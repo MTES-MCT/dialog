@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/MTES-MCT/dialog/raw/main/schema.json",
+  "title": "Arrêtés de circulation",
+  "description": "Spécification du fichier d'échange relatif aux arrêtés de circulation",
+  "homepage": "https://github.com/MTES-MCT/dialog",
+  "countryCode": "FR",
+  "keywords": [
+    "TODO",
+    "arrêtés",
+    "circulation",
+    "fabnum"
+  ],
+  "licenses": ["TODO"],
+  "resources": [
+    {
+      "title": "Fichier valide (JSON)",
+      "name": "schema-exemple-valide.json",
+      "path": "https://github.com/MTES-MCT/dialog/raw/main/schema-exemple-valide.json"
+    }
+  ],
+  "sources": [
+    {
+      "title": "DATEX II - TrafficRegulation",
+      "path": "https://docs.datex2.eu/trafficregulation/index.html"
+    }
+  ],
+  "created": "2022-11-07",
+  "lastModified": "2022-11-07",
+  "version": "0.0.1",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "_RegulationOrder"
+    }
+  ],
+  "definitions": {
+    "_RegulationOrder": {
+      "type": "object",
+      "required": [
+        "description",
+        "identifiant_pub",
+        "autorite",
+        "statut",
+        "localisation",
+        "reglementations"
+      ],
+      "properties": {
+        "description": {
+          "title": "Description",
+          "description": "Description de l'arrêté de circulation",
+          "type": "string",
+          "examples": [
+            "Arrêté réglementant la circulation, l'arrêt et le stationnement des véhicules de distribution ou d'enlèvement de marchandises à Paris"
+          ]
+        },
+        "identifiant_pub": {
+          "title": "Identifiant public",
+          "description": "Identifiant de l'arrêté tel qu'il a été publié",
+          "type": "string",
+          "examples": [
+            "2020P19283"
+          ]
+        },
+        "autorite": {
+          "type": "string",
+          "title": "Autorité",
+          "description": "Autorité dont émange l'arrêté de circulation",
+          "examples": [
+            "Préfet de la Ville de Paris"
+          ]
+        },
+        "statut": {
+          "type": "string",
+          "title": "Statut",
+          "description": "Statut d'application de l'arrêté",
+          "enum": [
+            "cree_et_implemente",
+            "cree_et_partiellement_implemente",
+            "cree_mais_pas_encore_implemente",
+            "partiellement_abroge",
+            "prevu",
+            "abroge"
+          ],
+          "examples": [
+            "cree_et_implemente"
+          ]
+        },
+        "localisation_globale": {
+          "type": "string",
+          "title": "Localisation globale",
+          "description": "Localisation globale de la zone affectée par l'arrêté, au format ???"
+        },
+        "reglementations": {
+          "type": "array",
+          "title": "Réglementations",
+          "description": "Liste des réglementations de circulation prévues par l'arrêté",
+          "minItems": 0,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "_TrafficRegulation"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "_TrafficRegulation": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "circulation_interdite",
+            "deviation"
+          ]
+        },
+        "condition": {
+          "properties": {
+            "negate": {
+              "type": "boolean"
+            },
+            "condition_vehicule": {
+              "allOf": [
+                {
+                  "$ref": "_VehicleCondition"
+                }
+              ]
+            },
+            "condition_localisation": {
+              "allOf": [
+                {
+                  "$ref": "_LocationCondition"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "_VehicleCondition": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "_VehicleCharacteristics"
+        }
+      ]
+    },
+    "_LocationCondition": {
+      "type": "object",
+      "properties": {
+        "TODO": {}
+      }
+    },
+    "_VehicleCharacteristics": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "poids_lourd",
+            "etc"
+          ]
+        },
+        "ptac_max_tonnes": {
+          "type": "number",
+          "title": "PTAC max",
+          "description": "PTAC (Poids total autorisé en charge) maximum du véhicule, en tonnes",
+          "minimum": 0
+        },
+        "hauteur_max_m": {
+          "type": "number",
+          "title": "Hauteur max",
+          "description": "Hauteur maximum du véhicule, en mètres",
+          "minimum": 0
+        },
+        "longueur_max_m": {
+          "type": "number",
+          "title": "Longueur max",
+          "description": "Longueur maximum du véhicule, en mètres",
+          "minimum": 0
+        },
+        "largeur_max_m": {
+          "type": "number",
+          "title": "Largeur max",
+          "description": "Largeur maximum du véhicule, en mètres",
+          "minimum": 0
+        },
+        "affectation": {
+          "type": "string",
+          "title": "Affectation",
+          "description": "Affectation du véhicule",
+          "enum": [
+            "transport_marchandises",
+            "agricole",
+            "etc"
+          ]
+        },
+        "critair_max": {
+          "type": "integer",
+          "title": "Vignette Critair",
+          "description": "Vignette Critair au-delà de laquelle le véhicule est interdit",
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    }
+  }
+}
