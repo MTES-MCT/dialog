@@ -1,0 +1,343 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "_ApplicableDaysWithinMonthEnum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/ApplicableDaysWithinMonthEnum"
+        },
+        "_extendedValue": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "_EuSpecialPurposeVehicleEnum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/EuSpecialPurposeVehicleEnum"
+        },
+        "_extendedValue": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "_EuVehicleCategoryEnum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/EuVehicleCategoryEnum"
+        },
+        "_extendedValue": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "_FuzzyTimeEnum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/FuzzyTimeEnum"
+        },
+        "_extendedValue": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "_PowerUnitOfMeasureEnum": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/PowerUnitOfMeasureEnum"
+        },
+        "_extendedValue": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "ADRClass": {
+      "$ref": "DATEXII_3_Common.json#/definitions/String"
+    },
+    "AgeCharacteristic": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "comparisonOperator": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ComparisonOperatorEnum"
+        },
+        "yearOfFirstRegistration": {
+          "$ref": "DATEXII_3_Common.json#/definitions/Year"
+        },
+        "_ageCharacteristicExtension": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ExtensionType"
+        }
+      },
+      "required": [
+        "comparisonOperator",
+        "yearOfFirstRegistration"
+      ]
+    },
+    "ApplicableDaysWithinMonthEnum": {
+      "type": "string",
+      "enum": [
+        "daysFromOneToFifteen",
+        "daysFromSixteenToThirtyOne",
+        "evenDay",
+        "oddDay",
+        "_extended"
+      ]
+    },
+    "DangerousGoodsExtended": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "adrClassValue": {
+          "type": "array",
+          "items": {
+            "$ref": "DATEXII_3_CommonExtension.json#/definitions/ADRClass"
+          },
+          "minItems": 0,
+          "maxItems": 13
+        }
+      }
+    },
+    "DayWeekMonthExtended": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "applicableDaysWithinMonth": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/_ApplicableDaysWithinMonthEnum"
+        }
+      },
+      "required": [
+        "applicableDaysWithinMonth"
+      ]
+    },
+    "EmissionsExtension": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "comparisonOperator": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ComparisonOperatorEnum"
+        }
+      },
+      "required": [
+        "comparisonOperator"
+      ]
+    },
+    "EnginePowerCharacteristics": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "comparisonOperator": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ComparisonOperatorEnum"
+        },
+        "enginePower": {
+          "$ref": "DATEXII_3_Common.json#/definitions/Float"
+        },
+        "unitOfMeasure": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/_PowerUnitOfMeasureEnum"
+        },
+        "_enginePowerCharacteristicsExtension": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ExtensionType"
+        }
+      },
+      "required": [
+        "comparisonOperator",
+        "enginePower",
+        "unitOfMeasure"
+      ]
+    },
+    "EuSpecialPurposeVehicleEnum": {
+      "type": "string",
+      "enum": [
+        "motorCaravan",
+        "armouredVehicle",
+        "ambulance",
+        "hearse",
+        "trailerCaravan",
+        "mobileCrane",
+        "otherSpecialPurposeVehicle",
+        "wheelChairAccessibleVehicle",
+        "_extended"
+      ]
+    },
+    "EuVehicleCategoryEnum": {
+      "type": "string",
+      "enum": [
+        "m",
+        "m1",
+        "m2",
+        "m3",
+        "n",
+        "n1",
+        "n2",
+        "n3",
+        "o",
+        "o1",
+        "o2",
+        "o3",
+        "o4",
+        "_extended"
+      ]
+    },
+    "FuzzyPeriod": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "beginOrDuration": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/_FuzzyTimeEnum"
+        },
+        "endOrDuration": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/_FuzzyTimeEnum"
+        },
+        "_fuzzyPeriodExtension": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ExtensionType"
+        }
+      }
+    },
+    "FuzzyTimeEnum": {
+      "type": "string",
+      "enum": [
+        "dawn",
+        "sunset",
+        "_extended"
+      ]
+    },
+    "GrossTrailerWeightCharacteristics": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "comparisonOperator": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ComparisonOperatorEnum"
+        },
+        "grossTrailerWeight": {
+          "$ref": "DATEXII_3_Common.json#/definitions/Tonnes"
+        },
+        "typeOfWeight": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_WeightTypeEnum"
+        },
+        "_grossTrailerWeightCharacteristicsExtension": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ExtensionType"
+        }
+      },
+      "required": [
+        "comparisonOperator",
+        "grossTrailerWeight",
+        "typeOfWeight"
+      ]
+    },
+    "PeriodExtended": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fuzzyPeriod": {
+          "type": "array",
+          "items": {
+            "$ref": "DATEXII_3_CommonExtension.json#/definitions/FuzzyPeriod"
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "PowerUnitOfMeasureEnum": {
+      "type": "string",
+      "enum": [
+        "horsepower",
+        "kilowatt",
+        "_extended"
+      ]
+    },
+    "RegulatedCharacteristics": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "euVehicleCategory": {
+          "type": "array",
+          "items": {
+            "$ref": "DATEXII_3_CommonExtension.json#/definitions/_EuVehicleCategoryEnum"
+          },
+          "minItems": 0
+        },
+        "euSpecialPurposeVehicle": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/_EuSpecialPurposeVehicleEnum"
+        },
+        "nationalSpecialPurposeVehicle": {
+          "$ref": "DATEXII_3_Common.json#/definitions/MultilingualString"
+        },
+        "_regulatedCharacteristicsExtension": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ExtensionType"
+        }
+      }
+    },
+    "TrailerCharacteristics": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "grossTrailerWeightCharacteristics": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/GrossTrailerWeightCharacteristics"
+        },
+        "_trailerCharacteristicsExtension": {
+          "$ref": "DATEXII_3_Common.json#/definitions/_ExtensionType"
+        }
+      },
+      "required": [
+        "grossTrailerWeightCharacteristics"
+      ]
+    },
+    "VehicleCharacteristicsExtended": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ageCharacteristic": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/AgeCharacteristic"
+        },
+        "maximumDesignSpeed": {
+          "$ref": "DATEXII_3_TrafficRegulation.json#/definitions/Speed"
+        },
+        "trailerCharacteristics": {
+          "$ref": "DATEXII_3_CommonExtension.json#/definitions/TrailerCharacteristics"
+        },
+        "hazardousMaterials": {
+          "$ref": "DATEXII_3_Common.json#/definitions/HazardousMaterials"
+        },
+        "enginePowerCharacteristics": {
+          "type": "array",
+          "items": {
+            "$ref": "DATEXII_3_CommonExtension.json#/definitions/EnginePowerCharacteristics"
+          },
+          "minItems": 0,
+          "maxItems": 2
+        },
+        "regulatedCharacteristics": {
+          "type": "array",
+          "items": {
+            "$ref": "DATEXII_3_CommonExtension.json#/definitions/RegulatedCharacteristics"
+          },
+          "minItems": 0
+        }
+      }
+    }
+  }
+}

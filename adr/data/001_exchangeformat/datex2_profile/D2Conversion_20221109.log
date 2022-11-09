@@ -1,0 +1,55 @@
+3:43:06 PM - [System] - log started with log level = Debug = 3
+3:43:06 PM - [System] - Start loading 'pim-33-level-a.xml'
+3:43:09 PM - [System] - XMI version is '2.1'
+3:43:33 PM - [System] - Start checking compliance with Level A
+3:43:33 PM - [System] - Model is compliant with Level A
+
+3:43:42 PM - [System] - log started with log level = Debug = 3
+3:43:42 PM - [System] - Start checking compliance with Level A
+3:43:42 PM - [System] - Model is compliant with Level A
+3:43:42 PM - [System] - Start checking the constrains
+3:43:42 PM - [Debug] - Found levelB extension : DangerousGoodsExtended
+3:43:42 PM - [Debug] - Found levelB extension : DayWeekMonthExtended
+3:43:42 PM - [Debug] - Found levelB extension : FacilityLocation
+3:43:42 PM - [Debug] - Found levelB extension : PeriodExtended
+3:43:42 PM - [Debug] - Found levelB extension : EmissionsExtension
+3:43:42 PM - [Debug] - Found levelB extension : SupplementaryPositionalDescriptionExtended
+3:43:42 PM - [Debug] - Found levelB extension : VehicleCharacteristicsExtended
+3:43:42 PM - [Debug] - Found levelB extension : NamedAreaExtended
+3:43:42 PM - [Debug] - the model has no attribute scope violations
+3:43:42 PM - [Debug] - the model has no illegal order numbers
+3:43:42 PM - [Debug] - the model has no attributes that have a missing data type
+3:43:42 PM - [Debug] - the model has no attributes with attribute tagged value set to yes and upper multiplicity unbounded
+3:43:42 PM - [Debug] - the model has no roles without definitions that point to the same target.
+3:43:42 PM - [Debug] - the model does not contain forbidden cycles.
+3:43:42 PM - [Debug] - the model has no schemaType tagged values that are not allowed.
+3:43:42 PM - [Debug] - the model is according to the naming convention
+3:43:42 PM - [Debug] - the model has no missing definitions on classes.
+3:43:42 PM - [Debug] - the model has no missing definitions on attributes.
+3:43:42 PM - [Debug] - the model has no missing definitions on datatypes,enumerations or enumeration literals.
+3:43:42 PM - [Debug] - the model has no schemaType and schemaTypeInclude tagged values on the same datatype. 
+3:43:42 PM - [Debug] - the model has no targetClass tagged value pointing to a nonexisting class.
+3:43:42 PM - [Debug] - the model has no facets on attributes that violates the rules
+3:43:42 PM - [Debug] - the model has no class scope violations
+3:43:42 PM - [Debug] - the model has no type scope violations
+3:43:42 PM - [Debug] - the model has no namespace name scope violations
+3:43:42 PM - [Debug] - the model has no external namespace violations
+3:43:42 PM - [Debug] - the model has no external component/types violations
+3:43:42 PM - [Debug] - the model has no namespace with prefix not set
+3:43:42 PM - [System] - checking the constrains successful finished
+3:43:42 PM - [System] - Start generating schema.. 
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/common
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/commonExtension
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/d2Payload
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/energyInfrastructure
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/extension
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/facilities
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/locationExtension
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/locationReferencing
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/parking
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/roadTrafficData
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/situation
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/trafficRegulation
+3:43:42 PM - [Debug] - creation of json Schema file for namespace http://datex2.eu/schema/3/vms
+3:43:42 PM - [Debug] - Json Schema output path D:\home\site\wwwroot\wwwroot\App_Data\Sessions\085d1a1c-f3cc-4e17-a859-442d31f33c45
+3:43:43 PM - [Debug] - number of classes = 180

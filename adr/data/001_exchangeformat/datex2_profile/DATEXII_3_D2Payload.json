@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "payload",
+  "definitions": {},
+  "$ref": "DATEXII_3_Common.json#/definitions/_PayloadPublication",
+  "type": "object",
+  "additionalProperties": false
+}
