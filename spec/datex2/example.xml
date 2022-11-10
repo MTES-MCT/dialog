@@ -6,6 +6,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:d2="http://datex2.eu/schema/3/d2Payload"
   xmlns:com="http://datex2.eu/schema/3/common"
+  xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
   xmlns="http://datex2.eu/schema/3/trafficRegulation"
   xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
   xsi:type="TrafficRegulationPublication"
@@ -45,28 +46,40 @@
           <accessRestrictionType>noEntry</accessRestrictionType>
         </typeOfRegulation>
 
-        <condition xsi:type="ValidityCondition">
-          <negate>true</negate>
-          <validityByOrder>
-            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-            <com:validityTimeSpecification>
-              <com:overallStartTime>2022-05-10T09:00:00.000Z</com:overallStartTime>
-              <com:overallEndTime>2022-06-10T16:30:00.000Z</com:overallEndTime>
-              <com:exceptionPeriod>
-                <com:recurringDayWeekMonthPeriod>
-                  <com:applicableDay>saturday</com:applicableDay>
-                  <com:applicableDay>sunday</com:applicableDay>
-                </com:recurringDayWeekMonthPeriod>
-              </com:exceptionPeriod>
-              <com:exceptionPeriod>
-                <com:recurringSpecialDay>
-                  <com:intersectWithApplicableDays>true</com:intersectWithApplicableDays>
-                  <com:specialDayType>publicHoliday</com:specialDayType>
-                </com:recurringSpecialDay>
-              </com:exceptionPeriod>
-            </com:validityTimeSpecification>
-          </validityByOrder>
+        <condition xsi:type="ConditionSet">
+            <operator>and</operator>
+            <conditions xsi:type="ValidityCondition">
+                <negate>false</negate>
+                <validityByOrder>
+                    <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                    <com:validityTimeSpecification>
+                    <com:overallStartTime>2022-05-10T09:00:00.000Z</com:overallStartTime>
+                    <com:overallEndTime>2022-06-10T16:30:00.000Z</com:overallEndTime>
+                    <com:exceptionPeriod>
+                        <com:recurringDayWeekMonthPeriod>
+                            <com:applicableDay>saturday</com:applicableDay>
+                            <com:applicableDay>sunday</com:applicableDay>
+                        </com:recurringDayWeekMonthPeriod>
+                    </com:exceptionPeriod>
+                    <com:exceptionPeriod>
+                        <com:recurringSpecialDay>
+                            <com:intersectWithApplicableDays>true</com:intersectWithApplicableDays>
+                            <com:specialDayType>publicHoliday</com:specialDayType>
+                        </com:recurringSpecialDay>
+                    </com:exceptionPeriod>
+                    </com:validityTimeSpecification>
+                </validityByOrder>
+            </conditions>
+            <conditions xsi:type="LocationCondition">
+                <negate>false</negate>
+                <implementedLocation xsi:type="loc:LinearLocation">
+                  <loc:gmlLineString>
+                    <loc:posList>47.366334 -1.944703 47.370631 -1.94021</loc:posList>
+                  </loc:gmlLineString>
+                </implementedLocation>
+            </conditions>
         </condition>
+
       </trafficRegulation>
     </trafficRegulationOrder>
   </trafficRegulationsFromCompetentAuthorities>
