@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:fac="http://datex2.eu/schema/3/facilities" version="3.3" targetNamespace="http://datex2.eu/schema/3/facilities" xmlns:com="http://datex2.eu/schema/3/common" xmlns:loc="http://datex2.eu/schema/3/locationReferencing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://datex2.eu/schema/3/locationReferencing" schemaLocation="DATEXII_3_LocationReferencing.xsd" />
+  <xs:import namespace="http://datex2.eu/schema/3/common" schemaLocation="DATEXII_3_Common.xsd" />
+  <xs:simpleType name="TimeZone">
+    <xs:annotation>
+      <xs:documentation>Identifies a time zone by specifying the difference to UTC in hours and minutes, as defined in ISO 8601.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="com:String">
+      <xs:pattern value="[-+][0-9][0-9]:[0-9][0-9]|Z" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

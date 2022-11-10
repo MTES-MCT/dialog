@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:prk="http://datex2.eu/schema/3/parking" version="1" targetNamespace="http://datex2.eu/schema/3/parking" xmlns:com="http://datex2.eu/schema/3/common" xmlns:fac="http://datex2.eu/schema/3/facilities" xmlns:loc="http://datex2.eu/schema/3/locationReferencing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://datex2.eu/schema/3/locationReferencing" schemaLocation="DATEXII_3_LocationReferencing.xsd" />
+  <xs:import namespace="http://datex2.eu/schema/3/facilities" schemaLocation="DATEXII_3_Facilities.xsd" />
+  <xs:import namespace="http://datex2.eu/schema/3/common" schemaLocation="DATEXII_3_Common.xsd" />
+  <xs:complexType name="_RoadTypeEnum">
+    <xs:simpleContent>
+      <xs:extension base="prk:RoadTypeEnum">
+        <xs:attribute name="_extendedValue" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RoadInformationEnhanced">
+    <xs:annotation>
+      <xs:documentation>Additional road information.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="loc:RoadInformation">
+        <xs:sequence>
+          <xs:element name="typeOfRoad" type="prk:_RoadTypeEnum" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>Type of the road.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="roadOrigination" type="com:MultilingualString" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Name of some city, area, compass direction or other identification this road comes from.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="_roadInformationEnhancedExtension" type="com:_ExtensionType" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="RoadTypeEnum">
+    <xs:annotation>
+      <xs:documentation>Categorisation of the  road type (motorway,main road,...).</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="motorway">
+        <xs:annotation>
+          <xs:documentation>Motorway.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="trunkRoad">
+        <xs:annotation>
+          <xs:documentation>Trunk road.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="mainRoad">
+        <xs:annotation>
+          <xs:documentation>Main road.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="other">
+        <xs:annotation>
+          <xs:documentation>Other.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="_extended" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
