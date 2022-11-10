@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<d2:payload
+  modelBaseVersion="3"
+  lang="EN"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:d2="http://datex2.eu/schema/3/d2Payload"
+  xmlns:com="http://datex2.eu/schema/3/common"
+  xmlns="http://datex2.eu/schema/3/trafficRegulation"
+  xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
+  xsi:type="TrafficRegulationPublication"
+  id="910928b3-58a1-4462-881b-53dec84602f9"
+>
+  <com:publicationTime>2022-11-10T15:11:00.000Z</com:publicationTime>
+
+  <com:publicationCreator>
+    <com:country>fr</com:country>
+    <com:nationalIdentifier>DiaLog</com:nationalIdentifier>
+  </com:publicationCreator>
+
+  <trafficRegulationsFromCompetentAuthorities>
+    <trafficRegulationOrder id="T-SN2022-05-154" version="1">
+      <description>
+        <com:values>
+          <com:value>
+            Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye
+          </com:value>
+        </com:values>
+      </description>
+
+      <issuingAuthority>
+        <com:values>
+          <com:value>Commune de Savenay</com:value>
+        </com:values>
+      </issuingAuthority>
+
+      <regulationId>T-SN2022-05-154</regulationId>
+
+      <status>madeAndImplemented</status>
+
+      <trafficRegulation>
+        <status>active</status>
+
+        <typeOfRegulation xsi:type="AccessRestriction">
+          <accessRestrictionType>noEntry</accessRestrictionType>
+        </typeOfRegulation>
+
+        <condition xsi:type="ValidityCondition">
+          <negate>true</negate>
+          <validityByOrder>
+            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+            <com:validityTimeSpecification>
+              <com:overallStartTime>2022-05-10T09:00:00.000Z</com:overallStartTime>
+              <com:overallEndTime>2022-06-10T16:30:00.000Z</com:overallEndTime>
+              <com:exceptionPeriod>
+                <com:recurringDayWeekMonthPeriod>
+                  <com:applicableDay>saturday</com:applicableDay>
+                  <com:applicableDay>sunday</com:applicableDay>
+                </com:recurringDayWeekMonthPeriod>
+              </com:exceptionPeriod>
+              <com:exceptionPeriod>
+                <com:recurringSpecialDay>
+                  <com:intersectWithApplicableDays>true</com:intersectWithApplicableDays>
+                  <com:specialDayType>publicHoliday</com:specialDayType>
+                </com:recurringSpecialDay>
+              </com:exceptionPeriod>
+            </com:validityTimeSpecification>
+          </validityByOrder>
+        </condition>
+      </trafficRegulation>
+    </trafficRegulationOrder>
+  </trafficRegulationsFromCompetentAuthorities>
+</d2:payload>
