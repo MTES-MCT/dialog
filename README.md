@@ -18,6 +18,7 @@ Vous devez avoir **[Docker](https://www.docker.com/)** et **[Docker Compose](htt
 ## Démarrage du projet
 
 ### Installation
+
 Pour installer le projet la première fois, lancer la commande :
 
 ```bash
