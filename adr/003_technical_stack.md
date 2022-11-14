@@ -1,8 +1,8 @@
 # Environnement technique
 
-* Date : 2022-09-10
+* Date : 2022-09-14
 * Personnes impliquées : Mathieu Marchois, Florimond Manca
-* Statut : BROUILLON
+* Statut : Accepté
 
 ## Contexte
 
