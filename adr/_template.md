@@ -1,10 +1,10 @@
-# $TITRE
+# $NUMERO - $TITRE
 
 <!-- OBLIGATOIRE -->
 
 * Date : YYYY-MM-DD
 * Personnes impliquées : $NOMS
-* Statut : [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ]
+* Statut : <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
 
 ## Contexte
 
