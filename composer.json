@@ -14,7 +14,11 @@
         "symfony/yaml": "6.1.*"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.13"
+        "friendsofphp/php-cs-fixer": "^3.13",
+        "symfony/debug-bundle": "6.1.*",
+        "symfony/stopwatch": "6.1.*",
+        "symfony/var-dumper": "6.1.*",
+        "symfony/web-profiler-bundle": "6.1.*"
     },
     "config": {
         "allow-plugins": {
