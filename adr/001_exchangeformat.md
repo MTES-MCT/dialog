@@ -1,10 +1,8 @@
 # Format d'échange de données
 
-<!-- OBLIGATOIRE -->
-
 * Date : 2022-11-09
 * Personnes impliquées : Florimond Manca, Mathieu Marchois
-* Statut : BROUILLON <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
+* Statut : Brouillon
 
 **Table des matières**
 
@@ -18,8 +16,6 @@
 * [Références](#références)
 
 ## Contexte
-
-<!-- OBLIGATOIRE -->
 
 DiaLog publiera des données d'arrêtés de circulation qui seront utilisées par des services numériques d'aide au déplacement pour prendre en compte par exemple les restrictions poids lourds.
 
@@ -38,8 +34,6 @@ Faut-il créer un format ad-hoc, ou y a-t-il des standards reconnus sur lesquels
 * Pas de contrainte sur le format de données de la part des services numériques d'aide au déplacement. Ils sont éventuellement familiers des standards existants.
 
 ## Décision
-
-<!-- OBLIGATOIRE -->
 
 Nous avons décidé d'exposer les données comme des publications `TrafficRegulationPublication` au sens de DATEX II v3.3 (Option 1 décrite ci-dessous).
 
