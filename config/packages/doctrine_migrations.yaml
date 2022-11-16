@@ -1,0 +1,4 @@
+doctrine_migrations:
+    migrations_paths:
+        App\Infrastructure\Persistence\Doctrine\Migrations: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine/Migrations'
+    enable_profiler: false

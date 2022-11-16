@@ -1,10 +1,17 @@
+# Allow referring to environment variables defined in .env.
+# See: https://lithic.tech/blog/2020-05/makefile-dot-env
+ifneq (,$(wildcard ./.env))
+	include .env
+	export
+endif
+
+COMPOSE_EXEC_PHP=docker-compose exec app
+
 ##
 ## ----------------
 ## General
 ## ----------------
 ##
-
-COMPOSE_EXEC_PHP=docker-compose exec app
 
 all: help
 
@@ -42,6 +49,21 @@ rm: ## Remove containers
 
 logs: ## Run logs
 	${COMPOSE_EXEC_PHP} symfony server:log
+
+##
+## ----------------
+## Database
+## ----------------
+##
+
+database_generate_migration: ## Generate new db migration
+	${COMPOSE_EXEC_PHP} symfony console doctrine:migrations:diff
+
+database_run_migration: ## Run db migration
+	${COMPOSE_EXEC_PHP} symfony console doctrine:migrations:migrate -n --all-or-nothing
+
+database_connect: ## Connect to the database
+	docker-compose exec database psql ${DATABASE_URL}
 
 ##
 ## ----------------
