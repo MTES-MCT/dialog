@@ -86,8 +86,13 @@ cache_clear: ## Run console command
 ## ----------------
 ##
 
-lint: ## PHP linter
+lint_php: ## PHP linter
 	${COMPOSE_EXEC_PHP} ./vendor/bin/php-cs-fixer fix
+
+lint_twig: ## Twig linter
+	${COMPOSE_EXEC_PHP} symfony console lint:twig
+
+lint: lint_php lint_twig ## Run linters
 
 security_check: ## Security checks
 	${COMPOSE_EXEC_PHP} symfony security:check
