@@ -4,45 +4,39 @@ Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistiqu
 
 ## Environnement technique
 
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) / [Compose](https://docs.docker.com/compose/)
 - [PHP](https://www.php.net/)
 - [Symfony](https://www.symfony.com/)
 - [Twig](https://twig.symfony.com/)
 - [Htmx](https://htmx.org/)
 - [PostgreSQL](https://www.postgresql.org/)
 
-## Prérequis
-
-Vous devez avoir **[Docker](https://www.docker.com/)** et **[Docker Compose](https://docs.docker.com/compose/)** d'installés sur votre machine pour pouvoir lancer les services `database` et `app` définis dans le fichier `docker-compose.yml`.
-
 ## Démarrage du projet
 
-### Installation
+ℹ️ Vous devez avoir **[Docker](https://www.docker.com/)** et **[Docker Compose](https://docs.docker.com/compose/)** d'installés sur votre machine.
 
-Pour installer le projet la première fois, lancer la commande :
+Pour démarrer l'application (http://localhost:8000) :
 
 ```bash
 make install
 ```
 
-Cette commande va installer les différentes dépendances, dont la base de données, et lancer l'app.
-
-### Démarage
-
-Pour démarrer les services, lancer la commande :
+ou lancez la commande suivante si le projet avait déjà été installé :
 
 ```bash
 make start
 ```
 
-L'application sera disponible sur `http://localhost:8000`.
+## Environnements
 
-## Qualité
+### 🚀 Production
 
-Nous utilisons [PHP CS Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer) pour formater le code PHP en respectant le standard défini par `Symfony`.
+[https://dialog.beta.gouv.fr](https://dialog.beta.gouv.fr)
 
-Pour lancer le linter :
+### 🛠️ Staging
 
-```bash
-make lint
-```
+[https://dialog.incubateur.net](https://dialog.incubateur.net)
+
+## Contribuer
+
+Consultez [la documentation de développement](./docs/README.md).
