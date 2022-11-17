@@ -4,7 +4,6 @@
 
 ### Tests
 
-
 Nous utilisons le framework [PHPUnit](https://phpunit.de/) pour faire nos tests.
 
 ### Tests unitaires
