@@ -7,3 +7,4 @@ Table des matières :
 * [001 - Format d'échanges de données](./001_exchangeformat.md)
 * [002 - Modèle conceptuel de données](./002_mcd.md)
 * [003 - Environnement technique](./003_technical_stack.md)
+* [004 - Architecture hexagonale](./004_hexagonal_architecture.md)
