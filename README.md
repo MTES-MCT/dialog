@@ -1,4 +1,5 @@
 # DiaLog
+[![CI](https://github.com/MTES-MCT/dialog/actions/workflows/ci.yml/badge.svg)](https://github.com/MTES-MCT/dialog/actions/workflows/ci.yml)
 
 Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistique.
 
