@@ -96,3 +96,15 @@ lint: lint_php lint_twig ## Run linters
 
 security_check: ## Security checks
 	${COMPOSE_EXEC_PHP} symfony security:check
+
+##
+## ----------------
+## Tests
+## ----------------
+##
+
+phpunit: ## Run PHPUnit
+	${COMPOSE_EXEC_PHP} ./bin/phpunit
+
+phpunit_unit: ## Run unit tests
+	${COMPOSE_EXEC_PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
