@@ -2,6 +2,18 @@
 
 ## Qualité
 
+### Tests
+
+Nous utilisons le framework [PHPUnit](https://phpunit.de/) pour faire nos tests.
+
+### Tests unitaires
+
+Executer les tests unitaires :
+
+```bash
+make phpunit_unit
+```
+
 ### Linter
 
 Pour lancer le linter PHP :
