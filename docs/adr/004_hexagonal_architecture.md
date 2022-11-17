@@ -2,7 +2,7 @@
 
 * Date : 2022-11-16
 * Personnes impliquées : Mathieu Marchois, Florimond Manca
-* Statut : Brouillon
+* Statut : Accepté
 
 ## Contexte
 
