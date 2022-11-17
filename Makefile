@@ -86,13 +86,16 @@ cache_clear: ## Run console command
 ## ----------------
 ##
 
-lint_php: ## PHP linter
+phpstan: ## PHP Stan
+	${COMPOSE_EXEC_PHP} ./vendor/bin/phpstan analyse src
+
+php_lint: ## PHP linter
 	${COMPOSE_EXEC_PHP} ./vendor/bin/php-cs-fixer fix
 
-lint_twig: ## Twig linter
+twig_lint: ## Twig linter
 	${COMPOSE_EXEC_PHP} symfony console lint:twig
 
-lint: lint_php lint_twig ## Run linters
+lint: php_lint twig_lint ## Run linters
 
 security_check: ## Security checks
 	${COMPOSE_EXEC_PHP} symfony security:check
