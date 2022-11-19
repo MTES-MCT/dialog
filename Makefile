@@ -5,7 +5,7 @@ ifneq (,$(wildcard ./.env))
 	export
 endif
 
-COMPOSE_EXEC_PHP=docker-compose exec app
+COMPOSE_EXEC_PHP=docker-compose exec php
 
 ##
 ## ----------------
@@ -20,11 +20,11 @@ help: ## Display this message
 
 install: build start ## Bootstrap project
 	make composer CMD="install"
+	make database_run_migration
 
 start: ## Start container
 	docker-compose up -d
 	docker-compose start
-	${COMPOSE_EXEC_PHP} symfony server:start -d --no-tls
 
 stop: ## Stop containers
 	docker-compose stop
@@ -40,15 +40,6 @@ build: ## Build containers
 rm: ## Remove containers
 	make stop
 	docker-compose rm
-
-##
-## ----------------
-## Logs
-## ----------------
-##
-
-logs: ## Run logs
-	${COMPOSE_EXEC_PHP} symfony server:log
 
 ##
 ## ----------------
