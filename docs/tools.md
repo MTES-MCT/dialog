@@ -19,13 +19,13 @@ make phpunit_unit
 Pour lancer le linter PHP :
 
 ```bash
-make lint_php
+make php_lint
 ```
 
 Pour lancer le linter Twig :
 
 ```bash
-make lint_twig
+make twig_lint
 ```
 
 Pour lancer les linter PHP & Twig :
@@ -33,6 +33,13 @@ Pour lancer les linter PHP & Twig :
 make lint
 ```
 
+### Analyses statiques de code
+
+Pour lancer l'analyse statique de code [PHPStan](https://phpstan.org/), utilisez la commande :
+
+```bash
+make phpstan
+```
 ## Base de données
 
 ### Connection
