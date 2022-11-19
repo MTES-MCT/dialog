@@ -18,7 +18,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: "Install Dependencies"
+      - name: Install Dependencies
         run: composer install -n --prefer-dist
 
       - name: Lint PHP
@@ -26,6 +26,9 @@ jobs:
 
       - name: Lint Twig
         run: php bin/console lint:twig
+
+      - name: PHP Stan
+        run: php ./vendor/bin/phpstan analyse src
 
       - name: Tests
         run: php ./bin/phpunit
