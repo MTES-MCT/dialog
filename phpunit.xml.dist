@@ -28,7 +28,6 @@
         </exclude>
     </coverage>
 
-
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
