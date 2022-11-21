@@ -102,3 +102,6 @@ phpunit: ## Run PHPUnit
 
 phpunit_unit: ## Run unit tests
 	${COMPOSE_EXEC_PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
+
+phpunit_integration: ## Run integration tests
+	${COMPOSE_EXEC_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
