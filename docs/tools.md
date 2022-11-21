@@ -6,12 +6,16 @@
 
 Nous utilisons le framework [PHPUnit](https://phpunit.de/) pour faire nos tests.
 
-### Tests unitaires
-
 Executer les tests unitaires :
 
 ```bash
 make phpunit_unit
+```
+
+Executer les tests d'intégrations :
+
+```bash
+make phpunit_integration
 ```
 
 ### Linter
