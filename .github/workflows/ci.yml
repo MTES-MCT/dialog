@@ -31,4 +31,9 @@ jobs:
         run: php ./vendor/bin/phpstan analyse src
 
       - name: Tests
-        run: php ./bin/phpunit
+        run: php -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml
+
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
