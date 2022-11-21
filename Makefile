@@ -20,7 +20,6 @@ help: ## Display this message
 
 install: build start ## Bootstrap project
 	make composer CMD="install"
-	make database_run_migration
 
 start: ## Start container
 	docker-compose up -d
