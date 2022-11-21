@@ -1,7 +1,7 @@
 FROM php:8.1-fpm
 
 # Set working dir
-WORKDIR /var/www
+WORKDIR /var/www/dialog
 
 # Install dependencies
 RUN apt-get update \
