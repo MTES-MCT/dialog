@@ -70,6 +70,14 @@ Une fois la migration générée, il faut l'executer. Pour ce faire il existe la
 make database_run_migration
 ```
 
+### Outillage
+
+Pour valider que le schéma de la base de données est correct, vous pouvez lancer la commande suivante :
+
+```bash
+make console CMD="doctrine:schema:validate"
+```
+
 ## PHP
 
 ### Intégration avec l'éditeur de code
