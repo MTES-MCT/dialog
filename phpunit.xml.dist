@@ -24,6 +24,7 @@
         <exclude>
             <directory suffix=".php">src/Infrastructure/Persistence/Doctrine/Mapping</directory>
             <directory suffix=".php">src/Infrastructure/Persistence/Doctrine/Migrations</directory>
+            <directory suffix=".php">src/Infrastructure/Adapter</directory>
             <file>src/Kernel.php</file>
         </exclude>
     </coverage>
