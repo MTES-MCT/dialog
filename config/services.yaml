@@ -27,3 +27,25 @@ services:
     App\Infrastructure\Controller\:
         resource: '../src/Infrastructure/Controller/'
         tags: ['controller.service_arguments']
+
+    # -------------------
+    # Command & Query bus
+    # -------------------
+    App\Infrastructure\Adapter\QueryBus:
+        $queryBus: '@messenger.bus.queries'
+
+    App\Infrastructure\Adapter\CommandBus:
+        $commandBus: '@messenger.bus.commands'
+
+    command_handlers:
+        namespace: App\Application\
+        resource: '%kernel.project_dir%/src/Application/**/Command/**/*Handler.php'
+        public: true
+        tags:
+            - { name: 'messenger.message_handler', bus: 'messenger.bus.commands' }
+    query_handlers:
+        namespace: App\Application\
+        resource: '%kernel.project_dir%/src/Application/**/Query/**/*Handler.php'
+        public: true
+        tags:
+            - { name: 'messenger.message_handler', bus: 'messenger.bus.queries' }
