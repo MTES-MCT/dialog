@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics"
+    table="vehicle_characteristics">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="vehicleType" type="string" column="vehicle_type" nullable="true" length="40"/>
+    <field name="vehicleUsage" type="string" column="vehicle_usage" nullable="true" length="30"/>
+    <field name="vehicleCritair" type="string" column="vehicle_critair" nullable="true" length="2"/>
+    <field name="maxWeight" type="float" column="max_weight" nullable="true">
+        <options>
+            <option name="comment">Unit in tonnes.</option>
+        </options>
+    </field>
+    <field name="maxHeight" type="float" column="max_height" nullable="true">
+        <options>
+            <option name="comment">Unit in meters.</option>
+        </options>
+    </field>
+    <field name="maxWidth" type="float" column="max_width" nullable="true">
+        <options>
+            <option name="comment">Unit in meters.</option>
+        </options>
+    </field>
+    <field name="maxLength" type="float" column="max_length" nullable="true">
+        <options>
+            <option name="comment">Unit in meters.</option>
+        </options>
+    </field>
+  </entity>
+</doctrine-mapping>

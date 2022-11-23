@@ -22,7 +22,7 @@ jobs:
         run: composer install -n --prefer-dist
 
       - name: Lint PHP
-        run: php ./vendor/bin/php-cs-fixer fix
+        run: php ./vendor/bin/php-cs-fixer fix --dry-run -v
 
       - name: Lint Twig
         run: php bin/console lint:twig

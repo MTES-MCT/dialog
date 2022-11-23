@@ -8,5 +8,8 @@
     <one-to-one field="trafficRegulation" target-entity="App\Domain\TrafficRegulation\TrafficRegulation">
         <join-column name="traffic_regulation_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>
+    <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics">
+        <join-column name="vehicle_characteristics_uuid" referenced-column-name="uuid" nullable="true"/>
+    </one-to-one>
   </entity>
 </doctrine-mapping>

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\RegulationOrder;
 
-use App\Domain\RegulationOrder\Enum\RegulationOrderRecordStatus;
+use App\Domain\RegulationOrder\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\Organization;
 
 class RegulationOrderRecord
 {
     public function __construct(
         private string $uuid,
-        private RegulationOrderRecordStatus $status,
+        private RegulationOrderRecordStatusEnum $status,
         private Organization $organization,
         private RegulationOrder $regulationOrder,
         private \DateTimeImmutable $createdAt,
@@ -23,7 +23,7 @@ class RegulationOrderRecord
         return $this->uuid;
     }
 
-    public function getStatus(): RegulationOrderRecordStatus
+    public function getStatus(): RegulationOrderRecordStatusEnum
     {
         return $this->status;
     }
