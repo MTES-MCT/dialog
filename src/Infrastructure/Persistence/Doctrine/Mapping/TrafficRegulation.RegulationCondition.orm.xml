@@ -6,7 +6,10 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="negate" type="boolean" column="negate" nullable="false"/>
     <one-to-one field="trafficRegulation" target-entity="App\Domain\TrafficRegulation\TrafficRegulation">
-        <join-column name="traffic_regulation_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+        <join-column name="traffic_regulation_uuid" referenced-column-name="uuid" nullable="true" on-delete="CASCADE"/>
+    </one-to-one>
+    <one-to-one field="parentConditionSet" target-entity="App\Domain\TrafficRegulation\Condition\ConditionSet">
+        <join-column name="parent_condition_set_uuid" referenced-column-name="uuid" nullable="true"/>
     </one-to-one>
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics">
         <join-column name="vehicle_characteristics_uuid" referenced-column-name="uuid" nullable="true"/>

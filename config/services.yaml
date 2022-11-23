@@ -43,6 +43,7 @@ services:
         public: true
         tags:
             - { name: 'messenger.message_handler', bus: 'messenger.bus.commands' }
+
     query_handlers:
         namespace: App\Application\
         resource: '%kernel.project_dir%/src/Application/**/Query/**/*Handler.php'

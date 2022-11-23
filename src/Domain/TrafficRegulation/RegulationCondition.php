@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\TrafficRegulation;
 
+use App\Domain\TrafficRegulation\Condition\ConditionSet;
 use App\Domain\TrafficRegulation\Condition\VehicleCharacteristics;
 
 class RegulationCondition
@@ -13,7 +14,8 @@ class RegulationCondition
     public function __construct(
         private string $uuid,
         private bool $negate,
-        private TrafficRegulation $trafficRegulation,
+        private ?TrafficRegulation $trafficRegulation = null,
+        private ?ConditionSet $parentConditionSet = null,
     ) {
     }
 
@@ -40,5 +42,10 @@ class RegulationCondition
     public function setVehicleCharacteristics(VehicleCharacteristics $vehicleCharacteristics): void
     {
         $this->vehicleCharacteristics = $vehicleCharacteristics;
+    }
+
+    public function getParentConditionSet(): ?ConditionSet
+    {
+        return $this->parentConditionSet;
     }
 }

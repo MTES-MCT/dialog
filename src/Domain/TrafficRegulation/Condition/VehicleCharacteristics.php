@@ -12,13 +12,13 @@ class VehicleCharacteristics
 {
     public function __construct(
         private string $uuid,
-        private ?VehicleUsageEnum $vehicleUsage,
-        private ?VehicleTypeEnum $vehicleType,
-        private ?VehicleCritairEnum $vehicleCritair,
-        private ?float $maxWeight,
-        private ?float $maxHeight,
-        private ?float $maxWidth,
-        private ?float $maxLength,
+        private ?VehicleUsageEnum $vehicleUsage = null,
+        private ?VehicleTypeEnum $vehicleType = null,
+        private ?VehicleCritairEnum $vehicleCritair = null,
+        private ?float $maxWeight = null,
+        private ?float $maxHeight = null,
+        private ?float $maxWidth = null,
+        private ?float $maxLength = null,
     ) {
     }
 
