@@ -9,7 +9,27 @@
 
             <trans-unit id="home.title">
                 <source>home.title</source>
-                <target>Bienvenue sur DiaLog</target>
+                <target>DiaLog</target>
+            </trans-unit>
+
+            <trans-unit id="home.subtitle">
+                <source>home.subtitle</source>
+                <target>Digitaliser, diagnostiquer et diffuser la réglementation de circulation</target>
+            </trans-unit>
+
+            <trans-unit id="common.form.save">
+                <source>common.form.save</source>
+                <target>Enregistrer</target>
+            </trans-unit>
+
+            <trans-unit id="regulation_order.form.description">
+                <source>regulation_order.form.description</source>
+                <target>Description</target>
+            </trans-unit>
+
+            <trans-unit id="regulation_order.form.issuing_authority">
+                <source>regulation_order.form.issuing_authority</source>
+                <target>Autorité compétente</target>
             </trans-unit>
         </body>
     </file>
