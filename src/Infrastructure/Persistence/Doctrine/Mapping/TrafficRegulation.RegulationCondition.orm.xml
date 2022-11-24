@@ -14,5 +14,8 @@
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics">
         <join-column name="vehicle_characteristics_uuid" referenced-column-name="uuid" nullable="true"/>
     </one-to-one>
+    <one-to-one field="overallPeriod" target-entity="App\Domain\TrafficRegulation\Condition\Period\OverallPeriod">
+        <join-column name="overall_period_uuid" referenced-column-name="uuid" nullable="true"/>
+    </one-to-one>
   </entity>
 </doctrine-mapping>

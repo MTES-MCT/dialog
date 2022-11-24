@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\TrafficRegulation;
 
 use App\Domain\TrafficRegulation\Condition\ConditionSet;
+use App\Domain\TrafficRegulation\Condition\Period\OverallPeriod;
 use App\Domain\TrafficRegulation\Condition\VehicleCharacteristics;
 
 class RegulationCondition
@@ -16,6 +17,7 @@ class RegulationCondition
         private bool $negate,
         private ?TrafficRegulation $trafficRegulation = null,
         private ?ConditionSet $parentConditionSet = null,
+        private ?OverallPeriod $overallPeriod = null,
     ) {
     }
 
@@ -47,5 +49,10 @@ class RegulationCondition
     public function getParentConditionSet(): ?ConditionSet
     {
         return $this->parentConditionSet;
+    }
+
+    public function getOverallPeriod(): ?OverallPeriod
+    {
+        return $this->overallPeriod;
     }
 }
