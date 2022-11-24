@@ -34,7 +34,7 @@ class ConditionSet
             return;
         }
 
-        array_push($this->conditions, $regulationCondition);
+        $this->conditions[] = $regulationCondition;
     }
 
     public function getConditions(): array

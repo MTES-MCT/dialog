@@ -36,6 +36,6 @@ class Organization
             return;
         }
 
-        array_push($this->users, $user);
+        $this->users[] = $user;
     }
 }
