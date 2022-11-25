@@ -78,7 +78,7 @@ cache_clear: ## Run console command
 ##
 
 phpstan: ## PHP Stan
-	${COMPOSE_EXEC_PHP} ./vendor/bin/phpstan analyse src
+	${COMPOSE_EXEC_PHP} ./vendor/bin/phpstan analyse -l 5 src
 
 php_lint: ## PHP linter
 	${COMPOSE_EXEC_PHP} ./vendor/bin/php-cs-fixer fix
