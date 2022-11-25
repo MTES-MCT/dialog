@@ -6,7 +6,17 @@
 
 	<h3>Réglementations</h3>
 
-	<p><em>À venir...</em></p>
+	<ul>
+		{%- for obj in objects %}
+		<li>
+			{{ obj.description }}
+		</li>
+		{%- endfor %}
+	</ul>
+
+	<p>
+		<em>À venir...</em>
+	</p>
 
 	<h3>Ajouter une réglementation</h3>
 

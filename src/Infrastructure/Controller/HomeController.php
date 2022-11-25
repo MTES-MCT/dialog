@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
+use App\Application\RegulationOrder\Query\GetAllRegulationOrdersQuery;
 use App\Infrastructure\Form\RegulationOrder\RegulationOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,6 +19,7 @@ final class HomeController
     public function __construct(
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
+        private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
     ) {
     }
@@ -35,7 +38,14 @@ final class HomeController
             return new RedirectResponse('/');
         }
 
-        $html = $this->twig->render('index.html.twig', ['form' => $form->createView()]);
+        $regulationOrders = $this->queryBus->handle(new GetAllRegulationOrdersQuery());
+
+        $context = [
+            'objects' => $regulationOrders,
+            'form' => $form->createView(),
+        ];
+
+        $html = $this->twig->render('index.html.twig', $context);
 
         return new Response($html);
     }
