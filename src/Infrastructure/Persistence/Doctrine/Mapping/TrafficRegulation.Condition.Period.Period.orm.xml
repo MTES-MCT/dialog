@@ -13,5 +13,6 @@
     <many-to-one field="overallExceptionPeriod" target-entity="App\Domain\TrafficRegulation\Condition\Period\OverallPeriod" inversed-by="exceptionPeriods">
         <join-column name="overall_exception_period_uuid" referenced-column-name="uuid"/>
     </many-to-one>
+    <one-to-one field="timePeriodOfDay" target-entity="App\Domain\TrafficRegulation\Condition\Period\TimePeriodOfDay" mapped-by="period"/>
   </entity>
 </doctrine-mapping>

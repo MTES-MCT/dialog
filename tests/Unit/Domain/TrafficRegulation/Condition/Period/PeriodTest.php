@@ -26,5 +26,6 @@ final class PeriodTest extends TestCase
         $this->assertSame($end, $period->getEndDate());
         $this->assertSame(null, $period->getOverallValidPeriod()); // automatically set by Doctrine
         $this->assertSame(null, $period->getOverallExceptionPeriod()); // automatically set by Doctrine
+        $this->assertSame(null, $period->getTimePeriodOfDay()); // automatically set by Doctrine
     }
 }
