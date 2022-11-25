@@ -6,12 +6,14 @@ namespace App\Tests\Domain\TrafficRegulation\Condition\Period;
 
 use App\Domain\TrafficRegulation\Condition\Period\OverallPeriod;
 use App\Domain\TrafficRegulation\Condition\Period\Period;
+use App\Domain\TrafficRegulation\RegulationCondition;
 use PHPUnit\Framework\TestCase;
 
 final class OverallPeriodTest extends TestCase
 {
     public function testGetters(): void
     {
+        $regulationCondition = $this->createMock(RegulationCondition::class);
         $validPeriod = $this->createMock(Period::class);
         $exceptionPeriod = $this->createMock(Period::class);
         $start = new \DateTimeImmutable('2022-11-24');
@@ -19,7 +21,8 @@ final class OverallPeriodTest extends TestCase
         $overallPeriod = new OverallPeriod(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $start,
-            $end
+            $end,
+            $regulationCondition
         );
         $overallPeriod->addValidPeriod($validPeriod);
         $overallPeriod->addValidPeriod($validPeriod); // Test doublon
@@ -29,6 +32,7 @@ final class OverallPeriodTest extends TestCase
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $overallPeriod->getUuid());
         $this->assertSame($start, $overallPeriod->getStartPeriod());
         $this->assertSame($end, $overallPeriod->getEndPeriod());
+        $this->assertSame($regulationCondition, $overallPeriod->getRegulationCondition());
         $this->assertSame([$validPeriod], $overallPeriod->getValidPeriods());
         $this->assertSame([$exceptionPeriod], $overallPeriod->getExceptionPeriods());
     }

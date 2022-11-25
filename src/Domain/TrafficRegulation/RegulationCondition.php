@@ -11,13 +11,13 @@ use App\Domain\TrafficRegulation\Condition\VehicleCharacteristics;
 class RegulationCondition
 {
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
+    private ?OverallPeriod $overallPeriod = null;
 
     public function __construct(
         private string $uuid,
         private bool $negate,
         private ?TrafficRegulation $trafficRegulation = null,
         private ?ConditionSet $parentConditionSet = null,
-        private ?OverallPeriod $overallPeriod = null,
     ) {
     }
 
@@ -31,7 +31,7 @@ class RegulationCondition
         return $this->negate;
     }
 
-    public function getTrafficRegulation(): TrafficRegulation
+    public function getTrafficRegulation(): ?TrafficRegulation
     {
         return $this->trafficRegulation;
     }
@@ -39,11 +39,6 @@ class RegulationCondition
     public function getVehicleCharacteristics(): ?VehicleCharacteristics
     {
         return $this->vehicleCharacteristics;
-    }
-
-    public function setVehicleCharacteristics(VehicleCharacteristics $vehicleCharacteristics): void
-    {
-        $this->vehicleCharacteristics = $vehicleCharacteristics;
     }
 
     public function getParentConditionSet(): ?ConditionSet

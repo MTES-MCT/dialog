@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\TrafficRegulation\Condition\Period;
 
+use App\Domain\TrafficRegulation\RegulationCondition;
+
 class OverallPeriod
 {
     /** @var Period[] */
@@ -16,6 +18,7 @@ class OverallPeriod
         private string $uuid,
         private \DateTimeInterface $startPeriod,
         private \DateTimeInterface $endPeriod,
+        private RegulationCondition $regulationCondition,
     ) {
     }
 
@@ -60,5 +63,10 @@ class OverallPeriod
     public function getExceptionPeriods(): array
     {
         return $this->exceptionPeriods;
+    }
+
+    public function getRegulationCondition(): RegulationCondition
+    {
+        return $this->regulationCondition;
     }
 }
