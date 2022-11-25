@@ -6,5 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="startPeriod" type="datetimetz_immutable" column="start_period" nullable="false"/>
     <field name="endPeriod" type="datetimetz_immutable" column="end_period" nullable="false"/>
+    <one-to-many field="validPeriods" target-entity="App\Domain\TrafficRegulation\Condition\Period\Period" mapped-by="overallValidPeriod"/>
+    <one-to-many field="exceptionPeriods" target-entity="App\Domain\TrafficRegulation\Condition\Period\Period" mapped-by="overallExceptionPeriod"/>
   </entity>
 </doctrine-mapping>

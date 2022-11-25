@@ -16,8 +16,6 @@ final class CommandBus implements CommandBusInterface
         handle as doHandle;
     }
 
-    private MessageBusInterface $commandBus;
-
     public function __construct(MessageBusInterface $commandBus)
     {
         $this->messageBus = $commandBus;

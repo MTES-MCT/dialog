@@ -28,7 +28,7 @@ jobs:
         run: php bin/console lint:twig
 
       - name: PHP Stan
-        run: php ./vendor/bin/phpstan analyse src
+        run: php ./vendor/bin/phpstan analyse -l 5 src
 
       - name: Tests
         run: php -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml
