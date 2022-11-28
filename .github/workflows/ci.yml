@@ -30,6 +30,8 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Init CI environment variables
+        # HACK: Symfony won't read from 'env: { DATABASE_URL: ... }', so we need to edit
+        # .env directly.
         run: |
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
 
