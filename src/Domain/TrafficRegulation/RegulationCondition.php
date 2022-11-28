@@ -11,6 +11,7 @@ use App\Domain\TrafficRegulation\Condition\VehicleCharacteristics;
 class RegulationCondition
 {
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
+    private ?ConditionSet $conditionSet = null;
     private ?OverallPeriod $overallPeriod = null;
 
     public function __construct(
@@ -36,14 +37,19 @@ class RegulationCondition
         return $this->trafficRegulation;
     }
 
+    public function getParentConditionSet(): ?ConditionSet
+    {
+        return $this->parentConditionSet;
+    }
+
     public function getVehicleCharacteristics(): ?VehicleCharacteristics
     {
         return $this->vehicleCharacteristics;
     }
 
-    public function getParentConditionSet(): ?ConditionSet
+    public function getConditionSet(): ?ConditionSet
     {
-        return $this->parentConditionSet;
+        return $this->conditionSet;
     }
 
     public function getOverallPeriod(): ?OverallPeriod

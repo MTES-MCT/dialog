@@ -15,6 +15,7 @@ class ConditionSet
     public function __construct(
         private string $uuid,
         private OperatorEnum $operator,
+        private RegulationCondition $regulationCondition,
     ) {
     }
 
@@ -26,6 +27,11 @@ class ConditionSet
     public function getOperator(): OperatorEnum
     {
         return $this->operator;
+    }
+
+    public function getRegulationCondition(): RegulationCondition
+    {
+        return $this->regulationCondition;
     }
 
     public function addCondition(RegulationCondition $regulationCondition): void
