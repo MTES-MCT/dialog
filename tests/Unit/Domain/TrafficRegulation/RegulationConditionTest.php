@@ -14,21 +14,22 @@ final class RegulationConditionTest extends TestCase
 {
     public function testGetters(): void
     {
-        $conditionSet = $this->createMock(ConditionSet::class);
+        $parentConditionSet = $this->createMock(ConditionSet::class);
         $trafficRegulation = new TrafficRegulation('6598fd41-85cb-42a6-9693-1bc45f4dd392');
         $regulationCondition = new RegulationCondition(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             false,
             $trafficRegulation,
-            $conditionSet,
+            $parentConditionSet,
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $regulationCondition->getUuid());
         $this->assertSame(false, $regulationCondition->isNegate());
         $this->assertSame($trafficRegulation, $regulationCondition->getTrafficRegulation());
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationCondition->getTrafficRegulation()->getUuid());
+        $this->assertSame($parentConditionSet, $regulationCondition->getParentConditionSet());
         $this->assertSame(null, $regulationCondition->getVehicleCharacteristics()); // Automatically set by Doctrine
-        $this->assertSame($conditionSet, $regulationCondition->getParentConditionSet());
+        $this->assertSame(null, $regulationCondition->getConditionSet()); // Automatically set by Doctrine
         $this->assertSame(null, $regulationCondition->getOverallPeriod()); // Automatically set by Doctrine
     }
 }
