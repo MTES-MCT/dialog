@@ -59,13 +59,13 @@ Lorsque vous effectuez des modifications sur les entités doctrine ainsi que sur
 Pour générer une migration, utilisez la commande :
 
 ```bash
-make migration
+make dbmigration
 ```
 
 Une fois la migration générée, il faut l'executer. Pour ce faire il existe la commande suivante qui va prendre l'ensemble des migrations non jouées et les executer une à une.
 
 ```bash
-make migrate
+make dbmigrate
 ```
 
 ## PHP

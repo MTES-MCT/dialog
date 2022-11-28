@@ -23,7 +23,7 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start install_deps migrate ## Bootstrap project
+install: build start install_deps dbmigrate ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
@@ -53,10 +53,10 @@ rm: ## Remove containers
 ## ----------------
 ##
 
-migration: ## Generate new db migration
+dbmigration: ## Generate new db migration
 	${CONSOLE} doctrine:migrations:diff
 
-migrate: ## Run db migration
+dbmigrate: ## Run db migration
 	${CONSOLE} doctrine:migrations:migrate -n --all-or-nothing
 
 dbshell: ## Connect to the database
@@ -83,17 +83,29 @@ cache_clear: ## Run console command
 ## ----------------
 ##
 
-check: ## Run checks
-	${PHP} ./vendor/bin/php-cs-fixer fix -n --dry-run
-	${CONSOLE} lint:twig -n
+# Individual tools
+
+phpstan: ## PHP Stan
 	${PHP} ./vendor/bin/phpstan analyse -l 5 src
+
+php_lint: ## PHP linter
+	${PHP} ./vendor/bin/php-cs-fixer fix -n ${ARGS}
+
+twig_lint: ## Twig linter
+	${CONSOLE} lint:twig -n
+
+security_check: ## Security checks
+	${_SYMFONY} security:check
+
+# All-in-one commands
+
+check: ## Run checks
+	make php_lint ARGS="--dry-run"
+	make twig_lint
+	make phpstan
 	${CONSOLE} doctrine:schema:validate
 
-format: ## Format code
-	${PHP} ./vendor/bin/php-cs-fixer fix
-
-security: ## Run security checks
-	${_SYMFONY} security:check
+format: php_lint ## Format code
 
 ##
 ## ----------------
@@ -109,6 +121,12 @@ test_unit: ## Run unit tests only
 
 test_integration: ## Run integration tests only
 	${PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
+
+##
+## ----------------
+## CI
+## ----------------
+##
 
 ci: ## Run CI steps
 	make install_deps
