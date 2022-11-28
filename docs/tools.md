@@ -6,52 +6,50 @@
 
 Nous utilisons le framework [PHPUnit](https://phpunit.de/) pour faire nos tests.
 
-Executer les tests unitaires :
+Exécuter tous les tests :
 
 ```bash
-make phpunit_unit
+make test
 ```
 
-Executer les tests d'intégrations :
+Exécuter les tests unitaires uniquement :
 
 ```bash
-make phpunit_integration
+make test_unit
 ```
 
-### Linter
-
-Pour lancer le linter PHP :
+Exécuter les tests d'intégration uniquement :
 
 ```bash
-make php_lint
+make test_integration
 ```
 
-Pour lancer le linter Twig :
+### Formatage
+
+Pour lancer le formatage automatique (`php-cs-fixer`) :
 
 ```bash
-make twig_lint
+make format
 ```
 
-Pour lancer les linter PHP & Twig :
-```bash
-make lint
-```
+### Vérifications
 
-### Analyses statiques de code
-
-Pour lancer l'analyse statique de code [PHPStan](https://phpstan.org/), utilisez la commande :
+Pour lancer les vérifications, utilisez la commande :
 
 ```bash
-make phpstan
+make check
 ```
+
+Cela lance notamment `php-cs-fixer` en mode _dry run_, l'analyse statique [PHPStan](https://phpstan.org/), le linter Twig, et vérifie le schéma de la base de données.
+
 ## Base de données
 
-### Connection
+### Connexion
 
 Pour se connecter au client PostgreSQL, utilisez la commande :
 
 ```bash
-make database_connect
+make dbshell
 ```
 
 ### Migrations
@@ -61,21 +59,13 @@ Lorsque vous effectuez des modifications sur les entités doctrine ainsi que sur
 Pour générer une migration, utilisez la commande :
 
 ```bash
-make database_generate_migration
+make dbmigration
 ```
 
 Une fois la migration générée, il faut l'executer. Pour ce faire il existe la commande suivante qui va prendre l'ensemble des migrations non jouées et les executer une à une.
 
 ```bash
-make database_run_migration
-```
-
-### Outillage
-
-Pour valider que le schéma de la base de données est correct, vous pouvez lancer la commande suivante :
-
-```bash
-make console CMD="doctrine:schema:validate"
+make dbmigrate
 ```
 
 ## PHP

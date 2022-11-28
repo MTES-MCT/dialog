@@ -3,6 +3,17 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgresql:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: dialog
+          POSTGRES_PASSWORD: dialog
+          POSTGRES_DB: dialog
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v1
 
@@ -18,20 +29,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Install Dependencies
-        run: composer install -n --prefer-dist
+      - name: Init CI environment variables
+        # HACK: Symfony won't read from 'env: { DATABASE_URL: ... }', so we need to edit
+        # .env directly.
+        run: |
+          echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
 
-      - name: Lint PHP
-        run: php ./vendor/bin/php-cs-fixer fix --dry-run -v
-
-      - name: Lint Twig
-        run: php bin/console lint:twig
-
-      - name: PHP Stan
-        run: php ./vendor/bin/phpstan analyse -l 5 src
-
-      - name: Tests
-        run: php -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml
+      - name: CI
+        run: make ci BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
       - uses: codecov/codecov-action@v3
         with:
