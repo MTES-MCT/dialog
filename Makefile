@@ -5,7 +5,12 @@ ifneq (,$(wildcard ./.env))
 	export
 endif
 
-COMPOSE_EXEC_PHP=docker-compose exec php
+# Allow non-Docker overrides for CI.
+_DOCKER_EXEC_PHP = docker-compose exec php
+_SYMFONY = ${_DOCKER_EXEC_PHP} symfony
+PHP = ${_DOCKER_EXEC_PHP} php
+CONSOLE = ${_SYMFONY} console
+COMPOSER = ${_SYMFONY} composer
 
 ##
 ## ----------------
@@ -18,9 +23,10 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start ## Bootstrap project
-	make composer CMD="install"
-	make database_run_migration
+install: build start install_deps migrate ## Bootstrap project
+
+install_deps: ## Install dependencies
+	make composer CMD="install -n --prefer-dist"
 
 start: ## Start container
 	docker-compose up -d
@@ -47,13 +53,13 @@ rm: ## Remove containers
 ## ----------------
 ##
 
-database_generate_migration: ## Generate new db migration
-	${COMPOSE_EXEC_PHP} symfony console doctrine:migrations:diff
+migration: ## Generate new db migration
+	${CONSOLE} doctrine:migrations:diff
 
-database_run_migration: ## Run db migration
-	${COMPOSE_EXEC_PHP} symfony console doctrine:migrations:migrate -n --all-or-nothing
+migrate: ## Run db migration
+	${CONSOLE} doctrine:migrations:migrate -n --all-or-nothing
 
-database_connect: ## Connect to the database
+dbshell: ## Connect to the database
 	docker-compose exec database psql ${DATABASE_URL}
 
 ##
@@ -63,13 +69,13 @@ database_connect: ## Connect to the database
 ##
 
 composer: ## Run composer commands
-	${COMPOSE_EXEC_PHP} symfony composer ${CMD}
+	${COMPOSER} ${CMD}
 
 console: ## Run console command
-	${COMPOSE_EXEC_PHP} symfony console ${CMD}
+	${CONSOLE} ${CMD}
 
 cache_clear: ## Run console command
-	${COMPOSE_EXEC_PHP} symfony console cache:clear
+	${CONSOLE} cache:clear
 
 ##
 ## ----------------
@@ -77,19 +83,17 @@ cache_clear: ## Run console command
 ## ----------------
 ##
 
-phpstan: ## PHP Stan
-	${COMPOSE_EXEC_PHP} ./vendor/bin/phpstan analyse src
+check: ## Run checks
+	${PHP} ./vendor/bin/php-cs-fixer fix -n --dry-run
+	${CONSOLE} lint:twig -n
+	${PHP} ./vendor/bin/phpstan analyse -l 5 src
+	${CONSOLE} doctrine:schema:validate
 
-php_lint: ## PHP linter
-	${COMPOSE_EXEC_PHP} ./vendor/bin/php-cs-fixer fix
+format: ## Format code
+	${PHP} ./vendor/bin/php-cs-fixer fix
 
-twig_lint: ## Twig linter
-	${COMPOSE_EXEC_PHP} symfony console lint:twig
-
-lint: php_lint twig_lint ## Run linters
-
-security_check: ## Security checks
-	${COMPOSE_EXEC_PHP} symfony security:check
+security: ## Run security checks
+	${_SYMFONY} security:check
 
 ##
 ## ----------------
@@ -97,11 +101,16 @@ security_check: ## Security checks
 ## ----------------
 ##
 
-phpunit: ## Run PHPUnit
-	${COMPOSE_EXEC_PHP} ./bin/phpunit
+test: ## Run the test suite
+	${PHP} -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml
 
-phpunit_unit: ## Run unit tests
-	${COMPOSE_EXEC_PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
+test_unit: ## Run unit tests only
+	${PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
 
-phpunit_integration: ## Run integration tests
-	${COMPOSE_EXEC_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
+test_integration: ## Run integration tests only
+	${PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
+
+ci: ## Run CI steps
+	make install_deps
+	make check
+	make test

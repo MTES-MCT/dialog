@@ -16,8 +16,6 @@ final class QueryBus implements QueryBusInterface
         handle as doHandle;
     }
 
-    private MessageBusInterface $queryBus;
-
     public function __construct(MessageBusInterface $queryBus)
     {
         $this->messageBus = $queryBus;

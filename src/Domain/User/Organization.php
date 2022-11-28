@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 class Organization
 {
-    private ArrayCollection $users;
+    /** @var User[] */
+    private array $users = [];
 
     public function __construct(
         private string $uuid,
@@ -24,5 +23,19 @@ class Organization
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getUsers(): array
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): void
+    {
+        if (\in_array($user, $this->users, true)) {
+            return;
+        }
+
+        $this->users[] = $user;
     }
 }

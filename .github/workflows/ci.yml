@@ -18,20 +18,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Install Dependencies
-        run: composer install -n --prefer-dist
-
-      - name: Lint PHP
-        run: php ./vendor/bin/php-cs-fixer fix --dry-run -v
-
-      - name: Lint Twig
-        run: php bin/console lint:twig
-
-      - name: PHP Stan
-        run: php ./vendor/bin/phpstan analyse src
-
-      - name: Tests
-        run: php -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml
+      - name: CI
+        run: make ci PHP="php" CONSOLE="php bin/console" COMPOSER="composer"
 
       - uses: codecov/codecov-action@v3
         with:
