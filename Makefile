@@ -133,5 +133,6 @@ test_integration: ## Run integration tests only
 
 ci: ## Run CI steps
 	make install_deps
+	make dbmigrate
 	make check
 	make test

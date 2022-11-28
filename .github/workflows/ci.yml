@@ -3,6 +3,17 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgresql:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: dialog
+          POSTGRES_PASSWORD: dialog
+          POSTGRES_DB: dialog
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v1
 
@@ -17,6 +28,10 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
+
+      - name: Init CI environment variables
+        run: |
+          echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
 
       - name: CI
         run: make ci BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
