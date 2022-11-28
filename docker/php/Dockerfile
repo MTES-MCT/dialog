@@ -29,6 +29,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-install pdo pdo_pgsql zip opcache exif pcntl intl
 RUN docker-php-ext-configure intl
 RUN pecl install apcu && docker-php-ext-enable apcu
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Install Symfony cli
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash && \

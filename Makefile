@@ -114,7 +114,10 @@ format: php_lint ## Format code
 ##
 
 test: ## Run the test suite
-	${PHP} -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml
+	${PHP} ${OPTIONS} ./bin/phpunit ${ARGS}
+
+test-cov: ## Run the test suite (with code coverage)
+	make test OPTIONS="-d xdebug.mode=coverage" ARGS="--coverage-clover coverage.xml"
 
 test_unit: ## Run unit tests only
 	${PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
