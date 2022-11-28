@@ -12,5 +12,6 @@
         <join-column name="parent_condition_set_uuid" referenced-column-name="uuid" nullable="true"/>
     </one-to-one>
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics" mapped-by="regulationCondition"/>
+    <one-to-one field="overallPeriod" target-entity="App\Domain\TrafficRegulation\Condition\Period\OverallPeriod" mapped-by="regulationCondition"/>
   </entity>
 </doctrine-mapping>

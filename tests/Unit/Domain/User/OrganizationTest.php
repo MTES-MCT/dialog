@@ -23,7 +23,7 @@ final class OrganizationTest extends TestCase
 
         $user = $this->createMock(User::class);
         $organization->addUser($user);
-        $organization->addUser($user); // Test doublon to have only one user
+        $organization->addUser($user); // Test deduplication of users
 
         $this->assertSame([$user], $organization->getUsers());
     }

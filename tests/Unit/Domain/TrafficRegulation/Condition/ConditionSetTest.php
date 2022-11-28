@@ -20,7 +20,7 @@ final class ConditionSetTest extends TestCase
             OperatorEnum::AND
         );
         $conditionSet->addCondition($regulationCondition1);
-        $conditionSet->addCondition($regulationCondition1); // Test doublon
+        $conditionSet->addCondition($regulationCondition1); // Test deduplication
         $conditionSet->addCondition($regulationCondition2);
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $conditionSet->getUuid());

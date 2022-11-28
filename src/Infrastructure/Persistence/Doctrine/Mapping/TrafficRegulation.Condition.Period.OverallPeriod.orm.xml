@@ -8,7 +8,7 @@
     <field name="endPeriod" type="datetimetz_immutable" column="end_period" nullable="false"/>
     <one-to-many field="validPeriods" target-entity="App\Domain\TrafficRegulation\Condition\Period\Period" mapped-by="overallValidPeriod"/>
     <one-to-many field="exceptionPeriods" target-entity="App\Domain\TrafficRegulation\Condition\Period\Period" mapped-by="overallExceptionPeriod"/>
-    <one-to-one field="regulationCondition" target-entity="App\Domain\TrafficRegulation\RegulationCondition">
+    <one-to-one field="regulationCondition" target-entity="App\Domain\TrafficRegulation\RegulationCondition" inversed-by="overallPeriod">
         <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false"/>
     </one-to-one>
   </entity>

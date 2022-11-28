@@ -17,7 +17,7 @@ final class TimePeriodOfDayTest extends TestCase
         $end = new \DateTimeImmutable('2022-12-20 18:00:00');
         $timePeriodOfDay = new TimePeriodOfDay(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $start ,
+            $start,
             $end,
             $period
         );

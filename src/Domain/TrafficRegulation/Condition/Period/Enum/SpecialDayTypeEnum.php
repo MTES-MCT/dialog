@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\TrafficRegulation\Condition\Period\Enum;
 
+// We use the DATEXII SpecialDayTypeEnum values [docs/spec/datex2/DATEXII_3_Common.xsd]
 enum SpecialDayTypeEnum: string
 {
     case PUBLIC_HOLIDAY = 'publicHoliday';
