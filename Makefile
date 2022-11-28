@@ -86,7 +86,7 @@ cache_clear: ## Run console command
 # Individual tools
 
 phpstan: ## PHP Stan
-	${BIN_PHP} ./vendor/bin/phpstan analyse -l 5 src
+	${BIN_PHP} ./vendor/bin/phpstan analyse -l 5 --xdebug src
 
 php_lint: ## PHP linter
 	${BIN_PHP} ./vendor/bin/php-cs-fixer fix -n ${ARGS}
