@@ -8,9 +8,9 @@ endif
 # Allow non-Docker overrides for CI.
 _DOCKER_EXEC_PHP = docker-compose exec php
 _SYMFONY = ${_DOCKER_EXEC_PHP} symfony
-PHP = ${_DOCKER_EXEC_PHP} php
-CONSOLE = ${_SYMFONY} console
-COMPOSER = ${_SYMFONY} composer
+BIN_PHP = ${_DOCKER_EXEC_PHP} php
+BIN_CONSOLE = ${_SYMFONY} console
+BIN_COMPOSER = ${_SYMFONY} composer
 
 ##
 ## ----------------
@@ -54,10 +54,10 @@ rm: ## Remove containers
 ##
 
 dbmigration: ## Generate new db migration
-	${CONSOLE} doctrine:migrations:diff
+	${BIN_CONSOLE} doctrine:migrations:diff
 
 dbmigrate: ## Run db migration
-	${CONSOLE} doctrine:migrations:migrate -n --all-or-nothing
+	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing
 
 dbshell: ## Connect to the database
 	docker-compose exec database psql ${DATABASE_URL}
@@ -69,13 +69,13 @@ dbshell: ## Connect to the database
 ##
 
 composer: ## Run composer commands
-	${COMPOSER} ${CMD}
+	${BIN_COMPOSER} ${CMD}
 
 console: ## Run console command
-	${CONSOLE} ${CMD}
+	${BIN_CONSOLE} ${CMD}
 
 cache_clear: ## Run console command
-	${CONSOLE} cache:clear
+	${BIN_CONSOLE} cache:clear
 
 ##
 ## ----------------
@@ -86,13 +86,13 @@ cache_clear: ## Run console command
 # Individual tools
 
 phpstan: ## PHP Stan
-	${PHP} ./vendor/bin/phpstan analyse -l 5 src
+	${BIN_PHP} ./vendor/bin/phpstan analyse -l 5 src
 
 php_lint: ## PHP linter
-	${PHP} ./vendor/bin/php-cs-fixer fix -n ${ARGS}
+	${BIN_PHP} ./vendor/bin/php-cs-fixer fix -n ${ARGS}
 
 twig_lint: ## Twig linter
-	${CONSOLE} lint:twig -n
+	${BIN_CONSOLE} lint:twig -n
 
 security_check: ## Security checks
 	${_SYMFONY} security:check
@@ -103,7 +103,7 @@ check: ## Run checks
 	make php_lint ARGS="--dry-run"
 	make twig_lint
 	make phpstan
-	${CONSOLE} doctrine:schema:validate
+	${BIN_CONSOLE} doctrine:schema:validate
 
 format: php_lint ## Format code
 
@@ -114,16 +114,16 @@ format: php_lint ## Format code
 ##
 
 test: ## Run the test suite
-	${PHP} ${OPTIONS} ./bin/phpunit ${ARGS}
+	${BIN_PHP} ${OPTIONS} ./bin/phpunit ${ARGS}
 
 test-cov: ## Run the test suite (with code coverage)
 	make test OPTIONS="-d xdebug.mode=coverage" ARGS="--coverage-clover coverage.xml"
 
 test_unit: ## Run unit tests only
-	${PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
+	${BIN_PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
 
 test_integration: ## Run integration tests only
-	${PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
+	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
 
 ##
 ## ----------------

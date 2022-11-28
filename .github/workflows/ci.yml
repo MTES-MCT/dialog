@@ -19,7 +19,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: CI
-        run: make ci PHP="php" CONSOLE="php bin/console" COMPOSER="composer"
+        run: make ci BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
       - uses: codecov/codecov-action@v3
         with:
