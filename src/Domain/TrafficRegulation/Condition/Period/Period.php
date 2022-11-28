@@ -8,7 +8,6 @@ class Period
 {
     private ?OverallPeriod $overallValidPeriod = null;
     private ?OverallPeriod $overallExceptionPeriod = null;
-    private ?TimePeriodOfDay $timePeriodOfDay = null;
 
     public function __construct(
         private string $uuid,
@@ -46,10 +45,5 @@ class Period
     public function getOverallExceptionPeriod(): ?OverallPeriod
     {
         return $this->overallExceptionPeriod;
-    }
-
-    public function getTimePeriodOfDay(): ?TimePeriodOfDay
-    {
-        return $this->timePeriodOfDay;
     }
 }
