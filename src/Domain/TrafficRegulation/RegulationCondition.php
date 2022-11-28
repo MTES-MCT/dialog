@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\TrafficRegulation;
 
+use App\Domain\TrafficRegulation\Condition\ConditionSet;
+use App\Domain\TrafficRegulation\Condition\Period\OverallPeriod;
 use App\Domain\TrafficRegulation\Condition\VehicleCharacteristics;
 
 class RegulationCondition
 {
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
+    private ?ConditionSet $conditionSet = null;
+    private ?OverallPeriod $overallPeriod = null;
 
     public function __construct(
         private string $uuid,
         private bool $negate,
-        private TrafficRegulation $trafficRegulation,
+        private ?TrafficRegulation $trafficRegulation = null,
+        private ?ConditionSet $parentConditionSet = null,
     ) {
     }
 
@@ -27,9 +32,14 @@ class RegulationCondition
         return $this->negate;
     }
 
-    public function getTrafficRegulation(): TrafficRegulation
+    public function getTrafficRegulation(): ?TrafficRegulation
     {
         return $this->trafficRegulation;
+    }
+
+    public function getParentConditionSet(): ?ConditionSet
+    {
+        return $this->parentConditionSet;
     }
 
     public function getVehicleCharacteristics(): ?VehicleCharacteristics
@@ -37,8 +47,13 @@ class RegulationCondition
         return $this->vehicleCharacteristics;
     }
 
-    public function setVehicleCharacteristics(VehicleCharacteristics $vehicleCharacteristics): void
+    public function getConditionSet(): ?ConditionSet
     {
-        $this->vehicleCharacteristics = $vehicleCharacteristics;
+        return $this->conditionSet;
+    }
+
+    public function getOverallPeriod(): ?OverallPeriod
+    {
+        return $this->overallPeriod;
     }
 }

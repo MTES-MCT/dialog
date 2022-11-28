@@ -6,10 +6,17 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="negate" type="boolean" column="negate" nullable="false"/>
     <one-to-one field="trafficRegulation" target-entity="App\Domain\TrafficRegulation\TrafficRegulation">
-        <join-column name="traffic_regulation_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+        <join-column name="traffic_regulation_uuid" referenced-column-name="uuid" nullable="true" on-delete="CASCADE"/>
     </one-to-one>
-    <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics">
-        <join-column name="vehicle_characteristics_uuid" referenced-column-name="uuid" nullable="true"/>
-    </one-to-one>
+    <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\TrafficRegulation\Condition\VehicleCharacteristics" mapped-by="regulationCondition"/>
+    <one-to-one field="overallPeriod" target-entity="App\Domain\TrafficRegulation\Condition\Period\OverallPeriod" mapped-by="regulationCondition"/>
+    <one-to-one field="conditionSet" target-entity="App\Domain\TrafficRegulation\Condition\ConditionSet" mapped-by="regulationCondition"/>
+    <many-to-one
+      field="parentConditionSet"
+      target-entity="App\Domain\TrafficRegulation\Condition\ConditionSet"
+      inversed-by="conditions"
+    >
+      <join-column name="parent_condition_set_uuid" referenced-column-name="uuid" nullable="true" />
+    </many-to-one>
   </entity>
 </doctrine-mapping>

@@ -7,24 +7,31 @@ namespace App\Domain\TrafficRegulation\Condition;
 use App\Domain\TrafficRegulation\Condition\Enum\VehicleCritairEnum;
 use App\Domain\TrafficRegulation\Condition\Enum\VehicleTypeEnum;
 use App\Domain\TrafficRegulation\Condition\Enum\VehicleUsageEnum;
+use App\Domain\TrafficRegulation\RegulationCondition;
 
 class VehicleCharacteristics
 {
     public function __construct(
         private string $uuid,
-        private ?VehicleUsageEnum $vehicleUsage,
-        private ?VehicleTypeEnum $vehicleType,
-        private ?VehicleCritairEnum $vehicleCritair,
-        private ?float $maxWeight,
-        private ?float $maxHeight,
-        private ?float $maxWidth,
-        private ?float $maxLength,
+        private RegulationCondition $regulationCondition,
+        private ?VehicleUsageEnum $vehicleUsage = null,
+        private ?VehicleTypeEnum $vehicleType = null,
+        private ?VehicleCritairEnum $vehicleCritair = null,
+        private ?float $maxWeight = null,
+        private ?float $maxHeight = null,
+        private ?float $maxWidth = null,
+        private ?float $maxLength = null,
     ) {
     }
 
     public function getUuid(): string
     {
         return $this->uuid;
+    }
+
+    public function getRegulationCondition(): RegulationCondition
+    {
+        return $this->regulationCondition;
     }
 
     public function getMaxWeight(): ?float
