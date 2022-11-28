@@ -24,7 +24,7 @@ Exécuter les tests d'intégration uniquement :
 make test_integration
 ```
 
-### Formattage
+### Formatage
 
 Pour lancer le formatage automatique (`php-cs-fixer`) :
 
