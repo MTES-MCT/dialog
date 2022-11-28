@@ -25,9 +25,9 @@ final class OverallPeriodTest extends TestCase
             $regulationCondition
         );
         $overallPeriod->addValidPeriod($validPeriod);
-        $overallPeriod->addValidPeriod($validPeriod); // Test doublon
+        $overallPeriod->addValidPeriod($validPeriod); // Test deduplication
         $overallPeriod->addExceptionPeriod($exceptionPeriod);
-        $overallPeriod->addExceptionPeriod($exceptionPeriod); // Test doublon
+        $overallPeriod->addExceptionPeriod($exceptionPeriod); // Test deduplication
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $overallPeriod->getUuid());
         $this->assertSame($start, $overallPeriod->getStartPeriod());
