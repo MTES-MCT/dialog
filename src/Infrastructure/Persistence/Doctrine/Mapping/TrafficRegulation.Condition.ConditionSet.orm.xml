@@ -5,8 +5,9 @@
     table="condition_set">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="operator" type="string" column="operator" nullable="true" length="5"/>
-    <many-to-one field="conditions" target-entity="App\Domain\TrafficRegulation\RegulationCondition" fetch="LAZY">
-        <join-column name="regulation_condition_uuid" referenced-column-name="uuid"/>
-    </many-to-one>
+    <one-to-one field="regulationCondition" target-entity="App\Domain\TrafficRegulation\RegulationCondition" inversed-by="conditionSet">
+      <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false"/>
+    </one-to-one>
+    <one-to-many field="conditions" target-entity="App\Domain\TrafficRegulation\RegulationCondition" mapped-by="parentConditionSet" />
   </entity>
 </doctrine-mapping>
