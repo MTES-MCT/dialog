@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Domain\User;
 
+use App\Domain\User\Enum\UserRoleEnum;
 use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
 
@@ -15,10 +16,15 @@ final class UserTest extends TestCase
             '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
             'Mathieu Marchois',
             'mathieu@fairness.coop',
+            UserRoleEnum::ROLE_ADMIN,
+            'password'
         );
+
 
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $user->getUuid());
         $this->assertSame('Mathieu Marchois', $user->getFullName());
         $this->assertSame('mathieu@fairness.coop', $user->getEmail());
+        $this->assertSame('password', $user->getPassword());
+        $this->assertSame(UserRoleEnum::ROLE_ADMIN, $user->getRole());
     }
 }

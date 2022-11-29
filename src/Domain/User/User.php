@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\User\Enum\UserRoleEnum;
+
 class User
 {
     public function __construct(
         private string $uuid,
         private string $fullName,
         private string $email,
+        private UserRoleEnum $role,
+        private ?string $password = null,
     ) {
     }
 
@@ -26,5 +30,15 @@ class User
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getRole(): UserRoleEnum
+    {
+        return $this->role;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 }
