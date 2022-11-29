@@ -9,8 +9,4 @@ use App\Domain\RegulationOrder\RegulationOrder;
 interface RegulationOrderRepositoryInterface
 {
     public function save(RegulationOrder $regulationOrder): RegulationOrder;
-
-    public function findAll(): array;
-
-    public function findOneById(string $uuid): ?RegulationOrder;
 }
