@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\RegulationOrder\Query\GetAllRegulationOrdersQuery;
+use App\Application\RegulationOrder\Query\GetRegulationOrderByIdQuery;
 use App\Infrastructure\Form\RegulationOrder\RegulationOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,6 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 final class HomeController
 {
+    private $template = 'index.html.twig';
+    private $successPartialTemplate = 'partials/regulation_order_item.created.html.twig';
+
     public function __construct(
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
@@ -33,7 +37,16 @@ final class HomeController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $command = $form->getData();
-            $this->commandBus->handle($command);
+
+            $uuid = $this->commandBus->handle($command);
+
+            if ($request->headers->has('HX-Request')) {
+                $obj = $this->queryBus->handle(new GetRegulationOrderByIdQuery($uuid));
+                $context = ['obj' => $obj];
+                $html = $this->twig->render($this->successPartialTemplate, $context);
+
+                return new Response($html);
+            }
 
             return new RedirectResponse('/');
         }
@@ -45,7 +58,7 @@ final class HomeController
             'form' => $form->createView(),
         ];
 
-        $html = $this->twig->render('index.html.twig', $context);
+        $html = $this->twig->render($this->template, $context);
 
         return new Response($html);
     }

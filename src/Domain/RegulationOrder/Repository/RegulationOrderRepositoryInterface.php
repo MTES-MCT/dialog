@@ -12,4 +12,6 @@ interface RegulationOrderRepositoryInterface
 
     /** @var list<RegulationOrder> */
     public function findAll(): array;
+
+    public function findOneById(string $uuid): ?RegulationOrder;
 }

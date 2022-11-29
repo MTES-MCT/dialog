@@ -1,24 +1,31 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<h1>{% trans %}home.title{% endtrans %}</h1>
-	<h2>{% trans %}home.subtitle{% endtrans %}</h2>
+<div class="container">
+	<h1>
+		{% trans %}home.title{% endtrans %}
+	</h1>
+
+	<h2>
+		{% trans %}home.subtitle{% endtrans %}
+	</h2>
 
 	<h3>Réglementations</h3>
 
-	<ul>
+	<ul id="regulation_order_list">
 		{%- for obj in objects %}
-		<li>
-			{{ obj.description }}
-		</li>
+		{{ include ('partials/regulation_order_item.html.twig', { obj: obj }) }}
 		{%- endfor %}
 	</ul>
 
-	<p>
-		<em>À venir...</em>
+	{% if not objects %}
+	<p id="regulation_order_list_empty">
+		<em>Aucune réglementation.</em>
 	</p>
+	{% endif %}
 
 	<h3>Ajouter une réglementation</h3>
 
 	{{ form(form) }}
+</div>
 {% endblock %}

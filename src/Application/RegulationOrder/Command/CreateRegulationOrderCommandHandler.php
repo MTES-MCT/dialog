@@ -14,14 +14,16 @@ final class CreateRegulationOrderCommandHandler
     {
     }
 
-    public function __invoke(CreateRegulationOrderCommand $command)
+    public function __invoke(CreateRegulationOrderCommand $command): string
     {
-        $uuid = Uuid::v4()->__toString();
+        $uuid = (string) Uuid::v4();
         $description = $command->description;
         $issuingAuthority = $command->issuingAuthority;
 
         $obj = new RegulationOrder($uuid, $description, $issuingAuthority);
 
         $this->repository->save($obj);
+
+        return $uuid;
     }
 }

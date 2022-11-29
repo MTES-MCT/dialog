@@ -10,9 +10,15 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 
 final class RegulationOrderType extends AbstractType
 {
+    public function __construct(
+        private RouterInterface $router,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -26,6 +32,12 @@ final class RegulationOrderType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => CreateRegulationOrderCommand::class,
+            'attr' => [
+                'hx-trigger' => 'submit',
+                'hx-post' => $this->router->generate('app_home'),
+                'hx-target' => '#regulation_order_list',
+                'hx-swap' => 'beforeend',
+            ],
         ]);
     }
 }
