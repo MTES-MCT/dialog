@@ -83,6 +83,10 @@
         "symfony": {
             "allow-contrib": false,
             "require": "6.1.*"
+        },
+        "paas": {
+            "compile": ["echo $HTPASSWD_CONTENT > config/htpasswd"],
+            "nginx-includes": ["config/nginx-basic-auth.conf"]
         }
     }
 }
