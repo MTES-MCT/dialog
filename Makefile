@@ -62,6 +62,9 @@ dbmigrate: ## Run db migration
 dbshell: ## Connect to the database
 	docker-compose exec database psql ${DATABASE_URL}
 
+dbfixtures: ## Load tests fixtures
+	${BIN_CONSOLE} doctrine:fixtures:load -n --purge-with-truncate
+
 ##
 ## ----------------
 ## Executable
