@@ -2,11 +2,26 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="fr" datatype="plaintext" original="file.ext">
         <body>
-            <trans-unit id="site.title">
-                <source>site.title</source>
+            <trans-unit id="common.title">
+                <source>common.title</source>
                 <target>DiaLog</target>
             </trans-unit>
-
+            <trans-unit id="common.site_url">
+                <source>common.site_url</source>
+                <target>dialog.beta.gouv.fr</target>
+            </trans-unit>
+            <trans-unit id="common.slogan">
+                <source>common.slogan</source>
+                <target>Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistique.</target>
+            </trans-unit>
+            <trans-unit id="common.republic">
+                <source>common.republic</source>
+                <target>République <![CDATA[<br/>]]> Française</target>
+            </trans-unit>
+            <trans-unit id="common.back_to_home">
+                <source>common.back_to_home</source>
+                <target>Retour à l'accueil</target>
+            </trans-unit>
             <trans-unit id="home.title">
                 <source>home.title</source>
                 <target>Bienvenue sur DiaLog</target>
