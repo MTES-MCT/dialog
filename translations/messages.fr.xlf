@@ -2,11 +2,42 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="fr" datatype="plaintext" original="file.ext">
         <body>
-            <trans-unit id="site.title">
-                <source>site.title</source>
+            <trans-unit id="common.title">
+                <source>common.title</source>
                 <target>DiaLog</target>
             </trans-unit>
-
+            <trans-unit id="common.site_name">
+                <source>common.site_name</source>
+                <target>DiaLog</target>
+            </trans-unit>
+            <trans-unit id="common.slogan">
+                <source>common.slogan</source>
+                <target>Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistique.</target>
+            </trans-unit>
+            <trans-unit id="common.ministry">
+                <source>common.ministry</source>
+                <target>Ministère <![CDATA[<br/>]]> de la transition <![CDATA[<br/>]]> écologique</target>
+            </trans-unit>
+            <trans-unit id="common.back_to_home">
+                <source>common.back_to_home</source>
+                <target>Retour à l'accueil</target>
+            </trans-unit>
+            <trans-unit id="common.legals">
+                <source>common.legals</source>
+                <target>Mentions légales</target>
+            </trans-unit>
+            <trans-unit id="common.privacy">
+                <source>common.privacy</source>
+                <target>Vie privée</target>
+            </trans-unit>
+            <trans-unit id="common.accessibilty">
+                <source>common.accessibilty</source>
+                <target>Accessibilité</target>
+            </trans-unit>
+            <trans-unit id="common.licence">
+                <source>common.licence</source>
+                <target>Sauf mention contraire, tous les contenus de ce site sont sous <![CDATA[<a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank">licence etalab-2.0</a>]]></target>
+            </trans-unit>
             <trans-unit id="home.title">
                 <source>home.title</source>
                 <target>Bienvenue sur DiaLog</target>

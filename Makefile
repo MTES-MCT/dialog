@@ -5,12 +5,15 @@ ifneq (,$(wildcard ./.env))
 	export
 endif
 
+.PHONY: assets
+
 # Allow non-Docker overrides for CI.
 _DOCKER_EXEC_PHP = docker-compose exec php
 _SYMFONY = ${_DOCKER_EXEC_PHP} symfony
 BIN_PHP = ${_DOCKER_EXEC_PHP} php
 BIN_CONSOLE = ${_SYMFONY} console
 BIN_COMPOSER = ${_SYMFONY} composer
+NPM = ${_DOCKER_EXEC_PHP} npm
 
 ##
 ## ----------------
@@ -23,10 +26,11 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start install_deps dbmigrate ## Bootstrap project
+install: build start install_deps dbmigrate assets ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
+	$(NPM) install
 
 start: ## Start container
 	docker-compose up -d
@@ -74,8 +78,14 @@ composer: ## Run composer commands
 console: ## Run console command
 	${BIN_CONSOLE} ${CMD}
 
-cache_clear: ## Run console command
+cc: ## Run console command
 	${BIN_CONSOLE} cache:clear
+
+watch: ## Watch assets
+	$(NPM) run watch
+
+assets: ## Build assets
+	$(NPM) run build
 
 ##
 ## ----------------
@@ -133,6 +143,7 @@ test_integration: ## Run integration tests only
 
 ci: ## Run CI steps
 	make install_deps
+	make assets
 	make dbmigrate
 	make check
 	make test
