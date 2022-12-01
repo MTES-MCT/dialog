@@ -38,9 +38,25 @@
                 <source>common.licence</source>
                 <target>Sauf mention contraire, tous les contenus de ce site sont sous <![CDATA[<a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank">licence etalab-2.0</a>]]></target>
             </trans-unit>
-            <trans-unit id="home.title">
-                <source>home.title</source>
-                <target>Bienvenue sur DiaLog</target>
+            <trans-unit id="common.form.save">
+                <source>common.form.save</source>
+                <target>Enregistrer</target>
+            </trans-unit>
+            <trans-unit id="home.list_title">
+                <source>home.list_title</source>
+                <target>Réglementations</target>
+            </trans-unit>
+            <trans-unit id="home.add_title">
+                <source>home.add_title</source>
+                <target>Ajouter une réglementation</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.description">
+                <source>regulation_order.form.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.issuing_authority">
+                <source>regulation_order.form.issuing_authority</source>
+                <target>Autorité émettrice</target>
             </trans-unit>
         </body>
     </file>

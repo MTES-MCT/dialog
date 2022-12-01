@@ -11,9 +11,24 @@ final class HomeControllerTest extends WebTestCase
     public function testHome(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
 
+        $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Bienvenue sur DiaLog', $crawler->filter('h1')->text());
+        $this->assertSame('Réglementations', $crawler->filter('h3')->text());
+        $this->assertSame(0, $crawler->filter('[data-test=regulation_order_list_item]')->count());
+        $this->assertSame(1, $crawler->filter('[data-test=regulation_order_list_empty]')->count());
+
+        $saveButton = $crawler->selectButton("Enregistrer");
+        $form = $saveButton->form();
+        $form["regulation_order[description]"] = "Interdiction de circuler dans Paris";
+        $form["regulation_order[issuingAuthority]"] = "Ville de Paris";
+
+        $client->submit($form);
+        $this->assertResponseRedirects("/", 302);
+        
+        $crawler = $client->request('GET', '/');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(1, $crawler->filter("[data-test=regulation_order_list_item]")->count());
+        $this->assertSame(0, $crawler->filter('[data-test=regulation_order_list_empty]')->count());
     }
 }

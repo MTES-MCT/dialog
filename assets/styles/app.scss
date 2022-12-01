@@ -1,0 +1,4 @@
+/* Set by Symfony for form types with required: true */
+label.required::after {
+    content: ' *';
+}

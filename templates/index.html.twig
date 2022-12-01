@@ -1,5 +1,40 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<h1>{% trans %}home.title{% endtrans %}</h1>
+  <h3>{{ 'home.list_title'|trans }}</h3>
+
+  {% if objects|length > 0 %}
+    <ul>
+      {% for obj in objects %}
+        <li data-test="regulation_order_list_item">
+          {{ obj.description }}
+          ({{ obj.issuingAuthority }})
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p data-test="regulation_order_list_empty">
+      <em>Aucune réglementation.</em>
+    </p>
+  {% endif %}
+
+  <h3>{{ 'home.add_title'|trans }}</h3>
+
+  {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div>
+      {{ form_label(form.description, null, {'label_attr': {'class': 'fr-label'}}) }}
+      {{ form_widget(form.description, {'attr': {'class': 'fr-input'}}) }}
+    </div>
+
+    <div class="fr-mt-2w">
+      {{ form_label(form.issuingAuthority, null, {'label_attr': {'class': 'fr-label'}}) }}
+      {{ form_widget(form.issuingAuthority, {'attr': {'class': 'fr-input'}}) }}
+    </div>
+
+    <div class="fr-mt-2w">
+      {{ form_widget(form.save, {'attr': {'class': 'fr-btn'}}) }}
+    </div>
+  {{ form_end(form) }}
 {% endblock %}
