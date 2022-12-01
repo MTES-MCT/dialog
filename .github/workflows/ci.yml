@@ -36,7 +36,7 @@ jobs:
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
 
       - name: CI
-        run: make ci BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
+        run: make ci BIN_PHP="php" NPM="npm" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
       - uses: codecov/codecov-action@v3
         with:
