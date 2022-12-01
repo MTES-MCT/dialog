@@ -8,9 +8,6 @@ use App\Application\CommandInterface;
 
 final class CreateRegulationOrderCommand implements CommandInterface
 {
-    public function __construct(
-        public readonly string $description,
-        public readonly string $issuingAuthority,
-    ) {
-    }
+    public string $description;
+    public string $issuingAuthority;
 }

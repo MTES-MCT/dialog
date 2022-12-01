@@ -39,12 +39,11 @@ final class CreateRegulationOrderTest extends KernelTestCase
 
         $handler = new CreateRegulationOrderCommandHandler($idFactory, $validator, $regulationOrderRepository);
 
-        $uuid = $handler(
-            new CreateRegulationOrderCommand(
-                'Interdiction de circuler',
-                'Ville de Paris',
-            )
-        );
+        $command = new CreateRegulationOrderCommand();
+        $command->description = 'Interdiction de circuler';
+        $command->issuingAuthority = 'Ville de Paris';
+
+        $uuid = $handler($command);
 
         $this->assertSame('f331d768-ed8b-496d-81ce-b97008f338d0', $uuid);
     }
@@ -64,12 +63,10 @@ final class CreateRegulationOrderTest extends KernelTestCase
 
         $this->expectException('Symfony\Component\Validator\Exception\ValidationFailedException');
 
-        $handler(
-            new CreateRegulationOrderCommand(
-                '',
-                '',
-            )
-        );
+        $command = new CreateRegulationOrderCommand();
+        $command->description = '';
+        $command->issuingAuthority = '';
 
+        $handler($command);
     }
 }

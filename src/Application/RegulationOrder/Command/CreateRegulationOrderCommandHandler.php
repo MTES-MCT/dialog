@@ -27,15 +27,11 @@ final class CreateRegulationOrderCommandHandler
             throw new ValidationFailedException(null, $errors);
         }
 
-        $uuid = $this->idFactory->make();
-        $description = $command->description;
-        $issuingAuthority = $command->issuingAuthority;
-
         $obj = $this->repository->save(
             new RegulationOrder(
-                $uuid,
-                $description,
-                $issuingAuthority,
+                uuid: $this->idFactory->make(),
+                description: $command->description,
+                issuingAuthority: $command->issuingAuthority,
             ),
         );
 
