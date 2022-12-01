@@ -2,25 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\RegulationOrder;
+namespace App\Tests\Domain\RegulationOrder\Command;
 
 use App\Application\IdFactoryInterface;
 use App\Application\RegulationOrder\Command\CreateRegulationOrderCommand;
 use App\Application\RegulationOrder\Command\CreateRegulationOrderCommandHandler;
 use App\Domain\RegulationOrder\RegulationOrder;
 use App\Domain\RegulationOrder\Repository\RegulationOrderRepositoryInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use PHPUnit\Framework\TestCase;
 
-final class CreateRegulationOrderTest extends KernelTestCase
+final class CreateRegulationOrderCommandHandlerTest extends TestCase
 {
     public function testCreate(): void
     {
-        self::bootKernel();
-        $container = static::getContainer();
-
         $idFactory = $this->createMock(IdFactoryInterface::class);
-        $validator = $container->get(ValidatorInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $createdRegulationOrder = $this->createMock(RegulationOrder::class);
 
@@ -37,7 +32,7 @@ final class CreateRegulationOrderTest extends KernelTestCase
             ->method('getUuid')
             ->willReturn('f331d768-ed8b-496d-81ce-b97008f338d0');
 
-        $handler = new CreateRegulationOrderCommandHandler($idFactory, $validator, $regulationOrderRepository);
+        $handler = new CreateRegulationOrderCommandHandler($idFactory, $regulationOrderRepository);
 
         $command = new CreateRegulationOrderCommand();
         $command->description = 'Interdiction de circuler';
@@ -46,27 +41,5 @@ final class CreateRegulationOrderTest extends KernelTestCase
         $uuid = $handler($command);
 
         $this->assertSame('f331d768-ed8b-496d-81ce-b97008f338d0', $uuid);
-    }
-
-    public function testCreateInvalid(): void
-    {
-        self::bootKernel();
-        $container = static::getContainer();
-
-        $idFactory = $container->get(IdFactoryInterface::class);
-        $validator = $container->get(ValidatorInterface::class);
-        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
-
-        $regulationOrderRepository->expects(self::never())->method('save');
-
-        $handler = new CreateRegulationOrderCommandHandler($idFactory, $validator, $regulationOrderRepository);
-
-        $this->expectException('Symfony\Component\Validator\Exception\ValidationFailedException');
-
-        $command = new CreateRegulationOrderCommand();
-        $command->description = '';
-        $command->issuingAuthority = '';
-
-        $handler($command);
     }
 }
