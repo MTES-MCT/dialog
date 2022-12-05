@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Condition\RegulationCondition"
+    table="regulation_condition">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="negate" type="boolean" column="negate" nullable="false"/>
+    <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\Condition\VehicleCharacteristics" mapped-by="regulationCondition"/>
+    <one-to-one field="overallPeriod" target-entity="App\Domain\Condition\Period\OverallPeriod" mapped-by="regulationCondition"/>
+    <one-to-one field="conditionSet" target-entity="App\Domain\Condition\ConditionSet" mapped-by="regulationCondition"/>
+    <one-to-one field="regulationOrder" target-entity="App\Domain\RegulationOrder\RegulationOrder" mapped-by="regulationCondition"/>
+    <many-to-one
+      field="parentConditionSet"
+      target-entity="App\Domain\Condition\ConditionSet"
+      inversed-by="conditions"
+    >
+      <join-column name="parent_condition_set_uuid" referenced-column-name="uuid" nullable="true" />
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

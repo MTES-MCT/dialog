@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Condition\Period\DayWeekMonth"
+    table="day_week_month">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="applicableDay" type="string" column="applicable_day" length="10" nullable="true"/>
+    <field name="applicableMonth" type="string" column="applicable_month" length="10" nullable="true"/>
+    <many-to-one field="period" target-entity="App\Domain\Condition\Period\Period">
+        <join-column name="period_uuid" referenced-column-name="uuid" nullable="false"/>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
