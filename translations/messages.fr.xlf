@@ -42,13 +42,17 @@
                 <source>common.form.save</source>
                 <target>Enregistrer</target>
             </trans-unit>
-            <trans-unit id="home.list_title">
-                <source>home.list_title</source>
+            <trans-unit id="home.list.title">
+                <source>home.list.title</source>
                 <target>Réglementations</target>
             </trans-unit>
-            <trans-unit id="home.add_title">
-                <source>home.add_title</source>
+            <trans-unit id="home.add.title">
+                <source>home.add.title</source>
                 <target>Ajouter une réglementation</target>
+            </trans-unit>
+            <trans-unit id="home.list.empty">
+                <source>home.list.empty</source>
+                <target>Aucune réglementation</target>
             </trans-unit>
             <trans-unit id="regulation_order.form.description">
                 <source>regulation_order.form.description</source>

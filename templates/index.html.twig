@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  <h3>{{ 'home.list_title'|trans }}</h3>
+  <h3>{{ 'home.list.title'|trans }}</h3>
 
   {% if objects|length > 0 %}
     <ul>
       {% for obj in objects %}
-        <li data-test="regulation_order_list_item">
+        <li data-test="regulations_item">
           {{ obj.description }}
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p data-test="regulation_order_list_empty">
-      <em>Aucune réglementation.</em>
+    <p data-test="regulations_empty">
+      <em>{{ 'home.list.empty'|trans }}</em>
     </p>
   {% endif %}
 
-  <h3>{{ 'home.add_title'|trans }}</h3>
+  <h3>{{ 'home.add.title'|trans }}</h3>
 
   {{ form_start(form) }}
     {{ form_errors(form) }}

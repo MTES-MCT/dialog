@@ -26,16 +26,12 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
     /** @return string[] */
     public function findAllDescriptions(): array
     {
-        $results = $this
+        return $this
             ->createQueryBuilder('o')
             ->select('o.description')
             ->setMaxResults(20)
             ->getQuery()
-            ->getResult()
+            ->getSingleColumnResult()
         ;
-
-        return array_map(function ($result) {
-            return $result['description'];
-        }, $results);
     }
 }

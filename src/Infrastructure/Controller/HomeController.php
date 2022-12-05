@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\RegulationOrder\Query\GetAllRegulationOrderListItemsQuery;
 use App\Infrastructure\Form\RegulationOrder\RegulationOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,14 +34,18 @@ final class HomeController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                throw new BadRequestException();
+            }
+
             $command = $form->getData();
 
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
                 url: $this->router->generate('app_home'),
-                status: 302,
+                status: Response::HTTP_FOUND,
             );
         }
 

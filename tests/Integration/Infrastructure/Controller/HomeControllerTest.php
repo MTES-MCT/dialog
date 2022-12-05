@@ -15,8 +15,8 @@ final class HomeControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Réglementations', $crawler->filter('h3')->text());
-        $this->assertSame(0, $crawler->filter('[data-test=regulation_order_list_item]')->count());
-        $this->assertSame(1, $crawler->filter('[data-test=regulation_order_list_empty]')->count());
+        $this->assertSame(0, $crawler->filter('[data-test=regulations_item]')->count());
+        $this->assertSame(1, $crawler->filter('[data-test=regulations_empty]')->count());
 
         $saveButton = $crawler->selectButton("Enregistrer");
         $form = $saveButton->form();
@@ -28,7 +28,22 @@ final class HomeControllerTest extends WebTestCase
         
         $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame(1, $crawler->filter("[data-test=regulation_order_list_item]")->count());
-        $this->assertSame(0, $crawler->filter('[data-test=regulation_order_list_empty]')->count());
+        $this->assertSame(1, $crawler->filter("[data-test=regulations_item]")->count());
+        $this->assertSame(0, $crawler->filter('[data-test=regulations_empty]')->count());
+    }
+
+    public function testHomeInvalid(): void
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton("Enregistrer");
+        $form = $saveButton->form();
+        $form["regulation_order[description]"] = "";
+        $form["regulation_order[issuingAuthority]"] = "";
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(400);
     }
 }
