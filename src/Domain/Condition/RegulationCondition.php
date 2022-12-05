@@ -9,6 +9,7 @@ use App\Domain\RegulationOrder\RegulationOrder;
 
 class RegulationCondition
 {
+    private ?RegulationOrder $regulationOrder = null;
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
     private ?ConditionSet $conditionSet = null;
     private ?OverallPeriod $overallPeriod = null;
@@ -16,7 +17,6 @@ class RegulationCondition
     public function __construct(
         private string $uuid,
         private bool $negate,
-        private RegulationOrder $regulationOrder,
         private ?ConditionSet $parentConditionSet = null,
     ) {
     }
@@ -31,7 +31,7 @@ class RegulationCondition
         return $this->negate;
     }
 
-    public function getRegulationOrder(): RegulationOrder
+    public function getRegulationOrder(): ?RegulationOrder
     {
         return $this->regulationOrder;
     }
@@ -54,5 +54,10 @@ class RegulationCondition
     public function getOverallPeriod(): ?OverallPeriod
     {
         return $this->overallPeriod;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('RegulationCondition(uuid=\'%s\', ...)', $this->uuid);
     }
 }

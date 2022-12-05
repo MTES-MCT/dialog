@@ -18,7 +18,9 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
     public function save(RegulationOrder $regulationOrder): RegulationOrder
     {
-        $this->getEntityManager()->persist($regulationOrder);
+        $em = $this->getEntityManager();
+        $em->persist($regulationOrder->getRegulationCondition());
+        $em->persist($regulationOrder);
 
         return $regulationOrder;
     }
@@ -26,12 +28,16 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
     /** @return string[] */
     public function findAllDescriptions(): array
     {
-        return $this
+        $results = $this
             ->createQueryBuilder('o')
             ->select('o.description')
             ->setMaxResults(20)
             ->getQuery()
             ->getResult()
         ;
+
+        return array_map(function ($result) {
+            return $result['description'];
+        }, $results);
     }
 }

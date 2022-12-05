@@ -19,10 +19,8 @@ final class GetAllRegulationOrderListItemsQueryHandler
     {
         $descriptions = $this->repository->findAllDescriptions();
 
-        $build_item = function ($description): RegulationOrderListItemView {
+        return array_map(function ($description): RegulationOrderListItemView {
             return new RegulationOrderListItemView($description);
-        };
-
-        return array_map($build_item, $descriptions);
+        }, $descriptions);
     }
 }
