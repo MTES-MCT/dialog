@@ -9,4 +9,7 @@ use App\Domain\RegulationOrder\RegulationOrder;
 interface RegulationOrderRepositoryInterface
 {
     public function save(RegulationOrder $regulationOrder): RegulationOrder;
+
+    /** @return string[] */
+    public function findAllDescriptions(): array;
 }
