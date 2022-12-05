@@ -6,6 +6,6 @@ namespace App\Application\RegulationOrder\Query;
 
 use App\Application\QueryInterface;
 
-final class GetAllRegulationOrdersQuery implements QueryInterface
+final class GetAllRegulationOrderListItemsQuery implements QueryInterface
 {
 }

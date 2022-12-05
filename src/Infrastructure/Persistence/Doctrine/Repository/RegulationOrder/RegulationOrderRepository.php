@@ -23,12 +23,12 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
         return $regulationOrder;
     }
 
-    /** @return RegulationOrder[] */
-    public function findAll(): array
+    /** @return string[] */
+    public function findAllDescriptions(): array
     {
         return $this
             ->createQueryBuilder('o')
-            ->select('partial o.{uuid, description, issuingAuthority}')
+            ->select('o.description')
             ->getQuery()
             ->getResult()
         ;
