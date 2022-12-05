@@ -18,9 +18,7 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
     public function save(RegulationOrder $regulationOrder): RegulationOrder
     {
-        $em = $this->getEntityManager();
-        $em->persist($regulationOrder->getRegulationCondition());
-        $em->persist($regulationOrder);
+        $this->getEntityManager()->persist($regulationOrder);
 
         return $regulationOrder;
     }

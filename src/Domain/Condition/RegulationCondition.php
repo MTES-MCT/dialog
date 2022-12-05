@@ -55,9 +55,4 @@ class RegulationCondition
     {
         return $this->overallPeriod;
     }
-
-    public function __toString(): string
-    {
-        return sprintf('RegulationCondition(uuid=\'%s\', ...)', $this->uuid);
-    }
 }
