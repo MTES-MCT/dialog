@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
-use App\Application\RegulationOrder\Query\GetAllRegulationOrdersQuery;
+use App\Application\RegulationOrder\Query\GetAllRegulationOrderListItemsQuery;
 use App\Infrastructure\Form\RegulationOrder\RegulationOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -44,7 +44,7 @@ final class HomeController
             );
         }
 
-        $regulationOrders = $this->queryBus->handle(new GetAllRegulationOrdersQuery());
+        $regulationOrders = $this->queryBus->handle(new GetAllRegulationOrderListItemsQuery());
 
         $html = $this->twig->render(
             name: 'index.html.twig',
