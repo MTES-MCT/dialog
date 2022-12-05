@@ -22,4 +22,16 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
         return $regulationOrder;
     }
+
+    /** @return string[] */
+    public function findAllDescriptions(): array
+    {
+        return $this
+            ->createQueryBuilder('o')
+            ->select('o.description')
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
