@@ -25,11 +25,13 @@
     <div>
       {{ form_label(form.description, null, {'label_attr': {'class': 'fr-label'}}) }}
       {{ form_widget(form.description, {'attr': {'class': 'fr-input'}}) }}
+      {{ form_errors(form.description, {'attr': {'class': 'error-list'}}) }}
     </div>
 
     <div class="fr-mt-2w">
       {{ form_label(form.issuingAuthority, null, {'label_attr': {'class': 'fr-label'}}) }}
       {{ form_widget(form.issuingAuthority, {'attr': {'class': 'fr-input'}}) }}
+      {{ form_errors(form.issuingAuthority) }}
     </div>
 
     <div class="fr-mt-2w">

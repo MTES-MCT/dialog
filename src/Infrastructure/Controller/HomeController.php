@@ -34,11 +34,7 @@ final class HomeController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            if (!$form->isValid()) {
-                throw new BadRequestException();
-            }
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $command = $form->getData();
 
             $this->commandBus->handle($command);
