@@ -29,6 +29,7 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
         return $this
             ->createQueryBuilder('o')
             ->select('o.description')
+            ->setMaxResults(20)
             ->getQuery()
             ->getResult()
         ;
