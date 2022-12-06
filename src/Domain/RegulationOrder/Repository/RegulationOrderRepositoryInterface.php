@@ -10,6 +10,6 @@ interface RegulationOrderRepositoryInterface
 {
     public function save(RegulationOrder $regulationOrder): RegulationOrder;
 
-    /** @return string[] */
-    public function findAllDescriptions(): array;
+    /** @return RegulationOrder[] */
+    public function findRegulationOrders(): array;
 }
