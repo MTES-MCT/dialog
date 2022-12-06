@@ -1,5 +1,28 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<h1>{% trans %}home.title{% endtrans %}</h1>
+  <h3>{{ 'home.list.title'|trans }}</h3>
+
+  {% if objects|length > 0 %}
+    <ul>
+      {% for obj in objects %}
+        <li data-test="regulations_item">
+          {{ obj.description }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p data-test="regulations_empty">
+      <em>{{ 'home.list.empty'|trans }}</em>
+    </p>
+  {% endif %}
+
+  <h3>{{ 'home.add.title'|trans }}</h3>
+
+  {{ form_start(form) }}
+  {{ form_errors(form) }}
+  {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+  {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
+  {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
+  {{ form_end(form) }}
 {% endblock %}

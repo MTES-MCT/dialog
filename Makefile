@@ -26,7 +26,7 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start install_deps dbmigrate assets ## Bootstrap project
+install: build start install_deps dbinstall assets ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
@@ -57,11 +57,16 @@ rm: ## Remove containers
 ## ----------------
 ##
 
+dbinstall: ## Setup databases
+	make dbmigrate
+	make console CMD="doctrine:database:create --env=test --if-not-exists"
+	make dbmigrate ARGS="--env=test"
+
 dbmigration: ## Generate new db migration
 	${BIN_CONSOLE} doctrine:migrations:diff
 
 dbmigrate: ## Run db migration
-	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing
+	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing ${ARGS}
 
 dbshell: ## Connect to the database
 	docker-compose exec database psql ${DATABASE_URL}
@@ -144,6 +149,6 @@ test_integration: ## Run integration tests only
 ci: ## Run CI steps
 	make install_deps
 	make assets
-	make dbmigrate
+	make dbinstall
 	make check
 	make test_cov

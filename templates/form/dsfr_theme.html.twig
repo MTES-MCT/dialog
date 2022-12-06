@@ -1,0 +1,54 @@
+{# This custom theme tweaks the default Symfony form theme with DSFR specifics. #}
+{% use "form_div_layout.html.twig" %}
+
+{% block form_row %}
+  {%- set widget_attr = {} -%}
+  {%- if errors|length > 0 -%}
+    {%- set widget_attr = {attr: {'aria-describedby': id ~"_error"}} -%}
+    {%- if group_class is defined -%}
+      {# DSFR generally uses e.g. "fr-input-group fr-input-group--error" #}
+      {%- set group_class = group_class ~ ' ' ~ (group_error_class|default(group_class ~'--error')) -%}
+    {%- endif -%}
+  {%- elseif help is not empty -%}
+    {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+  {%- endif -%}
+
+  {%- set row_class = (group_class|default('') ~ ' ' ~ row_attr.class|default(''))|trim -%}
+
+  <div {% with {attr: row_attr|merge({class: row_class} )} %} {{ block('attributes') }} {% endwith %}>
+    {{- form_label(form) -}}
+    {{- form_widget(form, widget_attr) -}}
+    {{- form_errors(form) -}}
+    {{- form_help(form) -}}
+  </div>
+{% endblock form_row %}
+
+{% block form_label %}
+  {%- set label_class = (label_attr.class|default('') ~ ' fr-label')|trim -%}
+  {%- set label_attr = label_attr|merge({class: label_class}) -%}
+  {{ parent() }}
+{% endblock %}
+
+{% block form_widget_simple %}
+  {%- if errors|length > 0 -%}
+    {%- if widget_class is defined -%}
+      {# DSFR generally uses e.g. "fr-input fr-input--error" #}
+      {%- set widget_class = widget_class ~ ' ' ~ (widget_error_class|default(widget_class ~'--error')) -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- set widget_class = (widget_class|default('') ~ ' ' ~ attr.class|default(''))|trim -%}
+
+  {%- set attr = attr|merge({class: widget_class}) -%}
+  {{ parent() }}
+{% endblock %}
+
+{% block form_errors %}
+  {% if errors|length > 0 %}
+    <p class="fr-error-text" id="{{ id }}_error">
+      {%- for error in errors -%}
+        {{ error.message }}
+      {%- endfor -%}
+    </p>
+  {% endif %}
+{% endblock form_errors %}
