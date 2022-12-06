@@ -73,6 +73,18 @@
             "tests/bootstrap.php"
         ]
     },
+    "sentry/sentry-symfony": {
+        "version": "4.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "4.0",
+            "ref": "9ac202e84b6fb3c276cb3d7846006e0df65272d0"
+        },
+        "files": [
+            "config/packages/sentry.yaml"
+        ]
+    },
     "symfony/console": {
         "version": "6.1",
         "recipe": {
