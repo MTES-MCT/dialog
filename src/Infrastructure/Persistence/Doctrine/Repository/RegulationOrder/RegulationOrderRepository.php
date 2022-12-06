@@ -31,7 +31,7 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
             ->select('o.description')
             ->setMaxResults(20)
             ->getQuery()
-            ->getResult()
+            ->getSingleColumnResult()
         ;
     }
 }
