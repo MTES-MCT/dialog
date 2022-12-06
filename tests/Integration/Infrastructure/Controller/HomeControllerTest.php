@@ -15,8 +15,10 @@ final class HomeControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Réglementations', $crawler->filter('h3')->text());
-        $this->assertSame(0, $crawler->filter('[data-test=regulations_item]')->count());
-        $this->assertSame(1, $crawler->filter('[data-test=regulations_empty]')->count());
+        $this->assertCount(0, $crawler->filter('[data-test=regulations_item]'));
+        $this->assertCount(1, $crawler->filter('[data-test=regulations_empty]'));
+        $this->assertCount(0, $crawler->filter("#regulation_order_description_error"));
+        $this->assertCount(0, $crawler->filter("#regulation_order_issuingAuthority_error"));
 
         $saveButton = $crawler->selectButton("Enregistrer");
         $form = $saveButton->form();
@@ -25,11 +27,11 @@ final class HomeControllerTest extends WebTestCase
 
         $client->submit($form);
         $this->assertResponseRedirects("/", 302);
-        
-        $crawler = $client->request('GET', '/');
+
+        $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame(1, $crawler->filter("[data-test=regulations_item]")->count());
-        $this->assertSame(0, $crawler->filter('[data-test=regulations_empty]')->count());
+        $this->assertCount(1, $crawler->filter("[data-test=regulations_item]"));
+        $this->assertCount(0, $crawler->filter('[data-test=regulations_empty]'));
     }
 
     public function testHomeInvalid(): void
@@ -43,7 +45,10 @@ final class HomeControllerTest extends WebTestCase
         $form = $saveButton->form();
         $form["regulation_order[description]"] = "";
         $form["regulation_order[issuingAuthority]"] = "";
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(400);
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(1, $crawler->filter('#regulation_order_description_error'));
+        $this->assertCount(1, $crawler->filter("#regulation_order_issuingAuthority_error"));
     }
 }

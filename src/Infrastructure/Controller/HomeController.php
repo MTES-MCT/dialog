@@ -9,7 +9,6 @@ use App\Application\QueryBusInterface;
 use App\Application\RegulationOrder\Query\GetAllRegulationOrderListItemsQuery;
 use App\Infrastructure\Form\RegulationOrder\RegulationOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
