@@ -20,9 +20,9 @@ final class OverallPeriodTest extends TestCase
         $end = new \DateTimeImmutable('2022-11-26');
         $overallPeriod = new OverallPeriod(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+            $regulationCondition,
             $start,
             $end,
-            $regulationCondition
         );
         $overallPeriod->addValidPeriod($validPeriod);
         $overallPeriod->addValidPeriod($validPeriod); // Test deduplication

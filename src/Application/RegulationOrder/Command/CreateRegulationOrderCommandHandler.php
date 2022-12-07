@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\RegulationOrder\Command;
 
 use App\Application\IdFactoryInterface;
+use App\Domain\Condition\Period\OverallPeriod;
+use App\Domain\Condition\Period\Repository\OverallPeriodRepositoryInterface;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\RegulationConditionRepositoryInterface;
 use App\Domain\RegulationOrder\RegulationOrder;
@@ -16,6 +18,7 @@ final class CreateRegulationOrderCommandHandler
         private IdFactoryInterface $idFactory,
         private RegulationConditionRepositoryInterface $regulationConditionRepository,
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
+        private OverallPeriodRepositoryInterface $overallPeriodRepository,
     ) {
     }
 
@@ -34,6 +37,15 @@ final class CreateRegulationOrderCommandHandler
                 description: $command->description,
                 issuingAuthority: $command->issuingAuthority,
                 regulationCondition: $regulationCondition,
+            ),
+        );
+
+        $this->overallPeriodRepository->save(
+            new OverallPeriod(
+                uuid: $this->idFactory->make(),
+                regulationCondition: $regulationCondition,
+                startPeriod: $command->startPeriod,
+                endPeriod: $command->endPeriod,
             ),
         );
 

@@ -10,4 +10,6 @@ final class CreateRegulationOrderCommand implements CommandInterface
 {
     public string $description;
     public string $issuingAuthority;
+    public ?\DateTimeInterface $startPeriod;
+    public ?\DateTimeInterface $endPeriod;
 }

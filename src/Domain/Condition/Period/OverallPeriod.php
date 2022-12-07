@@ -9,16 +9,16 @@ use App\Domain\Condition\RegulationCondition;
 class OverallPeriod
 {
     /** @var Period[] */
-    private array $validPeriods = [];
+    private iterable $validPeriods = [];
 
     /** @var Period[] */
-    private array $exceptionPeriods = [];
+    private iterable $exceptionPeriods = [];
 
     public function __construct(
         private string $uuid,
-        private \DateTimeInterface $startPeriod,
-        private \DateTimeInterface $endPeriod,
         private RegulationCondition $regulationCondition,
+        private \DateTimeInterface $startPeriod,
+        private ?\DateTimeInterface $endPeriod = null,
     ) {
     }
 
@@ -32,7 +32,7 @@ class OverallPeriod
         return $this->startPeriod;
     }
 
-    public function getEndPeriod(): \DateTimeInterface
+    public function getEndPeriod(): ?\DateTimeInterface
     {
         return $this->endPeriod;
     }
@@ -46,7 +46,7 @@ class OverallPeriod
         $this->validPeriods[] = $period;
     }
 
-    public function getValidPeriods(): array
+    public function getValidPeriods(): iterable
     {
         return $this->validPeriods;
     }
@@ -60,7 +60,7 @@ class OverallPeriod
         $this->exceptionPeriods[] = $period;
     }
 
-    public function getExceptionPeriods(): array
+    public function getExceptionPeriods(): iterable
     {
         return $this->exceptionPeriods;
     }

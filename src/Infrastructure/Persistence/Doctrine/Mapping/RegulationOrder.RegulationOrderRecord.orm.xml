@@ -5,7 +5,7 @@
     table="regulation_order_record">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="status" type="string" column="status" nullable="false" length="10"/>
-    <field name="createdAt" type="datetimetz_immutable" column="created_at" nullable="false">
+    <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
         <options>
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>

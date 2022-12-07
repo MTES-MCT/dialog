@@ -5,8 +5,8 @@
     table="period">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" column="name" nullable="true"/>
-    <field name="startDate" type="datetimetz_immutable" column="start_date" nullable="true"/>
-    <field name="endDate" type="datetimetz_immutable" column="end_date" nullable="true"/>
+    <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
+    <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
     <many-to-one field="overallValidPeriod" target-entity="App\Domain\Condition\Period\OverallPeriod" inversed-by="validPeriods">
         <join-column name="overall_valid_period_uuid" referenced-column-name="uuid"/>
     </many-to-one>
