@@ -66,6 +66,14 @@
                 <source>regulation_order.issuing_authority</source>
                 <target>Autorité émettrice</target>
             </trans-unit>
+            <trans-unit id="regulation_order.form.start_period">
+                <source>regulation_order.form.start_period</source>
+                <target>Date de début</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.end_period">
+                <source>regulation_order.form.end_period</source>
+                <target>Date de fin</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
