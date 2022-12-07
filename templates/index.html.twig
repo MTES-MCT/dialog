@@ -1,28 +1,43 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  <h3>{{ 'home.list.title'|trans }}</h3>
+    <h3>{{ 'home.list.title'|trans }}</h3>
 
-  {% if objects|length > 0 %}
-    <ul>
-      {% for obj in objects %}
-        <li data-test="regulations_item">
-          {{ obj.description }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p data-test="regulations_empty">
-      <em>{{ 'home.list.empty'|trans }}</em>
-    </p>
-  {% endif %}
+    <div class="fr-table fr-table--layout-fixed">
+        <table>
+            <thead>
+                <tr>
+                    <td scope="col">#</td>
+                    <th scope="col">{{ 'regulation_order.description'|trans }}</th>
+                    <th scope="col">{{ 'regulation_order.issuing_authority'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in objects %}
+                <tr data-test="regulations_item">
+                    <td>{{ obj.uuid }}</td>
+                    <td>{{ obj.description }}</td>
+                    <td>{{ obj.issuingAuthority }}</td>
+                </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">
+                            <p data-test="regulations_empty">
+                                <em>{{ 'home.list.empty'|trans }}</em>
+                            </p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-  <h3>{{ 'home.add.title'|trans }}</h3>
+    <h3>{{ 'home.add.title'|trans }}</h3>
 
-  {{ form_start(form) }}
-  {{ form_errors(form) }}
-  {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-  {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
-  {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
-  {{ form_end(form) }}
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
+        {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
+    {{ form_end(form) }}
 {% endblock %}

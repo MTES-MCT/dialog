@@ -71,6 +71,11 @@ dbmigrate: ## Run db migration
 dbshell: ## Connect to the database
 	docker-compose exec database psql ${DATABASE_URL}
 
+dbfixtures: ## Load tests fixtures
+	make console CMD="doctrine:database:create --if-not-exists --env=test"
+	make console CMD="doctrine:migrations:migrate -n --all-or-nothing --env=test"
+	make console CMD="doctrine:fixtures:load --env=test -n --purge-with-truncate"
+
 ##
 ## ----------------
 ## Executable
@@ -150,5 +155,6 @@ ci: ## Run CI steps
 	make install_deps
 	make assets
 	make dbinstall
+	make dbfixtures
 	make check
 	make test_cov

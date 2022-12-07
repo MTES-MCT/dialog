@@ -20,14 +20,14 @@ final class RegulationOrderType extends AbstractType
                 'description',
                 TextType::class,
                 options: [
-                    'label' => 'regulation_order.form.description',
+                    'label' => 'regulation_order.description',
                 ],
             )
             ->add(
                 'issuingAuthority',
                 TextType::class,
                 options: [
-                    'label' => 'regulation_order.form.issuing_authority',
+                    'label' => 'regulation_order.issuing_authority',
                 ],
             )
             ->add(

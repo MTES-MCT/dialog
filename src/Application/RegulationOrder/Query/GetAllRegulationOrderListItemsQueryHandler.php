@@ -17,10 +17,17 @@ final class GetAllRegulationOrderListItemsQueryHandler
     /** @return \App\Application\RegulationOrder\View\RegulationOrderListItemView[] */
     public function __invoke(GetAllRegulationOrderListItemsQuery $query): array
     {
-        $descriptions = $this->repository->findAllDescriptions();
+        $regulationOrders = $this->repository->findRegulationOrders();
+        $regulationOrderViews = [];
 
-        return array_map(function ($description): RegulationOrderListItemView {
-            return new RegulationOrderListItemView($description);
-        }, $descriptions);
+        foreach ($regulationOrders as $regulationOrder) {
+            $regulationOrderViews[] = new RegulationOrderListItemView(
+                $regulationOrder->getUuid(),
+                $regulationOrder->getDescription(),
+                $regulationOrder->getIssuingAuthority(),
+            );
+        }
+
+        return $regulationOrderViews;
     }
 }

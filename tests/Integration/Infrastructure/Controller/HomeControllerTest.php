@@ -15,8 +15,8 @@ final class HomeControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Réglementations', $crawler->filter('h3')->text());
-        $this->assertCount(0, $crawler->filter('[data-test=regulations_item]'));
-        $this->assertCount(1, $crawler->filter('[data-test=regulations_empty]'));
+        $this->assertCount(1, $crawler->filter('[data-test=regulations_item]'));
+        $this->assertCount(0, $crawler->filter('[data-test=regulations_empty]'));
         $this->assertCount(0, $crawler->filter("#regulation_order_description_error"));
         $this->assertCount(0, $crawler->filter("#regulation_order_issuingAuthority_error"));
 
@@ -30,7 +30,7 @@ final class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertCount(1, $crawler->filter("[data-test=regulations_item]"));
+        $this->assertCount(2, $crawler->filter("[data-test=regulations_item]"));
         $this->assertCount(0, $crawler->filter('[data-test=regulations_empty]'));
     }
 
