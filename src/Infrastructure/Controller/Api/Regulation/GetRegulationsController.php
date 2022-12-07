@@ -20,7 +20,7 @@ final class GetRegulationsController
     #[Route(
         '/api/regulations.{_format}',
         methods: 'GET',
-        name: 'app_regulations',
+        name: 'app_regulations_list',
         requirements: ['_format' => 'xml'],
     )]
     public function __invoke(): Response

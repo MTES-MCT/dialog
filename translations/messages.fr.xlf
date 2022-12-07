@@ -46,6 +46,10 @@
                 <source>home.list.title</source>
                 <target>Réglementations</target>
             </trans-unit>
+            <trans-unit id="home.link.datex">
+                <source>home.link.datex</source>
+                <target>Accéder au flux de données (DATEX II)</target>
+            </trans-unit>
             <trans-unit id="home.add.title">
                 <source>home.add.title</source>
                 <target>Ajouter une réglementation</target>

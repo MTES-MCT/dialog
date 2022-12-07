@@ -2,7 +2,7 @@
 
 {% block body %}
     <h3>{{ 'home.list.title'|trans }}</h3>
-
+    <a href="{{ path('app_regulations_list', { _format: 'xml' }) }}">{{ "home.link.datex"|trans }}</a>
     <div class="fr-table fr-table--layout-fixed">
         <table>
             <thead>
