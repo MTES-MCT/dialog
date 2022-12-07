@@ -54,12 +54,12 @@
                 <source>home.list.empty</source>
                 <target>Aucune réglementation</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.description">
-                <source>regulation_order.form.description</source>
+            <trans-unit id="regulation_order.description">
+                <source>regulation_order.description</source>
                 <target>Description</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.issuing_authority">
-                <source>regulation_order.form.issuing_authority</source>
+            <trans-unit id="regulation_order.issuing_authority">
+                <source>regulation_order.issuing_authority</source>
                 <target>Autorité émettrice</target>
             </trans-unit>
         </body>
