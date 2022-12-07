@@ -7,6 +7,8 @@ namespace App\Tests\Domain\RegulationOrder\Command;
 use App\Application\IdFactoryInterface;
 use App\Application\RegulationOrder\Command\CreateRegulationOrderCommand;
 use App\Application\RegulationOrder\Command\CreateRegulationOrderCommandHandler;
+use App\Domain\Condition\Period\OverallPeriod;
+use App\Domain\Condition\Period\Repository\OverallPeriodRepositoryInterface;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\RegulationConditionRepositoryInterface;
 use App\Domain\RegulationOrder\RegulationOrder;
@@ -17,9 +19,14 @@ final class CreateRegulationOrderCommandHandlerTest extends TestCase
 {
     public function testCreate(): void
     {
+        $startPeriod = new \DateTime('2022-12-07 15:00');
+        $endPeriod = new \DateTime('2022-12-17 16:00');
+
         $idFactory = $this->createMock(IdFactoryInterface::class);
         $regulationConditionRepository = $this->createMock(RegulationConditionRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
+        $overallPeriodRepository = $this->createMock(OverallPeriodRepositoryInterface::class);
+
         $regulationCondition = new RegulationCondition(
             uuid: 'f331d768-ed8b-496d-81ce-b97008f338d0',
             negate: false,
@@ -27,11 +34,12 @@ final class CreateRegulationOrderCommandHandlerTest extends TestCase
         $createdRegulationOrder = $this->createMock(RegulationOrder::class);
 
         $idFactory
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('make')
             ->willReturn(
                 'f331d768-ed8b-496d-81ce-b97008f338d0',
                 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
+                '98d3d3c6-83cd-49ab-b94a-4d4373a31114',
             );
 
         $regulationConditionRepository
@@ -55,6 +63,20 @@ final class CreateRegulationOrderCommandHandlerTest extends TestCase
             )
             ->willReturn($createdRegulationOrder);
 
+        $overallPeriodRepository
+            ->expects(self::once())
+            ->method('save')
+            ->with(
+                $this->equalTo(
+                    new OverallPeriod(
+                        uuid: '98d3d3c6-83cd-49ab-b94a-4d4373a31114',
+                        regulationCondition: $regulationCondition,
+                        startPeriod: $startPeriod,
+                        endPeriod: $endPeriod,
+                    )
+                )
+            );
+
         $createdRegulationOrder
             ->expects(self::once())
             ->method('getUuid')
@@ -64,11 +86,14 @@ final class CreateRegulationOrderCommandHandlerTest extends TestCase
             $idFactory,
             $regulationConditionRepository,
             $regulationOrderRepository,
+            $overallPeriodRepository,
         );
 
         $command = new CreateRegulationOrderCommand();
         $command->description = 'Interdiction de circuler';
         $command->issuingAuthority = 'Ville de Paris';
+        $command->startPeriod = $startPeriod;
+        $command->endPeriod = $endPeriod;
 
         $uuid = $handler($command);
 

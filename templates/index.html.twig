@@ -33,11 +33,12 @@
     </div>
 
     <h3>{{ 'home.add.title'|trans }}</h3>
-
     {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
         {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
+        {{ form_row(form.startPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
+        {{ form_row(form.endPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
         {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
     {{ form_end(form) }}
 {% endblock %}
