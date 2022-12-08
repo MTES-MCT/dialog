@@ -23,11 +23,13 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
         return $regulationOrder;
     }
 
-    /** @return RegulationOrder[] */
     public function findRegulationOrders(): array
     {
-        return $this->createQueryBuilder('o')
-            ->select('partial o.{uuid, description, issuingAuthority}')
+        return $this->createQueryBuilder('ro')
+            ->select('ro.uuid, ro.description, ro.issuingAuthority, o.startPeriod, o.endPeriod')
+            ->innerJoin('ro.regulationCondition', 'rc')
+            ->innerJoin('rc.overallPeriod', 'o')
+            ->orderBy('o.startPeriod', 'DESC')
             ->setMaxResults(20)
             ->getQuery()
             ->getResult()

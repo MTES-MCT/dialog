@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\RegulationOrder\Query;
 
+use App\Application\RegulationOrder\View\PeriodView;
 use App\Application\RegulationOrder\View\RegulationOrderListItemView;
 use App\Domain\RegulationOrder\Repository\RegulationOrderRepositoryInterface;
 
@@ -22,9 +23,13 @@ final class GetAllRegulationOrderListItemsQueryHandler
 
         foreach ($regulationOrders as $regulationOrder) {
             $regulationOrderViews[] = new RegulationOrderListItemView(
-                $regulationOrder->getUuid(),
-                $regulationOrder->getDescription(),
-                $regulationOrder->getIssuingAuthority(),
+                $regulationOrder['uuid'],
+                $regulationOrder['description'],
+                $regulationOrder['issuingAuthority'],
+                new PeriodView(
+                    $regulationOrder['startPeriod'],
+                    $regulationOrder['endPeriod'],
+                ),
             );
         }
 
