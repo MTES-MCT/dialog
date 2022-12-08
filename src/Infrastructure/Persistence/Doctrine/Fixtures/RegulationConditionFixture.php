@@ -8,7 +8,7 @@ use App\Domain\Condition\RegulationCondition;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class RegulationConditionFixture extends Fixture
+final class RegulationConditionFixture extends Fixture
 {
     public function load(ObjectManager $manager): void
     {

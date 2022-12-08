@@ -10,6 +10,7 @@ final class RegulationOrderListItemView
         public readonly string $uuid,
         public readonly string $description,
         public readonly string $issuingAuthority,
+        public readonly PeriodView $period,
     ) {
     }
 }

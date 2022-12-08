@@ -30,6 +30,10 @@
                 <source>common.privacy</source>
                 <target>Vie privée</target>
             </trans-unit>
+            <trans-unit id="common.permanent">
+                <source>common.permanent</source>
+                <target>Permanent</target>
+            </trans-unit>
             <trans-unit id="common.accessibilty">
                 <source>common.accessibilty</source>
                 <target>Accessibilité</target>
@@ -61,6 +65,22 @@
             <trans-unit id="regulation_order.description">
                 <source>regulation_order.description</source>
                 <target>Description</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.period">
+                <source>regulation_order.period</source>
+                <target>Période</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.period.temporary">
+                <source>regulation_order.period.temporary</source>
+                <target>du %startPeriod% au %endPeriod%</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.period.permanent.present">
+                <source>regulation_order.period.permanent.present</source>
+                <target>depuis le %date%</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.period.permanent.futur">
+                <source>regulation_order.period.permanent.futur</source>
+                <target>à partir du %date%</target>
             </trans-unit>
             <trans-unit id="regulation_order.issuing_authority">
                 <source>regulation_order.issuing_authority</source>
