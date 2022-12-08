@@ -10,18 +10,43 @@
                     <td scope="col">#</td>
                     <th scope="col">{{ 'regulation_order.description'|trans }}</th>
                     <th scope="col">{{ 'regulation_order.issuing_authority'|trans }}</th>
+                    <th scope="col">{{ 'regulation_order.period'|trans }}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for obj in objects %}
-                <tr data-test="regulations_item">
-                    <td>{{ obj.uuid }}</td>
-                    <td>{{ obj.description }}</td>
-                    <td>{{ obj.issuingAuthority }}</td>
-                </tr>
+                    {% set startPeriod = obj.period.startPeriod %}
+                    {% set endPeriod = obj.period.endPeriod %}
+
+                    <tr data-test="regulations_item">
+                        <td>{{ obj.uuid }}</td>
+                        <td>{{ obj.description }}</td>
+                        <td>{{ obj.issuingAuthority }}</td>
+                        <td>
+                            {% if startPeriod and endPeriod %}
+                                {{ 'regulation_order.period.temporary'|trans({
+                                    '%startPeriod%': startPeriod|date('d/m/Y'),
+                                    '%endPeriod%': endPeriod|date('d/m/Y'),
+                                })}}
+                            {% else %}
+                                {% if "now"|date('d/m/Y') >= startPeriod|date('d/m/Y') %}
+                                    {{ 'regulation_order.period.permanent.present'|trans({
+                                        '%date%': startPeriod|date('d/m/Y'),
+                                    })}}
+                                {% else %}
+                                    {{ 'regulation_order.period.permanent.futur'|trans({
+                                        '%date%': startPeriod|date('d/m/Y'),
+                                    })}}
+                                {% endif %}
+                                <p class="fr-badge fr-badge--sm fr-badge--info fr-badge--no-icon">
+                                    {{ 'common.permanent'|trans}}
+                                </p>
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% else %}
                     <tr>
-                        <td colspan="3">
+                        <td colspan="4">
                             <p data-test="regulations_empty">
                                 <em>{{ 'home.list.empty'|trans }}</em>
                             </p>

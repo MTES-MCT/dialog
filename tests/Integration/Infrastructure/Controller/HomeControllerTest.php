@@ -24,8 +24,8 @@ final class HomeControllerTest extends WebTestCase
         $form = $saveButton->form();
         $form["regulation_order[description]"] = "Interdiction de circuler dans Paris";
         $form["regulation_order[issuingAuthority]"] = "Ville de Paris";
-        $form["regulation_order[startPeriod]"] = "2022-12-07 16:44";
-        $form["regulation_order[endPeriod]"] = "2022-12-17 15:00";
+        $form["regulation_order[startPeriod]"] = "2022-12-07";
+        $form["regulation_order[endPeriod]"] = "2022-12-17";
 
         $client->submit($form);
         $this->assertResponseRedirects("/", 302);
@@ -67,13 +67,13 @@ final class HomeControllerTest extends WebTestCase
         $form["regulation_order[endPeriod]"] = "mauvais format";
 
         $crawler = $client->submit($form);
-        $this->assertSame("Veuillez saisir une date et une heure valides.", $crawler->filter('#regulation_order_startPeriod_error')->text());
-        $this->assertSame("Veuillez saisir une date et une heure valides.", $crawler->filter('#regulation_order_endPeriod_error')->text());
+        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#regulation_order_startPeriod_error')->text());
+        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#regulation_order_endPeriod_error')->text());
 
-        $form["regulation_order[startPeriod]"] = "2022-12-07 16:44";
-        $form["regulation_order[endPeriod]"] = "2022-12-05 00:00";
+        $form["regulation_order[startPeriod]"] = "2022-12-07";
+        $form["regulation_order[endPeriod]"] = "2022-12-05";
 
         $crawler = $client->submit($form);
-        $this->assertCount(1, $crawler->filter('#regulation_order_endPeriod_error')); // Cette valeur doit être supérieure à 7 déc. 2022 à 16:44.
+        $this->assertCount(1, $crawler->filter('#regulation_order_endPeriod_error')); // Cette valeur doit être supérieure à 7 déc. 2022.
     }
 }

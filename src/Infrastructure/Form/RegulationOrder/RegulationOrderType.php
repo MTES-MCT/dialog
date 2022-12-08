@@ -6,7 +6,7 @@ namespace App\Infrastructure\Form\RegulationOrder;
 
 use App\Application\RegulationOrder\Command\CreateRegulationOrderCommand;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,7 +33,7 @@ final class RegulationOrderType extends AbstractType
             )
             ->add(
                 'startPeriod',
-                DateTimeType::class,
+                DateType::class,
                 options: [
                     'label' => 'regulation_order.form.start_period',
                     'widget' => 'single_text',
@@ -41,7 +41,7 @@ final class RegulationOrderType extends AbstractType
             )
             ->add(
                 'endPeriod',
-                DateTimeType::class,
+                DateType::class,
                 options: [
                     'label' => 'regulation_order.form.end_period',
                     'widget' => 'single_text',
