@@ -8,7 +8,6 @@
             <thead>
                 <tr>
                     <td scope="col">#</td>
-                    <th scope="col">{{ 'regulation_order.description'|trans }}</th>
                     <th scope="col">{{ 'regulation_order.issuing_authority'|trans }}</th>
                     <th scope="col">{{ 'regulation_order.period'|trans }}</th>
                 </tr>
@@ -19,7 +18,6 @@
                     {% set endPeriod = obj.period.endPeriod %}
                     <tr>
                         <td>{{ obj.uuid }}</td>
-                        <td>{{ obj.description }}</td>
                         <td>{{ obj.issuingAuthority }}</td>
                         <td>
                             {% if startPeriod and endPeriod %}
@@ -46,7 +44,7 @@
                 {% else %}
                     <tr>
                         <td colspan="4">
-                            <p><em>{{ 'home.list.empty'|trans }}</em></p>
+                            <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                         </td>
                     </tr>
                 {% endfor %}
