@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3>{{ 'home.list.title'|trans }}</h3>
-    <a href="{{ path('app_regulations_list', { _format: 'xml' }) }}">{{ "home.link.datex"|trans }}</a>
+    <h3>{{ 'regulation.list.title'|trans }}</h3>
+    <a href="{{ path('app_regulations_add') }}">{{ "regulation.list.add_button"|trans }}</a>
     <div class="fr-table fr-table--layout-fixed">
         <table>
             <thead>
@@ -14,11 +14,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for obj in objects %}
+                {% for obj in regulationOrders %}
                     {% set startPeriod = obj.period.startPeriod %}
                     {% set endPeriod = obj.period.endPeriod %}
-
-                    <tr data-test="regulations_item">
+                    <tr>
                         <td>{{ obj.uuid }}</td>
                         <td>{{ obj.description }}</td>
                         <td>{{ obj.issuingAuthority }}</td>
@@ -38,7 +37,7 @@
                                         '%date%': startPeriod|date('d/m/Y'),
                                     })}}
                                 {% endif %}
-                                <p class="fr-badge fr-badge--sm fr-badge--info fr-badge--no-icon">
+                                <p class="fr-badge fr-badge--sm fr-badge--success fr-badge--no-icon">
                                     {{ 'common.permanent'|trans}}
                                 </p>
                             {% endif %}
@@ -47,23 +46,14 @@
                 {% else %}
                     <tr>
                         <td colspan="4">
-                            <p data-test="regulations_empty">
-                                <em>{{ 'home.list.empty'|trans }}</em>
-                            </p>
+                            <p><em>{{ 'home.list.empty'|trans }}</em></p>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <h3>{{ 'home.add.title'|trans }}</h3>
-    {{ form_start(form) }}
-        {{ form_errors(form) }}
-        {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-        {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
-        {{ form_row(form.startPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
-        {{ form_row(form.endPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-mt-2w'}}) }}
-        {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
-    {{ form_end(form) }}
+    <a href="{{ path('api_regulations_list', { _format: 'xml' }) }}" target="_blank">
+        {{ "regulation.link.datex"|trans }}
+    </a>
 {% endblock %}

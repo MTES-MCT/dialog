@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Api\Regulation;
+namespace App\Infrastructure\Controller\Api;
 
 use App\Application\QueryBusInterface;
 use App\Application\RegulationOrder\Query\GetAllRegulationOrderListItemsQuery;
@@ -20,7 +20,7 @@ final class GetRegulationsController
     #[Route(
         '/api/regulations.{_format}',
         methods: 'GET',
-        name: 'app_regulations_list',
+        name: 'api_regulations_list',
         requirements: ['_format' => 'xml'],
     )]
     public function __invoke(): Response
@@ -28,7 +28,7 @@ final class GetRegulationsController
         $regulationOrders = $this->queryBus->handle(new GetAllRegulationOrderListItemsQuery());
 
         return new Response(
-            $this->twig->render('api/regulation/index.xml.twig', [
+            $this->twig->render('api/regulations.xml.twig', [
                 'regulationOrders' => $regulationOrders,
             ]),
         );

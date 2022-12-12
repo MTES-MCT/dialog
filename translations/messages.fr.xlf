@@ -26,6 +26,10 @@
                 <source>common.legals</source>
                 <target>Mentions légales</target>
             </trans-unit>
+            <trans-unit id="common.cancel">
+                <source>common.cancel</source>
+                <target>Annuler</target>
+            </trans-unit>
             <trans-unit id="common.privacy">
                 <source>common.privacy</source>
                 <target>Vie privée</target>
@@ -46,21 +50,25 @@
                 <source>common.form.save</source>
                 <target>Enregistrer</target>
             </trans-unit>
-            <trans-unit id="home.list.title">
-                <source>home.list.title</source>
-                <target>Réglementations</target>
+            <trans-unit id="regulation.list.title">
+                <source>regulation.list.title</source>
+                <target>Restrictions de circulation</target>
             </trans-unit>
-            <trans-unit id="home.link.datex">
-                <source>home.link.datex</source>
+            <trans-unit id="regulation.link.datex">
+                <source>regulation.link.datex</source>
                 <target>Accéder au flux de données (DATEX II)</target>
             </trans-unit>
-            <trans-unit id="home.add.title">
-                <source>home.add.title</source>
-                <target>Ajouter une réglementation</target>
+            <trans-unit id="regulation.add.title">
+                <source>regulation.add.title</source>
+                <target>Créer une restriction de circulation</target>
             </trans-unit>
-            <trans-unit id="home.list.empty">
-                <source>home.list.empty</source>
+            <trans-unit id="regulation.list.empty">
+                <source>regulation.list.empty</source>
                 <target>Aucune réglementation</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.add_button">
+                <source>regulation.list.add_button</source>
+                <target>Nouvelle réglementation</target>
             </trans-unit>
             <trans-unit id="regulation_order.description">
                 <source>regulation_order.description</source>
