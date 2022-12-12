@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\CommandBusInterface;
-use App\Application\QueryBusInterface;
-use App\Application\RegulationOrder\Query\GetAllRegulationOrderListItemsQuery;
 use App\Infrastructure\Form\RegulationOrder\RegulationOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,45 +13,42 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class HomeController
+final class AddRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
-        private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
     ) {
     }
 
-    #[Route('/', name: 'app_home', methods: ['GET', 'POST'])]
+    #[Route(
+        '/creer-une-restriction-de-circulation',
+        name: 'app_regulations_add',
+        methods: ['GET', 'POST'],
+    )]
     public function __invoke(Request $request): Response
     {
         $form = $this->formFactory->create(RegulationOrderType::class);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $command = $form->getData();
-
-            $this->commandBus->handle($command);
+            $this->commandBus->handle($form->getData());
 
             return new RedirectResponse(
-                url: $this->router->generate('app_home'),
+                url: $this->router->generate('app_regulations_list'),
                 status: Response::HTTP_FOUND,
             );
         }
 
-        $regulationOrders = $this->queryBus->handle(new GetAllRegulationOrderListItemsQuery());
-
-        $html = $this->twig->render(
-            name: 'index.html.twig',
-            context: [
-                'objects' => $regulationOrders,
-                'form' => $form->createView(),
-            ],
+        return new Response(
+            $this->twig->render(
+                name: 'add.html.twig',
+                context: [
+                    'form' => $form->createView(),
+                ],
+            ),
         );
-
-        return new Response($html);
     }
 }

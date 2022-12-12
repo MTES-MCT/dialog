@@ -6,19 +6,15 @@ namespace App\Tests\Integration\Infrastructure\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-final class HomeControllerTest extends WebTestCase
+final class AddRegulationControllerTest extends WebTestCase
 {
-    public function testHome(): void
+    public function testAdd(): void
     {
         $client = static::createClient();
+        $crawler = $client->request('GET', '/creer-une-restriction-de-circulation');
 
-        $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Réglementations', $crawler->filter('h3')->text());
-        $this->assertCount(1, $crawler->filter('[data-test=regulations_item]'));
-        $this->assertCount(0, $crawler->filter('[data-test=regulations_empty]'));
-        $this->assertCount(0, $crawler->filter("#regulation_order_description_error"));
-        $this->assertCount(0, $crawler->filter("#regulation_order_issuingAuthority_error"));
+        $this->assertSame('Créer une restriction de circulation', $crawler->filter('h3')->text());
 
         $saveButton = $crawler->selectButton("Enregistrer");
         $form = $saveButton->form();
@@ -32,14 +28,13 @@ final class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertCount(2, $crawler->filter("[data-test=regulations_item]"));
-        $this->assertCount(0, $crawler->filter('[data-test=regulations_empty]'));
+        $this->assertSame(3, $crawler->filter("tbody > tr")->count());
     }
 
-    public function testHomeInvalid(): void
+    public function testInvalid(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request('GET', '/creer-une-restriction-de-circulation');
 
         $this->assertResponseStatusCodeSame(200);
 
@@ -57,7 +52,7 @@ final class HomeControllerTest extends WebTestCase
     public function testInvalidPeriod(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request('GET', '/creer-une-restriction-de-circulation');
 
         $this->assertResponseStatusCodeSame(200);
 
