@@ -20,6 +20,8 @@
 
     <trafficRegulationsFromCompetentAuthorities>
     {% for regulationOrder in regulationOrders %}
+        {% set startPeriod = regulationOrder.period.startPeriod %}
+        {% set endPeriod = regulationOrder.period.endPeriod %}
         <trafficRegulationOrder id="{{ regulationOrder.uuid }}" version="1">
             <description>
                 <com:values>
@@ -33,6 +35,27 @@
             </issuingAuthority>
             <regulationId>{{ regulationOrder.uuid }}</regulationId>
             <status>madeAndImplemented</status>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                            <com:validityTimeSpecification>
+                                <com:overallStartTime>{{ startPeriod|date('Y-m-d') }}T00:00:00.000Z</com:overallStartTime>
+                                {% if endPeriod%}
+                                    <com:overallEndTime>{{ endPeriod|date('Y-m-d') }}T00:00:00.000Z</com:overallEndTime>
+                                {% endif %}
+                            </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
         </trafficRegulationOrder>
     {% endfor %}
     </trafficRegulationsFromCompetentAuthorities>
