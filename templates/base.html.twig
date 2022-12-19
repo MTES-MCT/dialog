@@ -4,7 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}"/>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <link rel="apple-touch-icon" href="{{ asset('build/dsfr/favicon/apple-touch-icon.png') }}"><!-- 180×180 -->
+    <link rel="icon" href="{{ asset('build/dsfr/favicon/favicon.svg') }}" type="image/svg+xml">
+    <link rel="shortcut icon" href="{{ asset('build/dsfr/favicon/favicon.ico') }}" type="image/x-icon"><!-- 32×32 -->
+    <link rel="manifest" href="{{ asset('build/dsfr/favicon/manifest.webmanifest') }}" crossorigin="use-credentials">
+
     <title>{% block title %}{{ 'common.title'|trans }}{% endblock %}</title>
 
     {% block stylesheets %}
