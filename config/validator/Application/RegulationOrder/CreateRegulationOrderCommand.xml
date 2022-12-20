@@ -23,5 +23,17 @@
                 <option name="propertyPath">startPeriod</option>
             </constraint>
         </property>
+        <property name="maxWeight">
+            <constraint name="Positive" />
+        </property>
+        <property name="maxHeight">
+            <constraint name="Positive" />
+        </property>
+        <property name="maxWidth">
+            <constraint name="Positive" />
+        </property>
+        <property name="maxLength">
+            <constraint name="Positive" />
+        </property>
     </class>
 </constraint-mapping>
