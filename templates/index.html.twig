@@ -26,7 +26,7 @@
                                     '%endPeriod%': endPeriod|date('d/m/Y'),
                                 })}}
                             {% else %}
-                                {% if "now"|date('d/m/Y') >= startPeriod|date('d/m/Y') %}
+                                {% if "now"|date('U') >= startPeriod|date('U') %}
                                     {{ 'regulation_order.period.permanent.present'|trans({
                                         '%date%': startPeriod|date('d/m/Y'),
                                     })}}
