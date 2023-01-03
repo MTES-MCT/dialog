@@ -11,6 +11,7 @@ class RegulationCondition
 {
     private ?RegulationOrder $regulationOrder = null;
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
+    private ?LocationCondition $locationCondition = null;
     private ?ConditionSet $conditionSet = null;
     private ?OverallPeriod $overallPeriod = null;
 
@@ -44,6 +45,11 @@ class RegulationCondition
     public function getVehicleCharacteristics(): ?VehicleCharacteristics
     {
         return $this->vehicleCharacteristics;
+    }
+
+    public function getLocationCondition(): ?LocationCondition
+    {
+        return $this->locationCondition;
     }
 
     public function getConditionSet(): ?ConditionSet

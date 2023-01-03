@@ -25,6 +25,7 @@ final class RegulationConditionTest extends TestCase
         $this->assertSame(null, $regulationCondition->getRegulationOrder()); // Automatically set by Doctrine
         $this->assertSame($parentConditionSet, $regulationCondition->getParentConditionSet());
         $this->assertSame(null, $regulationCondition->getVehicleCharacteristics()); // Automatically set by Doctrine
+        $this->assertSame(null, $regulationCondition->getLocationCondition()); // Automatically set by Doctrine
         $this->assertSame(null, $regulationCondition->getConditionSet()); // Automatically set by Doctrine
         $this->assertSame(null, $regulationCondition->getOverallPeriod()); // Automatically set by Doctrine
     }
