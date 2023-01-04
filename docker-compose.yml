@@ -2,6 +2,7 @@ version: "3.8"
 
 volumes:
   database: {}
+  pgadmin-data: {}
 
 services:
   database:
@@ -35,4 +36,18 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
+      - database
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - '5050:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: equipe@beta.gouv.fr
+      PGADMIN_DEFAULT_PASSWORD: equipe
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
       - database
