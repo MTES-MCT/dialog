@@ -38,4 +38,32 @@ final class VehicleCharacteristicsTest extends TestCase
         $this->assertSame(2.0, $vehicleCharacteristics->getMaxWidth());
         $this->assertSame(6.0, $vehicleCharacteristics->getMaxLength());
     }
+
+    public function testUpdate(): void
+    {
+        $regulationCondition = $this->createMock(RegulationCondition::class);
+        $vehicleCharacteristics = new VehicleCharacteristics(
+            '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+            $regulationCondition,
+            VehicleUsageEnum::NON_COMMERCIAL,
+            VehicleTypeEnum::ELECTRIC_VEHICLES,
+            VehicleCritairEnum::EL,
+            3.5,
+            1.8,
+            2.0,
+            6.0,
+        );
+
+        $vehicleCharacteristics->update(
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+        );
+
+        $this->assertSame(1.1, $vehicleCharacteristics->getMaxWeight());
+        $this->assertSame(1.2, $vehicleCharacteristics->getMaxHeight());
+        $this->assertSame(1.3, $vehicleCharacteristics->getMaxWidth());
+        $this->assertSame(1.4, $vehicleCharacteristics->getMaxLength());
+    }
 }

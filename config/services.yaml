@@ -50,3 +50,9 @@ services:
         public: true
         tags:
             - { name: 'messenger.message_handler', bus: 'messenger.bus.queries' }
+
+    # ------------
+    # Dates
+    # ------------
+    DateTimeInterface:
+        class: DateTimeImmutable

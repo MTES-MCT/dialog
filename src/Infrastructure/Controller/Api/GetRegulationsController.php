@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Api;
 
 use App\Application\QueryBusInterface;
-use App\Application\RegulationOrder\Query\GetRegulationOrdersToDatexFormatQuery;
+use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 

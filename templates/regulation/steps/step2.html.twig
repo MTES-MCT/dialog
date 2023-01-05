@@ -1,0 +1,11 @@
+{% extends 'regulation/steps/base.html.twig' %}
+
+{% block steps %}
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
+    {{ form_end(form) }}
+    <a href="{{ path('app_regulations_list') }}">
+        {{ "common.cancel"|trans }}
+    </a>
+{% endblock %}
