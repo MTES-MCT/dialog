@@ -9,6 +9,8 @@ use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\Period\Repository\OverallPeriodRepositoryInterface;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\RegulationConditionRepositoryInterface;
+use App\Domain\Condition\Repository\VehicleCharacteristicsRepositoryInterface;
+use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\RegulationOrder\RegulationOrder;
 use App\Domain\RegulationOrder\Repository\RegulationOrderRepositoryInterface;
 
@@ -19,6 +21,7 @@ final class CreateRegulationOrderCommandHandler
         private RegulationConditionRepositoryInterface $regulationConditionRepository,
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private OverallPeriodRepositoryInterface $overallPeriodRepository,
+        private VehicleCharacteristicsRepositoryInterface $vehicleCharacteristicsRepository,
     ) {
     }
 
@@ -46,6 +49,17 @@ final class CreateRegulationOrderCommandHandler
                 regulationCondition: $regulationCondition,
                 startPeriod: $command->startPeriod,
                 endPeriod: $command->endPeriod,
+            ),
+        );
+
+        $this->vehicleCharacteristicsRepository->save(
+            new VehicleCharacteristics(
+                uuid: $this->idFactory->make(),
+                regulationCondition: $regulationCondition,
+                maxWeight: $command->maxWeight,
+                maxHeight: $command->maxHeight,
+                maxWidth: $command->maxWidth,
+                maxLength: $command->maxLength,
             ),
         );
 

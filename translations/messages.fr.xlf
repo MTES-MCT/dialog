@@ -102,6 +102,26 @@
                 <source>regulation_order.form.end_period</source>
                 <target>Date de fin</target>
             </trans-unit>
+            <trans-unit id="regulation_order.form.vehicle_characteristics">
+                <source>regulation_order.form.vehicle_characteristics</source>
+                <target>Véhicules concernés</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.max_weight">
+                <source>regulation_order.form.max_weight</source>
+                <target>Poids maximum (tonnes)</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.max_height">
+                <source>regulation_order.form.max_height</source>
+                <target>Hauteur maximum (m)</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.max_width">
+                <source>regulation_order.form.max_width</source>
+                <target>Largeur maximum (m)</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.max_length">
+                <source>regulation_order.form.max_length</source>
+                <target>Longueur maximum (m)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
