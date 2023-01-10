@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\RegulationOrder\Command\CreateRegulationOrderCommand">
         <property name="description">
             <constraint name="NotBlank" />
@@ -34,6 +34,15 @@
         </property>
         <property name="maxLength">
             <constraint name="Positive" />
+        </property>
+        <property name="postalCode">
+            <constraint name="Regex">
+                <option name="pattern">/^\d{5}/</option>
+                <option name="message">regulation_order.form.postal_code.error_invalid</option>
+            </constraint>
+        </property>
+        <property name="city">
+            <constraint name="NotBlank" />
         </property>
     </class>
 </constraint-mapping>

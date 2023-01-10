@@ -16,4 +16,7 @@ final class CreateRegulationOrderCommand implements CommandInterface
     public ?float $maxHeight = null;
     public ?float $maxWidth = null;
     public ?float $maxLength = null;
+    public string $postalCode;
+    public string $city;
+    public array $roads;
 }

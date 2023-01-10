@@ -1,0 +1,61 @@
+{% use "common/form/dsfr_theme.html.twig" %}
+
+{# 
+The Stimulus-based add/delete interactions are inspired by:
+https://symfony.com/doc/current/form/form_collections.html#javascript-with-stimulus
+
+Blocks overridden here are named after the Symfony collection fragment naming convention.
+See: https://symfony.com/doc/5.4/form/form_themes.html#fragment-naming-for-collections
+
+Using a macro to customize a collection prototype is inspired by:
+https://stackoverflow.com/questions/35489540/symfony-trying-to-customize-a-collection-form-prototype
+#}
+
+{% block _regulation_order_roads_row %}
+    {# See: https://symfony.com/doc/current/form/form_collections.html#javascript-with-stimulus #}
+    <div class="fr-fieldset__element"
+        {{ stimulus_controller('form-collection') }}
+        data-form-collection-sequence-value="{{ form|length > 0 ? form|last.vars.name + 1 : 0 }}"
+        data-form-collection-prototype-value="{{ _self.roads_entry_content_template(form.vars.prototype)|e('html_attr') }}"
+        data-form-collection-entry-selector-value="li"
+    >
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block _regulation_order_roads_widget %}
+    <ul class="fr-raw-list" {{ stimulus_target('form-collection', 'collectionContainer') }}>
+        {% for entry in form %}
+            {% set key = loop.index %}
+            {{ _self.roads_entry_content_template(entry) }}
+        {% endfor %}
+    </ul>
+
+    <button
+        type="button"
+        class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
+        {{ stimulus_action('form-collection', 'addEntry') }}
+    >
+        {{ 'regulation_order.form.roads.add'|trans }}
+    </button>
+{% endblock %}
+
+{% macro roads_entry_content_template(form) %}
+    {% if key is not defined %}
+        {% set key = '__form_collection_key__' %}
+    {% endif %}
+
+    <li class="d-road-list__item fr-mb-3w">
+        {{ form_row(form.name, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col fr-mb-0'}}) }}
+        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col fr-mb-0'}}) }}
+        {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col fr-mb-0'}}) }}
+        {{ form_row(form.remove, {
+            attr: {
+                'class': 'fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line',
+                'data-action': 'form-collection#removeEntry',
+                'data-form-collection-key-param': key
+            }
+        }) }}
+    </li>
+{% endmacro %}

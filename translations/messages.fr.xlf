@@ -122,6 +122,42 @@
                 <source>regulation_order.form.max_length</source>
                 <target>Longueur maximum (m)</target>
             </trans-unit>
+            <trans-unit id="regulation_order.form.location">
+                <source>regulation_order.form.location</source>
+                <target>Rues concernées</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.location.hint_text">
+                <source>regulation_order.form.location.hint_text</source>
+                <target>Indiquez la ou les rues impactées par la restriction.</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.postal_code">
+                <source>regulation_order.form.postal_code</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.city">
+                <source>regulation_order.form.city</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.roads.name">
+                <source>regulation_order.form.roads.name</source>
+                <target>Rue</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.roads.from_house_number">
+                <source>regulation_order.form.roads.from_house_number</source>
+                <target>Numéro de début</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.roads.to_house_number">
+                <source>regulation_order.form.roads.to_house_number</source>
+                <target>Numéro de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.roads.add">
+                <source>regulation_order.form.roads.add</source>
+                <target>Ajouter une rue</target>
+            </trans-unit>
+            <trans-unit id="regulation_order.form.roads.remove">
+                <source>regulation_order.form.roads.remove</source>
+                <target>Retirer cette rue</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

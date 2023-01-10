@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\RegulationOrder;
 
 use App\Application\RegulationOrder\Command\CreateRegulationOrderCommand;
+use App\Infrastructure\Form\RegulationOrder\Location\RoadType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -79,6 +81,30 @@ final class RegulationOrderType extends AbstractType
                 options: [
                     'label' => 'regulation_order.form.max_length',
                     'required' => false,
+                ],
+            )
+            ->add(
+                'postalCode',
+                TextType::class,
+                options: [
+                    'label' => 'regulation_order.form.postal_code',
+                ],
+            )
+            ->add(
+                'city',
+                TextType::class,
+                options: [
+                    'label' => 'regulation_order.form.city',
+                ],
+            )
+            ->add(
+                'roads',
+                CollectionType::class,
+                options: [
+                    'label' => false,
+                    'entry_type' => RoadType::class,
+                    'allow_add' => true,
+                    // 'allow_delete' => true,
                 ],
             )
             ->add(

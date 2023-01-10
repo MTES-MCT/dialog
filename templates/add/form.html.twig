@@ -1,0 +1,45 @@
+{% form_theme form with ['add/_custom_theme.html.twig'] %}
+
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+    {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+    {{ form_row(form.startPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+    {{ form_row(form.endPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+
+    <fieldset class="fr-fieldset">
+        <legend class="fr-fieldset__legend">
+            {{ "regulation_order.form.vehicle_characteristics"|trans }}
+        </legend>
+        <div class="fr-fieldset__element">
+            {{ form_row(form.maxWeight, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        </div>
+        <div class="fr-fieldset__element">
+            {{ form_row(form.maxHeight, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        </div>
+        <div class="fr-fieldset__element">
+            {{ form_row(form.maxWidth, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        </div>
+        <div class="fr-fieldset__element">
+            {{ form_row(form.maxLength, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        </div>
+    </fieldset>
+
+    <fieldset class="fr-fieldset">
+        <legend class="fr-fieldset__legend">
+            {{ "regulation_order.form.location"|trans }}
+            <span class="fr-hint-text">
+                {{ "regulation_order.form.location.hint_text"|trans }}
+            </span>
+        </legend>
+        <div class="fr-fieldset__element">
+            {{ form_row(form.postalCode, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }} 
+        </div>
+        <div class="fr-fieldset__element">
+            {{ form_row(form.city, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        </div>
+        {{ form_row(form.roads) }}
+    </fieldset>
+
+    {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
+{{ form_end(form) }}
