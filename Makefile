@@ -97,6 +97,9 @@ watch: ## Watch assets
 assets: ## Build assets
 	$(NPM) run build
 
+shell: ## Connect to the container
+	docker-compose exec php bash
+
 ##
 ## ----------------
 ## Quality

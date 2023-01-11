@@ -16,11 +16,19 @@
             </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
-                <target>Ministère <![CDATA[<br/>]]> de la transition <![CDATA[<br/>]]> écologique</target>
+                <target>République <![CDATA[<br/>]]> Française</target>
+            </trans-unit>
+            <trans-unit id="common.baseline">
+                <source>common.baseline</source>
+                <target>Intégration de la réglementation poids lourd dans les solutions numériques</target>
             </trans-unit>
             <trans-unit id="common.back_to_home">
                 <source>common.back_to_home</source>
                 <target>Retour à l'accueil</target>
+            </trans-unit>
+            <trans-unit id="common.breadcrumb.here">
+                <source>common.breadcrumb.here</source>
+                <target>vous êtes ici :</target>
             </trans-unit>
             <trans-unit id="common.legals">
                 <source>common.legals</source>
@@ -38,6 +46,10 @@
                 <source>common.permanent</source>
                 <target>Permanent</target>
             </trans-unit>
+            <trans-unit id="common.back">
+                <source>common.back</source>
+                <target>Précédent</target>
+            </trans-unit>
             <trans-unit id="common.accessibilty">
                 <source>common.accessibilty</source>
                 <target>Accessibilité</target>
@@ -50,6 +62,14 @@
                 <source>common.form.save</source>
                 <target>Enregistrer</target>
             </trans-unit>
+            <trans-unit id="common.actions">
+                <source>common.actions</source>
+                <target>Actions</target>
+            </trans-unit>
+            <trans-unit id="common.form.next">
+                <source>common.form.next</source>
+                <target>Suivant</target>
+            </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
                 <target>Restrictions de circulation</target>
@@ -57,10 +77,6 @@
             <trans-unit id="regulation.link.datex">
                 <source>regulation.link.datex</source>
                 <target>Accéder au flux de données (DATEX II)</target>
-            </trans-unit>
-            <trans-unit id="regulation.add.title">
-                <source>regulation.add.title</source>
-                <target>Créer une restriction de circulation</target>
             </trans-unit>
             <trans-unit id="regulation.list.empty">
                 <source>regulation.list.empty</source>
@@ -70,57 +86,89 @@
                 <source>regulation.list.add_button</source>
                 <target>Nouvelle réglementation</target>
             </trans-unit>
-            <trans-unit id="regulation_order.description">
-                <source>regulation_order.description</source>
+            <trans-unit id="regulation.breadcrumb">
+                <source>regulation.breadcrumb</source>
+                <target>Réglementations</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.description">
+                <source>regulation.step1.description</source>
                 <target>Description</target>
             </trans-unit>
-            <trans-unit id="regulation_order.period">
-                <source>regulation_order.period</source>
-                <target>Période</target>
-            </trans-unit>
-            <trans-unit id="regulation_order.period.temporary">
-                <source>regulation_order.period.temporary</source>
-                <target>du %startPeriod% au %endPeriod%</target>
-            </trans-unit>
-            <trans-unit id="regulation_order.period.permanent.present">
-                <source>regulation_order.period.permanent.present</source>
-                <target>depuis le %date%</target>
-            </trans-unit>
-            <trans-unit id="regulation_order.period.permanent.futur">
-                <source>regulation_order.period.permanent.futur</source>
-                <target>à partir du %date%</target>
-            </trans-unit>
-            <trans-unit id="regulation_order.issuing_authority">
-                <source>regulation_order.issuing_authority</source>
+            <trans-unit id="regulation.step1.issuing_authority">
+                <source>regulation.step1.issuing_authority</source>
                 <target>Autorité émettrice</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.start_period">
-                <source>regulation_order.form.start_period</source>
+            <trans-unit id="regulation.step3.start_period">
+                <source>regulation.step3.start_period</source>
                 <target>Date de début</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.end_period">
-                <source>regulation_order.form.end_period</source>
+            <trans-unit id="regulation.step3.end_period">
+                <source>regulation.step3.end_period</source>
                 <target>Date de fin</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.vehicle_characteristics">
-                <source>regulation_order.form.vehicle_characteristics</source>
+            <trans-unit id="regulation.step4.vehicle_characteristics">
+                <source>regulation.step4.vehicle_characteristics</source>
                 <target>Véhicules concernés</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.max_weight">
-                <source>regulation_order.form.max_weight</source>
+            <trans-unit id="regulation.step4.max_weight">
+                <source>regulation.step4.max_weight</source>
                 <target>Poids maximum (tonnes)</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.max_height">
-                <source>regulation_order.form.max_height</source>
+            <trans-unit id="regulation.step4.max_height">
+                <source>regulation.step4.max_height</source>
                 <target>Hauteur maximum (m)</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.max_width">
-                <source>regulation_order.form.max_width</source>
+            <trans-unit id="regulation.step4.max_width">
+                <source>regulation.step4.max_width</source>
                 <target>Largeur maximum (m)</target>
             </trans-unit>
-            <trans-unit id="regulation_order.form.max_length">
-                <source>regulation_order.form.max_length</source>
+            <trans-unit id="regulation.step4.max_length">
+                <source>regulation.step4.max_length</source>
                 <target>Longueur maximum (m)</target>
+            </trans-unit>
+            <trans-unit id="regulation.period">
+                <source>regulation.period</source>
+                <target>Période</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.temporary">
+                <source>regulation.period.temporary</source>
+                <target>du %startPeriod% au %endPeriod%</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.permanent.present">
+                <source>regulation.period.permanent.present</source>
+                <target>depuis le %date%</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.permanent.future">
+                <source>regulation.period.permanent.future</source>
+                <target>à partir du %date%</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.steps">
+                <source>regulation.stepper.steps</source>
+                <target>Étape %step% sur 5</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.step1">
+                <source>regulation.stepper.step1</source>
+                <target>Restriction</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.step2">
+                <source>regulation.stepper.step2</source>
+                <target>Localisation</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.step3">
+                <source>regulation.stepper.step3</source>
+                <target>Période</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.step4">
+                <source>regulation.stepper.step4</source>
+                <target>Véhicules concernés</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.step5">
+                <source>regulation.stepper.step5</source>
+                <target>Récapitulatif</target>
+            </trans-unit>
+            <trans-unit id="regulation.stepper.next">
+                <source>regulation.stepper.next</source>
+                <target>Étape suivante :</target>
             </trans-unit>
         </body>
     </file>

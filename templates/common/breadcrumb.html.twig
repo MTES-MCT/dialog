@@ -1,0 +1,17 @@
+<nav role="navigation" class="fr-breadcrumb" aria-label="{{ 'common.breadcrumb.here'|trans }}">
+    <div class="fr-collapse" id="breadcrumb-1">
+        <ol class="fr-breadcrumb__list">
+            {% for item in items %}
+                {% if loop.last %}
+                    <li>
+                        <a class="fr-breadcrumb__link" aria-current="page">{{ item.title|trans }}</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a class="fr-breadcrumb__link" href="{{ path(item.path) }}">{{ item.title|trans }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </div>
+</nav>
