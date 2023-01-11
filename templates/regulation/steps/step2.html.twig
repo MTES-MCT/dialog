@@ -1,6 +1,6 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
-{% block steps %}
+{% block step_body %}
     {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}

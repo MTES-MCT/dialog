@@ -1,7 +1,7 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
-{% block steps %}
-    <a href="{{ path('app_regulations_list') }}">
-        {{ "common.cancel"|trans }}
+{% block step_body %}
+    <a href="{{ path('app_regulations_steps_4', {'uuid': uuid}) }}">
+        {{ "common.back"|trans }}
     </a>
 {% endblock %}

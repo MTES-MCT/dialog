@@ -26,32 +26,42 @@ final class SaveRegulationStep1CommandHandler
 
     public function __invoke(SaveRegulationStep1Command $command): string
     {
-        $regulationCondition = $this->regulationConditionRepository->save(
-            new RegulationCondition(
-                uuid: $this->idFactory->make(),
-                negate: false,
-            ),
+        // If submitting step 1 for the first time, we create the regulationCondition, regulationOrder and regulationOrderRecord
+        if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
+            $regulationCondition = $this->regulationConditionRepository->save(
+                new RegulationCondition(
+                    uuid: $this->idFactory->make(),
+                    negate: false,
+                ),
+            );
+
+            $regulationOrder = $this->regulationOrderRepository->save(
+                new RegulationOrder(
+                    uuid: $this->idFactory->make(),
+                    description: $command->description,
+                    issuingAuthority: $command->issuingAuthority,
+                    regulationCondition: $regulationCondition,
+                ),
+            );
+
+            $regulationOrderRecord = $this->regulationOrderRecordRepository->save(
+                new RegulationOrderRecord(
+                    uuid: $this->idFactory->make(),
+                    status: RegulationOrderRecordStatusEnum::DRAFT,
+                    lastFilledStep: 1,
+                    regulationOrder: $regulationOrder,
+                    createdAt: $this->now,
+                ),
+            );
+
+            return $regulationOrderRecord->getUuid();
+        }
+
+        $command->regulationOrderRecord->getRegulationOrder()->update(
+            description: $command->description,
+            issuingAuthority: $command->issuingAuthority,
         );
 
-        $regulationOrder = $this->regulationOrderRepository->save(
-            new RegulationOrder(
-                uuid: $this->idFactory->make(),
-                description: $command->description,
-                issuingAuthority: $command->issuingAuthority,
-                regulationCondition: $regulationCondition,
-            ),
-        );
-
-        $regulationOrderRecord = $this->regulationOrderRecordRepository->save(
-            new RegulationOrderRecord(
-                uuid: $this->idFactory->make(),
-                status: RegulationOrderRecordStatusEnum::DRAFT,
-                lastFilledStep: 1,
-                regulationOrder: $regulationOrder,
-                createdAt: $this->now,
-            ),
-        );
-
-        return $regulationOrderRecord->getUuid();
+        return $command->regulationOrderRecord->getUuid();
     }
 }

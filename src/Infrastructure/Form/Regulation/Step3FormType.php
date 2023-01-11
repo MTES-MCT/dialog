@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class Step3FormType extends AbstractType
 {
@@ -41,12 +39,5 @@ final class Step3FormType extends AbstractType
                 ],
             )
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => SaveRegulationStep3Command::class,
-        ]);
     }
 }

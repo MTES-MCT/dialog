@@ -7,9 +7,9 @@
         <table>
             <thead>
                 <tr>
-                    <td scope="col">#</td>
                     <th scope="col">{{ 'regulation.step1.issuing_authority'|trans }}</th>
                     <th scope="col">{{ 'regulation.period'|trans }}</th>
+                    <th scope="col">{{ 'common.actions'|trans }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,7 +17,6 @@
                     {% set startPeriod = obj.period.startPeriod %}
                     {% set endPeriod = obj.period.endPeriod %}
                     <tr>
-                        <td>{{ obj.uuid }}</td>
                         <td>{{ obj.issuingAuthority }}</td>
                         <td>
                             {% if startPeriod and endPeriod %}
@@ -31,7 +30,7 @@
                                         '%date%': startPeriod|date('d/m/Y'),
                                     })}}
                                 {% else %}
-                                    {{ 'regulation.period.permanent.futur'|trans({
+                                    {{ 'regulation.period.permanent.future'|trans({
                                         '%date%': startPeriod|date('d/m/Y'),
                                     })}}
                                 {% endif %}
@@ -39,6 +38,9 @@
                                     {{ 'common.permanent'|trans}}
                                 </p>
                             {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('app_regulations_steps_1', { uuid: obj.uuid }) }}">Edit</a>
                         </td>
                     </tr>
                 {% else %}

@@ -21,10 +21,12 @@ final class SaveRegulationStep4CommandHandler
         $regulationCondition = $command->regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
         $command->regulationOrderRecord->updateLastFilledStep(4);
 
-        if (!$command->maxWeight && !$command->maxHeight && !$command->maxWidth && !$command->maxLength) {
+        $isEmpty = !$command->maxWeight && !$command->maxHeight && !$command->maxWidth && !$command->maxLength;
+        if ($isEmpty) {
             return;
         }
 
+        // If submitting step 4 for the first time, we create the vehicleCharacteristics
         if (!$command->vehicleCharacteristics instanceof VehicleCharacteristics) {
             $this->vehicleCharacteristicsRepository->save(
                 new VehicleCharacteristics(

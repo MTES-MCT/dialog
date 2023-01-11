@@ -43,4 +43,20 @@ final class Step1ControllerTest extends WebTestCase
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_description_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
     }
+
+    public function testRegulationOrderRecordNotFound(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testBadUuid(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form/aaaaaaaa');
+
+        $this->assertResponseStatusCodeSame(400);
+    }
 }

@@ -42,7 +42,7 @@ final class Step3Controller extends AbstractStepsController
             new GetOverallPeriodByRegulationConditionQuery($regulationCondition->getUuid()),
         );
 
-        $command = new SaveRegulationStep3Command($regulationOrderRecord, $overallPeriod);
+        $command = SaveRegulationStep3Command::create($regulationOrderRecord, $overallPeriod);
         $form = $this->formFactory->create(Step3FormType::class, $command);
         $form->handleRequest($request);
 

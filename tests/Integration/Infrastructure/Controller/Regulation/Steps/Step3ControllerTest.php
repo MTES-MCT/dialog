@@ -56,8 +56,16 @@ final class Step3ControllerTest extends WebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations/form/aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb/3');
+        $client->request('GET', '/regulations/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b/3');
 
         $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testBadUuid(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form/aaaaaaaa/3');
+
+        $this->assertResponseStatusCodeSame(400);
     }
 }

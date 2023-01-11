@@ -10,7 +10,5 @@ interface RegulationOrderRepositoryInterface
 {
     public function save(RegulationOrder $regulationOrder): RegulationOrder;
 
-    public function findRegulationOrders(): array;
-
     public function findRegulationOrdersForDatexFormat(): array;
 }

@@ -50,6 +50,6 @@ class RegulationOrderRecord
 
     public function updateLastFilledStep(int $step): void
     {
-        $this->lastFilledStep = $step;
+        $this->lastFilledStep = max($this->lastFilledStep, $step);
     }
 }

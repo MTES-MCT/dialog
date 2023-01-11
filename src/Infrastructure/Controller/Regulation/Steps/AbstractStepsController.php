@@ -8,7 +8,9 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Uid\Uuid;
 
 abstract class AbstractStepsController
 {
@@ -17,8 +19,12 @@ abstract class AbstractStepsController
     ) {
     }
 
-    public function getRegulationOrderRecord(string $uuid): RegulationOrderRecord
+    protected function getRegulationOrderRecord(string $uuid): RegulationOrderRecord
     {
+        if (!Uuid::isValid($uuid)) {
+            throw new BadRequestHttpException();
+        }
+
         try {
             return $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
         } catch (RegulationOrderRecordNotFoundException) {

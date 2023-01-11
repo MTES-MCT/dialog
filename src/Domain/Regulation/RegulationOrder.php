@@ -35,4 +35,10 @@ class RegulationOrder
     {
         return $this->regulationCondition;
     }
+
+    public function update(string $description, string $issuingAuthority): void
+    {
+        $this->description = $description;
+        $this->issuingAuthority = $issuingAuthority;
+    }
 }

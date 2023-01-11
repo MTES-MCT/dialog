@@ -42,7 +42,7 @@ final class Step4Controller extends AbstractStepsController
             new GetVehicleCharacteristicsByRegulationConditionQuery($regulationCondition->getUuid()),
         );
 
-        $command = new SaveRegulationStep4Command($regulationOrderRecord, $vehicleCharacteristics);
+        $command = SaveRegulationStep4Command::create($regulationOrderRecord, $vehicleCharacteristics);
         $form = $this->formFactory->create(Step4FormType::class, $command);
         $form->handleRequest($request);
 

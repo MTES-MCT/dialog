@@ -8,7 +8,7 @@ use App\Application\Regulation\Query\GetAllRegulationOrderListItemsQueryHandler;
 use App\Application\Regulation\Query\GetAllRegulationOrderListItemsQuery;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
-use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetAllRegulationOrderListItemsQueryHandlerTest extends TestCase
@@ -19,7 +19,7 @@ final class GetAllRegulationOrderListItemsQueryHandlerTest extends TestCase
         $endPeriod1 = new \DateTime('2022-12-17');
         $startPeriod2 = new \DateTime('2022-12-10');
 
-        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
+        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'issuingAuthority' => 'Autorité 1',
@@ -33,12 +33,12 @@ final class GetAllRegulationOrderListItemsQueryHandlerTest extends TestCase
             'endPeriod' => null,
         ];
 
-        $regulationOrderRepository
+        $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("findRegulationOrders")
+            ->method("findAll")
             ->willReturn([$regulationOrder1, $regulationOrder2]);
 
-        $handler = new GetAllRegulationOrderListItemsQueryHandler($regulationOrderRepository);
+        $handler = new GetAllRegulationOrderListItemsQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetAllRegulationOrderListItemsQuery());
 
         $this->assertEquals(

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class Step4FormType extends AbstractType
 {
@@ -56,12 +54,5 @@ final class Step4FormType extends AbstractType
                 ],
             )
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => SaveRegulationStep4Command::class,
-        ]);
     }
 }
