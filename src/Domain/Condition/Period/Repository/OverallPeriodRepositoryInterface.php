@@ -9,4 +9,6 @@ use App\Domain\Condition\Period\OverallPeriod;
 interface OverallPeriodRepositoryInterface
 {
     public function save(OverallPeriod $overallPeriod): OverallPeriod;
+
+    public function findOneByRegulationConditionUuid(string $uuid): ?OverallPeriod;
 }

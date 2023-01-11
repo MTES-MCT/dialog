@@ -16,6 +16,18 @@ final class VehicleCharacteristicsRepository extends ServiceEntityRepository imp
         parent::__construct($registry, VehicleCharacteristics::class);
     }
 
+    public function findOneByRegulationConditionUuid(string $uuid): ?VehicleCharacteristics
+    {
+        return $this->createQueryBuilder('vc')
+            ->where('rc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('vc.regulationCondition', 'rc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function save(VehicleCharacteristics $vehicleCharacteristics): VehicleCharacteristics
     {
         $this->getEntityManager()->persist($vehicleCharacteristics);

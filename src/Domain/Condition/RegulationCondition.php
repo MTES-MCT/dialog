@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Condition;
 
 use App\Domain\Condition\Period\OverallPeriod;
-use App\Domain\RegulationOrder\RegulationOrder;
+use App\Domain\Regulation\RegulationOrder;
 
 class RegulationCondition
 {

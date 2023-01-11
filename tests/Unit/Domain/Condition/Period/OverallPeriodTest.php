@@ -36,4 +36,26 @@ final class OverallPeriodTest extends TestCase
         $this->assertSame([$validPeriod], $overallPeriod->getValidPeriods());
         $this->assertSame([$exceptionPeriod], $overallPeriod->getExceptionPeriods());
     }
+
+    public function testUpdate(): void
+    {
+        $regulationCondition = $this->createMock(RegulationCondition::class);
+        $start = new \DateTimeImmutable('2022-11-24');
+        $end = new \DateTimeImmutable('2022-11-26');
+        $overallPeriod = new OverallPeriod(
+            '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+            $regulationCondition,
+            $start,
+            $end,
+        );
+
+        $start2 = new \DateTimeImmutable('2022-11-24');
+        $end2 = new \DateTimeImmutable('2022-11-26');
+
+        $overallPeriod->update($start2, $end2);
+
+        $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $overallPeriod->getUuid());
+        $this->assertSame($start2, $overallPeriod->getStartPeriod());
+        $this->assertSame($end2, $overallPeriod->getEndPeriod());
+    }
 }

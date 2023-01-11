@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
-use App\Domain\RegulationOrder\RegulationOrder;
+use App\Domain\Regulation\RegulationOrder;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -27,9 +27,21 @@ final class RegulationOrderFixture extends Fixture implements DependentFixtureIn
             $this->getReference('regulationCondition2'),
         );
 
+        $regulationOrder3 = new RegulationOrder(
+            'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
+            'Description 3',
+            'Autorité 3',
+            $this->getReference('regulationCondition3'),
+        );
+
         $manager->persist($regulationOrder);
         $manager->persist($regulationOrder2);
+        $manager->persist($regulationOrder3);
         $manager->flush();
+
+        $this->addReference('regulationOrder', $regulationOrder);
+        $this->addReference('regulationOrder2', $regulationOrder2);
+        $this->addReference('regulationOrder3', $regulationOrder3);
     }
 
     public function getDependencies(): array

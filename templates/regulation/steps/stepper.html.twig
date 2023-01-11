@@ -1,0 +1,12 @@
+<div class="fr-stepper">
+    <h2 class="fr-stepper__title">
+        <span class="fr-stepper__state">{{ 'regulation.stepper.steps'|trans({'%step%': stepNumber})}}</span>
+        {{ stepName|trans }}
+    </h2>
+    <div class="fr-stepper__steps" data-fr-current-step="{{ stepNumber }}" data-fr-steps="5"></div>
+    {% if stepNumber < 5 %}
+        <p class="fr-stepper__details">
+            <span class="fr-text--bold">{{ 'regulation.stepper.next'|trans }}</span> {{ nextStep|trans }}
+        </p>
+    {% endif %}
+</div>
