@@ -6,7 +6,7 @@ jobs:
 
     services:
       postgresql:
-        image: postgres:14-alpine
+        image: postgis/postgis:14-3.3-alpine
         env:
           POSTGRES_USER: dialog
           POSTGRES_PASSWORD: dialog
