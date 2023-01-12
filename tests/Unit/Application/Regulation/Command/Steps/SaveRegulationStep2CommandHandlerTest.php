@@ -72,8 +72,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeCoordinates')
             ->willReturnOnConsecutiveCalls(
-                new Coordinates(47.347024, -1.935836),
-                new Coordinates(47.347917, -1.930973),
+                Coordinates::fromLatLon(47.347024, -1.935836),
+                Coordinates::fromLatLon(47.347917, -1.930973),
             );
 
         $location = new Location(
