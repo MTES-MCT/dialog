@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-fr-scheme="system">
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -29,5 +29,7 @@
         </section>
     </main>
     {% include 'common/footer.html.twig' %}
+    <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
+    <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
   </body>
 </html>
