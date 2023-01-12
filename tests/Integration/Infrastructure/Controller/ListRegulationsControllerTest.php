@@ -14,15 +14,32 @@ final class ListRegulationsControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Restrictions de circulation', $crawler->filter('h3')->text());
+        $this->assertSame('Réglementations', $crawler->filter('h3')->text());
 
-        $firstTr = $crawler->filter('tbody > tr')->eq(0);
-        $secondTr = $crawler->filter('tbody > tr')->eq(1);
+        $tabs = $crawler->filter('.fr-tabs__list')->eq(0);
 
-        $this->assertSame("Autorité 1", $firstTr->filter('td')->eq(0)->text());
-        $this->assertSame("du 08/12/2022 au 18/12/2022", $firstTr->filter('td')->eq(1)->text());
+        $this->assertSame("tablist", $tabs->attr("role"));
+        $this->assertSame("Brouillons (2) Publiée (1)", $tabs->text());
 
-        $this->assertSame("Autorité 2", $secondTr->filter('td')->eq(0)->text());
-        $this->assertSame("depuis le 08/10/2022 Permanent", $secondTr->filter('td')->eq(1)->text());
+        $draftRows = $crawler->filter('#draft-panel tbody > tr');
+        $this->assertSame(2, $draftRows->count());
+
+        $draftRow0 = $draftRows->eq(0)->filter('td');
+        $this->assertSame("/", $draftRow0->eq(0)->text()); // No location
+        $this->assertEmpty($draftRow0->eq(1)->text()); // No period set
+        $this->assertSame("Brouillon", $draftRow0->eq(2)->text());
+
+        $draftRow1 = $draftRows->eq(1)->filter('td');
+        $this->assertSame("/", $draftRow1->eq(0)->text()); // No location
+        $this->assertSame("du 08/12/2022 au 18/12/2022", $draftRow1->eq(1)->text());
+        $this->assertSame("Brouillon", $draftRow1->eq(2)->text());
+
+        $publishedRows = $crawler->filter('#published-panel tbody > tr');
+        $this->assertSame(1, $publishedRows->count());
+
+        $publishedRow0 = $publishedRows->eq(0)->filter('td');
+        $this->assertSame("/", $publishedRow0->eq(0)->text()); // No location
+        $this->assertSame("depuis le 08/10/2022 permanent", $publishedRow0->eq(1)->text());
+        $this->assertSame("Réglementation en cours", $publishedRow0->eq(2)->text());
     }
 }
