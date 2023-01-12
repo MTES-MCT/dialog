@@ -18,7 +18,7 @@ final class SaveRegulationStep2CommandHandler
     ) {
     }
 
-    public function computePoint(string $postalCode, string $city, string $roadName, string $houseNumber): string
+    private function computePoint(string $postalCode, string $city, string $roadName, string $houseNumber): string
     {
         $address = sprintf('%s %s, %s %s', $houseNumber, $roadName, $city, $postalCode);
         $coords = $this->geocoder->computeCoordinates($address);
@@ -53,13 +53,13 @@ final class SaveRegulationStep2CommandHandler
             return;
         }
 
-        $isRoadChanged = (
-            $command->postalCode != $command->location->getPostalCode()
-            || $command->city != $command->location->getCity()
-            || $command->roadName != $command->location->getRoadName()
+        $hasRoadChanged = (
+            $command->postalCode !== $command->location->getPostalCode()
+            || $command->city !== $command->location->getCity()
+            || $command->roadName !== $command->location->getRoadName()
         );
 
-        $fromPointNeedsUpdating = $isRoadChanged || ($command->fromHouseNumber != $command->location->getFromHouseNumber());
+        $fromPointNeedsUpdating = $hasRoadChanged || ($command->fromHouseNumber !== $command->location->getFromHouseNumber());
 
         if ($fromPointNeedsUpdating) {
             $fromPoint = $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber);
@@ -67,7 +67,7 @@ final class SaveRegulationStep2CommandHandler
             $fromPoint = $command->location->getFromPoint();
         }
 
-        $toPointNeedsUpdating = $isRoadChanged || ($command->toHouseNumber != $command->location->getToHouseNumber());
+        $toPointNeedsUpdating = $hasRoadChanged || ($command->toHouseNumber !== $command->location->getToHouseNumber());
 
         if ($toPointNeedsUpdating) {
             $toPoint = $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber);
