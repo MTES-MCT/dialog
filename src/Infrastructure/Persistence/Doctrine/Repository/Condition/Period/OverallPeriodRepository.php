@@ -16,6 +16,18 @@ final class OverallPeriodRepository extends ServiceEntityRepository implements O
         parent::__construct($registry, OverallPeriod::class);
     }
 
+    public function findOneByRegulationConditionUuid(string $uuid): ?OverallPeriod
+    {
+        return $this->createQueryBuilder('op')
+            ->where('rc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('op.regulationCondition', 'rc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function save(OverallPeriod $overallPeriod): OverallPeriod
     {
         $this->getEntityManager()->persist($overallPeriod);

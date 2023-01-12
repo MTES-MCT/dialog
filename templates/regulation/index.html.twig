@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>{{ 'regulation.list.title'|trans }}</h3>
+    <a href="{{ path('app_regulations_steps_1') }}">{{ "regulation.list.add_button"|trans }}</a>
+    <div class="fr-table fr-table--layout-fixed">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'regulation.step1.issuing_authority'|trans }}</th>
+                    <th scope="col">{{ 'regulation.period'|trans }}</th>
+                    <th scope="col">{{ 'common.actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in regulationOrders %}
+                    {% set startPeriod = obj.period.startPeriod %}
+                    {% set endPeriod = obj.period.endPeriod %}
+                    <tr>
+                        <td>{{ obj.issuingAuthority }}</td>
+                        <td>
+                            {% if startPeriod and endPeriod %}
+                                {{ 'regulation.period.temporary'|trans({
+                                    '%startPeriod%': startPeriod|date('d/m/Y'),
+                                    '%endPeriod%': endPeriod|date('d/m/Y'),
+                                })}}
+                            {% else %}
+                                {% if "now"|date('U') >= startPeriod|date('U') %}
+                                    {{ 'regulation.period.permanent.present'|trans({
+                                        '%date%': startPeriod|date('d/m/Y'),
+                                    })}}
+                                {% else %}
+                                    {{ 'regulation.period.permanent.future'|trans({
+                                        '%date%': startPeriod|date('d/m/Y'),
+                                    })}}
+                                {% endif %}
+                                <p class="fr-badge fr-badge--sm fr-badge--success fr-badge--no-icon">
+                                    {{ 'common.permanent'|trans}}
+                                </p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('app_regulations_steps_1', { uuid: obj.uuid }) }}">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">
+                            <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ path('api_regulations_list', { _format: 'xml' }) }}" target="_blank">
+        {{ "regulation.link.datex"|trans }}
+    </a>
+{% endblock %}

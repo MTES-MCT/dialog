@@ -78,6 +78,23 @@ Une fois la migration générée, il faut l'executer. Pour ce faire il existe la
 make dbmigrate
 ```
 
+### pgAdmin4
+
+Pour pouvoir accéder à pgAdmin, il faut se rendre sur l'URL http://localhost:5050 et se connecter avec le compte définit dans le fichier [`docker-compose.yml`](../docker-compose.yml).
+
+Une configuration est nécéssaire à la première connection pour relier pgAdmin à notre base de données. Pour ce faire :
+- Cliquez sur "Add New Server"
+- Dans l'onglet `General`, remplissez les valeurs suivantes :
+    - **Name**: dialog
+- Dans l'onglet `Connection`, remplissez les valeurs suivantes avec les informations définies dans le fichier [`docker-compose.yml`](../docker-compose.yml) :
+    - **Host name** : database
+    - **Port** : 5432
+    - **Maintenance database** : dialog
+    - **Username** : dialog
+    - **Password** : dialog
+
+Et c'est tout ! Vous aurez maintenant accès à l'interface graphique pour gérer la base de données.
+
 ## PHP
 
 ### Intégration avec l'éditeur de code
@@ -101,9 +118,9 @@ Ce thème permet d'utiliser les options suivantes :
 | Variable | Utilisation |
 |---|---|
 | `group_class` | Classe CSS du groupe d'un champs de formulaire. |
-| `group_error_class` | Classe CSS du groupe d'un champs de formulaire en état d'erreur. Valeur par défaut : `group_class ~ '--error'`. Par exemple, si `group_class` vaut `'fr-input-group'`, alors `group_error_class` sera `'fr-input-group--error'`. | 
+| `group_error_class` | Classe CSS du groupe d'un champs de formulaire en état d'erreur. Valeur par défaut : `group_class ~ '--error'`. Par exemple, si `group_class` vaut `'fr-input-group'`, alors `group_error_class` sera `'fr-input-group--error'`. |
 | `widget_class` | Classe CSS du widget d'un champs de formulaire. |
-| `widget_error_class` | Classe CSS du widget d'un champs de formulaire en état d'erreur. Valeur par défaut : `widget_class ~ '--error'`. Par exemple, si `widget_class` vaut `'fr-select'`, alors `widget_error_class` sera `'fr-select--error'`. | 
+| `widget_error_class` | Classe CSS du widget d'un champs de formulaire en état d'erreur. Valeur par défaut : `widget_class ~ '--error'`. Par exemple, si `widget_class` vaut `'fr-select'`, alors `widget_error_class` sera `'fr-select--error'`. |
 
 Exemple pour le rendu d'un [champ de saisie (input)](https://www.systeme-de-design.gouv.fr/elements-d-interface/composants/champ-de-saisie) nommé `description` :
 

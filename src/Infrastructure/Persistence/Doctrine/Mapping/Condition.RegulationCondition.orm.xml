@@ -8,7 +8,7 @@
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\Condition\VehicleCharacteristics" mapped-by="regulationCondition"/>
     <one-to-one field="overallPeriod" target-entity="App\Domain\Condition\Period\OverallPeriod" mapped-by="regulationCondition"/>
     <one-to-one field="conditionSet" target-entity="App\Domain\Condition\ConditionSet" mapped-by="regulationCondition"/>
-    <one-to-one field="regulationOrder" target-entity="App\Domain\RegulationOrder\RegulationOrder" mapped-by="regulationCondition"/>
+    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" mapped-by="regulationCondition"/>
     <many-to-one
       field="parentConditionSet"
       target-entity="App\Domain\Condition\ConditionSet"

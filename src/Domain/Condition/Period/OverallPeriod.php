@@ -69,4 +69,12 @@ class OverallPeriod
     {
         return $this->regulationCondition;
     }
+
+    public function update(
+        \DateTimeInterface $startPeriod,
+        ?\DateTimeInterface $endPeriod,
+    ): void {
+        $this->startPeriod = $startPeriod;
+        $this->endPeriod = $endPeriod;
+    }
 }
