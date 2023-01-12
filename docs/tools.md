@@ -127,3 +127,17 @@ Exemple pour le rendu d'un [champ de saisie (input)](https://www.systeme-de-desi
 ```twig
 {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
 ```
+
+## Docker Compose
+
+### Problèmes de permissions
+
+Il se peut que vous rencontriez des problèmes de permissions en modifiant les fichiers autogénérés par les recettes Symfony.
+
+Sous Linux, forcez la propriété de ces fichiers par votre utilisateur de session avec :
+
+```
+$ sudo chown -R USERNAME:USERNAME .
+```
+
+(Remplacez `USERNAME` par votre nom d'utilisateur, _c.f._ `$ whoami`.)

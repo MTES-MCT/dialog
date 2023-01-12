@@ -3,6 +3,11 @@
 {% block step_body %}
     {{ form_start(form) }}
         {{ form_errors(form) }}
+        {{ form_row(form.postalCode, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.city, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.roadName, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
         {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
     {{ form_end(form) }}
     <a href="{{ path('app_regulations_list') }}">
