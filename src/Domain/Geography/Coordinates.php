@@ -12,6 +12,11 @@ class Coordinates
     ) {
     }
 
+    public static function fromLatLon(float $latitude, float $longitude): self
+    {
+        return new self($latitude, $longitude);
+    }
+
     public function getLatitude(): float
     {
         return $this->latitude;
