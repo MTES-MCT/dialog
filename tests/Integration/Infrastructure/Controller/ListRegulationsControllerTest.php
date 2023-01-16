@@ -25,12 +25,12 @@ final class ListRegulationsControllerTest extends WebTestCase
         $this->assertSame(2, $draftRows->count());
 
         $draftRow0 = $draftRows->eq(0)->filter('td');
-        $this->assertSame("/", $draftRow0->eq(0)->text()); // No location
+        $this->assertEmpty($draftRow0->eq(0)->text()); // No location
         $this->assertEmpty($draftRow0->eq(1)->text()); // No period set
         $this->assertSame("Brouillon", $draftRow0->eq(2)->text());
 
         $draftRow1 = $draftRows->eq(1)->filter('td');
-        $this->assertSame("/", $draftRow1->eq(0)->text()); // No location
+        $this->assertSame("Savenay Route du Grand Brossais", $draftRow1->eq(0)->text());
         $this->assertSame("du 08/12/2022 au 18/12/2022", $draftRow1->eq(1)->text());
         $this->assertSame("Brouillon", $draftRow1->eq(2)->text());
 
@@ -38,7 +38,7 @@ final class ListRegulationsControllerTest extends WebTestCase
         $this->assertSame(1, $publishedRows->count());
 
         $publishedRow0 = $publishedRows->eq(0)->filter('td');
-        $this->assertSame("/", $publishedRow0->eq(0)->text()); // No location
+        $this->assertEmpty($publishedRow0->eq(0)->text()); // No location
         $this->assertSame("depuis le 08/10/2022 permanent", $publishedRow0->eq(1)->text());
         $this->assertSame("Réglementation en cours", $publishedRow0->eq(2)->text());
     }

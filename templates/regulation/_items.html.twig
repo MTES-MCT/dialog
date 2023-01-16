@@ -11,7 +11,12 @@
         <tbody>
             {% for regulation in pagination.items %}
                 <tr>
-                    <td>/</td>
+                    <td>
+                        {% if regulation.location %}
+                            <b>{{ regulation.location.city }}</b><br/>
+                            {{ regulation.location.roadName }}
+                        {% endif %}
+                    </td>
                     <td>
                         {% if regulation.period %}
                             {% set startPeriod = regulation.period.startPeriod %}

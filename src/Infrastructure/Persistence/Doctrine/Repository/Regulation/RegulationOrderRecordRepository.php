@@ -20,12 +20,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulations(int $page, string $status): array
     {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, o.startPeriod, o.endPeriod, roc.status')
+            ->select('roc.uuid, o.startPeriod, o.endPeriod, roc.status, l.city, l.roadName')
             ->where('roc.status = :status')
             ->setParameter('status', $status)
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.regulationCondition', 'rc')
             ->leftJoin('rc.overallPeriod', 'o')
+            ->leftJoin('rc.location', 'l')
             ->orderBy('o.startPeriod', 'DESC')
             ->setFirstResult(Pagination::MAX_ITEMS_PER_PAGE * ($page - 1))
             ->setMaxResults(Pagination::MAX_ITEMS_PER_PAGE)
