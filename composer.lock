@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48d4b365f7a0c4439018d994617bcee4",
+    "content-hash": "57ff90447dee070d0a65c49d6bbd8142",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1781,6 +1781,74 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.0.5"
             },
             "time": "2021-10-08T21:21:46+00:00"
+        },
+        {
+            "name": "jsor/doctrine-postgis",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jsor/doctrine-postgis.git",
+                "reference": "c82053b1cf4089d68e91f4f827afcdd3735a9b03"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jsor/doctrine-postgis/zipball/c82053b1cf4089d68e91f4f827afcdd3735a9b03",
+                "reference": "c82053b1cf4089d68e91f4f827afcdd3735a9b03",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^2.13 || ^3.1",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.9",
+                "friendsofphp/php-cs-fixer": "^3.1",
+                "phpunit/phpunit": "^9.5",
+                "vimeo/psalm": "^4.10"
+            },
+            "suggest": {
+                "doctrine/orm": "For using with the Doctrine ORM"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jsor\\Doctrine\\PostGIS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com",
+                    "homepage": "https://sorgalla.com"
+                }
+            ],
+            "description": "Spatial and Geographic Data with PostGIS and Doctrine.",
+            "keywords": [
+                "database",
+                "dbal",
+                "doctrine",
+                "geo",
+                "geography",
+                "geometry",
+                "gis",
+                "orm",
+                "postgis",
+                "spatial"
+            ],
+            "support": {
+                "issues": "https://github.com/jsor/doctrine-postgis/issues",
+                "source": "https://github.com/jsor/doctrine-postgis/tree/v2.1.0"
+            },
+            "time": "2022-04-21T20:57:00+00:00"
         },
         {
             "name": "laminas/laminas-code",
