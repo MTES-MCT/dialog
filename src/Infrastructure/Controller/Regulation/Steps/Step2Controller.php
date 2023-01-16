@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Steps;
 
 use App\Application\CommandBusInterface;
+use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Infrastructure\Form\Regulation\Step2FormType;
@@ -22,7 +23,7 @@ final class Step2Controller extends AbstractStepsController
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
-        QueryBusInterface $queryBus,
+        private QueryBusInterface $queryBus,
     ) {
         parent::__construct($queryBus);
     }
@@ -36,8 +37,12 @@ final class Step2Controller extends AbstractStepsController
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $regulationCondition = $regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $location = $this->queryBus->handle(
+            new GetLocationByRegulationConditionQuery($regulationCondition->getUuid()),
+        );
 
-        $command = new SaveRegulationStep2Command($regulationOrderRecord);
+        $command = SaveRegulationStep2Command::create($regulationOrderRecord, $location);
         $form = $this->formFactory->create(Step2FormType::class, $command);
         $form->handleRequest($request);
 

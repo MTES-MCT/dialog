@@ -98,6 +98,26 @@
                 <source>regulation.step1.issuing_authority</source>
                 <target>Autorité émettrice</target>
             </trans-unit>
+            <trans-unit id="regulation.step2.postal_code">
+                <source>regulation.step2.postal_code</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.city">
+                <source>regulation.step2.city</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.road_name">
+                <source>regulation.step2.road_name</source>
+                <target>Rue</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.from_house_number">
+                <source>regulation.step2.from_house_number</source>
+                <target>Numéro de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.to_house_number">
+                <source>regulation.step2.to_house_number</source>
+                <target>Numéro de fin</target>
+            </trans-unit>
             <trans-unit id="regulation.step3.start_period">
                 <source>regulation.step3.start_period</source>
                 <target>Date de début</target>

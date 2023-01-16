@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Condition\Location"
+    table="location">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="postalCode" type="string" column="postal_code" nullable="false" length="5" />
+    <field name="city" type="string" column="city" nullable="false" length="255" />
+    <field name="roadName" type="string" column="road_name" nullable="false" length="60" />
+    <field name="fromHouseNumber" type="string" column="from_house_number" nullable="false" length="8" />
+    <field name="fromPoint" type="geometry" column="from_point" nullable="false">
+      <options>
+        <option name="geometry_type">POINT</option>
+        <option name="srid">2154</option>
+      </options>
+    </field>
+    <field name="toHouseNumber" type="string" column="to_house_number" nullable="false" length="8" />
+    <field name="toPoint" type="geometry" column="to_point" nullable="false">
+      <options>
+        <option name="geometry_type">POINT</option>
+        <option name="srid">2154</option>
+      </options>
+    </field>
+    <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" inversed-by="location">
+        <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false"/>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

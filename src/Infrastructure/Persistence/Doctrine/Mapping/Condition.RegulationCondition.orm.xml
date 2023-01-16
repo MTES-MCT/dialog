@@ -6,6 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="negate" type="boolean" column="negate" nullable="false"/>
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\Condition\VehicleCharacteristics" mapped-by="regulationCondition"/>
+    <one-to-one field="location" target-entity="App\Domain\Condition\Location" mapped-by="regulationCondition"/>
     <one-to-one field="overallPeriod" target-entity="App\Domain\Condition\Period\OverallPeriod" mapped-by="regulationCondition"/>
     <one-to-one field="conditionSet" target-entity="App\Domain\Condition\ConditionSet" mapped-by="regulationCondition"/>
     <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" mapped-by="regulationCondition"/>
