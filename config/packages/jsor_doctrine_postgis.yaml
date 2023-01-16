@@ -6,8 +6,6 @@ services:
 doctrine:
     dbal:
         schema_filter: ~^(?!tiger)(?!topology)~
-        mapping_types:
-            _text: string
         types:
             geometry: 
                 class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
