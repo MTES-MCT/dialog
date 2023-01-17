@@ -32,3 +32,13 @@ Exemple pour le rendu d'un [champ de saisie (input)](https://www.systeme-de-desi
 ```twig
 {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
 ```
+
+## Mise à jour des dépendances
+
+Pour mettre à jour les dépendances du projet, lancez la commande suivante :
+
+```bash
+make update_deps
+```
+
+Les dépendances définies dans le composer.json et dans le package.lock seront mises à jour.

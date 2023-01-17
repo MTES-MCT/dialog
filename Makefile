@@ -32,6 +32,10 @@ install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
 	$(NPM) install
 
+update_deps:
+	make composer CMD="update"
+	$(NPM) update
+
 start: ## Start container
 	docker-compose up -d
 	docker-compose start
@@ -87,7 +91,7 @@ composer: ## Run composer commands
 console: ## Run console command
 	${BIN_CONSOLE} ${CMD}
 
-cc: ## Run console command
+cc: ## Run clear cache command
 	${BIN_CONSOLE} cache:clear
 
 watch: ## Watch assets
