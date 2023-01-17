@@ -12,7 +12,7 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findOneByUuid(string $uuid): RegulationOrderRecord|null;
 
-    public function findRegulations(int $page, string $status): array;
+    public function findRegulations(int $maxItemsPerPage, int $page, string $status): array;
 
     public function countRegulations(string $status): int;
 }

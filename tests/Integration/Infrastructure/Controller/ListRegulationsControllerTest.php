@@ -11,35 +11,80 @@ final class ListRegulationsControllerTest extends WebTestCase
     public function testList(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $pageOne = $client->request('GET', '/?pageSize=1');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Réglementations', $crawler->filter('h3')->text());
+        $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
 
-        $tabs = $crawler->filter('.fr-tabs__list')->eq(0);
+        $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
 
         $this->assertSame("tablist", $tabs->attr("role"));
         $this->assertSame("Brouillons (2) Publiée (1)", $tabs->text());
 
-        $draftRows = $crawler->filter('#draft-panel tbody > tr');
-        $this->assertSame(2, $draftRows->count());
+        // Test draft reglementation rendering
+        $pageOneDraftRows = $pageOne->filter('#draft-panel tbody > tr');
+        $this->assertSame(1, $pageOneDraftRows->count()); // One item per page
 
-        $draftRow0 = $draftRows->eq(0)->filter('td');
-        $this->assertEmpty($draftRow0->eq(0)->text()); // No location
-        $this->assertEmpty($draftRow0->eq(1)->text()); // No period set
-        $this->assertSame("Brouillon", $draftRow0->eq(2)->text());
+        $pageOneDraftRow0 = $pageOneDraftRows->eq(0)->filter('td');
+        $this->assertEmpty($pageOneDraftRow0->eq(0)->text()); // No location
+        $this->assertEmpty($pageOneDraftRow0->eq(1)->text()); // No period set
+        $this->assertSame("Brouillon", $pageOneDraftRow0->eq(2)->text());
 
-        $draftRow1 = $draftRows->eq(1)->filter('td');
-        $this->assertSame("Savenay Route du Grand Brossais", $draftRow1->eq(0)->text());
-        $this->assertSame("du 08/12/2022 au 18/12/2022", $draftRow1->eq(1)->text());
-        $this->assertSame("Brouillon", $draftRow1->eq(2)->text());
+        $pageTwo = $client->request('GET', '/?page=2&tab=draft&pageSize=1');
+        $this->assertResponseStatusCodeSame(200);
 
-        $publishedRows = $crawler->filter('#published-panel tbody > tr');
-        $this->assertSame(1, $publishedRows->count());
+        $tabs = $pageTwo->filter('.fr-tabs__list')->eq(0);
+        $this->assertSame("Brouillons (2) Publiée (1)", $tabs->text());
 
-        $publishedRow0 = $publishedRows->eq(0)->filter('td');
-        $this->assertEmpty($publishedRow0->eq(0)->text()); // No location
-        $this->assertSame("depuis le 08/10/2022 permanent", $publishedRow0->eq(1)->text());
-        $this->assertSame("Réglementation en cours", $publishedRow0->eq(2)->text());
+        $pageTwoDraftRows = $pageTwo->filter('#draft-panel tbody > tr');
+        $pageTwoDraftRow1 = $pageTwoDraftRows->eq(0)->filter('td');
+
+        $this->assertSame("Savenay Route du Grand Brossais", $pageTwoDraftRow1->eq(0)->text());
+        $this->assertSame("du 08/12/2022 au 18/12/2022", $pageTwoDraftRow1->eq(1)->text());
+        $this->assertSame("Brouillon", $pageTwoDraftRow1->eq(2)->text());
+
+        // Test published reglementation rendering
+        $pageOnePublishedRows = $pageOne->filter('#published-panel tbody > tr');
+        $this->assertSame(1, $pageOnePublishedRows->count());
+
+        $pageOnePublishedRow0 = $pageOnePublishedRows->eq(0)->filter('td');
+        $this->assertEmpty($pageOnePublishedRow0->eq(0)->text()); // No location
+        $this->assertSame("depuis le 08/10/2022 permanent", $pageOnePublishedRow0->eq(1)->text());
+        $this->assertSame("Réglementation en cours", $pageOnePublishedRow0->eq(2)->text());
+
+        // Test pagination rendering
+        $navLi = $pageOne->filter('nav.fr-pagination')->filter('li');
+        $this->assertSame("Première page", $navLi->eq(0)->filter('a')->text());
+        $this->assertSame("Page précédente", $navLi->eq(1)->filter('a')->text());
+        $this->assertSame("1", $navLi->eq(2)->filter('a')->text());
+        $this->assertSame("2", $navLi->eq(3)->filter('a')->text());
+        $this->assertSame("Page suivante", $navLi->eq(4)->filter('a')->text());
+        $this->assertSame("Dernière page", $navLi->eq(5)->filter('a')->text());
+    }
+
+    public function testInvalidPageSize(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/?pageSize=0');
+        $this->assertResponseStatusCodeSame(400);
+
+        $client->request('GET', '/?pageSize=-1');
+        $this->assertResponseStatusCodeSame(400);
+
+        $client->request('GET', '/?pageSize=abc');
+        $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function testInvalidPageNumber(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/?page=0');
+        $this->assertResponseStatusCodeSame(400);
+
+        $client->request('GET', '/?page=-1');
+        $this->assertResponseStatusCodeSame(400);
+
+        $client->request('GET', '/?page=abc');
+        $this->assertResponseStatusCodeSame(400);
     }
 }

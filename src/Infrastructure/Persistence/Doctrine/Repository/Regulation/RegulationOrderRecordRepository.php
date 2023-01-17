@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Domain\Pagination;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -17,7 +16,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
-    public function findRegulations(int $page, string $status): array
+    public function findRegulations(int $maxItemsPerPage, int $page, string $status): array
     {
         return $this->createQueryBuilder('roc')
             ->select('roc.uuid, o.startPeriod, o.endPeriod, roc.status, l.city, l.roadName')
@@ -28,8 +27,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('rc.overallPeriod', 'o')
             ->leftJoin('rc.location', 'l')
             ->orderBy('o.startPeriod', 'DESC')
-            ->setFirstResult(Pagination::MAX_ITEMS_PER_PAGE * ($page - 1))
-            ->setMaxResults(Pagination::MAX_ITEMS_PER_PAGE)
+            ->setFirstResult($maxItemsPerPage * ($page - 1))
+            ->setMaxResults($maxItemsPerPage)
             ->getQuery()
             ->getResult()
         ;

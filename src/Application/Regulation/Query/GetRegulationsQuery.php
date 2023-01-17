@@ -10,7 +10,8 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 final class GetRegulationsQuery implements QueryInterface
 {
     public function __construct(
-        public readonly int $page = 1,
+        public readonly int $pageSize,
+        public readonly int $page,
         public readonly string $status = RegulationOrderRecordStatusEnum::DRAFT,
     ) {
     }
