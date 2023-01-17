@@ -2,56 +2,28 @@
 
 {% block body %}
     <h3>{{ 'regulation.list.title'|trans }}</h3>
-    <a href="{{ path('app_regulations_steps_1') }}">{{ "regulation.list.add_button"|trans }}</a>
-    <div class="fr-table fr-table--layout-fixed">
-        <table>
-            <thead>
-                <tr>
-                    <th scope="col">{{ 'regulation.step1.issuing_authority'|trans }}</th>
-                    <th scope="col">{{ 'regulation.period'|trans }}</th>
-                    <th scope="col">{{ 'common.actions'|trans }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for obj in regulationOrders %}
-                    {% set startPeriod = obj.period.startPeriod %}
-                    {% set endPeriod = obj.period.endPeriod %}
-                    <tr>
-                        <td>{{ obj.issuingAuthority }}</td>
-                        <td>
-                            {% if startPeriod and endPeriod %}
-                                {{ 'regulation.period.temporary'|trans({
-                                    '%startPeriod%': startPeriod|date('d/m/Y'),
-                                    '%endPeriod%': endPeriod|date('d/m/Y'),
-                                })}}
-                            {% else %}
-                                {% if "now"|date('U') >= startPeriod|date('U') %}
-                                    {{ 'regulation.period.permanent.present'|trans({
-                                        '%date%': startPeriod|date('d/m/Y'),
-                                    })}}
-                                {% else %}
-                                    {{ 'regulation.period.permanent.future'|trans({
-                                        '%date%': startPeriod|date('d/m/Y'),
-                                    })}}
-                                {% endif %}
-                                <p class="fr-badge fr-badge--sm fr-badge--success fr-badge--no-icon">
-                                    {{ 'common.permanent'|trans}}
-                                </p>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ path('app_regulations_steps_1', { uuid: obj.uuid }) }}">Edit</a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3">
-                            <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <a href="{{ path('app_regulations_steps_1') }}" class="fr-btn fr-btn--sm">
+        {{ "regulation.list.add_button"|trans }}
+    </a>
+    <div class="fr-tabs fr-mt-2w">
+        <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.list.title'|trans }}">
+            <li role="presentation">
+                <button id="draft" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="draft-panel">
+                    {{ 'regulation.list.total_draft'|trans({'%count%': draftPagination.totalItems}) }}
+                </button>
+            </li>
+            <li role="presentation">
+                <button id="published" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="false" aria-controls="published-panel">
+                    {{ 'regulation.list.total_published'|trans({'%count%': publishedPagination.totalItems}) }}
+                </button>
+            </li>
+        </ul>
+        <div id="draft-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="draft" tabindex="0">
+            {% include "regulation/_items.html.twig" with { pagination: draftPagination } only %}
+        </div>
+        <div id="published-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="published" tabindex="1">
+            {% include "regulation/_items.html.twig" with { pagination: publishedPagination } only %}
+        </div>
     </div>
     <a href="{{ path('api_regulations_list', { _format: 'xml' }) }}" target="_blank">
         {{ "regulation.link.datex"|trans }}
