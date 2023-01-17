@@ -10,27 +10,34 @@ use App\Domain\Geography\Coordinates;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class IGNGeocoder implements GeocoderInterface
+final class APIAdresseGeocoder implements GeocoderInterface
 {
     public function __construct(
         private HttpClientInterface $http,
     ) {
     }
 
-    public function computeCoordinates(string $address): Coordinates
-    {
-        // See: https://geoservices.ign.fr/documentation/services/api-et-services-ogc/geocodage-20/doc-technique-api-geocodage
+    public function computeCoordinates(
+        string $postalCode,
+        string $city,
+        string $road,
+        string $houseNumber,
+    ): Coordinates {
+        // See: https://adresse.data.gouv.fr/api-doc/adresse
+        $url = 'https://api-adresse.data.gouv.fr/search/';
 
-        $url = 'https://wxs.ign.fr/essentiels/geoportail/geocodage/rest/0.1/search';
+        $q = sprintf('%s %s %s %s', $houseNumber, $road, $postalCode, $city);
 
         $response = $this->http->request('GET', $url, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
             'query' => [
-                'q' => $address,
-                'type' => 'housenumber',
+                'q' => $q,
                 'limit' => 1,
+                // Hints for the API
+                'type' => 'housenumber',
+                'postcode' => $postalCode,
             ],
         ]);
 
@@ -51,7 +58,8 @@ final class IGNGeocoder implements GeocoderInterface
             throw new GeocodingFailureException($message);
         }
 
-        // ... And be very defensive when decoding the response data.
+        // Decode the data according to the GeoJSON FeatureCollection spec.
+        // Fail fast if we encounter any unexpected format issue.
 
         try {
             $data = $response->toArray(false);
@@ -81,18 +89,18 @@ final class IGNGeocoder implements GeocoderInterface
             throw new GeocodingFailureException('key error: coordinates');
         }
 
-        $coords = $point['geometry']['coordinates'];
+        // Caution: GeoJSON uses (lon, lat), but we process (lat, lon). (There's no standard on this.)
+        $lonLat = $point['geometry']['coordinates'];
 
         // Phew. Let's do a final check on the coordinates.
 
-        if (\count($coords) != 2) {
-            $message = sprintf('expected 2 coordinates, got %d', \count($coords));
+        if (\count($lonLat) != 2) {
+            $message = sprintf('expected 2 coordinates, got %d', \count($lonLat));
             throw new GeocodingFailureException($message);
         }
 
-        // Caution: IGN's geocoding API returns (lon, lat), but we process (lat, lon). (There's no standard on this.)
-        $longitude = $coords[0];
-        $latitude = $coords[1];
+        $longitude = $lonLat[0];
+        $latitude = $lonLat[1];
 
         return Coordinates::fromLatLon($latitude, $longitude);
     }

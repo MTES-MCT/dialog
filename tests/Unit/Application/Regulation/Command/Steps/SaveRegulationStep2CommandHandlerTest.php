@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Domain\Regulation\Command\Steps;
 
 use App\Application\GeocoderInterface;
+use App\Application\GeographyFormatterInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
@@ -14,6 +15,7 @@ use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Infrastructure\Adapter\DoctrinePostGISGeographyFormatter;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep2CommandHandlerTest extends TestCase
@@ -76,6 +78,15 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
                 Coordinates::fromLatLon(47.347917, -1.930973),
             );
 
+        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
+        $geographyFormatter
+            ->expects(self::exactly(2))
+            ->method('formatPoint')
+            ->willReturnOnConsecutiveCalls(
+                'POINT(47.347024 -1.935836)',
+                'POINT(47.347917 -1.930973)',
+            );
+
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationCondition: $this->regulationCondition,
@@ -98,6 +109,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $idFactory,
             $locationRepository,
             $geocoder,
+            $geographyFormatter,
         );
 
         $command = new SaveRegulationStep2Command($this->regulationOrderRecord);
@@ -136,10 +148,19 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeCoordinates')
             ->willReturnOnConsecutiveCalls(
-                new Coordinates(47.347024, -1.935836),
-                new Coordinates(47.347917, -1.930973),
+                Coordinates::fromLatLon(47.347024, -1.935836),
+                Coordinates::fromLatLon(47.347917, -1.930973),
             );
 
+        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
+        $geographyFormatter
+            ->expects(self::exactly(2))
+            ->method('formatPoint')
+            ->willReturnOnConsecutiveCalls(
+                'POINT(47.347024 -1.935836)',
+                'POINT(47.347917 -1.930973)',
+            );
+    
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::never())
@@ -149,6 +170,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $idFactory,
             $locationRepository,
             $geocoder,
+            $geographyFormatter,
         );
 
         $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
@@ -217,6 +239,11 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
+        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
+        $geographyFormatter
+            ->expects(self::never())
+            ->method('formatPoint');    
+
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::never())
@@ -226,6 +253,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $idFactory,
             $locationRepository,
             $geocoder,
+            $geographyFormatter,
         );
 
         $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);

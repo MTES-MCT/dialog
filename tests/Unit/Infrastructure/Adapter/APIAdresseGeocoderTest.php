@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
-use App\Infrastructure\Adapter\IGNGeocoder;
+use App\Infrastructure\Adapter\APIAdresseGeocoder;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class IGNGeocoderTest extends TestCase
+final class APIAdresseGeocoderTest extends TestCase
 {
-    private $address = '15 Route du Grand Brossais, 44260 Savenay';
+    private $postalCode = '44260';
+    private $city = 'Savenay';
+    private $roadName = 'Route du Grand Brossais';
+    private $houseNumber = '15';
 
     public function testComputeCoordinates(): void
     {
@@ -20,9 +23,9 @@ final class IGNGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new IGNGeocoder($http);
+        $geocoder = new APIAdresseGeocoder($http);
 
-        $coords = $geocoder->computeCoordinates($this->address);
+        $coords = $geocoder->computeCoordinates($this->postalCode, $this->city, $this->roadName, $this->houseNumber);
 
         $this->assertSame(44.3, $coords->getLatitude());
         $this->assertSame(0.5, $coords->getLongitude());
@@ -31,13 +34,13 @@ final class IGNGeocoderTest extends TestCase
     private function provideStatusErrorData(): array {
         return [
             [503, '/server error: HTTP 503$/'],
-            // These could happen if IGN's geocoding API parameters or authentication change.
-            // In that case, we want the app to fail loudly.
+            // This could happen if API Adresse is updated or if we use wrong parameters.
             [400, '/client error: HTTP 400$/'],
+            // These cases shouldn't happen because API Adresse does not require authentication
+            // and shouldn't mess with redirects.
+            // But let's handle and test them too.
             [401, '/client error: HTTP 401$/'],
             [403, '/client error: HTTP 403$/'],
-            // This shouldn't happen unless IGN's geoservice gets messed up.
-            // But let's handle and test this case too.
             [303, '/too many redirects: HTTP 303$/'],
         ];
     }
@@ -53,8 +56,8 @@ final class IGNGeocoderTest extends TestCase
         $response = new MockResponse('...', ['http_code' => $statusCode]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new IGNGeocoder($http);
-        $geocoder->computeCoordinates($this->address);
+        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder->computeCoordinates($this->postalCode, $this->city, $this->roadName, $this->houseNumber);
     }
 
     private function provideDecodeErrorData(): array {
@@ -78,7 +81,7 @@ final class IGNGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new IGNGeocoder($http);
-        $geocoder->computeCoordinates($this->address);
+        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder->computeCoordinates($this->postalCode, $this->city, $this->roadName, $this->houseNumber);
     }
 }

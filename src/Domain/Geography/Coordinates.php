@@ -6,7 +6,7 @@ namespace App\Domain\Geography;
 
 class Coordinates
 {
-    public function __construct(
+    private function __construct(
         private float $latitude,
         private float $longitude,
     ) {
