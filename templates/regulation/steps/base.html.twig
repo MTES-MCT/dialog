@@ -5,7 +5,7 @@
         { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
         { title: 'regulation.list.add_button'},
     ]} %}
-    {% include "regulation/steps/stepper.html.twig" with {
+    {% include "regulation/steps/_stepper.html.twig" with {
         'stepName': 'regulation.stepper.step' ~ stepNumber,
         'stepNumber': stepNumber,
         'nextStep': 'regulation.stepper.step' ~ (stepNumber + 1),

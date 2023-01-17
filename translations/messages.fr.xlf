@@ -34,6 +34,10 @@
                 <source>common.legals</source>
                 <target>Mentions légales</target>
             </trans-unit>
+            <trans-unit id="common.update">
+                <source>common.update</source>
+                <target>Modifier</target>
+            </trans-unit>
             <trans-unit id="common.cancel">
                 <source>common.cancel</source>
                 <target>Annuler</target>
@@ -44,7 +48,7 @@
             </trans-unit>
             <trans-unit id="common.permanent">
                 <source>common.permanent</source>
-                <target>Permanent</target>
+                <target>permanent</target>
             </trans-unit>
             <trans-unit id="common.back">
                 <source>common.back</source>
@@ -72,7 +76,27 @@
             </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
-                <target>Restrictions de circulation</target>
+                <target>Réglementations</target>
+            </trans-unit>
+            <trans-unit id="regulation.status.draft">
+                <source>regulation.status.draft</source>
+                <target>Brouillon</target>
+            </trans-unit>
+            <trans-unit id="regulation.status">
+                <source>regulation.status</source>
+                <target>Statut</target>
+            </trans-unit>
+            <trans-unit id="regulation.city">
+                <source>regulation.city</source>
+                <target>Commune</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.total_draft">
+                <source>regulation.list.total_draft</source>
+                <target>{0}Brouillon (0)|{1}Brouillon (1)|]1,Inf[Brouillons (%count%)</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.total_published">
+                <source>regulation.list.total_published</source>
+                <target>{0}Publiée (0)|{1}Publiée (1)|]1,Inf[Publiées (%count%)</target>
             </trans-unit>
             <trans-unit id="regulation.link.datex">
                 <source>regulation.link.datex</source>
@@ -157,6 +181,18 @@
             <trans-unit id="regulation.period.permanent.present">
                 <source>regulation.period.permanent.present</source>
                 <target>depuis le %date%</target>
+            </trans-unit>
+            <trans-unit id="regulation.present">
+                <source>regulation.present</source>
+                <target>Réglementation en cours</target>
+            </trans-unit>
+            <trans-unit id="regulation.past">
+                <source>regulation.past</source>
+                <target>Réglementation passée</target>
+            </trans-unit>
+            <trans-unit id="regulation.future">
+                <source>regulation.future</source>
+                <target>Réglementation à venir</target>
             </trans-unit>
             <trans-unit id="regulation.period.permanent.future">
                 <source>regulation.period.permanent.future</source>

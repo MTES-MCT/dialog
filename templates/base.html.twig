@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="fr" data-fr-scheme="system">
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-design/icons-design.min.css') }}">
     <link rel="apple-touch-icon" href="{{ asset('build/dsfr/favicon/apple-touch-icon.png') }}"><!-- 180×180 -->
     <link rel="icon" href="{{ asset('build/dsfr/favicon/favicon.svg') }}" type="image/svg+xml">
     <link rel="shortcut icon" href="{{ asset('build/dsfr/favicon/favicon.ico') }}" type="image/x-icon"><!-- 32×32 -->
@@ -29,5 +30,7 @@
         </section>
     </main>
     {% include 'common/footer.html.twig' %}
+    <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
+    <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
   </body>
 </html>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Pagination;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,17 +17,32 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
-    public function findAll(): array
+    public function findRegulations(int $page, string $status): array
     {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, o.startPeriod, ro.issuingAuthority, o.endPeriod')
+            ->select('roc.uuid, o.startPeriod, o.endPeriod, roc.status, l.city, l.roadName')
+            ->where('roc.status = :status')
+            ->setParameter('status', $status)
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.regulationCondition', 'rc')
-            ->innerJoin('rc.overallPeriod', 'o')
+            ->leftJoin('rc.overallPeriod', 'o')
+            ->leftJoin('rc.location', 'l')
             ->orderBy('o.startPeriod', 'DESC')
-            ->setMaxResults(20)
+            ->setFirstResult(Pagination::MAX_ITEMS_PER_PAGE * ($page - 1))
+            ->setMaxResults(Pagination::MAX_ITEMS_PER_PAGE)
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    public function countRegulations(string $status): int
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->where('roc.status = :status')
+            ->setParameter('status', $status)
+            ->getQuery()
+            ->getSingleScalarResult()
         ;
     }
 

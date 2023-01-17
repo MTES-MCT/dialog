@@ -1,0 +1,68 @@
+<div class="fr-table fr-table--layout-fixed">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">{{ 'regulation.city'|trans }}</th>
+                <th scope="col">{{ 'regulation.period'|trans }}</th>
+                <th scope="col">{{ 'regulation.status'|trans }}</th>
+                <th scope="col">{{ 'common.actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for regulation in pagination.items %}
+                <tr>
+                    <td>
+                        {% if regulation.location %}
+                            <b>{{ regulation.location.city }}</b><br/>
+                            {{ regulation.location.roadName }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if regulation.period %}
+                            {% set startPeriod = regulation.period.startPeriod %}
+                            {% set endPeriod = regulation.period.endPeriod %}
+                            {% set isPresent = "now"|date('U') >= startPeriod|date('U') %}
+                            {% if startPeriod and endPeriod %}
+                                <b>
+                                    {{ 'regulation.period.temporary'|trans({ '%startPeriod%': startPeriod|date('d/m/Y'), '%endPeriod%': endPeriod|date('d/m/Y') })}}
+                                </b>
+                            {% else %}
+                                <b>
+                                    {% if isPresent %}
+                                        {{ 'regulation.period.permanent.present'|trans({ '%date%': startPeriod|date('d/m/Y')  })}}
+                                    {% else %}
+                                        {{ 'regulation.period.permanent.future'|trans({ '%date%': startPeriod|date('d/m/Y') })}}
+                                    {% endif %}
+                                </b>
+                                <br/>
+                                <em>{{ 'common.permanent'|trans}}</em>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if regulation.status == 'draft' %}
+                            <p class="fr-badge fr-badge--info">{{'regulation.status.draft'|trans}}</p>
+                        {% elseif regulation.status == 'published' %}
+                            {% if isPresent %}
+                                <p class="fr-badge fr-badge--success">{{'regulation.present'|trans}}</p>
+                            {% else %}
+                                <p class="fr-badge fr-badge--new">{{'regulation.future'|trans}}</p>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a title="{{ 'common.update'|trans }}" href="{{ path('app_regulations_steps_1', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                            {{ 'common.update'|trans }}
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">
+                        <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

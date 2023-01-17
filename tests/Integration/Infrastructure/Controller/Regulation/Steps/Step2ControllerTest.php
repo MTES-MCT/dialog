@@ -11,7 +11,7 @@ final class Step2ControllerTest extends WebTestCase
     public function testAdd(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2');
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Étape 2 sur 5 Localisation', $crawler->filter('h2')->text());
@@ -36,7 +36,7 @@ final class Step2ControllerTest extends WebTestCase
     public function testInvalidForm(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2');
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
 
         $this->assertResponseStatusCodeSame(200);
         $saveButton = $crawler->selectButton("Suivant");
@@ -70,7 +70,7 @@ final class Step2ControllerTest extends WebTestCase
     public function testInvalidPostalCode(string $postalCode): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2');
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
 
         $this->assertResponseStatusCodeSame(200);
         $saveButton = $crawler->selectButton("Suivant");
