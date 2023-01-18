@@ -59,4 +59,16 @@ final class Step1ControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(400);
     }
+
+    public function testCancel(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $client->clickLink('Annuler');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_regulations_list');
+    }
+
 }

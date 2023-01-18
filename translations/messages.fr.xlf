@@ -34,6 +34,10 @@
                 <source>common.legals</source>
                 <target>Mentions légales</target>
             </trans-unit>
+            <trans-unit id="common.save">
+                <source>common.save</source>
+                <target>Sauvegarder</target>
+            </trans-unit>
             <trans-unit id="common.update">
                 <source>common.update</source>
                 <target>Modifier</target>
