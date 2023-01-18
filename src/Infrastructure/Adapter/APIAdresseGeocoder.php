@@ -17,85 +17,92 @@ final class APIAdresseGeocoder implements GeocoderInterface
     ) {
     }
 
-    public function computeCoordinates(
-        string $postalCode,
-        string $city,
-        string $road,
-        string $houseNumber,
-    ): Coordinates {
+    public function computeCoordinates(string $address, ?string $postalCodeHint = null): Coordinates
+    {
         // See: https://adresse.data.gouv.fr/api-doc/adresse
         $url = 'https://api-adresse.data.gouv.fr/search/';
 
-        $q = sprintf('%s %s %s %s', $houseNumber, $road, $postalCode, $city);
+        $query = [
+            'q' => $address,
+            'limit' => 1,
+            'type' => 'housenumber',
+        ];
+
+        if ($postalCodeHint) {
+            $query['postcode'] = $postalCodeHint;
+        }
 
         $response = $this->http->request('GET', $url, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
-            'query' => [
-                'q' => $q,
-                'limit' => 1,
-                // Hints for the API
-                'type' => 'housenumber',
-                'postcode' => $postalCode,
-            ],
+            'query' => $query,
         ]);
+
+        $requestUrl = $response->getInfo()['url'];
+        $errorMsgPrefix = sprintf('requesting %s', $requestUrl);
 
         // Check the response status...
 
         if ($response->getStatusCode() >= 500) {
-            $message = sprintf('server error: HTTP %d', $response->getStatusCode());
+            $message = sprintf('%s: server error: HTTP %d', $errorMsgPrefix, $response->getStatusCode());
             throw new GeocodingFailureException($message);
         }
 
         if ($response->getStatusCode() >= 400) {
-            $message = sprintf('client error: HTTP %d', $response->getStatusCode());
+            $message = sprintf('%s: client error: HTTP %d', $errorMsgPrefix, $response->getStatusCode());
             throw new GeocodingFailureException($message);
         }
 
         if ($response->getStatusCode() >= 300) {
-            $message = sprintf('too many redirects: HTTP %d', $response->getStatusCode());
+            $message = sprintf('%s: too many redirects: HTTP %d', $errorMsgPrefix, $response->getStatusCode());
             throw new GeocodingFailureException($message);
         }
 
-        // Decode the data according to the GeoJSON FeatureCollection spec.
-        // Fail fast if we encounter any unexpected format issue.
+        // API Adresse returns a GeoJSON `FeatureCollection` object.
+        // Decode it carefully according to the spec.
+        // See: https://www.rfc-editor.org/rfc/rfc7946#section-3.3
 
         try {
             $data = $response->toArray(false);
         } catch (DecodingExceptionInterface $exc) {
-            $message = sprintf('invalid json: %s', $exc->getMessage());
+            $message = sprintf('%s: invalid json: %s', $errorMsgPrefix, $exc->getMessage());
             throw new GeocodingFailureException($message);
         }
 
         // We want $data['features'][0]['geometry']['coordinates'].
 
         if (!\array_key_exists('features', $data)) {
-            throw new GeocodingFailureException('key error: features');
+            $message = sprintf('%s: key error: features', $errorMsgPrefix);
+            throw new GeocodingFailureException($message);
         }
 
         if (\count($data['features']) == 0) {
-            $message = 'error: expected 1 result, got 0';
+            $message = sprintf('%s: error: expected 1 result, got 0', $errorMsgPrefix);
             throw new GeocodingFailureException($message);
         }
 
         $point = $data['features'][0];
 
         if (!\array_key_exists('geometry', $point)) {
-            throw new GeocodingFailureException('key error: geometry');
+            $message = sprintf('%s: key error: geometry', $errorMsgPrefix);
+            throw new GeocodingFailureException($message);
         }
 
         if (!\array_key_exists('coordinates', $point['geometry'])) {
-            throw new GeocodingFailureException('key error: coordinates');
+            $message = sprintf('%s: key error: coordinates', $errorMsgPrefix);
+            throw new GeocodingFailureException($message);
         }
 
-        // Caution: GeoJSON uses (lon, lat), but we process (lat, lon). (There's no standard on this.)
+        // Caution: GeoJSON uses (longitude, latitude).
+        // See: https://www.rfc-editor.org/rfc/rfc7946#section-3.1.1
+        // But we process (latitude, longitude). (There's no standard on this.)
         $lonLat = $point['geometry']['coordinates'];
 
         // Phew. Let's do a final check on the coordinates.
 
         if (\count($lonLat) != 2) {
-            $message = sprintf('expected 2 coordinates, got %d', \count($lonLat));
+            $message = sprintf('%s: expected 2 coordinates, got %d', $errorMsgPrefix, \count($lonLat));
             throw new GeocodingFailureException($message);
         }
 

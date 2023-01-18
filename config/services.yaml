@@ -28,6 +28,13 @@ services:
         resource: '../src/Infrastructure/Controller/'
         tags: ['controller.service_arguments']
 
+    # ----------------
+    # Console commands
+    # ----------------
+    App\Infrastructure\Symfony\Command\:
+        resource: '../src/Infrastructure/Symfony/Command/'
+        tags: ['console.command']
+
     # -------------------
     # Command & Query bus
     # -------------------

@@ -22,7 +22,8 @@ final class SaveRegulationStep2CommandHandler
 
     private function computePoint(string $postalCode, string $city, string $roadName, string $houseNumber): string
     {
-        $coords = $this->geocoder->computeCoordinates($postalCode, $city, $roadName, $houseNumber);
+        $address = sprintf('%s %s %s %s', $houseNumber, $roadName, $postalCode, $city);
+        $coords = $this->geocoder->computeCoordinates($address, postalCodeHint: $postalCode);
 
         return $this->geographyFormatter->formatPoint($coords->getLatitude(), $coords->getLongitude());
     }

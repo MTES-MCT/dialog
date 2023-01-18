@@ -12,10 +12,8 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 final class APIAdresseGeocoderTest extends TestCase
 {
+    private $address = '15 Route du Grand Brossais 44260 Savenay';
     private $postalCode = '44260';
-    private $city = 'Savenay';
-    private $roadName = 'Route du Grand Brossais';
-    private $houseNumber = '15';
 
     public function testComputeCoordinates(): void
     {
@@ -25,23 +23,48 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $geocoder = new APIAdresseGeocoder($http);
 
-        $coords = $geocoder->computeCoordinates($this->postalCode, $this->city, $this->roadName, $this->houseNumber);
+        $coords = $geocoder->computeCoordinates($this->address, postalCodeHint: $this->postalCode);
 
         $this->assertSame(44.3, $coords->getLatitude());
         $this->assertSame(0.5, $coords->getLongitude());
+
+        $this->assertSame('GET', $response->getRequestMethod());
+        $this->assertSame(
+            'https://api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber&postcode=44260',
+            $response->getRequestUrl()
+        );
+    }
+
+    public function testComputeCoordinatesPostCodeHintOmitted(): void {
+        $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
+        $response = new MockResponse($body, ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+
+        $coords = $geocoder->computeCoordinates($this->address);
+
+        $this->assertSame(44.3, $coords->getLatitude());
+        $this->assertSame(0.5, $coords->getLongitude());
+
+        $this->assertSame('GET', $response->getRequestMethod());
+        $this->assertSame(
+            'https://api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
+            $response->getRequestUrl()
+        );
     }
 
     private function provideStatusErrorData(): array {
         return [
-            [503, '/server error: HTTP 503$/'],
+            [503, '/requesting https:\/\/.*: server error: HTTP 503$/'],
             // This could happen if API Adresse is updated or if we use wrong parameters.
-            [400, '/client error: HTTP 400$/'],
+            [400, '/requesting https:\/\/.*: client error: HTTP 400$/'],
             // These cases shouldn't happen because API Adresse does not require authentication
             // and shouldn't mess with redirects.
             // But let's handle and test them too.
-            [401, '/client error: HTTP 401$/'],
-            [403, '/client error: HTTP 403$/'],
-            [303, '/too many redirects: HTTP 303$/'],
+            [401, '/requesting https:\/\/.*: client error: HTTP 401$/'],
+            [403, '/requesting https:\/\/.*: client error: HTTP 403$/'],
+            [303, '/requesting https:\/\/.*: too many redirects: HTTP 303$/'],
         ];
     }
 
@@ -57,17 +80,17 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $geocoder->computeCoordinates($this->postalCode, $this->city, $this->roadName, $this->houseNumber);
+        $geocoder->computeCoordinates($this->address);
     }
 
     private function provideDecodeErrorData(): array {
         return [
-            ['{"features": }', '/^invalid json/'],
-            ['{}', '/^key error: features/'],
-            ['{"features": []}', '/expected 1 result, got 0$/'],
-            ['{"features": [{}]}', '/^key error: geometry/'],
-            ['{"features": [{"geometry": {}}]}', '/^key error: coordinates/'],
-            ['{"features": [{"geometry": {"coordinates": [42]}}]}', '/^expected 2 coordinates, got 1/'],
+            ['{"features": }', '/^requesting https:\/\/.*: invalid json: .*$/'],
+            ['{}', '/^requesting https:\/\/.*: key error: features$/'],
+            ['{"features": []}', '/requesting https:\/\/.*: expected 1 result, got 0$/'],
+            ['{"features": [{}]}', '/^requesting https:\/\/.*: key error: geometry$/'],
+            ['{"features": [{"geometry": {}}]}', '/^requesting https:\/\/.*: key error: coordinates$/'],
+            ['{"features": [{"geometry": {"coordinates": [42]}}]}', '/^requesting https:\/\/.*: expected 2 coordinates, got 1$/'],
         ];
     }
 
@@ -82,6 +105,6 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $geocoder->computeCoordinates($this->postalCode, $this->city, $this->roadName, $this->houseNumber);
+        $geocoder->computeCoordinates($this->address);
     }
 }
