@@ -25,7 +25,7 @@ final class SaveRegulationStep2CommandHandler
         $address = sprintf('%s %s %s %s', $houseNumber, $roadName, $postalCode, $city);
         $coords = $this->geocoder->computeCoordinates($address, postalCodeHint: $postalCode);
 
-        return $this->geographyFormatter->formatPoint($coords->getLatitude(), $coords->getLongitude());
+        return $this->geographyFormatter->formatPoint($coords->latitude, $coords->longitude);
     }
 
     public function __invoke(SaveRegulationStep2Command $command): void

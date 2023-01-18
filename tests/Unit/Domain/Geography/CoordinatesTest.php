@@ -12,7 +12,7 @@ final class CoordinatesTest extends TestCase
     public function testGetters(): void
     {
         $coords = Coordinates::fromLatLon(43.6, -1.9);
-        $this->assertSame(43.6, $coords->getLatitude());
-        $this->assertSame(-1.9, $coords->getLongitude());
+        $this->assertSame(43.6, $coords->latitude);
+        $this->assertSame(-1.9, $coords->longitude);
     }
 }

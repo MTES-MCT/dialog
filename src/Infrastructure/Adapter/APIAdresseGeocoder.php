@@ -14,13 +14,13 @@ final class APIAdresseGeocoder implements GeocoderInterface
 {
     public function __construct(
         private HttpClientInterface $http,
+        private string $apiAdresseSearchUrl,
     ) {
     }
 
     public function computeCoordinates(string $address, ?string $postalCodeHint = null): Coordinates
     {
         // See: https://adresse.data.gouv.fr/api-doc/adresse
-        $url = 'https://api-adresse.data.gouv.fr/search/';
 
         $query = [
             'q' => $address,
@@ -32,7 +32,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             $query['postcode'] = $postalCodeHint;
         }
 
-        $response = $this->http->request('GET', $url, [
+        $response = $this->http->request('GET', $this->apiAdresseSearchUrl, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -77,7 +77,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             throw new GeocodingFailureException($message);
         }
 
-        if (\count($data['features']) == 0) {
+        if (\count($data['features']) === 0) {
             $message = sprintf('%s: error: expected 1 result, got 0', $errorMsgPrefix);
             throw new GeocodingFailureException($message);
         }
@@ -101,7 +101,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
         // Phew. Let's do a final check on the coordinates.
 
-        if (\count($lonLat) != 2) {
+        if (\count($lonLat) !== 2) {
             $message = sprintf('%s: expected 2 coordinates, got %d', $errorMsgPrefix, \count($lonLat));
             throw new GeocodingFailureException($message);
         }

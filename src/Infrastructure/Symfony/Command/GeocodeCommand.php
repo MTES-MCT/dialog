@@ -6,18 +6,24 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\GeocoderInterface;
 use App\Application\GeographyFormatterInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'app:geocode',
+    description: 'Geocode an address like the server would',
+    hidden: false,
+)]
 class GeocodeCommand extends Command
 {
     public function __construct(
         private GeocoderInterface $geocoder,
         private GeographyFormatterInterface $geographyFormatter,
     ) {
-        parent::__construct('app:geocode');
+        parent::__construct();
     }
 
     public function configure(): void
@@ -30,10 +36,9 @@ class GeocodeCommand extends Command
         $address = $input->getArgument('address');
 
         $coords = $this->geocoder->computeCoordinates($address);
-        $point = $this->geographyFormatter->formatPoint($coords->getLatitude(), $coords->getLongitude());
-
+        $point = $this->geographyFormatter->formatPoint($coords->latitude, $coords->longitude);
         $output->writeln($point);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

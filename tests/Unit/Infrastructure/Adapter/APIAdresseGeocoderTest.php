@@ -12,8 +12,8 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 final class APIAdresseGeocoderTest extends TestCase
 {
-    private $address = '15 Route du Grand Brossais 44260 Savenay';
-    private $postalCode = '44260';
+    private string $address = '15 Route du Grand Brossais 44260 Savenay';
+    private string $postalCode = '44260';
 
     public function testComputeCoordinates(): void
     {
@@ -21,40 +21,42 @@ final class APIAdresseGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
 
         $coords = $geocoder->computeCoordinates($this->address, postalCodeHint: $this->postalCode);
 
-        $this->assertSame(44.3, $coords->getLatitude());
-        $this->assertSame(0.5, $coords->getLongitude());
+        $this->assertSame(44.3, $coords->latitude);
+        $this->assertSame(0.5, $coords->longitude);
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber&postcode=44260',
+            'https://mock-api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber&postcode=44260',
             $response->getRequestUrl()
         );
     }
 
-    public function testComputeCoordinatesPostCodeHintOmitted(): void {
+    public function testComputeCoordinatesPostCodeHintOmitted(): void
+    {
         $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
 
         $coords = $geocoder->computeCoordinates($this->address);
 
-        $this->assertSame(44.3, $coords->getLatitude());
-        $this->assertSame(0.5, $coords->getLongitude());
+        $this->assertSame(44.3, $coords->latitude);
+        $this->assertSame(0.5, $coords->longitude);
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
+            'https://mock-api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
             $response->getRequestUrl()
         );
     }
 
-    private function provideStatusErrorData(): array {
+    private function provideStatusErrorData(): array
+    {
         return [
             [503, '/requesting https:\/\/.*: server error: HTTP 503$/'],
             // This could happen if API Adresse is updated or if we use wrong parameters.
@@ -79,11 +81,12 @@ final class APIAdresseGeocoderTest extends TestCase
         $response = new MockResponse('...', ['http_code' => $statusCode]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
         $geocoder->computeCoordinates($this->address);
     }
 
-    private function provideDecodeErrorData(): array {
+    private function provideDecodeErrorData(): array
+    {
         return [
             ['{"features": }', '/^requesting https:\/\/.*: invalid json: .*$/'],
             ['{}', '/^requesting https:\/\/.*: key error: features$/'],
@@ -97,14 +100,15 @@ final class APIAdresseGeocoderTest extends TestCase
     /**
      * @dataProvider provideDecodeErrorData
      */
-    public function testComputeCoordinatesDecodeError(string $body, string $pattern): void {
+    public function testComputeCoordinatesDecodeError(string $body, string $pattern): void
+    {
         $this->expectException(GeocodingFailureException::class);
         $this->expectErrorMessageMatches($pattern);
 
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
         $geocoder->computeCoordinates($this->address);
     }
 }
