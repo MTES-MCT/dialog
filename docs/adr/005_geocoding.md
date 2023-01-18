@@ -10,7 +10,7 @@ Dans le cadre du [MVP](https://github.com/MTES-MCT/dialog/milestone/1), il a ét
 
 Étant donnés deux points de coordonnées géographiques, le format de données DATEX II (voir [ADR-001](./001_exchangeformat.md)) permet de représenter une portion linéaire de route par l'entité `LinearWithinLinearElement`.
 
-L'approche technique est proposée est donc de transformer l'adresse de début et l'adresse de fin (adresse + numéro de fin) en coordonnées géographiques en vue de l'intégrer à l'export DATEX II et _in fine_ les mettre à disposition des GPS.
+L'approche technique proposée est donc de transformer l'adresse de début et l'adresse de fin (adresse + numéro de fin) en coordonnées géographiques en vue de l'intégrer à l'export DATEX II et _in fine_ les mettre à disposition des GPS.
 
 (La représentation DATEX II évoquée ici pourra évoluer avec le retour des GPS et n'est pas l'objet de ce document.)
 
