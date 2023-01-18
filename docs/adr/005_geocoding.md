@@ -115,7 +115,7 @@ Etalab cite des [géocodeurs alternatifs](https://guides.etalab.gouv.fr/apis-geo
 
 > Leurs principaux intérêts sont de pouvoir chercher des POIs, par exemple un centre commercial ou une enseigne ainsi que de marcher sur des données internationales, contrairement à [l'API Adresse].
 
-À l'instant T, le besoin de DiaLog n'incluait ni la rechercher par POI, ni l'accès à des données internationales. Il ne semblait donc pas justifié d'utiliser un géocodeur alternatif.
+À l'instant T, le besoin de DiaLog n'incluait ni la recherche par POI, ni l'accès à des données internationales. Il ne semblait donc pas justifié d'utiliser un géocodeur alternatif.
 
 A fortiori, les géocodeurs propriétaires (exemple : _Geocoding API_ de Google) n'ont pas été envisagés.
 
