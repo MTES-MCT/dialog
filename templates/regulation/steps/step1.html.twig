@@ -5,9 +5,10 @@
         {{ form_errors(form) }}
         {{ form_row(form.description, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
         {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-        {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
+
+        <a href="{{ path('app_regulations_list') }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+            {{ "common.cancel"|trans }}
+        </a>
+        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
     {{ form_end(form) }}
-    <a href="{{ path('app_regulations_list') }}">
-        {{ "common.cancel"|trans }}
-    </a>
 {% endblock %}

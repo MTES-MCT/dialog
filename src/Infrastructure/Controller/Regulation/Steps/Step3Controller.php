@@ -61,6 +61,7 @@ final class Step3Controller extends AbstractStepsController
                 context: [
                     'form' => $form->createView(),
                     'stepNumber' => 3,
+                    'uuid' => $uuid,
                 ],
             ),
         );
