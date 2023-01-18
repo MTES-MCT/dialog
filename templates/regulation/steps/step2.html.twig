@@ -8,9 +8,11 @@
         {{ form_row(form.roadName, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
         {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
         {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-        {{ form_row(form.save, {row_attr: {class: 'fr-mt-2w'}, attr: {class: 'fr-btn'}})}}
+
+        <a href="{{ path('app_regulations_steps_1', {uuid: uuid}) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-arrow-left-line fr-mr-3w">
+            {{ "common.back"|trans }}
+        </a>
+        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
+
     {{ form_end(form) }}
-    <a href="{{ path('app_regulations_list') }}">
-        {{ "common.cancel"|trans }}
-    </a>
 {% endblock %}

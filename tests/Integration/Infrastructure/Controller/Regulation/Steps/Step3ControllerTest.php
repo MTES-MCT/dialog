@@ -68,4 +68,15 @@ final class Step3ControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(400);
     }
+
+    public function testPrevious(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
+        $this->assertResponseStatusCodeSame(200);
+
+        $client->clickLink('Précédent');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_regulations_steps_2', ['uuid' => '4ce75a1f-82f3-40ee-8f95-48d0f04446aa']);
+    }
 }

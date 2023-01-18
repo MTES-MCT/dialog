@@ -61,6 +61,7 @@ final class Step4Controller extends AbstractStepsController
                 context: [
                     'form' => $form->createView(),
                     'stepNumber' => 4,
+                    'uuid' => $uuid,
                 ],
             ),
         );
