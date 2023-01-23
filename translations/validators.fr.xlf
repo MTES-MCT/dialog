@@ -6,6 +6,10 @@
                 <source>regulation.step2.postal_code.error.invalid</source>
                 <target>Cette valeur n'est pas valide. Un code postal est composé de 5 chiffres.</target>
             </trans-unit>
+            <trans-unit id="regulation.step2.error.geocoding_failed">
+                <source>regulation.step2.error.geocoding_failed</source>
+                <target>En raison d'un problème technique, le traitement de cette adresse a échoué. Nous travaillons à rémédier à ce problème dès que possible.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
