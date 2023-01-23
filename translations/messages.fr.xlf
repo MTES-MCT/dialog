@@ -250,6 +250,18 @@
                 <source>pagination.page</source>
                 <target>Page %page%</target>
             </trans-unit>
+            <trans-unit id="landing.title">
+                <source>landing.title</source>
+                <target>Faciliter et sécuriser la circulation</target>
+            </trans-unit>
+            <trans-unit id="landing.description">
+                <source>landing.description</source>
+                <target>Dialog est une plateforme pour les administrations. Elles peuvent y numériser la réglementation des poids lourds (circulation, stationnement…).</target>
+            </trans-unit>
+            <trans-unit id="landing.link">
+                <source>landing.link</source>
+                <target>Accéder à l'outil (authentification requise)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

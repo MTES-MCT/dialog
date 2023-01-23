@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Controller;
+namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -11,7 +11,7 @@ final class ListRegulationsControllerTest extends WebTestCase
     public function testList(): void
     {
         $client = static::createClient();
-        $pageOne = $client->request('GET', '/?pageSize=1');
+        $pageOne = $client->request('GET', '/regulations?pageSize=1');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
@@ -30,7 +30,7 @@ final class ListRegulationsControllerTest extends WebTestCase
         $this->assertEmpty($pageOneDraftRow0->eq(1)->text()); // No period set
         $this->assertSame("Brouillon", $pageOneDraftRow0->eq(2)->text());
 
-        $pageTwo = $client->request('GET', '/?page=2&tab=draft&pageSize=1');
+        $pageTwo = $client->request('GET', '/regulations?page=2&tab=draft&pageSize=1');
         $this->assertResponseStatusCodeSame(200);
 
         $tabs = $pageTwo->filter('.fr-tabs__list')->eq(0);
@@ -65,26 +65,26 @@ final class ListRegulationsControllerTest extends WebTestCase
     public function testInvalidPageSize(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/?pageSize=0');
+        $client->request('GET', '/regulations?pageSize=0');
         $this->assertResponseStatusCodeSame(400);
 
-        $client->request('GET', '/?pageSize=-1');
+        $client->request('GET', '/regulations?pageSize=-1');
         $this->assertResponseStatusCodeSame(400);
 
-        $client->request('GET', '/?pageSize=abc');
+        $client->request('GET', '/regulations?pageSize=abc');
         $this->assertResponseStatusCodeSame(400);
     }
 
     public function testInvalidPageNumber(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/?page=0');
+        $client->request('GET', '/regulations?page=0');
         $this->assertResponseStatusCodeSame(400);
 
-        $client->request('GET', '/?page=-1');
+        $client->request('GET', '/regulations?page=-1');
         $this->assertResponseStatusCodeSame(400);
 
-        $client->request('GET', '/?page=abc');
+        $client->request('GET', '/regulations?page=abc');
         $this->assertResponseStatusCodeSame(400);
     }
 }
