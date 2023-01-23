@@ -10,6 +10,10 @@
                 <source>regulation.step2.error.geocoding_failed</source>
                 <target>En raison d'un problème technique, le traitement de cette adresse a échoué. Nous travaillons à rémédier à ce problème dès que possible.</target>
             </trans-unit>
+            <trans-unit id="invalid.page_or_page_size">
+                <source>invalid.page_or_page_size</source>
+                <target>Le nombre d'éléments par page et/ou le numéro de la page doivent être supérieur à 0.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,0 +1,96 @@
+{% if pagination.lastPage > 1 %}
+    <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+        <ul class="fr-pagination__list">
+            <li>
+                <a class="fr-pagination__link fr-pagination__link--first"
+                    role="link"
+                    {% if currentPage > 1 %}
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: 1 })) }}"
+                    {% else %}
+                        aria-disabled="true"
+                    {% endif %}
+                >
+                    {{ 'pagination.first'|trans }}
+                </a>
+            </li>
+            <li>
+                <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+                    role="link"
+                    {% if currentPage > 1 %}
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: currentPage-1 })) }}"
+                    {% else %}
+                        aria-disabled="true"
+                    {% endif %}
+                >
+                    {{ 'pagination.previous'|trans }}
+                </a>
+            </li>
+            {% if pagination.hasFirstPageLandmark %}
+                <li>
+                    <a class="fr-pagination__link"
+                        title="{{ 'pagination.page'|trans({'%page%': 1}) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: 1 })) }}"
+                    >
+                        1
+                    </a>
+                </li>
+            {% endif %}
+            {% if pagination.hasLeftTruncature %}
+                <li>
+                    <span class="fr-pagination__link fr-unhidden-lg"> ... </span>
+                </li>
+            {% endif %}
+            {% for page in pagination.windowPages %}
+                <li>
+                    <a class="fr-pagination__link"
+                        title="{{ 'pagination.page'|trans({'%page%': page}) }}"
+                        {% if page == currentPage %}
+                            aria-current="page"
+                        {% else %}
+                            href="{{ path('app_regulations_list', queryParams|merge({ page })) }}"
+                        {% endif %}
+                    >
+                        {{ page }}
+                    </a>
+                </li>
+            {% endfor %}
+            {% if pagination.hasRightTruncature %}
+                <li>
+                    <span class="fr-pagination__link fr-unhidden-lg"> ... </span>
+                </li>
+            {% endif %}
+            {% if pagination.hasLastPageLandmark %}
+                <li>
+                    <a class="fr-pagination__link"
+                        title="{{ 'pagination.page'|trans({'%page%': pagination.lastPage }) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: pagination.lastPage })) }}"
+                    >
+                        {{ pagination.lastPage }}
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+                    {% if currentPage + 1 <= pagination.lastPage %}
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: currentPage + 1 })) }}"
+                    {% else %}
+                        aria-disabled="true"
+                    {% endif %}
+                >
+                    {{ 'pagination.next'|trans }}
+                </a>
+            </li>
+            <li>
+                <a class="fr-pagination__link fr-pagination__link--last"
+                    {% if currentPage + 1 <= pagination.lastPage %}
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: pagination.lastPage })) }}"
+                    {% else %}
+                        aria-disabled="true"
+                    {% endif %}
+                >
+                    {{ 'pagination.last'|trans }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}
