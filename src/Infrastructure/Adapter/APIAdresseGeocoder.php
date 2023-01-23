@@ -13,8 +13,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class APIAdresseGeocoder implements GeocoderInterface
 {
     public function __construct(
-        private HttpClientInterface $http,
-        private string $apiAdresseSearchUrl,
+        private HttpClientInterface $apiAdresseClient,
     ) {
     }
 
@@ -32,7 +31,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             $query['postcode'] = $postalCodeHint;
         }
 
-        $response = $this->http->request('GET', $this->apiAdresseSearchUrl, [
+        $response = $this->apiAdresseClient->request('GET', '/search/', [
             'headers' => [
                 'Accept' => 'application/json',
             ],

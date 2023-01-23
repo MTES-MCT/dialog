@@ -19,9 +19,9 @@ final class APIAdresseGeocoderTest extends TestCase
     {
         $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
         $response = new MockResponse($body, ['http_code' => 200]);
-        $http = new MockHttpClient([$response]);
+        $http = new MockHttpClient([$response], 'https://testserver');
 
-        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
+        $geocoder = new APIAdresseGeocoder($http);
 
         $coords = $geocoder->computeCoordinates($this->address, postalCodeHint: $this->postalCode);
 
@@ -30,7 +30,7 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://mock-api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber&postcode=44260',
+            'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber&postcode=44260',
             $response->getRequestUrl()
         );
     }
@@ -39,9 +39,9 @@ final class APIAdresseGeocoderTest extends TestCase
     {
         $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
         $response = new MockResponse($body, ['http_code' => 200]);
-        $http = new MockHttpClient([$response]);
+        $http = new MockHttpClient([$response], 'https://testserver');
 
-        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
+        $geocoder = new APIAdresseGeocoder($http);
 
         $coords = $geocoder->computeCoordinates($this->address);
 
@@ -50,7 +50,7 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://mock-api-adresse.data.gouv.fr/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
+            'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
             $response->getRequestUrl()
         );
     }
@@ -81,7 +81,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $response = new MockResponse('...', ['http_code' => $statusCode]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
+        $geocoder = new APIAdresseGeocoder($http);
         $geocoder->computeCoordinates($this->address);
     }
 
@@ -108,7 +108,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $geocoder = new APIAdresseGeocoder($http, 'https://mock-api-adresse.data.gouv.fr/search/');
+        $geocoder = new APIAdresseGeocoder($http);
         $geocoder->computeCoordinates($this->address);
     }
 }
