@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Domain\Regulation\Command\Steps;
 
 use App\Application\GeocoderInterface;
-use App\Application\GeographyFormatterInterface;
+use App\Domain\Geography\GeometryFormatter;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
@@ -15,7 +15,6 @@ use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Infrastructure\Adapter\DoctrinePostGISGeographyFormatter;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep2CommandHandlerTest extends TestCase
@@ -78,8 +77,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
                 Coordinates::fromLatLon(47.347917, -1.930973),
             );
 
-        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
-        $geographyFormatter
+        $geometryFormatter = $this->createMock(GeometryFormatter::class);
+        $geometryFormatter
             ->expects(self::exactly(2))
             ->method('formatPoint')
             ->willReturnOnConsecutiveCalls(
@@ -109,7 +108,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $idFactory,
             $locationRepository,
             $geocoder,
-            $geographyFormatter,
+            $geometryFormatter,
         );
 
         $command = new SaveRegulationStep2Command($this->regulationOrderRecord);
@@ -152,8 +151,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
                 Coordinates::fromLatLon(47.347917, -1.930973),
             );
 
-        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
-        $geographyFormatter
+        $geometryFormatter = $this->createMock(GeometryFormatter::class);
+        $geometryFormatter
             ->expects(self::exactly(2))
             ->method('formatPoint')
             ->willReturnOnConsecutiveCalls(
@@ -170,7 +169,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $idFactory,
             $locationRepository,
             $geocoder,
-            $geographyFormatter,
+            $geometryFormatter,
         );
 
         $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
@@ -239,8 +238,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
-        $geographyFormatter
+        $geometryFormatter = $this->createMock(GeometryFormatter::class);
+        $geometryFormatter
             ->expects(self::never())
             ->method('formatPoint');    
 
@@ -253,7 +252,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $idFactory,
             $locationRepository,
             $geocoder,
-            $geographyFormatter,
+            $geometryFormatter,
         );
 
         $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);

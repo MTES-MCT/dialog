@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Infrastructure\Adapter;
+namespace App\Tests\Domain\Geography;
 
-use App\Infrastructure\Adapter\DoctrinePostGISGeographyFormatter;
+use App\Domain\Geography\GeometryFormatter;
 use PHPUnit\Framework\TestCase;
 
-final class DoctrinePostGISGeographyFormatterTest extends TestCase
+final class GeometryFormatterTest extends TestCase
 {
     public function testFormatPoint(): void
     {
-        $formatter = new DoctrinePostGISGeographyFormatter();
+        $formatter = new GeometryFormatter();
         $point = $formatter->formatPoint(43.6, -1.9);
         $this->assertSame('POINT(43.600000 -1.900000)', $point);
     }

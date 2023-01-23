@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\GeocoderInterface;
-use App\Application\GeographyFormatterInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\Condition\Location;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
+use App\Domain\Geography\GeometryFormatter;
 
 final class SaveRegulationStep2CommandHandler
 {
@@ -16,7 +16,7 @@ final class SaveRegulationStep2CommandHandler
         private IdFactoryInterface $idFactory,
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
-        private GeographyFormatterInterface $geographyFormatter,
+        private GeometryFormatter $geometryFormatter,
     ) {
     }
 
@@ -25,7 +25,7 @@ final class SaveRegulationStep2CommandHandler
         $address = sprintf('%s %s %s %s', $houseNumber, $roadName, $postalCode, $city);
         $coords = $this->geocoder->computeCoordinates($address, postalCodeHint: $postalCode);
 
-        return $this->geographyFormatter->formatPoint($coords->latitude, $coords->longitude);
+        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
     }
 
     public function __invoke(SaveRegulationStep2Command $command): void

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Test\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\GeocoderInterface;
-use App\Application\GeographyFormatterInterface;
+use App\Domain\Geography\GeometryFormatter;
 use App\Domain\Geography\Coordinates;
 use App\Infrastructure\Symfony\Command\GeocodeCommand;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +16,7 @@ class GeocodeCommandTest extends TestCase
     public function testExecute()
     {
         $geocoder = $this->createMock(GeocoderInterface::class);
-        $geographyFormatter = $this->createMock(GeographyFormatterInterface::class);
+        $geometryFormatter = $this->createMock(GeometryFormatter::class);
 
         $geocoder
             ->expects(self::once())
@@ -24,12 +24,12 @@ class GeocodeCommandTest extends TestCase
             ->with('3 Rue des Tournesols 82000 Montauban')
             ->willReturn(Coordinates::fromLatLon(44.049081, 1.386715));
 
-        $geographyFormatter
+        $geometryFormatter
             ->expects(self::once())
             ->method('formatPoint')
             ->willReturn('POINT(44.049081 1.386715)');
 
-        $command = new GeocodeCommand($geocoder, $geographyFormatter);
+        $command = new GeocodeCommand($geocoder, $geometryFormatter);
         $commandTester = new CommandTester($command);
 
         $this->assertSame('app:geocode', $command->getName());
