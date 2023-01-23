@@ -7,25 +7,51 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ListRegulationsController
 {
     public function __construct(
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
+        private TranslatorInterface $translator,
     ) {
     }
 
-    #[Route('/{page}', name: 'app_regulations_list', requirements: ['page' => '\d+'], methods: ['GET'])]
-    public function __invoke(int $page = 1): Response
+    #[Route(
+        name: 'app_regulations_list',
+        requirements: ['page' => '\d+'],
+        methods: ['GET'],
+    )]
+    public function __invoke(Request $request): Response
     {
+        $tab = $request->query->get('tab', RegulationOrderRecordStatusEnum::DRAFT);
+        $pageSize = min($request->query->getInt('pageSize', 20), 100);
+        $page = $request->query->getInt('page', 1);
+
+        if ($pageSize <= 0 || $page <= 0) {
+            throw new BadRequestHttpException(
+                $this->translator->trans('invalid.page_or_page_size', [], 'validators'),
+            );
+        }
+
         $draftPagination = $this->queryBus->handle(
-            new GetRegulationsQuery($page, RegulationOrderRecordStatusEnum::DRAFT),
+            new GetRegulationsQuery(
+                $pageSize,
+                $tab === RegulationOrderRecordStatusEnum::DRAFT ? $page : 1,
+                RegulationOrderRecordStatusEnum::DRAFT,
+            ),
         );
         $publishedPagination = $this->queryBus->handle(
-            new GetRegulationsQuery($page, RegulationOrderRecordStatusEnum::PUBLISHED),
+            new GetRegulationsQuery(
+                $pageSize,
+                $tab === RegulationOrderRecordStatusEnum::PUBLISHED ? $page : 1,
+                RegulationOrderRecordStatusEnum::PUBLISHED,
+            ),
         );
 
         return new Response($this->twig->render(
@@ -33,6 +59,9 @@ final class ListRegulationsController
             context: [
                 'draftPagination' => $draftPagination,
                 'publishedPagination' => $publishedPagination,
+                'tab' => $tab,
+                'pageSize' => $pageSize,
+                'page' => $page,
             ],
         ));
     }

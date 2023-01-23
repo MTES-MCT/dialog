@@ -50,7 +50,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method("findRegulations")
-            ->with(1, 'draft')
+            ->with(20, 1, 'draft')
             ->willReturn([$regulationOrder1, $regulationOrder2, $regulationOrder3]);
 
         $regulationOrderRecordRepository
@@ -60,7 +60,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->willReturn(3);
 
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationsQuery(1, 'draft'));
+        $regulationOrders = $handler(new GetRegulationsQuery(20, 1, 'draft'));
 
         $pagination = new Pagination(
             [
@@ -82,11 +82,9 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     null,
                     null,
                 ),
-            ], 3,
+            ], 3, 1, 20,
         );
 
         $this->assertEquals($pagination, $regulationOrders);
-        $this->assertEquals(1, $pagination->pageCount);
-        $this->assertEquals(3, $pagination->totalItems);
     }
 }

@@ -19,7 +19,7 @@ final class GetRegulationsQueryHandler
 
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
-        $regulations = $this->repository->findRegulations($query->page, $query->status);
+        $regulations = $this->repository->findRegulations($query->pageSize, $query->page, $query->status);
         $totalItems = $this->repository->countRegulations($query->status);
         $regulationOrderViews = [];
 
@@ -38,6 +38,11 @@ final class GetRegulationsQueryHandler
             );
         }
 
-        return new Pagination($regulationOrderViews, $totalItems);
+        return new Pagination(
+            $regulationOrderViews,
+            $totalItems,
+            $query->page,
+            $query->pageSize,
+        );
     }
 }
