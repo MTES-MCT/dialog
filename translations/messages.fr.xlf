@@ -230,6 +230,26 @@
                 <source>regulation.stepper.next</source>
                 <target>Étape suivante :</target>
             </trans-unit>
+            <trans-unit id="pagination.first">
+                <source>pagination.first</source>
+                <target>Première page</target>
+            </trans-unit>
+            <trans-unit id="pagination.last">
+                <source>pagination.last</source>
+                <target>Dernière page</target>
+            </trans-unit>
+            <trans-unit id="pagination.next">
+                <source>pagination.next</source>
+                <target>Page suivante</target>
+            </trans-unit>
+            <trans-unit id="pagination.previous">
+                <source>pagination.previous</source>
+                <target>Page précédente</target>
+            </trans-unit>
+            <trans-unit id="pagination.page">
+                <source>pagination.page</source>
+                <target>Page %page%</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
