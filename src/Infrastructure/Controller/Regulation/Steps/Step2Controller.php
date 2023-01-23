@@ -61,7 +61,7 @@ final class Step2Controller extends AbstractStepsController
                 $form->addError(
                     new FormError(
                         $this->translator->trans('regulation.step2.error.geocoding_failed', [], 'validators'),
-                    )
+                    ),
                 );
             }
 
