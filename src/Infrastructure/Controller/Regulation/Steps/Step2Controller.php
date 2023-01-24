@@ -6,15 +6,18 @@ namespace App\Infrastructure\Controller\Regulation\Steps;
 
 use App\Application\CommandBusInterface;
 use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Infrastructure\Form\Regulation\Step2FormType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class Step2Controller extends AbstractStepsController
 {
@@ -24,6 +27,7 @@ final class Step2Controller extends AbstractStepsController
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
+        private TranslatorInterface $translator,
     ) {
         parent::__construct($queryBus);
     }
@@ -47,12 +51,26 @@ final class Step2Controller extends AbstractStepsController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->commandBus->handle($command);
+            $commandFailed = false;
 
-            return new RedirectResponse(
-                url: $this->router->generate('app_regulations_steps_3', ['uuid' => $uuid]),
-                status: Response::HTTP_FOUND,
-            );
+            try {
+                $this->commandBus->handle($command);
+            } catch (GeocodingFailureException $exc) {
+                $commandFailed = true;
+                \Sentry\captureException($exc);
+                $form->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.step2.error.geocoding_failed', [], 'validators'),
+                    ),
+                );
+            }
+
+            if (!$commandFailed) {
+                return new RedirectResponse(
+                    url: $this->router->generate('app_regulations_steps_3', ['uuid' => $uuid]),
+                    status: Response::HTTP_FOUND,
+                );
+            }
         }
 
         return new Response(

@@ -86,6 +86,23 @@ final class Step2ControllerTest extends WebTestCase
         $this->assertSame("Cette valeur n'est pas valide. Un code postal est composé de 5 chiffres.", $crawler->filter('#step2_form_postalCode_error')->text());
     }
 
+    public function testGeocodingFailure(): void {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['step2_form[postalCode]'] = '44260';
+        $form['step2_form[city]'] = 'Savenay';
+        $form['step2_form[roadName]'] = 'Route du GEOCODING_FAILURE';
+        $form['step2_form[fromHouseNumber]'] = '15';
+        $form['step2_form[toHouseNumber]'] = '37bis';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertStringStartsWith("En raison d'un problème technique", $crawler->filter('#step2_form_error')->text());
+    }
 
     public function testRegulationOrderRecordNotFound(): void
     {

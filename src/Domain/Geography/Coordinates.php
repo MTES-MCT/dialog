@@ -6,19 +6,14 @@ namespace App\Domain\Geography;
 
 class Coordinates
 {
-    public function __construct(
-        private float $latitude,
-        private float $longitude,
+    private function __construct(
+        public readonly float $latitude,
+        public readonly float $longitude,
     ) {
     }
 
-    public function getLatitude(): float
+    public static function fromLatLon(float $latitude, float $longitude): self
     {
-        return $this->latitude;
-    }
-
-    public function getLongitude(): float
-    {
-        return $this->longitude;
+        return new self($latitude, $longitude);
     }
 }
