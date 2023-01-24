@@ -17,6 +17,11 @@ framework:
     php_errors:
         log: true
 
+    http_client:
+        scoped_clients:
+            api.adresse.client:
+                base_uri: '%env(API_ADRESSE_BASE_URL)%'
+
 when@test:
     framework:
         test: true
