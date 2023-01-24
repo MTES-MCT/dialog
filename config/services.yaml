@@ -63,3 +63,10 @@ services:
     # ------------
     DateTimeInterface:
         class: DateTimeImmutable
+
+when@test:
+    services:
+        App\Tests\Mock\APIAdresseMockClient:
+            # See: https://symfony.com/doc/current/service_container/service_decoration.html
+            decorates: 'api.adresse.client'
+            decoration_inner_name: 'App\Tests\Mock\APIAdresseMockClient::api.adresse.client'

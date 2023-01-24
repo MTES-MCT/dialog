@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Mock;
 
+use App\Application\Exception\GeocodingFailureException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -17,17 +18,21 @@ final class APIAdresseMockClient extends MockHttpClient
         parent::__construct($callback, $this->baseUri);
     }
 
-    private function handleRequests(string $method, string $url): MockResponse
+    private function handleRequests(string $method, string $url, array $options): MockResponse
     {
         if ($method === 'GET' && str_starts_with($url, $this->baseUri . '/search/')) {
-            return $this->getSearchMock();
+            return $this->getSearchMock($options);
         }
 
         throw new \UnexpectedValueException("Mock not implemented: $method $url");
     }
 
-    private function getSearchMock(): MockResponse
+    private function getSearchMock(array $options): MockResponse
     {
+        if (\str_contains($options['query']['q'], 'GEOCODING_FAILURE')) {
+            throw new GeocodingFailureException();
+        }
+
         $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
 
         return new MockResponse(
