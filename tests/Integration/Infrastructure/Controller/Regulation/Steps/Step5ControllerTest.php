@@ -16,6 +16,29 @@ final class Step5ControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Étape 5 sur 5 Récapitulatif', $crawler->filter('h2')->text());
 
+        $step1 = $crawler->filter('div.for-what');
+        $step2 = $crawler->filter('div.where');
+        $step3 = $crawler->filter('div.when');
+        $step4 = $crawler->filter('div.vehicles');
+
+        // Step 1
+        $this->assertSame('Description 1', $step1->filter('li')->eq(0)->text());
+        $this->assertSame('Circulation interdite', $step1->filter('li')->eq(1)->text());
+        $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $step1->filter('a')->link()->getUri());
+
+        // Step 2
+        $this->assertSame('Ville : Savenay', $step2->filter('li')->eq(0)->text());
+        $this->assertSame('Rue : Route du Grand Brossais', $step2->filter('li')->eq(1)->text());
+        $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2', $step2->filter('a')->link()->getUri());
+
+        // Step 3
+        $this->assertSame('du 08/12/2022 au 18/12/2022', $step3->filter('li')->eq(0)->text());
+        $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/3', $step3->filter('a')->link()->getUri());
+
+        // Step 4
+        $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4', $step4->filter('a')->link()->getUri());
+        $this->assertCount(0, $step4->filter('li'));
+
         $client->clickLink('Sauvegarder');
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_list');
