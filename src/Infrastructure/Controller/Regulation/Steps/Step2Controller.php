@@ -68,7 +68,7 @@ final class Step2Controller extends AbstractStepsController
             if (!$commandFailed) {
                 return new RedirectResponse(
                     url: $this->router->generate('app_regulations_steps_3', ['uuid' => $uuid]),
-                    status: Response::HTTP_FOUND,
+                    status: Response::HTTP_SEE_OTHER,
                 );
             }
         }
@@ -82,6 +82,7 @@ final class Step2Controller extends AbstractStepsController
                     'uuid' => $uuid,
                 ],
             ),
+            status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
         );
     }
 }

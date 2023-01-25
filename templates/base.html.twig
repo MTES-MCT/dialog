@@ -20,6 +20,8 @@
 
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
+        <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}" defer></script>
+        <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}" defer></script>
     {% endblock %}
   </head>
   <body>
@@ -32,7 +34,5 @@
         </section>
     </main>
     {% include 'common/footer.html.twig' %}
-    <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
-    <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
   </body>
 </html>
