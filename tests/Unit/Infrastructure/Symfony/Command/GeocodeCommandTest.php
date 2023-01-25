@@ -22,12 +22,12 @@ class GeocodeCommandTest extends TestCase
             ->expects(self::once())
             ->method('computeCoordinates')
             ->with('3 Rue des Tournesols 82000 Montauban')
-            ->willReturn(Coordinates::fromLatLon(44.049081, 1.386715));
+            ->willReturn(Coordinates::fromLonLat(1.386715, 44.049081));
 
         $geometryFormatter
             ->expects(self::once())
             ->method('formatPoint')
-            ->willReturn('POINT(44.049081 1.386715)');
+            ->willReturn('POINT(1.386715 44.049081)');
 
         $command = new GeocodeCommand($geocoder, $geometryFormatter);
         $commandTester = new CommandTester($command);
@@ -41,6 +41,6 @@ class GeocodeCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('POINT(44.049081 1.386715)', $output);
+        $this->assertStringContainsString('POINT(1.386715 44.049081)', $output);
     }
 }
