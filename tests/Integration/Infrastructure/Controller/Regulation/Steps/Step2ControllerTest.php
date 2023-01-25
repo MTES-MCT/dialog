@@ -8,10 +8,28 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class Step2ControllerTest extends WebTestCase
 {
+    public function testInvalidBlank(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet
+
+        $this->assertResponseStatusCodeSame(200);
+        $saveButton = $crawler->selectButton("Suivant");
+        $form = $saveButton->form();
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_postalCode_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_city_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_roadName_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
+    }
+
     public function testAdd(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
+        $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Étape 2 sur 5 Localisation', $crawler->filter('h2')->text());
@@ -33,27 +51,21 @@ final class Step2ControllerTest extends WebTestCase
         $this->assertRouteSame('app_regulations_steps_3');
     }
 
-    public function testInvalidForm(): void
+    public function testEditUnchanged(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
-
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2'); // Already has a location
         $this->assertResponseStatusCodeSame(200);
+
         $saveButton = $crawler->selectButton("Suivant");
         $form = $saveButton->form();
-        $form['step2_form[postalCode]'] = '';
-        $form['step2_form[city]'] = '';
-        $form['step2_form[roadName]'] = '';
-        $form['step2_form[fromHouseNumber]'] = '';
-        $form['step2_form[toHouseNumber]'] = '';
 
-        $crawler = $client->submit($form);
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(302);
+
+        $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_postalCode_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_city_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_roadName_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
+        $this->assertRouteSame('app_regulations_steps_3');
     }
 
     private function provideInvalidPostalCode(): array {

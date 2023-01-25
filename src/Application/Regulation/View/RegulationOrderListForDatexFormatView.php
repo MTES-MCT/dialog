@@ -11,6 +11,7 @@ final class RegulationOrderListForDatexFormatView
         public readonly string $description,
         public readonly string $issuingAuthority,
         public readonly PeriodView $period,
+        public readonly ?DatexLocationView $location,
     ) {
     }
 }

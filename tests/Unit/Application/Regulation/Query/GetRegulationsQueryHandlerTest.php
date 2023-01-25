@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\Regulation\Query\GetRegulationsQueryHandler;
-use App\Application\Regulation\View\LocationView;
+use App\Application\Regulation\View\ListItemLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
@@ -67,13 +67,13 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     'draft',
-                    new LocationView('Rue de Prince Bois', 'Savenay'),
+                    new ListItemLocationView('Rue de Prince Bois', 'Savenay'),
                     new PeriodView($startPeriod1, $endPeriod1),
                 ),
                 new RegulationOrderListItemView(
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     'draft',
-                    new LocationView('Rue du Lac', 'Savenay'),
+                    new ListItemLocationView('Rue du Lac', 'Savenay'),
                     new PeriodView($startPeriod2),
                 ),
                 new RegulationOrderListItemView(
