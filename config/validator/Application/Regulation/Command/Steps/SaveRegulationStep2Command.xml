@@ -18,9 +18,15 @@
         </property>
         <property name="fromHouseNumber">
             <constraint name="NotBlank" />
-        </property>
-        <property name="toHouseNumber">
+            <constraint name="Length">
+                <option name="max">8</option>
+            </constraint>
+       </property>
+       <property name="toHouseNumber">
             <constraint name="NotBlank" />
-        </property>
+            <constraint name="Length">
+                <option name="max">8</option>
+            </constraint>
+       </property>
     </class>
 </constraint-mapping>
