@@ -35,6 +35,50 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                            <loc:secondarySupplementaryDescription>
+                                <loc:locationDescription>
+                                    <com:values>
+                                        <com:value>15 - 37bis, Route du Grand Brossais, 44260 Savenay</com:value>
+                                    </com:values>
+                                </loc:locationDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Route du Grand Brossais</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:secondarySupplementaryDescription>
+                            <loc:linearWithinLinearElement>
+                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
+                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
+                                <loc:linearElement xsi:type="loc:LinearElementByPoints">
+                                    <loc:startPointOfLinearElement>
+                                        <loc:referentIdentifier>start</loc:referentIdentifier>
+                                        <loc:referentName>15</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>47.347024</loc:latitude>
+                                            <loc:longitude>-1.935836</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:startPointOfLinearElement>
+                                    <loc:endPointOfLinearElement>
+                                        <loc:referentIdentifier>end</loc:referentIdentifier>
+                                        <loc:referentName>37bis</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>47.347917</loc:latitude>
+                                            <loc:longitude>-1.930973</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:endPointOfLinearElement>
+                                </loc:linearElement>
+                                <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
+                                </loc:fromPoint>
+                                <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
+                                </loc:toPoint>
+                            </loc:linearWithinLinearElement>
+                        </locationByOrder>
+                    </conditions>
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
@@ -66,6 +110,50 @@
                                 <com:overallStartTime>2022-10-08T00:00:00.000Z</com:overallStartTime>
                             </com:validityTimeSpecification>
                         </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                            <loc:secondarySupplementaryDescription>
+                                <loc:locationDescription>
+                                    <com:values>
+                                        <com:value>695 - 253, Avenue de Fonneuve, 82000 Montauban</com:value>
+                                    </com:values>
+                                </loc:locationDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Avenue de Fonneuve</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:secondarySupplementaryDescription>
+                            <loc:linearWithinLinearElement>
+                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
+                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
+                                <loc:linearElement xsi:type="loc:LinearElementByPoints">
+                                    <loc:startPointOfLinearElement>
+                                        <loc:referentIdentifier>start</loc:referentIdentifier>
+                                        <loc:referentName>695</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.028996</loc:latitude>
+                                            <loc:longitude>1.362275</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:startPointOfLinearElement>
+                                    <loc:endPointOfLinearElement>
+                                        <loc:referentIdentifier>end</loc:referentIdentifier>
+                                        <loc:referentName>253</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.025665</loc:latitude>
+                                            <loc:longitude>1.35931</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:endPointOfLinearElement>
+                                </loc:linearElement>
+                                <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
+                                </loc:fromPoint>
+                                <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
+                                </loc:toPoint>
+                            </loc:linearWithinLinearElement>
+                        </locationByOrder>
                     </conditions>
                 </condition>
             </trafficRegulation>

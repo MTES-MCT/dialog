@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
-use App\Application\Regulation\View\LocationView;
+use App\Application\Regulation\View\ListItemLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
@@ -27,7 +27,7 @@ final class GetRegulationsQueryHandler
             $regulationOrderViews[] = new RegulationOrderListItemView(
                 $regulation['uuid'],
                 $regulation['status'],
-                $regulation['city'] ? new LocationView(
+                $regulation['city'] ? new ListItemLocationView(
                     $regulation['roadName'],
                     $regulation['city'],
                 ) : null,

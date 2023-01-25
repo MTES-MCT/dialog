@@ -48,7 +48,7 @@ final class ListRegulationsControllerTest extends WebTestCase
         $this->assertSame(1, $pageOnePublishedRows->count());
 
         $pageOnePublishedRow0 = $pageOnePublishedRows->eq(0)->filter('td');
-        $this->assertEmpty($pageOnePublishedRow0->eq(0)->text()); // No location
+        $this->assertSame('Montauban Avenue de Fonneuve', $pageOnePublishedRow0->eq(0)->text());
         $this->assertSame("depuis le 08/10/2022 permanent", $pageOnePublishedRow0->eq(1)->text());
         $this->assertSame("Réglementation en cours", $pageOnePublishedRow0->eq(2)->text());
 

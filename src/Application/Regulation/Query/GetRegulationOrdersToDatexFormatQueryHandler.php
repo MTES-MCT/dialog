@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
+use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListForDatexFormatView;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
@@ -28,6 +29,17 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 new PeriodView(
                     $regulationOrder['startPeriod'],
                     $regulationOrder['endPeriod'],
+                ),
+                new DatexLocationView(
+                    postalCode: $regulationOrder['postalCode'],
+                    city: $regulationOrder['city'],
+                    roadName: $regulationOrder['roadName'],
+                    fromHouseNumber: $regulationOrder['fromHouseNumber'],
+                    fromLongitude: $regulationOrder['fromLongitude'],
+                    fromLatitude: $regulationOrder['fromLatitude'],
+                    toHouseNumber: $regulationOrder['toHouseNumber'],
+                    toLongitude: $regulationOrder['toLongitude'],
+                    toLatitude: $regulationOrder['toLatitude'],
                 ),
             );
         }
