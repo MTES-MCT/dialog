@@ -93,21 +93,15 @@ final class APIAdresseGeocoder implements GeocoderInterface
             throw new GeocodingFailureException($message);
         }
 
-        // Caution: GeoJSON uses (longitude, latitude).
+        // GeoJSON uses (longitude, latitude).
         // See: https://www.rfc-editor.org/rfc/rfc7946#section-3.1.1
-        // But we process (latitude, longitude). (There's no standard on this.)
         $lonLat = $point['geometry']['coordinates'];
-
-        // Phew. Let's do a final check on the coordinates.
 
         if (\count($lonLat) !== 2) {
             $message = sprintf('%s: expected 2 coordinates, got %d', $errorMsgPrefix, \count($lonLat));
             throw new GeocodingFailureException($message);
         }
 
-        $longitude = $lonLat[0];
-        $latitude = $lonLat[1];
-
-        return Coordinates::fromLatLon($latitude, $longitude);
+        return Coordinates::fromLonLat($lonLat[0], $lonLat[1]);
     }
 }

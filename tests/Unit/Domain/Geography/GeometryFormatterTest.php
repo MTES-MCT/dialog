@@ -13,6 +13,6 @@ final class GeometryFormatterTest extends TestCase
     {
         $formatter = new GeometryFormatter();
         $point = $formatter->formatPoint(43.6, -1.9);
-        $this->assertSame('POINT(43.600000 -1.900000)', $point);
+        $this->assertSame('POINT(-1.900000 43.600000)', $point);
     }
 }

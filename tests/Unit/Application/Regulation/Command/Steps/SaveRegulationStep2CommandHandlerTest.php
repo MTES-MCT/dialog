@@ -37,9 +37,9 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
         $this->city = 'Savenay';
         $this->roadName = 'Route du Grand Brossais';
         $this->fromHouseNumber = '15';
-        $this->fromPoint = 'POINT(47.347024 -1.935836)';
+        $this->fromPoint = 'POINT(-1.935836 47.347024)';
         $this->toHouseNumber = '37bis';
-        $this->toPoint = 'POINT(47.347917 -1.930973)';
+        $this->toPoint = 'POINT(-1.930973 47.347917)';
 
         $this->regulationCondition = $this->createMock(RegulationCondition::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
@@ -73,8 +73,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeCoordinates')
             ->willReturnOnConsecutiveCalls(
-                Coordinates::fromLatLon(47.347024, -1.935836),
-                Coordinates::fromLatLon(47.347917, -1.930973),
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
             );
 
         $geometryFormatter = $this->createMock(GeometryFormatter::class);
@@ -82,8 +82,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('formatPoint')
             ->willReturnOnConsecutiveCalls(
-                'POINT(47.347024 -1.935836)',
-                'POINT(47.347917 -1.930973)',
+                'POINT(-1.935836 47.347024)',
+                'POINT(-1.930973 47.347917)',
             );
 
         $location = new Location(
@@ -147,8 +147,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeCoordinates')
             ->willReturnOnConsecutiveCalls(
-                Coordinates::fromLatLon(47.347024, -1.935836),
-                Coordinates::fromLatLon(47.347917, -1.930973),
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
             );
 
         $geometryFormatter = $this->createMock(GeometryFormatter::class);
@@ -156,8 +156,8 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('formatPoint')
             ->willReturnOnConsecutiveCalls(
-                'POINT(47.347024 -1.935836)',
-                'POINT(47.347917 -1.930973)',
+                'POINT(-1.935836 47.347024)',
+                'POINT(-1.930973 47.347917)',
             );
     
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);

@@ -20,9 +20,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'Savenay',
             'Route du Grand Brossais',
             '15',
-            'POINT(47.347024 -1.935836)',
+            'POINT(-1.935836 47.347024)',
             '37bis',
-            'POINT(47.347917 -1.930973)',
+            'POINT(-1.930973 47.347917)',
         );
 
         $manager->persist($location);

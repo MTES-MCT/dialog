@@ -19,6 +19,8 @@ DiaLog s'interface avec l'[API Adresse](https://adresse.data.gouv.fr/api-doc/adr
 
 Utilisez la commande utilitaire `app:geocode`.
 
+La valeur affichée est un `POINT(X Y)` selon le format WKT, dans la projection standard EPSG:4326 (X = longitude et Y = latitude).
+
 Exemple :
 
 ```bash
@@ -26,5 +28,5 @@ make console CMD="app:geocode '3 Rue des Tournesols 82000 Montauban'"
 ```
 
 ```console
-POINT(44.049081 1.386715)
+POINT(1.386715 44.049081)
 ```
