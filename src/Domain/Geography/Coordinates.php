@@ -7,13 +7,13 @@ namespace App\Domain\Geography;
 class Coordinates
 {
     private function __construct(
-        public readonly float $latitude,
         public readonly float $longitude,
+        public readonly float $latitude,
     ) {
     }
 
-    public static function fromLatLon(float $latitude, float $longitude): self
+    public static function fromLonLat(float $longitude, float $latitude): self
     {
-        return new self($latitude, $longitude);
+        return new self($longitude, $latitude);
     }
 }
