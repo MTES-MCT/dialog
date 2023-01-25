@@ -8,6 +8,7 @@ use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\Condition\Location;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
+use App\Domain\Geography\GeometryFormatter;
 
 final class SaveRegulationStep2CommandHandler
 {
@@ -15,15 +16,16 @@ final class SaveRegulationStep2CommandHandler
         private IdFactoryInterface $idFactory,
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
+        private GeometryFormatter $geometryFormatter,
     ) {
     }
 
     private function computePoint(string $postalCode, string $city, string $roadName, string $houseNumber): string
     {
-        $address = sprintf('%s %s, %s %s', $houseNumber, $roadName, $city, $postalCode);
-        $coords = $this->geocoder->computeCoordinates($address);
+        $address = sprintf('%s %s %s %s', $houseNumber, $roadName, $postalCode, $city);
+        $coords = $this->geocoder->computeCoordinates($address, postalCodeHint: $postalCode);
 
-        return sprintf('POINT(%f %f)', $coords->getLatitude(), $coords->getLongitude());
+        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
     }
 
     public function __invoke(SaveRegulationStep2Command $command): void
