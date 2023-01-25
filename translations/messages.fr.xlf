@@ -10,6 +10,18 @@
                 <source>common.site_name</source>
                 <target>DiaLog</target>
             </trans-unit>
+            <trans-unit id="common.login">
+                <source>common.login</source>
+                <target>Se connecter</target>
+            </trans-unit>
+            <trans-unit id="common.close">
+                <source>common.close</source>
+                <target>Fermer</target>
+            </trans-unit>
+            <trans-unit id="common.menu">
+                <source>common.menu</source>
+                <target>Menu</target>
+            </trans-unit>
             <trans-unit id="common.slogan">
                 <source>common.slogan</source>
                 <target>Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistique.</target>

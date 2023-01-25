@@ -7,6 +7,11 @@
                         <div class="fr-header__logo">
                             <p class="fr-logo">{{ 'common.ministry'|trans|raw }}</p>
                         </div>
+                        <div class="fr-header__navbar">
+                            <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-499" aria-haspopup="menu" id="button-500" title="Menu">
+                                {{ 'common.menu'|trans }}
+                            </button>
+                        </div>
                     </div>
                     <div class="fr-header__service">
                         <a href="{{ path(mainPath) }}" title="{{ 'common.site_name'|trans }}">
@@ -18,7 +23,34 @@
                         <p class="fr-header__service-tagline">{{ 'common.baseline'|trans }}</p>
                     </div>
                 </div>
+                <div class="fr-header__tools user">
+                    <div class="fr-header__tools-links">
+                        <ul class="fr-btns-group">
+                            {% if app.user %}
+                                <li>
+                                    <a class="fr-btn fr-icon-user-fill" href="{{ path('app_regulations_list') }}">
+                                        {{ app.user|capitalize }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="fr-btn fr-icon-lock-line" href="#">
+                                        {{ 'common.login'|trans }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <div class="fr-header__menu fr-modal" id="modal-499" aria-labelledby="button-500">
+        <div class="fr-container">
+            <button class="fr-btn--close fr-btn" aria-controls="modal-499" title="Fermer">
+                {{ 'common.close'|trans }}
+            </button>
+            <div class="fr-header__menu-links"></div>
         </div>
     </div>
 </header>
