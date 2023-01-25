@@ -23,6 +23,7 @@ final class ListRegulationsController
     }
 
     #[Route(
+        '/regulations',
         name: 'app_regulations_list',
         requirements: ['page' => '\d+'],
         methods: ['GET'],
