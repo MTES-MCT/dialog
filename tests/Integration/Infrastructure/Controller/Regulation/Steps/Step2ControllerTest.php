@@ -98,7 +98,8 @@ final class Step2ControllerTest extends WebTestCase
         $this->assertSame("Cette valeur n'est pas valide. Un code postal est composé de 5 chiffres.", $crawler->filter('#step2_form_postalCode_error')->text());
     }
 
-    public function testGeocodingFailure(): void {
+    public function testGeocodingFailure(): void
+    {
         $client = static::createClient();
         $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
         $this->assertResponseStatusCodeSame(200);
@@ -141,6 +142,26 @@ final class Step2ControllerTest extends WebTestCase
         $client->clickLink('Précédent');
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_steps_1', ['uuid' => '3ede8b1a-1816-4788-8510-e08f45511cb5']);
+    }
+
+    public function testInvalidFromHouseNumberAndToHouseNumber(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['step2_form[postalCode]'] = '44260';
+        $form['step2_form[city]'] = 'Savenay';
+        $form['step2_form[roadName]'] = 'Route du GEOCODING_FAILURE';
+        $form['step2_form[fromHouseNumber]'] = 'Plus long que 8 caractères';
+        $form['step2_form[toHouseNumber]'] = 'Plus long que 8 caractères';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
     }
 
     public function testUxEnhancements(): void
