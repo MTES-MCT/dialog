@@ -47,4 +47,15 @@ final class Step5ControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(400);
     }
+
+
+    public function testUxEnhancements(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/5');
+        $this->assertResponseStatusCodeSame(200);
+
+        $backLink = $crawler->selectLink('Précédent');
+        $this->assertNotNull($backLink->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
+    }
 }

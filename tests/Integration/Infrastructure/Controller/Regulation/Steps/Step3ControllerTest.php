@@ -17,13 +17,13 @@ final class Step3ControllerTest extends WebTestCase
         $this->assertSame('Étape 3 sur 5 Période', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Véhicules concernés', $crawler->filter('p.fr-stepper__details')->text());
 
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step3_form[startPeriod]"] = "2022-12-07";
         $form["step3_form[endPeriod]"] = "2022-12-17";
 
         $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
@@ -34,13 +34,15 @@ final class Step3ControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
+        $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step3_form[startPeriod]"] = "mauvais format";
         $form["step3_form[endPeriod]"] = "mauvais format";
 
         $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertCount(2, $crawler->filter('[id^="step3_form_"][id$="_error"]'));
         $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_startPeriod_error')->text());
         $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_endPeriod_error')->text());
@@ -49,6 +51,7 @@ final class Step3ControllerTest extends WebTestCase
         $form["step3_form[endPeriod]"] = "2022-12-05";
 
         $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertCount(1, $crawler->filter('[id^="step3_form_"][id$="_error"]'));
         $this->assertCount(1, $crawler->filter('#step3_form_endPeriod_error')); // Cette valeur doit être supérieure à 7 déc. 2022.
     }
@@ -78,5 +81,15 @@ final class Step3ControllerTest extends WebTestCase
         $client->clickLink('Précédent');
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_steps_2', ['uuid' => '4ce75a1f-82f3-40ee-8f95-48d0f04446aa']);
+    }
+
+    public function testUxEnhancements(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $this->assertNotNull($saveButton->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
     }
 }

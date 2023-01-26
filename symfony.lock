@@ -254,6 +254,9 @@
             "config/packages/uid.yaml"
         ]
     },
+    "symfony/ux-turbo": {
+        "version": "v2.7.1"
+    },
     "symfony/validator": {
         "version": "6.1",
         "recipe": {

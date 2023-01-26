@@ -30,7 +30,7 @@ install: build start install_deps dbinstall assets ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
-	$(NPM) install
+	$(NPM) ci
 
 update_deps:
 	make composer CMD="update"

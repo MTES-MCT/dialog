@@ -1,14 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% include "common/breadcrumb.html.twig" with { items: [
-        { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
-        { title: 'regulation.list.add_button'},
-    ]} %}
-    {% include "regulation/steps/_stepper.html.twig" with {
-        'stepName': 'regulation.stepper.step' ~ stepNumber,
-        'stepNumber': stepNumber,
-        'nextStep': 'regulation.stepper.step' ~ (stepNumber + 1),
-    } %}
-    {% block step_body %}{% endblock %}
+    <turbo-frame id="step-content" data-turbo-action="advance" autoscroll>
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
+            { title: 'regulation.list.add_button'},
+        ]} %}
+        {% include "regulation/steps/_stepper.html.twig" with {
+            'stepName': 'regulation.stepper.step' ~ stepNumber,
+            'stepNumber': stepNumber,
+            'nextStep': 'regulation.stepper.step' ~ (stepNumber + 1),
+        } %}
+        {% block step_body %}{% endblock %}
+    </turbo-frame>
 {% endblock %}
