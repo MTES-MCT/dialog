@@ -9,7 +9,6 @@
         <div class="fr-container--fluid">
             <div class="fr-grid-row">
                 {% include "regulation/steps/_stepper.html.twig" with {
-                    stepper_attr: {class: 'fr-col fr-col-lg-6'},
                     'stepName': 'regulation.stepper.step' ~ stepNumber,
                     'stepNumber': stepNumber,
                     'nextStep': 'regulation.stepper.step' ~ (stepNumber + 1),

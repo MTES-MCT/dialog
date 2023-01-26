@@ -1,6 +1,4 @@
-{%- set stepper_attr = stepper_attr|default({})|merge({class: stepper_attr.class|default('') ~ ' fr-stepper'}) -%}
-
-<div {% include 'common/attr.html.twig' with {attr: stepper_attr} %}>
+<div class="fr-stepper fr-col fr-col-lg-6">
     <h2 class="fr-stepper__title">
         <span class="fr-stepper__state">{{ 'regulation.stepper.steps'|trans({'%step%': stepNumber})}}</span>
         {{ stepName|trans }}
