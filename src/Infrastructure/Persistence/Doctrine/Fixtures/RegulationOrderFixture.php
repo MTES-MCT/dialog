@@ -14,24 +14,24 @@ final class RegulationOrderFixture extends Fixture implements DependentFixtureIn
     public function load(ObjectManager $manager): void
     {
         $regulationOrder = new RegulationOrder(
-            '54eacea0-e1e0-4823-828d-3eae72b76da8',
-            'Description 1',
-            'Autorité 1',
-            $this->getReference('regulationCondition1'),
+            uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
+            issuingAuthority: 'Autorité 1',
+            description: 'Description 1',
+            regulationCondition: $this->getReference('regulationCondition1'),
         );
 
         $regulationOrder2 = new RegulationOrder(
-            '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
-            'Description 2',
-            'Autorité 2',
-            $this->getReference('regulationCondition2'),
+            uuid: '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
+            issuingAuthority: 'Autorité 2',
+            description: 'Description 2',
+            regulationCondition: $this->getReference('regulationCondition2'),
         );
 
         $regulationOrder3 = new RegulationOrder(
-            'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
-            'Description 3',
-            'Autorité 3',
-            $this->getReference('regulationCondition3'),
+            uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
+            issuingAuthority: 'Description 3',
+            description: 'Autorité 3',
+            regulationCondition: $this->getReference('regulationCondition3'),
         );
 
         $manager->persist($regulationOrder);

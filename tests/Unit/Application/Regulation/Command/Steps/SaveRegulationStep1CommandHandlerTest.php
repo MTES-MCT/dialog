@@ -60,8 +60,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
                 $this->equalTo(
                     new RegulationOrder(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
-                        description: 'Interdiction de circuler',
                         issuingAuthority: 'Ville de Paris',
+                        description: 'Interdiction de circuler',
                         regulationCondition: $regulationCondition,
                     )
                 )
@@ -94,8 +94,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationStep1Command();
-        $command->description = 'Interdiction de circuler';
         $command->issuingAuthority = 'Ville de Paris';
+        $command->description = 'Interdiction de circuler';
 
         $uuid = $handler($command);
 
@@ -139,7 +139,10 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationOrder
             ->expects(self::once())
             ->method('update')
-            ->with('Interdiction de circuler', 'Ville de Paris');
+            ->with(
+                'Ville de Paris',
+                'Interdiction de circuler',
+            );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord
@@ -160,8 +163,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationStep1Command($regulationOrderRecord);
-        $command->description = 'Interdiction de circuler';
         $command->issuingAuthority = 'Ville de Paris';
+        $command->description = 'Interdiction de circuler';
 
         $uuid = $handler($command);
 

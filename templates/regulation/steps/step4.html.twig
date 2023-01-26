@@ -6,7 +6,10 @@
 
         <fieldset class="fr-fieldset">
             <legend class="fr-fieldset__legend">
-                {{ "regulation.step4.vehicle_characteristics"|trans }}
+                {{ 'regulation.step4.vehicle_characteristics'|trans }}
+                <span class="fr-hint-text fr-text--sm">
+                    {{ 'regulation.step4.vehicle_characteristics.help'|trans }}
+                </span>
             </legend>
             <div class="fr-fieldset__element">
                 {{ form_row(form.maxWeight, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}

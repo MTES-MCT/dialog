@@ -47,8 +47,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-            'description' => 'Description 1',
             'issuingAuthority' => 'Autorité 1',
+            'description' => 'Description 1',
             'startPeriod' => $startPeriod1,
             'endPeriod' => $endPeriod1,
             'postalCode' => $location1->postalCode,
@@ -63,8 +63,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
-            'description' => 'Description 2',
             'issuingAuthority' => 'Autorité 2',
+            'description' => 'Description 2',
             'startPeriod' => $startPeriod2,
             'endPeriod' => null,
             'postalCode' => $location2->postalCode,
@@ -89,18 +89,18 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $this->assertEquals(
             [
                 new RegulationOrderListForDatexFormatView(
-                    '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                    'Description 1',
-                    'Autorité 1',
-                    new PeriodView($startPeriod1, $endPeriod1),
-                    $location1,
+                    uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                    issuingAuthority: 'Autorité 1',
+                    description: 'Description 1',
+                    period: new PeriodView($startPeriod1, $endPeriod1),
+                    location: $location1,
                 ),
                 new RegulationOrderListForDatexFormatView(
-                    '247edaa2-58d1-43de-9d33-9753bf6f4d30',
-                    'Description 2',
-                    'Autorité 2',
-                    new PeriodView($startPeriod2),
-                    $location2,
+                    uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
+                    issuingAuthority: 'Autorité 2',
+                    description: 'Description 2',
+                    period: new PeriodView($startPeriod2),
+                    location: $location2,
                 ),
             ],
             $regulationOrders,

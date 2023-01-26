@@ -10,8 +10,8 @@ class RegulationOrder
 {
     public function __construct(
         private string $uuid,
-        private string $description,
         private string $issuingAuthority,
+        private string $description,
         private RegulationCondition $regulationCondition,
     ) {
     }
@@ -21,14 +21,14 @@ class RegulationOrder
         return $this->uuid;
     }
 
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
     public function getIssuingAuthority(): string
     {
         return $this->issuingAuthority;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     public function getRegulationCondition(): RegulationCondition
@@ -36,9 +36,11 @@ class RegulationOrder
         return $this->regulationCondition;
     }
 
-    public function update(string $description, string $issuingAuthority): void
-    {
-        $this->description = $description;
+    public function update(
+        string $issuingAuthority,
+        string $description,
+    ): void {
         $this->issuingAuthority = $issuingAuthority;
+        $this->description = $description;
     }
 }

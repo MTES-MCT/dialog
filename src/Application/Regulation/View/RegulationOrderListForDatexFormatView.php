@@ -8,8 +8,8 @@ final class RegulationOrderListForDatexFormatView
 {
     public function __construct(
         public readonly string $uuid,
-        public readonly string $description,
         public readonly string $issuingAuthority,
+        public readonly string $description,
         public readonly PeriodView $period,
         public readonly ?DatexLocationView $location,
     ) {

@@ -24,8 +24,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
         foreach ($regulationOrders as $regulationOrder) {
             $regulationOrderViews[] = new RegulationOrderListForDatexFormatView(
                 $regulationOrder['uuid'],
-                $regulationOrder['description'],
                 $regulationOrder['issuingAuthority'],
+                $regulationOrder['description'],
                 new PeriodView(
                     $regulationOrder['startPeriod'],
                     $regulationOrder['endPeriod'],

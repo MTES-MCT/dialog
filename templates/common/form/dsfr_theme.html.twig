@@ -19,13 +19,25 @@
     {{- form_label(form) -}}
     {{- form_widget(form, widget_attr) -}}
     {{- form_errors(form) -}}
-    {{- form_help(form) -}}
   </div>
 {% endblock form_row %}
 
 {% block form_label %}
   {%- set label_class = (label_attr.class|default('') ~ ' fr-label')|trim -%}
   {%- set label_attr = label_attr|merge({class: label_class}) -%}
+  {{ parent() }}
+{% endblock %}
+
+{% block form_label_content %}
+  {%- set label_content_attr = label_content_attr|default({})|merge({class: label_content_attr.class|default('') ~ ' fr-x-label-content'}) -%}
+  <span {% with {attr: label_content_attr} %}{{ block('attributes')}}{% endwith %}>
+    {{ parent() }}
+  </span>
+  {{- form_help(form) -}}
+{% endblock %}
+
+{% block form_help %}
+  {%- set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text')}) -%}
   {{ parent() }}
 {% endblock %}
 

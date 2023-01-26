@@ -1,6 +1,14 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
 {% block step_body %}
+    <h3 class="fr-text--md fr-mb-0">
+        {{ 'regulation.step3.subtitle'|trans }}
+    </h3>
+
+    <p class="fr-hint-text fr-text--sm">
+        {{ 'regulation.step3.help'|trans }}
+    </p>
+
     {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_row(form.startPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}

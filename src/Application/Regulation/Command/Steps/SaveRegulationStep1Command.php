@@ -9,8 +9,8 @@ use App\Domain\Regulation\RegulationOrderRecord;
 
 final class SaveRegulationStep1Command implements CommandInterface
 {
-    public ?string $description;
     public ?string $issuingAuthority;
+    public ?string $description;
 
     public function __construct(
         public readonly ?RegulationOrderRecord $regulationOrderRecord = null,
@@ -22,8 +22,8 @@ final class SaveRegulationStep1Command implements CommandInterface
     ): self {
         $regulationOrder = $regulationOrderRecord?->getRegulationOrder();
         $command = new self($regulationOrderRecord);
-        $command->description = $regulationOrder?->getDescription();
         $command->issuingAuthority = $regulationOrder?->getIssuingAuthority();
+        $command->description = $regulationOrder?->getDescription();
 
         return $command;
     }
