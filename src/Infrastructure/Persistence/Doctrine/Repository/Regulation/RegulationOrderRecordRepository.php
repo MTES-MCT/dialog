@@ -58,6 +58,35 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function findOneForSummary(string $uuid): array|null
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(
+                'roc.uuid',
+                'roc.status',
+                'ro.description',
+                'o.startPeriod',
+                'o.endPeriod',
+                'l.city',
+                'l.roadName',
+                'vc.maxWeight',
+                'vc.maxHeight',
+                'vc.maxWidth',
+                'vc.maxLength',
+            )
+            ->where('roc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->innerJoin('ro.regulationCondition', 'rc')
+            ->leftJoin('rc.vehicleCharacteristics', 'vc')
+            ->leftJoin('rc.overallPeriod', 'o')
+            ->leftJoin('rc.location', 'l')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function save(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
     {
         $this->getEntityManager()->persist($regulationOrderRecord);

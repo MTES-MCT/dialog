@@ -2,3 +2,15 @@
 label.required::after {
     content: ' *';
 }
+
+:root {
+    --x-icon-decorative-blue-france: #CACAFB;
+}
+
+.fr-x-icon-decorative--blue-france::before {
+    background-color: var(--x-icon-decorative-blue-france);
+}
+
+.fr-x-icon--xl::before {
+    --icon-size: 2.5rem;
+}

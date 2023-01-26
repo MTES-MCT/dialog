@@ -1,10 +1,54 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
 {% block step_body %}
+    {% include "regulation/_summary.html.twig" %}
+
+    <h3 class="fr-mt-4w">{{ 'regulation.step5.and_now'|trans }}</h3>
+
+    <div class="fr-container--fluid">
+        <div class="fr-grid-row">
+            <div class="fr-form-group fr-col-12 fr-col-lg-6">
+                <fieldset class="fr-fieldset">
+                    <div class="fr-fieldset__content">
+                        <div class="fr-radio-group fr-mt-0 fr-radio-rich">
+                            <input
+                                type="radio"
+                                id="status-draft"
+                                name="status"
+                                {% if regulationOrderRecord.status == 'draft' %}checked{% endif %}
+                            />
+                            <label class="fr-label" for="radio-rich-hint-1">
+                                <b>{{ 'regulation.step5.draft.save'|trans }}</b>
+                                <span class="fr-hint-text">{{ 'regulation.step5.draft.description'|trans }}</span>
+                            </label>
+                            <div class="fr-radio-rich__img">
+                                <span class="fr-icon-contrast-fill fr-icon--lg fr-m-3w" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="fr-radio-group fr-radio-rich">
+                            <input
+                                type="radio"
+                                id="status-published"
+                                name="status"
+                                {% if regulationOrderRecord.status == 'published' %}checked{% endif %}
+                            />
+                            <label class="fr-label" for="radio-rich-hint-2">
+                                <b>{{ 'regulation.step5.published.save'|trans }}</b>
+                                <span class="fr-hint-text">{{ 'regulation.step5.published.description'|trans }}</span>
+                            </label>
+                            <div class="fr-radio-rich__img">
+                                <span class="fr-icon-check-line fr-icon--lg fr-m-3w" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
     <a href="{{ path('app_regulations_steps_4', {uuid}) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-arrow-left-line fr-mr-3w">
         {{ "common.back"|trans }}
     </a>
-
     <a href="{{ path('app_regulations_list') }}" class="fr-btn">
         {{ "common.save"|trans }}
     </a>

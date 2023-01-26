@@ -15,4 +15,6 @@ interface RegulationOrderRecordRepositoryInterface
     public function findRegulations(int $maxItemsPerPage, int $page, string $status): array;
 
     public function countRegulations(string $status): int;
+
+    public function findOneForSummary(string $uuid): array|null;
 }
