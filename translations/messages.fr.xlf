@@ -130,13 +130,33 @@
                 <source>regulation.breadcrumb</source>
                 <target>Réglementations</target>
             </trans-unit>
+            <trans-unit id="regulation.step1.expected_disruption">
+                <source>regulation.step1.expected_disruption</source>
+                <target>Perturbation prévue</target>
+            </trans-unit>
             <trans-unit id="regulation.step1.description">
                 <source>regulation.step1.description</source>
                 <target>Description</target>
             </trans-unit>
+            <trans-unit id="regulation.step1.description.help">
+                <source>regulation.step1.description.help</source>
+                <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur la voie")</target>
+            </trans-unit>
             <trans-unit id="regulation.step1.issuing_authority">
                 <source>regulation.step1.issuing_authority</source>
-                <target>Autorité émettrice</target>
+                <target>Autorité compétente</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.issuing_authority.help">
+                <source>regulation.step1.issuing_authority.help</source>
+                <target>Commune, département ou entité responsable de la réglementation</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.subtitle">
+                <source>regulation.step2.subtitle</source>
+                <target>Ville et rue</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.help">
+                <source>regulation.step2.help</source>
+                <target>Indiquez la rue impactée par la restriction.</target>
             </trans-unit>
             <trans-unit id="regulation.step2.postal_code">
                 <source>regulation.step2.postal_code</source>
@@ -148,7 +168,7 @@
             </trans-unit>
             <trans-unit id="regulation.step2.road_name">
                 <source>regulation.step2.road_name</source>
-                <target>Rue</target>
+                <target>Nom de la voie</target>
             </trans-unit>
             <trans-unit id="regulation.step2.from_house_number">
                 <source>regulation.step2.from_house_number</source>
@@ -158,17 +178,37 @@
                 <source>regulation.step2.to_house_number</source>
                 <target>Numéro de fin</target>
             </trans-unit>
+            <trans-unit id="regulation.step3.subtitle">
+                <source>regulation.step3.subtitle</source>
+                <target>Période de restriction</target>
+            </trans-unit>
+            <trans-unit id="regulation.step3.help">
+                <source>regulation.step3.help</source>
+                <target>Pendant quelle période la circulation est-elle réglementée ? Si la restriction est permanente, une date de début suffit.</target>
+            </trans-unit>
             <trans-unit id="regulation.step3.start_period">
                 <source>regulation.step3.start_period</source>
                 <target>Date de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.step3.start_period.help">
+                <source>regulation.step3.start_period.help</source>
+                <target>Début d'effet de la restriction</target>
             </trans-unit>
             <trans-unit id="regulation.step3.end_period">
                 <source>regulation.step3.end_period</source>
                 <target>Date de fin</target>
             </trans-unit>
+            <trans-unit id="regulation.step3.end_period.help">
+                <source>regulation.step3.end_period.help</source>
+                <target>Laisser vide si la restriction est permanente</target>
+            </trans-unit>
             <trans-unit id="regulation.step4.vehicle_characteristics">
                 <source>regulation.step4.vehicle_characteristics</source>
-                <target>Véhicules concernés</target>
+                <target>Véhicules concernés par la réglementation</target>
+            </trans-unit>
+            <trans-unit id="regulation.step4.vehicle_characteristics.help">
+                <source>regulation.step4.vehicle_characteristics.help</source>
+                <target>Quels véhicules sont limités de circulation ?</target>
             </trans-unit>
             <trans-unit id="regulation.step4.max_weight">
                 <source>regulation.step4.max_weight</source>

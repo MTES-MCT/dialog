@@ -1,4 +1,4 @@
-/* Set by Symfony for form types with required: true */
-label.required::after {
+/* label.required is set by Symfony for form types with 'required => true' */
+label.required > .fr-x-label-content::after {
     content: ' *';
 }

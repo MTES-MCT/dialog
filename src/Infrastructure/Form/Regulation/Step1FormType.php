@@ -19,6 +19,7 @@ final class Step1FormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.step1.description',
+                    'help' => 'regulation.step1.description.help',
                 ],
             )
             ->add(
@@ -26,6 +27,7 @@ final class Step1FormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.step1.issuing_authority',
+                    'help' => 'regulation.step1.issuing_authority.help',
                 ],
             )
             ->add(
