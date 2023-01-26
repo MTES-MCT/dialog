@@ -26,6 +26,10 @@
                 <source>common.slogan</source>
                 <target>Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistique.</target>
             </trans-unit>
+            <trans-unit id="common.see">
+                <source>common.see</source>
+                <target>Voir le détail</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>
@@ -225,6 +229,70 @@
             <trans-unit id="regulation.step4.max_length">
                 <source>regulation.step4.max_length</source>
                 <target>Longueur maximum (m)</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.where">
+                <source>regulation.step5.where</source>
+                <target>Où ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.where.city">
+                <source>regulation.step5.where.city</source>
+                <target>Ville : %city%</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.where.road_name">
+                <source>regulation.step5.where.road_name</source>
+                <target>Rue : %roadName%</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.when">
+                <source>regulation.step5.when</source>
+                <target>Quand ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.for_what">
+                <source>regulation.step5.for_what</source>
+                <target>Quoi ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.for_what.no_entry">
+                <source>regulation.step5.for_what.no_entry</source>
+                <target>Circulation interdite</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.vehicles">
+                <source>regulation.step5.vehicles</source>
+                <target>Pour quels véhicules ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.vehicles.weight">
+                <source>regulation.step5.vehicles.weight</source>
+                <target>de plus de %weight% tonnes</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.vehicles.width">
+                <source>regulation.step5.vehicles.width</source>
+                <target>d'une largeur de plus de %width% mètres</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.vehicles.height">
+                <source>regulation.step5.vehicles.height</source>
+                <target>d'une hauteur de plus de %height% mètres</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.vehicles.length">
+                <source>regulation.step5.vehicles.length</source>
+                <target>d'une longueur de plus de %length% mètres</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.and_now">
+                <source>regulation.step5.and_now</source>
+                <target>Et maintenant ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.draft.save">
+                <source>regulation.step5.draft.save</source>
+                <target>Sauvegarder le brouillon</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.published.save">
+                <source>regulation.step5.published.save</source>
+                <target>Valider la réglementation</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.published.description">
+                <source>regulation.step5.published.description</source>
+                <target>La réglementation sera communiquée aux GPS (bientôt).</target>
+            </trans-unit>
+            <trans-unit id="regulation.step5.draft.description">
+                <source>regulation.step5.draft.description</source>
+                <target>La réglementation ne sera pas encore diffusée.</target>
             </trans-unit>
             <trans-unit id="regulation.period">
                 <source>regulation.period</source>
