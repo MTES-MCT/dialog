@@ -15,22 +15,23 @@ final class SaveRegulationStep1CommandTest extends TestCase
     {
         $command = SaveRegulationStep1Command::create();
 
-        $this->assertEmpty($command->description);
         $this->assertEmpty($command->issuingAuthority);
+        $this->assertEmpty($command->description);
     }
 
     public function testWithRegulationOrderRecord(): void
     {
         $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getDescription')
-            ->willReturn('Description');
 
         $regulationOrder
             ->expects(self::once())
             ->method('getIssuingAuthority')
             ->willReturn('Autorité');
+
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getDescription')
+            ->willReturn('Description');
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord
@@ -40,7 +41,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
 
         $command = SaveRegulationStep1Command::create($regulationOrderRecord);
 
-        $this->assertSame($command->description, 'Description');
         $this->assertSame($command->issuingAuthority, 'Autorité');
+        $this->assertSame($command->description, 'Description');
     }
 }

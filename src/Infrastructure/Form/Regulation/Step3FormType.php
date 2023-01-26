@@ -19,6 +19,7 @@ final class Step3FormType extends AbstractType
                 DateType::class,
                 options: [
                     'label' => 'regulation.step3.start_period',
+                    'help' => 'regulation.step3.start_period.help',
                     'widget' => 'single_text',
                 ],
             )
@@ -27,6 +28,7 @@ final class Step3FormType extends AbstractType
                 DateType::class,
                 options: [
                     'label' => 'regulation.step3.end_period',
+                    'help' => 'regulation.step3.end_period.help',
                     'widget' => 'single_text',
                     'required' => false,
                 ],

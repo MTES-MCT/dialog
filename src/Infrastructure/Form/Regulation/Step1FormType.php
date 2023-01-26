@@ -15,17 +15,19 @@ final class Step1FormType extends AbstractType
     {
         $builder
             ->add(
-                'description',
-                TextType::class,
-                options: [
-                    'label' => 'regulation.step1.description',
-                ],
-            )
-            ->add(
                 'issuingAuthority',
                 TextType::class,
                 options: [
                     'label' => 'regulation.step1.issuing_authority',
+                    'help' => 'regulation.step1.issuing_authority.help',
+                ],
+            )
+            ->add(
+                'description',
+                TextType::class,
+                options: [
+                    'label' => 'regulation.step1.description',
+                    'help' => 'regulation.step1.description.help',
                 ],
             )
             ->add(
