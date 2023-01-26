@@ -71,4 +71,20 @@ final class Step1ControllerTest extends WebTestCase
         $this->assertRouteSame('app_regulations_list');
     }
 
+    public function testFieldsTooLong(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[description]"] = str_repeat('a', 256);
+        $form["step1_form[issuingAuthority]"] = str_repeat('a', 256);
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_description_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
+    }
 }
