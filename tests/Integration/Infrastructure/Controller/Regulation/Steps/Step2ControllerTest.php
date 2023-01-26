@@ -144,7 +144,7 @@ final class Step2ControllerTest extends WebTestCase
         $this->assertRouteSame('app_regulations_steps_1', ['uuid' => '3ede8b1a-1816-4788-8510-e08f45511cb5']);
     }
 
-    public function testInvalidFromHouseNumberAndToHouseNumber(): void
+    public function testFieldsTooLong(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
@@ -153,13 +153,15 @@ final class Step2ControllerTest extends WebTestCase
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form['step2_form[postalCode]'] = '44260';
-        $form['step2_form[city]'] = 'Savenay';
-        $form['step2_form[roadName]'] = 'Route du GEOCODING_FAILURE';
-        $form['step2_form[fromHouseNumber]'] = 'Plus long que 8 caractères';
-        $form['step2_form[toHouseNumber]'] = 'Plus long que 8 caractères';
+        $form['step2_form[city]'] = str_repeat('a', 256);
+        $form['step2_form[roadName]'] = str_repeat('a', 61);
+        $form['step2_form[fromHouseNumber]'] = str_repeat('a', 9);
+        $form['step2_form[toHouseNumber]'] = str_repeat('a', 9);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(200);
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step2_form_city_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.", $crawler->filter('#step2_form_roadName_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
     }

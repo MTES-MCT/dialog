@@ -5,9 +5,15 @@
     <class name="App\Application\Regulation\Command\Steps\SaveRegulationStep1Command">
         <property name="description">
             <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
         </property>
         <property name="issuingAuthority">
             <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
         </property>
     </class>
 </constraint-mapping>
