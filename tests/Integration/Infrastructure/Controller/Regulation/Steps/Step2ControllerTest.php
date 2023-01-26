@@ -14,11 +14,11 @@ final class Step2ControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet
 
         $this->assertResponseStatusCodeSame(200);
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
 
         $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_postalCode_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_city_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_roadName_error')->text());
@@ -35,7 +35,7 @@ final class Step2ControllerTest extends WebTestCase
         $this->assertSame('Étape 2 sur 5 Localisation', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Période', $crawler->filter('p.fr-stepper__details')->text());
 
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form['step2_form[postalCode]'] = '44260';
         $form['step2_form[city]'] = 'Savenay';
@@ -44,7 +44,7 @@ final class Step2ControllerTest extends WebTestCase
         $form['step2_form[toHouseNumber]'] = '37bis';
 
         $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
@@ -57,11 +57,11 @@ final class Step2ControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2'); // Already has a location
         $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
 
         $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
@@ -85,7 +85,7 @@ final class Step2ControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
 
         $this->assertResponseStatusCodeSame(200);
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form['step2_form[postalCode]'] = $postalCode;
         $form['step2_form[city]'] = 'Savenay';
@@ -94,7 +94,7 @@ final class Step2ControllerTest extends WebTestCase
         $form['step2_form[toHouseNumber]'] = '37bis';
 
         $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertSame("Cette valeur n'est pas valide. Un code postal est composé de 5 chiffres.", $crawler->filter('#step2_form_postalCode_error')->text());
     }
 
@@ -113,7 +113,7 @@ final class Step2ControllerTest extends WebTestCase
         $form['step2_form[toHouseNumber]'] = '37bis';
 
         $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith("En raison d'un problème technique", $crawler->filter('#step2_form_error')->text());
     }
 
@@ -159,10 +159,20 @@ final class Step2ControllerTest extends WebTestCase
         $form['step2_form[toHouseNumber]'] = str_repeat('a', 9);
 
         $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step2_form_city_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.", $crawler->filter('#step2_form_roadName_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
+    }
+
+    public function testUxEnhancements(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $this->assertNotNull($saveButton->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
     }
 }
