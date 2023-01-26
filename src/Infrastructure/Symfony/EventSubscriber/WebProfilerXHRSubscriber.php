@@ -29,7 +29,7 @@ class WebProfilerXHRSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$this->kernel->isDebug()) {
             return;
