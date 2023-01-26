@@ -16,14 +16,14 @@ final class RegulationOrderTest extends TestCase
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
-            description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             issuingAuthority: 'Commune de Savenay',
+            description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             regulationCondition: $regulationCondition,
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrder->getUuid());
-        $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
         $this->assertSame('Commune de Savenay', $regulationOrder->getIssuingAuthority());
+        $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
         $this->assertSame($regulationCondition, $regulationOrder->getRegulationCondition());
     }
 
@@ -33,12 +33,15 @@ final class RegulationOrderTest extends TestCase
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
-            description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             issuingAuthority: 'Commune de Savenay',
+            description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             regulationCondition: $regulationCondition,
         );
 
-        $regulationOrder->update('Arrêté temporaire', 'Commune de Paris');
+        $regulationOrder->update(
+            issuingAuthority: 'Commune de Paris',
+            description: 'Arrêté temporaire',
+        );
 
         $this->assertSame('Commune de Paris', $regulationOrder->getIssuingAuthority());
         $this->assertSame('Arrêté temporaire', $regulationOrder->getDescription());

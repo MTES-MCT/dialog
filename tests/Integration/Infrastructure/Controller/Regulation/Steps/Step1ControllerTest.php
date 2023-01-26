@@ -19,8 +19,8 @@ final class Step1ControllerTest extends WebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
         $form["step1_form[issuingAuthority]"] = "Ville de Paris";
+        $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
 
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -40,8 +40,8 @@ final class Step1ControllerTest extends WebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_description_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_description_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
@@ -79,13 +79,13 @@ final class Step1ControllerTest extends WebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[description]"] = str_repeat('a', 256);
         $form["step1_form[issuingAuthority]"] = str_repeat('a', 256);
+        $form["step1_form[description]"] = str_repeat('a', 256);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_description_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_description_error')->text());
     }
 
     public function testUxEnhancements(): void

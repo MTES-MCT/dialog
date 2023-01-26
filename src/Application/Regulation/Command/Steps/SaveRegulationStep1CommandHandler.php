@@ -38,8 +38,8 @@ final class SaveRegulationStep1CommandHandler
             $regulationOrder = $this->regulationOrderRepository->save(
                 new RegulationOrder(
                     uuid: $this->idFactory->make(),
-                    description: $command->description,
                     issuingAuthority: $command->issuingAuthority,
+                    description: $command->description,
                     regulationCondition: $regulationCondition,
                 ),
             );
@@ -58,8 +58,8 @@ final class SaveRegulationStep1CommandHandler
         }
 
         $command->regulationOrderRecord->getRegulationOrder()->update(
-            description: $command->description,
             issuingAuthority: $command->issuingAuthority,
+            description: $command->description,
         );
 
         return $command->regulationOrderRecord->getUuid();

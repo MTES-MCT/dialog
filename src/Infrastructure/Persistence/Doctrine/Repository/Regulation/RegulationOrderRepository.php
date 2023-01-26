@@ -28,8 +28,8 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
         return $this->createQueryBuilder('ro')
             ->select(
                 'ro.uuid',
-                'ro.description',
                 'ro.issuingAuthority',
+                'ro.description',
                 'o.startPeriod',
                 'o.endPeriod',
                 'loc.postalCode',
