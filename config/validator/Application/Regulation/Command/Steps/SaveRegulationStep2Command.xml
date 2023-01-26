@@ -12,15 +12,27 @@
         </property>
         <property name="city">
             <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
         </property>
         <property name="roadName">
             <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="max">60</option>
+            </constraint>
         </property>
         <property name="fromHouseNumber">
             <constraint name="NotBlank" />
-        </property>
-        <property name="toHouseNumber">
+            <constraint name="Length">
+                <option name="max">8</option>
+            </constraint>
+       </property>
+       <property name="toHouseNumber">
             <constraint name="NotBlank" />
-        </property>
+            <constraint name="Length">
+                <option name="max">8</option>
+            </constraint>
+       </property>
     </class>
 </constraint-mapping>

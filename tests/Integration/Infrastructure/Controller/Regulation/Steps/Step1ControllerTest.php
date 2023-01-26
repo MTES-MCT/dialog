@@ -17,13 +17,13 @@ final class Step1ControllerTest extends WebTestCase
         $this->assertSame('Étape 1 sur 5 Restriction', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Localisation', $crawler->filter('p.fr-stepper__details')->text());
 
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
         $form["step1_form[issuingAuthority]"] = "Ville de Paris";
 
         $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseStatusCodeSame(303);
 
         $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
@@ -35,11 +35,11 @@ final class Step1ControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/regulations/form');
 
-        $saveButton = $crawler->selectButton("Suivant");
+        $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
 
         $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_description_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
     }
@@ -71,4 +71,30 @@ final class Step1ControllerTest extends WebTestCase
         $this->assertRouteSame('app_regulations_list');
     }
 
+    public function testFieldsTooLong(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[description]"] = str_repeat('a', 256);
+        $form["step1_form[issuingAuthority]"] = str_repeat('a', 256);
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_description_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
+    }
+
+    public function testUxEnhancements(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $this->assertNotNull($saveButton->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
+    }
 }
