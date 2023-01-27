@@ -74,6 +74,10 @@
                 <source>common.back</source>
                 <target>Précédent</target>
             </trans-unit>
+            <trans-unit id="common.published">
+                <source>common.published</source>
+                <target>Publiée</target>
+            </trans-unit>
             <trans-unit id="common.accessibilty">
                 <source>common.accessibilty</source>
                 <target>Accessibilité</target>
@@ -456,6 +460,30 @@
                     <![CDATA[<li>]]><![CDATA[<b>]]>Fin 2023<![CDATA[</b>]]> : déploiement dans 5 territoires, pour tout type de réglementation.<![CDATA[</li>]]>
                     <![CDATA[</ul>]]>
                 </target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.title">
+                <source>regulation.detail.title</source>
+                <target>Réglementation - %city%</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.datex">
+                <source>regulation.detail.datex</source>
+                <target>Format DATEX II</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.export">
+                <source>regulation.detail.export</source>
+                <target>Exporter</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.share">
+                <source>regulation.detail.share</source>
+                <target>Partager</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.copy">
+                <source>regulation.detail.copy</source>
+                <target>Copier le lien de partage</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.see_all">
+                <source>regulation.detail.see_all</source>
+                <target>Toutes les réglementations</target>
             </trans-unit>
         </body>
     </file>

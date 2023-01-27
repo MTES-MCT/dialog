@@ -1,7 +1,7 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
 {% block step_body %}
-    {% include "regulation/_summary.html.twig" %}
+    {% include "regulation/_summary.html.twig" with { 'canEdit': true, regulationOrderRecord} only %}
 
     <h3 class="fr-mt-4w">{{ 'regulation.step5.and_now'|trans }}</h3>
 

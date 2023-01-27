@@ -35,7 +35,6 @@ final class Step2Controller extends AbstractStepsController
     #[Route(
         '/regulations/form/{uuid}/2',
         name: 'app_regulations_steps_2',
-        requirements: ['uuid' => '.+'],
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response
