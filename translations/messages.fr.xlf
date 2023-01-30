@@ -370,17 +370,92 @@
                 <source>pagination.page</source>
                 <target>Page %page%</target>
             </trans-unit>
-            <trans-unit id="landing.title">
-                <source>landing.title</source>
+            <trans-unit id="landing.jumbotron.title">
+                <source>landing.jumbotron.title</source>
                 <target>Faciliter et sécuriser la circulation</target>
             </trans-unit>
-            <trans-unit id="landing.description">
-                <source>landing.description</source>
-                <target>Dialog est une plateforme pour les administrations. Elles peuvent y numériser la réglementation des poids lourds (circulation, stationnement…).</target>
+            <trans-unit id="landing.jumbotron.description">
+                <source>landing.jumbotron.description</source>
+                <target>Dialog permet <![CDATA[<b>]]>la numérisation de réglementations<![CDATA[</b>]]> pour garantir la sécurité du public et préserver les infrastructures routières.</target>
             </trans-unit>
-            <trans-unit id="landing.link">
-                <source>landing.link</source>
-                <target>Accéder à l'outil (authentification requise)</target>
+            <trans-unit id="landing.jumbotron.illustration">
+                <source>landing.jumbotron.illustration</source>
+                <target>Illustration GPS</target>
+            </trans-unit>
+            <trans-unit id="landing.jumbotron.login">
+                <source>landing.jumbotron.login</source>
+                <target>Se connecter</target>
+            </trans-unit>
+            <trans-unit id="landing.jumbotron.contact">
+                <source>landing.jumbotron.contact</source>
+                <target>Nous contacter</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.title">
+                <source>landing.how-it-works.title</source>
+                <target>Comment ça marche ?</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.city.title">
+                <source>landing.how-it-works.city.title</source>
+                <target>Pour les communes</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.city.description">
+                <source>landing.how-it-works.city.description</source>
+                <target>La <![CDATA[<b>]]>numérisation des réglementations de circulation<![CDATA[</b>]]> permet de les <![CDATA[<b>]]>communiquer efficacement<![CDATA[</b>]]>.</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.city.link">
+                <source>landing.how-it-works.city.link</source>
+                <target>Créer un compte pour ma commune</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.gps.title">
+                <source>landing.how-it-works.gps.title</source>
+                <target>Pour les GPS</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.gps.description">
+                <source>landing.how-it-works.gps.description</source>
+                <target><![CDATA[<b>]]>L’intégration<![CDATA[</b>]]> des réglementations dans les <![CDATA[<b>]]>calculateurs d'itinéraires<![CDATA[</b>]]> favorise la bonne circulation.</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.gps.link">
+                <source>landing.how-it-works.gps.link</source>
+                <target>Accéder aux données Open Data</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.trucks.title">
+                <source>landing.how-it-works.trucks.title</source>
+                <target>Pour les poids lourds</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.trucks.description">
+                <source>landing.how-it-works.trucks.description</source>
+                <target>Les chauffeurs ont enfin un <![CDATA[<b>]]>moyen fiable de connaître la réglementation<![CDATA[</b>]]>, directement via leurs GPS.</target>
+            </trans-unit>
+            <trans-unit id="landing.how-it-works.trucks.link">
+                <source>landing.how-it-works.trucks.link</source>
+                <target>Voir les GPS partenaires</target>
+            </trans-unit>
+            <trans-unit id="landing.itinerary.title">
+                <source>landing.itinerary.title</source>
+                <target>Des itinéraires adaptés pour une circulation apaisée</target>
+            </trans-unit>
+            <trans-unit id="landing.itinerary.description">
+                <source>landing.itinerary.description</source>
+                <target>
+                    <![CDATA[<p>]]>Actuellement, les collectivités ont des <![CDATA[<b>]]>difficultés à communiquer les restrictions de circulations<![CDATA[</b>]]>, notamment celles spécifiques aux poids lourds. Cela cause des <![CDATA[<b>]]>problèmes d’usure du réseau routier<![CDATA[</b>]]>, ainsi que des <![CDATA[<b>]]>difficultés de circulation en période de travaux<![CDATA[</b>]]>.<![CDATA[</p>]]>
+                    <![CDATA[<p>]]>Afin de pallier à ce problème, <![CDATA[<b>]]>la loi Climat et Résilience (article 122-4)<![CDATA[</b>]]> impose aux calculateurs d’itinéraires d’intégrer les réglementations spécifiques aux poids lourds.<![CDATA[</p>]]>
+                    <![CDATA[<p>]]>L’équipe de DiaLog travaille donc avec les principaux services de <![CDATA[<b>]]>navigations GPS<![CDATA[</b>]]> pour <![CDATA[<b>]]>diffuser plus largement les règles de circulations.<![CDATA[</b>]]><![CDATA[</p>]]>
+                </target>
+            </trans-unit>
+            <trans-unit id="landing.product.title">
+                <source>landing.product.title</source>
+                <target>Un produit en cours de construction</target>
+            </trans-unit>
+            <trans-unit id="landing.product.description">
+                <source>landing.product.description</source>
+                <target>
+                    <![CDATA[<p>]]><![CDATA[<b>]]>Dialog est un service numérique public incubé par beta.gouv.fr<![CDATA[</b>]]>. Il est actuellement en <![CDATA[<b>]]>phase de construction<![CDATA[</b>]]>. L’équipe construit une première version, sur un périmètre réduit :<![CDATA[</p>]]>
+                    <![CDATA[<ul>]]>
+                    <![CDATA[<li>]]><![CDATA[<b>]]>Début 2023 : développement et tests<![CDATA[</b>]]> auprès de Rennes et Savenay (9000 habitants).<![CDATA[</li>]]>
+                    <![CDATA[<li>]]><![CDATA[<b>]]>Mars 2023<![CDATA[</b>]]> : mise en production de la plateforme Dialog, pour intégrer les <![CDATA[<b>]]>réglementations poids lourds et travaux<![CDATA[</b>]]>.<![CDATA[</li>]]>
+                    <![CDATA[<li>]]><![CDATA[<b>]]>Fin 2023<![CDATA[</b>]]> : déploiement dans 5 territoires, pour tout type de réglementation.<![CDATA[</li>]]>
+                    <![CDATA[</ul>]]>
+                </target>
             </trans-unit>
         </body>
     </file>

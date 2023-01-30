@@ -1,7 +1,101 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3>{{ 'landing.title'|trans }}</h3>
-    <p>{{ 'landing.description'|trans }}</p>
-    <a href="{{ path('app_regulations_list') }}">{{ 'landing.link'|trans }}</a>
+    <section class="fr-container fr-pt-4w header" aria-labelledby="jumbotron">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-8">
+                <h1 id="jumbotron" class="fr-title--blue-france">{{ 'landing.jumbotron.title'|trans }}</h1>
+                <p class="fr-text--lead">{{ 'landing.jumbotron.description'|trans|raw }}</p>
+
+                <a href="{{ path('app_regulations_list') }}" class="fr-btn fr-mr-2w">
+                    {{ 'landing.jumbotron.login'|trans }}
+                </a>
+                <a href="#" class="fr-btn fr-btn--secondary">
+                    {{ 'landing.jumbotron.contact'|trans }}
+                </a>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
+                <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" width="300" height="276"/>
+            </div>
+        </div>
+    </section>
+    <section class="how-it-works fr-background-alt--blue-france" aria-labelledby="how-it-works">
+        <div class="fr-container fr-py-6w">
+            <h2 id="how-it-works">{{ 'landing.how-it-works.title'|trans }}</h2>
+            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-card">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">{{ 'landing.how-it-works.city.title'|trans }}</h3>
+                                <p class="fr-card__desc">
+                                    {{ 'landing.how-it-works.city.description'|trans|raw }}
+                                    <br/>
+                                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
+                                        {{ 'landing.how-it-works.city.link'|trans }}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-card__header fr-x-text--center">
+                            <img src="{{ asset('images/landing/city-hall.png') }}" alt="city-hall" />
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-card">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">{{ 'landing.how-it-works.gps.title'|trans }}</h3>
+                                <p class="fr-card__desc">
+                                    {{ 'landing.how-it-works.gps.description'|trans|raw }}
+                                    <br/>
+                                    <a href="{{ path('api_regulations_list', { _format: 'xml' }) }}" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
+                                        {{ 'landing.how-it-works.gps.link'|trans }}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-card__header fr-x-text--center">
+                            <img src="{{ asset('images/landing/map.png') }}" alt="map" />
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-card">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">{{ 'landing.how-it-works.trucks.title'|trans }}</h3>
+                                <p class="fr-card__desc">
+                                    {{ 'landing.how-it-works.trucks.description'|trans|raw }}
+                                    <br/>
+                                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
+                                        {{ 'landing.how-it-works.trucks.link'|trans }}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-card__header fr-x-text--center">
+                            <img src="{{ asset('images/landing/information.png') }}" alt="information" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="itinerary fr-container fr-py-6w" aria-labelledby="itinerary">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-md-8">
+                <h2 id="itinerary" class="fr-title--blue-france">{{ 'landing.itinerary.title'|trans }}</h2>
+                {{ 'landing.itinerary.description'|trans|raw }}
+            </div>
+            <div class="fr-col-md-4 fr-x-text--right">
+                <img src="{{ asset('images/landing/itinerary.png') }}" width="346" alt="itinerary" />
+            </div>
+        </div>
+    </section>
+    <section class="fr-container fr-py-6w">
+        <h2 class="fr-title--blue-france">{{ 'landing.product.title'|trans }}</h2>
+        {{ 'landing.product.description'|trans|raw }}
+    </section>
 {% endblock %}

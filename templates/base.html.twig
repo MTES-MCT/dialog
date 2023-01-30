@@ -30,11 +30,7 @@
   <body>
     {% include 'common/header.html.twig' %}
     <main id="contenu">
-        <section class="banner fr-py-5w fr-md-8w">
-            <div class="fr-container">
-                {% block body %}{% endblock %}
-            </div>
-        </section>
+        {% block body %}{% endblock %}
     </main>
     {% include 'common/footer.html.twig' %}
   </body>
