@@ -39,6 +39,14 @@ final class Step5ControllerTest extends WebTestCase
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4', $step4->filter('a')->link()->getUri());
         $this->assertCount(0, $step4->filter('li'));
 
+        // Status action
+        $draftInput = $crawler->filter('input[id="status-draft"]')->first();
+        $draftLabel = $draftInput->siblings()->filter('[for="status-draft"]')->first();
+        $this->assertStringStartsWith('Sauvegarder le brouillon', $draftLabel->text());
+        $publishedInput = $crawler->filter('input[id="status-published"]')->first();
+        $publishedLabel = $publishedInput->siblings()->filter('[for="status-published"]')->first();
+        $this->assertStringStartsWith('Valider la réglementation', $publishedLabel->text());
+
         $client->clickLink('Sauvegarder');
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_list');
