@@ -1,9 +1,11 @@
 <div class="fr-tile fr-tile--horizontal for-what">
-    <div class="fr-m-3w">
-        <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-     </div>
+    {% if canEdit %}
+        <div class="fr-m-3w">
+            <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                {{ 'common.update'|trans }}
+            </a>
+        </div>
+    {% endif %}
     <div class="fr-tile__body">
         <h4 class="fr-tile__title">{{ 'regulation.step5.for_what'|trans }}</h4>
         <div class="fr-tile__desc">
@@ -18,11 +20,13 @@
     </div>
 </div>
 <div class="fr-tile fr-tile--horizontal fr-mt-4w where">
-    <div class="fr-m-3w">
-        <a href="{{ path('app_regulations_steps_2', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-     </div>
+    {% if canEdit %}
+        <div class="fr-m-3w">
+            <a href="{{ path('app_regulations_steps_2', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                {{ 'common.update'|trans }}
+            </a>
+        </div>
+    {% endif %}
     <div class="fr-tile__body">
         <h4 class="fr-tile__title">{{ 'regulation.step5.where'|trans }}</h4>
         {% if regulationOrderRecord.location %}
@@ -39,11 +43,13 @@
     </div>
 </div>
 <div class="fr-tile fr-tile--horizontal fr-mt-4w when">
-    <div class="fr-m-3w">
-        <a href="{{ path('app_regulations_steps_3', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-     </div>
+    {% if canEdit %}
+        <div class="fr-m-3w">
+            <a href="{{ path('app_regulations_steps_3', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                {{ 'common.update'|trans }}
+            </a>
+        </div>
+    {% endif %}
     <div class="fr-tile__body">
         <h4 class="fr-tile__title">{{ 'regulation.step5.when'|trans }}</h4>
         {% if regulationOrderRecord.period %}
@@ -70,11 +76,13 @@
     </div>
 </div>
 <div class="fr-tile fr-tile--horizontal fr-mt-4w vehicles">
-    <div class="fr-m-3w">
-        <a href="{{ path('app_regulations_steps_4', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-     </div>
+    {% if canEdit %}
+        <div class="fr-m-3w">
+            <a href="{{ path('app_regulations_steps_4', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                {{ 'common.update'|trans }}
+            </a>
+        </div>
+    {% endif %}
     <div class="fr-tile__body">
         <h4 class="fr-tile__title">{{ 'regulation.step5.vehicles'|trans }}</h4>
         {% if regulationOrderRecord.vehicleCharacteristics %}
