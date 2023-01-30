@@ -1,3 +1,10 @@
+@import url('../../node_modules/@gouvfr/dsfr/dist/dsfr.min.css');
+@import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css');
+@import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css');
+@import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css');
+@import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css');
+@import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css');
+
 /* label.required is set by Symfony for form types with 'required => true' */
 label.required > .fr-x-label-content::after {
     content: ' *';
