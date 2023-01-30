@@ -17,7 +17,7 @@
                                 name="status"
                                 {% if regulationOrderRecord.status == 'draft' %}checked{% endif %}
                             />
-                            <label class="fr-label" for="radio-rich-hint-1">
+                            <label class="fr-label" for="status-draft">
                                 <b>{{ 'regulation.step5.draft.save'|trans }}</b>
                                 <span class="fr-hint-text">{{ 'regulation.step5.draft.description'|trans }}</span>
                             </label>
@@ -32,7 +32,7 @@
                                 name="status"
                                 {% if regulationOrderRecord.status == 'published' %}checked{% endif %}
                             />
-                            <label class="fr-label" for="radio-rich-hint-2">
+                            <label class="fr-label" for="status-published">
                                 <b>{{ 'regulation.step5.published.save'|trans }}</b>
                                 <span class="fr-hint-text">{{ 'regulation.step5.published.description'|trans }}</span>
                             </label>
