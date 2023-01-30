@@ -12,6 +12,7 @@ Encore
     .setPublicPath('/build')
     .copyFiles({
         from: './node_modules/@gouvfr/dsfr/dist/',
+        pattern: /(dsfr.(no)?module.min.js)|(favicon\/)/,
         to: 'dsfr/[path][name].[ext]'
     })
 
