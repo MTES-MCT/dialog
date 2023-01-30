@@ -14,3 +14,26 @@ label.required > .fr-x-label-content::after {
 .fr-x-icon--xl::before {
     --icon-size: 2.5rem;
 }
+
+.fr-x-text--right {
+    text-align: right;
+}
+
+.fr-x-text--center {
+  text-align: center;
+}
+
+.landing-jumbotron__illustration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.fr-title--blue-france {
+    color: var(--blue-france-sun-113-625);
+}
+
+.fr-background-alt--blue-france {
+    background-color: var(--blue-france-975-75);
+}
