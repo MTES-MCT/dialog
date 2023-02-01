@@ -19,7 +19,7 @@ label.required > .fr-x-label-content::after {
 }
 
 .fr-x-icon--xl::before {
-    --icon-size: 2.5rem;
+    --icon-size: 2.75rem;
 }
 
 .fr-x-text--right {
@@ -43,4 +43,27 @@ label.required > .fr-x-label-content::after {
 
 .fr-background-alt--blue-france {
     background-color: var(--blue-france-975-75);
+}
+
+.summary-card {
+    column-gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.summary-card__img {
+    order: 0;
+}
+
+.summary-card__content {
+    order: 1;
+    flex: 1;
+}
+
+.summary-card__title {
+    font-size: inherit;
+    margin: 0;
+}
+
+.summary-card__action {
+    order: 2;
 }
