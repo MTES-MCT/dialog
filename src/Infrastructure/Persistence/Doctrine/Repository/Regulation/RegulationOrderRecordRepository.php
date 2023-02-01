@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -87,6 +88,37 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
+        ;
+    }
+
+    public function findRegulationOrdersForDatexFormat(): array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(
+                'ro.uuid',
+                'ro.issuingAuthority',
+                'ro.description',
+                'o.startPeriod',
+                'o.endPeriod',
+                'loc.postalCode',
+                'loc.city',
+                'loc.roadName',
+                'loc.fromHouseNumber',
+                'ST_X(loc.fromPoint) as fromLongitude',
+                'ST_Y(loc.fromPoint) as fromLatitude',
+                'loc.toHouseNumber',
+                'ST_X(loc.toPoint) as toLongitude',
+                'ST_Y(loc.toPoint) as toLatitude',
+            )
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->innerJoin('ro.regulationCondition', 'rc')
+            ->innerJoin('rc.overallPeriod', 'o')
+            ->innerJoin('rc.location', 'loc')
+            ->where('roc.status = :status')
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getResult()
         ;
     }
 
