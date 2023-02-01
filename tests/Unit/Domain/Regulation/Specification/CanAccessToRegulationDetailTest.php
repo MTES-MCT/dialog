@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Domain\Regulation\Specification;
 
-use App\Application\Regulation\View\ListItemLocationView;
+use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Specification\CanAccessToRegulationDetail;
@@ -21,8 +21,7 @@ final class CanAccessToRegulationDetailTest extends TestCase
             'published',
             'Description',
             $period,
-            new ListItemLocationView('Boulevard Ney', 'Paris'),
-            null,
+            $this->createMock(DetailLocationView::class),
             null,
         );
 

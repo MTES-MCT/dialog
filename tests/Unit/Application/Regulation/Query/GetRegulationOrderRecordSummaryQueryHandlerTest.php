@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
-use App\Application\Regulation\View\ListItemLocationView;
+use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
@@ -18,9 +18,12 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 {
     public function testGetOne(): void
     {
-        $location = new ListItemLocationView(
+        $location = new DetailLocationView(
+            postalCode: '82000',
             city: 'Montauban',
             roadName: 'Avenue de Fonneuve',
+            fromHouseNumber: '695',
+            toHouseNumber: '253',
         );
 
         $startPeriod = new \DateTime('2022-12-07');
@@ -34,8 +37,11 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startPeriod' => $startPeriod,
             'endPeriod' => $endPeriod,
+            'postalCode' => $location->postalCode,
             'city' => $location->city,
             'roadName' => $location->roadName,
+            'fromHouseNumber' => $location->fromHouseNumber,
+            'toHouseNumber' => $location->toHouseNumber,
             'maxWeight' => 3.5,
             'maxHeight' => 3,
             'maxWidth' => 2,
@@ -56,7 +62,13 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'draft',
                 'Description 1',
                 new PeriodView($startPeriod, $endPeriod),
-                new ListItemLocationView($location->roadName, $location->city),
+                new DetailLocationView(
+                    $location->postalCode,
+                    $location->city,
+                    $location->roadName,
+                    $location->fromHouseNumber,
+                    $location->toHouseNumber,
+                ),
                 new VehicleCharacteristicsView(3.5, 3, 2, 10),
             ),
             $regulationOrders,
@@ -73,8 +85,11 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startPeriod' => null,
             'endPeriod' => null,
+            'postalCode' => null,
             'city' => null,
             'roadName' => null,
+            'fromHouseNumber' => null,
+            'toHouseNumber' => null,
             'maxWeight' => null,
             'maxHeight' => null,
             'maxWidth' => null,

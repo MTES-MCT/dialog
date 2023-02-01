@@ -27,8 +27,8 @@ final class Step5ControllerTest extends WebTestCase
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $step1->filter('a')->link()->getUri());
 
         // Step 2
-        $this->assertSame('Ville : Savenay', $step2->filter('li')->eq(0)->text());
-        $this->assertSame('Rue : Route du Grand Brossais', $step2->filter('li')->eq(1)->text());
+        $this->assertSame('Ville : 44260 Savenay', $step2->filter('li')->eq(0)->text());
+        $this->assertSame('Rue : du 15 au 37bis, Route du Grand Brossais', $step2->filter('li')->eq(1)->text());
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2', $step2->filter('a')->link()->getUri());
 
         // Step 3

@@ -25,9 +25,10 @@
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.step5.where'|trans }}</h3>
         {% if regulationOrderRecord.location %}
+            {% set loc = regulationOrderRecord.location %}
             <ul class="fr-ml-1w fr-my-0">
-                <li>{{ 'regulation.step5.where.city'|trans({'%city%': regulationOrderRecord.location.city}) }}</li>
-                <li>{{ 'regulation.step5.where.road_name'|trans({'%roadName%': regulationOrderRecord.location.roadName}) }}</li>
+                <li>{{ 'regulation.step5.where.city'|trans({'%postalCode%': loc.postalCode, '%city%': loc.city}) }}</li>
+                <li>{{ 'regulation.step5.where.road_segment'|trans({'%roadName%': loc.roadName, '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber}) }}</li>
             </ul>
         {% endif %}
     </div>

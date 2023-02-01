@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
-use App\Application\Regulation\View\ListItemLocationView;
+use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
@@ -29,7 +29,11 @@ final class GetRegulationOrderRecordSummaryQueryHandler
         }
 
         $hasPeriod = $row['startPeriod'] || $row['endPeriod'];
-        $hasLocation = $row['city'] && $row['roadName'];
+        $hasLocation = $row['postalCode']
+            && $row['city']
+            && $row['roadName']
+            && $row['fromHouseNumber']
+            && $row['toHouseNumber'];
         $hasVehicleCharacteristics = $row['maxWeight']
             || $row['maxHeight']
             || $row['maxLength']
@@ -43,9 +47,12 @@ final class GetRegulationOrderRecordSummaryQueryHandler
                 $row['startPeriod'],
                 $row['endPeriod'],
             ) : null,
-            $hasLocation ? new ListItemLocationView(
-                $row['roadName'],
+            $hasLocation ? new DetailLocationView(
+                $row['postalCode'],
                 $row['city'],
+                $row['roadName'],
+                $row['fromHouseNumber'],
+                $row['toHouseNumber'],
             ) : null,
             $hasVehicleCharacteristics ? new VehicleCharacteristicsView(
                 $row['maxWeight'],
