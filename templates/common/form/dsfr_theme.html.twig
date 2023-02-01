@@ -1,4 +1,7 @@
-{# This custom theme tweaks the default Symfony form theme with DSFR specifics. #}
+{#
+This custom theme tweaks the default Symfony form theme with DSFR specifics.
+https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/views/Form/form_div_layout.html.twig
+#}
 {% use "form_div_layout.html.twig" %}
 
 {% block form_row %}
@@ -54,6 +57,16 @@
   {%- set attr = attr|merge({class: widget_class}) -%}
   {{ parent() }}
 {% endblock %}
+
+{% block date_widget %}
+  {%- if widget == 'single_text' -%}
+    <div class="fr-input-wrap fr-fi-calendar-line">
+      {{ parent() }}
+    </div>
+  {%- else -%}
+    {{ parent() }}
+  {%- endif -%}
+{% endblock date_widget %}
 
 {% block form_errors %}
   {% if errors|length > 0 %}
