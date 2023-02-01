@@ -11,7 +11,6 @@ class RegulationOrderRecord
     public function __construct(
         private string $uuid,
         private string $status,
-        private int $lastFilledStep,
         private RegulationOrder $regulationOrder,
         private \DateTimeInterface $createdAt,
         private ?Organization $organization = null,
@@ -41,15 +40,5 @@ class RegulationOrderRecord
     public function getRegulationOrder(): RegulationOrder
     {
         return $this->regulationOrder;
-    }
-
-    public function getLastFilledStep(): int
-    {
-        return $this->lastFilledStep;
-    }
-
-    public function updateLastFilledStep(int $step): void
-    {
-        $this->lastFilledStep = max($this->lastFilledStep, $step);
     }
 }
