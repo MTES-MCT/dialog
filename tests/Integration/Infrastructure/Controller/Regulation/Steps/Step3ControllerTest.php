@@ -20,8 +20,8 @@ final class Step3ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step3_form[startPeriod]"] = "2022-12-07";
-        $form["step3_form[endPeriod]"] = "2022-12-17";
+        $form["step3_form[startPeriod]"] = "2022-12-07T00:00";
+        $form["step3_form[endPeriod]"] = "2022-12-17T23:59";
 
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -45,11 +45,11 @@ final class Step3ControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertCount(2, $crawler->filter('[id^="step3_form_"][id$="_error"]'));
-        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_startPeriod_error')->text());
-        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_endPeriod_error')->text());
+        $this->assertSame("Veuillez saisir une date et une heure valides.", $crawler->filter('#step3_form_startPeriod_error')->text());
+        $this->assertSame("Veuillez saisir une date et une heure valides.", $crawler->filter('#step3_form_endPeriod_error')->text());
 
-        $form["step3_form[startPeriod]"] = "2022-12-07";
-        $form["step3_form[endPeriod]"] = "2022-12-05";
+        $form["step3_form[startPeriod]"] = "2022-12-07T00:00";
+        $form["step3_form[endPeriod]"] = "2022-12-05T23:59";
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);

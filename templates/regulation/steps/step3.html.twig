@@ -11,8 +11,8 @@
 
     {{ form_start(form) }}
         {{ form_errors(form) }}
-        {{ form_row(form.startPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-        {{ form_row(form.endPeriod, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.startPeriod, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-8 fr-col-md-6'}, widget_class: 'fr-input'}) }}
+        {{ form_row(form.endPeriod, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-8 fr-col-md-6'}, widget_class: 'fr-input'}) }}
 
         <a href="{{ path('app_regulations_steps_2', {uuid}) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-arrow-left-line fr-mr-3w">
             {{ "common.back"|trans }}

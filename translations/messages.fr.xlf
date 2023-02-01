@@ -220,7 +220,7 @@
             </trans-unit>
             <trans-unit id="regulation.step3.end_period.help">
                 <source>regulation.step3.end_period.help</source>
-                <target>Laisser vide si la restriction est permanente</target>
+                <target>Laisser vide si la restriction est permanente.</target>
             </trans-unit>
             <trans-unit id="regulation.step4.vehicle_characteristics">
                 <source>regulation.step4.vehicle_characteristics</source>

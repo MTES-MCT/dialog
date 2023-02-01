@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation\Steps;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -16,20 +16,24 @@ final class Step3FormType extends AbstractType
         $builder
             ->add(
                 'startPeriod',
-                DateType::class,
+                DateTimeType::class,
                 options: [
                     'label' => 'regulation.step3.start_period',
                     'help' => 'regulation.step3.start_period.help',
                     'widget' => 'single_text',
+                    'model_timezone' => 'Europe/London',
+                    'view_timezone' => 'Europe/Paris',
                 ],
             )
             ->add(
                 'endPeriod',
-                DateType::class,
+                DateTimeType::class,
                 options: [
                     'label' => 'regulation.step3.end_period',
                     'help' => 'regulation.step3.end_period.help',
                     'widget' => 'single_text',
+                    'model_timezone' => 'Europe/London',
+                    'view_timezone' => 'Europe/Paris',
                     'required' => false,
                 ],
             )
