@@ -17,4 +17,6 @@ interface RegulationOrderRecordRepositoryInterface
     public function countRegulations(string $status): int;
 
     public function findOneForSummary(string $uuid): array|null;
+
+    public function findRegulationOrdersForDatexFormat(): array;
 }
