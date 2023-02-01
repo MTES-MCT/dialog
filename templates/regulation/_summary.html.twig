@@ -1,111 +1,106 @@
-<div class="fr-tile fr-tile--horizontal for-what">
-    {% if canEdit %}
-        <div class="fr-m-3w">
-            <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                {{ 'common.update'|trans }}
-            </a>
-        </div>
-    {% endif %}
-    <div class="fr-tile__body">
-        <h4 class="fr-tile__title">{{ 'regulation.step5.for_what'|trans }}</h4>
-        <div class="fr-tile__desc">
-            <ul class="fr-ml-2w">
-                <li>{{ regulationOrderRecord.description }}</li>
-                <li>{{ 'regulation.step5.for_what.no_entry'|trans }}</li>
-            </ul>
-        </div>
-    </div>
-    <div class="fr-tile__img">
+<div class="fr-card fr-card--horizontal summary-card for-what">
+    <div class="summary-card__img">
         <span class="fr-icon-close-circle-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
-</div>
-<div class="fr-tile fr-tile--horizontal fr-mt-4w where">
-    {% if canEdit %}
-        <div class="fr-m-3w">
-            <a href="{{ path('app_regulations_steps_2', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                {{ 'common.update'|trans }}
-            </a>
-        </div>
-    {% endif %}
-    <div class="fr-tile__body">
-        <h4 class="fr-tile__title">{{ 'regulation.step5.where'|trans }}</h4>
-        {% if regulationOrderRecord.location %}
-            <div class="fr-tile__desc">
-                <ul class="fr-ml-2w">
-                    <li>{{ 'regulation.step5.where.city'|trans({'%city%': regulationOrderRecord.location.city}) }}</li>
-                    <li>{{ 'regulation.step5.where.road_name'|trans({'%roadName%': regulationOrderRecord.location.roadName}) }}</li>
-                </ul>
-            </div>
-        {% endif %}
+    <div class="summary-card__content">
+        <h3 class="summary-card__title">{{ 'regulation.step5.for_what'|trans }}</h3>
+        <ul class="fr-ml-1w fr-my-0">
+            <li>{{ regulationOrderRecord.description }}</li>
+            <li>{{ 'regulation.step5.for_what.no_entry'|trans }}</li>
+        </ul>
     </div>
-    <div class="fr-tile__img">
+    {% if canEdit %}
+    <div class="summary-card__action">
+        <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+            {{ 'common.update'|trans }}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="fr-card fr-card--horizontal summary-card fr-mt-3w where">
+    <div class="summary-card__img">
         <span class="fr-icon-map-pin-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
-</div>
-<div class="fr-tile fr-tile--horizontal fr-mt-4w when">
+    <div class="summary-card__content">
+        <h3 class="summary-card__title">{{ 'regulation.step5.where'|trans }}</h3>
+        {% if regulationOrderRecord.location %}
+            <ul class="fr-ml-1w fr-my-0">
+                <li>{{ 'regulation.step5.where.city'|trans({'%city%': regulationOrderRecord.location.city}) }}</li>
+                <li>{{ 'regulation.step5.where.road_name'|trans({'%roadName%': regulationOrderRecord.location.roadName}) }}</li>
+            </ul>
+        {% endif %}
+    </div>
     {% if canEdit %}
-        <div class="fr-m-3w">
-            <a href="{{ path('app_regulations_steps_3', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                {{ 'common.update'|trans }}
-            </a>
-        </div>
+    <div class="summary-card__action">
+        <a href="{{ path('app_regulations_steps_2', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+            {{ 'common.update'|trans }}
+        </a>
+    </div>
     {% endif %}
-    <div class="fr-tile__body">
-        <h4 class="fr-tile__title">{{ 'regulation.step5.when'|trans }}</h4>
+</div>
+
+<div class="fr-card fr-card--horizontal summary-card fr-mt-3w when">
+    <div class="summary-card__img">
+        <span class="fr-icon-calendar-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+    </div>
+    <div class="summary-card__content">
+        <h3 class="summary-card__title">{{ 'regulation.step5.when'|trans }}</h3>
         {% if regulationOrderRecord.period %}
             {% set startPeriod = regulationOrderRecord.period.startPeriod %}
             {% set endPeriod = regulationOrderRecord.period.endPeriod %}
-            <div class="fr-tile__desc">
-                <ul class="fr-ml-2w">
-                    <li>
-                        {% if startPeriod and endPeriod %}
-                            {{ 'regulation.period.temporary'|trans({
-                                '%startPeriod%': startPeriod|date('d/m/Y'),
-                                '%endPeriod%': endPeriod|date('d/m/Y')
-                            }) }}
-                        {% else %}
-                            {{ 'regulation.period.permanent.future'|trans({'%date%': startPeriod|date('d/m/Y') }) }}
-                        {% endif %}
-                    </li>
-                </ul>
-            </div>
+            <ul class="fr-ml-1w fr-my-0">
+                <li>
+                    {% if startPeriod and endPeriod %}
+                        {{ 'regulation.period.temporary'|trans({
+                            '%startPeriod%': startPeriod|date('d/m/Y'),
+                            '%endPeriod%': endPeriod|date('d/m/Y')
+                        }) }}
+                    {% else %}
+                        {{ 'regulation.period.permanent.future'|trans({'%date%': startPeriod|date('d/m/Y') }) }}
+                    {% endif %}
+                </li>
+            </ul>
         {% endif %}
     </div>
-    <div class="fr-tile__img">
-        <span class="fr-icon-calendar-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-    </div>
-</div>
-<div class="fr-tile fr-tile--horizontal fr-mt-4w vehicles">
     {% if canEdit %}
-        <div class="fr-m-3w">
-            <a href="{{ path('app_regulations_steps_4', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                {{ 'common.update'|trans }}
-            </a>
-        </div>
-    {% endif %}
-    <div class="fr-tile__body">
-        <h4 class="fr-tile__title">{{ 'regulation.step5.vehicles'|trans }}</h4>
-        {% if regulationOrderRecord.vehicleCharacteristics %}
-            {% set vehicleCharacteristics = regulationOrderRecord.vehicleCharacteristics %}
-            <div class="fr-tile__desc">
-                <ul class="fr-ml-2w">
-                    {% if vehicleCharacteristics.maxWeight %}
-                        <li>{{ 'regulation.step5.vehicles.weight'|trans({ '%weight%': vehicleCharacteristics.maxWeight }) }}</li>
-                    {% endif %}
-                    {% if vehicleCharacteristics.maxWidth %}
-                        <li>{{ 'regulation.step5.vehicles.width'|trans({ '%width%': vehicleCharacteristics.maxWidth }) }}</li>
-                    {% endif %}
-                    {% if vehicleCharacteristics.maxHeight %}
-                        <li>{{ 'regulation.step5.vehicles.height'|trans({ '%height%': vehicleCharacteristics.maxHeight }) }}</li>
-                    {% endif %}
-                    {% if vehicleCharacteristics.maxLength %}
-                        <li>{{ 'regulation.step5.vehicles.length'|trans({ '%length%': vehicleCharacteristics.maxLength }) }}</li>
-                    {% endif %}
-                </ul>
-            </div>
-        {% endif %}
+    <div class="summary-card__action">
+        <a href="{{ path('app_regulations_steps_3', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+            {{ 'common.update'|trans }}
+        </a>
     </div>
-    <div class="fr-tile__img">
+    {% endif %}
+</div>
+
+<div class="fr-card fr-card--horizontal summary-card fr-mt-3w vehicles">
+    <div class="summary-card__img">
         <span class="fr-icon-car-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
+    <div class="summary-card__content">
+        <h3 class="summary-card__title">{{ 'regulation.step5.vehicles'|trans }}</h3>
+        {% if regulationOrderRecord.vehicleCharacteristics %}
+            {% set vehicleCharacteristics = regulationOrderRecord.vehicleCharacteristics %}
+            <ul class="fr-ml-1w fr-my-0">
+                {% if vehicleCharacteristics.maxWeight %}
+                    <li>{{ 'regulation.step5.vehicles.weight'|trans({ '%weight%': vehicleCharacteristics.maxWeight }) }}</li>
+                {% endif %}
+                {% if vehicleCharacteristics.maxWidth %}
+                    <li>{{ 'regulation.step5.vehicles.width'|trans({ '%width%': vehicleCharacteristics.maxWidth }) }}</li>
+                {% endif %}
+                {% if vehicleCharacteristics.maxHeight %}
+                    <li>{{ 'regulation.step5.vehicles.height'|trans({ '%height%': vehicleCharacteristics.maxHeight }) }}</li>
+                {% endif %}
+                {% if vehicleCharacteristics.maxLength %}
+                    <li>{{ 'regulation.step5.vehicles.length'|trans({ '%length%': vehicleCharacteristics.maxLength }) }}</li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+    {% if canEdit %}
+    <div class="summary-card__action">
+        <a href="{{ path('app_regulations_steps_4', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+            {{ 'common.update'|trans }}
+        </a>
+    </div>
+    {% endif %}
 </div>
