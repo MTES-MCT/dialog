@@ -10,7 +10,7 @@ Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistiqu
 - [PHP](https://www.php.net/)
 - [Symfony](https://www.symfony.com/)
 - [Twig](https://twig.symfony.com/)
-- [Turbo](https://turbo.hotwired.dev/) / [Stimulus] (https://stimulus.hotwired.dev/)
+- [Turbo](https://turbo.hotwired.dev/) / [Stimulus](https://stimulus.hotwired.dev/)
 - [PostgreSQL](https://www.postgresql.org/)
 
 ## Démarrage du projet
