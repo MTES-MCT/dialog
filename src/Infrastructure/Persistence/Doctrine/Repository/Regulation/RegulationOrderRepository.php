@@ -22,32 +22,4 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
         return $regulationOrder;
     }
-
-    public function findRegulationOrdersForDatexFormat(): array
-    {
-        return $this->createQueryBuilder('ro')
-            ->select(
-                'ro.uuid',
-                'ro.issuingAuthority',
-                'ro.description',
-                'o.startPeriod',
-                'o.endPeriod',
-                'loc.postalCode',
-                'loc.city',
-                'loc.roadName',
-                'loc.fromHouseNumber',
-                'ST_X(loc.fromPoint) as fromLongitude',
-                'ST_Y(loc.fromPoint) as fromLatitude',
-                'loc.toHouseNumber',
-                'ST_X(loc.toPoint) as toLongitude',
-                'ST_Y(loc.toPoint) as toLatitude',
-            )
-            ->innerJoin('ro.regulationCondition', 'rc')
-            ->innerJoin('rc.overallPeriod', 'o')
-            ->innerJoin('rc.location', 'loc')
-            ->setMaxResults(20)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 }
