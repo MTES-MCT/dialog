@@ -26,8 +26,8 @@ final class RegulationDetailControllerTest extends WebTestCase
         $this->assertSame('Circulation interdite', $step1->filter('li')->eq(1)->text());
 
         // Step 2
-        $this->assertSame('Ville : Montauban', $step2->filter('li')->eq(0)->text());
-        $this->assertSame('Rue : Avenue de Fonneuve', $step2->filter('li')->eq(1)->text());
+        $this->assertSame('Ville : 82000 Montauban', $step2->filter('li')->eq(0)->text());
+        $this->assertSame('Rue : du 695 au 253, Avenue de Fonneuve', $step2->filter('li')->eq(1)->text());
 
         // Step 3
         $this->assertSame('à partir du 08/10/2022', $step3->filter('li')->eq(0)->text());

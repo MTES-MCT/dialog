@@ -240,11 +240,11 @@
             </trans-unit>
             <trans-unit id="regulation.step5.where.city">
                 <source>regulation.step5.where.city</source>
-                <target>Ville : %city%</target>
+                <target>Ville : %postalCode% %city%</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.where.road_name">
-                <source>regulation.step5.where.road_name</source>
-                <target>Rue : %roadName%</target>
+            <trans-unit id="regulation.step5.where.road_segment">
+                <source>regulation.step5.where.road_segment</source>
+                <target>Rue : du %from% au %to%, %roadName%</target>
             </trans-unit>
             <trans-unit id="regulation.step5.when">
                 <source>regulation.step5.when</source>

@@ -11,7 +11,7 @@ class RegulationOrderRecordSummaryView
         public readonly string $status,
         public readonly string $description,
         public readonly ?PeriodView $period,
-        public readonly ?ListItemLocationView $location,
+        public readonly ?DetailLocationView $location,
         public readonly ?VehicleCharacteristicsView $vehicleCharacteristics,
     ) {
     }
