@@ -54,6 +54,11 @@
                         <a title="{{ 'common.update'|trans }}" href="{{ path('app_regulations_steps_5', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                             {{ 'common.update'|trans }}
                         </a>
+                        {% if regulation.status == 'published' %}
+                            <a title="{{ 'common.see'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline">
+                                {{ 'common.see'|trans }}
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
             {% else %}
