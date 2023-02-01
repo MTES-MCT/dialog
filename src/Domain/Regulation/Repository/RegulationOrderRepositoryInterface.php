@@ -9,6 +9,4 @@ use App\Domain\Regulation\RegulationOrder;
 interface RegulationOrderRepositoryInterface
 {
     public function save(RegulationOrder $regulationOrder): RegulationOrder;
-
-    public function findRegulationOrdersForDatexFormat(): array;
 }

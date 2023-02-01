@@ -7,12 +7,12 @@ namespace App\Application\Regulation\Query;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListForDatexFormatView;
-use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
 {
     public function __construct(
-        private RegulationOrderRepositoryInterface $repository,
+        private RegulationOrderRecordRepositoryInterface $repository,
     ) {
     }
 
