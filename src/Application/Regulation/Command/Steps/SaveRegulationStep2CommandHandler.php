@@ -31,7 +31,6 @@ final class SaveRegulationStep2CommandHandler
     public function __invoke(SaveRegulationStep2Command $command): void
     {
         $regulationCondition = $command->regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
-        $command->regulationOrderRecord->updateLastFilledStep(2);
 
         // If submitting step 2 for the first time, we create the location
         if (!$command->location instanceof Location) {

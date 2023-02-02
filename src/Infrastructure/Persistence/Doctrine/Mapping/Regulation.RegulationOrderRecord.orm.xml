@@ -10,11 +10,6 @@
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>
     </field>
-    <field name="lastFilledStep" type="smallint" column="last_filled_step" nullable="false">
-        <options>
-            <option name="default">1</option>
-        </options>
-    </field>
     <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder">
         <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>

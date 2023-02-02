@@ -76,7 +76,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
                     new RegulationOrderRecord(
                         uuid: 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
                         status: RegulationOrderRecordStatusEnum::DRAFT,
-                        lastFilledStep: 1,
                         regulationOrder: $createdRegulationOrder,
                         createdAt: $now,
                         organization: null,
