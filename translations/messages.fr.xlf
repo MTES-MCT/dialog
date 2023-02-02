@@ -282,12 +282,12 @@
                 <source>regulation.step5.and_now</source>
                 <target>Et maintenant ?</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.draft.save">
-                <source>regulation.step5.draft.save</source>
+            <trans-unit id="regulation.step5.draft">
+                <source>regulation.step5.draft</source>
                 <target>Sauvegarder le brouillon</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.published.save">
-                <source>regulation.step5.published.save</source>
+            <trans-unit id="regulation.step5.published">
+                <source>regulation.step5.published</source>
                 <target>Valider la réglementation</target>
             </trans-unit>
             <trans-unit id="regulation.step5.published.description">

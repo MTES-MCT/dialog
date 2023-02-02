@@ -41,4 +41,9 @@ class RegulationOrderRecord
     {
         return $this->regulationOrder;
     }
+
+    public function updateStatus(string $status): void
+    {
+        $this->status = $status;
+    }
 }
