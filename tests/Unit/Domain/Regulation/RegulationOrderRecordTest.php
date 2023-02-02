@@ -38,5 +38,8 @@ final class RegulationOrderRecordTest extends TestCase
         $this->assertSame(3, $regulationOrderRecord->getLastFilledStep());
         $regulationOrderRecord->updateLastFilledStep(4);
         $this->assertSame(4, $regulationOrderRecord->getLastFilledStep());
+
+        $regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::DRAFT);
+        $this->assertSame(RegulationOrderRecordStatusEnum::DRAFT, $regulationOrderRecord->getStatus());
     }
 }
