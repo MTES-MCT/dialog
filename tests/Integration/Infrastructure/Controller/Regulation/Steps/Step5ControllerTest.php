@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class Step5ControllerTest extends WebTestCase
 {
-    public function testSave(): void
+    public function testPageState(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/5');
@@ -40,16 +40,69 @@ final class Step5ControllerTest extends WebTestCase
         $this->assertCount(0, $step4->filter('li'));
 
         // Status action
-        $draftInput = $crawler->filter('input[id="status-draft"]')->first();
-        $draftLabel = $draftInput->siblings()->filter('[for="status-draft"]')->first();
+        $draftInput = $crawler->filter('input[id="step5_form_status_0"]')->first();
+        $draftLabel = $draftInput->siblings()->filter('[for="step5_form_status_0"]')->first();
         $this->assertStringStartsWith('Sauvegarder le brouillon', $draftLabel->text());
-        $publishedInput = $crawler->filter('input[id="status-published"]')->first();
-        $publishedLabel = $publishedInput->siblings()->filter('[for="status-published"]')->first();
+        $publishedInput = $crawler->filter('input[id="step5_form_status_1"]')->first();
+        $publishedLabel = $publishedInput->siblings()->filter('[for="step5_form_status_1"]')->first();
         $this->assertStringStartsWith('Valider la réglementation', $publishedLabel->text());
+    }
 
-        $client->clickLink('Sauvegarder');
+    public function testSaveDraft(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/5');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+
+        $form = $saveButton->form();
+        $form["step5_form[status]"] = "draft";
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_list');
+    }
+
+    public function testSavePublished(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/5');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+
+        $form = $saveButton->form();
+        $form["step5_form[status]"] = "published";
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_regulation_detail');
+    }
+
+    public function testCantBePublished(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/5');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+
+        $form = $saveButton->form();
+        $form["step5_form[status]"] = "published";
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertSame('La réglementation ne peut pas être publiée. Vérifiez qu\'elle a correctement été créée.', $crawler->filter('div.fr-alert')->text());
     }
 
     public function testPrevious(): void

@@ -10,6 +10,7 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
+                {% set isPresent = regulation.period ? "now"|date('U') >= regulation.period.startPeriod|date('U') : null %}
                 <tr>
                     <td>
                         {% if regulation.location %}
@@ -21,7 +22,6 @@
                         {% if regulation.period %}
                             {% set startPeriod = regulation.period.startPeriod %}
                             {% set endPeriod = regulation.period.endPeriod %}
-                            {% set isPresent = "now"|date('U') >= startPeriod|date('U') %}
                             {% if startPeriod and endPeriod %}
                                 <b>
                                     {{ 'regulation.period.temporary'|trans({ '%startPeriod%': startPeriod|date('d/m/Y'), '%endPeriod%': endPeriod|date('d/m/Y') })}}

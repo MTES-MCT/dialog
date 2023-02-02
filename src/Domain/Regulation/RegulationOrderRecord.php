@@ -52,4 +52,9 @@ class RegulationOrderRecord
     {
         $this->lastFilledStep = max($this->lastFilledStep, $step);
     }
+
+    public function updateStatus(string $status): void
+    {
+        $this->status = $status;
+    }
 }
