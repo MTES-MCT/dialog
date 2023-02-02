@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
 
-final class RegulationDetailControllerTest extends WebTestCase
+final class RegulationDetailControllerTest extends AbstactWebTestCase
 {
     public function testSpecificationPattern(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
 
         $this->assertResponseStatusCodeSame(200);
@@ -38,7 +38,7 @@ final class RegulationDetailControllerTest extends WebTestCase
 
     public function testRegulationOrderRecordNotPublished(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
 
         $this->assertResponseStatusCodeSame(404);
@@ -46,9 +46,17 @@ final class RegulationDetailControllerTest extends WebTestCase
 
     public function testRegulationOrderRecordNotFound(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
 
         $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
+
+        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

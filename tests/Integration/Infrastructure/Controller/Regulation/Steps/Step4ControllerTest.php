@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Steps;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
 
-final class Step4ControllerTest extends WebTestCase
+final class Step4ControllerTest extends AbstactWebTestCase
 {
     public function testAdd(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4');
 
         $this->assertResponseStatusCodeSame(200);
@@ -34,7 +34,7 @@ final class Step4ControllerTest extends WebTestCase
 
     public function testInvalidVehicleCharacteristics(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4');
         $this->assertResponseStatusCodeSame(200);
 
@@ -82,7 +82,7 @@ final class Step4ControllerTest extends WebTestCase
 
     public function testRegulationOrderRecordNotFound(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b/4');
 
         $this->assertResponseStatusCodeSame(404);
@@ -90,7 +90,7 @@ final class Step4ControllerTest extends WebTestCase
 
     public function testBadUuid(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/form/aaaaaaaa/4');
 
         $this->assertResponseStatusCodeSame(400);
@@ -98,7 +98,7 @@ final class Step4ControllerTest extends WebTestCase
 
     public function testPrevious(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4');
         $this->assertResponseStatusCodeSame(200);
 
@@ -109,11 +109,18 @@ final class Step4ControllerTest extends WebTestCase
 
     public function testUxEnhancements(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Suivant');
         $this->assertNotNull($saveButton->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/4');
+        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }
