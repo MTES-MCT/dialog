@@ -17,7 +17,6 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecord = new RegulationOrderRecord(
             'e413a47e-5928-4353-a8b2-8b7dda27f9a5',
             RegulationOrderRecordStatusEnum::DRAFT,
-            1,
             $this->getReference('regulationOrder'),
             new \DateTime('2022-01-10'),
         );
@@ -25,7 +24,6 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecord2 = new RegulationOrderRecord(
             '3ede8b1a-1816-4788-8510-e08f45511cb5',
             RegulationOrderRecordStatusEnum::PUBLISHED,
-            5,
             $this->getReference('regulationOrder2'),
             new \DateTime('2022-01-10'),
         );
@@ -33,7 +31,6 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecord3 = new RegulationOrderRecord(
             '4ce75a1f-82f3-40ee-8f95-48d0f04446aa',
             RegulationOrderRecordStatusEnum::DRAFT,
-            5,
             $this->getReference('regulationOrder3'),
             new \DateTime('2022-01-11'),
         );

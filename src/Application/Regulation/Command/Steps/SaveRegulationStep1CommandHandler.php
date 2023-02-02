@@ -48,7 +48,6 @@ final class SaveRegulationStep1CommandHandler
                 new RegulationOrderRecord(
                     uuid: $this->idFactory->make(),
                     status: RegulationOrderRecordStatusEnum::DRAFT,
-                    lastFilledStep: 1,
                     regulationOrder: $regulationOrder,
                     createdAt: $this->now,
                 ),

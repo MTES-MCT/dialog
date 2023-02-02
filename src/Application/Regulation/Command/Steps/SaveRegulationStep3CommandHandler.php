@@ -19,7 +19,6 @@ final class SaveRegulationStep3CommandHandler
     public function __invoke(SaveRegulationStep3Command $command): void
     {
         $regulationCondition = $command->regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
-        $command->regulationOrderRecord->updateLastFilledStep(3);
 
         // If submitting step 3 for the first time, we create the overallPeriod
         if (!$command->overallPeriod instanceof OverallPeriod) {

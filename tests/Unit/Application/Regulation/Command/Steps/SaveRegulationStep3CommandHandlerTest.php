@@ -39,11 +39,6 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($this->regulationOrder);
-
-        $this->regulationOrderRecord
-            ->expects(self::once())
-            ->method('updateLastFilledStep')
-            ->with(3);
     }
 
     public function testCreate(): void
