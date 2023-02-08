@@ -14,6 +14,8 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\User\Organization;
+use App\Infrastructure\Security\SymfonyUser;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep1CommandHandlerTest extends TestCase
@@ -24,6 +26,13 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationConditionRepository = $this->createMock(RegulationConditionRepositoryInterface::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
+        $organization = $this->createMock(Organization::class);
+
+        $user = $this->createMock(SymfonyUser::class);
+        $user->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
         $now = new \DateTimeImmutable('2022-01-09');
 
         $idFactory
@@ -78,7 +87,7 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
                         status: RegulationOrderRecordStatusEnum::DRAFT,
                         regulationOrder: $createdRegulationOrder,
                         createdAt: $now,
-                        organization: null,
+                        organization: $organization,
                     )
                 )
             )
@@ -92,7 +101,7 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationStep1Command();
+        $command = new SaveRegulationStep1Command($user);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 
@@ -107,6 +116,7 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationConditionRepository = $this->createMock(RegulationConditionRepositoryInterface::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
+        $user = $this->createMock(SymfonyUser::class);
         $now = new \DateTimeImmutable('2022-01-09');
 
         $idFactory
@@ -161,7 +171,7 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationStep1Command($regulationOrderRecord);
+        $command = new SaveRegulationStep1Command($user, $regulationOrderRecord);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 

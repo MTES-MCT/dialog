@@ -50,6 +50,7 @@ final class SaveRegulationStep1CommandHandler
                     status: RegulationOrderRecordStatusEnum::DRAFT,
                     regulationOrder: $regulationOrder,
                     createdAt: $this->now,
+                    organization: $command->user->getOrganization(),
                 ),
             );
 

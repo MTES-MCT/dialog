@@ -31,8 +31,8 @@ final class UserProvider implements UserProviderInterface
             $user->getEmail(),
             $user->getFullName(),
             $user->getPassword(),
-            $user->getOrganizationUuids(),
             ['ROLE_USER'],
+            $user->getOrganization(),
         );
     }
 

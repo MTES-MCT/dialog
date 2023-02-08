@@ -13,16 +13,7 @@ final class UserTest extends TestCase
     public function testGetters(): void
     {
         $organization1 = $this->createMock(Organization::class);
-        $organization1
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('bec265a8-f3ef-4d2e-82f6-76060946020a');
-
         $organization2 = $this->createMock(Organization::class);
-        $organization2
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('dc28230e-7935-4686-905b-68a27b51913d');
 
         $user = new User(
             '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
@@ -36,7 +27,7 @@ final class UserTest extends TestCase
         $this->assertSame('Mathieu Marchois', $user->getFullName());
         $this->assertSame('mathieu@fairness.coop', $user->getEmail());
         $this->assertSame('password', $user->getPassword());
-        $this->assertSame(['bec265a8-f3ef-4d2e-82f6-76060946020a', 'dc28230e-7935-4686-905b-68a27b51913d'], $user->getOrganizationUuids());
+        $this->assertSame($organization1, $user->getOrganization());
     }
 
     public function testWithoutOrganization(): void
@@ -48,6 +39,6 @@ final class UserTest extends TestCase
             'password',
         );
 
-        $this->assertSame([], $user->getOrganizationUuids());
+        $this->assertSame(null, $user->getOrganization());
     }
 }

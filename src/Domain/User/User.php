@@ -35,18 +35,15 @@ class User
         return $this->password;
     }
 
-    public function getOrganizationUuids(): array
+    /**
+     * For the moment we only manage the case of single organization
+     */
+    public function getOrganization(): ?Organization
     {
-        $uuids = [];
-
         if (!$this->organizations) {
-            return $uuids;
+            return null;
         }
 
-        foreach ($this->organizations as $organization) {
-            $uuids[] = $organization->getUuid();
-        }
-
-        return $uuids;
+        return $this->organizations[0];
     }
 }

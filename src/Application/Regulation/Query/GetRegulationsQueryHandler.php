@@ -19,8 +19,16 @@ final class GetRegulationsQueryHandler
 
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
-        $regulations = $this->repository->findRegulations($query->pageSize, $query->page, $query->status);
-        $totalItems = $this->repository->countRegulations($query->status);
+        $regulations = $this->repository->findRegulationsByOrganization(
+            $query->organization,
+            $query->pageSize,
+            $query->page,
+            $query->status,
+        );
+        $totalItems = $this->repository->countRegulationsByOrganization(
+            $query->organization,
+            $query->status,
+        );
         $regulationOrderViews = [];
 
         foreach ($regulations as $regulation) {
