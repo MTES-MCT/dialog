@@ -485,6 +485,18 @@
                 <source>regulation.detail.see_all</source>
                 <target>Toutes les réglementations</target>
             </trans-unit>
+            <trans-unit id="regulation.delete_modal.title">
+                <source>regulation.delete_modal.title</source>
+                <target>Supprimer cette réglementation ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.delete_modal.confirm">
+                <source>regulation.delete_modal.confirm</source>
+                <target>Oui, supprimer</target>
+            </trans-unit>
+            <trans-unit id="regulation.delete_modal.cancel">
+                <source>regulation.delete_modal.cancel</source>
+                <target>Non, ne pas supprimer</target>
+            </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
@@ -520,18 +532,6 @@
             <trans-unit id="login.legend">
                 <source>login.legend</source>
                 <target>Se connecter avec son compte</target>
-            </trans-unit>
-            <trans-unit id="regulation.delete_modal.title">
-                <source>regulation.delete_modal.title</source>
-                <target>Supprimer cette réglementation ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.delete_modal.confirm">
-                <source>regulation.delete_modal.confirm</source>
-                <target>Oui, supprimer</target>
-            </trans-unit>
-            <trans-unit id="regulation.delete_modal.cancel">
-                <source>regulation.delete_modal.cancel</source>
-                <target>Non, ne pas supprimer</target>
             </trans-unit>
         </body>
     </file>

@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 
 final class RegulationDeleteController
 {
     public function __construct(
+        private RouterInterface $router,
+        private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
     ) {
     }
@@ -22,14 +29,17 @@ final class RegulationDeleteController
         requirements: ['uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'],
         methods: ['DELETE'],
     )]
-    public function __invoke(string $uuid): Response
+    public function __invoke(Request $request, string $uuid): Response
     {
-        $command = new DeleteRegulationCommand($uuid);
+        try {
+            $status = $this->commandBus->handle(new DeleteRegulationCommand($uuid));
+        } catch (RegulationOrderRecordNotFoundException) {
+            $status = 'draft';
+        }
 
-        $this->commandBus->handle($command);
-
-        return new Response(
-            status: 204,
+        return new RedirectResponse(
+            url: $this->router->generate('app_regulations_list', ['tab' => $status]),
+            status: Response::HTTP_SEE_OTHER,
         );
     }
 }

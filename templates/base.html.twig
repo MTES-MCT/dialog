@@ -19,7 +19,6 @@
         {{ encore_entry_script_tags('app') }}
         <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}" defer></script>
         <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}" defer></script>
-        <script type="text/javascript" src="{{ asset('build/htmx.org/htmx.min.js') }}"></script>
     {% endblock %}
   </head>
   <body>
@@ -39,5 +38,7 @@
         {% block body %}{% endblock %}
     </main>
     {% include 'common/footer.html.twig' %}
+
+    {% block body_end %}{% endblock %}
   </body>
 </html>

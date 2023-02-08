@@ -15,11 +15,6 @@ Encore
         pattern: /(dsfr.(no)?module.min.js)|(favicon\/)/,
         to: 'dsfr/[path][name].[ext]'
     })
-    .copyFiles({
-        from: './node_modules/htmx.org/dist/',
-        pattern: /.min.js/,
-        to: 'htmx.org/[path][name].[ext]'
-    })
 
     /*
      * ENTRY CONFIG

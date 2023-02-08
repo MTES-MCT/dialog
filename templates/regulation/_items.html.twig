@@ -60,65 +60,25 @@
                             </a>
                         {% endif %}
 
-                        {% set delete_modal_id = 'delete-modal-' ~ loop.index %}
-
-                        <div
-                            data-controller="dialog"
-                            data-dialog-submit-value="confirm"
+                        <button
+                            type="button"
+                            class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                            data-controller="modal-trigger"
+                            aria-controls="regulation-delete-modal"
+                            data-modal-trigger-modal-outlet="#regulation-delete-modal"
+                            data-modal-trigger-key-value="{{ regulation.uuid }}"
+                            data-action="modal-trigger#showModal"
+                            hx-trigger="modal-trigger:submit"
                             hx-delete="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
-                            hx-trigger="dialog-submit:confirm"
-                            hx-target="closest tr"
+                            hx-select="#contenu"
+                            hx-target="#contenu"
                         >
-                            <button
-                                type="button"
-                                class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
-                                data-fr-opened="false"
-                                aria-controls="{{ delete_modal_id }}"
-                            >
-                                {{ 'common.delete'|trans }}
-                            </button>
-
-                            <dialog
-                                data-dialog-target="dialog"
-                                id="{{ delete_modal_id }}"
-                                class="fr-modal"
-                                role="dialog"
-                                aria-labelledby="{{ delete_modal_id }}-title"
-                            >
-                                <div class="fr-container fr-container--fluid fr-container-md">
-                                    <div class="fr-grid-row fr-grid-row--center">
-                                        <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                                            <form method="dialog" class="fr-modal__body">
-                                                <div class="fr-modal__header">
-                                                    <button class="fr-link fr-link--close" value="cancel" aria-controls="{{ delete_modal_id }}">
-                                                        {{ 'common.close'|trans }}
-                                                    </button>
-                                                </div>
-                                                <div class="fr-modal__content">
-                                                    <h1 id="{{ delete_modal_id }}-title" class="fr-modal__title">
-                                                        {{ 'regulation.delete_modal.title'|trans }}
-                                                    </h1>
-                                                </div>
-                                                <div class="fr-modal__footer">
-                                                    <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg">
-                                                        <button value="confirm" class="fr-btn">
-                                                            {{ 'regulation.delete_modal.confirm'|trans }}
-                                                        </button>
-                                                        <button value="cancel" class="fr-btn fr-btn--secondary" aria-controls="{{ delete_modal_id }}">
-                                                            {{ 'regulation.delete_modal.cancel'|trans }}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </dialog>
-                        </div>
+                            {{ 'common.delete'|trans }}
+                        </button>
                     </td>
                 </tr>
             {% else %}
-                <tr>
+                <tr data-testid="empty-row">
                     <td colspan="4">
                         <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                     </td>
