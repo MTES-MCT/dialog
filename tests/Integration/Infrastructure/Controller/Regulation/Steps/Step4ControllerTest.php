@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Steps;
 
-use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class Step4ControllerTest extends AbstactWebTestCase
+final class Step4ControllerTest extends AbstractWebTestCase
 {
     public function testAdd(): void
     {
@@ -14,6 +14,7 @@ final class Step4ControllerTest extends AbstactWebTestCase
         $crawler = $client->request('GET', '/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4');
 
         $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
         $this->assertSame('Étape 4 sur 5 Véhicules concernés', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Récapitulatif', $crawler->filter('p.fr-stepper__details')->text());
 

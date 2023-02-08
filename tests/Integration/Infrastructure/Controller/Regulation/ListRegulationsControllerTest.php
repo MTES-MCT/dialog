@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
-use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class ListRegulationsControllerTest extends AbstactWebTestCase
+final class ListRegulationsControllerTest extends AbstractWebTestCase
 {
     public function testList(): void
     {
@@ -14,6 +14,7 @@ final class ListRegulationsControllerTest extends AbstactWebTestCase
         $pageOne = $client->request('GET', '/regulations?pageSize=1');
 
         $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
         $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
 
         $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
