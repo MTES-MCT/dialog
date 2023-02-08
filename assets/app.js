@@ -10,3 +10,15 @@ import './styles/app.scss';
 
 // start the Stimulus application
 import './bootstrap';
+
+// Configure htmx
+
+// See: https://htmx.org/docs/#modifying_swapping_behavior_with_events
+document.body.addEventListener('htmx:beforeSwap', (event) => {
+    // By default, htmx does nothing when receiving a 204 No Content response.
+    // See: https://htmx.org/docs/#requests
+    // We'd like it to interpret those as 'swap with nothing'.
+    if (event.detail.xhr.status === 204) {
+        event.detail.shouldSwap = true;
+    }
+});
