@@ -19,4 +19,6 @@ interface RegulationOrderRecordRepositoryInterface
     public function findOneForSummary(string $uuid): array|null;
 
     public function findRegulationOrdersForDatexFormat(): array;
+
+    public function delete(RegulationOrderRecord $regulationOrderRecord): void;
 }
