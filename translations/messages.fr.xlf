@@ -485,6 +485,42 @@
                 <source>regulation.detail.see_all</source>
                 <target>Toutes les réglementations</target>
             </trans-unit>
+            <trans-unit id="login.title">
+                <source>login.title</source>
+                <target>Connexion à DiaLog</target>
+            </trans-unit>
+            <trans-unit id="login.email">
+                <source>login.email</source>
+                <target>Adresse e-mail</target>
+            </trans-unit>
+            <trans-unit id="login.password">
+                <source>login.password</source>
+                <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="login.email_format">
+                <source>login.email_format</source>
+                <target>Format attendu : nom@domaine.fr</target>
+            </trans-unit>
+            <trans-unit id="login.display">
+                <source>login.display</source>
+                <target>Afficher</target>
+            </trans-unit>
+            <trans-unit id="login.submit">
+                <source>login.submit</source>
+                <target>Se connecter</target>
+            </trans-unit>
+            <trans-unit id="login.no_account.title">
+                <source>login.no_account.title</source>
+                <target>Vous n'avez pas de compte ?</target>
+            </trans-unit>
+            <trans-unit id="login.no_account.instructions">
+                <source>login.no_account.instructions</source>
+                <target>Vous pouvez nous contacter à l'adresse email suivante : <![CDATA[<a href="mailto:dialog@beta.gouv.fr">]]>dialog@beta.gouv.fr<![CDATA[</a>]]>.</target>
+            </trans-unit>
+            <trans-unit id="login.legend">
+                <source>login.legend</source>
+                <target>Se connecter avec son compte</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
