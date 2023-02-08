@@ -24,3 +24,21 @@ nelmio_security:
         policies:
             - 'no-referrer'
             - 'strict-origin-when-cross-origin'
+
+    # Set a Content-Security-Policy
+    csp:
+        enabled: true
+        enforce:
+            default-src: ['none']
+            connect-src: ['self']
+            font-src: ['self']
+            img-src: ['self', 'data:']
+            block-all-mixed-content: true
+
+    # Require HTTPS
+    forced_ssl:
+        enabled: true
+        redirect_status_code: 301
+        hsts_max_age: 31536000 # 1 year
+        hsts_subdomains: true
+        hsts_preload: true
