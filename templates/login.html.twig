@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-md-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h1>{{ 'login.title'|trans }}</h1>
+                            <div>
+                                <form id="login-1760" action="{{ path('app_login') }}" method="post">
+                                    <fieldset class="fr-fieldset" aria-labelledby="login-fieldset-legend">
+                                        <legend id="login-fieldset-legend" class="fr-fieldset__legend">
+                                            <h2>{{ 'login.legend'|trans }}</h2>
+                                        </legend>
+                                        <div class="fr-fieldset__element">
+                                            <fieldset class="fr-fieldset" id="credentials" aria-labelledby="credentials-message">
+                                                <div class="fr-fieldset__element">
+                                                    <div class="fr-input-group">
+                                                        <label class="fr-label" for="username">
+                                                            {{ 'login.email'|trans }}
+                                                            <span class="fr-hint-text">{{ 'login.email_format'|trans }}</span>
+                                                        </label>
+                                                        <input class="fr-input" type="email" autocomplete="email" id="username" required name="_username" value="{{ last_username }}"/>
+                                                    </div>
+                                                </div>
+                                                <div class="fr-fieldset__element">
+                                                    <div class="fr-password">
+                                                        <label class="fr-label" for="password">{{ 'login.password'|trans }}</label>
+                                                        <div class="fr-input-wrap">
+                                                            <input class="fr-password__input fr-input" aria-required="true" required name="_password" autocomplete="current-password" id="password" type="password"/>
+                                                        </div>
+                                                        <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
+                                                            <input aria-label="{{ 'login.display'|trans }}" id="password-show" type="checkbox"/>
+                                                            <label class="fr-password__checkbox fr-label" for="password-show">
+                                                                {{ 'login.display'|trans }}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="credentials-message" class="fr-messages-group" aria-live="assertive">
+                                                    {% if error %}
+                                                        <p class="fr-message fr-message--error">
+                                                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="fr-fieldset__element">
+                                            <ul class="fr-btns-group">
+                                                <li>
+                                                    <button class="fr-btn">{{ 'login.submit'|trans }}</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </fieldset>
+                                    <input type="hidden" name="_target_path" value="{{ path('app_regulations_list') }}">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </form>
+                            </div>
+                            <hr>
+                            <h2>{{ 'login.no_account.title'|trans }}</h2>
+                            <p class="fr-text--sm">
+                                {{ 'login.no_account.instructions'|trans|raw }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

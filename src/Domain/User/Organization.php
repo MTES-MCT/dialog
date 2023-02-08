@@ -7,7 +7,7 @@ namespace App\Domain\User;
 class Organization
 {
     /** @var User[] */
-    private array $users = [];
+    private iterable $users = [];
 
     public function __construct(
         private string $uuid,
@@ -25,7 +25,7 @@ class Organization
         return $this->name;
     }
 
-    public function getUsers(): array
+    public function getUsers(): iterable
     {
         return $this->users;
     }

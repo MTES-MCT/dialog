@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
 
-final class ListRegulationsControllerTest extends WebTestCase
+final class ListRegulationsControllerTest extends AbstactWebTestCase
 {
     public function testList(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $pageOne = $client->request('GET', '/regulations?pageSize=1');
 
         $this->assertResponseStatusCodeSame(200);
@@ -74,7 +74,7 @@ final class ListRegulationsControllerTest extends WebTestCase
 
     public function testInvalidPageSize(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations?pageSize=0');
         $this->assertResponseStatusCodeSame(400);
 
@@ -87,7 +87,7 @@ final class ListRegulationsControllerTest extends WebTestCase
 
     public function testInvalidPageNumber(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations?page=0');
         $this->assertResponseStatusCodeSame(400);
 
@@ -96,5 +96,13 @@ final class ListRegulationsControllerTest extends WebTestCase
 
         $client->request('GET', '/regulations?page=abc');
         $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations');
+
+        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

@@ -14,6 +14,10 @@ label.required > .fr-x-label-content::after {
     --x-icon-decorative-blue-france: #CACAFB;
 }
 
+.fr-background-alt--grey {
+    background-color: var(--background-alt-grey);
+}
+
 .fr-x-icon-decorative--blue-france::before {
     background-color: var(--x-icon-decorative-blue-france);
 }

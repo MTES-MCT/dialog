@@ -24,7 +24,7 @@
   <body>
     {% include 'common/header.html.twig' %}
 
-    <div class="fr-container fr-pt-4w">
+    <div class="fr-container">
         {% for label, messages in app.flashes(['warning', 'error']) %}
             {% for message in messages %}
                 <div class="fr-alert fr-alert--{{ label }}">

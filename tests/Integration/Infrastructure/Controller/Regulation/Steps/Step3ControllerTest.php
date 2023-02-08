@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Steps;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
 
-final class Step3ControllerTest extends WebTestCase
+final class Step3ControllerTest extends AbstactWebTestCase
 {
     public function testAdd(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3'); // Regulation Order Record without overall period
 
         $this->assertResponseStatusCodeSame(200);
@@ -32,7 +32,7 @@ final class Step3ControllerTest extends WebTestCase
 
     public function testInvalidPeriod(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
         $this->assertResponseStatusCodeSame(200);
 
@@ -58,7 +58,7 @@ final class Step3ControllerTest extends WebTestCase
 
     public function testRegulationOrderRecordNotFound(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b/3');
 
         $this->assertResponseStatusCodeSame(404);
@@ -66,7 +66,7 @@ final class Step3ControllerTest extends WebTestCase
 
     public function testBadUuid(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/form/aaaaaaaa/3');
 
         $this->assertResponseStatusCodeSame(400);
@@ -74,7 +74,7 @@ final class Step3ControllerTest extends WebTestCase
 
     public function testPrevious(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
         $this->assertResponseStatusCodeSame(200);
 
@@ -85,11 +85,18 @@ final class Step3ControllerTest extends WebTestCase
 
     public function testUxEnhancements(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Suivant');
         $this->assertNotNull($saveButton->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3');
+        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }
