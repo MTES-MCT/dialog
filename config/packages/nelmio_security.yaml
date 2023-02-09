@@ -1,0 +1,46 @@
+nelmio_security:
+    # prevents framing of the entire site
+    clickjacking:
+        paths:
+            '^/.*': DENY
+
+    # disables content type sniffing for script resources
+    content_type:
+        nosniff: true
+
+    # forces Microsoft's XSS-Protection with
+    # its block mode
+    xss_protection:
+        enabled: true
+        mode_block: true
+
+    # Send a full URL in the `Referer` header when performing a same-origin request,
+    # only send the origin of the document to secure destination (HTTPS->HTTPS),
+    # and send no header to a less secure destination (HTTPS->HTTP).
+    # If `strict-origin-when-cross-origin` is not supported, use `no-referrer` policy,
+    # no referrer information is sent along with requests.
+    referrer_policy:
+        enabled: true
+        policies:
+            - 'no-referrer'
+            - 'strict-origin-when-cross-origin'
+
+    # Set a Content-Security-Policy
+    csp:
+        enabled: true
+        enforce:
+            default-src: ['self']
+            connect-src: ['self']
+            font-src: ['self']
+            img-src: ['self', 'data:']
+            block-all-mixed-content: true
+
+when@prod:
+    nelmio_security:
+        # Require HTTPS
+        forced_ssl:
+            enabled: true
+            redirect_status_code: 301
+            hsts_max_age: 31536000 # 1 year
+            hsts_subdomains: true
+            hsts_preload: true
