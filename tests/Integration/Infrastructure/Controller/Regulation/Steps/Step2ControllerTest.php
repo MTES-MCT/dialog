@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Steps;
 
-use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class Step2ControllerTest extends AbstactWebTestCase
+final class Step2ControllerTest extends AbstractWebTestCase
 {
     public function testInvalidBlank(): void
     {
@@ -14,6 +14,7 @@ final class Step2ControllerTest extends AbstactWebTestCase
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet
 
         $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
 

@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
-use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class RegulationDetailControllerTest extends AbstactWebTestCase
+final class RegulationDetailControllerTest extends AbstractWebTestCase
 {
     public function testSpecificationPattern(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
 
+        $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Réglementation - Montauban', $crawler->filter('h2')->text());
 

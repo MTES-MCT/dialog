@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-final class LoginControllerTest extends WebTestCase
+final class LoginControllerTest extends AbstractWebTestCase
 {
     public function testLoginSuccessfully(): void
     {
@@ -14,6 +12,7 @@ final class LoginControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/login');
 
         $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
         $this->assertSame('Connexion à DiaLog', $crawler->filter('h1')->text());
 
         $saveButton = $crawler->selectButton('Se connecter');

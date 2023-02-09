@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Steps;
 
-use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class Step3ControllerTest extends AbstactWebTestCase
+final class Step3ControllerTest extends AbstractWebTestCase
 {
     public function testAdd(): void
     {
@@ -14,6 +14,7 @@ final class Step3ControllerTest extends AbstactWebTestCase
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/3'); // Regulation Order Record without overall period
 
         $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
         $this->assertSame('Étape 3 sur 5 Période', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Véhicules concernés', $crawler->filter('p.fr-stepper__details')->text());
 
