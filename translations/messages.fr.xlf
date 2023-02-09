@@ -491,11 +491,11 @@
             </trans-unit>
             <trans-unit id="regulation.delete_modal.confirm">
                 <source>regulation.delete_modal.confirm</source>
-                <target>Oui, supprimer</target>
+                <target>Supprimer</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.cancel">
                 <source>regulation.delete_modal.cancel</source>
-                <target>Non, ne pas supprimer</target>
+                <target>Ne pas supprimer</target>
             </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>
