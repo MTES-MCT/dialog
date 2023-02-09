@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
-use App\Tests\Integration\Infrastructure\Controller\AbstactWebTestCase;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class RegulationDeleteControllerTest extends AbstactWebTestCase
+final class RegulationDeleteControllerTest extends AbstractWebTestCase
 {
     private function countRows($crawler) {
         $numDrafts = $crawler->filter("#draft-panel tbody > tr:not([data-testid=empty-row])")->count();

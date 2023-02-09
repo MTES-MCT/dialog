@@ -10,6 +10,7 @@ final class DeleteRegulationCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $uuid,
+        public readonly array $userOrganizationUuids,
     ) {
     }
 }
