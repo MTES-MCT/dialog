@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Steps;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
+use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Step1FormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class Step1Controller extends AbstractStepsController
+final class Step1Controller extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -45,10 +46,12 @@ final class Step1Controller extends AbstractStepsController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $regulationOrderUuid = $this->commandBus->handle($command);
+            $regulationOrderRecord = $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_regulations_steps_2', ['uuid' => $regulationOrderUuid]),
+                url: $this->router->generate('app_regulations_steps_2', [
+                    'uuid' => $regulationOrderRecord->getUuid(),
+                ]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

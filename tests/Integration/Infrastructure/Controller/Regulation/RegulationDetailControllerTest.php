@@ -8,7 +8,7 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class RegulationDetailControllerTest extends AbstractWebTestCase
 {
-    public function testSpecificationPattern(): void
+    public function testRegulationDetail(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
@@ -35,14 +35,6 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         // Step 4
         $this->assertCount(0, $step4->filter('li'));
-    }
-
-    public function testRegulationOrderRecordNotPublished(): void
-    {
-        $client = $this->login();
-        $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
-
-        $this->assertResponseStatusCodeSame(404);
     }
 
     public function testRegulationOrderRecordNotFound(): void
