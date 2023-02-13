@@ -50,8 +50,8 @@ final class DeleteRegulationController
             $command = new DeleteRegulationCommand($user->getOrganization(), $uuid);
             $status = $this->commandBus->handle($command);
         } catch (RegulationOrderRecordNotFoundException) {
-            // Maybe the regulation has just been deleted, and a user agent retried the request.
-            // It should succeed too, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
+            // The regulation may have been deleted before.
+            // Don't fail, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
             $status = 'draft';
         } catch (RegulationOrderRecordCannotBeDeletedException) {
             throw new AccessDeniedHttpException();
