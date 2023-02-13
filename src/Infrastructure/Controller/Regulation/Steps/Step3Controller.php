@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
+use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Step3FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class Step3Controller extends AbstractStepsController
+final class Step3Controller extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,

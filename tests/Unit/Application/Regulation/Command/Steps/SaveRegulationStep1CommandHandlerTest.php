@@ -26,7 +26,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $organization = $this->createMock(Organization::class);
-
         $now = new \DateTimeImmutable('2022-01-09');
 
         $idFactory
@@ -49,11 +48,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             ->willReturn($regulationCondition);
 
         $createdRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $createdRegulationOrderRecord
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('f40f95eb-a7dd-4232-9f03-2db10f04f37f');
-
         $createdRegulationOrder = $this->createMock(RegulationOrder::class);
 
         $regulationOrderRepository
@@ -95,13 +89,14 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
+
         $command = new SaveRegulationStep1Command($organization);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 
-        $uuid = $handler($command);
+        $result = $handler($command);
 
-        $this->assertSame('f40f95eb-a7dd-4232-9f03-2db10f04f37f', $uuid);
+        $this->assertSame($createdRegulationOrderRecord, $result);
     }
 
     public function testUpdate(): void
@@ -148,10 +143,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('f40f95eb-a7dd-4232-9f03-2db10f04f37f');
 
         $handler = new SaveRegulationStep1CommandHandler(
             $idFactory,
@@ -161,12 +152,13 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
+
         $command = new SaveRegulationStep1Command($organization, $regulationOrderRecord);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 
-        $uuid = $handler($command);
+        $result = $handler($command);
 
-        $this->assertSame('f40f95eb-a7dd-4232-9f03-2db10f04f37f', $uuid);
+        $this->assertSame($regulationOrderRecord, $result);
     }
 }
