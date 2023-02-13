@@ -23,9 +23,8 @@ use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Specification\CanRegulationBeDuplicated;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
-use App\Infrastructure\Security\SymfonyUser;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -33,13 +32,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 {
     private $idFactory;
     private $translator;
-    private $canRegulationBeDuplicated;
+    private $canOrganizationAccessToRegulation;
     private $queryBus;
     private $commandBus;
     private $locationRepository;
     private $originalRegulationOrderRecord;
     private $organization;
-    private $user;
     private $originalRegulationOrder;
     private $originalRegulationCondition;
 
@@ -47,19 +45,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->canRegulationBeDuplicated = $this->createMock(CanRegulationBeDuplicated::class);
+        $this->canOrganizationAccessToRegulation = $this->createMock(CanOrganizationAccessToRegulation::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->organization = $this->createMock(Organization::class);
-        $this->user = $this->createMock(SymfonyUser::class);
-        $this->user
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($this->organization);
-
         $this->originalRegulationCondition = $this->createMock(RegulationCondition::class);
-
         $this->originalRegulationOrder = $this->createMock(RegulationOrder::class);
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -77,7 +68,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
     {
         $this->expectException(RegulationCannotBeDuplicated::class);
 
-        $this->canRegulationBeDuplicated
+        $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
             ->with($this->originalRegulationOrderRecord, $this->organization)
@@ -95,12 +86,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
-        $command = new DuplicateRegulationCommand($this->user, $this->originalRegulationOrderRecord);
+        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
 
         $handler = new DuplicateRegulationCommandHandler(
             $this->idFactory,
             $this->translator,
-            $this->canRegulationBeDuplicated,
+            $this->canOrganizationAccessToRegulation,
             $this->queryBus,
             $this->commandBus,
             $this->locationRepository,
@@ -109,9 +100,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->assertEmpty($handler($command));
     }
 
-    public function testReglementationFullyDuplicated(): void
+    public function testRegulationFullyDuplicated(): void
     {
-        $this->canRegulationBeDuplicated
+        $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
             ->with($this->originalRegulationOrderRecord, $this->organization)
@@ -149,7 +140,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('Description (copie)');
 
         // RegulationCondition, RegulationOrder and RegulationOrderRecord
-        $step1command = new SaveRegulationStep1Command($this->user);
+        $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
 
@@ -273,19 +264,19 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $handler = new DuplicateRegulationCommandHandler(
             $this->idFactory,
             $this->translator,
-            $this->canRegulationBeDuplicated,
+            $this->canOrganizationAccessToRegulation,
             $this->queryBus,
             $this->commandBus,
             $this->locationRepository,
         );
 
-        $command = new DuplicateRegulationCommand($this->user, $this->originalRegulationOrderRecord);
+        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
         $this->assertSame($duplicatedRegulationOrderRecord, $handler($command));
     }
 
-    public function testReglementationPartiallyDuplicated(): void
+    public function testRegulationPartiallyDuplicated(): void
     {
-        $this->canRegulationBeDuplicated
+        $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
             ->with($this->originalRegulationOrderRecord, $this->organization)
@@ -323,7 +314,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('Description (copie)');
 
         // RegulationCondition, RegulationOrder and RegulationOrderRecord
-        $step1command = new SaveRegulationStep1Command($this->user);
+        $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
 
@@ -355,13 +346,13 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $handler = new DuplicateRegulationCommandHandler(
             $this->idFactory,
             $this->translator,
-            $this->canRegulationBeDuplicated,
+            $this->canOrganizationAccessToRegulation,
             $this->queryBus,
             $this->commandBus,
             $this->locationRepository,
         );
 
-        $command = new DuplicateRegulationCommand($this->user, $this->originalRegulationOrderRecord);
+        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
         $this->assertSame($duplicatedRegulationOrderRecord, $handler($command));
     }
 }

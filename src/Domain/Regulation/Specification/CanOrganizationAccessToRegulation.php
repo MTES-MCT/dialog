@@ -7,7 +7,7 @@ namespace App\Domain\Regulation\Specification;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 
-class CanRegulationBeDuplicated
+class CanOrganizationAccessToRegulation
 {
     public function isSatisfiedBy(
         RegulationOrderRecord $regulationOrderRecord,

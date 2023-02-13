@@ -40,5 +40,15 @@ final class UserTest extends TestCase
         );
 
         $this->assertSame(null, $user->getOrganization());
+
+        $user2 = new User(
+            '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
+            'Mathieu Marchois',
+            'mathieu@fairness.coop',
+            'password',
+            [],
+        );
+
+        $this->assertSame(null, $user2->getOrganization());
     }
 }

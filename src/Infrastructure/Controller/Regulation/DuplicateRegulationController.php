@@ -51,7 +51,7 @@ final class DuplicateRegulationController extends AbstractRegulationController
 
         try {
             $duplicatedRegulationOrderRecord = $this->commandBus->handle(
-                new DuplicateRegulationCommand($user, $regulationOrderRecord),
+                new DuplicateRegulationCommand($user->getOrganization(), $regulationOrderRecord),
             );
 
             return new RedirectResponse(

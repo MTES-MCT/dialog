@@ -22,8 +22,8 @@ use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Specification\CanRegulationBeDuplicated;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Domain\User\Organization;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DuplicateRegulationCommandHandler
@@ -31,7 +31,7 @@ final class DuplicateRegulationCommandHandler
     public function __construct(
         private IdFactoryInterface $idFactory,
         private TranslatorInterface $translator,
-        private CanRegulationBeDuplicated $canRegulationBeDuplicated,
+        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
         private LocationRepositoryInterface $locationRepository,
@@ -40,16 +40,16 @@ final class DuplicateRegulationCommandHandler
 
     public function __invoke(DuplicateRegulationCommand $command): RegulationOrderRecord
     {
-        $organization = $command->user->getOrganization();
+        $organization = $command->organization;
         $originalRegulationOrderRecord = $command->originalRegulationOrderRecord;
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
         $originalRegulationCondition = $originalRegulationOrder->getRegulationCondition();
 
-        if (!$this->canRegulationBeDuplicated->isSatisfiedBy($originalRegulationOrderRecord, $organization)) {
+        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($originalRegulationOrderRecord, $organization)) {
             throw new RegulationCannotBeDuplicated();
         }
 
-        $duplicatedRegulationOrderRecord = $this->duplicateRegulationOrderRecord($command->user, $originalRegulationOrder);
+        $duplicatedRegulationOrderRecord = $this->duplicateRegulationOrderRecord($organization, $originalRegulationOrder);
         $duplicatedRegulationCondition = $duplicatedRegulationOrderRecord->getRegulationOrder()->getRegulationCondition();
 
         $this->duplicateLocation($originalRegulationCondition, $duplicatedRegulationCondition);
@@ -60,10 +60,10 @@ final class DuplicateRegulationCommandHandler
     }
 
     private function duplicateRegulationOrderRecord(
-        SymfonyUser $user,
+        Organization $organization,
         RegulationOrder $originalRegulationOrder,
     ): RegulationOrderRecord {
-        $step1Command = new SaveRegulationStep1Command($user);
+        $step1Command = new SaveRegulationStep1Command($organization);
         $step1Command->issuingAuthority = $originalRegulationOrder->getIssuingAuthority();
         $step1Command->description = $this->translator->trans('regulation.description.copy', [
             '%description%' => $originalRegulationOrder->getDescription(),

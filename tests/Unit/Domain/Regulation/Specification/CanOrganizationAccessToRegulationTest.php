@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Domain\Regulation\Specification;
 
-use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
-use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
-use App\Application\QueryBusInterface;
-use App\Domain\Condition\Location;
-use App\Domain\Condition\Period\OverallPeriod;
-use App\Domain\Condition\RegulationCondition;
-use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Specification\CanRegulationBeDuplicated;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
-final class CanRegulationBeDuplicatedTest extends TestCase
+final class CanOrganizationAccessToRegulationTest extends TestCase
 {
     public function testRegulationCanBePublished(): void
     {
@@ -38,7 +31,7 @@ final class CanRegulationBeDuplicatedTest extends TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $specification = new CanRegulationBeDuplicated();
+        $specification = new CanOrganizationAccessToRegulation();
         $this->assertTrue($specification->isSatisfiedBy($regulationOrderRecord, $userOrganization));
     }
 
@@ -62,7 +55,7 @@ final class CanRegulationBeDuplicatedTest extends TestCase
             ->method('getUuid')
             ->willReturn('f35dc505-50a9-40ac-8bff-e0dff961aaf8');
 
-        $specification = new CanRegulationBeDuplicated();
+        $specification = new CanOrganizationAccessToRegulation();
         $this->assertFalse($specification->isSatisfiedBy($regulationOrderRecord, $userOrganization));
     }
 }

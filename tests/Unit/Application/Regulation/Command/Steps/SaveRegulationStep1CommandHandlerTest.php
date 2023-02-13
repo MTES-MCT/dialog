@@ -15,7 +15,6 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
-use App\Infrastructure\Security\SymfonyUser;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep1CommandHandlerTest extends TestCase
@@ -27,12 +26,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $organization = $this->createMock(Organization::class);
-
-        $user = $this->createMock(SymfonyUser::class);
-        $user->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
         $now = new \DateTimeImmutable('2022-01-09');
 
         $idFactory
@@ -96,7 +89,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationStep1Command($user);
+
+        $command = new SaveRegulationStep1Command($organization);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 
@@ -111,17 +105,13 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationConditionRepository = $this->createMock(RegulationConditionRepositoryInterface::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
-        $user = $this->createMock(SymfonyUser::class);
         $now = new \DateTimeImmutable('2022-01-09');
+        $organization = $this->createMock(Organization::class);
 
         $idFactory
             ->expects(self::never())
             ->method('make');
 
-        $regulationCondition = new RegulationCondition(
-            uuid: 'f331d768-ed8b-496d-81ce-b97008f338d0',
-            negate: false,
-        );
         $regulationConditionRepository
             ->expects(self::never())
             ->method('save');
@@ -162,7 +152,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationStep1Command($user, $regulationOrderRecord);
+
+        $command = new SaveRegulationStep1Command($organization, $regulationOrderRecord);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 

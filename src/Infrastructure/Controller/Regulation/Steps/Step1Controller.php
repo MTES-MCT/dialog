@@ -41,7 +41,7 @@ final class Step1Controller extends AbstractRegulationController
         /** @var SymfonyUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $uuid ? $this->getRegulationOrderRecord($uuid) : null;
-        $command = SaveRegulationStep1Command::create($user, $regulationOrderRecord);
+        $command = SaveRegulationStep1Command::create($user->getOrganization(), $regulationOrderRecord);
         $form = $this->formFactory->create(Step1FormType::class, $command);
         $form->handleRequest($request);
 

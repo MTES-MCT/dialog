@@ -7,9 +7,15 @@
                 <h1 id="jumbotron" class="fr-title--blue-france">{{ 'landing.jumbotron.title'|trans }}</h1>
                 <p class="fr-text--lead">{{ 'landing.jumbotron.description'|trans|raw }}</p>
 
-                <a href="{{ path('app_login') }}" class="fr-btn fr-mr-2w">
-                    {{ 'landing.jumbotron.login'|trans }}
-                </a>
+                {% if app.user %}
+                    <a href="{{ path('app_regulations_list') }}" class="fr-btn fr-mr-2w" data-testid="enter-link">
+                        {{ 'landing.jumbotron.logged'|trans }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="fr-btn fr-mr-2w" data-testid="enter-link">
+                        {{ 'landing.jumbotron.login'|trans }}
+                    </a>
+                {% endif %}
                 <a href="#" class="fr-btn fr-btn--secondary">
                     {{ 'landing.jumbotron.contact'|trans }}
                 </a>

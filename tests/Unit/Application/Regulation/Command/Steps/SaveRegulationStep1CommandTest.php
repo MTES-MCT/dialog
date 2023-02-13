@@ -8,7 +8,6 @@ use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
-use App\Infrastructure\Security\SymfonyUser;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep1CommandTest extends TestCase
@@ -20,12 +19,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
             ->method('getName')
             ->willReturn('DiaLog');
 
-        $user = $this->createMock(SymfonyUser::class);
-        $user->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
-        $command = SaveRegulationStep1Command::create($user);
+        $command = SaveRegulationStep1Command::create($organization);
 
         $this->assertSame('DiaLog', $command->issuingAuthority);
         $this->assertEmpty($command->description);
@@ -33,7 +27,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
 
     public function testWithRegulationOrderRecord(): void
     {
-        $user = $this->createMock(SymfonyUser::class);
+        $organization = $this->createMock(Organization::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
 
         $regulationOrder
@@ -52,7 +46,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
 
-        $command = SaveRegulationStep1Command::create($user, $regulationOrderRecord);
+        $command = SaveRegulationStep1Command::create($organization, $regulationOrderRecord);
 
         $this->assertSame($command->issuingAuthority, 'Autorité');
         $this->assertSame($command->description, 'Description');
