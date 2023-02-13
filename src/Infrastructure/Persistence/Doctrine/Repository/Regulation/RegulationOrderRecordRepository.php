@@ -60,6 +60,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.regulationCondition', 'rc')
+            ->innerJoin('roc.organization', 'o')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

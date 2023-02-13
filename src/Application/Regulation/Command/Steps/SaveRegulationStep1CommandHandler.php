@@ -24,7 +24,7 @@ final class SaveRegulationStep1CommandHandler
     ) {
     }
 
-    public function __invoke(SaveRegulationStep1Command $command): string
+    public function __invoke(SaveRegulationStep1Command $command): RegulationOrderRecord
     {
         // If submitting step 1 for the first time, we create the regulationCondition, regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
@@ -54,7 +54,7 @@ final class SaveRegulationStep1CommandHandler
                 ),
             );
 
-            return $regulationOrderRecord->getUuid();
+            return $regulationOrderRecord;
         }
 
         $command->regulationOrderRecord->getRegulationOrder()->update(
@@ -62,6 +62,6 @@ final class SaveRegulationStep1CommandHandler
             description: $command->description,
         );
 
-        return $command->regulationOrderRecord->getUuid();
+        return $command->regulationOrderRecord;
     }
 }

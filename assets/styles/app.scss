@@ -4,6 +4,7 @@
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css');
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css');
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css');
+@import url('../../node_modules/remixicon/fonts/remixicon.css');
 
 /* label.required is set by Symfony for form types with 'required => true' */
 label.required > .fr-x-label-content::after {
@@ -32,6 +33,10 @@ label.required > .fr-x-label-content::after {
 
 .fr-x-text--center {
   text-align: center;
+}
+
+.remixicons {
+    font-size: 1.5rem !important; // Override to have the same size as the DSFR. Don't work without !important
 }
 
 .landing-jumbotron__illustration {

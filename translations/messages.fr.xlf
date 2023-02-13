@@ -30,6 +30,10 @@
                 <source>common.see</source>
                 <target>Voir le détail</target>
             </trans-unit>
+            <trans-unit id="common.duplicate">
+                <source>common.duplicate</source>
+                <target>Dupliquer</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>
@@ -353,6 +357,10 @@
             <trans-unit id="regulation.stepper.next">
                 <source>regulation.stepper.next</source>
                 <target>Étape suivante :</target>
+            </trans-unit>
+            <trans-unit id="regulation.description.copy">
+                <source>regulation.description.copy</source>
+                <target>%description% (copie)</target>
             </trans-unit>
             <trans-unit id="pagination.first">
                 <source>pagination.first</source>

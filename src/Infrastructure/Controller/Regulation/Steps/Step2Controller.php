@@ -9,6 +9,7 @@ use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQue
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
+use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Step2FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class Step2Controller extends AbstractStepsController
+final class Step2Controller extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,

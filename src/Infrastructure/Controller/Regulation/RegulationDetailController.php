@@ -7,7 +7,6 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\Specification\CanAccessToRegulationDetail;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +16,6 @@ final class RegulationDetailController
     public function __construct(
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
-        private CanAccessToRegulationDetail $canAccessToRegulationDetail,
     ) {
     }
 
@@ -32,10 +30,6 @@ final class RegulationDetailController
         try {
             $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
         } catch (RegulationOrderRecordNotFoundException) {
-            throw new NotFoundHttpException();
-        }
-
-        if (false === $this->canAccessToRegulationDetail->isSatisfiedBy($regulationOrderRecord)) {
             throw new NotFoundHttpException();
         }
 
