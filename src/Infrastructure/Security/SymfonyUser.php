@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security;
 
+use App\Domain\User\Organization;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,8 +15,8 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         private string $email,
         private string $fullName,
         private string $password,
-        private array $organizationUuids,
         private array $roles,
+        private Organization $organization,
     ) {
     }
 
@@ -54,9 +55,9 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function getOrganizationUuids(): array
+    public function getOrganization(): Organization
     {
-        return $this->organizationUuids;
+        return $this->organization;
     }
 
     public function eraseCredentials(): void

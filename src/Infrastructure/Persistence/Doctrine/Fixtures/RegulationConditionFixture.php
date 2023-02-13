@@ -27,13 +27,20 @@ final class RegulationConditionFixture extends Fixture
             false,
         );
 
+        $regulationCondition4 = new RegulationCondition(
+            '4e43c2d3-788c-404e-b741-e3a501d0ce9f',
+            false,
+        );
+
         $manager->persist($regulationCondition);
         $manager->persist($regulationCondition2);
         $manager->persist($regulationCondition3);
+        $manager->persist($regulationCondition4);
         $manager->flush();
 
         $this->addReference('regulationCondition1', $regulationCondition);
         $this->addReference('regulationCondition2', $regulationCondition2);
         $this->addReference('regulationCondition3', $regulationCondition3);
+        $this->addReference('regulationCondition4', $regulationCondition4);
     }
 }

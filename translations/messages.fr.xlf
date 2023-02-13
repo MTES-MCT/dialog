@@ -390,6 +390,10 @@
                 <source>landing.jumbotron.login</source>
                 <target>Se connecter</target>
             </trans-unit>
+            <trans-unit id="landing.jumbotron.logged">
+                <source>landing.jumbotron.logged</source>
+                <target>Accéder aux réglementations</target>
+            </trans-unit>
             <trans-unit id="landing.jumbotron.contact">
                 <source>landing.jumbotron.contact</source>
                 <target>Nous contacter</target>

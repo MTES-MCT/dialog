@@ -22,8 +22,8 @@ abstract class AbstractWebTestCase extends WebTestCase
                 $testUser->getEmail(),
                 $testUser->getFullName(),
                 $testUser->getPassword(),
-                $testUser->getOrganizationUuids(),
                 ['ROLE_USER'],
+                $testUser->getOrganization(),
             )
         );
 
