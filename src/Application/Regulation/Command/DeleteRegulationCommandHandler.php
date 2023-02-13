@@ -8,25 +8,25 @@ use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedExceptio
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\Regulation\Specification\CanUserDeleteRegulationOrderRecord;
+use App\Domain\Regulation\Specification\CanDeleteRegulationOrderRecord;
 
 final class DeleteRegulationCommandHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
-        private CanUserDeleteRegulationOrderRecord $canUserDeleteRegulationOrderRecord,
+        private CanDeleteRegulationOrderRecord $canDeleteRegulationOrderRecord,
     ) {
     }
 
     public function __invoke(DeleteRegulationCommand $command): string
     {
         $regulationOrderRecord = $this->regulationOrderRecordRepository->findOneByUuid($command->uuid);
-        
+
         if (!$regulationOrderRecord instanceof RegulationOrderRecord) {
             throw new RegulationOrderRecordNotFoundException();
         }
 
-        if (false === $this->canUserDeleteRegulationOrderRecord->isSatisfiedBy($command->userOrganizationUuids, $regulationOrderRecord)) {
+        if (false === $this->canDeleteRegulationOrderRecord->isSatisfiedBy($command->organization, $regulationOrderRecord)) {
             throw new RegulationOrderRecordCannotBeDeletedException();
         }
 

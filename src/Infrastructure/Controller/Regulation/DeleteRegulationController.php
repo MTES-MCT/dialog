@@ -8,15 +8,17 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
+use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class RegulationDeleteController
+final class DeleteRegulationController
 {
     public function __construct(
         private RouterInterface $router,
@@ -34,16 +36,18 @@ final class RegulationDeleteController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        /** @var \App\Infrastructure\Security\SymfonyUser */
+        /** @var SymfonyUser */
         $user = $this->security->getUser();
 
         try {
-            $command = new DeleteRegulationCommand($uuid, $user->getOrganizationUuids());
+            $command = new DeleteRegulationCommand($user->getOrganization(), $uuid);
             $status = $this->commandBus->handle($command);
         } catch (RegulationOrderRecordNotFoundException) {
+            // Maybe the regulation has just been deleted, and a user agent retried the request.
+            // It should succeed too, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
             $status = 'draft';
         } catch (RegulationOrderRecordCannotBeDeletedException) {
-            throw new NotFoundHttpException();
+            throw new AccessDeniedHttpException();
         }
 
         return new RedirectResponse(

@@ -10,25 +10,28 @@ use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedExceptio
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\Regulation\Specification\CanUserDeleteRegulationOrderRecord;
+use App\Domain\Regulation\Specification\CanDeleteRegulationOrderRecord;
+use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class DeleteRegulationCommandHandlerTest extends TestCase
 {
     private $uuid = 'f331d768-ed8b-496d-81ce-b97008f338d0';
-    private $canUserDeleteRegulationOrderRecord;
+    private $canDeleteRegulationOrderRecord;
     private $regulationOrderRecordRepository;
     private $regulationOrderRecord;
 
     protected function setUp(): void {
-        $this->canUserDeleteRegulationOrderRecord = $this->createMock(CanUserDeleteRegulationOrderRecord::class);
+        $this->canDeleteRegulationOrderRecord = $this->createMock(CanDeleteRegulationOrderRecord::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
     }
 
     public function testDelete(): void
     {
-        $this->canUserDeleteRegulationOrderRecord
+        $organization = $this->createMock(Organization::class);
+
+        $this->canDeleteRegulationOrderRecord
             ->expects(self::once())
             ->method('isSatisfiedBy')
             ->willReturn(true);
@@ -51,18 +54,20 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
-            $this->canUserDeleteRegulationOrderRecord,
+            $this->canDeleteRegulationOrderRecord,
         );
 
-        $command = new DeleteRegulationCommand($this->uuid, ['...']);
+        $command = new DeleteRegulationCommand($organization, $this->uuid);
         $this->assertSame('published', $handler($command));
     }
 
-    public function testUserCannotDelete(): void
+    public function testCannotDelete(): void
     {
         $this->expectException(RegulationOrderRecordCannotBeDeletedException::class);
 
-        $this->canUserDeleteRegulationOrderRecord
+        $organization = $this->createMock(Organization::class);
+
+        $this->canDeleteRegulationOrderRecord
             ->expects(self::once())
             ->method('isSatisfiedBy')
             ->willReturn(false);
@@ -83,16 +88,18 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
-            $this->canUserDeleteRegulationOrderRecord,
+            $this->canDeleteRegulationOrderRecord,
         );
 
-        $command = new DeleteRegulationCommand($this->uuid, ['...']);
+        $command = new DeleteRegulationCommand($organization, $this->uuid);
         $handler($command);
     }
 
     public function testNotFound(): void
     {
         $this->expectException(RegulationOrderRecordNotFoundException::class);
+
+        $organization = $this->createMock(Organization::class);
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
@@ -106,10 +113,10 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
-            $this->canUserDeleteRegulationOrderRecord,
+            $this->canDeleteRegulationOrderRecord,
         );
 
-        $command = new DeleteRegulationCommand($this->uuid, ['...']);
+        $command = new DeleteRegulationCommand($organization, $this->uuid);
         $handler($command);
     }
 }

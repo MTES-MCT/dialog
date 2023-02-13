@@ -6,7 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class RegulationDeleteControllerTest extends AbstractWebTestCase
+final class DeleteRegulationControllerTest extends AbstractWebTestCase
 {
     private function countRows($crawler) {
         $numDrafts = $crawler->filter("#draft-panel tbody > tr:not([data-testid=empty-row])")->count();
@@ -48,6 +48,13 @@ final class RegulationDeleteControllerTest extends AbstractWebTestCase
         // Detail page doesn't exist anymore.
         $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testCannotDeleteBecauseDifferentOrganization(): void
+    {
+        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testRegulationOrderRecordNotFound(): void
