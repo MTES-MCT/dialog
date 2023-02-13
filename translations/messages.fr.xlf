@@ -34,6 +34,10 @@
                 <source>common.duplicate</source>
                 <target>Dupliquer</target>
             </trans-unit>
+            <trans-unit id="common.delete">
+                <source>common.delete</source>
+                <target>Supprimer</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>

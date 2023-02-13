@@ -63,24 +63,26 @@
                                 </a>
                             {% endif %}
                             <form method="post" action="{{ path('app_regulation_duplicate', { uuid: regulation.uuid })}}">
-                                <button class="fr-btn ri-file-copy-line remixicons fr-btn--tertiary-no-outline" title="{{ 'common.duplicate'|trans}}"/>
+                                <button class="fr-btn ri-file-copy-line remixicons fr-btn--tertiary-no-outline" title="{{ 'common.duplicate'|trans }}"></button>
                                 <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
                             </form>
-                            <button
-                                type="button"
-                                class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
-                                data-controller="modal-trigger"
-                                aria-controls="regulation-delete-modal"
-                                data-modal-trigger-modal-outlet="#regulation-delete-modal"
-                                data-modal-trigger-key-value="{{ regulation.uuid }}"
-                                data-action="modal-trigger#showModal"
-                                hx-trigger="modal-trigger:submit"
-                                hx-delete="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
-                                hx-select="#contenu"
-                                hx-target="#contenu"
+                            <form
+                                method="delete"
+                                action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
+                                data-controller="form-submit"
+                                data-form-submit-event-name-value="modal-trigger:submit"
                             >
-                                {{ 'common.delete'|trans }}
-                            </button>
+                                <button
+                                    id="regulation-delete-modal-trigger"
+                                    class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                    data-controller="modal-trigger"
+                                    data-modal-trigger-modal-outlet="#regulation-delete-modal"
+                                    data-modal-trigger-key-value="{{ regulation.uuid }}"
+                                    data-action="modal-trigger#showModal:prevent"
+                                    aria-controls="regulation-delete-modal"
+                                    title="{{ 'common.delete'|trans }}"
+                                ></button>
+                            </form>
                         </div>
                     </td>
                 </tr>

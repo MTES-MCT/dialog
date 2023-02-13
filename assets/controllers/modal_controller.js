@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
+/**
+ * Manage a modal with a return value.
+ */
 export default class extends Controller {
     static targets = ['value'];
 

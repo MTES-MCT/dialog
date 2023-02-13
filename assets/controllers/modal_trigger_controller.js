@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
+/**
+ * Manage the opening and closing of a modal.
+ */
 export default class extends Controller {
     static outlets = ['modal'];
 
@@ -25,7 +28,8 @@ export default class extends Controller {
 
     #onModalClose = () => {
         if (this.modalOutletElement.returnValue === this.keyValue) {
-            this.element.dispatchEvent(new CustomEvent('modal-trigger:submit'));
+            const event = new CustomEvent('modal-trigger:submit', { bubbles: true });
+            this.element.dispatchEvent(event);
         }
     };
 }
