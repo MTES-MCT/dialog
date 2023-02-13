@@ -19,6 +19,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrder'),
             new \DateTime('2022-01-10'),
+            $this->getReference('organization1'),
         );
 
         $regulationOrderRecord2 = new RegulationOrderRecord(
@@ -26,6 +27,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED,
             $this->getReference('regulationOrder2'),
             new \DateTime('2022-01-10'),
+            $this->getReference('organization1'),
         );
 
         $regulationOrderRecord3 = new RegulationOrderRecord(
@@ -33,11 +35,21 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrder3'),
             new \DateTime('2022-01-11'),
+            $this->getReference('organization1'),
+        );
+
+        $regulationOrderRecord4 = new RegulationOrderRecord(
+            '867d2be6-0d80-41b5-b1ff-8452b30a95f5',
+            RegulationOrderRecordStatusEnum::DRAFT,
+            $this->getReference('regulationOrder4'),
+            new \DateTime('2022-01-11'),
+            $this->getReference('organization2'),
         );
 
         $manager->persist($regulationOrderRecord);
         $manager->persist($regulationOrderRecord2);
         $manager->persist($regulationOrderRecord3);
+        $manager->persist($regulationOrderRecord4);
         $manager->flush();
     }
 
@@ -45,6 +57,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
     {
         return [
             RegulationOrderFixture::class,
+            OrganizationFixture::class,
         ];
     }
 }

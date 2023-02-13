@@ -8,6 +8,8 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Infrastructure\Form\Regulation\Step1FormType;
+use App\Infrastructure\Security\SymfonyUser;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +24,7 @@ final class Step1Controller extends AbstractStepsController
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
+        private Security $security,
         QueryBusInterface $queryBus,
     ) {
         parent::__construct($queryBus);
@@ -34,12 +37,10 @@ final class Step1Controller extends AbstractStepsController
     )]
     public function __invoke(Request $request, string $uuid = null): Response
     {
-        $regulationOrderRecord = null;
-        if ($uuid) {
-            $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        }
-
-        $command = SaveRegulationStep1Command::create($regulationOrderRecord);
+        /** @var SymfonyUser */
+        $user = $this->security->getUser();
+        $regulationOrderRecord = $uuid ? $this->getRegulationOrderRecord($uuid) : null;
+        $command = SaveRegulationStep1Command::create($user->getOrganization(), $regulationOrderRecord);
         $form = $this->formFactory->create(Step1FormType::class, $command);
         $form->handleRequest($request);
 

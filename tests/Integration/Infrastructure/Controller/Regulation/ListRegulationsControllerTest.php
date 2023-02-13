@@ -73,6 +73,33 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame("Dernière page", $navLi->eq(5)->filter('a')->text());
     }
 
+    public function testListWithOtherOrganization(): void
+    {
+        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $pageOne = $client->request('GET', '/regulations');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
+
+        $this->assertSame("tablist", $tabs->attr("role"));
+        $this->assertSame("Brouillon (1) Publiée (0)", $tabs->text());
+
+        // Test draft reglementation rendering
+        $pageOneDraftRows = $pageOne->filter('#draft-panel tbody > tr');
+        $this->assertSame(1, $pageOneDraftRows->count()); // One item per page
+
+        $pageOneDraftRow0 = $pageOneDraftRows->eq(0)->filter('td');
+        $this->assertEmpty($pageOneDraftRow0->eq(0)->text()); // No location
+        $this->assertEmpty($pageOneDraftRow0->eq(1)->text()); // No period set
+        $this->assertSame("Brouillon", $pageOneDraftRow0->eq(2)->text());
+
+        $links = $pageOneDraftRow0->eq(3)->filter('a');
+        $this->assertSame("Modifier", $links->eq(0)->text());
+        $this->assertSame("http://localhost/regulations/form/867d2be6-0d80-41b5-b1ff-8452b30a95f5/5", $links->eq(0)->link()->getUri());
+    }
+
     public function testInvalidPageSize(): void
     {
         $client = $this->login();

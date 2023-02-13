@@ -38,7 +38,7 @@ final class Step1ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-
+        $form["step1_form[issuingAuthority]"] = ""; // Reset the default value
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_issuingAuthority_error')->text());

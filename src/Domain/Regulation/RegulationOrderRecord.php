@@ -13,7 +13,7 @@ class RegulationOrderRecord
         private string $status,
         private RegulationOrder $regulationOrder,
         private \DateTimeInterface $createdAt,
-        private ?Organization $organization = null,
+        private Organization $organization,
     ) {
     }
 

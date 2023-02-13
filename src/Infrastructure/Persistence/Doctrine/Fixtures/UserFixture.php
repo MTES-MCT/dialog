@@ -19,9 +19,18 @@ final class UserFixture extends Fixture
             'password',
         );
 
+        $user2 = new User(
+            'd47badd9-989e-472b-a80e-9df642e93880',
+            'Florimond MANCA',
+            'florimond.manca@beta.gouv.fr',
+            'password',
+        );
+
         $manager->persist($user1);
+        $manager->persist($user2);
         $manager->flush();
 
         $this->addReference('user1', $user1);
+        $this->addReference('user2', $user2);
     }
 }

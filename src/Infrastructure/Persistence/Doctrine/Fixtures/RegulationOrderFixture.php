@@ -34,14 +34,23 @@ final class RegulationOrderFixture extends Fixture implements DependentFixtureIn
             regulationCondition: $this->getReference('regulationCondition3'),
         );
 
+        $regulationOrder4 = new RegulationOrder(
+            uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
+            issuingAuthority: 'Description 4',
+            description: 'Autorité 4',
+            regulationCondition: $this->getReference('regulationCondition4'),
+        );
+
         $manager->persist($regulationOrder);
         $manager->persist($regulationOrder2);
         $manager->persist($regulationOrder3);
+        $manager->persist($regulationOrder4);
         $manager->flush();
 
         $this->addReference('regulationOrder', $regulationOrder);
         $this->addReference('regulationOrder2', $regulationOrder2);
         $this->addReference('regulationOrder3', $regulationOrder3);
+        $this->addReference('regulationOrder4', $regulationOrder4);
     }
 
     public function getDependencies(): array
