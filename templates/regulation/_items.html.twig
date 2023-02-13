@@ -1,4 +1,5 @@
 {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
+{% set deleteCsrfToken = csrf_token('delete-regulation') %}
 
 <div class="fr-table fr-table--layout-fixed">
     <table>
@@ -82,6 +83,7 @@
                                     aria-controls="regulation-delete-modal"
                                     title="{{ 'common.delete'|trans }}"
                                 ></button>
+                                <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
                             </form>
                         </div>
                     </td>

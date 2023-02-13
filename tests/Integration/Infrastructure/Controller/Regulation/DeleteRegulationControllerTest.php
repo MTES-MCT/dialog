@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use App\Tests\SessionHelper;
 
 final class DeleteRegulationControllerTest extends AbstractWebTestCase
 {
+    use SessionHelper;
+
     private function countRows($crawler) {
         $numDrafts = $crawler->filter("#draft-panel tbody > tr:not([data-testid=empty-row])")->count();
         $numPublished = $crawler->filter("#published-panel tbody > tr:not([data-testid=empty-row])")->count();
@@ -21,7 +24,9 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations');
         [$numDrafts, $numPublished] = $this->countRows($crawler);
 
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', [
+            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+        ]);
         $this->assertResponseRedirects('/regulations?tab=draft', 303);
         $crawler = $client->followRedirect();
         // Doesn't appear in list of drafts anymore.
@@ -38,7 +43,9 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations');
         [$numDrafts, $numPublished] = $this->countRows($crawler);
 
-        $client->request('DELETE', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $client->request('DELETE', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5', [
+            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+        ]);
         $this->assertResponseRedirects('/regulations?tab=published', 303);
         $crawler = $client->followRedirect();
 
@@ -53,15 +60,26 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     public function testCannotDeleteBecauseDifferentOrganization(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', [
+            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+        ]);
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/regulations/547a5639-655a-41c3-9428-a5256b5a9e38');
+        $client->request('DELETE', '/regulations/547a5639-655a-41c3-9428-a5256b5a9e38', [
+            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+        ]);
         $this->assertResponseRedirects('/regulations?tab=draft', 303);
+    }
+
+    public function testInvalidCsrfToken(): void
+    {
+        $client = $this->login();
+        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testWithoutAuthenticatedUser(): void

@@ -14,9 +14,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final class DeleteRegulationController
 {
@@ -24,6 +26,7 @@ final class DeleteRegulationController
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private Security $security,
+        private CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -35,6 +38,11 @@ final class DeleteRegulationController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
+        $csrfToken = new CsrfToken('delete-regulation', $request->request->get('token'));
+        if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
+            throw new BadRequestHttpException('Invalid CSRF token');
+        }
+
         /** @var SymfonyUser */
         $user = $this->security->getUser();
 
