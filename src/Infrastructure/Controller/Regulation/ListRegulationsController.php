@@ -7,6 +7,8 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Infrastructure\Security\SymfonyUser;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,6 +21,7 @@ final class ListRegulationsController
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
         private TranslatorInterface $translator,
+        private Security $security,
     ) {
     }
 
@@ -30,6 +33,8 @@ final class ListRegulationsController
     )]
     public function __invoke(Request $request): Response
     {
+        /** @var SymfonyUser */
+        $user = $this->security->getUser();
         $tab = $request->query->get('tab', RegulationOrderRecordStatusEnum::DRAFT);
         $pageSize = min($request->query->getInt('pageSize', 20), 100);
         $page = $request->query->getInt('page', 1);
@@ -42,6 +47,7 @@ final class ListRegulationsController
 
         $draftPagination = $this->queryBus->handle(
             new GetRegulationsQuery(
+                $user->getOrganization(),
                 $pageSize,
                 $tab === RegulationOrderRecordStatusEnum::DRAFT ? $page : 1,
                 RegulationOrderRecordStatusEnum::DRAFT,
@@ -49,6 +55,7 @@ final class ListRegulationsController
         );
         $publishedPagination = $this->queryBus->handle(
             new GetRegulationsQuery(
+                $user->getOrganization(),
                 $pageSize,
                 $tab === RegulationOrderRecordStatusEnum::PUBLISHED ? $page : 1,
                 RegulationOrderRecordStatusEnum::PUBLISHED,
