@@ -64,6 +64,10 @@ services:
     DateTimeInterface:
         class: DateTimeImmutable
 
+    App\Infrastructure\Security\ContentSecurityPolicy\NonceGenerator:
+        decorates: 'nelmio_security.nonce_generator'
+        arguments: ['@.inner']
+
 when@test:
     services:
         App\Tests\Mock\APIAdresseMockClient:

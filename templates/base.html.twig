@@ -4,6 +4,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {#
+    Turbo manipulates the DOM by inserting elements, stylesheets, and scripts.
+    So we need to grant it a nonce to pass the Content-Security-Policy.
+    We suppress CSP errors on initial page load thanks to the following double-call
+    to csp_nonce(), some Turbo configuration to send the nonce along with Turbo Drive
+    requests, and the custom NonceGenerator which reuses the nonce in the CSP header.
+    But page navigations may still generate CSP errors.
+    See: https://github.com/nelmio/NelmioSecurityBundle/issues/321
+    #}
+    {% set _nonce = csp_nonce('script') %}
+    {% set _nonce = csp_nonce('style') %}
+    <meta name="csp-nonce" content="{{ _nonce }}">
+
     <link rel="apple-touch-icon" href="{{ asset('build/dsfr/favicon/apple-touch-icon.png') }}"><!-- 180×180 -->
     <link rel="icon" href="{{ asset('build/dsfr/favicon/favicon.svg') }}" type="image/svg+xml">
     <link rel="shortcut icon" href="{{ asset('build/dsfr/favicon/favicon.ico') }}" type="image/x-icon"><!-- 32×32 -->
