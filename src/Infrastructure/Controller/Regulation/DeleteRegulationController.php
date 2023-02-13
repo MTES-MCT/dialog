@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
-use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -22,7 +21,6 @@ final class DeleteRegulationController
 {
     public function __construct(
         private RouterInterface $router,
-        private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
         private Security $security,
     ) {
