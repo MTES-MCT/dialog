@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,6 +29,7 @@ final class DeleteRegulationController
     public function __construct(
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
+        private QueryBusInterface $queryBus,
         private Security $security,
         private CsrfTokenManagerInterface $csrfTokenManager,
     ) {
@@ -47,18 +52,27 @@ final class DeleteRegulationController
         $user = $this->security->getUser();
 
         try {
-            $command = new DeleteRegulationCommand($user->getOrganization(), $uuid);
-            $status = $this->commandBus->handle($command);
+            /** @var RegulationOrderRecord */
+            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
         } catch (RegulationOrderRecordNotFoundException) {
             // The regulation may have been deleted before.
             // Don't fail, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
-            $status = 'draft';
+            return new RedirectResponse(
+                url: $this->router->generate('app_regulations_list', [
+                    'tab' => RegulationOrderRecordStatusEnum::DRAFT,
+                ]),
+                status: Response::HTTP_SEE_OTHER,
+            );
+        }
+
+        try {
+            $this->commandBus->handle(new DeleteRegulationCommand($user->getOrganization(), $regulationOrderRecord));
         } catch (RegulationOrderRecordCannotBeDeletedException) {
             throw new AccessDeniedHttpException();
         }
 
         return new RedirectResponse(
-            url: $this->router->generate('app_regulations_list', ['tab' => $status]),
+            url: $this->router->generate('app_regulations_list', ['tab' => $regulationOrderRecord->getStatus()]),
             status: Response::HTTP_SEE_OTHER,
         );
     }
