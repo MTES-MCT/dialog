@@ -10,21 +10,21 @@ use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedExceptio
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
-use App\Domain\Regulation\Specification\CanDeleteRegulationOrderRecord;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class DeleteRegulationCommandHandlerTest extends TestCase
 {
     private $organization;
-    private $canDeleteRegulationOrderRecord;
+    private $canOrganizationAccessToRegulation;
     private $regulationOrderRepository;
     private $regulationOrderRecord;
     private $regulationOrder;
 
     protected function setUp(): void {
         $this->organization = $this->createMock(Organization::class);
-        $this->canDeleteRegulationOrderRecord = $this->createMock(CanDeleteRegulationOrderRecord::class);
+        $this->canOrganizationAccessToRegulation = $this->createMock(CanOrganizationAccessToRegulation::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
@@ -34,10 +34,10 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
     {
         $organization = $this->createMock(Organization::class);
 
-        $this->canDeleteRegulationOrderRecord
+        $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
-            ->with($this->organization, $this->regulationOrderRecord)
+            ->with($this->regulationOrderRecord, $this->organization)
             ->willReturn(true);
 
         $this->regulationOrderRepository
@@ -52,7 +52,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRepository,
-            $this->canDeleteRegulationOrderRecord,
+            $this->canOrganizationAccessToRegulation,
         );
 
         $command = new DeleteRegulationCommand($organization, $this->regulationOrderRecord);
@@ -65,10 +65,10 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $organization = $this->createMock(Organization::class);
 
-        $this->canDeleteRegulationOrderRecord
+        $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
-            ->with($this->organization, $this->regulationOrderRecord)
+            ->with($this->regulationOrderRecord, $this->organization)
             ->willReturn(false);
 
         $this->regulationOrderRepository
@@ -81,7 +81,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRepository,
-            $this->canDeleteRegulationOrderRecord,
+            $this->canOrganizationAccessToRegulation,
         );
 
         $command = new DeleteRegulationCommand($organization, $this->regulationOrderRecord);

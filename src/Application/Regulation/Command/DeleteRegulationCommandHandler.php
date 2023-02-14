@@ -6,13 +6,13 @@ namespace App\Application\Regulation\Command;
 
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
-use App\Domain\Regulation\Specification\CanDeleteRegulationOrderRecord;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 
 final class DeleteRegulationCommandHandler
 {
     public function __construct(
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
-        private CanDeleteRegulationOrderRecord $canDeleteRegulationOrderRecord,
+        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
     }
 
@@ -20,7 +20,7 @@ final class DeleteRegulationCommandHandler
     {
         $regulationOrderRecord = $command->regulationOrderRecord;
 
-        if (false === $this->canDeleteRegulationOrderRecord->isSatisfiedBy($command->organization, $regulationOrderRecord)) {
+        if (false === $this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $command->organization)) {
             throw new RegulationOrderRecordCannotBeDeletedException();
         }
 
