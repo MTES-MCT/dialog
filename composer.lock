@@ -6066,13 +6066,13 @@
             "version": "v6.2.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/security-bundle.git",
-                "reference": "2f7f0b79b2acb6f497e8a8f24ff86a5d7e36170f"
+                "url": "https://github.com/MatTheCat/symfony.git",
+                "reference": "691609c3b3f90aa765282a776487bf2de3c3a456"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-bundle/zipball/2f7f0b79b2acb6f497e8a8f24ff86a5d7e36170f",
-                "reference": "2f7f0b79b2acb6f497e8a8f24ff86a5d7e36170f",
+                "url": "https://api.github.com/repos/MatTheCat/symfony/zipball/691609c3b3f90aa765282a776487bf2de3c3a456",
+                "reference": "691609c3b3f90aa765282a776487bf2de3c3a456",
                 "shasum": ""
             },
             "require": {
@@ -6328,13 +6328,13 @@
             "version": "v6.2.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/security-http.git",
-                "reference": "5c8f064e34f3a320ab02874bdc4591197ba05b20"
+                "url": "https://github.com/MatTheCat/symfony.git",
+                "reference": "691609c3b3f90aa765282a776487bf2de3c3a456"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-http/zipball/5c8f064e34f3a320ab02874bdc4591197ba05b20",
-                "reference": "5c8f064e34f3a320ab02874bdc4591197ba05b20",
+                "url": "https://api.github.com/repos/MatTheCat/symfony/zipball/691609c3b3f90aa765282a776487bf2de3c3a456",
+                "reference": "691609c3b3f90aa765282a776487bf2de3c3a456",
                 "shasum": ""
             },
             "require": {
