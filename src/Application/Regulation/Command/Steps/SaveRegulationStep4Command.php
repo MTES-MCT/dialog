@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\CommandInterface;
 use App\Domain\Condition\VehicleCharacteristics;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrder;
 
 final class SaveRegulationStep4Command implements CommandInterface
 {
@@ -16,16 +16,16 @@ final class SaveRegulationStep4Command implements CommandInterface
     public ?float $maxLength = null;
 
     public function __construct(
-        public readonly RegulationOrderRecord $regulationOrderRecord,
+        public readonly RegulationOrder $regulationOrder,
         public readonly ?VehicleCharacteristics $vehicleCharacteristics = null,
     ) {
     }
 
     public static function create(
-        RegulationOrderRecord $regulationOrderRecord,
+        RegulationOrder $regulationOrder,
         VehicleCharacteristics $vehicleCharacteristics = null,
     ): self {
-        $command = new self($regulationOrderRecord, $vehicleCharacteristics);
+        $command = new self($regulationOrder, $vehicleCharacteristics);
         $command->maxHeight = $vehicleCharacteristics?->getMaxHeight();
         $command->maxLength = $vehicleCharacteristics?->getMaxLength();
         $command->maxWeight = $vehicleCharacteristics?->getMaxWeight();

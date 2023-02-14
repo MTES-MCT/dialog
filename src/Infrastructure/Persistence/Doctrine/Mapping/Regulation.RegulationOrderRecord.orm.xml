@@ -10,9 +10,6 @@
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>
     </field>
-    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder">
-        <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
-    </one-to-one>
     <many-to-one field="organization" target-entity="App\Domain\User\Organization" fetch="LAZY">
         <join-columns>
             <join-column name="organization_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>

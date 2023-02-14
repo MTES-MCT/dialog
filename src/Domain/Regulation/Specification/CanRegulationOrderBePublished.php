@@ -9,18 +9,18 @@ use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationCondition
 use App\Application\QueryBusInterface;
 use App\Domain\Condition\Location;
 use App\Domain\Condition\Period\OverallPeriod;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrder;
 
-class CanRegulationOrderRecordBePublished
+class CanRegulationOrderBePublished
 {
     public function __construct(
         private readonly QueryBusInterface $queryBus,
     ) {
     }
 
-    public function isSatisfiedBy(RegulationOrderRecord $regulationOrderRecord): bool
+    public function isSatisfiedBy(RegulationOrder $regulationOrder): bool
     {
-        $regulationCondition = $regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $regulationCondition = $regulationOrder->getRegulationCondition();
 
         $location = $this->queryBus->handle(
             new GetLocationByRegulationConditionQuery($regulationCondition->getUuid()),

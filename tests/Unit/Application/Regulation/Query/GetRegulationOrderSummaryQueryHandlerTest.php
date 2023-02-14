@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
+use App\Application\Regulation\Query\GetRegulationOrderSummaryQuery;
+use App\Application\Regulation\Query\GetRegulationOrderSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\PeriodView;
-use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Application\Regulation\View\RegulationOrderSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Exception\RegulationOrderNotFoundException;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
-final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
+final class GetRegulationOrderSummaryQueryHandlerTest extends TestCase
 {
     public function testGetOne(): void
     {
@@ -29,9 +29,9 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $startPeriod = new \DateTime('2022-12-07');
         $endPeriod = new \DateTime('2022-12-17');
 
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
 
-        $regulationOrderRecord = [
+        $regulationOrderSummary = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'status' => 'draft',
             'description' => 'Description 1',
@@ -48,16 +48,16 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'maxLength' => 10,
         ];
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::once())
-            ->method("findOneForSummary")
-            ->willReturn($regulationOrderRecord);
+            ->method('findOneForSummary')
+            ->willReturn($regulationOrderSummary);
 
-        $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetRegulationOrderSummaryQueryHandler($regulationOrderRepository);
+        $regulationOrders = $handler(new GetRegulationOrderSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(
-            new RegulationOrderRecordSummaryView(
+            new RegulationOrderSummaryView(
                 '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'draft',
                 'Description 1',
@@ -77,9 +77,9 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
     public function testGetOneWithoutExtraData(): void
     {
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
 
-        $regulationOrderRecord = [
+        $regulationOrderSummary = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'status' => 'draft',
             'description' => 'Description 1',
@@ -96,16 +96,16 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'maxLength' => null,
         ];
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::once())
-            ->method("findOneForSummary")
-            ->willReturn($regulationOrderRecord);
+            ->method('findOneForSummary')
+            ->willReturn($regulationOrderSummary);
 
-        $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetRegulationOrderSummaryQueryHandler($regulationOrderRepository);
+        $regulationOrders = $handler(new GetRegulationOrderSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(
-            new RegulationOrderRecordSummaryView(
+            new RegulationOrderSummaryView(
                 '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'draft',
                 'Description 1',
@@ -119,16 +119,16 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
     public function testNotFound(): void
     {
-        $this->expectException(RegulationOrderRecordNotFoundException::class);
+        $this->expectException(RegulationOrderNotFoundException::class);
 
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::once())
             ->method("findOneForSummary")
             ->willReturn(null);
 
-        $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetRegulationOrderSummaryQueryHandler($regulationOrderRepository);
+        $handler(new GetRegulationOrderSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
     }
 }

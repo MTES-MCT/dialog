@@ -13,49 +13,49 @@ final class RegulationOrderFixture extends Fixture implements DependentFixtureIn
 {
     public function load(ObjectManager $manager): void
     {
-        $regulationOrder = new RegulationOrder(
-            uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
+        $regulationOrder1 = new RegulationOrder(
+            uuid: 'e413a47e-5928-4353-a8b2-8b7dda27f9a5',
             issuingAuthority: 'Autorité 1',
             description: 'Description 1',
+            regulationOrderRecord: $this->getReference('regulationOrderRecord1'),
             regulationCondition: $this->getReference('regulationCondition1'),
         );
 
         $regulationOrder2 = new RegulationOrder(
-            uuid: '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
+            uuid: '3ede8b1a-1816-4788-8510-e08f45511cb5',
             issuingAuthority: 'Autorité 2',
             description: 'Description 2',
+            regulationOrderRecord: $this->getReference('regulationOrderRecord2'),
             regulationCondition: $this->getReference('regulationCondition2'),
         );
 
         $regulationOrder3 = new RegulationOrder(
-            uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
+            uuid: '4ce75a1f-82f3-40ee-8f95-48d0f04446aa',
             issuingAuthority: 'Description 3',
             description: 'Autorité 3',
+            regulationOrderRecord: $this->getReference('regulationOrderRecord3'),
             regulationCondition: $this->getReference('regulationCondition3'),
         );
 
         $regulationOrder4 = new RegulationOrder(
-            uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
+            uuid: '867d2be6-0d80-41b5-b1ff-8452b30a95f5',
             issuingAuthority: 'Description 4',
             description: 'Autorité 4',
+            regulationOrderRecord: $this->getReference('regulationOrderRecord4'),
             regulationCondition: $this->getReference('regulationCondition4'),
         );
 
-        $manager->persist($regulationOrder);
+        $manager->persist($regulationOrder1);
         $manager->persist($regulationOrder2);
         $manager->persist($regulationOrder3);
         $manager->persist($regulationOrder4);
         $manager->flush();
-
-        $this->addReference('regulationOrder', $regulationOrder);
-        $this->addReference('regulationOrder2', $regulationOrder2);
-        $this->addReference('regulationOrder3', $regulationOrder3);
-        $this->addReference('regulationOrder4', $regulationOrder4);
     }
 
     public function getDependencies(): array
     {
         return [
+            RegulationOrderRecordFixture::class,
             RegulationConditionFixture::class,
         ];
     }

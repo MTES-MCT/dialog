@@ -40,17 +40,17 @@ final class Step1Controller extends AbstractRegulationController
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-        $regulationOrderRecord = $uuid ? $this->getRegulationOrderRecord($uuid) : null;
-        $command = SaveRegulationStep1Command::create($user->getOrganization(), $regulationOrderRecord);
+        $regulationOrder = $uuid ? $this->getRegulationOrder($uuid) : null;
+        $command = SaveRegulationStep1Command::create($user->getOrganization(), $regulationOrder);
         $form = $this->formFactory->create(Step1FormType::class, $command);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $regulationOrderRecord = $this->commandBus->handle($command);
+            $regulationOrder = $this->commandBus->handle($command);
 
             return new RedirectResponse(
                 url: $this->router->generate('app_regulations_steps_2', [
-                    'uuid' => $regulationOrderRecord->getUuid(),
+                    'uuid' => $regulationOrder->getUuid(),
                 ]),
                 status: Response::HTTP_SEE_OTHER,
             );

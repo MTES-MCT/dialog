@@ -6,6 +6,9 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="issuingAuthority" type="string" column="issuing_authority" nullable="false"/>
     <field name="description" type="text" column="description" nullable="false"/>
+    <one-to-one field="regulationOrderRecord" target-entity="App\Domain\Regulation\RegulationOrderRecord">
+      <join-column name="regulation_order_record_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
+    </one-to-one>
     <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" inversed-by="regulationOrder">
         <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>

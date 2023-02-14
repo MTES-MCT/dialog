@@ -9,7 +9,7 @@ use App\Application\CommandInterface;
 final class SaveRegulationStep5Command implements CommandInterface
 {
     public function __construct(
-        public readonly string $regulationOrderRecordUuid,
+        public readonly string $regulationOrderUuid,
         public string $status,
     ) {
     }

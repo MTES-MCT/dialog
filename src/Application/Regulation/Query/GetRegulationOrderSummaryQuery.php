@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\QueryInterface;
 
-final class GetRegulationOrderRecordSummaryQuery implements QueryInterface
+final class GetRegulationOrderSummaryQuery implements QueryInterface
 {
     public function __construct(
         public readonly string $uuid,

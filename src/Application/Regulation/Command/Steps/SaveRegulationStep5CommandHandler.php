@@ -5,34 +5,34 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Steps;
 
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
-use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Domain\Regulation\Exception\RegulationOrderCannotBePublishedException;
+use App\Domain\Regulation\Exception\RegulationOrderNotFoundException;
+use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\Regulation\Specification\CanRegulationOrderBePublished;
 
 final class SaveRegulationStep5CommandHandler
 {
     public function __construct(
-        private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
-        private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
+        private RegulationOrderRepositoryInterface $regulationOrderRepository,
+        private CanRegulationOrderBePublished $canRegulationOrderBePublished,
     ) {
     }
 
     public function __invoke(SaveRegulationStep5Command $command): void
     {
-        $regulationOrderRecord = $this->regulationOrderRecordRepository
-            ->findOneByUuid($command->regulationOrderRecordUuid);
+        $regulationOrder = $this->regulationOrderRepository
+            ->findOneByUuid($command->regulationOrderUuid);
 
-        if (!$regulationOrderRecord instanceof RegulationOrderRecord) {
-            throw new RegulationOrderRecordNotFoundException();
+        if (!$regulationOrder instanceof RegulationOrder) {
+            throw new RegulationOrderNotFoundException();
         }
 
         if ($command->status === RegulationOrderRecordStatusEnum::PUBLISHED &&
-            false === $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord)) {
-            throw new RegulationOrderRecordCannotBePublishedException();
+            false === $this->canRegulationOrderBePublished->isSatisfiedBy($regulationOrder)) {
+            throw new RegulationOrderCannotBePublishedException();
         }
 
-        $regulationOrderRecord->updateStatus($command->status);
+        $regulationOrder->getRegulationOrderRecord()->updateStatus($command->status);
     }
 }

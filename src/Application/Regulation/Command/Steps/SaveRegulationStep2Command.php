@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\CommandInterface;
 use App\Domain\Condition\Location;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrder;
 
 final class SaveRegulationStep2Command implements CommandInterface
 {
@@ -17,16 +17,16 @@ final class SaveRegulationStep2Command implements CommandInterface
     public ?string $toHouseNumber;
 
     public function __construct(
-        public readonly RegulationOrderRecord $regulationOrderRecord,
+        public readonly RegulationOrder $regulationOrder,
         public readonly ?Location $location = null,
     ) {
     }
 
     public static function create(
-        RegulationOrderRecord $regulationOrderRecord,
+        RegulationOrder $regulationOrder,
         Location $location = null,
     ): self {
-        $command = new self($regulationOrderRecord, $location);
+        $command = new self($regulationOrder, $location);
 
         $command->postalCode = $location?->getPostalCode();
         $command->city = $location?->getCity();

@@ -6,13 +6,12 @@ namespace App\Tests\Domain\Regulation\Command\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep1CommandTest extends TestCase
 {
-    public function testWithoutRegulationOrderRecord(): void
+    public function testWithoutRegulationOrder(): void
     {
         $organization = $this->createMock(Organization::class);
         $organization->expects(self::once())
@@ -25,7 +24,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
         $this->assertEmpty($command->description);
     }
 
-    public function testWithRegulationOrderRecord(): void
+    public function testWithRegulationOrder(): void
     {
         $organization = $this->createMock(Organization::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
@@ -40,13 +39,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
             ->method('getDescription')
             ->willReturn('Description');
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-
-        $command = SaveRegulationStep1Command::create($organization, $regulationOrderRecord);
+        $command = SaveRegulationStep1Command::create($organization, $regulationOrder);
 
         $this->assertSame($command->issuingAuthority, 'Autorité');
         $this->assertSame($command->description, 'Description');

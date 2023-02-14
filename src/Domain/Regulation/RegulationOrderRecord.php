@@ -11,7 +11,6 @@ class RegulationOrderRecord
     public function __construct(
         private string $uuid,
         private string $status,
-        private RegulationOrder $regulationOrder,
         private \DateTimeInterface $createdAt,
         private Organization $organization,
     ) {
@@ -35,11 +34,6 @@ class RegulationOrderRecord
     public function getOrganization(): ?Organization
     {
         return $this->organization;
-    }
-
-    public function getRegulationOrder(): RegulationOrder
-    {
-        return $this->regulationOrder;
     }
 
     public function updateStatus(string $status): void

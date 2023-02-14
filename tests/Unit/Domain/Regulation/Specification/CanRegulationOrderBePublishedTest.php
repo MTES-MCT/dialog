@@ -11,16 +11,14 @@ use App\Domain\Condition\Location;
 use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Domain\Regulation\Specification\CanRegulationOrderBePublished;
 use PHPUnit\Framework\TestCase;
 
-final class CanRegulationOrderRecordBePublishedTest extends TestCase
+final class CanRegulationOrderBePublishedTest extends TestCase
 {
     private $queryBus;
     private $location;
     private $overallPeriod;
-    private $regulationOrderRecord;
     private $regulationCondition;
     private $regulationOrder;
 
@@ -40,12 +38,6 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationCondition')
             ->willReturn($this->regulationCondition);
-
-        $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $this->regulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($this->regulationOrder);
     }
 
     public function testRegulationCanBePublished(): void
@@ -59,8 +51,8 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
             ->withConsecutive([$this->equalTo($locationQuery)], [$this->equalTo($overallPeriodQuery)])
             ->willReturnOnConsecutiveCalls($this->location, $this->overallPeriod);
 
-        $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
-        $this->assertTrue($specification->isSatisfiedBy($this->regulationOrderRecord));
+        $specification = new CanRegulationOrderBePublished($this->queryBus);
+        $this->assertTrue($specification->isSatisfiedBy($this->regulationOrder));
     }
 
     public function testNullableLocation(): void
@@ -74,8 +66,8 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
             ->withConsecutive([$this->equalTo($locationQuery)], [$this->equalTo($overallPeriodQuery)])
             ->willReturnOnConsecutiveCalls(null, $this->overallPeriod);
 
-        $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
-        $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));
+        $specification = new CanRegulationOrderBePublished($this->queryBus);
+        $this->assertFalse($specification->isSatisfiedBy($this->regulationOrder));
     }
 
     public function testNullableOverallPeriod(): void
@@ -89,7 +81,7 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
             ->withConsecutive([$this->equalTo($locationQuery)], [$this->equalTo($overallPeriodQuery)])
             ->willReturnOnConsecutiveCalls($this->location, null);
 
-        $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
-        $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));
+        $specification = new CanRegulationOrderBePublished($this->queryBus);
+        $this->assertFalse($specification->isSatisfiedBy($this->regulationOrder));
     }
 }

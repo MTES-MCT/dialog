@@ -50,21 +50,20 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->organization = $this->createMock(Organization::class);
+        $this->originalRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->originalRegulationCondition = $this->createMock(RegulationCondition::class);
         $this->originalRegulationOrder = $this->createMock(RegulationOrder::class);
         $this->originalRegulationOrder
             ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($this->originalRegulationOrderRecord);
+        $this->originalRegulationOrder
+            ->expects(self::once())
             ->method('getRegulationCondition')
             ->willReturn($this->originalRegulationCondition);
-
-        $this->originalRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $this->originalRegulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($this->originalRegulationOrder);
     }
 
-    public function testReglementationCannotBeDuplicated(): void
+    public function testRegulationCannotBeDuplicated(): void
     {
         $this->expectException(RegulationCannotBeDuplicated::class);
 
@@ -86,7 +85,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
-        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
+        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrder);
 
         $handler = new DuplicateRegulationCommandHandler(
             $this->idFactory,
@@ -125,12 +124,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getRegulationCondition')
             ->willReturn($duplicatedRegulationCondition);
 
-        $duplicatedRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $duplicatedRegulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($duplicatedRegulationOrder);
-
         $this->translator
             ->expects(self::once())
             ->method('trans')
@@ -139,7 +132,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ])
             ->willReturn('Description (copie)');
 
-        // RegulationCondition, RegulationOrder and RegulationOrderRecord
+        // RegulationOrderRecord, RegulationCondition and RegulationOrder
         $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
@@ -216,7 +209,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getEndPeriod')
             ->willReturn($end);
 
-        $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrderRecord);
+        $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrder);
         $step3Command->startPeriod = $start;
         $step3Command->endPeriod = $end;
 
@@ -239,7 +232,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getMaxLength')
             ->willReturn(10.0);
 
-        $step4Command = new SaveRegulationStep4Command($duplicatedRegulationOrderRecord);
+        $step4Command = new SaveRegulationStep4Command($duplicatedRegulationOrder);
         $step4Command->maxHeight = 2.0;
         $step4Command->maxLength = 10.0;
         $step4Command->maxWeight = 3.5;
@@ -259,7 +252,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::exactly(3))
             ->method('handle')
             ->withConsecutive([$step1command], [$step3Command], [$step4Command])
-            ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
+            ->willReturnOnConsecutiveCalls($duplicatedRegulationOrder);
 
         $handler = new DuplicateRegulationCommandHandler(
             $this->idFactory,
@@ -270,8 +263,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             $this->locationRepository,
         );
 
-        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
-        $this->assertSame($duplicatedRegulationOrderRecord, $handler($command));
+        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrder);
+        $this->assertSame($duplicatedRegulationOrder, $handler($command));
     }
 
     public function testRegulationPartiallyDuplicated(): void
@@ -299,12 +292,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getRegulationCondition')
             ->willReturn($duplicatedRegulationCondition);
 
-        $duplicatedRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $duplicatedRegulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($duplicatedRegulationOrder);
-
         $this->translator
             ->expects(self::once())
             ->method('trans')
@@ -313,7 +300,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ])
             ->willReturn('Description (copie)');
 
-        // RegulationCondition, RegulationOrder and RegulationOrderRecord
+        // RegulationOrderRecord, RegulationCondition and RegulationOrder
         $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
@@ -341,7 +328,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::exactly(1))
             ->method('handle')
             ->withConsecutive([$step1command])
-            ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
+            ->willReturnOnConsecutiveCalls($duplicatedRegulationOrder);
 
         $handler = new DuplicateRegulationCommandHandler(
             $this->idFactory,
@@ -352,7 +339,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             $this->locationRepository,
         );
 
-        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
-        $this->assertSame($duplicatedRegulationOrderRecord, $handler($command));
+        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrder);
+        $this->assertSame($duplicatedRegulationOrder, $handler($command));
     }
 }

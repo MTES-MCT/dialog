@@ -11,7 +11,6 @@ use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\Period\Repository\OverallPeriodRepositoryInterface;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep3CommandHandlerTest extends TestCase
@@ -20,7 +19,6 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
     private $endPeriod;
     private $regulationCondition;
     private $regulationOrder;
-    private $regulationOrderRecord;
 
     protected function setUp(): void
     {
@@ -33,12 +31,6 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationCondition')
             ->willReturn($this->regulationCondition);
-
-        $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $this->regulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($this->regulationOrder);
     }
 
     public function testCreate(): void
@@ -69,7 +61,7 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
             $overallPeriodRepository,
         );
 
-        $command = new SaveRegulationStep3Command($this->regulationOrderRecord);
+        $command = new SaveRegulationStep3Command($this->regulationOrder);
         $command->startPeriod = $this->startPeriod;
         $command->endPeriod = $this->endPeriod;
 
@@ -99,7 +91,7 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
             $overallPeriodRepository,
         );
 
-        $command = new SaveRegulationStep3Command($this->regulationOrderRecord, $overallPeriod);
+        $command = new SaveRegulationStep3Command($this->regulationOrder, $overallPeriod);
         $command->startPeriod = $this->startPeriod;
         $command->endPeriod = $this->endPeriod;
 

@@ -5,13 +5,13 @@
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.step5.for_what'|trans }}</h3>
         <ul class="fr-ml-1w fr-my-0">
-            <li>{{ regulationOrderRecord.description }}</li>
+            <li>{{ regulation.description }}</li>
             <li>{{ 'regulation.step5.for_what.no_entry'|trans }}</li>
         </ul>
     </div>
     {% if canEdit %}
     <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+        <a href="{{ path('app_regulations_steps_1', { uuid: regulation.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
             {{ 'common.update'|trans }}
         </a>
     </div>
@@ -24,8 +24,8 @@
     </div>
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.step5.where'|trans }}</h3>
-        {% if regulationOrderRecord.location %}
-            {% set loc = regulationOrderRecord.location %}
+        {% if regulation.location %}
+            {% set loc = regulation.location %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>{{ 'regulation.step5.where.city'|trans({'%postalCode%': loc.postalCode, '%city%': loc.city}) }}</li>
                 <li>{{ 'regulation.step5.where.road_segment'|trans({'%roadName%': loc.roadName, '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber}) }}</li>
@@ -34,7 +34,7 @@
     </div>
     {% if canEdit %}
     <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_2', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+        <a href="{{ path('app_regulations_steps_2', { uuid: regulation.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
             {{ 'common.update'|trans }}
         </a>
     </div>
@@ -47,9 +47,9 @@
     </div>
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.step5.when'|trans }}</h3>
-        {% if regulationOrderRecord.period %}
-            {% set startPeriod = regulationOrderRecord.period.startPeriod %}
-            {% set endPeriod = regulationOrderRecord.period.endPeriod %}
+        {% if regulation.period %}
+            {% set startPeriod = regulation.period.startPeriod %}
+            {% set endPeriod = regulation.period.endPeriod %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>
                     {% if startPeriod and endPeriod %}
@@ -66,7 +66,7 @@
     </div>
     {% if canEdit %}
     <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_3', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+        <a href="{{ path('app_regulations_steps_3', { uuid: regulation.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
             {{ 'common.update'|trans }}
         </a>
     </div>
@@ -79,8 +79,8 @@
     </div>
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.step5.vehicles'|trans }}</h3>
-        {% if regulationOrderRecord.vehicleCharacteristics %}
-            {% set vehicleCharacteristics = regulationOrderRecord.vehicleCharacteristics %}
+        {% if regulation.vehicleCharacteristics %}
+            {% set vehicleCharacteristics = regulation.vehicleCharacteristics %}
             <ul class="fr-ml-1w fr-my-0">
                 {% if vehicleCharacteristics.maxWeight %}
                     <li>{{ 'regulation.step5.vehicles.weight'|trans({ '%weight%': vehicleCharacteristics.maxWeight }) }}</li>
@@ -99,7 +99,7 @@
     </div>
     {% if canEdit %}
     <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_4', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+        <a href="{{ path('app_regulations_steps_4', { uuid: regulation.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
             {{ 'common.update'|trans }}
         </a>
     </div>

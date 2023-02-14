@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block step_body %}
-    {% include "regulation/_summary.html.twig" with { 'canEdit': true, regulationOrderRecord} only %}
+    {% include "regulation/_summary.html.twig" with { 'canEdit': true, regulation } only %}
 
     <h3 class="fr-mt-4w">{{ 'regulation.step5.and_now'|trans }}</h3>
 

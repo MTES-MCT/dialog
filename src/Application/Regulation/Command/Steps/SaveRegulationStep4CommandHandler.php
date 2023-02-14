@@ -18,7 +18,7 @@ final class SaveRegulationStep4CommandHandler
 
     public function __invoke(SaveRegulationStep4Command $command): void
     {
-        $regulationCondition = $command->regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $regulationCondition = $command->regulationOrder->getRegulationCondition();
 
         $isEmpty = !$command->maxWeight && !$command->maxHeight && !$command->maxWidth && !$command->maxLength;
         if ($isEmpty) {

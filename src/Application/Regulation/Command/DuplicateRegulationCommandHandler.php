@@ -21,7 +21,6 @@ use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -38,31 +37,31 @@ final class DuplicateRegulationCommandHandler
     ) {
     }
 
-    public function __invoke(DuplicateRegulationCommand $command): RegulationOrderRecord
+    public function __invoke(DuplicateRegulationCommand $command): RegulationOrder
     {
         $organization = $command->organization;
-        $originalRegulationOrderRecord = $command->originalRegulationOrderRecord;
-        $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
+        $originalRegulationOrder = $command->originalRegulationOrder;
+        $originalRegulationOrderRecord = $originalRegulationOrder->getRegulationOrderRecord();
         $originalRegulationCondition = $originalRegulationOrder->getRegulationCondition();
 
         if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($originalRegulationOrderRecord, $organization)) {
             throw new RegulationCannotBeDuplicated();
         }
 
-        $duplicatedRegulationOrderRecord = $this->duplicateRegulationOrderRecord($organization, $originalRegulationOrder);
-        $duplicatedRegulationCondition = $duplicatedRegulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $duplicatedRegulationOrder = $this->duplicateRegulationOrder($organization, $originalRegulationOrder);
+        $duplicatedRegulationCondition = $duplicatedRegulationOrder->getRegulationCondition();
 
         $this->duplicateLocation($originalRegulationCondition, $duplicatedRegulationCondition);
-        $this->duplicateOverallPeriod($originalRegulationCondition, $duplicatedRegulationOrderRecord);
-        $this->duplicateVehicleCharacteristics($originalRegulationCondition, $duplicatedRegulationOrderRecord);
+        $this->duplicateOverallPeriod($originalRegulationCondition, $duplicatedRegulationOrder);
+        $this->duplicateVehicleCharacteristics($originalRegulationCondition, $duplicatedRegulationOrder);
 
-        return $duplicatedRegulationOrderRecord;
+        return $duplicatedRegulationOrder;
     }
 
-    private function duplicateRegulationOrderRecord(
+    private function duplicateRegulationOrder(
         Organization $organization,
         RegulationOrder $originalRegulationOrder,
-    ): RegulationOrderRecord {
+    ): RegulationOrder {
         $step1Command = new SaveRegulationStep1Command($organization);
         $step1Command->issuingAuthority = $originalRegulationOrder->getIssuingAuthority();
         $step1Command->description = $this->translator->trans('regulation.description.copy', [
@@ -93,14 +92,14 @@ final class DuplicateRegulationCommandHandler
 
     private function duplicateOverallPeriod(
         RegulationCondition $originalRegulationCondition,
-        RegulationOrderRecord $duplicatedRegulationOrderRecord,
+        RegulationOrder $duplicatedRegulationOrder,
     ): void {
         $overallPeriod = $this->queryBus->handle(
             new GetOverallPeriodByRegulationConditionQuery($originalRegulationCondition->getUuid()),
         );
 
         if ($overallPeriod instanceof OverallPeriod) {
-            $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrderRecord);
+            $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrder);
             $step3Command->startPeriod = $overallPeriod->getStartPeriod();
             $step3Command->endPeriod = $overallPeriod->getEndPeriod();
             $this->commandBus->handle($step3Command);
@@ -109,14 +108,14 @@ final class DuplicateRegulationCommandHandler
 
     private function duplicateVehicleCharacteristics(
         RegulationCondition $originalRegulationCondition,
-        RegulationOrderRecord $duplicatedRegulationOrderRecord,
+        RegulationOrder $duplicatedRegulationOrder,
     ): void {
         $vehicleCharacteristics = $this->queryBus->handle(
             new GetVehicleCharacteristicsByRegulationConditionQuery($originalRegulationCondition->getUuid()),
         );
 
         if ($vehicleCharacteristics instanceof VehicleCharacteristics) {
-            $step4Command = new SaveRegulationStep4Command($duplicatedRegulationOrderRecord);
+            $step4Command = new SaveRegulationStep4Command($duplicatedRegulationOrder);
             $step4Command->maxHeight = $vehicleCharacteristics->getMaxHeight();
             $step4Command->maxLength = $vehicleCharacteristics->getMaxLength();
             $step4Command->maxWeight = $vehicleCharacteristics->getMaxWeight();

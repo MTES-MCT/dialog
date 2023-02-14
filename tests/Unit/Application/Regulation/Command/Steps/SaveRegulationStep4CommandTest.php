@@ -6,15 +6,15 @@ namespace App\Tests\Domain\Regulation\Command\Steps\Factory;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
 use App\Domain\Condition\VehicleCharacteristics;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrder;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep4CommandTest extends TestCase
 {
     public function testWithoutVehicleCharacteristics(): void
     {
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $command = SaveRegulationStep4Command::create($regulationOrderRecord);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveRegulationStep4Command::create($regulationOrder);
 
         $this->assertEmpty($command->maxHeight);
         $this->assertEmpty($command->maxLength);
@@ -42,8 +42,8 @@ final class SaveRegulationStep4CommandTest extends TestCase
             ->method('getMaxWidth')
             ->willReturn(4.4);
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $command = SaveRegulationStep4Command::create($regulationOrderRecord, $vehicleCharacteristics);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveRegulationStep4Command::create($regulationOrder, $vehicleCharacteristics);
 
         $this->assertSame($command->maxHeight, 1.1);
         $this->assertSame($command->maxLength, 2.2);

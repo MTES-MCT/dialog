@@ -12,6 +12,7 @@ class RegulationOrder
         private string $uuid,
         private string $issuingAuthority,
         private string $description,
+        private RegulationOrderRecord $regulationOrderRecord,
         private RegulationCondition $regulationCondition,
     ) {
     }
@@ -29,6 +30,11 @@ class RegulationOrder
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getRegulationOrderRecord(): RegulationOrderRecord
+    {
+        return $this->regulationOrderRecord;
     }
 
     public function getRegulationCondition(): RegulationCondition

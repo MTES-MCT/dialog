@@ -10,7 +10,7 @@ use App\Application\Regulation\View\ListItemLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +23,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $startPeriod2 = new \DateTime('2022-12-10');
         $organization = $this->createMock(Organization::class);
 
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'startPeriod' => $startPeriod1,
@@ -49,19 +49,19 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             'roadName' => null,
         ];
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::once())
             ->method("findRegulationsByOrganization")
             ->with($organization, 20, 1, 'draft')
             ->willReturn([$regulationOrder1, $regulationOrder2, $regulationOrder3]);
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::once())
             ->method("countRegulationsByOrganization")
             ->with($organization, 'draft')
             ->willReturn(3);
 
-        $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetRegulationsQueryHandler($regulationOrderRepository);
         $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, 'draft'));
 
         $pagination = new Pagination(

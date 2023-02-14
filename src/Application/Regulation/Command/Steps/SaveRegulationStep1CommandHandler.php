@@ -24,10 +24,19 @@ final class SaveRegulationStep1CommandHandler
     ) {
     }
 
-    public function __invoke(SaveRegulationStep1Command $command): RegulationOrderRecord
+    public function __invoke(SaveRegulationStep1Command $command): RegulationOrder
     {
-        // If submitting step 1 for the first time, we create the regulationCondition, regulationOrder and regulationOrderRecord
-        if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
+        // If submitting step 1 for the first time, we create the regulationOrderRecord, regulationCondition and regulationOrder
+        if (!$command->regulationOrder instanceof RegulationOrder) {
+            $regulationOrderRecord = $this->regulationOrderRecordRepository->save(
+                new RegulationOrderRecord(
+                    uuid: $this->idFactory->make(),
+                    status: RegulationOrderRecordStatusEnum::DRAFT,
+                    createdAt: $this->now,
+                    organization: $command->organization,
+                ),
+            );
+
             $regulationCondition = $this->regulationConditionRepository->save(
                 new RegulationCondition(
                     uuid: $this->idFactory->make(),
@@ -40,28 +49,19 @@ final class SaveRegulationStep1CommandHandler
                     uuid: $this->idFactory->make(),
                     issuingAuthority: $command->issuingAuthority,
                     description: $command->description,
+                    regulationOrderRecord: $regulationOrderRecord,
                     regulationCondition: $regulationCondition,
                 ),
             );
 
-            $regulationOrderRecord = $this->regulationOrderRecordRepository->save(
-                new RegulationOrderRecord(
-                    uuid: $this->idFactory->make(),
-                    status: RegulationOrderRecordStatusEnum::DRAFT,
-                    regulationOrder: $regulationOrder,
-                    createdAt: $this->now,
-                    organization: $command->organization,
-                ),
-            );
-
-            return $regulationOrderRecord;
+            return $regulationOrder;
         }
 
-        $command->regulationOrderRecord->getRegulationOrder()->update(
+        $command->regulationOrder->update(
             issuingAuthority: $command->issuingAuthority,
             description: $command->description,
         );
 
-        return $command->regulationOrderRecord;
+        return $command->regulationOrder;
     }
 }

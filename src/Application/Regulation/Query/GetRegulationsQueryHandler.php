@@ -8,12 +8,12 @@ use App\Application\Regulation\View\ListItemLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 
 final class GetRegulationsQueryHandler
 {
     public function __construct(
-        private RegulationOrderRecordRepositoryInterface $repository,
+        private RegulationOrderRepositoryInterface $repository,
     ) {
     }
 

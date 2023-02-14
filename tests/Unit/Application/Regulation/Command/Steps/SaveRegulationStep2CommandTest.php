@@ -6,15 +6,15 @@ namespace App\Tests\Domain\Regulation\Command\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Domain\Condition\Location;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrder;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep2CommandTest extends TestCase
 {
     public function testWithoutLocation(): void
     {
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $command = SaveRegulationStep2Command::create($regulationOrderRecord);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveRegulationStep2Command::create($regulationOrder);
 
         $this->assertEmpty($command->location);
         $this->assertEmpty($command->postalCode);
@@ -54,8 +54,8 @@ final class SaveRegulationStep2CommandTest extends TestCase
             ->method('getToHouseNumber')
             ->willReturn($toHouseNumber);
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $command = SaveRegulationStep2Command::create($regulationOrderRecord, $location);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveRegulationStep2Command::create($regulationOrder, $location);
 
         $this->assertSame($command->location, $location);
         $this->assertSame($command->postalCode, $postalCode);

@@ -9,7 +9,7 @@ use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderListForDatexFormatView;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
@@ -44,7 +44,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $endPeriod1 = new \DateTime('2022-12-17');
         $startPeriod2 = new \DateTime('2022-12-10');
 
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'issuingAuthority' => 'Autorité 1',
@@ -78,12 +78,12 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toLongitude' => $location2->toLongitude,
         ];
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::once())
             ->method("findRegulationOrdersForDatexFormat")
             ->willReturn([$regulationOrder1, $regulationOrder2]);
 
-        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRepository);
         $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
 
         $this->assertEquals(

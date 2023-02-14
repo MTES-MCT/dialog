@@ -36,13 +36,13 @@ final class Step4Controller extends AbstractRegulationController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        $regulationCondition = $regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $regulationOrder = $this->getRegulationOrder($uuid);
+        $regulationCondition = $regulationOrder->getRegulationCondition();
         $vehicleCharacteristics = $this->queryBus->handle(
             new GetVehicleCharacteristicsByRegulationConditionQuery($regulationCondition->getUuid()),
         );
 
-        $command = SaveRegulationStep4Command::create($regulationOrderRecord, $vehicleCharacteristics);
+        $command = SaveRegulationStep4Command::create($regulationOrder, $vehicleCharacteristics);
         $form = $this->formFactory->create(Step4FormType::class, $command);
         $form->handleRequest($request);
 

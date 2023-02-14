@@ -14,49 +14,49 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
 {
     public function load(ObjectManager $manager): void
     {
-        $regulationOrderRecord = new RegulationOrderRecord(
-            'e413a47e-5928-4353-a8b2-8b7dda27f9a5',
+        $regulationOrderRecord1 = new RegulationOrderRecord(
+            '54eacea0-e1e0-4823-828d-3eae72b76da8',
             RegulationOrderRecordStatusEnum::DRAFT,
-            $this->getReference('regulationOrder'),
             new \DateTime('2022-01-10'),
             $this->getReference('organization1'),
         );
 
         $regulationOrderRecord2 = new RegulationOrderRecord(
-            '3ede8b1a-1816-4788-8510-e08f45511cb5',
+            '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
             RegulationOrderRecordStatusEnum::PUBLISHED,
-            $this->getReference('regulationOrder2'),
             new \DateTime('2022-01-10'),
             $this->getReference('organization1'),
         );
 
         $regulationOrderRecord3 = new RegulationOrderRecord(
-            '4ce75a1f-82f3-40ee-8f95-48d0f04446aa',
+            'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
             RegulationOrderRecordStatusEnum::DRAFT,
-            $this->getReference('regulationOrder3'),
             new \DateTime('2022-01-11'),
             $this->getReference('organization1'),
         );
 
         $regulationOrderRecord4 = new RegulationOrderRecord(
-            '867d2be6-0d80-41b5-b1ff-8452b30a95f5',
+            'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
             RegulationOrderRecordStatusEnum::DRAFT,
-            $this->getReference('regulationOrder4'),
             new \DateTime('2022-01-11'),
             $this->getReference('organization2'),
         );
 
-        $manager->persist($regulationOrderRecord);
+        $manager->persist($regulationOrderRecord1);
         $manager->persist($regulationOrderRecord2);
         $manager->persist($regulationOrderRecord3);
         $manager->persist($regulationOrderRecord4);
         $manager->flush();
+
+        $this->addReference('regulationOrderRecord1', $regulationOrderRecord1);
+        $this->addReference('regulationOrderRecord2', $regulationOrderRecord2);
+        $this->addReference('regulationOrderRecord3', $regulationOrderRecord3);
+        $this->addReference('regulationOrderRecord4', $regulationOrderRecord4);
     }
 
     public function getDependencies(): array
     {
         return [
-            RegulationOrderFixture::class,
             OrganizationFixture::class,
         ];
     }

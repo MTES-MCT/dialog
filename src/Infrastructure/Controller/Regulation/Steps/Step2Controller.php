@@ -40,13 +40,13 @@ final class Step2Controller extends AbstractRegulationController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        $regulationCondition = $regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $regulationOrder = $this->getRegulationOrder($uuid);
+        $regulationCondition = $regulationOrder->getRegulationCondition();
         $location = $this->queryBus->handle(
             new GetLocationByRegulationConditionQuery($regulationCondition->getUuid()),
         );
 
-        $command = SaveRegulationStep2Command::create($regulationOrderRecord, $location);
+        $command = SaveRegulationStep2Command::create($regulationOrder, $location);
         $form = $this->formFactory->create(Step2FormType::class, $command);
         $form->handleRequest($request);
 

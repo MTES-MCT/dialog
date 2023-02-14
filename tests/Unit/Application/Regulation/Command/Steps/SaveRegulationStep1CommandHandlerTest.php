@@ -32,9 +32,9 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             ->expects(self::exactly(3))
             ->method('make')
             ->willReturn(
+                'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
                 'f331d768-ed8b-496d-81ce-b97008f338d0',
                 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
-                'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
             );
 
         $regulationCondition = new RegulationCondition(
@@ -50,6 +50,21 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $createdRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $createdRegulationOrder = $this->createMock(RegulationOrder::class);
 
+        $regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('save')
+            ->with(
+                $this->equalTo(
+                    new RegulationOrderRecord(
+                        uuid: 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
+                        status: RegulationOrderRecordStatusEnum::DRAFT,
+                        createdAt: $now,
+                        organization: $organization,
+                    )
+                )
+            )
+            ->willReturn($createdRegulationOrderRecord);
+
         $regulationOrderRepository
             ->expects(self::once())
             ->method('save')
@@ -59,27 +74,12 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         issuingAuthority: 'Ville de Paris',
                         description: 'Interdiction de circuler',
+                        regulationOrderRecord: $createdRegulationOrderRecord,
                         regulationCondition: $regulationCondition,
                     )
                 )
             )
             ->willReturn($createdRegulationOrder);
-
-        $regulationOrderRecordRepository
-            ->expects(self::once())
-            ->method('save')
-            ->with(
-                $this->equalTo(
-                    new RegulationOrderRecord(
-                        uuid: 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
-                        status: RegulationOrderRecordStatusEnum::DRAFT,
-                        regulationOrder: $createdRegulationOrder,
-                        createdAt: $now,
-                        organization: $organization,
-                    )
-                )
-            )
-            ->willReturn($createdRegulationOrderRecord);
 
         $handler = new SaveRegulationStep1CommandHandler(
             $idFactory,
@@ -89,14 +89,13 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
-
         $command = new SaveRegulationStep1Command($organization);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 
         $result = $handler($command);
 
-        $this->assertSame($createdRegulationOrderRecord, $result);
+        $this->assertSame($createdRegulationOrder, $result);
     }
 
     public function testUpdate(): void
@@ -116,16 +115,11 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $createdRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $createdRegulationOrderRecord
-            ->expects(self::never())
-            ->method('getUuid');
-
-        $regulationOrderRepository
+        $regulationOrderRecordRepository
             ->expects(self::never())
             ->method('save');
 
-        $regulationOrderRecordRepository
+        $regulationOrderRepository
             ->expects(self::never())
             ->method('save');
 
@@ -138,12 +132,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
                 'Interdiction de circuler',
             );
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-
         $handler = new SaveRegulationStep1CommandHandler(
             $idFactory,
             $regulationConditionRepository,
@@ -152,13 +140,12 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             $now,
         );
 
-
-        $command = new SaveRegulationStep1Command($organization, $regulationOrderRecord);
+        $command = new SaveRegulationStep1Command($organization, $regulationOrder);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
 
         $result = $handler($command);
 
-        $this->assertSame($regulationOrderRecord, $result);
+        $this->assertSame($regulationOrder, $result);
     }
 }

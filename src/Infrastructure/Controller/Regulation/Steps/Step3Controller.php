@@ -36,13 +36,13 @@ final class Step3Controller extends AbstractRegulationController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        $regulationCondition = $regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $regulationOrder = $this->getRegulationOrder($uuid);
+        $regulationCondition = $regulationOrder->getRegulationCondition();
         $overallPeriod = $this->queryBus->handle(
             new GetOverallPeriodByRegulationConditionQuery($regulationCondition->getUuid()),
         );
 
-        $command = SaveRegulationStep3Command::create($regulationOrderRecord, $overallPeriod);
+        $command = SaveRegulationStep3Command::create($regulationOrder, $overallPeriod);
         $form = $this->formFactory->create(Step3FormType::class, $command);
         $form->handleRequest($request);
 

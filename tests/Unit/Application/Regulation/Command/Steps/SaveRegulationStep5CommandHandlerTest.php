@@ -6,41 +6,42 @@ namespace App\Tests\Domain\Regulation\Command\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep5Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep5CommandHandler;
-use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\Regulation\Exception\RegulationOrderCannotBePublishedException;
+use App\Domain\Regulation\Exception\RegulationOrderNotFoundException;
+use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\Regulation\Specification\CanRegulationOrderBePublished;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep5CommandHandlerTest extends TestCase
 {
-    private $canRegulationOrderRecordBePublished;
-    private $regulationOrderRecordRepository;
+    private $canRegulationOrderBePublished;
+    private $regulationOrderRepository;
 
     protected function setUp(): void
     {
-        $this->canRegulationOrderRecordBePublished = $this->createMock(CanRegulationOrderRecordBePublished::class);
-        $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $this->canRegulationOrderBePublished = $this->createMock(CanRegulationOrderBePublished::class);
+        $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
     }
 
     public function testRegulationOrderRecordNotFound(): void
     {
-        $this->expectException(RegulationOrderRecordNotFoundException::class);
+        $this->expectException(RegulationOrderNotFoundException::class);
 
-        $this->regulationOrderRecordRepository
+        $this->regulationOrderRepository
             ->expects(self::once())
             ->method('findOneByUuid')
             ->with('df4454e1-64e8-46ff-a6c1-7f9c35375802')
             ->willReturn(null);
 
-        $this->canRegulationOrderRecordBePublished
+        $this->canRegulationOrderBePublished
             ->expects(self::never())
             ->method('isSatisfiedBy');
 
         $handler = new SaveRegulationStep5CommandHandler(
-            $this->regulationOrderRecordRepository,
-            $this->canRegulationOrderRecordBePublished,
+            $this->regulationOrderRepository,
+            $this->canRegulationOrderBePublished,
         );
 
         $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'draft');
@@ -55,19 +56,25 @@ final class SaveRegulationStep5CommandHandlerTest extends TestCase
             ->method('updateStatus')
             ->with('draft');
 
-        $this->regulationOrderRecordRepository
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+
+        $this->regulationOrderRepository
             ->expects(self::once())
             ->method('findOneByUuid')
             ->with('df4454e1-64e8-46ff-a6c1-7f9c35375802')
-            ->willReturn($regulationOrderRecord);
+            ->willReturn($regulationOrder);
 
-        $this->canRegulationOrderRecordBePublished
+        $this->canRegulationOrderBePublished
             ->expects(self::never())
             ->method('isSatisfiedBy');
 
         $handler = new SaveRegulationStep5CommandHandler(
-            $this->regulationOrderRecordRepository,
-            $this->canRegulationOrderRecordBePublished,
+            $this->regulationOrderRepository,
+            $this->canRegulationOrderBePublished,
         );
 
         $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'draft');
@@ -82,51 +89,57 @@ final class SaveRegulationStep5CommandHandlerTest extends TestCase
             ->method('updateStatus')
             ->with('published');
 
-        $this->regulationOrderRecordRepository
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+
+        $this->regulationOrderRepository
             ->expects(self::once())
             ->method('findOneByUuid')
             ->with('df4454e1-64e8-46ff-a6c1-7f9c35375802')
-            ->willReturn($regulationOrderRecord);
+            ->willReturn($regulationOrder);
 
-        $this->canRegulationOrderRecordBePublished
+        $this->canRegulationOrderBePublished
             ->expects(self::once())
             ->method('isSatisfiedBy')
-            ->with($regulationOrderRecord)
+            ->with($regulationOrder)
             ->willReturn(true);
 
         $handler = new SaveRegulationStep5CommandHandler(
-            $this->regulationOrderRecordRepository,
-            $this->canRegulationOrderRecordBePublished,
+            $this->regulationOrderRepository,
+            $this->canRegulationOrderBePublished,
         );
 
         $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'published');
         $this->assertEmpty($handler($command));
     }
 
-    public function testRegulationCantBePublished(): void
+    public function testRegulationCannotBePublished(): void
     {
-        $this->expectException(RegulationOrderRecordCannotBePublishedException::class);
+        $this->expectException(RegulationOrderCannotBePublishedException::class);
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $regulationOrderRecord
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder
             ->expects(self::never())
-            ->method('updateStatus');
+            ->method('getRegulationOrderRecord');
 
-        $this->regulationOrderRecordRepository
+        $this->regulationOrderRepository
             ->expects(self::once())
             ->method('findOneByUuid')
             ->with('df4454e1-64e8-46ff-a6c1-7f9c35375802')
-            ->willReturn($regulationOrderRecord);
+            ->willReturn($regulationOrder);
 
-        $this->canRegulationOrderRecordBePublished
+        $this->canRegulationOrderBePublished
             ->expects(self::once())
             ->method('isSatisfiedBy')
-            ->with($regulationOrderRecord)
+            ->with($regulationOrder)
             ->willReturn(false);
 
         $handler = new SaveRegulationStep5CommandHandler(
-            $this->regulationOrderRecordRepository,
-            $this->canRegulationOrderRecordBePublished,
+            $this->regulationOrderRepository,
+            $this->canRegulationOrderBePublished,
         );
 
         $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'published');

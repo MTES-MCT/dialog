@@ -5,7 +5,7 @@
         <com:nationalIdentifier>DiaLog</com:nationalIdentifier>
     </com:publicationCreator>
     <trafficRegulationsFromCompetentAuthorities>
-        <trafficRegulationOrder id="2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c" version="1">
+        <trafficRegulationOrder id="3ede8b1a-1816-4788-8510-e08f45511cb5" version="1">
             <description>
                 <com:values>
                     <com:value>Description 2</com:value>
@@ -16,7 +16,7 @@
                     <com:value>Autorité 2</com:value>
                 </com:values>
             </issuingAuthority>
-            <regulationId>2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c</regulationId>
+            <regulationId>3ede8b1a-1816-4788-8510-e08f45511cb5</regulationId>
             <status>madeAndImplemented</status>
             <trafficRegulation>
                 <status>active</status>

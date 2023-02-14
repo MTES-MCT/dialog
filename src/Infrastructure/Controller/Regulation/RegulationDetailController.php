@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Application\Regulation\Query\GetRegulationOrderSummaryQuery;
+use App\Domain\Regulation\Exception\RegulationOrderNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,8 +28,8 @@ final class RegulationDetailController
     public function __invoke(string $uuid): Response
     {
         try {
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
-        } catch (RegulationOrderRecordNotFoundException) {
+            $regulationOrderSummary = $this->queryBus->handle(new GetRegulationOrderSummaryQuery($uuid));
+        } catch (RegulationOrderNotFoundException) {
             throw new NotFoundHttpException();
         }
 
@@ -37,7 +37,7 @@ final class RegulationDetailController
             $this->twig->render(
                 name: 'regulation/detail.html.twig',
                 context: [
-                    'regulationOrderRecord' => $regulationOrderRecord,
+                    'regulation' => $regulationOrderSummary,
                 ],
             ),
         );

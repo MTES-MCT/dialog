@@ -6,26 +6,26 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\PeriodView;
-use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Application\Regulation\View\RegulationOrderSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Exception\RegulationOrderNotFoundException;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 
-final class GetRegulationOrderRecordSummaryQueryHandler
+final class GetRegulationOrderSummaryQueryHandler
 {
     public function __construct(
-        private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
+        private RegulationOrderRepositoryInterface $regulationOrderRepository,
     ) {
     }
 
-    public function __invoke(GetRegulationOrderRecordSummaryQuery $query): RegulationOrderRecordSummaryView
+    public function __invoke(GetRegulationOrderSummaryQuery $query): RegulationOrderSummaryView
     {
-        $row = $this->regulationOrderRecordRepository->findOneForSummary(
+        $row = $this->regulationOrderRepository->findOneForSummary(
             $query->uuid,
         );
 
         if (!$row) {
-            throw new RegulationOrderRecordNotFoundException();
+            throw new RegulationOrderNotFoundException();
         }
 
         $hasPeriod = $row['startPeriod'] || $row['endPeriod'];
@@ -39,7 +39,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             || $row['maxLength']
             || $row['maxWidth'];
 
-        return new RegulationOrderRecordSummaryView(
+        return new RegulationOrderSummaryView(
             $row['uuid'],
             $row['status'],
             $row['description'],

@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
+use App\Domain\Regulation\RegulationOrder;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -47,16 +48,17 @@ final class DuplicateRegulationController extends AbstractRegulationController
 
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $regulationOrder = $this->getRegulationOrder($uuid);
 
         try {
-            $duplicatedRegulationOrderRecord = $this->commandBus->handle(
-                new DuplicateRegulationCommand($user->getOrganization(), $regulationOrderRecord),
+            /** @var RegulationOrder */
+            $duplicatedRegulationOrder = $this->commandBus->handle(
+                new DuplicateRegulationCommand($user->getOrganization(), $regulationOrder),
             );
 
             return new RedirectResponse(
                 url: $this->router->generate('app_regulations_steps_5', [
-                    'uuid' => $duplicatedRegulationOrderRecord->getUuid(),
+                    'uuid' => $duplicatedRegulationOrder->getUuid(),
                 ]),
                 status: Response::HTTP_SEE_OTHER,
             );

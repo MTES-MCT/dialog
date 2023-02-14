@@ -7,10 +7,11 @@ namespace App\Infrastructure\Controller\Regulation\Steps;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep5Command;
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
+use App\Application\Regulation\Query\GetRegulationOrderSummaryQuery;
+use App\Application\Regulation\View\RegulationOrderSummaryView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
-use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\Regulation\Exception\RegulationOrderCannotBePublishedException;
+use App\Domain\Regulation\Exception\RegulationOrderNotFoundException;
 use App\Infrastructure\Form\Regulation\Step5FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -48,12 +49,13 @@ final class Step5Controller
         }
 
         try {
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
-        } catch (RegulationOrderRecordNotFoundException) {
+            /** @var RegulationOrderSummaryView */
+            $regulationOrderSummary = $this->queryBus->handle(new GetRegulationOrderSummaryQuery($uuid));
+        } catch (RegulationOrderNotFoundException) {
             throw new NotFoundHttpException();
         }
 
-        $command = new SaveRegulationStep5Command($regulationOrderRecord->uuid, $regulationOrderRecord->status);
+        $command = new SaveRegulationStep5Command($regulationOrderSummary->uuid, $regulationOrderSummary->status);
         $form = $this->formFactory->create(Step5FormType::class, $command);
         $form->handleRequest($request);
 
@@ -64,7 +66,7 @@ final class Step5Controller
                 if ($command->status === RegulationOrderRecordStatusEnum::PUBLISHED) {
                     return new RedirectResponse(
                         url: $this->router->generate('app_regulation_detail', [
-                            'uuid' => $regulationOrderRecord->uuid,
+                            'uuid' => $regulationOrderSummary->uuid,
                         ]),
                         status: Response::HTTP_SEE_OTHER,
                     );
@@ -74,7 +76,7 @@ final class Step5Controller
                     url: $this->router->generate('app_regulations_list'),
                     status: Response::HTTP_SEE_OTHER,
                 );
-            } catch (RegulationOrderRecordCannotBePublishedException) {
+            } catch (RegulationOrderCannotBePublishedException) {
                 /** @var FlashBagAwareSessionInterface */
                 $session = $request->getSession();
                 $session->getFlashBag()->add(
@@ -91,7 +93,7 @@ final class Step5Controller
                     'form' => $form->createView(),
                     'stepNumber' => 5,
                     'uuid' => $uuid,
-                    'regulationOrderRecord' => $regulationOrderRecord,
+                    'regulation' => $regulationOrderSummary,
                 ],
             ),
         );

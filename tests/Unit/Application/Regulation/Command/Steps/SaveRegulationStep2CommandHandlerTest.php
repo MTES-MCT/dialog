@@ -14,7 +14,6 @@ use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep2CommandHandlerTest extends TestCase
@@ -29,7 +28,6 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
 
     private $regulationCondition;
     private $regulationOrder;
-    private $regulationOrderRecord;
 
     protected function setUp(): void
     {
@@ -47,12 +45,6 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationCondition')
             ->willReturn($this->regulationCondition);
-
-        $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $this->regulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($this->regulationOrder);
     }
 
     public function testCreate(): void
@@ -106,7 +98,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord);
+        $command = new SaveRegulationStep2Command($this->regulationOrder);
         $command->postalCode = $this->postalCode;
         $command->city = $this->city;
         $command->roadName = $this->roadName;
@@ -167,7 +159,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
+        $command = new SaveRegulationStep2Command($this->regulationOrder, $location);
         $command->postalCode = $this->postalCode;
         $command->city = $this->city;
         $command->roadName = $this->roadName;
@@ -250,7 +242,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
+        $command = new SaveRegulationStep2Command($this->regulationOrder, $location);
         $command->postalCode = $this->postalCode;
         $command->city = $this->city;
         $command->roadName = $this->roadName;

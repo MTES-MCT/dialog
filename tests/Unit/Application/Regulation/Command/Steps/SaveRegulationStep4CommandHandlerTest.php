@@ -11,14 +11,12 @@ use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\VehicleCharacteristicsRepositoryInterface;
 use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep4CommandHandlerTest extends TestCase
 {
     private $regulationCondition;
     private $regulationOrder;
-    private $regulationOrderRecord;
 
     protected function setUp(): void
     {
@@ -28,12 +26,6 @@ final class SaveRegulationStep4CommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationCondition')
             ->willReturn($this->regulationCondition);
-
-        $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $this->regulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($this->regulationOrder);
     }
 
     public function testCreate(): void
@@ -69,7 +61,7 @@ final class SaveRegulationStep4CommandHandlerTest extends TestCase
             $vehicleCharacteristicsRepository,
         );
 
-        $command = new SaveRegulationStep4Command($this->regulationOrderRecord);
+        $command = new SaveRegulationStep4Command($this->regulationOrder);
         $command->maxWeight = $maxWeight;
         $command->maxHeight = $maxHeight;
         $command->maxWidth = $maxWidth;
@@ -106,7 +98,7 @@ final class SaveRegulationStep4CommandHandlerTest extends TestCase
             $vehicleCharacteristicsRepository,
         );
 
-        $command = new SaveRegulationStep4Command($this->regulationOrderRecord, $vehicleCharacteristics);
+        $command = new SaveRegulationStep4Command($this->regulationOrder, $vehicleCharacteristics);
         $command->maxWeight = $maxWeight;
         $command->maxHeight = $maxHeight;
         $command->maxWidth = $maxWidth;
@@ -132,7 +124,7 @@ final class SaveRegulationStep4CommandHandlerTest extends TestCase
             $vehicleCharacteristicsRepository,
         );
 
-        $command = new SaveRegulationStep4Command($this->regulationOrderRecord);
+        $command = new SaveRegulationStep4Command($this->regulationOrder);
 
         $this->assertEmpty($handler($command));
     }

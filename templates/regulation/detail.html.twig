@@ -3,8 +3,8 @@
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
         <span class="fr-badge fr-badge--success">{{ 'common.published'|trans }}</span>
-        <h2 class="regulation-detail">{{ 'regulation.detail.title'|trans({ '%city%': regulationOrderRecord.location.city}) }}</h2>
-        {% include "regulation/_summary.html.twig" with { 'canEdit': false, regulationOrderRecord} only %}
+        <h2 class="regulation-detail">{{ 'regulation.detail.title'|trans({ '%city%': regulation.location.city}) }}</h2>
+        {% include "regulation/_summary.html.twig" with { 'canEdit': false, regulation } only %}
 
         <div class="fr-grid-row fr-grid-row--gutters fr-py-4w">
             <div class="fr-col fr-col-12 fr-col-md-6">
@@ -12,7 +12,7 @@
                     <div
                         class="fr-card__body"
                         {{ stimulus_controller('clipboard') }}
-                        data-clipboard-url-value="{{ url('app_regulation_detail', { uuid: regulationOrderRecord.uuid}) }}"
+                        data-clipboard-url-value="{{ url('app_regulation_detail', { uuid: regulation.uuid}) }}"
                     >
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'regulation.detail.share'|trans }}</h3>

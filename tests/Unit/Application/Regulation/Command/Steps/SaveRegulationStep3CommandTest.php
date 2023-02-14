@@ -6,15 +6,15 @@ namespace App\Tests\Domain\Regulation\Command\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Domain\Condition\Period\OverallPeriod;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrder;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep3CommandTest extends TestCase
 {
     public function testWithoutOverallPeriod(): void
     {
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $command = SaveRegulationStep3Command::create($regulationOrderRecord);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveRegulationStep3Command::create($regulationOrder);
 
         $this->assertEmpty($command->startPeriod);
         $this->assertEmpty($command->endPeriod);
@@ -35,8 +35,8 @@ final class SaveRegulationStep3CommandTest extends TestCase
             ->method('getEndPeriod')
             ->willReturn($end);
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $command = SaveRegulationStep3Command::create($regulationOrderRecord, $overallPeriod);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveRegulationStep3Command::create($regulationOrder, $overallPeriod);
 
         $this->assertSame($command->startPeriod, $start);
         $this->assertSame($command->endPeriod, $end);
