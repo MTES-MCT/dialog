@@ -2,6 +2,12 @@
     "type": "project",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@github.com:MatTheCat/symfony.git"
+        }
+    ],
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
@@ -22,7 +28,7 @@
         "symfony/messenger": "6.2.*",
         "symfony/proxy-manager-bridge": "6.2.*",
         "symfony/runtime": "6.2.*",
-        "symfony/security-bundle": "6.2.*",
+        "symfony/security-bundle": "dev-ticket_49194 as 6.2.5",
         "symfony/translation": "6.2.*",
         "symfony/twig-bundle": "6.2.*",
         "symfony/uid": "6.2.*",
