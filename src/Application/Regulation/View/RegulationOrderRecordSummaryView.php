@@ -8,6 +8,7 @@ class RegulationOrderRecordSummaryView
 {
     public function __construct(
         public readonly string $uuid,
+        public readonly string $organizationUuid,
         public readonly string $status,
         public readonly string $description,
         public readonly ?PeriodView $period,

@@ -1,47 +1,69 @@
 {% extends 'base.html.twig' %}
+{% form_theme form _self %}
 
-{% block body %}
-    <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
-        <span class="fr-badge fr-badge--success">{{ 'common.published'|trans }}</span>
-        <h2 class="regulation-detail">{{ 'regulation.detail.title'|trans({ '%city%': regulationOrderRecord.location.city}) }}</h2>
-        {% include "regulation/_summary.html.twig" with { 'canEdit': false, regulationOrderRecord} only %}
-
-        <div class="fr-grid-row fr-grid-row--gutters fr-py-4w">
-            <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card" >
-                    <div
-                        class="fr-card__body"
-                        {{ stimulus_controller('clipboard') }}
-                        data-clipboard-url-value="{{ url('app_regulation_detail', { uuid: regulationOrderRecord.uuid}) }}"
-                    >
-                        <div class="fr-card__content">
-                            <h3 class="fr-card__title">{{ 'regulation.detail.share'|trans }}</h3>
-                            <p class="fr-card__desc">
-                                <button data-action="clipboard#copy" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-fi-arrow-right-line">
-                                    {{ "regulation.detail.copy"|trans }}
-                                </button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="fr-col-12 fr-col-md-6">
-                <div class="fr-card">
-                    <div class="fr-card__body">
-                        <div class="fr-card__content">
-                            <h3 class="fr-card__title">{{ 'regulation.detail.export'|trans }}</h3>
-                            <p class="fr-card__desc">
-                                <a class="fr-title--blue-france" href="{{ path('api_regulations_list', { _format: 'xml' }) }}" target="_blank">
-                                    {{ "regulation.detail.datex"|trans }}
-                                </a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+{% block _publish_form_status_widget %}
+    {%- for child in form %}
+        <div class="fr-radio-group fr-mt-0 fr-radio-rich">
+            {{ form_widget(child) }}
+            <label class="fr-label" for="{{ child.vars.id }}">
+                <b>{{ child.vars.label|trans }}</b>
+                <span class="fr-hint-text">
+                    {{ ('regulation.detail.' ~ child.vars.value ~ '.description')|trans }}
+                </span>
+            </label>
+            <div class="fr-radio-rich__img">
+                {% if child.vars.value == 'draft' %}
+                    <span class="fr-icon-contrast-fill fr-icon--lg fr-m-3w" aria-hidden="true"></span>
+                {% else %}
+                    <span class="fr-icon-check-line fr-icon--lg fr-m-3w" aria-hidden="true"></span>
+                {% endif %}
             </div>
         </div>
-        <a href="{{ path('app_regulations_list', { tab: 'published' }) }}" class="fr-link fr-fi-arrow-left-line fr-link--icon-left">
-            {{ 'regulation.detail.see_all'|trans }}
-        </a>
+    {% endfor %}
+{% endblock %}
+
+{% block body %}
+    {% set isDraft = regulationOrderRecord.status == 'draft' %}
+    <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
+        {% if isDraft %}
+            <span class="fr-badge fr-badge--info">{{ 'common.draft'|trans }}</span>
+        {% else %}
+            <span class="fr-badge fr-badge--success">{{ 'common.published'|trans }}</span>
+        {% endif %}
+
+        <h2 class="regulation-detail">
+            {% if regulationOrderRecord.location %}
+                {{ 'regulation.detail.title'|trans({ '%roadName%': regulationOrderRecord.location.roadName}) }}
+            {% else %}
+                {{ regulationOrderRecord.description }}
+            {% endif %}
+        </h2>
+
+        {% include "regulation/_summary.html.twig" with { 'canEdit': isDraft, regulationOrderRecord} only %}
+
+        {% if isDraft %}
+            <h3 class="fr-mt-4w">{{ 'regulation.detail.and_now'|trans }}</h3>
+
+            {{ form_start(form) }}
+                <div class="fr-container--fluid">
+                    <div class="fr-grid-row">
+                        <div class="fr-form-group fr-col-12 fr-col-lg-6">
+                            <fieldset class="fr-fieldset">
+                                <div class="fr-fieldset__content">
+                                    {{ form_widget(form.status) }}
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_widget(form.save, {attr: {class: 'fr-btn'}}) }}
+            {{ form_end(form) }}
+        {% endif %}
+        <div class="fr-mt-4w">
+            <a href="{{ path('app_regulations_list', { tab: regulationOrderRecord.status }) }}" class="fr-link fr-fi-arrow-left-line fr-link--icon-left">
+                {{ 'regulation.detail.see_all'|trans }}
+            </a>
+        </div>
     </section>
 {% endblock %}

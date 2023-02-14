@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Steps;
+namespace App\Application\Regulation\Command;
 
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
@@ -11,7 +11,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 
-final class SaveRegulationStep5CommandHandler
+final class PublishRegulationCommandHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
@@ -19,7 +19,7 @@ final class SaveRegulationStep5CommandHandler
     ) {
     }
 
-    public function __invoke(SaveRegulationStep5Command $command): void
+    public function __invoke(PublishRegulationCommand $command): void
     {
         $regulationOrderRecord = $this->regulationOrderRecordRepository
             ->findOneByUuid($command->regulationOrderRecordUuid);

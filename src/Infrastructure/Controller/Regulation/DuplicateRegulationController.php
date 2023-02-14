@@ -13,12 +13,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DuplicateRegulationController extends AbstractRegulationController
 {
@@ -27,6 +29,7 @@ final class DuplicateRegulationController extends AbstractRegulationController
         private RouterInterface $router,
         private Security $security,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private TranslatorInterface $translator,
         QueryBusInterface $queryBus,
     ) {
         parent::__construct($queryBus);
@@ -54,8 +57,12 @@ final class DuplicateRegulationController extends AbstractRegulationController
                 new DuplicateRegulationCommand($user->getOrganization(), $regulationOrderRecord),
             );
 
+            /** @var FlashBagAwareSessionInterface */
+            $session = $request->getSession();
+            $session->getFlashBag()->add('success', $this->translator->trans('regulation.duplicated.success'));
+
             return new RedirectResponse(
-                url: $this->router->generate('app_regulations_steps_5', [
+                url: $this->router->generate('app_regulation_detail', [
                     'uuid' => $duplicatedRegulationOrderRecord->getUuid(),
                 ]),
                 status: Response::HTTP_SEE_OTHER,

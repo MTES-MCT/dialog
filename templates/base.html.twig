@@ -24,15 +24,15 @@
   <body>
     {% include 'common/header.html.twig' %}
 
-    <div class="fr-container">
-        {% for label, messages in app.flashes(['warning', 'error']) %}
+    {% for label, messages in app.flashes %}
+        <div class="fr-container fr-mt-4w">
             {% for message in messages %}
                 <div class="fr-alert fr-alert--{{ label }}">
-                    <h3 class="fr-alert__title">{{ message }}</h3>
+                    {{ message|raw }}
                 </div>
             {% endfor %}
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
 
     <main id="contenu">
         {% block body %}{% endblock %}
