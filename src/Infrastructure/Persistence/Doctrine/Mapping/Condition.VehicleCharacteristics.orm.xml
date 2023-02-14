@@ -28,7 +28,7 @@
         </options>
     </field>
     <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" inversed-by="vehicleCharacteristics">
-        <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false"/>
+        <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
     </one-to-one>
   </entity>
 </doctrine-mapping>
