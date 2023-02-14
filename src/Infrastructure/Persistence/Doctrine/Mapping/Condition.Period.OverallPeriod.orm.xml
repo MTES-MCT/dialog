@@ -9,7 +9,7 @@
     <one-to-many field="validPeriods" target-entity="App\Domain\Condition\Period\Period" mapped-by="overallValidPeriod"/>
     <one-to-many field="exceptionPeriods" target-entity="App\Domain\Condition\Period\Period" mapped-by="overallExceptionPeriod"/>
     <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" inversed-by="overallPeriod">
-        <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false"/>
+        <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>
   </entity>
 </doctrine-mapping>
