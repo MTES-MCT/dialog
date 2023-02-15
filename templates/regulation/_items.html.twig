@@ -1,4 +1,5 @@
 {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
+{% set deleteCsrfToken = csrf_token('delete-regulation') %}
 
 <div class="fr-table fr-table--layout-fixed">
     <table>
@@ -63,14 +64,31 @@
                                 </a>
                             {% endif %}
                             <form method="post" action="{{ path('app_regulation_duplicate', { uuid: regulation.uuid })}}">
-                                <button class="fr-btn ri-file-copy-line remixicons fr-btn--tertiary-no-outline" title="{{ 'common.duplicate'|trans}}"/>
+                                <button class="fr-btn ri-file-copy-line remixicons fr-btn--tertiary-no-outline" title="{{ 'common.duplicate'|trans }}"></button>
                                 <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
+                            </form>
+                            <form
+                                method="delete"
+                                action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
+                                data-controller="form-submit"
+                                data-form-submit-event-name-value="modal-trigger:submit"
+                            >
+                                <button
+                                    class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                    data-controller="modal-trigger"
+                                    data-modal-trigger-modal-outlet="#regulation-delete-modal"
+                                    data-modal-trigger-key-value="{{ regulation.uuid }}"
+                                    data-action="modal-trigger#showModal:prevent"
+                                    aria-controls="regulation-delete-modal"
+                                    title="{{ 'common.delete'|trans }}"
+                                ></button>
+                                <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
                             </form>
                         </div>
                     </td>
                 </tr>
             {% else %}
-                <tr>
+                <tr data-testid="empty-row">
                     <td colspan="4">
                         <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                     </td>
