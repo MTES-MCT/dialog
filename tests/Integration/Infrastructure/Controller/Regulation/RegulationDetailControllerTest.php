@@ -89,6 +89,18 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_regulations_list');
     }
 
+    public function testPublishedRegulationDetail(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+
+        $this->assertSecurityHeaders();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('Réglementation - Avenue de Fonneuve', $crawler->filter('h2')->text());
+
+        $this->assertSame(0, $crawler->filter('form')->count()); // No form found
+    }
+
     public function testCantBePublished(): void
     {
         $client = $this->login();

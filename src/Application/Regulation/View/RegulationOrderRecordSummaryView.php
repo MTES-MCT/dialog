@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
-class RegulationOrderRecordSummaryView
+use App\Domain\User\OrganizationRegulationAccessInterface;
+
+class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessInterface
 {
     public function __construct(
         public readonly string $uuid,
@@ -15,5 +17,10 @@ class RegulationOrderRecordSummaryView
         public readonly ?DetailLocationView $location,
         public readonly ?VehicleCharacteristicsView $vehicleCharacteristics,
     ) {
+    }
+
+    public function getOrganizationUuid(): ?string
+    {
+        return $this->organizationUuid;
     }
 }

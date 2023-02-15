@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\Regulation;
 
 use App\Domain\User\Organization;
+use App\Domain\User\OrganizationRegulationAccessInterface;
 
-class RegulationOrderRecord
+class RegulationOrderRecord implements OrganizationRegulationAccessInterface
 {
     public function __construct(
         private string $uuid,
@@ -35,6 +36,11 @@ class RegulationOrderRecord
     public function getOrganization(): ?Organization
     {
         return $this->organization;
+    }
+
+    public function getOrganizationUuid(): ?string
+    {
+        return $this->organization->getUuid();
     }
 
     public function getRegulationOrder(): RegulationOrder

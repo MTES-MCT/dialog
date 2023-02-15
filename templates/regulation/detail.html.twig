@@ -31,7 +31,7 @@
             <span class="fr-badge fr-badge--success">{{ 'common.published'|trans }}</span>
         {% endif %}
 
-        <h2 class="regulation-detail">
+        <h2 id="regulation-detail">
             {% if regulationOrderRecord.location %}
                 {{ 'regulation.detail.title'|trans({ '%roadName%': regulationOrderRecord.location.roadName}) }}
             {% else %}

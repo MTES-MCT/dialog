@@ -10,6 +10,7 @@ use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Form\Regulation\PublishFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -33,6 +34,7 @@ final class RegulationDetailController
         private readonly FormFactoryInterface $formFactory,
         private readonly RouterInterface $router,
         private readonly TranslatorInterface $translator,
+        private readonly CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         private readonly Security $security,
     ) {
     }
@@ -53,7 +55,8 @@ final class RegulationDetailController
 
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-        if ($user->getOrganization()->getUuid() !== $regulationOrderRecord->organizationUuid) {
+
+        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
             throw new AccessDeniedHttpException();
         }
 
