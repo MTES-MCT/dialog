@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Steps;
+namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
 
-final class SaveRegulationStep5Command implements CommandInterface
+final class PublishRegulationCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $regulationOrderRecordUuid,

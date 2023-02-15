@@ -20,7 +20,8 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Étape 5 sur 5 Récapitulatif', $crawler->filter('h2')->text());
+        $this->assertSame('Réglementation - Route du Grand Brossais', $crawler->filter('h2')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
     }
 
     public function testRegulationCannotBeDuplicated(): void

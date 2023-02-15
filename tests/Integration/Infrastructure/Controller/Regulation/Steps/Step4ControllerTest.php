@@ -15,8 +15,7 @@ final class Step4ControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Étape 4 sur 5 Véhicules concernés', $crawler->filter('h2')->text());
-        $this->assertSame('Étape suivante : Récapitulatif', $crawler->filter('p.fr-stepper__details')->text());
+        $this->assertSame('Étape 4 sur 4 Véhicules concernés', $crawler->filter('h2')->text());
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
@@ -30,7 +29,7 @@ final class Step4ControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_regulations_steps_5');
+        $this->assertRouteSame('app_regulation_detail');
     }
 
     public function testInvalidVehicleCharacteristics(): void
