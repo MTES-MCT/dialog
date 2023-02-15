@@ -34,6 +34,10 @@
                 <source>common.duplicate</source>
                 <target>Dupliquer</target>
             </trans-unit>
+            <trans-unit id="common.delete">
+                <source>common.delete</source>
+                <target>Supprimer</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>
@@ -496,6 +500,18 @@
             <trans-unit id="regulation.detail.see_all">
                 <source>regulation.detail.see_all</source>
                 <target>Toutes les réglementations</target>
+            </trans-unit>
+            <trans-unit id="regulation.delete_modal.title">
+                <source>regulation.delete_modal.title</source>
+                <target>Supprimer cette réglementation ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.delete_modal.confirm">
+                <source>regulation.delete_modal.confirm</source>
+                <target>Supprimer</target>
+            </trans-unit>
+            <trans-unit id="regulation.delete_modal.cancel">
+                <source>regulation.delete_modal.cancel</source>
+                <target>Ne pas supprimer</target>
             </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>

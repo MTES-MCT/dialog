@@ -21,7 +21,13 @@
                     </button>
                 </li>
             </ul>
-            <div id="draft-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="draft" tabindex="0">
+            <div
+                id="draft-panel"
+                class="fr-tabs__panel {% if isDraftTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-start{% endif %}"
+                role="tabpanel"
+                aria-labelledby="draft"
+                tabindex="0"
+            >
                 {% include "regulation/_items.html.twig" with { pagination: draftPagination } only %}
                 {% include "common/pagination.html.twig" with {
                     pagination: draftPagination,
@@ -29,7 +35,13 @@
                     queryParams: app.request.query.all,
                 } only %}
             </div>
-            <div id="published-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="published" tabindex="1">
+            <div
+                id="published-panel"
+                class="fr-tabs__panel {% if isPublishedTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-end{% endif %}"
+                role="tabpanel"
+                aria-labelledby="published"
+                tabindex="1"
+            >
                 {% include "regulation/_items.html.twig" with { pagination: publishedPagination } only %}
                 {% include "common/pagination.html.twig" with {
                     pagination: publishedPagination,
@@ -42,4 +54,9 @@
             {{ "regulation.link.datex"|trans }}
         </a>
     </section>
+{% endblock %}
+
+{% block body_end %}
+    {{ parent() }}
+    {% include 'regulation/_delete_modal.html.twig' %}
 {% endblock %}

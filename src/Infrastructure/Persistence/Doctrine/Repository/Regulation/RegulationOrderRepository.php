@@ -22,4 +22,9 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
         return $regulationOrder;
     }
+
+    public function delete(RegulationOrder $regulationOrder): void
+    {
+        $this->getEntityManager()->remove($regulationOrder);
+    }
 }
