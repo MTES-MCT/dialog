@@ -70,13 +70,13 @@ final class APIAdresseGeocoderTest extends TestCase
         ];
     }
 
-    /** 
+    /**
      * @dataProvider provideStatusErrorData
     */
     public function testComputeCoordinatesStatusError(int $statusCode, string $pattern): void
     {
         $this->expectException(GeocodingFailureException::class);
-        $this->expectErrorMessageMatches($pattern);
+        $this->expectExceptionMessageMatches($pattern);
 
         $response = new MockResponse('...', ['http_code' => $statusCode]);
         $http = new MockHttpClient([$response]);
@@ -103,7 +103,7 @@ final class APIAdresseGeocoderTest extends TestCase
     public function testComputeCoordinatesDecodeError(string $body, string $pattern): void
     {
         $this->expectException(GeocodingFailureException::class);
-        $this->expectErrorMessageMatches($pattern);
+        $this->expectExceptionMessageMatches($pattern);
 
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
