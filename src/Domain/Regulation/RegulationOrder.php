@@ -8,11 +8,12 @@ use App\Domain\Condition\RegulationCondition;
 
 class RegulationOrder
 {
+    private ?RegulationCondition $regulationCondition = null;
+
     public function __construct(
         private string $uuid,
         private string $issuingAuthority,
         private string $description,
-        private RegulationCondition $regulationCondition,
     ) {
     }
 
@@ -31,9 +32,14 @@ class RegulationOrder
         return $this->description;
     }
 
-    public function getRegulationCondition(): RegulationCondition
+    public function getRegulationCondition(): ?RegulationCondition
     {
         return $this->regulationCondition;
+    }
+
+    public function setRegulationCondition(RegulationCondition $regulationCondition): void
+    {
+        $this->regulationCondition = $regulationCondition;
     }
 
     public function update(

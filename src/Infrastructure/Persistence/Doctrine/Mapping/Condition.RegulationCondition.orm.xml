@@ -9,7 +9,9 @@
     <one-to-one field="location" target-entity="App\Domain\Condition\Location" mapped-by="regulationCondition"/>
     <one-to-one field="overallPeriod" target-entity="App\Domain\Condition\Period\OverallPeriod" mapped-by="regulationCondition"/>
     <one-to-one field="conditionSet" target-entity="App\Domain\Condition\ConditionSet" mapped-by="regulationCondition"/>
-    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" mapped-by="regulationCondition"/>
+    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="regulationCondition">
+      <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+    </one-to-one>
     <many-to-one
       field="parentConditionSet"
       target-entity="App\Domain\Condition\ConditionSet"
