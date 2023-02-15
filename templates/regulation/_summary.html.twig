@@ -3,18 +3,18 @@
         <span class="fr-icon-close-circle-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
     <div class="summary-card__content">
-        <h3 class="summary-card__title">{{ 'regulation.step5.for_what'|trans }}</h3>
+        <h3 class="summary-card__title">{{ 'regulation.detail.for_what'|trans }}</h3>
         <ul class="fr-ml-1w fr-my-0">
             <li>{{ regulationOrderRecord.description }}</li>
-            <li>{{ 'regulation.step5.for_what.no_entry'|trans }}</li>
+            <li>{{ 'regulation.detail.for_what.no_entry'|trans }}</li>
         </ul>
     </div>
     {% if canEdit %}
-    <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-    </div>
+        <div class="summary-card__action">
+            <a href="{{ path('app_regulations_steps_1', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                {{ 'common.update'|trans }}
+            </a>
+        </div>
     {% endif %}
 </div>
 
@@ -23,12 +23,12 @@
         <span class="fr-icon-map-pin-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
     <div class="summary-card__content">
-        <h3 class="summary-card__title">{{ 'regulation.step5.where'|trans }}</h3>
+        <h3 class="summary-card__title">{{ 'regulation.detail.where'|trans }}</h3>
         {% if regulationOrderRecord.location %}
             {% set loc = regulationOrderRecord.location %}
             <ul class="fr-ml-1w fr-my-0">
-                <li>{{ 'regulation.step5.where.city'|trans({'%postalCode%': loc.postalCode, '%city%': loc.city}) }}</li>
-                <li>{{ 'regulation.step5.where.road_segment'|trans({'%roadName%': loc.roadName, '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber}) }}</li>
+                <li>{{ 'regulation.detail.where.city'|trans({'%postalCode%': loc.postalCode, '%city%': loc.city}) }}</li>
+                <li>{{ 'regulation.detail.where.road_segment'|trans({'%roadName%': loc.roadName, '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber}) }}</li>
             </ul>
         {% endif %}
     </div>
@@ -46,7 +46,7 @@
         <span class="fr-icon-calendar-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
     <div class="summary-card__content">
-        <h3 class="summary-card__title">{{ 'regulation.step5.when'|trans }}</h3>
+        <h3 class="summary-card__title">{{ 'regulation.detail.when'|trans }}</h3>
         {% if regulationOrderRecord.period %}
             {% set startPeriod = regulationOrderRecord.period.startPeriod %}
             {% set endPeriod = regulationOrderRecord.period.endPeriod %}
@@ -78,21 +78,21 @@
         <span class="fr-icon-car-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
     <div class="summary-card__content">
-        <h3 class="summary-card__title">{{ 'regulation.step5.vehicles'|trans }}</h3>
+        <h3 class="summary-card__title">{{ 'regulation.detail.vehicles'|trans }}</h3>
         {% if regulationOrderRecord.vehicleCharacteristics %}
             {% set vehicleCharacteristics = regulationOrderRecord.vehicleCharacteristics %}
             <ul class="fr-ml-1w fr-my-0">
                 {% if vehicleCharacteristics.maxWeight %}
-                    <li>{{ 'regulation.step5.vehicles.weight'|trans({ '%weight%': vehicleCharacteristics.maxWeight }) }}</li>
+                    <li>{{ 'regulation.detail.vehicles.weight'|trans({ '%weight%': vehicleCharacteristics.maxWeight }) }}</li>
                 {% endif %}
                 {% if vehicleCharacteristics.maxWidth %}
-                    <li>{{ 'regulation.step5.vehicles.width'|trans({ '%width%': vehicleCharacteristics.maxWidth }) }}</li>
+                    <li>{{ 'regulation.detail.vehicles.width'|trans({ '%width%': vehicleCharacteristics.maxWidth }) }}</li>
                 {% endif %}
                 {% if vehicleCharacteristics.maxHeight %}
-                    <li>{{ 'regulation.step5.vehicles.height'|trans({ '%height%': vehicleCharacteristics.maxHeight }) }}</li>
+                    <li>{{ 'regulation.detail.vehicles.height'|trans({ '%height%': vehicleCharacteristics.maxHeight }) }}</li>
                 {% endif %}
                 {% if vehicleCharacteristics.maxLength %}
-                    <li>{{ 'regulation.step5.vehicles.length'|trans({ '%length%': vehicleCharacteristics.maxLength }) }}</li>
+                    <li>{{ 'regulation.detail.vehicles.length'|trans({ '%length%': vehicleCharacteristics.maxLength }) }}</li>
                 {% endif %}
             </ul>
         {% endif %}

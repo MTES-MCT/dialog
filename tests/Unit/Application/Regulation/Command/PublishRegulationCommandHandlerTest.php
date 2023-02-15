@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation\Command\Steps;
+namespace App\Tests\Domain\Regulation\Command;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep5Command;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep5CommandHandler;
+use App\Application\Regulation\Command\PublishRegulationCommand;
+use App\Application\Regulation\Command\PublishRegulationCommandHandler;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -38,12 +38,12 @@ final class SaveRegulationStep5CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('isSatisfiedBy');
 
-        $handler = new SaveRegulationStep5CommandHandler(
+        $handler = new PublishRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
             $this->canRegulationOrderRecordBePublished,
         );
 
-        $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'draft');
+        $command = new PublishRegulationCommand('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'draft');
         $handler($command);
     }
 
@@ -65,12 +65,12 @@ final class SaveRegulationStep5CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('isSatisfiedBy');
 
-        $handler = new SaveRegulationStep5CommandHandler(
+        $handler = new PublishRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
             $this->canRegulationOrderRecordBePublished,
         );
 
-        $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'draft');
+        $command = new PublishRegulationCommand('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'draft');
         $this->assertEmpty($handler($command));
     }
 
@@ -94,12 +94,12 @@ final class SaveRegulationStep5CommandHandlerTest extends TestCase
             ->with($regulationOrderRecord)
             ->willReturn(true);
 
-        $handler = new SaveRegulationStep5CommandHandler(
+        $handler = new PublishRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
             $this->canRegulationOrderRecordBePublished,
         );
 
-        $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'published');
+        $command = new PublishRegulationCommand('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'published');
         $this->assertEmpty($handler($command));
     }
 
@@ -124,12 +124,12 @@ final class SaveRegulationStep5CommandHandlerTest extends TestCase
             ->with($regulationOrderRecord)
             ->willReturn(false);
 
-        $handler = new SaveRegulationStep5CommandHandler(
+        $handler = new PublishRegulationCommandHandler(
             $this->regulationOrderRecordRepository,
             $this->canRegulationOrderRecordBePublished,
         );
 
-        $command = new SaveRegulationStep5Command('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'published');
+        $command = new PublishRegulationCommand('df4454e1-64e8-46ff-a6c1-7f9c35375802', 'published');
         $handler($command);
     }
 }

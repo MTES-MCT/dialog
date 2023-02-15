@@ -30,6 +30,8 @@ nelmio_security:
         enabled: true
         enforce:
             default-src: ['self']
+            script-src: ['self']
+            style-src: ['self']
             connect-src: ['self']
             font-src: ['self']
             img-src: ['self', 'data:']

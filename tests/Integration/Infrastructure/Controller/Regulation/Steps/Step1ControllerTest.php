@@ -15,7 +15,7 @@ final class Step1ControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Étape 1 sur 5 Restriction', $crawler->filter('h2')->text());
+        $this->assertSame('Étape 1 sur 4 Restriction', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Localisation', $crawler->filter('p.fr-stepper__details')->text());
 
         $saveButton = $crawler->selectButton('Suivant');

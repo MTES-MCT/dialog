@@ -64,7 +64,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn($this->originalRegulationOrder);
     }
 
-    public function testReglementationCannotBeDuplicated(): void
+    public function testRegulationCannotBeDuplicated(): void
     {
         $this->expectException(RegulationCannotBeDuplicated::class);
 

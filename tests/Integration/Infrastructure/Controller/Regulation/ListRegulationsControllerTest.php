@@ -33,7 +33,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $links = $pageOneDraftRow0->eq(3)->filter('a');
         $this->assertSame("Modifier", $links->eq(0)->text());
-        $this->assertSame("http://localhost/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/5", $links->eq(0)->link()->getUri());
+        $this->assertSame("http://localhost/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa", $links->eq(0)->link()->getUri());
 
         $pageTwo = $client->request('GET', '/regulations?page=2&tab=draft&pageSize=1');
         $this->assertResponseStatusCodeSame(200);
@@ -56,12 +56,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('Montauban Avenue de Fonneuve', $pageOnePublishedRow0->eq(0)->text());
         $this->assertSame("depuis le 08/10/2022 permanent", $pageOnePublishedRow0->eq(1)->text());
         $this->assertSame("Réglementation en cours", $pageOnePublishedRow0->eq(2)->text());
-
         $links = $pageOnePublishedRow0->eq(3)->filter('a');
-        $this->assertSame("Modifier", $links->eq(0)->text());
-        $this->assertSame("http://localhost/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/5", $links->eq(0)->link()->getUri());
-        $this->assertSame("Voir le détail", $links->eq(1)->text());
-        $this->assertSame("http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5", $links->eq(1)->link()->getUri());
+
+        $this->assertSame("Voir le détail", $links->eq(0)->text());
+        $this->assertSame("http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5", $links->eq(0)->link()->getUri());
 
         // Test pagination rendering
         $navLi = $pageOne->filter('nav.fr-pagination')->filter('li');
@@ -97,7 +95,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $links = $pageOneDraftRow0->eq(3)->filter('a');
         $this->assertSame("Modifier", $links->eq(0)->text());
-        $this->assertSame("http://localhost/regulations/form/867d2be6-0d80-41b5-b1ff-8452b30a95f5/5", $links->eq(0)->link()->getUri());
+        $this->assertSame("http://localhost/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5", $links->eq(0)->link()->getUri());
     }
 
     public function testInvalidPageSize(): void

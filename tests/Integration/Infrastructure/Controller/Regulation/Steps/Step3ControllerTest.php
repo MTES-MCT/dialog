@@ -15,7 +15,7 @@ final class Step3ControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Étape 3 sur 5 Période', $crawler->filter('h2')->text());
+        $this->assertSame('Étape 3 sur 4 Période', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Véhicules concernés', $crawler->filter('p.fr-stepper__details')->text());
 
         $saveButton = $crawler->selectButton('Suivant');

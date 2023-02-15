@@ -86,6 +86,10 @@
                 <source>common.published</source>
                 <target>Publiée</target>
             </trans-unit>
+            <trans-unit id="common.draft">
+                <source>common.draft</source>
+                <target>Brouillon</target>
+            </trans-unit>
             <trans-unit id="common.accessibilty">
                 <source>common.accessibilty</source>
                 <target>Accessibilité</target>
@@ -242,68 +246,75 @@
                 <source>regulation.step4.max_length</source>
                 <target>Longueur maximum (m)</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.where">
-                <source>regulation.step5.where</source>
+            <trans-unit id="regulation.detail.where">
+                <source>regulation.detail.where</source>
                 <target>Où ?</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.where.city">
-                <source>regulation.step5.where.city</source>
+            <trans-unit id="regulation.detail.where.city">
+                <source>regulation.detail.where.city</source>
                 <target>Ville : %postalCode% %city%</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.where.road_segment">
-                <source>regulation.step5.where.road_segment</source>
+            <trans-unit id="regulation.detail.where.road_segment">
+                <source>regulation.detail.where.road_segment</source>
                 <target>Rue : du %from% au %to%, %roadName%</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.when">
-                <source>regulation.step5.when</source>
+            <trans-unit id="regulation.detail.when">
+                <source>regulation.detail.when</source>
                 <target>Quand ?</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.for_what">
-                <source>regulation.step5.for_what</source>
+            <trans-unit id="regulation.detail.for_what">
+                <source>regulation.detail.for_what</source>
                 <target>Quoi ?</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.for_what.no_entry">
-                <source>regulation.step5.for_what.no_entry</source>
+            <trans-unit id="regulation.detail.for_what.no_entry">
+                <source>regulation.detail.for_what.no_entry</source>
                 <target>Circulation interdite</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.vehicles">
-                <source>regulation.step5.vehicles</source>
+            <trans-unit id="regulation.detail.vehicles">
+                <source>regulation.detail.vehicles</source>
                 <target>Pour quels véhicules ?</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.vehicles.weight">
-                <source>regulation.step5.vehicles.weight</source>
+            <trans-unit id="regulation.detail.vehicles.weight">
+                <source>regulation.detail.vehicles.weight</source>
                 <target>de plus de %weight% tonnes</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.vehicles.width">
-                <source>regulation.step5.vehicles.width</source>
+            <trans-unit id="regulation.detail.vehicles.width">
+                <source>regulation.detail.vehicles.width</source>
                 <target>d'une largeur de plus de %width% mètres</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.vehicles.height">
-                <source>regulation.step5.vehicles.height</source>
+            <trans-unit id="regulation.detail.vehicles.height">
+                <source>regulation.detail.vehicles.height</source>
                 <target>d'une hauteur de plus de %height% mètres</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.vehicles.length">
-                <source>regulation.step5.vehicles.length</source>
+            <trans-unit id="regulation.detail.vehicles.length">
+                <source>regulation.detail.vehicles.length</source>
                 <target>d'une longueur de plus de %length% mètres</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.and_now">
-                <source>regulation.step5.and_now</source>
+            <trans-unit id="regulation.detail.and_now">
+                <source>regulation.detail.and_now</source>
                 <target>Et maintenant ?</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.draft">
-                <source>regulation.step5.draft</source>
+            <trans-unit id="regulation.detail.draft">
+                <source>regulation.detail.draft</source>
                 <target>Sauvegarder le brouillon</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.published">
-                <source>regulation.step5.published</source>
+            <trans-unit id="regulation.detail.published">
+                <source>regulation.detail.published</source>
                 <target>Valider la réglementation</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.published.description">
-                <source>regulation.step5.published.description</source>
+            <trans-unit id="regulation.duplicated.success">
+                <source>regulation.duplicated.success</source>
+                <target>
+                    <![CDATA[<h3 class="fr-alert__title">]]>Copiée avec succès<![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.<![CDATA[</p>]]>
+                </target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.published.description">
+                <source>regulation.detail.published.description</source>
                 <target>La réglementation sera communiquée aux GPS (bientôt).</target>
             </trans-unit>
-            <trans-unit id="regulation.step5.draft.description">
-                <source>regulation.step5.draft.description</source>
+            <trans-unit id="regulation.detail.draft.description">
+                <source>regulation.detail.draft.description</source>
                 <target>La réglementation ne sera pas encore diffusée.</target>
             </trans-unit>
             <trans-unit id="regulation.period">
@@ -336,7 +347,7 @@
             </trans-unit>
             <trans-unit id="regulation.stepper.steps">
                 <source>regulation.stepper.steps</source>
-                <target>Étape %step% sur 5</target>
+                <target>Étape %step% sur 4</target>
             </trans-unit>
             <trans-unit id="regulation.stepper.step1">
                 <source>regulation.stepper.step1</source>
@@ -353,10 +364,6 @@
             <trans-unit id="regulation.stepper.step4">
                 <source>regulation.stepper.step4</source>
                 <target>Véhicules concernés</target>
-            </trans-unit>
-            <trans-unit id="regulation.stepper.step5">
-                <source>regulation.stepper.step5</source>
-                <target>Récapitulatif</target>
             </trans-unit>
             <trans-unit id="regulation.stepper.next">
                 <source>regulation.stepper.next</source>
@@ -479,23 +486,7 @@
             </trans-unit>
             <trans-unit id="regulation.detail.title">
                 <source>regulation.detail.title</source>
-                <target>Réglementation - %city%</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.datex">
-                <source>regulation.detail.datex</source>
-                <target>Format DATEX II</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.export">
-                <source>regulation.detail.export</source>
-                <target>Exporter</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.share">
-                <source>regulation.detail.share</source>
-                <target>Partager</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.copy">
-                <source>regulation.detail.copy</source>
-                <target>Copier le lien de partage</target>
+                <target>Réglementation - %roadName%</target>
             </trans-unit>
             <trans-unit id="regulation.detail.see_all">
                 <source>regulation.detail.see_all</source>

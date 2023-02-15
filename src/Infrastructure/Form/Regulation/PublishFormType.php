@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-final class Step5FormType extends AbstractType
+final class PublishFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -19,8 +19,8 @@ final class Step5FormType extends AbstractType
                 ChoiceType::class,
                 options: [
                     'choices' => [
-                        'regulation.step5.draft' => 'draft',
-                        'regulation.step5.published' => 'published',
+                        'regulation.detail.draft' => 'draft',
+                        'regulation.detail.published' => 'published',
                     ],
                     'expanded' => true,
                 ],

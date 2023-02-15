@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Form\Regulation;
+namespace App\Infrastructure\Form\Regulation\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use Symfony\Component\Form\AbstractType;

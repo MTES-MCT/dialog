@@ -9,7 +9,7 @@ use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationCondition
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\Form\Regulation\Step3FormType;
+use App\Infrastructure\Form\Regulation\Steps\Step3FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -33,6 +33,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
         $regulationOrderRecord = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             'status' => 'draft',
             'description' => 'Description 1',
             'startPeriod' => $startPeriod,
@@ -59,6 +60,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $this->assertEquals(
             new RegulationOrderRecordSummaryView(
                 '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 'draft',
                 'Description 1',
                 new PeriodView($startPeriod, $endPeriod),
@@ -81,6 +83,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
         $regulationOrderRecord = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             'status' => 'draft',
             'description' => 'Description 1',
             'startPeriod' => null,
@@ -107,6 +110,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $this->assertEquals(
             new RegulationOrderRecordSummaryView(
                 '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 'draft',
                 'Description 1',
                 null,

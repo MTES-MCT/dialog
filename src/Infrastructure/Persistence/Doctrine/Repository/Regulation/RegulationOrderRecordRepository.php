@@ -72,6 +72,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select(
                 'roc.uuid',
+                'org.uuid as organizationUuid',
                 'roc.status',
                 'ro.description',
                 'o.startPeriod',
@@ -88,6 +89,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             )
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
+            ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.regulationCondition', 'rc')
             ->leftJoin('rc.vehicleCharacteristics', 'vc')
