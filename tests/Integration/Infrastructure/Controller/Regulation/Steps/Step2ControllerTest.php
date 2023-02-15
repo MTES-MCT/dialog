@@ -33,7 +33,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Étape 2 sur 5 Localisation', $crawler->filter('h2')->text());
+        $this->assertSame('Étape 2 sur 4 Localisation', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Période', $crawler->filter('p.fr-stepper__details')->text());
 
         $saveButton = $crawler->selectButton('Suivant');

@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\Form\Regulation\Step1FormType;
+use App\Infrastructure\Form\Regulation\Steps\Step1FormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;

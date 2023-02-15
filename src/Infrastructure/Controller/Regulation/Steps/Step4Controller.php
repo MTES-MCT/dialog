@@ -9,7 +9,7 @@ use App\Application\Condition\Query\VehicleCharacteristics\GetVehicleCharacteris
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\Form\Regulation\Step4FormType;
+use App\Infrastructure\Form\Regulation\Steps\Step4FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +50,7 @@ final class Step4Controller extends AbstractRegulationController
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_regulations_steps_5', ['uuid' => $uuid]),
+                url: $this->router->generate('app_regulation_detail', ['uuid' => $uuid]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

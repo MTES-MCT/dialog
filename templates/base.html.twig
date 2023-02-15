@@ -24,15 +24,15 @@
   <body>
     {% include 'common/header.html.twig' %}
 
-    <div class="fr-container">
-        {% for label, messages in app.flashes(['warning', 'error']) %}
-            {% for message in messages %}
-                <div class="fr-alert fr-alert--{{ label }}">
-                    <h3 class="fr-alert__title">{{ message }}</h3>
-                </div>
-            {% endfor %}
+    {% for label, messages in app.flashes %}
+        {% if loop.first %}<div class="fr-container fr-mt-4w">{% endif %}
+        {% for message in messages %}
+            <div class="fr-alert fr-alert--{{ label }}">
+                {{ message|raw }}
+            </div>
         {% endfor %}
-    </div>
+    {% if loop.last %}</div>{% endif %}
+    {% endfor %}
 
     <main id="contenu">
         {% block body %}{% endblock %}
