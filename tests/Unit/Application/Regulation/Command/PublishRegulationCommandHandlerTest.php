@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation\Command;
+namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Application\Regulation\Command\PublishRegulationCommandHandler;
@@ -13,7 +13,7 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use PHPUnit\Framework\TestCase;
 
-final class SaveRegulationStep5CommandHandlerTest extends TestCase
+final class PublishRegulationCommandHandlerTest extends TestCase
 {
     private $canRegulationOrderRecordBePublished;
     private $regulationOrderRecordRepository;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation\Command\Steps;
+namespace App\Tests\Unit\Application\Regulation\Command\Steps;
 
 use App\Application\GeocoderInterface;
 use App\Domain\Geography\GeometryFormatter;
@@ -154,7 +154,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
                 'POINT(-1.935836 47.347024)',
                 'POINT(-1.930973 47.347917)',
             );
-    
+
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::never())
@@ -236,7 +236,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
         $geometryFormatter = $this->createMock(GeometryFormatter::class);
         $geometryFormatter
             ->expects(self::never())
-            ->method('formatPoint');    
+            ->method('formatPoint');
 
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository

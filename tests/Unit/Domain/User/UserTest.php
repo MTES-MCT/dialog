@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\User;
+namespace App\Tests\Unit\Domain\User;
 
 use App\Domain\User\Organization;
 use App\Domain\User\User;

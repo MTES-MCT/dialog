@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation\Specification;
+namespace App\Tests\Unit\Domain\Regulation\Specification;
 
 use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
 use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;

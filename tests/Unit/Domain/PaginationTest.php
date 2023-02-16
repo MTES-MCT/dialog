@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain;
+namespace App\Tests\Unit\Domain;
 
 use App\Domain\Pagination;
 use PHPUnit\Framework\TestCase;

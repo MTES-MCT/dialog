@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Condition;
+namespace App\Tests\Unit\Domain\Condition;
 
 use App\Domain\Condition\Enum\VehicleCritairEnum;
 use App\Domain\Condition\Enum\VehicleTypeEnum;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Geography;
+namespace App\Tests\Unit\Domain\Geography;
 
 use App\Domain\Geography\GeometryFormatter;
 use PHPUnit\Framework\TestCase;
