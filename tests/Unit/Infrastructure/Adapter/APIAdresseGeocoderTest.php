@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Infrastructure\Adapter;
+namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Infrastructure\Adapter\APIAdresseGeocoder;

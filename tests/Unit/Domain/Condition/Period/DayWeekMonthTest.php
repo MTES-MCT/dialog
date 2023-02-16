@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Condition\Period;
+namespace App\Tests\Unit\Domain\Condition\Period;
 
 use App\Domain\Condition\Period\DayWeekMonth;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;

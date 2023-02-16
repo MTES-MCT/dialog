@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation\Command;
+namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\Regulation\Command\DeleteRegulationCommandHandler;
 use App\Application\Regulation\Command\DeleteRegulationCommand;

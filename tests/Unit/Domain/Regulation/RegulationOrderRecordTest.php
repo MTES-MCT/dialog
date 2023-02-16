@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation;
+namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
