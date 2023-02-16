@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Geography;
+namespace App\Tests\Unit\Domain\Geography;
 
 use PHPUnit\Framework\TestCase;
 use App\Domain\Geography\Coordinates;

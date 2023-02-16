@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Domain\Regulation\Command\Steps;
+namespace App\Tests\Unit\Application\Regulation\Command\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Domain\Condition\Period\OverallPeriod;
