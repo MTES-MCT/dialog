@@ -8,7 +8,7 @@ use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandle
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
-use App\Application\Regulation\View\RegulationOrderListForDatexFormatView;
+use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -88,14 +88,14 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
         $this->assertEquals(
             [
-                new RegulationOrderListForDatexFormatView(
+                new RegulationOrderDatexListItemView(
                     uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     issuingAuthority: 'Autorité 1',
                     description: 'Description 1',
                     period: new PeriodView($startPeriod1, $endPeriod1),
                     location: $location1,
                 ),
-                new RegulationOrderListForDatexFormatView(
+                new RegulationOrderDatexListItemView(
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     issuingAuthority: 'Autorité 2',
                     description: 'Description 2',
