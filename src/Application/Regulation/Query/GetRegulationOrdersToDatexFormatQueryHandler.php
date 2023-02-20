@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
-use App\Application\Regulation\View\RegulationOrderListForDatexFormatView;
+use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
@@ -22,7 +22,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
         $regulationOrderViews = [];
 
         foreach ($regulationOrders as $regulationOrder) {
-            $regulationOrderViews[] = new RegulationOrderListForDatexFormatView(
+            $regulationOrderViews[] = new RegulationOrderDatexListItemView(
                 $regulationOrder['uuid'],
                 $regulationOrder['issuingAuthority'],
                 $regulationOrder['description'],
