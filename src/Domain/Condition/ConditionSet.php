@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition;
 
-use App\Domain\Condition\Enum\OperatorEnum;
-
 class ConditionSet
 {
     /** @var RegulationCondition[] */
@@ -13,7 +11,7 @@ class ConditionSet
 
     public function __construct(
         private string $uuid,
-        private OperatorEnum $operator,
+        private string $operator,
         private RegulationCondition $regulationCondition,
     ) {
     }
@@ -23,7 +21,7 @@ class ConditionSet
         return $this->uuid;
     }
 
-    public function getOperator(): OperatorEnum
+    public function getOperator(): string
     {
         return $this->operator;
     }

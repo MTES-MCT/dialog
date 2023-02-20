@@ -6,7 +6,7 @@ namespace App\Domain\Condition\Enum;
 
 enum OperatorEnum: string
 {
-    case AND = 'and';
-    case OR = 'or';
-    case XOR = 'xor';
+    public const AND = 'and';
+    public const OR = 'or';
+    public const XOR = 'xor';
 }
