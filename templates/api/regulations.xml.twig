@@ -106,25 +106,25 @@
                             <vehicleCharacteristics>
                                 {% if vehicleCharacteristics.maxLength %}
                                     <com:lengthCharacteristic>
-                                        <com:comparisonOperator>moreThan</com:comparisonOperator>
+                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
                                         <com:vehicleLength>{{ vehicleCharacteristics.maxLength }}</com:vehicleLength>
                                     </com:lengthCharacteristic>
                                 {% endif %}
                                 {% if vehicleCharacteristics.maxHeight %}
                                     <com:heightCharacteristic>
-                                        <com:comparisonOperator>moreThan</com:comparisonOperator>
+                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
                                         <com:vehicleHeight>{{ vehicleCharacteristics.maxHeight }}</com:vehicleHeight>
                                     </com:heightCharacteristic>
                                 {% endif %}
                                 {% if vehicleCharacteristics.maxWidth %}
                                     <com:widthCharacteristic>
-                                        <com:comparisonOperator>moreThan</com:comparisonOperator>
+                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
                                         <com:vehicleWidth>{{ vehicleCharacteristics.maxWidth }}</com:vehicleWidth>
                                     </com:widthCharacteristic>
                                 {% endif %}
                                 {% if vehicleCharacteristics.maxWeight %}
                                     <com:grossWeightCharacteristic>
-                                        <com:comparisonOperator>moreThan</com:comparisonOperator>
+                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
                                         <com:grossVehicleWeight>{{ vehicleCharacteristics.maxLength }}</com:grossVehicleWeight>
                                     </com:grossWeightCharacteristic>
                                 {% endif %}
