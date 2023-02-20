@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\GeometryFormatter;
 

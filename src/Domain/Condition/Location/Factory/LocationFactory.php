@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Condition\Factory;
+namespace App\Domain\Condition\Location\Factory;
 
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\RegulationCondition;
 
 class LocationFactory

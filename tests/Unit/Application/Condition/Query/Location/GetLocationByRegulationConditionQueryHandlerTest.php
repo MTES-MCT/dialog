@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Application\Condition\Query\Location;
 
 use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
 use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQueryHandler;
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 

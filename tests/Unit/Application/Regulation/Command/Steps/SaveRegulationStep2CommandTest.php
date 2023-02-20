@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command\Steps;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;
 

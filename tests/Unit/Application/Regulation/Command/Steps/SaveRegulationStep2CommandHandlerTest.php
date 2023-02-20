@@ -9,7 +9,7 @@ use App\Domain\Geography\GeometryFormatter;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;

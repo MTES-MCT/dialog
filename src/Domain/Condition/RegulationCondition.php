@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition;
 
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Regulation\RegulationOrder;
 

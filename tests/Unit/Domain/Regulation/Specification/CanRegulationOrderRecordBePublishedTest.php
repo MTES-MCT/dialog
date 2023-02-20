@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Domain\Regulation\Specification;
 use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
 use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
 use App\Application\QueryBusInterface;
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Regulation\RegulationOrder;

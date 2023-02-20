@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Condition\Query\Location;
 
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;
 
 final class GetLocationByRegulationConditionQueryHandler

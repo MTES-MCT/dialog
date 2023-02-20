@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Condition;
+namespace App\Domain\Condition\Location;
+
+use App\Domain\Condition\RegulationCondition;
 
 class Location
 {
+    private ?SupplementaryPositionalDescription $supplementaryPositionalDescription = null;
+
     public function __construct(
         private string $uuid,
         private RegulationCondition $regulationCondition,
@@ -27,6 +31,11 @@ class Location
     public function getRegulationCondition(): RegulationCondition
     {
         return $this->regulationCondition;
+    }
+
+    public function getSupplementaryPositionalDescription(): ?SupplementaryPositionalDescription
+    {
+        return $this->supplementaryPositionalDescription;
     }
 
     public function getPostalCode(): string

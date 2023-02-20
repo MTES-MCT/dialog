@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Condition;
+namespace App\Tests\Unit\Domain\Condition\Location;
 
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\RegulationCondition;
 use PHPUnit\Framework\TestCase;
 
@@ -34,6 +34,7 @@ final class LocationTest extends TestCase
         $this->assertSame('POINT(-1.935836 47.347024)', $location->getFromPoint());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame('POINT(-1.930973 47.347917)', $location->getToPoint());
+        $this->assertSame(null, $location->getSupplementaryPositionalDescription()); // Automatically set by Doctrine
     }
 
     public function testUpdate(): void

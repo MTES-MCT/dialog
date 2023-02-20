@@ -15,7 +15,7 @@ use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
-use App\Domain\Condition\Location;
+use App\Domain\Condition\Location\Location;
 use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\Repository\LocationRepositoryInterface;

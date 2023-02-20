@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Condition\Location\RoadInformation"
+    table="road_information">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="roadNumber" type="string" column="road_number" nullable="true" length="60" />
+    <field name="roadDestination" type="string" column="road_destination" nullable="true" length="60" />
+    <field name="roadName" type="string" column="road_name" nullable="true" length="60" />
+    <many-to-one field="supplementaryPositionalDescription" target-entity="App\Domain\Condition\Location\SupplementaryPositionalDescription" fetch="LAZY" inversed-by="roadInformations">
+        <join-columns>
+            <join-column name="supplementary_positional_description_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+        </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
