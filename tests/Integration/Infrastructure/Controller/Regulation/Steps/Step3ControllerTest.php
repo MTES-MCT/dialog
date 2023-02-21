@@ -21,7 +21,9 @@ final class Step3ControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step3_form[startDate]"] = "2022-12-07";
+        $form["step3_form[startTime]"] = "09:00";
         $form["step3_form[endDate]"] = "2022-12-17";
+        $form["step3_form[endTime]"] = "06:00";
 
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);

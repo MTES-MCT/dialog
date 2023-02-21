@@ -42,7 +42,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $startDate1 = new \DateTime('2022-12-07');
+        $startTime1 = new \DateTime('22:00');
         $endDate1 = new \DateTime('2022-12-17');
+        $endTime1 = new \DateTime('06:00');
         $startDate2 = new \DateTime('2022-12-10');
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
@@ -51,9 +53,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'issuingAuthority' => 'Autorité 1',
             'description' => 'Description 1',
             'startDate' => $startDate1,
-            'startTime' => null,
+            'startTime' => $startTime1,
             'endDate' => $endDate1,
-            'endTime' => null,
+            'endTime' => $endTime1,
             'postalCode' => $location1->postalCode,
             'city' => $location1->city,
             'roadName' => $location1->roadName,
@@ -105,7 +107,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     issuingAuthority: 'Autorité 1',
                     description: 'Description 1',
-                    period: new PeriodView($startDate1, null, $endDate1, null),
+                    period: new PeriodView($startDate1, $startTime1, $endDate1, $endTime1),
                     location: $location1,
                     vehicleCharacteristics: new VehicleCharacteristicsView(3.5, 3, 2, 10),
                 ),
