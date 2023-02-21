@@ -17,6 +17,10 @@ final class LandingControllerTest extends AbstractWebTestCase
         $enterLink = $crawler->filter('[data-testid="enter-link"]');
         $this->assertSame('Se connecter', $enterLink->text());
         $this->assertSame('/login', $enterLink->attr('href'));
+
+        $contactLink = $crawler->filter('[data-testid="contact-link"]');
+        $this->assertSame('Nous contacter', $contactLink->text());
+        $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
     }
 
     public function testLandingWithLoggedUser(): void
