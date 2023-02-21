@@ -41,17 +41,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             toLongitude :'-1.930973',
         );
 
-        $startPeriod1 = new \DateTime('2022-12-07');
-        $endPeriod1 = new \DateTime('2022-12-17');
-        $startPeriod2 = new \DateTime('2022-12-10');
+        $startDate1 = new \DateTime('2022-12-07');
+        $endDate1 = new \DateTime('2022-12-17');
+        $startDate2 = new \DateTime('2022-12-10');
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'issuingAuthority' => 'Autorité 1',
             'description' => 'Description 1',
-            'startPeriod' => $startPeriod1,
-            'endPeriod' => $endPeriod1,
+            'startDate' => $startDate1,
+            'startTime' => null,
+            'endDate' => $endDate1,
+            'endTime' => null,
             'postalCode' => $location1->postalCode,
             'city' => $location1->city,
             'roadName' => $location1->roadName,
@@ -70,8 +72,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
             'issuingAuthority' => 'Autorité 2',
             'description' => 'Description 2',
-            'startPeriod' => $startPeriod2,
-            'endPeriod' => null,
+            'startDate' => $startDate2,
+            'startTime' => null,
+            'endDate' => null,
+            'endTime' => null,
             'postalCode' => $location2->postalCode,
             'city' => $location2->city,
             'roadName' => $location2->roadName,
@@ -101,7 +105,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     issuingAuthority: 'Autorité 1',
                     description: 'Description 1',
-                    period: new PeriodView($startPeriod1, $endPeriod1),
+                    period: new PeriodView($startDate1, null, $endDate1, null),
                     location: $location1,
                     vehicleCharacteristics: new VehicleCharacteristicsView(3.5, 3, 2, 10),
                 ),
@@ -109,7 +113,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     issuingAuthority: 'Autorité 2',
                     description: 'Description 2',
-                    period: new PeriodView($startPeriod2),
+                    period: new PeriodView($startDate2, null, null, null),
                     location: $location2,
                     vehicleCharacteristics: null,
                 ),

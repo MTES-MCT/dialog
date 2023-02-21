@@ -33,8 +33,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 $regulationOrder['issuingAuthority'],
                 $regulationOrder['description'],
                 new PeriodView(
-                    $regulationOrder['startPeriod'],
-                    $regulationOrder['endPeriod'],
+                    $regulationOrder['startDate'],
+                    $regulationOrder['startTime'],
+                    $regulationOrder['endDate'],
+                    $regulationOrder['endTime'],
                 ),
                 new DatexLocationView(
                     postalCode: $regulationOrder['postalCode'],

@@ -13,7 +13,7 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
-                {% set isPresent = regulation.period ? "now"|date('U') >= regulation.period.startPeriod|date('U') : null %}
+                {% set isPresent = regulation.period ? "now"|date('U') >= regulation.period.startDate|date('U') : null %}
                 <tr>
                     <td>
                         {% if regulation.location %}
@@ -23,18 +23,18 @@
                     </td>
                     <td>
                         {% if regulation.period %}
-                            {% set startPeriod = regulation.period.startPeriod %}
-                            {% set endPeriod = regulation.period.endPeriod %}
-                            {% if startPeriod and endPeriod %}
+                            {% set startDate = regulation.period.startDate %}
+                            {% set endDate = regulation.period.endDate %}
+                            {% if startDate and endDate %}
                                 <b>
-                                    {{ 'regulation.period.temporary'|trans({ '%startPeriod%': startPeriod|date('d/m/Y'), '%endPeriod%': endPeriod|date('d/m/Y') })}}
+                                    {{ 'regulation.period.temporary'|trans({ '%startDate%': startDate|date('d/m/Y'), '%endDate%': endDate|date('d/m/Y') })}}
                                 </b>
                             {% else %}
                                 <b>
                                     {% if isPresent %}
-                                        {{ 'regulation.period.permanent.present'|trans({ '%date%': startPeriod|date('d/m/Y')  })}}
+                                        {{ 'regulation.period.permanent.present'|trans({ '%date%': startDate|date('d/m/Y')  })}}
                                     {% else %}
-                                        {{ 'regulation.period.permanent.future'|trans({ '%date%': startPeriod|date('d/m/Y') })}}
+                                        {{ 'regulation.period.permanent.future'|trans({ '%date%': startDate|date('d/m/Y') })}}
                                     {% endif %}
                                 </b>
                                 <br/>

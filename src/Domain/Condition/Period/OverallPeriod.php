@@ -17,8 +17,10 @@ class OverallPeriod
     public function __construct(
         private string $uuid,
         private RegulationCondition $regulationCondition,
-        private \DateTimeInterface $startPeriod,
-        private ?\DateTimeInterface $endPeriod = null,
+        private \DateTimeInterface $startDate,
+        private ?\DateTimeInterface $startTime = null,
+        private ?\DateTimeInterface $endDate = null,
+        private ?\DateTimeInterface $endTime = null,
     ) {
     }
 
@@ -27,14 +29,24 @@ class OverallPeriod
         return $this->uuid;
     }
 
-    public function getStartPeriod(): \DateTimeInterface
+    public function getStartDate(): \DateTimeInterface
     {
-        return $this->startPeriod;
+        return $this->startDate;
     }
 
-    public function getEndPeriod(): ?\DateTimeInterface
+    public function getStartTime(): ?\DateTimeInterface
     {
-        return $this->endPeriod;
+        return $this->startTime;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function getEndTime(): ?\DateTimeInterface
+    {
+        return $this->endTime;
     }
 
     public function addValidPeriod(Period $period): void
@@ -71,10 +83,14 @@ class OverallPeriod
     }
 
     public function update(
-        \DateTimeInterface $startPeriod,
-        ?\DateTimeInterface $endPeriod,
+        \DateTimeInterface $startDate,
+        ?\DateTimeInterface $startTime,
+        ?\DateTimeInterface $endDate,
+        ?\DateTimeInterface $endTime,
     ): void {
-        $this->startPeriod = $startPeriod;
-        $this->endPeriod = $endPeriod;
+        $this->startDate = $startDate;
+        $this->startTime = $startTime;
+        $this->endDate = $endDate;
+        $this->endTime = $endTime;
     }
 }

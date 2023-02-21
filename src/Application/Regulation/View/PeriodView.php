@@ -7,8 +7,10 @@ namespace App\Application\Regulation\View;
 class PeriodView
 {
     public function __construct(
-        public readonly \DateTimeInterface $startPeriod,
-        public readonly ?\DateTimeInterface $endPeriod = null,
+        public readonly \DateTimeInterface $startDate,
+        public readonly ?\DateTimeInterface $startTime = null,
+        public readonly ?\DateTimeInterface $endDate = null,
+        public readonly ?\DateTimeInterface $endTime = null,
     ) {
     }
 }

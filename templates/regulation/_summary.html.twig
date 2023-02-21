@@ -48,17 +48,17 @@
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.detail.when'|trans }}</h3>
         {% if regulationOrderRecord.period %}
-            {% set startPeriod = regulationOrderRecord.period.startPeriod %}
-            {% set endPeriod = regulationOrderRecord.period.endPeriod %}
+            {% set startDate = regulationOrderRecord.period.startDate %}
+            {% set endDate = regulationOrderRecord.period.endDate %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>
-                    {% if startPeriod and endPeriod %}
+                    {% if startDate and endDate %}
                         {{ 'regulation.period.temporary'|trans({
-                            '%startPeriod%': startPeriod|date('d/m/Y'),
-                            '%endPeriod%': endPeriod|date('d/m/Y')
+                            '%startDate%': startDate|date('d/m/Y'),
+                            '%endDate%': endDate|date('d/m/Y')
                         }) }}
                     {% else %}
-                        {{ 'regulation.period.permanent.future'|trans({'%date%': startPeriod|date('d/m/Y') }) }}
+                        {{ 'regulation.period.permanent.future'|trans({'%date%': startDate|date('d/m/Y') }) }}
                     {% endif %}
                 </li>
             </ul>

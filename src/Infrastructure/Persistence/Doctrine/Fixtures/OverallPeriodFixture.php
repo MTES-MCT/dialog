@@ -16,14 +16,16 @@ final class OverallPeriodFixture extends Fixture implements DependentFixtureInte
         $overallPeriod = new OverallPeriod(
             'bc8739de-968a-4b76-9874-b61ca474c892',
             $this->getReference('regulationCondition1'),
-            new \DateTime('2022-12-08'),
-            new \DateTime('2022-12-18'),
+            startDate: new \DateTime('2022-12-08'),
+            startTime: new \DateTimeImmutable('08:00:00'),
+            endDate: new \DateTime('2022-12-18 00:00:00'),
+            endTime: new \DateTimeImmutable('16:00:00'),
         );
 
         $overallPeriod2 = new OverallPeriod(
             '66a52b5d-71a8-4a09-abda-fca30ddce7b1',
             $this->getReference('regulationCondition2'),
-            new \DateTime('2022-10-08'),
+            startDate: new \DateTime('2022-10-08'),
         );
 
         $manager->persist($overallPeriod);
