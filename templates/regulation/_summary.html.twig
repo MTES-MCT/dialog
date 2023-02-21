@@ -49,16 +49,18 @@
         <h3 class="summary-card__title">{{ 'regulation.detail.when'|trans }}</h3>
         {% if regulationOrderRecord.period %}
             {% set startDate = regulationOrderRecord.period.startDate %}
+            {% set startTime = regulationOrderRecord.period.startTime %}
             {% set endDate = regulationOrderRecord.period.endDate %}
+            {% set endTime = regulationOrderRecord.period.endTime %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>
                     {% if startDate and endDate %}
-                        {{ 'regulation.period.temporary'|trans({
-                            '%startDate%': startDate|date('d/m/Y'),
-                            '%endDate%': endDate|date('d/m/Y')
-                        }) }}
+                        {{ 'common.date.from'|trans({ '%date%': startDate|date('d/m/Y') }) }}
+                        {% if startTime %}{{ 'common.time'|trans({ '%time%': startTime|date('H\\hi') }) }}{% endif %}
+                        {{ 'common.date.to'|trans({ '%date%': endDate|date('d/m/Y') }) }}
+                        {% if endTime %}{{ 'common.time'|trans({ '%time%': endTime|date('H\\hi') }) }}{% endif %}
                     {% else %}
-                        {{ 'regulation.period.permanent.future'|trans({'%date%': startDate|date('d/m/Y') }) }}
+                        {{ 'common.date.starting'|trans({'%date%': startDate|date('d/m/Y') }) }}
                     {% endif %}
                 </li>
             </ul>

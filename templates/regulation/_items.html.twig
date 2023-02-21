@@ -24,18 +24,24 @@
                     <td>
                         {% if regulation.period %}
                             {% set startDate = regulation.period.startDate %}
+                            {% set startTime = regulation.period.startTime %}
                             {% set endDate = regulation.period.endDate %}
+                            {% set endTime = regulation.period.endTime %}
                             {% if startDate and endDate %}
                                 <b>
-                                    {{ 'regulation.period.temporary'|trans({ '%startDate%': startDate|date('d/m/Y'), '%endDate%': endDate|date('d/m/Y') })}}
+                                {{ 'common.date.from'|trans({ '%date%': startDate|date('d/m/Y') }) }}
+                                {% if startTime %}{{ 'common.time'|trans({ '%time%': startTime|date('H\\hi') }) }}{% endif %}
+                                {{ 'common.date.to'|trans({ '%date%': endDate|date('d/m/Y') }) }}
+                                {% if endTime %}{{ 'common.time'|trans({ '%time%': endTime|date('H\\hi') }) }}{% endif %}
                                 </b>
                             {% else %}
                                 <b>
                                     {% if isPresent %}
-                                        {{ 'regulation.period.permanent.present'|trans({ '%date%': startDate|date('d/m/Y')  })}}
+                                        {{ 'common.date.since'|trans({ '%date%': startDate|date('d/m/Y')  })}}
                                     {% else %}
-                                        {{ 'regulation.period.permanent.future'|trans({ '%date%': startDate|date('d/m/Y') })}}
+                                        {{ 'common.date.starting'|trans({'%date%': startDate|date('d/m/Y') }) }}
                                     {% endif %}
+                                    {% if startTime %}{{ 'common.time'|trans({ '%time%': startTime|date('H\\hi') }) }}{% endif %}
                                 </b>
                                 <br/>
                                 <em>{{ 'common.permanent'|trans}}</em>

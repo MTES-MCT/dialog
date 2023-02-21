@@ -110,6 +110,26 @@
                 <source>common.form.next</source>
                 <target>Suivant</target>
             </trans-unit>
+            <trans-unit id="common.time">
+                <source>common.time</source>
+                <target>à %time%</target>
+            </trans-unit>
+            <trans-unit id="common.date.from">
+                <source>common.date.from</source>
+                <target>du %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.to">
+                <source>common.date.to</source>
+                <target>au %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.since">
+                <source>common.date.since</source>
+                <target>depuis le %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.starting">
+                <source>common.date.starting</source>
+                <target>à partir du %date%</target>
+            </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
                 <target>Réglementations</target>
@@ -333,14 +353,6 @@
                 <source>regulation.period</source>
                 <target>Période</target>
             </trans-unit>
-            <trans-unit id="regulation.period.temporary">
-                <source>regulation.period.temporary</source>
-                <target>du %startDate% au %endDate%</target>
-            </trans-unit>
-            <trans-unit id="regulation.period.permanent.present">
-                <source>regulation.period.permanent.present</source>
-                <target>depuis le %date%</target>
-            </trans-unit>
             <trans-unit id="regulation.present">
                 <source>regulation.present</source>
                 <target>Réglementation en cours</target>
@@ -352,10 +364,6 @@
             <trans-unit id="regulation.future">
                 <source>regulation.future</source>
                 <target>Réglementation à venir</target>
-            </trans-unit>
-            <trans-unit id="regulation.period.permanent.future">
-                <source>regulation.period.permanent.future</source>
-                <target>à partir du %date%</target>
             </trans-unit>
             <trans-unit id="regulation.stepper.steps">
                 <source>regulation.stepper.steps</source>

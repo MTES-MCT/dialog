@@ -34,6 +34,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('rc.overallPeriod', 'o')
             ->leftJoin('rc.location', 'l')
             ->orderBy('o.startDate', 'DESC')
+            ->orderBy('o.startTime', 'DESC')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
             ->getQuery()
