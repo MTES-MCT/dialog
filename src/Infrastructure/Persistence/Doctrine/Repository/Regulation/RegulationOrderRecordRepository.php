@@ -114,6 +114,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.city',
                 'loc.roadName',
                 'loc.fromHouseNumber',
+                'vc.maxWeight',
+                'vc.maxHeight',
+                'vc.maxWidth',
+                'vc.maxLength',
                 'ST_X(loc.fromPoint) as fromLongitude',
                 'ST_Y(loc.fromPoint) as fromLatitude',
                 'loc.toHouseNumber',
@@ -124,6 +128,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('ro.regulationCondition', 'rc')
             ->innerJoin('rc.overallPeriod', 'o')
             ->innerJoin('rc.location', 'loc')
+            ->leftJoin('rc.vehicleCharacteristics', 'vc')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setMaxResults(20)
