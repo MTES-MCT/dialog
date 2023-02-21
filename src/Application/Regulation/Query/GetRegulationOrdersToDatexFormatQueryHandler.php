@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Query;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
@@ -22,6 +23,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
         $regulationOrderViews = [];
 
         foreach ($regulationOrders as $regulationOrder) {
+            $hasVehicleCharacteristics = $regulationOrder['maxWeight']
+                || $regulationOrder['maxHeight']
+                || $regulationOrder['maxLength']
+                || $regulationOrder['maxWidth'];
+
             $regulationOrderViews[] = new RegulationOrderDatexListItemView(
                 $regulationOrder['uuid'],
                 $regulationOrder['issuingAuthority'],
@@ -41,6 +47,12 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     toLongitude: $regulationOrder['toLongitude'],
                     toLatitude: $regulationOrder['toLatitude'],
                 ),
+                $hasVehicleCharacteristics ? new VehicleCharacteristicsView(
+                    $regulationOrder['maxWeight'],
+                    $regulationOrder['maxHeight'],
+                    $regulationOrder['maxWidth'],
+                    $regulationOrder['maxLength'],
+                ) : null,
             );
         }
 
