@@ -95,7 +95,7 @@
                             </com:widthCharacteristic>
                             <com:grossWeightCharacteristic>
                                 <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
-                                <com:grossVehicleWeight>6</com:grossVehicleWeight>
+                                <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
                             </com:grossWeightCharacteristic>
                         </vehicleCharacteristics>
                     </conditions>
