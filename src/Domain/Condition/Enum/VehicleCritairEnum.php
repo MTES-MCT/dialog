@@ -6,11 +6,11 @@ namespace App\Domain\Condition\Enum;
 
 enum VehicleCritairEnum: string
 {
-    case V1 = 'V1';
-    case V2 = 'V2';
-    case V3 = 'V3';
-    case V4 = 'V4';
-    case V5 = 'V5';
-    case EC = 'EC';
-    case EL = 'EL';
+    public const V1 = 'V1';
+    public const V2 = 'V2';
+    public const V3 = 'V3';
+    public const V4 = 'V4';
+    public const V5 = 'V5';
+    public const EC = 'EC';
+    public const EL = 'EL';
 }

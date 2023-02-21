@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition;
 
-use App\Domain\Condition\Enum\VehicleCritairEnum;
-use App\Domain\Condition\Enum\VehicleTypeEnum;
-use App\Domain\Condition\Enum\VehicleUsageEnum;
-
 class VehicleCharacteristics
 {
     public function __construct(
         private string $uuid,
         private RegulationCondition $regulationCondition,
-        private ?VehicleUsageEnum $vehicleUsage = null,
-        private ?VehicleTypeEnum $vehicleType = null,
-        private ?VehicleCritairEnum $vehicleCritair = null,
+        private ?string $vehicleUsage = null,
+        private ?string $vehicleType = null,
+        private ?string $vehicleCritair = null,
         private ?float $maxWeight = null,
         private ?float $maxHeight = null,
         private ?float $maxWidth = null,
@@ -53,17 +49,17 @@ class VehicleCharacteristics
         return $this->maxLength;
     }
 
-    public function getVehicleCritair(): ?VehicleCritairEnum
+    public function getVehicleCritair(): ?string
     {
         return $this->vehicleCritair;
     }
 
-    public function getVehicleUsage(): ?VehicleUsageEnum
+    public function getVehicleUsage(): ?string
     {
         return $this->vehicleUsage;
     }
 
-    public function getVehicleType(): ?VehicleTypeEnum
+    public function getVehicleType(): ?string
     {
         return $this->vehicleType;
     }

@@ -78,6 +78,27 @@
                             </loc:linearWithinLinearElement>
                         </locationByOrder>
                     </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:lengthCharacteristic>
+                                <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleLength>6</com:vehicleLength>
+                            </com:lengthCharacteristic>
+                                <com:heightCharacteristic>
+                                <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleHeight>1.8</com:vehicleHeight>
+                            </com:heightCharacteristic>
+                            <com:widthCharacteristic>
+                                <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleWidth>2</com:vehicleWidth>
+                            </com:widthCharacteristic>
+                            <com:grossWeightCharacteristic>
+                                <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
+                                <com:grossVehicleWeight>6</com:grossVehicleWeight>
+                            </com:grossWeightCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>

@@ -12,6 +12,7 @@ final class RegulationOrderDatexListItemView
         public readonly string $description,
         public readonly PeriodView $period,
         public readonly ?DatexLocationView $location,
+        public readonly ?VehicleCharacteristicsView $vehicleCharacteristics,
     ) {
     }
 }
