@@ -9,6 +9,7 @@ use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -60,6 +61,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location1->toHouseNumber,
             'toLatitude' => $location1->toLatitude,
             'toLongitude' => $location1->toLongitude,
+            'maxWeight' => 3.5,
+            'maxHeight' => 3,
+            'maxWidth' => 2,
+            'maxLength' => 10,
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -76,6 +81,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location2->toHouseNumber,
             'toLatitude' => $location2->toLatitude,
             'toLongitude' => $location2->toLongitude,
+            'maxWeight' => null,
+            'maxHeight' => null,
+            'maxWidth' => null,
+            'maxLength' => null,
         ];
 
         $regulationOrderRecordRepository
@@ -94,6 +103,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     description: 'Description 1',
                     period: new PeriodView($startPeriod1, $endPeriod1),
                     location: $location1,
+                    vehicleCharacteristics: new VehicleCharacteristicsView(3.5, 3, 2, 10),
                 ),
                 new RegulationOrderDatexListItemView(
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -101,6 +111,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     description: 'Description 2',
                     period: new PeriodView($startPeriod2),
                     location: $location2,
+                    vehicleCharacteristics: null,
                 ),
             ],
             $regulationOrders,
