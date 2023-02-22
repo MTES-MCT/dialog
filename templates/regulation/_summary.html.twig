@@ -52,15 +52,16 @@
             {% set startTime = regulationOrderRecord.period.startTime %}
             {% set endDate = regulationOrderRecord.period.endDate %}
             {% set endTime = regulationOrderRecord.period.endTime %}
+            {% set isFuture = app_is_future(startDate, startTime) %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>
                     {% if startDate and endDate %}
-                        {{ 'common.date.from'|trans({ '%date%': startDate|date('d/m/Y') }) }}
-                        {% if startTime %}{{ 'common.time'|trans({ '%time%': startTime|date('H\\hi') }) }}{% endif %}
-                        {{ 'common.date.to'|trans({ '%date%': endDate|date('d/m/Y') }) }}
-                        {% if endTime %}{{ 'common.time'|trans({ '%time%': endTime|date('H\\hi') }) }}{% endif %}
+                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate, startTime) }) }}
+                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate, endTime) }) }}
+                    {% elseif isFuture %}
+                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate, startTime) }) }}
                     {% else %}
-                        {{ 'common.date.starting'|trans({'%date%': startDate|date('d/m/Y') }) }}
+                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate, startTime) }) }}
                     {% endif %}
                 </li>
             </ul>

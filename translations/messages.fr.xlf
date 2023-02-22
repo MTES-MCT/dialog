@@ -110,10 +110,6 @@
                 <source>common.form.next</source>
                 <target>Suivant</target>
             </trans-unit>
-            <trans-unit id="common.time">
-                <source>common.time</source>
-                <target>à %time%</target>
-            </trans-unit>
             <trans-unit id="common.date.from">
                 <source>common.date.from</source>
                 <target>du %date%</target>

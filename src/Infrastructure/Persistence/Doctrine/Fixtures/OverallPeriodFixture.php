@@ -17,9 +17,9 @@ final class OverallPeriodFixture extends Fixture implements DependentFixtureInte
             'bc8739de-968a-4b76-9874-b61ca474c892',
             $this->getReference('regulationCondition1'),
             startDate: new \DateTime('2022-12-08'),
-            startTime: new \DateTimeImmutable('08:00:00'),
-            endDate: new \DateTime('2022-12-18 00:00:00'),
-            endTime: new \DateTimeImmutable('16:00:00'),
+            startTime: new \DateTimeImmutable('08:00:00'), // UTC
+            endDate: new \DateTime('2022-12-18'),
+            endTime: new \DateTimeImmutable('16:00:00'), // UTC
         );
 
         $overallPeriod2 = new OverallPeriod(
