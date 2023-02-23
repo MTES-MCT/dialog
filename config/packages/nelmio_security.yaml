@@ -29,7 +29,6 @@ nelmio_security:
     csp:
         enabled: true
         enforce:
-            level1_fallback: true
             default-src: ['self']
             script-src: ['self']
             style-src: ['self']
