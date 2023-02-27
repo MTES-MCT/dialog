@@ -69,11 +69,6 @@ services:
         class: DateTimeImmutable
 
 when@test:
-    parameters:
-        # Use known timezones
-        server_timezone: 'UTC'
-        client_timezone: 'Europe/Paris'
-
     services:
         App\Tests\Mock\APIAdresseMockClient:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
