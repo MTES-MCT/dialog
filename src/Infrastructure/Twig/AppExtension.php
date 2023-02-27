@@ -24,12 +24,12 @@ class AppExtension extends \Twig\Extension\AbstractExtension
      */
     public function formatDateTime(\DateTimeInterface $date, ?\DateTimeInterface $time = null): string
     {
+        $dateTime = \DateTime::createFromInterface($date);
+        $format = 'd/m/Y';
+
         if ($time) {
+            $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
             $format = 'd/m/Y à H\hi';
-            $dateTime = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $time->format('H:i:s'));
-        } else {
-            $format = 'd/m/Y';
-            $dateTime = new \DateTimeImmutable($date->format('Y-m-d'));
         }
 
         return $dateTime->setTimezone(new \DateTimeZone($this->clientTimezone))->format($format);
@@ -41,10 +41,12 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             $reference = new \DateTimeImmutable('now');
         }
 
+        $dateTime = \DateTime::createFromInterface($date);
+
         if ($time) {
-            $date = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $time->format('H:i:s'));
+            $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
         }
 
-        return $reference < $date;
+        return $reference < $dateTime;
     }
 }

@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class IsValidSaveRegulationStep3CommandValidatorTest extends ConstraintValidatorTestCase
+class SaveRegulationStep3CommandConstraintValidatorTest extends ConstraintValidatorTestCase
 {
     private $constraintObj;
     private $regulationOrderRecord;
