@@ -45,7 +45,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageTwoDraftRow1 = $pageTwoDraftRows->eq(0)->filter('td');
 
         $this->assertSame("Savenay Route du Grand Brossais", $pageTwoDraftRow1->eq(0)->text());
-        $this->assertSame("du 08/12/2022 au 18/12/2022", $pageTwoDraftRow1->eq(1)->text());
+        $this->assertSame("du 08/12/2022 à 09h00 au 18/12/2022 à 17h00", $pageTwoDraftRow1->eq(1)->text());
         $this->assertSame("Brouillon", $pageTwoDraftRow1->eq(2)->text());
 
         // Test published reglementation rendering

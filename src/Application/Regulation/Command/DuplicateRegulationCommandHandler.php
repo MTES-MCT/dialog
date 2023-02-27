@@ -101,8 +101,10 @@ final class DuplicateRegulationCommandHandler
 
         if ($overallPeriod instanceof OverallPeriod) {
             $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrderRecord);
-            $step3Command->startPeriod = $overallPeriod->getStartPeriod();
-            $step3Command->endPeriod = $overallPeriod->getEndPeriod();
+            $step3Command->startDate = $overallPeriod->getStartDate();
+            $step3Command->startTime = $overallPeriod->getStartTime();
+            $step3Command->endDate = $overallPeriod->getEndDate();
+            $step3Command->endTime = $overallPeriod->getEndTime();
             $this->commandBus->handle($step3Command);
         }
     }

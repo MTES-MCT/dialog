@@ -26,8 +26,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             toHouseNumber: '253',
         );
 
-        $startPeriod = new \DateTime('2022-12-07');
-        $endPeriod = new \DateTime('2022-12-17');
+        $startDate = new \DateTime('2022-12-07');
+        $endDate = new \DateTime('2022-12-17');
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
@@ -36,8 +36,10 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             'status' => 'draft',
             'description' => 'Description 1',
-            'startPeriod' => $startPeriod,
-            'endPeriod' => $endPeriod,
+            'startDate' => $startDate,
+            'startTime' => null,
+            'endDate' => $endDate,
+            'endTime' => null,
             'postalCode' => $location->postalCode,
             'city' => $location->city,
             'roadName' => $location->roadName,
@@ -63,7 +65,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 'draft',
                 'Description 1',
-                new PeriodView($startPeriod, $endPeriod),
+                new PeriodView($startDate, null, $endDate, null),
                 new DetailLocationView(
                     $location->postalCode,
                     $location->city,
@@ -86,8 +88,10 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             'status' => 'draft',
             'description' => 'Description 1',
-            'startPeriod' => null,
-            'endPeriod' => null,
+            'startDate' => null,
+            'startTime' => null,
+            'endDate' => null,
+            'endTime' => null,
             'postalCode' => null,
             'city' => null,
             'roadName' => null,

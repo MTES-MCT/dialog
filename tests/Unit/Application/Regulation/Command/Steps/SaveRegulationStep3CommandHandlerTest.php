@@ -16,16 +16,20 @@ use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationStep3CommandHandlerTest extends TestCase
 {
-    private $startPeriod;
-    private $endPeriod;
+    private $startDate;
+    private $startTime;
+    private $endDate;
+    private $endTime;
     private $regulationCondition;
     private $regulationOrder;
     private $regulationOrderRecord;
 
     protected function setUp(): void
     {
-        $this->startPeriod = new \DateTime('2022-12-07 15:00');
-        $this->endPeriod = new \DateTime('2022-12-17 16:00');
+        $this->startDate = new \DateTime('2022-12-07');
+        $this->startTime = new \DateTime('15:00');
+        $this->endDate = new \DateTime('2022-12-17');
+        $this->endTime = new \DateTime('16:00');
 
         $this->regulationCondition = $this->createMock(RegulationCondition::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
@@ -58,8 +62,10 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
                     new OverallPeriod(
                         uuid: '98d3d3c6-83cd-49ab-b94a-4d4373a31114',
                         regulationCondition: $this->regulationCondition,
-                        startPeriod: $this->startPeriod,
-                        endPeriod: $this->endPeriod,
+                        startDate: $this->startDate,
+                        startTime: $this->startTime,
+                        endDate: $this->endDate,
+                        endTime: $this->endTime,
                     )
                 )
             );
@@ -70,8 +76,10 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationStep3Command($this->regulationOrderRecord);
-        $command->startPeriod = $this->startPeriod;
-        $command->endPeriod = $this->endPeriod;
+        $command->startDate = $this->startDate;
+        $command->startTime = $this->startTime;
+        $command->endDate = $this->endDate;
+        $command->endTime = $this->endTime;
 
         $this->assertEmpty($handler($command, null));
     }
@@ -82,7 +90,7 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
         $overallPeriod
             ->expects(self::once())
             ->method('update')
-            ->with($this->startPeriod, $this->endPeriod);
+            ->with($this->startDate, $this->startTime, $this->endDate, $this->endTime);
 
         $idFactory = $this->createMock(IdFactoryInterface::class);
         $idFactory
@@ -100,8 +108,10 @@ final class SaveRegulationStep3CommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationStep3Command($this->regulationOrderRecord, $overallPeriod);
-        $command->startPeriod = $this->startPeriod;
-        $command->endPeriod = $this->endPeriod;
+        $command->startDate = $this->startDate;
+        $command->startTime = $this->startTime;
+        $command->endDate = $this->endDate;
+        $command->endTime = $this->endTime;
 
         $this->assertEmpty($handler($command));
     }

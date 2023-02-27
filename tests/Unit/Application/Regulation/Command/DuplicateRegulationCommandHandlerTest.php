@@ -203,22 +203,34 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             );
 
         // OverallPeriod
-        $start = new \DateTime('2023-02-10');
-        $end = new \DateTime('2023-02-12');
+        $startDate = new \DateTime('2023-02-10');
+        $startTime = new \DateTime('22:00:00');
+        $endDate = new \DateTime('2023-02-12');
+        $endTime = new \DateTime('08:00:00');
 
         $overallPeriod = $this->createMock(OverallPeriod::class);
         $overallPeriod
             ->expects(self::once())
-            ->method('getStartPeriod')
-            ->willReturn($start);
+            ->method('getStartDate')
+            ->willReturn($startDate);
         $overallPeriod
             ->expects(self::once())
-            ->method('getEndPeriod')
-            ->willReturn($end);
+            ->method('getStartTime')
+            ->willReturn($startTime);
+        $overallPeriod
+            ->expects(self::once())
+            ->method('getEndDate')
+            ->willReturn($endDate);
+        $overallPeriod
+            ->expects(self::once())
+            ->method('getEndTime')
+            ->willReturn($endTime);
 
         $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrderRecord);
-        $step3Command->startPeriod = $start;
-        $step3Command->endPeriod = $end;
+        $step3Command->startDate = $startDate;
+        $step3Command->startTime = $startTime;
+        $step3Command->endDate = $endDate;
+        $step3Command->endTime = $endTime;
 
         // VehicleCharacteristics
         $vehicleCharacteristics = $this->createMock(VehicleCharacteristics::class);

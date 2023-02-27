@@ -13,7 +13,7 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
-                {% set isPresent = regulation.period ? "now"|date('U') >= regulation.period.startPeriod|date('U') : null %}
+                {% set isFuture = regulation.period ? app_is_future(regulation.period.startDate, regulation.period.startTime) : null %}
                 <tr>
                     <td>
                         {% if regulation.location %}
@@ -23,22 +23,25 @@
                     </td>
                     <td>
                         {% if regulation.period %}
-                            {% set startPeriod = regulation.period.startPeriod %}
-                            {% set endPeriod = regulation.period.endPeriod %}
-                            {% if startPeriod and endPeriod %}
+                            {% set startDate = regulation.period.startDate %}
+                            {% set startTime = regulation.period.startTime %}
+                            {% set endDate = regulation.period.endDate %}
+                            {% set endTime = regulation.period.endTime %}
+                            {% if startDate and endDate %}
                                 <b>
-                                    {{ 'regulation.period.temporary'|trans({ '%startPeriod%': startPeriod|date('d/m/Y'), '%endPeriod%': endPeriod|date('d/m/Y') })}}
+                                {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate, startTime) }) }}
+                                {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate, endTime) }) }}
                                 </b>
                             {% else %}
                                 <b>
-                                    {% if isPresent %}
-                                        {{ 'regulation.period.permanent.present'|trans({ '%date%': startPeriod|date('d/m/Y')  })}}
+                                    {% if isFuture %}
+                                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate, startTime) }) }}
                                     {% else %}
-                                        {{ 'regulation.period.permanent.future'|trans({ '%date%': startPeriod|date('d/m/Y') })}}
+                                        {{ 'common.date.since'|trans({ '%date%': app_datetime(startDate, startTime) })}}
                                     {% endif %}
                                 </b>
                                 <br/>
-                                <em>{{ 'common.permanent'|trans}}</em>
+                                <em>{{ 'common.permanent'|trans }}</em>
                             {% endif %}
                         {% endif %}
                     </td>
@@ -46,10 +49,10 @@
                         {% if regulation.status == 'draft' %}
                             <p class="fr-badge fr-badge--info">{{'regulation.status.draft'|trans}}</p>
                         {% elseif regulation.status == 'published' %}
-                            {% if isPresent %}
-                                <p class="fr-badge fr-badge--success">{{'regulation.present'|trans}}</p>
-                            {% else %}
+                            {% if isFuture %}
                                 <p class="fr-badge fr-badge--new">{{'regulation.future'|trans}}</p>
+                            {% else %}
+                                <p class="fr-badge fr-badge--success">{{'regulation.present'|trans}}</p>
                             {% endif %}
                         {% endif %}
                     </td>

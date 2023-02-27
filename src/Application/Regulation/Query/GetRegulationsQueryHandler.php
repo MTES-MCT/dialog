@@ -39,9 +39,11 @@ final class GetRegulationsQueryHandler
                     $regulation['roadName'],
                     $regulation['city'],
                 ) : null,
-                $regulation['startPeriod'] ? new PeriodView(
-                    $regulation['startPeriod'],
-                    $regulation['endPeriod'],
+                $regulation['startDate'] ? new PeriodView(
+                    $regulation['startDate'],
+                    $regulation['startTime'],
+                    $regulation['endDate'],
+                    $regulation['endTime'],
                 ) : null,
             );
         }

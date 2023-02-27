@@ -18,32 +18,40 @@ final class GetRegulationsQueryHandlerTest extends TestCase
 {
     public function testGetAll(): void
     {
-        $startPeriod1 = new \DateTime('2022-12-07');
-        $endPeriod1 = new \DateTime('2022-12-17');
-        $startPeriod2 = new \DateTime('2022-12-10');
+        $startDate1 = new \DateTime('2022-12-07');
+        $startTime1 = new \DateTime('22:00');
+        $endDate1 = new \DateTime('2022-12-17');
+        $endTime1 = new \DateTime('06:00');
+        $startDate2 = new \DateTime('2022-12-10');
         $organization = $this->createMock(Organization::class);
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-            'startPeriod' => $startPeriod1,
-            'endPeriod' => $endPeriod1,
+            'startDate' => $startDate1,
+            'startTime' => $startTime1,
+            'endDate' => $endDate1,
+            'endTime' => $endTime1,
             'status' => 'draft',
             'city' => 'Savenay',
             'roadName' => 'Rue de Prince Bois',
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
-            'startPeriod' => $startPeriod2,
-            'endPeriod' => null,
+            'startDate' => $startDate2,
+            'startTime' => null,
+            'endDate' => null,
+            'endTime' => null,
             'status' => 'draft',
             'city' => 'Savenay',
             'roadName' => 'Rue du Lac',
         ];
         $regulationOrder3 = [
             'uuid' => 'c421193a-5437-431a-9228-db6288d36a16',
-            'startPeriod' => null,
-            'endPeriod' => null,
+            'startDate' => null,
+            'startTime' => null,
+            'endDate' => null,
+            'endTime' => null,
             'status' => 'draft',
             'city' => null,
             'roadName' => null,
@@ -70,13 +78,13 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     'draft',
                     new ListItemLocationView('Rue de Prince Bois', 'Savenay'),
-                    new PeriodView($startPeriod1, $endPeriod1),
+                    new PeriodView($startDate1, $startTime1, $endDate1, $endTime1),
                 ),
                 new RegulationOrderListItemView(
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     'draft',
                     new ListItemLocationView('Rue du Lac', 'Savenay'),
-                    new PeriodView($startPeriod2),
+                    new PeriodView($startDate2, null, null, null),
                 ),
                 new RegulationOrderListItemView(
                     'c421193a-5437-431a-9228-db6288d36a16',

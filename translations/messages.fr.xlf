@@ -110,6 +110,22 @@
                 <source>common.form.next</source>
                 <target>Suivant</target>
             </trans-unit>
+            <trans-unit id="common.date.from">
+                <source>common.date.from</source>
+                <target>du %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.to">
+                <source>common.date.to</source>
+                <target>au %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.since">
+                <source>common.date.since</source>
+                <target>depuis le %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.starting">
+                <source>common.date.starting</source>
+                <target>à partir du %date%</target>
+            </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
                 <target>Réglementations</target>
@@ -206,21 +222,33 @@
                 <source>regulation.step3.help</source>
                 <target>Pendant quelle période la circulation est-elle réglementée ? Si la restriction est permanente, une date de début suffit.</target>
             </trans-unit>
-            <trans-unit id="regulation.step3.start_period">
-                <source>regulation.step3.start_period</source>
+            <trans-unit id="regulation.step3.start_date">
+                <source>regulation.step3.start_date</source>
                 <target>Date de début</target>
             </trans-unit>
-            <trans-unit id="regulation.step3.start_period.help">
-                <source>regulation.step3.start_period.help</source>
+            <trans-unit id="regulation.step3.start_date.help">
+                <source>regulation.step3.start_date.help</source>
                 <target>Début d'effet de la restriction</target>
             </trans-unit>
-            <trans-unit id="regulation.step3.end_period">
-                <source>regulation.step3.end_period</source>
+            <trans-unit id="regulation.step3.start_time">
+                <source>regulation.step3.start_time</source>
+                <target>Heure de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.step3.start_time.help">
+                <source>regulation.step3.start_time.help</source>
+                <target>Heure d'effet de la restriction</target>
+            </trans-unit>
+            <trans-unit id="regulation.step3.end_date">
+                <source>regulation.step3.end_date</source>
                 <target>Date de fin</target>
             </trans-unit>
-            <trans-unit id="regulation.step3.end_period.help">
-                <source>regulation.step3.end_period.help</source>
-                <target>Laisser vide si la restriction est permanente</target>
+            <trans-unit id="regulation.step3.end_date.help">
+                <source>regulation.step3.end_date.help</source>
+                <target>Laisser vide si la restriction est permanente.</target>
+            </trans-unit>
+            <trans-unit id="regulation.step3.end_time">
+                <source>regulation.step3.end_time</source>
+                <target>Heure de fin</target>
             </trans-unit>
             <trans-unit id="regulation.step4.vehicle_characteristics">
                 <source>regulation.step4.vehicle_characteristics</source>
@@ -321,14 +349,6 @@
                 <source>regulation.period</source>
                 <target>Période</target>
             </trans-unit>
-            <trans-unit id="regulation.period.temporary">
-                <source>regulation.period.temporary</source>
-                <target>du %startPeriod% au %endPeriod%</target>
-            </trans-unit>
-            <trans-unit id="regulation.period.permanent.present">
-                <source>regulation.period.permanent.present</source>
-                <target>depuis le %date%</target>
-            </trans-unit>
             <trans-unit id="regulation.present">
                 <source>regulation.present</source>
                 <target>Réglementation en cours</target>
@@ -340,10 +360,6 @@
             <trans-unit id="regulation.future">
                 <source>regulation.future</source>
                 <target>Réglementation à venir</target>
-            </trans-unit>
-            <trans-unit id="regulation.period.permanent.future">
-                <source>regulation.period.permanent.future</source>
-                <target>à partir du %date%</target>
             </trans-unit>
             <trans-unit id="regulation.stepper.steps">
                 <source>regulation.stepper.steps</source>

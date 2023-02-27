@@ -48,17 +48,20 @@
     <div class="summary-card__content">
         <h3 class="summary-card__title">{{ 'regulation.detail.when'|trans }}</h3>
         {% if regulationOrderRecord.period %}
-            {% set startPeriod = regulationOrderRecord.period.startPeriod %}
-            {% set endPeriod = regulationOrderRecord.period.endPeriod %}
+            {% set startDate = regulationOrderRecord.period.startDate %}
+            {% set startTime = regulationOrderRecord.period.startTime %}
+            {% set endDate = regulationOrderRecord.period.endDate %}
+            {% set endTime = regulationOrderRecord.period.endTime %}
+            {% set isFuture = app_is_future(startDate, startTime) %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>
-                    {% if startPeriod and endPeriod %}
-                        {{ 'regulation.period.temporary'|trans({
-                            '%startPeriod%': startPeriod|date('d/m/Y'),
-                            '%endPeriod%': endPeriod|date('d/m/Y')
-                        }) }}
+                    {% if startDate and endDate %}
+                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate, startTime) }) }}
+                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate, endTime) }) }}
+                    {% elseif isFuture %}
+                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate, startTime) }) }}
                     {% else %}
-                        {{ 'regulation.period.permanent.future'|trans({'%date%': startPeriod|date('d/m/Y') }) }}
+                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate, startTime) }) }}
                     {% endif %}
                 </li>
             </ul>

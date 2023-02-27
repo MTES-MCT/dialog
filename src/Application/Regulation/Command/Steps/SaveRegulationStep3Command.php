@@ -10,8 +10,10 @@ use App\Domain\Regulation\RegulationOrderRecord;
 
 final class SaveRegulationStep3Command implements CommandInterface
 {
-    public ?\DateTimeInterface $startPeriod;
-    public ?\DateTimeInterface $endPeriod = null;
+    public ?\DateTimeInterface $startDate;
+    public ?\DateTimeInterface $startTime = null;
+    public ?\DateTimeInterface $endDate = null;
+    public ?\DateTimeInterface $endTime = null;
 
     public function __construct(
         public readonly RegulationOrderRecord $regulationOrderRecord,
@@ -24,8 +26,10 @@ final class SaveRegulationStep3Command implements CommandInterface
         OverallPeriod $overallPeriod = null,
     ): self {
         $command = new self($regulationOrderRecord, $overallPeriod);
-        $command->startPeriod = $overallPeriod?->getStartPeriod();
-        $command->endPeriod = $overallPeriod?->getEndPeriod();
+        $command->startDate = $overallPeriod?->getStartDate();
+        $command->startTime = $overallPeriod?->getStartTime();
+        $command->endDate = $overallPeriod?->getEndDate();
+        $command->endTime = $overallPeriod?->getEndTime();
 
         return $command;
     }

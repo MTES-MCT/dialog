@@ -4,8 +4,10 @@
     name="App\Domain\Condition\Period\OverallPeriod"
     table="overall_period">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="startPeriod" type="datetimetz" column="start_period" nullable="false"/>
-    <field name="endPeriod" type="datetimetz" column="end_period" nullable="true"/>
+    <field name="startDate" type="datetimetz" column="start_date" nullable="false"/>
+    <field name="startTime" type="datetimetz_immutable" column="start_time" nullable="true"/>
+    <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
+    <field name="endTime" type="datetimetz_immutable" column="end_time" nullable="true"/>
     <one-to-many field="validPeriods" target-entity="App\Domain\Condition\Period\Period" mapped-by="overallValidPeriod"/>
     <one-to-many field="exceptionPeriods" target-entity="App\Domain\Condition\Period\Period" mapped-by="overallExceptionPeriod"/>
     <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" inversed-by="overallPeriod">
