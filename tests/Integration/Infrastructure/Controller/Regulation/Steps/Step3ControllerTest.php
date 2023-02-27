@@ -20,8 +20,8 @@ final class Step3ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step3_form[startPeriod]"] = "2022-12-07";
-        $form["step3_form[endPeriod]"] = "2022-12-17";
+        $form["step3_form[startDate]"] = "2022-12-07";
+        $form["step3_form[endDate]"] = "2022-12-17";
 
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -30,7 +30,6 @@ final class Step3ControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_steps_4');
     }
-
     public function testInvalidPeriod(): void
     {
         $client = $this->login();
@@ -39,22 +38,28 @@ final class Step3ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step3_form[startPeriod]"] = "mauvais format";
-        $form["step3_form[endPeriod]"] = "mauvais format";
 
+        $form["step3_form[startDate]"] = "mauvais format";
+        $form["step3_form[startTime]"] = "mauvais format";
+        $form["step3_form[endDate]"] = "mauvais format";
+        $form["step3_form[endTime]"] = "mauvais format";
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertCount(2, $crawler->filter('[id^="step3_form_"][id$="_error"]'));
-        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_startPeriod_error')->text());
-        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_endPeriod_error')->text());
+        $this->assertCount(4, $crawler->filter('[id^="step3_form_"][id$="_error"]'));
+        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_startDate_error')->text());
+        $this->assertSame("Veuillez saisir une heure valide.", $crawler->filter('#step3_form_startTime_error')->text());
+        $this->assertSame("Veuillez entrer une date valide.", $crawler->filter('#step3_form_endDate_error')->text());
+        $this->assertSame("Veuillez saisir une heure valide.", $crawler->filter('#step3_form_endTime_error')->text());
 
-        $form["step3_form[startPeriod]"] = "2022-12-07";
-        $form["step3_form[endPeriod]"] = "2022-12-05";
-
+        // Other invalid cases are covered in unit tests.
+        $form["step3_form[startDate]"] = "2022-12-07";
+        $form["step3_form[startTime]"] = "";
+        $form["step3_form[endDate]"] = "2022-12-05";
+        $form["step3_form[endTime]"] = "";
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertCount(1, $crawler->filter('[id^="step3_form_"][id$="_error"]'));
-        $this->assertCount(1, $crawler->filter('#step3_form_endPeriod_error')); // Cette valeur doit être supérieure à 7 déc. 2022.
+        $this->assertSame("La date de fin doit être après le 07/12/2022.", $crawler->filter('#step3_form_endDate_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void

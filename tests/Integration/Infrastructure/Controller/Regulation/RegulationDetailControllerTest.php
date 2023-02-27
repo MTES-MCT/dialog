@@ -33,7 +33,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2', $step2->filter('a')->link()->getUri());
 
         // Step 3
-        $this->assertSame('du 08/12/2022 au 18/12/2022', $step3->filter('li')->eq(0)->text());
+        $this->assertSame('du 08/12/2022 à 09h00 au 18/12/2022 à 17h00', $step3->filter('li')->eq(0)->text());
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/3', $step3->filter('a')->link()->getUri());
 
         // Step 4

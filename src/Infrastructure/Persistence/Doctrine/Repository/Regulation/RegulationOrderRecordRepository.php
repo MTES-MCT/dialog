@@ -25,7 +25,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         string $status,
     ): array {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, o.startPeriod, o.endPeriod, roc.status, l.city, l.roadName')
+            ->select('roc.uuid, o.startDate, o.startTime, o.endDate, o.endTime, roc.status, l.city, l.roadName')
             ->where('roc.status = :status')
             ->andWhere('roc.organization = :organization')
             ->setParameters(['status' => $status, 'organization' => $organization->getUuid()])
@@ -33,7 +33,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('ro.regulationCondition', 'rc')
             ->leftJoin('rc.overallPeriod', 'o')
             ->leftJoin('rc.location', 'l')
-            ->orderBy('o.startPeriod', 'DESC')
+            ->orderBy('o.startDate', 'DESC')
+            ->orderBy('o.startTime', 'DESC')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
             ->getQuery()
@@ -75,8 +76,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'org.uuid as organizationUuid',
                 'roc.status',
                 'ro.description',
-                'o.startPeriod',
-                'o.endPeriod',
+                'o.startDate',
+                'o.startTime',
+                'o.endDate',
+                'o.endTime',
                 'l.postalCode',
                 'l.city',
                 'l.roadName',
@@ -108,8 +111,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.uuid',
                 'ro.issuingAuthority',
                 'ro.description',
-                'o.startPeriod',
-                'o.endPeriod',
+                'o.startDate',
+                'o.startTime',
+                'o.endDate',
+                'o.endTime',
                 'loc.postalCode',
                 'loc.city',
                 'loc.roadName',

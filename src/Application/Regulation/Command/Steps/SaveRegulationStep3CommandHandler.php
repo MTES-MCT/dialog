@@ -26,14 +26,21 @@ final class SaveRegulationStep3CommandHandler
                 new OverallPeriod(
                     uuid: $this->idFactory->make(),
                     regulationCondition: $regulationCondition,
-                    startPeriod: $command->startPeriod,
-                    endPeriod: $command->endPeriod,
+                    startDate: $command->startDate,
+                    startTime: $command->startTime,
+                    endDate: $command->endDate,
+                    endTime: $command->endTime,
                 ),
             );
 
             return;
         }
 
-        $command->overallPeriod->update($command->startPeriod, $command->endPeriod);
+        $command->overallPeriod->update(
+            startDate: $command->startDate,
+            startTime: $command->startTime,
+            endDate: $command->endDate,
+            endTime: $command->endTime,
+        );
     }
 }

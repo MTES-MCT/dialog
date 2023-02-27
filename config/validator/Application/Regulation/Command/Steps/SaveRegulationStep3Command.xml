@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\Steps\SaveRegulationStep3Command">
-        <property name="startPeriod">
+        <property name="startDate">
             <constraint name="NotBlank" />
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
-        <property name="endPeriod">
+        <property name="startTime">
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
             </constraint>
-            <constraint name="GreaterThan">
-                <option name="propertyPath">startPeriod</option>
+        </property>
+        <property name="endDate">
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
+        <property name="endTime">
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
+        </property>
+        <constraint name="App\Infrastructure\Validator\SaveRegulationStep3CommandConstraint" />
     </class>
 </constraint-mapping>

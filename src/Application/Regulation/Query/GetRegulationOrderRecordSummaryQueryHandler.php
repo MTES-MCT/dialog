@@ -28,7 +28,10 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             throw new RegulationOrderRecordNotFoundException();
         }
 
-        $hasPeriod = $row['startPeriod'] || $row['endPeriod'];
+        $hasPeriod = $row['startDate']
+            || $row['startTime']
+            || $row['endDate']
+            || $row['endTime'];
         $hasLocation = $row['postalCode']
             && $row['city']
             && $row['roadName']
@@ -45,8 +48,10 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             $row['status'],
             $row['description'],
             $hasPeriod ? new PeriodView(
-                $row['startPeriod'],
-                $row['endPeriod'],
+                $row['startDate'],
+                $row['startTime'],
+                $row['endDate'],
+                $row['endTime'],
             ) : null,
             $hasLocation ? new DetailLocationView(
                 $row['postalCode'],
