@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\Steps\SaveRegulationStep3Command">
         <property name="startDate">
             <constraint name="NotBlank" />
@@ -24,9 +24,6 @@
                 <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
-        <constraint name="Callback">
-            <value>App\Infrastructure\Form\Regulation\Steps\Step3FormType</value>
-            <value>validate</value>
-        </constraint>
+        <constraint name="App\Infrastructure\Validator\SaveRegulationStep3CommandConstraint" />
     </class>
 </constraint-mapping>

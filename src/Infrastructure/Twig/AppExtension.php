@@ -6,6 +6,11 @@ namespace App\Infrastructure\Twig;
 
 class AppExtension extends \Twig\Extension\AbstractExtension
 {
+    public function __construct(
+        private string $clientTimezone,
+    ) {
+    }
+
     public function getFunctions(): array
     {
         return [
@@ -27,7 +32,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             $dateTime = new \DateTimeImmutable($date->format('Y-m-d'));
         }
 
-        return $dateTime->setTimezone(new \DateTimeZone('Europe/Paris'))->format($format);
+        return $dateTime->setTimezone(new \DateTimeZone($this->clientTimezone))->format($format);
     }
 
     public function isFuture(\DateTimeInterface $date, \DateTimeInterface $time = null, \DateTimeInterface $reference = null): bool
