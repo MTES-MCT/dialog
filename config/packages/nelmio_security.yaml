@@ -37,6 +37,11 @@ nelmio_security:
             img-src: ['self', 'data:']
             block-all-mixed-content: true
 
+when@dev:
+    nelmio_security:
+        csp:
+            hosts: ['example.org'] # Use any value so we don't enforce on localhost.
+
 when@prod:
     nelmio_security:
         # Require HTTPS
