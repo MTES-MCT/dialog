@@ -23,7 +23,7 @@ final class LoginControllerTest extends AbstractWebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
         $crawler = $client->followRedirect();
-        $this->assertSame('Mathieu MARCHOIS', $crawler->filter('div.user')->text());
+        $this->assertSame('Mathieu MARCHOIS Se déconnecter', $crawler->filter('div.user')->text());
     }
 
     public function testLoginWithUnknownAccount(): void

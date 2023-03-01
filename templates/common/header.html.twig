@@ -32,6 +32,11 @@
                                         {{ app.user.fullName }}
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="fr-btn fr-icon-lock-unlock-line" href="{{ path('app_logout') }}" data-testid="logout-link">
+                                        {{ 'common.logout'|trans }}
+                                    </a>
+                                </li>
                             {% else %}
                                 <li>
                                     <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
