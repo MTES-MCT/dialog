@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    {{ 'login.tab.meta.title'|trans }} - {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-md-14v">
         <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
