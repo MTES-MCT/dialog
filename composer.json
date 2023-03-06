@@ -12,6 +12,7 @@
         "jsor/doctrine-postgis": "^2.1",
         "nelmio/security-bundle": "^3.0",
         "sentry/sentry-symfony": "^4.5",
+        "symfony/amqp-messenger": "6.2.*",
         "symfony/asset": "6.2.*",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",

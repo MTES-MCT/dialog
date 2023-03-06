@@ -38,6 +38,13 @@ services:
       - php
       - database
 
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    ports: [5672, 15672]
+    depends_on:
+      - php
+      - database
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4

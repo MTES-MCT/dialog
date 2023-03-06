@@ -6,6 +6,7 @@ WORKDIR /var/www/dialog
 # Install dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libfreetype6-dev \
+        librabbitmq-dev \
         locales \
         apt-utils \
         git \
@@ -30,6 +31,7 @@ RUN docker-php-ext-install pdo pdo_pgsql zip opcache exif pcntl intl
 RUN docker-php-ext-configure intl
 RUN pecl install apcu && docker-php-ext-enable apcu
 RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install amqp && docker-php-ext-enable amqp
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
@@ -40,7 +42,7 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
     apt install symfony-cli
 
 # Install composer
-RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
+RUN curl -sSk https://getcomposer.org/installer | php && \
    mv composer.phar /usr/local/bin/composer
 
 CMD ["php-fpm"]
