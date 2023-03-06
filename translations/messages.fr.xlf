@@ -560,6 +560,38 @@
                 <source>login.legend</source>
                 <target>Se connecter avec son compte</target>
             </trans-unit>
+            <trans-unit id="error.home_link">
+                <source>error.home_link</source>
+                <target>Page d'accueil</target>
+            </trans-unit>
+            <trans-unit id="error.404.title">
+                <source>error.404.title</source>
+                <target>Page non trouvée</target>
+            </trans-unit>
+            <trans-unit id="error.404.description">
+                <source>error.404.description</source>
+                <target>La page que vous cherchez est introuvable. Excusez-nous pour la gène occasionnée.</target>
+            </trans-unit>
+            <trans-unit id="error.404.more_description">
+                <source>error.404.more_description</source>
+                <target>Si vous avez tapé l'adresse web dans le navigateur, vérifiez qu'elle est correcte. La page n’est peut-être plus disponible. Dans ce cas, pour continuer votre visite vous pouvez consulter notre page d’accueil. Sinon contactez-nous pour que l’on puisse vous rediriger vers la bonne information.</target>
+            </trans-unit>
+            <trans-unit id="error.status_code.title">
+                <source>error.status_code.title</source>
+                <target>Une erreur est survenue</target>
+            </trans-unit>
+            <trans-unit id="error.status_code.description">
+                <source>error.status_code.description</source>
+                <target>La page que vous cherchez est inaccessible. Excusez-nous pour la gène occasionnée.</target>
+            </trans-unit>
+            <trans-unit id="error.status_code.detail">
+                <source>error.status_code.detail</source>
+                <target>Erreur %status%</target>
+            </trans-unit>
+            <trans-unit id="error.403.title">
+                <source>error.403.title</source>
+                <target>Vous n'avez pas les droits requis pour accéder à cette page</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
