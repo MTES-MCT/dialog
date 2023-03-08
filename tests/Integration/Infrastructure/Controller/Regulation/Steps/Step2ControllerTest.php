@@ -35,7 +35,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Étape 2 sur 4 Localisation', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Période', $crawler->filter('p.fr-stepper__details')->text());
-        $this->assertMetaTitle("Étape", $crawler);
+        $this->assertMetaTitle("Étape 2 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form['step2_form[postalCode]'] = '44260';

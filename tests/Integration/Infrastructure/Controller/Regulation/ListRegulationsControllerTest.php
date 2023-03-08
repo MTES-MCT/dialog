@@ -14,7 +14,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
-        $this->assertMetaTitle("Liste des réglementations", $pageOne);
+        $this->assertMetaTitle("Liste des réglementations - DiaLog", $pageOne);
         $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
 
         $this->assertSame("tablist", $tabs->attr("role"));

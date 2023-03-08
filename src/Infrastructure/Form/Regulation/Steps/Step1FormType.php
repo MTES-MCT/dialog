@@ -30,8 +30,8 @@ final class Step1FormType extends AbstractType
                     'label' => 'regulation.step1.description',
                     'help' => 'regulation.step1.description.help',
                     'attr' => [
-                        'class' => 'fr-input'
-                    ]
+                        'class' => 'fr-input',
+                    ],
                     // widget_class not working. Only way to apply a class on the component textarea
                 ],
             )

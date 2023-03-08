@@ -17,7 +17,7 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Étape 1 sur 4 Restriction', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Localisation', $crawler->filter('p.fr-stepper__details')->text());
-        $this->assertMetaTitle("Étape", $crawler);
+        $this->assertMetaTitle("Étape 1 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step1_form[issuingAuthority]"] = "Ville de Paris";
