@@ -17,7 +17,7 @@ final class Step3ControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Étape 3 sur 4 Période', $crawler->filter('h2')->text());
         $this->assertSame('Étape suivante : Véhicules concernés', $crawler->filter('p.fr-stepper__details')->text());
-
+        $this->assertMetaTitle("Étape", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step3_form[startDate]"] = "2022-12-07";

@@ -8,6 +8,7 @@ use App\Infrastructure\Persistence\Doctrine\Repository\User\UserRepository;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
@@ -28,6 +29,11 @@ abstract class AbstractWebTestCase extends WebTestCase
         );
 
         return $client;
+    }
+
+    protected function assertMetaTitle(string $title, Crawler $crawler): void
+    {
+        $this->assertEquals(1, $crawler->filter('title:contains('.$title.')')->count());
     }
 
     protected function assertSecurityHeaders(): void

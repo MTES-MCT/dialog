@@ -603,22 +603,6 @@
                 <source>regulation.list.meta.title</source>
                 <target>Liste des réglementations</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.meta.title">
-                <source>regulation.step1.meta.title</source>
-                <target>Étape 1 sur 4</target>
-            </trans-unit>
-            <trans-unit id="regulation.step2.meta.title">
-                <source>regulation.step2.meta.title</source>
-                <target>Étape 2 sur 4</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.meta.title">
-                <source>regulation.step3.meta.title</source>
-                <target>Étape 3 sur 4</target>
-            </trans-unit>
-            <trans-unit id="regulation.step4.meta.title">
-                <source>regulation.step4.meta.title</source>
-                <target>Étape 4 sur 4</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>
