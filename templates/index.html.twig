@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %} 
+    {{ 'index.meta.title'|trans }} - {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <section class="fr-container fr-pt-4w header" aria-labelledby="jumbotron">
         <div class="fr-grid-row fr-grid-row--gutters">

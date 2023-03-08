@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 {% form_theme form _self %}
 
+{% set title = regulationOrderRecord.location ? 'regulation.detail.title'|trans({ '%roadName%': regulationOrderRecord.location.roadName}) : regulationOrderRecord.description %}
+
+{% block title %}
+     {{ title }} - {{ parent() }}
+{% endblock %}
+
 {% block _publish_form_status_widget %}
     {%- for child in form %}
         <div class="fr-radio-group fr-mt-0 fr-radio-rich">
@@ -32,11 +38,7 @@
         {% endif %}
 
         <h2 id="regulation-detail">
-            {% if regulationOrderRecord.location %}
-                {{ 'regulation.detail.title'|trans({ '%roadName%': regulationOrderRecord.location.roadName}) }}
-            {% else %}
-                {{ regulationOrderRecord.description }}
-            {% endif %}
+            {{ title }}                
         </h2>
 
         {% include "regulation/_summary.html.twig" with { 'canEdit': isDraft, regulationOrderRecord} only %}
