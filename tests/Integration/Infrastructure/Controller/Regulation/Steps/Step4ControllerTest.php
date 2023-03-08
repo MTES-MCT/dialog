@@ -16,7 +16,7 @@ final class Step4ControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Étape 4 sur 4 Véhicules concernés', $crawler->filter('h2')->text());
-
+        $this->assertMetaTitle("Étape 4 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step4_form[maxWeight]"] = "3.5";

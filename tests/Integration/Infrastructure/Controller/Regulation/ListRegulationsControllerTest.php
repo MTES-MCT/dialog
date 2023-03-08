@@ -5,18 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
-
 final class ListRegulationsControllerTest extends AbstractWebTestCase
 {
     public function testList(): void
     {
         $client = $this->login();
         $pageOne = $client->request('GET', '/regulations?pageSize=1');
-
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
-
+        $this->assertMetaTitle("Liste des réglementations - DiaLog", $pageOne);
         $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
 
         $this->assertSame("tablist", $tabs->attr("role"));
@@ -69,6 +67,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame("2", $navLi->eq(3)->filter('a')->text());
         $this->assertSame("Page suivante", $navLi->eq(4)->filter('a')->text());
         $this->assertSame("Dernière page", $navLi->eq(5)->filter('a')->text());
+        
     }
 
     public function testListWithOtherOrganization(): void

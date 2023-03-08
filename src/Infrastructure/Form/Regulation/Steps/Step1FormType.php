@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation\Steps;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -24,7 +25,7 @@ final class Step1FormType extends AbstractType
             )
             ->add(
                 'description',
-                TextType::class,
+                TextareaType::class,
                 options: [
                     'label' => 'regulation.step1.description',
                     'help' => 'regulation.step1.description.help',

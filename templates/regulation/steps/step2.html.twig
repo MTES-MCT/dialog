@@ -1,5 +1,9 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
+{% block title %}
+    {{ 'regulation.stepper.steps'|trans({"%step%": 2}) }} - {{ parent() }}
+{% endblock %}
+
 {% block step_body %}
     <h3 class="fr-text--md fr-mb-0">
         {{ 'regulation.step2.subtitle'|trans }}

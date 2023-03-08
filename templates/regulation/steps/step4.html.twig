@@ -1,5 +1,9 @@
 {% extends 'regulation/steps/base.html.twig' %}
 
+{% block title %}
+    {{ 'regulation.stepper.steps'|trans({"%step%": 4}) }} - {{ parent() }}
+{% endblock %}
+
 {% block step_body %}
     {{ form_start(form) }}
         {{ form_errors(form) }}

@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    {{'regulation.list.meta.title'|trans}} - {{ parent() }}
+{% endblock %}
+
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-list">
         {% set isDraftTab = tab == 'draft' %}

@@ -14,7 +14,7 @@ final class LoginControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Connexion à DiaLog', $crawler->filter('h1')->text());
-
+        $this->assertMetaTitle("Connexion - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
 

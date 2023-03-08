@@ -16,7 +16,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Réglementation - Route du Grand Brossais', $crawler->filter('h2')->text());
-
+        $this->assertMetaTitle("Réglementation - Route du Grand Brossais - DiaLog", $crawler);
         $step1 = $crawler->filter('div.for-what');
         $step2 = $crawler->filter('div.where');
         $step3 = $crawler->filter('div.when');
