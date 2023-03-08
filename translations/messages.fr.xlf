@@ -591,6 +591,7 @@
             <trans-unit id="error.403.title">
                 <source>error.403.title</source>
                 <target>Vous n'avez pas les droits requis pour accéder à cette page</target>
+            </trans-unit>
             <trans-unit id="index.meta.title">
                 <source>index.meta.title</source>
                 <target>Accueil</target>
