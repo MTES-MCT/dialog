@@ -592,10 +592,6 @@
                 <source>error.403.title</source>
                 <target>Vous n'avez pas les droits requis pour accéder à cette page</target>
             </trans-unit>
-            <trans-unit id="index.meta.title">
-                <source>index.meta.title</source>
-                <target>Accueil</target>
-            </trans-unit>
             <trans-unit id="login.meta.title">
                 <source>login.meta.title</source>
                 <target>Connexion</target>
