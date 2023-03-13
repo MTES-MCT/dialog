@@ -39,7 +39,6 @@ class RegulationOrder
         return $this->startDate;
     }
 
-
     public function getEndDate(): ?\DateTimeInterface
     {
         return $this->endDate;

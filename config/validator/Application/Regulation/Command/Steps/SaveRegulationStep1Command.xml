@@ -22,7 +22,9 @@
             </constraint>
         </property>
         <property name="endDate">
-
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
         </property>
     </class>
 </constraint-mapping>

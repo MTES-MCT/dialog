@@ -28,6 +28,7 @@ final class Step1FormType extends AbstractType
                     'label' => 'regulation.step1.start_date',
                     'help' => 'regulation.step1.start_date.help',
                     'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
                 ],
             )
             ->add(
