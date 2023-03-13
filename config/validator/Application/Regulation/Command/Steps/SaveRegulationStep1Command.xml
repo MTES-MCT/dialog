@@ -25,10 +25,7 @@
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
             </constraint>
-            <constraint name="GreaterThan">
-                <!-- TODO: ensure error message contains date using $clientTimezone -->
-                <option name="propertyPath">startDate</option>
-            </constraint>
         </property>
+        <constraint name="App\Infrastructure\Validator\SaveRegulationStep1CommandConstraint" />
     </class>
 </constraint-mapping>

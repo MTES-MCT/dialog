@@ -60,8 +60,7 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $form["step1_form[endDate]"] = "2023-02-11";
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        // TODO: ensure error message contains date using $clientTimezone
-        $this->assertSame("Cette valeur doit être supérieure à 11 févr. 2023 à 23:00.", $crawler->filter('#step1_form_endDate_error')->text());
+        $this->assertSame("La date de fin doit être après le 12/02/2023.", $crawler->filter('#step1_form_endDate_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
