@@ -15,5 +15,14 @@
                 <option name="max">255</option>
             </constraint>
         </property>
+        <property name="startDate">
+            <constraint name="NotBlank" />
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
+        </property>
+        <property name="endDate">
+
+        </property>
     </class>
 </constraint-mapping>
