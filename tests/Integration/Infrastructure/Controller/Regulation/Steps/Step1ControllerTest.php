@@ -71,6 +71,14 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
+    public function testRegulationOrderWithoutExistingStartDate(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/regulations/form/fd5d2e24-64e4-45c9-a8fc-097c7df796b2');
+        // TODO: why is this 404
+        $this->assertResponseStatusCodeSame(200);
+    }
+
     public function testBadUuid(): void
     {
         $client = $this->login();
