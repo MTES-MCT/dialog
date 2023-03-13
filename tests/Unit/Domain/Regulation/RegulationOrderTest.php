@@ -11,8 +11,8 @@ final class RegulationOrderTest extends TestCase
 {
     public function testGetters(): void
     {
-        $start = new \DateTime('2023-03-13');
-        $end = new \DateTime('2023-03-15');
+        $start = new \DateTimeImmutable('2023-03-13');
+        $end = new \DateTimeImmutable('2023-03-15');
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',

@@ -57,8 +57,12 @@ class RegulationOrder
     public function update(
         string $issuingAuthority,
         string $description,
+        \DateTimeInterface $startDate,
+        ?\DateTimeInterface $endDate = null,
     ): void {
         $this->issuingAuthority = $issuingAuthority;
         $this->description = $description;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
     }
 }
