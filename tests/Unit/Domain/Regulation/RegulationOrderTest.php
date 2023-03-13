@@ -33,6 +33,8 @@ final class RegulationOrderTest extends TestCase
     public function testUpdate(): void
     {
         $start = new \DateTime('2023-03-13');
+        $newStart = new \DateTime('2023-03-13');
+        $end = new \DateTimeImmutable('2023-03-15');
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
@@ -45,9 +47,13 @@ final class RegulationOrderTest extends TestCase
         $regulationOrder->update(
             issuingAuthority: 'Commune de Paris',
             description: 'Arrêté temporaire',
+            startDate: $newStart,
+            endDate: $end,
         );
 
         $this->assertSame('Commune de Paris', $regulationOrder->getIssuingAuthority());
         $this->assertSame('Arrêté temporaire', $regulationOrder->getDescription());
+        $this->assertSame($newStart, $regulationOrder->getStartDate());
+        $this->assertSame($end, $regulationOrder->getEndDate());
     }
 }

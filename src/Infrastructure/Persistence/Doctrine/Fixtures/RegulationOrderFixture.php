@@ -16,24 +16,30 @@ final class RegulationOrderFixture extends Fixture
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
             issuingAuthority: 'Autorité 1',
             description: 'Description 1',
+            startDate: new \DateTimeImmutable('2023-03-13'),
+            endDate: new \DateTimeImmutable('2023-03-15'),
         );
 
         $regulationOrder2 = new RegulationOrder(
             uuid: '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
             issuingAuthority: 'Autorité 2',
             description: 'Description 2',
+            startDate: new \DateTimeImmutable('2023-03-10'),
+            endDate: new \DateTimeImmutable('2023-03-20'),
         );
 
         $regulationOrder3 = new RegulationOrder(
             uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
             issuingAuthority: 'Description 3',
             description: 'Autorité 3',
+            startDate: new \DateTimeImmutable('2023-03-11'),
         );
 
         $regulationOrder4 = new RegulationOrder(
             uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
             issuingAuthority: 'Description 4',
             description: 'Autorité 4',
+            startDate: new \DateTimeImmutable('2023-03-12')
         );
 
         $manager->persist($regulationOrder);

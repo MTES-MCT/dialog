@@ -27,6 +27,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $organization = $this->createMock(Organization::class);
         $now = new \DateTimeImmutable('2022-01-09');
+        $start = new \DateTimeImmutable('2023-03-13');
+        $end = new \DateTimeImmutable('2023-03-15');
 
         $idFactory
             ->expects(self::exactly(3))
@@ -49,6 +51,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         issuingAuthority: 'Ville de Paris',
                         description: 'Interdiction de circuler',
+                        startDate: $start,
+                        endDate: $end,
                     )
                 )
             )
@@ -96,6 +100,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $command = new SaveRegulationStep1Command($organization);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
+        $command->startDate = $start;
+        $command->endDate = $end;
 
         $result = $handler($command);
 
@@ -110,6 +116,9 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $now = new \DateTimeImmutable('2022-01-09');
         $organization = $this->createMock(Organization::class);
+
+        $start = new \DateTimeImmutable('2023-03-13');
+        $end = new \DateTimeImmutable('2023-03-15');
 
         $idFactory
             ->expects(self::never())
@@ -139,6 +148,9 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             ->with(
                 'Ville de Paris',
                 'Interdiction de circuler',
+                new \DateTimeImmutable('2023-03-13'),
+                new \DateTimeImmutable('2023-03-15'),
+
             );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -158,6 +170,8 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $command = new SaveRegulationStep1Command($organization, $regulationOrderRecord);
         $command->issuingAuthority = 'Ville de Paris';
         $command->description = 'Interdiction de circuler';
+        $command->startDate = $start;
+        $command->endDate = $end;
 
         $result = $handler($command);
 
