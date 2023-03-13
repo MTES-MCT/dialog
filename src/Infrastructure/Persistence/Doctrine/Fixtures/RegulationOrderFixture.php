@@ -39,7 +39,7 @@ final class RegulationOrderFixture extends Fixture
             uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
             issuingAuthority: 'Description 4',
             description: 'Autorité 4',
-            startDate: new \DateTimeImmutable('2023-03-12')
+            startDate: new \DateTimeImmutable('2023-03-12'),
         );
 
         $manager->persist($regulationOrder);

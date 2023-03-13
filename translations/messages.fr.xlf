@@ -192,7 +192,7 @@
             </trans-unit>
             <trans-unit id="regulation.step1.end_date.help">
                 <source>regulation.step1.end_date.help</source>
-                <target>Laisser vide si l'arrếté est permanent.</target>
+                <target>Laisser vide si l'arrêté est permanent.</target>
             </trans-unit>
             <trans-unit id="regulation.step1.description.help">
                 <source>regulation.step1.description.help</source>
