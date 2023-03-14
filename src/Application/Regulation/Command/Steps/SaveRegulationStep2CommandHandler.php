@@ -6,9 +6,9 @@ namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
-use App\Domain\Condition\Location;
-use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
 final class SaveRegulationStep2CommandHandler
 {
@@ -30,7 +30,7 @@ final class SaveRegulationStep2CommandHandler
 
     public function __invoke(SaveRegulationStep2Command $command): void
     {
-        $regulationCondition = $command->regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
 
         // If submitting step 2 for the first time, we create the location
         if (!$command->location instanceof Location) {
@@ -40,7 +40,7 @@ final class SaveRegulationStep2CommandHandler
             $this->locationRepository->save(
                 new Location(
                     uuid: $this->idFactory->make(),
-                    regulationCondition: $regulationCondition,
+                    regulationOrder: $regulationOrder,
                     postalCode: $command->postalCode,
                     city: $command->city,
                     roadName: $command->roadName,

@@ -9,6 +9,7 @@ use App\Domain\Condition\RegulationCondition;
 class RegulationOrder
 {
     private ?RegulationCondition $regulationCondition = null;
+    private iterable $locations;
 
     public function __construct(
         private string $uuid,
@@ -52,6 +53,11 @@ class RegulationOrder
     public function setRegulationCondition(RegulationCondition $regulationCondition): void
     {
         $this->regulationCondition = $regulationCondition;
+    }
+
+    public function getLocations(): iterable
+    {
+        return $this->locations;
     }
 
     public function update(

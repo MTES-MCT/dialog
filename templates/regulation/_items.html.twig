@@ -5,7 +5,6 @@
     <table>
         <thead>
             <tr>
-                <th scope="col">{{ 'regulation.city'|trans }}</th>
                 <th scope="col">{{ 'regulation.period'|trans }}</th>
                 <th scope="col">{{ 'regulation.status'|trans }}</th>
                 <th scope="col">{{ 'common.actions'|trans }}</th>
@@ -13,31 +12,23 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
-                {% set isFuture = regulation.period ? app_is_future(regulation.period.startDate, regulation.period.startTime) : null %}
+                {% set isFuture = regulation.startDate ? app_is_future(regulation.startDate) : null %}
                 <tr>
                     <td>
-                        {% if regulation.location %}
-                            <b>{{ regulation.location.city }}</b><br/>
-                            {{ regulation.location.roadName }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if regulation.period %}
-                            {% set startDate = regulation.period.startDate %}
-                            {% set startTime = regulation.period.startTime %}
-                            {% set endDate = regulation.period.endDate %}
-                            {% set endTime = regulation.period.endTime %}
+                        {% if regulation.startDate %}
+                            {% set startDate = regulation.startDate %}
+                            {% set endDate = regulation.endDate %}
                             {% if startDate and endDate %}
                                 <b>
-                                {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate, startTime) }) }}
-                                {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate, endTime) }) }}
+                                {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
+                                {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
                                 </b>
                             {% else %}
                                 <b>
                                     {% if isFuture %}
-                                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate, startTime) }) }}
+                                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) }) }}
                                     {% else %}
-                                        {{ 'common.date.since'|trans({ '%date%': app_datetime(startDate, startTime) })}}
+                                        {{ 'common.date.since'|trans({ '%date%': app_datetime(startDate) })}}
                                     {% endif %}
                                 </b>
                                 <br/>

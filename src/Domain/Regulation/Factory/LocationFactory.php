@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Condition\Factory;
+namespace App\Domain\Regulation\Factory;
 
-use App\Domain\Condition\Location;
-use App\Domain\Condition\RegulationCondition;
+use App\Domain\Regulation\Location;
+use App\Domain\Regulation\RegulationOrder;
 
 class LocationFactory
 {
     public static function duplicate(
         string $uuid,
-        RegulationCondition $regulationCondition,
+        RegulationOrder $regulationOrder,
         Location $location,
     ): Location {
         return new Location(
             uuid: $uuid,
-            regulationCondition: $regulationCondition,
+            regulationOrder: $regulationOrder,
             postalCode: $location->getPostalCode(),
             city: $location->getCity(),
             roadName: $location->getRoadName(),
