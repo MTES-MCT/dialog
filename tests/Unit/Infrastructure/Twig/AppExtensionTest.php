@@ -38,10 +38,9 @@ class AppExtensionTest extends TestCase
             '06/01/2023 à 09h30',
             $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 UTC'), new \DateTimeImmutable('08:30:00 UTC'))
         );
-        // Time in $date is ignored
         $this->assertSame(
-            '06/01/2023 à 11h30',
-            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06T08:30:00'), new \DateTimeImmutable('10:30:00'))
+            '07/01/2023 à 11h30',
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 23:00 UTC'), new \DateTimeImmutable('10:30:00 UTC'))
         );
     }
 
