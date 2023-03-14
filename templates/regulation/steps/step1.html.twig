@@ -11,6 +11,8 @@
     {{ form_errors(form) }}
 
     {{ form_row(form.issuingAuthority, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+    {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+    {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
 
     <fieldset class="fr-fieldset">
         <legend class="fr-fieldset__legend">

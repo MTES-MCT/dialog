@@ -33,6 +33,8 @@ final class SaveRegulationStep1CommandHandler
                     uuid: $this->idFactory->make(),
                     issuingAuthority: $command->issuingAuthority,
                     description: $command->description,
+                    startDate: $command->startDate,
+                    endDate: $command->endDate,
                 ),
             );
 
@@ -62,6 +64,8 @@ final class SaveRegulationStep1CommandHandler
         $command->regulationOrderRecord->getRegulationOrder()->update(
             issuingAuthority: $command->issuingAuthority,
             description: $command->description,
+            startDate: $command->startDate,
+            endDate: $command->endDate,
         );
 
         return $command->regulationOrderRecord;

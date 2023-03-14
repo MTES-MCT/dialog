@@ -68,6 +68,8 @@ final class DuplicateRegulationCommandHandler
         $step1Command->description = $this->translator->trans('regulation.description.copy', [
             '%description%' => $originalRegulationOrder->getDescription(),
         ]);
+        $step1Command->startDate = $originalRegulationOrder->getStartDate();
+        $step1Command->endDate = $originalRegulationOrder->getEndDate();
 
         return $this->commandBus->handle($step1Command);
     }

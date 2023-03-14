@@ -22,7 +22,7 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $form["step1_form[issuingAuthority]"] = "Ville de Paris";
         $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
-
+        $form["step1_form[startDate]"] = "2023-02-14";
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
@@ -31,7 +31,7 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_regulations_steps_2');
     }
 
-    public function testBadRequest(): void
+    public function testEmptyData(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form');
@@ -39,10 +39,28 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["step1_form[issuingAuthority]"] = ""; // Reset the default value
+        $form["step1_form[startDate]"] = "";
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_description_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_startDate_error')->text());
+    }
+
+    public function testBadPeriod(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/form');
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[issuingAuthority]"] = "Paris"; // Reset the default value
+        $form["step1_form[description]"] = "Travaux";
+        $form["step1_form[startDate]"] = "2023-02-12";
+        $form["step1_form[endDate]"] = "2023-02-11";
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("La date de fin doit être après le 12/02/2023.", $crawler->filter('#step1_form_endDate_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
@@ -51,6 +69,26 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $client->request('GET', '/regulations/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
 
         $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testEditRegulationOrderWithNoStartDateYet(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/form/867d2be6-0d80-41b5-b1ff-8452b30a95f5');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[issuingAuthority]"] = "Ville de Paris";
+        $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
+        $form["step1_form[startDate]"] = "2023-02-14";
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_regulations_steps_2');
     }
 
     public function testBadUuid(): void

@@ -23,12 +23,16 @@ final class SaveRegulationStep1CommandTest extends TestCase
 
         $this->assertSame('DiaLog', $command->issuingAuthority);
         $this->assertEmpty($command->description);
+        $this->assertEmpty($command->startDate);
+        $this->assertEmpty($command->endDate);
     }
 
     public function testWithRegulationOrderRecord(): void
     {
         $organization = $this->createMock(Organization::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $start = new \DateTimeImmutable('2023-03-13');
+        $end = new \DateTimeImmutable('2023-03-15');
 
         $regulationOrder
             ->expects(self::once())
@@ -40,6 +44,16 @@ final class SaveRegulationStep1CommandTest extends TestCase
             ->method('getDescription')
             ->willReturn('Description');
 
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getStartDate')
+            ->willReturn($start);
+
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getEndDate')
+            ->willReturn($end);
+
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord
             ->expects(self::once())
@@ -50,5 +64,7 @@ final class SaveRegulationStep1CommandTest extends TestCase
 
         $this->assertSame($command->issuingAuthority, 'Autorité');
         $this->assertSame($command->description, 'Description');
+        $this->assertSame($command->startDate, $start);
+        $this->assertSame($command->endDate, $end);
     }
 }

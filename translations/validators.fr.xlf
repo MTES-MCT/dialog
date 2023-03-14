@@ -18,6 +18,10 @@
                 <source>regulation.detail.regulation_cant_be_published</source>
                 <target><![CDATA[<h3 class="fr-alert__title">]]>La réglementation ne peut pas être publiée. Vérifiez qu'elle a correctement été créée.<![CDATA[</h3>]]></target>
             </trans-unit>
+            <trans-unit id="regulation.step1.error.end_date_before_start_date">
+                <source>regulation.step1.error.end_date_before_start_date</source>
+                <target>La date de fin doit être après le {{ compared_value }}.</target>
+            </trans-unit>
             <trans-unit id="regulation.step3.error.end_time_without_end_date">
                 <source>regulation.step3.error.end_time_without_end_date</source>
                 <target>Veuillez indiquer une date de fin, ou retirer l'heure de fin.</target>
