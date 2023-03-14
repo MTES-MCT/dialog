@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Unit\Infrastructure\Validator;
+namespace App\Test\Unit\Infrastructure\Validation;
 
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Domain\Regulation\RegulationOrderRecord;
