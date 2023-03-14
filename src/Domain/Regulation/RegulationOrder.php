@@ -9,7 +9,7 @@ use App\Domain\Condition\RegulationCondition;
 class RegulationOrder
 {
     private ?RegulationCondition $regulationCondition = null;
-    private iterable $locations;
+    private iterable $locations = [];
 
     public function __construct(
         private string $uuid,

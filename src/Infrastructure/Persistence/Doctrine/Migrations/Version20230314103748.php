@@ -23,9 +23,17 @@ final class Version20230314103748 extends AbstractMigration
         $this->addSql('ALTER TABLE location DROP CONSTRAINT fk_5e9e89cb9f073263');
         $this->addSql('DROP INDEX uniq_5e9e89cb9f073263');
         $this->addSql('ALTER TABLE location ADD regulation_order_uuid UUID DEFAULT NULL');
-        $this->addSql('ALTER TABLE location DROP regulation_condition_uuid');
         $this->addSql('ALTER TABLE location ADD CONSTRAINT FK_5E9E89CB267E0D5E FOREIGN KEY (regulation_order_uuid) REFERENCES regulation_order (uuid) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE INDEX IDX_5E9E89CB267E0D5E ON location (regulation_order_uuid)');
+        $this->addSql('
+            UPDATE location
+            SET regulation_order_uuid = ro.uuid
+            FROM regulation_order AS ro
+            JOIN regulation_condition AS rc ON ro.uuid = rc.regulation_order_uuid
+            WHERE rc.uuid = location.regulation_condition_uuid
+        ');
+        $this->addSql('ALTER TABLE location DROP regulation_condition_uuid');
+        $this->addSql('ALTER TABLE location ALTER regulation_order_uuid DROP NOT NULL');
     }
 
     public function down(Schema $schema): void

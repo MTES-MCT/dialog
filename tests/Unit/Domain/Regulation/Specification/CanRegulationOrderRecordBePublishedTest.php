@@ -59,7 +59,7 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
             ->expects(self::once())
             ->method('handle')
             ->with($this->equalTo($locationQuery))
-            ->willReturnOnConsecutiveCalls(null);
+            ->willReturn(null);
 
         $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
         $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));

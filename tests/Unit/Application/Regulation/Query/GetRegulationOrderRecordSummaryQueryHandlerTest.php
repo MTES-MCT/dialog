@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
-use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;

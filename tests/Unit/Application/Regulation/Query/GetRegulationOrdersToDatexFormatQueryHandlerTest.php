@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\View\DatexLocationView;
-use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
