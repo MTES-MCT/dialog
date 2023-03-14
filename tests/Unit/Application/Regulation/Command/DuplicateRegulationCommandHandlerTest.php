@@ -102,6 +102,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
     public function testRegulationFullyDuplicated(): void
     {
+        $startDate = new \DateTimeImmutable('2023-03-13');
+        $endDate = new \DateTimeImmutable('2023-03-16');
+
         $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
@@ -117,6 +120,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDescription')
             ->willReturn('Description');
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getStartDate')
+            ->willReturn($startDate);
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getEndDate')
+            ->willReturn($endDate);
 
         $duplicatedRegulationCondition = $this->createMock(RegulationCondition::class);
         $duplicatedRegulationOrder = $this->createMock(RegulationOrder::class);
@@ -143,6 +156,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
+        $step1command->startDate = $startDate;
+        $step1command->endDate = $endDate;
 
         $this->originalRegulationCondition
             ->expects(self::exactly(3))
@@ -288,6 +303,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
     public function testRegulationPartiallyDuplicated(): void
     {
+        $startDate = new \DateTimeImmutable('2023-03-13');
+        $endDate = new \DateTimeImmutable('2023-03-16');
+
         $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
@@ -303,6 +321,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDescription')
             ->willReturn('Description');
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getStartDate')
+            ->willReturn($startDate);
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getEndDate')
+            ->willReturn($endDate);
 
         $duplicatedRegulationCondition = $this->createMock(RegulationCondition::class);
         $duplicatedRegulationOrder = $this->createMock(RegulationOrder::class);
@@ -329,6 +357,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
+        $step1command->startDate = $startDate;
+        $step1command->endDate = $endDate;
 
         $this->originalRegulationCondition
             ->expects(self::exactly(3))

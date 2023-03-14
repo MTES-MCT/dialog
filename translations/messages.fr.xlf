@@ -178,6 +178,22 @@
                 <source>regulation.step1.description</source>
                 <target>Description</target>
             </trans-unit>
+            <trans-unit id="regulation.step1.start_date">
+                <source>regulation.step1.start_date</source>
+                <target>Date de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.start_date.help">
+                <source>regulation.step1.start_date.help</source>
+                <target>Début d'effet de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.end_date">
+                <source>regulation.step1.end_date</source>
+                <target>Date de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.end_date.help">
+                <source>regulation.step1.end_date.help</source>
+                <target>Laisser vide si l'arrêté est permanent.</target>
+            </trans-unit>
             <trans-unit id="regulation.step1.description.help">
                 <source>regulation.step1.description.help</source>
                 <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur la voie")</target>
