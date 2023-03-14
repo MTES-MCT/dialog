@@ -71,12 +71,24 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testRegulationOrderWithoutExistingStartDate(): void
+    public function testEditRegulationOrderWithNoStartDateYet(): void
     {
         $client = $this->login();
-        $client->request('GET', '/regulations/form/fd5d2e24-64e4-45c9-a8fc-097c7df796b2');
-        // TODO: why is this 404
+        $crawler = $client->request('GET', '/regulations/form/867d2be6-0d80-41b5-b1ff-8452b30a95f5');
+
         $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[issuingAuthority]"] = "Ville de Paris";
+        $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
+        $form["step1_form[startDate]"] = "2023-02-14";
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_regulations_steps_2');
     }
 
     public function testBadUuid(): void

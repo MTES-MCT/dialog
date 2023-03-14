@@ -14,7 +14,7 @@ class RegulationOrder
         private string $uuid,
         private string $issuingAuthority,
         private string $description,
-        private \DateTimeInterface $startDate,
+        private ?\DateTimeInterface $startDate,
         private ?\DateTimeInterface $endDate = null,
     ) {
     }
@@ -34,7 +34,7 @@ class RegulationOrder
         return $this->description;
     }
 
-    public function getStartDate(): \DateTimeInterface
+    public function getStartDate(): ?\DateTimeInterface
     {
         return $this->startDate;
     }
