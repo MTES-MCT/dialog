@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\CommandInterface;
-use App\Domain\Condition\Location;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrderRecord;
 
 final class SaveRegulationStep2Command implements CommandInterface

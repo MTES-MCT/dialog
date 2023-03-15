@@ -25,16 +25,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         string $status,
     ): array {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, o.startDate, o.startTime, o.endDate, o.endTime, roc.status, l.city, l.roadName')
+            ->select('roc.uuid, ro.startDate, ro.endDate, roc.status')
             ->where('roc.status = :status')
             ->andWhere('roc.organization = :organization')
             ->setParameters(['status' => $status, 'organization' => $organization->getUuid()])
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->innerJoin('ro.regulationCondition', 'rc')
-            ->leftJoin('rc.overallPeriod', 'o')
-            ->leftJoin('rc.location', 'l')
-            ->orderBy('o.startDate', 'DESC')
-            ->orderBy('o.startTime', 'DESC')
+            ->orderBy('ro.startDate', 'DESC')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
             ->getQuery()
@@ -76,10 +72,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'org.uuid as organizationUuid',
                 'roc.status',
                 'ro.description',
-                'o.startDate',
-                'o.startTime',
-                'o.endDate',
-                'o.endTime',
+                'ro.startDate',
+                'ro.endDate',
                 'l.postalCode',
                 'l.city',
                 'l.roadName',
@@ -95,9 +89,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.regulationCondition', 'rc')
+            ->leftJoin('ro.locations', 'l')
             ->leftJoin('rc.vehicleCharacteristics', 'vc')
             ->leftJoin('rc.overallPeriod', 'o')
-            ->leftJoin('rc.location', 'l')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -111,10 +105,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.uuid',
                 'ro.issuingAuthority',
                 'ro.description',
-                'o.startDate',
-                'o.startTime',
-                'o.endDate',
-                'o.endTime',
+                'ro.startDate',
+                'ro.endDate',
                 'loc.postalCode',
                 'loc.city',
                 'loc.roadName',
@@ -132,7 +124,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.regulationCondition', 'rc')
             ->innerJoin('rc.overallPeriod', 'o')
-            ->innerJoin('rc.location', 'loc')
+            ->innerJoin('ro.locations', 'loc')
             ->leftJoin('rc.vehicleCharacteristics', 'vc')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)

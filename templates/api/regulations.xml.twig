@@ -20,10 +20,8 @@
 
     <trafficRegulationsFromCompetentAuthorities>
     {% for regulationOrder in regulationOrders %}
-        {% set startDate = regulationOrder.period.startDate %}
-        {% set startTime = regulationOrder.period.startTime %}
-        {% set endDate = regulationOrder.period.endDate %}
-        {% set endTime = regulationOrder.period.endTime %}
+        {% set startDate = regulationOrder.startDate %}
+        {% set endDate = regulationOrder.endDate %}
         {% set location = regulationOrder.location %}
         {% set vehicleCharacteristics = regulationOrder.vehicleCharacteristics %}
         <trafficRegulationOrder id="{{ regulationOrder.uuid }}" version="1">
@@ -51,9 +49,9 @@
                         <validityByOrder>
                             <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                             <com:validityTimeSpecification>
-                                <com:overallStartTime>{{ startDate|date('Y-m-d') }}T{{ startTime|default('00:00:00')|date('H:i:s') }}.000Z</com:overallStartTime>
+                                <com:overallStartTime>{{ startDate|date('Y-m-d') }}T00:00:00.000Z</com:overallStartTime>
                                 {% if endDate %}
-                                    <com:overallEndTime>{{ endDate|date('Y-m-d') }}T{{ endTime|default('23:59:59')|date('H:i:s') }}.000Z</com:overallEndTime>
+                                    <com:overallEndTime>{{ endDate|date('Y-m-d') }}T23:59:59.000Z</com:overallEndTime>
                                 {% endif %}
                             </com:validityTimeSpecification>
                         </validityByOrder>

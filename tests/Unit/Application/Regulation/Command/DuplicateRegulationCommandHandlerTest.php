@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
+use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
 use App\Application\Condition\Query\VehicleCharacteristics\GetVehicleCharacteristicsByRegulationConditionQuery;
 use App\Application\IdFactoryInterface;
@@ -15,10 +15,10 @@ use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
-use App\Domain\Condition\Location;
+use App\Domain\Regulation\Location;
 use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
-use App\Domain\Condition\Repository\LocationRepositoryInterface;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
 use App\Domain\Regulation\RegulationOrder;
@@ -131,12 +131,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getEndDate')
             ->willReturn($endDate);
 
-        $duplicatedRegulationCondition = $this->createMock(RegulationCondition::class);
         $duplicatedRegulationOrder = $this->createMock(RegulationOrder::class);
-        $duplicatedRegulationOrder
-            ->expects(self::once())
-            ->method('getRegulationCondition')
-            ->willReturn($duplicatedRegulationCondition);
 
         $duplicatedRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $duplicatedRegulationOrderRecord
@@ -160,9 +155,14 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step1command->endDate = $endDate;
 
         $this->originalRegulationCondition
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('getUuid')
             ->willReturn('d71d7c51-2a4b-49e2-8746-436466db1ade');
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('2d2e886c-90a3-4cd5-b0bf-ae288ca45830');
 
         // Location
         $location = $this->createMock(Location::class);
@@ -206,7 +206,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->with(
                 new Location(
                     uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
-                    regulationCondition: $duplicatedRegulationCondition,
+                    regulationOrder: $duplicatedRegulationOrder,
                     postalCode: '44260',
                     city: 'Savenay',
                     roadName: 'Route du Grand Brossais',
@@ -276,7 +276,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::exactly(3))
             ->method('handle')
             ->withConsecutive(
-                [new GetLocationByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
+                [new GetLocationByRegulationOrderQuery('2d2e886c-90a3-4cd5-b0bf-ae288ca45830')],
                 [new GetOverallPeriodByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
                 [new GetVehicleCharacteristicsByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
             )
@@ -332,13 +332,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getEndDate')
             ->willReturn($endDate);
 
-        $duplicatedRegulationCondition = $this->createMock(RegulationCondition::class);
         $duplicatedRegulationOrder = $this->createMock(RegulationOrder::class);
-        $duplicatedRegulationOrder
-            ->expects(self::once())
-            ->method('getRegulationCondition')
-            ->willReturn($duplicatedRegulationCondition);
-
         $duplicatedRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $duplicatedRegulationOrderRecord
             ->expects(self::once())
@@ -361,9 +355,14 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step1command->endDate = $endDate;
 
         $this->originalRegulationCondition
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('getUuid')
             ->willReturn('d71d7c51-2a4b-49e2-8746-436466db1ade');
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('2d2e886c-90a3-4cd5-b0bf-ae288ca45830');
 
         $this->locationRepository
             ->expects(self::never())
@@ -373,7 +372,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::exactly(3))
             ->method('handle')
             ->withConsecutive(
-                [new GetLocationByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
+                [new GetLocationByRegulationOrderQuery('2d2e886c-90a3-4cd5-b0bf-ae288ca45830')],
                 [new GetOverallPeriodByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
                 [new GetVehicleCharacteristicsByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
             )

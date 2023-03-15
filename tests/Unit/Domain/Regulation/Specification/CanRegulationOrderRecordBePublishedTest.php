@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation\Specification;
 
-use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
-use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
+use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Application\QueryBusInterface;
-use App\Domain\Condition\Location;
-use App\Domain\Condition\Period\OverallPeriod;
-use App\Domain\Condition\RegulationCondition;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
@@ -19,27 +16,19 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
 {
     private $queryBus;
     private $location;
-    private $overallPeriod;
     private $regulationOrderRecord;
-    private $regulationCondition;
     private $regulationOrder;
 
     public function setUp(): void
     {
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->location = $this->createMock(Location::class);
-        $this->overallPeriod = $this->createMock(OverallPeriod::class);
-        $this->regulationCondition = $this->createMock(RegulationCondition::class);
-        $this->regulationCondition
-            ->expects(self::exactly(2))
-            ->method('getUuid')
-            ->willReturn('bca28a47-d910-48a7-8d60-90bfbc4d675e');
 
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->regulationOrder
             ->expects(self::once())
-            ->method('getRegulationCondition')
-            ->willReturn($this->regulationCondition);
+            ->method('getUuid')
+            ->willReturn('b52be4b6-cbc6-4fa0-812f-b01cb7ca08ee');
 
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
@@ -50,14 +39,13 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
 
     public function testRegulationCanBePublished(): void
     {
-        $locationQuery = new GetLocationByRegulationConditionQuery('bca28a47-d910-48a7-8d60-90bfbc4d675e');
-        $overallPeriodQuery = new GetOverallPeriodByRegulationConditionQuery('bca28a47-d910-48a7-8d60-90bfbc4d675e');
+        $locationQuery = new GetLocationByRegulationOrderQuery('b52be4b6-cbc6-4fa0-812f-b01cb7ca08ee');
 
         $this->queryBus
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('handle')
-            ->withConsecutive([$this->equalTo($locationQuery)], [$this->equalTo($overallPeriodQuery)])
-            ->willReturnOnConsecutiveCalls($this->location, $this->overallPeriod);
+            ->with($this->equalTo($locationQuery))
+            ->willReturn($this->location);
 
         $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
         $this->assertTrue($specification->isSatisfiedBy($this->regulationOrderRecord));
@@ -65,29 +53,13 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
 
     public function testNullableLocation(): void
     {
-        $locationQuery = new GetLocationByRegulationConditionQuery('bca28a47-d910-48a7-8d60-90bfbc4d675e');
-        $overallPeriodQuery = new GetOverallPeriodByRegulationConditionQuery('bca28a47-d910-48a7-8d60-90bfbc4d675e');
+        $locationQuery = new GetLocationByRegulationOrderQuery('b52be4b6-cbc6-4fa0-812f-b01cb7ca08ee');
 
         $this->queryBus
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('handle')
-            ->withConsecutive([$this->equalTo($locationQuery)], [$this->equalTo($overallPeriodQuery)])
-            ->willReturnOnConsecutiveCalls(null, $this->overallPeriod);
-
-        $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
-        $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));
-    }
-
-    public function testNullableOverallPeriod(): void
-    {
-        $locationQuery = new GetLocationByRegulationConditionQuery('bca28a47-d910-48a7-8d60-90bfbc4d675e');
-        $overallPeriodQuery = new GetOverallPeriodByRegulationConditionQuery('bca28a47-d910-48a7-8d60-90bfbc4d675e');
-
-        $this->queryBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive([$this->equalTo($locationQuery)], [$this->equalTo($overallPeriodQuery)])
-            ->willReturnOnConsecutiveCalls($this->location, null);
+            ->with($this->equalTo($locationQuery))
+            ->willReturn(null);
 
         $specification = new CanRegulationOrderRecordBePublished($this->queryBus);
         $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Condition;
+namespace App\Tests\Unit\Domain\Regulation;
 
-use App\Domain\Condition\Location;
-use App\Domain\Condition\RegulationCondition;
+use App\Domain\Regulation\Location;
+use App\Domain\Regulation\RegulationOrder;
 use PHPUnit\Framework\TestCase;
 
 final class LocationTest extends TestCase
 {
     public function testGetters(): void
     {
-        $regulationCondition = $this->createMock(RegulationCondition::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
         $location = new Location(
             'b4812143-c4d8-44e6-8c3a-34688becae6e',
-            $regulationCondition,
+            $regulationOrder,
             '44260',
             'Savenay',
             'Route du Grand Brossais',
@@ -26,7 +26,7 @@ final class LocationTest extends TestCase
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
-        $this->assertSame($regulationCondition, $location->getRegulationCondition());
+        $this->assertSame($regulationOrder, $location->getRegulationOrder());
         $this->assertSame('44260', $location->getPostalCode());
         $this->assertSame('Savenay', $location->getCity());
         $this->assertSame('Route du Grand Brossais', $location->getRoadName());
@@ -38,11 +38,11 @@ final class LocationTest extends TestCase
 
     public function testUpdate(): void
     {
-        $regulationCondition = $this->createMock(RegulationCondition::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
 
         $location = new Location(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $regulationCondition,
+            $regulationOrder,
             '44260',
             'Savenay',
             'Route du Grand Brossais',
