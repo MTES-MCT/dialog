@@ -24,6 +24,17 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
     }
 
+    public function testDuplicateWithNoStartDateYet(): void {
+        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client->request('POST', '/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('Description 4 (copie)', $crawler->filter('h2')->text());
+    }
+
     public function testRegulationCannotBeDuplicated(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');

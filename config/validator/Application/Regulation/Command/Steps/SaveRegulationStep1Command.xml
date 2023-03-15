@@ -16,7 +16,11 @@
             </constraint>
         </property>
         <property name="startDate">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>html_form</value>
+                </option>
+            </constraint>
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
             </constraint>
