@@ -10,7 +10,8 @@ final class RegulationOrderDatexListItemView
         public readonly string $uuid,
         public readonly string $issuingAuthority,
         public readonly string $description,
-        public readonly PeriodView $period,
+        public readonly ?\DateTimeInterface $startDate,
+        public readonly ?\DateTimeInterface $endDate,
         public readonly ?DatexLocationView $location,
         public readonly ?VehicleCharacteristicsView $vehicleCharacteristics,
     ) {

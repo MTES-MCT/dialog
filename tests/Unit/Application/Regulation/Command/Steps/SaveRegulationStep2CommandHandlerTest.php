@@ -9,9 +9,9 @@ use App\Domain\Geography\GeometryFormatter;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
-use App\Domain\Condition\Location;
+use App\Domain\Regulation\Location;
 use App\Domain\Condition\RegulationCondition;
-use App\Domain\Condition\Repository\LocationRepositoryInterface;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -26,8 +26,6 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
     private $fromPoint;
     private $toHouseNumber;
     private $toPoint;
-
-    private $regulationCondition;
     private $regulationOrder;
     private $regulationOrderRecord;
 
@@ -41,13 +39,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
         $this->toHouseNumber = '37bis';
         $this->toPoint = 'POINT(-1.930973 47.347917)';
 
-        $this->regulationCondition = $this->createMock(RegulationCondition::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
-        $this->regulationOrder
-            ->expects(self::once())
-            ->method('getRegulationCondition')
-            ->willReturn($this->regulationCondition);
-
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -83,7 +75,7 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
 
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
-            regulationCondition: $this->regulationCondition,
+            regulationOrder: $this->regulationOrder,
             postalCode: $this->postalCode,
             city: $this->city,
             roadName: $this->roadName,

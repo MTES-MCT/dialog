@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DetailLocationView;
-use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -28,10 +27,6 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             throw new RegulationOrderRecordNotFoundException();
         }
 
-        $hasPeriod = $row['startDate']
-            || $row['startTime']
-            || $row['endDate']
-            || $row['endTime'];
         $hasLocation = $row['postalCode']
             && $row['city']
             && $row['roadName']
@@ -47,12 +42,8 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             $row['organizationUuid'],
             $row['status'],
             $row['description'],
-            $hasPeriod ? new PeriodView(
-                $row['startDate'],
-                $row['startTime'],
-                $row['endDate'],
-                $row['endTime'],
-            ) : null,
+            $row['startDate'],
+            $row['endDate'],
             $hasLocation ? new DetailLocationView(
                 $row['postalCode'],
                 $row['city'],

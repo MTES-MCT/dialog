@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
-use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -37,9 +36,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'status' => 'draft',
             'description' => 'Description 1',
             'startDate' => $startDate,
-            'startTime' => null,
             'endDate' => $endDate,
-            'endTime' => null,
             'postalCode' => $location->postalCode,
             'city' => $location->city,
             'roadName' => $location->roadName,
@@ -65,7 +62,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 'draft',
                 'Description 1',
-                new PeriodView($startDate, null, $endDate, null),
+                $startDate,
+                $endDate,
                 new DetailLocationView(
                     $location->postalCode,
                     $location->city,
@@ -89,9 +87,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'status' => 'draft',
             'description' => 'Description 1',
             'startDate' => null,
-            'startTime' => null,
             'endDate' => null,
-            'endTime' => null,
             'postalCode' => null,
             'city' => null,
             'roadName' => null,
@@ -117,6 +113,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 'draft',
                 'Description 1',
+                null,
                 null,
                 null,
                 null,

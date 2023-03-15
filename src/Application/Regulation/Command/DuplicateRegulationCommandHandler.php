@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
 use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
 use App\Application\Condition\Query\VehicleCharacteristics\GetVehicleCharacteristicsByRegulationConditionQuery;
 use App\Application\IdFactoryInterface;
@@ -13,15 +12,16 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
-use App\Domain\Condition\Factory\LocationFactory;
-use App\Domain\Condition\Location;
+use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
-use App\Domain\Condition\Repository\LocationRepositoryInterface;
 use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
+use App\Domain\Regulation\Factory\LocationFactory;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -50,9 +50,9 @@ final class DuplicateRegulationCommandHandler
         }
 
         $duplicatedRegulationOrderRecord = $this->duplicateRegulationOrderRecord($organization, $originalRegulationOrder);
-        $duplicatedRegulationCondition = $duplicatedRegulationOrderRecord->getRegulationOrder()->getRegulationCondition();
+        $duplicatedRegulationOrder = $duplicatedRegulationOrderRecord->getRegulationOrder();
 
-        $this->duplicateLocation($originalRegulationCondition, $duplicatedRegulationCondition);
+        $this->duplicateLocation($originalRegulationOrder, $duplicatedRegulationOrder);
         $this->duplicateOverallPeriod($originalRegulationCondition, $duplicatedRegulationOrderRecord);
         $this->duplicateVehicleCharacteristics($originalRegulationCondition, $duplicatedRegulationOrderRecord);
 
@@ -75,18 +75,18 @@ final class DuplicateRegulationCommandHandler
     }
 
     private function duplicateLocation(
-        RegulationCondition $originalRegulationCondition,
-        RegulationCondition $duplicatedRegulationCondition,
+        RegulationOrder $originalRegulationOrder,
+        RegulationOrder $duplicatedRegulationOrder,
     ): void {
         $location = $this->queryBus->handle(
-            new GetLocationByRegulationConditionQuery($originalRegulationCondition->getUuid()),
+            new GetLocationByRegulationOrderQuery($originalRegulationOrder->getUuid()),
         );
 
         if ($location instanceof Location) {
             $this->locationRepository->save(
                 LocationFactory::duplicate(
                     $this->idFactory->make(),
-                    $duplicatedRegulationCondition,
+                    $duplicatedRegulationOrder,
                     $location,
                 ),
             );

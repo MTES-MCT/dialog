@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Condition;
+namespace App\Domain\Regulation;
 
 class Location
 {
     public function __construct(
         private string $uuid,
-        private RegulationCondition $regulationCondition,
+        private RegulationOrder $regulationOrder,
         private string $postalCode,
         private string $city,
         private string $roadName,
@@ -24,9 +24,9 @@ class Location
         return $this->uuid;
     }
 
-    public function getRegulationCondition(): RegulationCondition
+    public function getRegulationOrder(): RegulationOrder
     {
-        return $this->regulationCondition;
+        return $this->regulationOrder;
     }
 
     public function getPostalCode(): string

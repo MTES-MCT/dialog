@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Doctrine\Repository\Condition;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Domain\Condition\Location;
-use App\Domain\Condition\Repository\LocationRepositoryInterface;
+use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,12 +23,12 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         return $location;
     }
 
-    public function findOneByRegulationConditionUuid(string $uuid): ?Location
+    public function findOneByRegulationOrderUuid(string $uuid): ?Location
     {
         return $this->createQueryBuilder('loc')
-            ->where('rc.uuid = :uuid')
+            ->where('ro.uuid = :uuid')
             ->setParameter('uuid', $uuid)
-            ->innerJoin('loc.regulationCondition', 'rc')
+            ->innerJoin('loc.regulationOrder', 'ro')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

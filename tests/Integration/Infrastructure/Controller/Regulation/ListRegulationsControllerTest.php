@@ -11,6 +11,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $pageOne = $client->request('GET', '/regulations?pageSize=1');
+
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
@@ -25,13 +26,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $pageOneDraftRows->count()); // One item per page
 
         $pageOneDraftRow0 = $pageOneDraftRows->eq(0)->filter('td');
-        $this->assertEmpty($pageOneDraftRow0->eq(0)->text()); // No location
-        $this->assertEmpty($pageOneDraftRow0->eq(1)->text()); // No period set
-        $this->assertSame("Brouillon", $pageOneDraftRow0->eq(2)->text());
+        $this->assertSame("du 13/03/2023 au 15/03/2023", $pageOneDraftRow0->eq(0)->text());
+        $this->assertSame("Brouillon", $pageOneDraftRow0->eq(1)->text());
 
-        $links = $pageOneDraftRow0->eq(3)->filter('a');
+        $links = $pageOneDraftRow0->eq(2)->filter('a');
         $this->assertSame("Modifier", $links->eq(0)->text());
-        $this->assertSame("http://localhost/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa", $links->eq(0)->link()->getUri());
+        $this->assertSame("http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5", $links->eq(0)->link()->getUri());
 
         $pageTwo = $client->request('GET', '/regulations?page=2&tab=draft&pageSize=1');
         $this->assertResponseStatusCodeSame(200);
@@ -42,19 +42,17 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageTwoDraftRows = $pageTwo->filter('#draft-panel tbody > tr');
         $pageTwoDraftRow1 = $pageTwoDraftRows->eq(0)->filter('td');
 
-        $this->assertSame("Savenay Route du Grand Brossais", $pageTwoDraftRow1->eq(0)->text());
-        $this->assertSame("du 08/12/2022 à 09h00 au 18/12/2022 à 17h00", $pageTwoDraftRow1->eq(1)->text());
-        $this->assertSame("Brouillon", $pageTwoDraftRow1->eq(2)->text());
+        $this->assertSame("depuis le 11/03/2023 permanent", $pageTwoDraftRow1->eq(0)->text());
+        $this->assertSame("Brouillon", $pageTwoDraftRow1->eq(1)->text());
 
         // Test published reglementation rendering
         $pageOnePublishedRows = $pageOne->filter('#published-panel tbody > tr');
         $this->assertSame(1, $pageOnePublishedRows->count());
 
         $pageOnePublishedRow0 = $pageOnePublishedRows->eq(0)->filter('td');
-        $this->assertSame('Montauban Avenue de Fonneuve', $pageOnePublishedRow0->eq(0)->text());
-        $this->assertSame("depuis le 08/10/2022 permanent", $pageOnePublishedRow0->eq(1)->text());
-        $this->assertSame("Réglementation en cours", $pageOnePublishedRow0->eq(2)->text());
-        $links = $pageOnePublishedRow0->eq(3)->filter('a');
+        $this->assertSame("du 10/03/2023 au 20/03/2023", $pageOnePublishedRow0->eq(0)->text());
+        $this->assertSame("Réglementation en cours", $pageOnePublishedRow0->eq(1)->text());
+        $links = $pageOnePublishedRow0->eq(2)->filter('a');
 
         $this->assertSame("Voir le détail", $links->eq(0)->text());
         $this->assertSame("http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5", $links->eq(0)->link()->getUri());
@@ -67,7 +65,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame("2", $navLi->eq(3)->filter('a')->text());
         $this->assertSame("Page suivante", $navLi->eq(4)->filter('a')->text());
         $this->assertSame("Dernière page", $navLi->eq(5)->filter('a')->text());
-        
+
     }
 
     public function testListWithOtherOrganization(): void
@@ -88,11 +86,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $pageOneDraftRows->count()); // One item per page
 
         $pageOneDraftRow0 = $pageOneDraftRows->eq(0)->filter('td');
-        $this->assertEmpty($pageOneDraftRow0->eq(0)->text()); // No location
-        $this->assertEmpty($pageOneDraftRow0->eq(1)->text()); // No period set
-        $this->assertSame("Brouillon", $pageOneDraftRow0->eq(2)->text());
+        $this->assertEmpty($pageOneDraftRow0->eq(0)->text()); // No period set
+        $this->assertSame("Brouillon", $pageOneDraftRow0->eq(1)->text());
 
-        $links = $pageOneDraftRow0->eq(3)->filter('a');
+        $links = $pageOneDraftRow0->eq(2)->filter('a');
         $this->assertSame("Modifier", $links->eq(0)->text());
         $this->assertSame("http://localhost/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5", $links->eq(0)->link()->getUri());
     }

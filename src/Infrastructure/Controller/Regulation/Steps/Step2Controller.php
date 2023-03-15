@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Steps;
 
 use App\Application\CommandBusInterface;
-use App\Application\Condition\Query\Location\GetLocationByRegulationConditionQuery;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
+use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Steps\Step2FormType;
 use Symfony\Component\Form\FormError;
@@ -41,9 +41,8 @@ final class Step2Controller extends AbstractRegulationController
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        $regulationCondition = $regulationOrderRecord->getRegulationOrder()->getRegulationCondition();
         $location = $this->queryBus->handle(
-            new GetLocationByRegulationConditionQuery($regulationCondition->getUuid()),
+            new GetLocationByRegulationOrderQuery($regulationOrderRecord->getRegulationOrder()->getUuid()),
         );
 
         $command = SaveRegulationStep2Command::create($regulationOrderRecord, $location);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DatexLocationView;
-use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -32,12 +31,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 $regulationOrder['uuid'],
                 $regulationOrder['issuingAuthority'],
                 $regulationOrder['description'],
-                new PeriodView(
-                    $regulationOrder['startDate'],
-                    $regulationOrder['startTime'],
-                    $regulationOrder['endDate'],
-                    $regulationOrder['endTime'],
-                ),
+                $regulationOrder['startDate'],
+                $regulationOrder['endDate'],
                 new DatexLocationView(
                     postalCode: $regulationOrder['postalCode'],
                     city: $regulationOrder['city'],

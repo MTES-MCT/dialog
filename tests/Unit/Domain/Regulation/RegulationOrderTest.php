@@ -28,6 +28,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame($start, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
         $this->assertSame(null, $regulationOrder->getRegulationCondition()); // Automatically set by Doctrine
+        $this->assertEmpty($regulationOrder->getLocations()); // Automatically set by Doctrine
     }
 
     public function testUpdate(): void
