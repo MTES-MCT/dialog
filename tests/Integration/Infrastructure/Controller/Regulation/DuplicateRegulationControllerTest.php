@@ -34,6 +34,16 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
+    public function testMessengerValidationFailed(): void
+    {
+        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client->request('POST', '/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+    }
+
     public function testRegulationNotFound(): void
     {
         $client = $this->login();

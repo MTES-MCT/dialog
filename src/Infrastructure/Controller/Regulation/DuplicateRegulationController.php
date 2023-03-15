@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
@@ -69,6 +70,8 @@ final class DuplicateRegulationController extends AbstractRegulationController
             );
         } catch (RegulationCannotBeDuplicated) {
             throw new AccessDeniedHttpException();
+        } catch (ValidationFailedException) {
+            throw new BadRequestHttpException();
         }
     }
 }
