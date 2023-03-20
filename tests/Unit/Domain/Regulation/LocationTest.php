@@ -34,6 +34,7 @@ final class LocationTest extends TestCase
         $this->assertSame('POINT(-1.935836 47.347024)', $location->getFromPoint());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame('POINT(-1.930973 47.347917)', $location->getToPoint());
+        $this->assertEmpty($location->getMeasures());
     }
 
     public function testUpdate(): void

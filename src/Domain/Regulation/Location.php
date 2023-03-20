@@ -6,6 +6,8 @@ namespace App\Domain\Regulation;
 
 class Location
 {
+    private iterable $measures = [];
+
     public function __construct(
         private string $uuid,
         private RegulationOrder $regulationOrder,
@@ -62,6 +64,11 @@ class Location
     public function getToPoint(): string
     {
         return $this->toPoint;
+    }
+
+    public function getMeasures(): iterable
+    {
+        return $this->measures;
     }
 
     public function update(
