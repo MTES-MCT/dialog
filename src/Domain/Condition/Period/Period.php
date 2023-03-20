@@ -11,9 +11,11 @@ class Period
 
     public function __construct(
         private string $uuid,
-        private ?string $name = null,
-        private ?\DateTimeInterface $startDate = null,
-        private ?\DateTimeInterface $endDate = null,
+        private ?array $applicableDays = [],
+        private ?array $applicableMonths = [],
+        private ?array $specialDays = [],
+        private ?\DateTimeInterface $dayStartTime = null,
+        private ?\DateTimeInterface $dayEndTime = null,
     ) {
     }
 
@@ -22,19 +24,29 @@ class Period
         return $this->uuid;
     }
 
-    public function getName(): ?string
+    public function getApplicableDays(): array
     {
-        return $this->name;
+        return $this->applicableDays;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getApplicableMonths(): array
     {
-        return $this->startDate;
+        return $this->applicableMonths;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getSpecialDays(): array
     {
-        return $this->endDate;
+        return $this->specialDays;
+    }
+
+    public function getDayStartTime(): ?\DateTimeInterface
+    {
+        return $this->dayStartTime;
+    }
+
+    public function getDayEndTime(): ?\DateTimeInterface
+    {
+        return $this->dayEndTime;
     }
 
     public function getOverallValidPeriod(): ?OverallPeriod
