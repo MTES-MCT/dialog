@@ -4,9 +4,11 @@
     name="App\Domain\Condition\Period\Period"
     table="period">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="name" type="string" column="name" nullable="true"/>
-    <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
-    <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
+    <field name="dayStartTime" type="datetimetz_immutable" column="day_start_time" nullable="true"/>
+    <field name="dayEndTime" type="datetimetz_immutable" column="day_end_time" nullable="true"/>
+    <field name="applicableDays" type="array" column="applicable_days" nullable="true"/>
+    <field name="applicableMonths" type="array" column="applicable_months" nullable="true"/>
+    <field name="specialDays" type="array" column="special_days" nullable="true"/>
     <many-to-one field="overallValidPeriod" target-entity="App\Domain\Condition\Period\OverallPeriod" inversed-by="validPeriods">
         <join-column name="overall_valid_period_uuid" referenced-column-name="uuid"/>
     </many-to-one>
