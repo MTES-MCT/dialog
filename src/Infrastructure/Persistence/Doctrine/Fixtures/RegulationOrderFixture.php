@@ -30,15 +30,15 @@ final class RegulationOrderFixture extends Fixture
 
         $regulationOrder3 = new RegulationOrder(
             uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
-            issuingAuthority: 'Description 3',
-            description: 'Autorité 3',
+            issuingAuthority: 'Autorité 3',
+            description: 'Description 3',
             startDate: new \DateTimeImmutable('2023-03-11'),
         );
 
         $regulationOrder4 = new RegulationOrder(
             uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
-            issuingAuthority: 'Description 4',
-            description: 'Autorité 4',
+            issuingAuthority: 'Autorité 4',
+            description: 'Description 4',
             startDate: null, // Simulate a regulation order before migration
         );
 
