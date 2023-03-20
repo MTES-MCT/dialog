@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition;
 
-use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Regulation\RegulationOrder;
 
 class RegulationCondition
 {
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
     private ?ConditionSet $conditionSet = null;
-    private ?OverallPeriod $overallPeriod = null;
 
     public function __construct(
         private string $uuid,
@@ -49,10 +47,5 @@ class RegulationCondition
     public function getConditionSet(): ?ConditionSet
     {
         return $this->conditionSet;
-    }
-
-    public function getOverallPeriod(): ?OverallPeriod
-    {
-        return $this->overallPeriod;
     }
 }
