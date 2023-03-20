@@ -56,7 +56,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->innerJoin('ro.regulationCondition', 'rc')
             ->innerJoin('roc.organization', 'o')
             ->setMaxResults(1)
             ->getQuery()
@@ -79,18 +78,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'l.roadName',
                 'l.fromHouseNumber',
                 'l.toHouseNumber',
-                'vc.maxWeight',
-                'vc.maxHeight',
-                'vc.maxWidth',
-                'vc.maxLength',
             )
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->innerJoin('ro.regulationCondition', 'rc')
             ->leftJoin('ro.locations', 'l')
-            ->leftJoin('rc.vehicleCharacteristics', 'vc')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -110,10 +103,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.city',
                 'loc.roadName',
                 'loc.fromHouseNumber',
-                'vc.maxWeight',
-                'vc.maxHeight',
-                'vc.maxWidth',
-                'vc.maxLength',
                 'ST_X(loc.fromPoint) as fromLongitude',
                 'ST_Y(loc.fromPoint) as fromLatitude',
                 'loc.toHouseNumber',
@@ -121,9 +110,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ST_Y(loc.toPoint) as toLatitude',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->innerJoin('ro.regulationCondition', 'rc')
             ->innerJoin('ro.locations', 'loc')
-            ->leftJoin('rc.vehicleCharacteristics', 'vc')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setMaxResults(20)

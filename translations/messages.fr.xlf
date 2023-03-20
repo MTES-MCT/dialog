@@ -234,30 +234,6 @@
                 <source>regulation.step2.to_house_number</source>
                 <target>Numéro de fin</target>
             </trans-unit>
-            <trans-unit id="regulation.step4.vehicle_characteristics">
-                <source>regulation.step4.vehicle_characteristics</source>
-                <target>Véhicules concernés par la réglementation</target>
-            </trans-unit>
-            <trans-unit id="regulation.step4.vehicle_characteristics.help">
-                <source>regulation.step4.vehicle_characteristics.help</source>
-                <target>Quels véhicules sont limités de circulation ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.step4.max_weight">
-                <source>regulation.step4.max_weight</source>
-                <target>Poids maximum (tonnes)</target>
-            </trans-unit>
-            <trans-unit id="regulation.step4.max_height">
-                <source>regulation.step4.max_height</source>
-                <target>Hauteur maximum (m)</target>
-            </trans-unit>
-            <trans-unit id="regulation.step4.max_width">
-                <source>regulation.step4.max_width</source>
-                <target>Largeur maximum (m)</target>
-            </trans-unit>
-            <trans-unit id="regulation.step4.max_length">
-                <source>regulation.step4.max_length</source>
-                <target>Longueur maximum (m)</target>
-            </trans-unit>
             <trans-unit id="regulation.detail.where">
                 <source>regulation.detail.where</source>
                 <target>Où ?</target>
@@ -281,26 +257,6 @@
             <trans-unit id="regulation.detail.for_what.no_entry">
                 <source>regulation.detail.for_what.no_entry</source>
                 <target>Circulation interdite</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.vehicles">
-                <source>regulation.detail.vehicles</source>
-                <target>Pour quels véhicules ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.vehicles.weight">
-                <source>regulation.detail.vehicles.weight</source>
-                <target>de plus de %weight% tonnes</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.vehicles.width">
-                <source>regulation.detail.vehicles.width</source>
-                <target>d'une largeur de plus de %width% mètres</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.vehicles.height">
-                <source>regulation.detail.vehicles.height</source>
-                <target>d'une hauteur de plus de %height% mètres</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.vehicles.length">
-                <source>regulation.detail.vehicles.length</source>
-                <target>d'une longueur de plus de %length% mètres</target>
             </trans-unit>
             <trans-unit id="regulation.detail.and_now">
                 <source>regulation.detail.and_now</source>

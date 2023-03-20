@@ -8,7 +8,6 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
-use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,10 +41,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'roadName' => $location->roadName,
             'fromHouseNumber' => $location->fromHouseNumber,
             'toHouseNumber' => $location->toHouseNumber,
-            'maxWeight' => 3.5,
-            'maxHeight' => 3,
-            'maxWidth' => 2,
-            'maxLength' => 10,
         ];
 
         $regulationOrderRecordRepository
@@ -71,7 +66,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                     $location->fromHouseNumber,
                     $location->toHouseNumber,
                 ),
-                new VehicleCharacteristicsView(3.5, 3, 2, 10),
+                null,
             ),
             $regulationOrders,
         );
@@ -93,10 +88,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'roadName' => null,
             'fromHouseNumber' => null,
             'toHouseNumber' => null,
-            'maxWeight' => null,
-            'maxHeight' => null,
-            'maxWidth' => null,
-            'maxLength' => null,
         ];
 
         $regulationOrderRecordRepository

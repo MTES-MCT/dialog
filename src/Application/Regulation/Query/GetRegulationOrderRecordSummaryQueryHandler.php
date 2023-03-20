@@ -6,7 +6,6 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
-use App\Application\Regulation\View\VehicleCharacteristicsView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
@@ -32,10 +31,6 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             && $row['roadName']
             && $row['fromHouseNumber']
             && $row['toHouseNumber'];
-        $hasVehicleCharacteristics = $row['maxWeight']
-            || $row['maxHeight']
-            || $row['maxLength']
-            || $row['maxWidth'];
 
         return new RegulationOrderRecordSummaryView(
             $row['uuid'],
@@ -50,12 +45,6 @@ final class GetRegulationOrderRecordSummaryQueryHandler
                 $row['roadName'],
                 $row['fromHouseNumber'],
                 $row['toHouseNumber'],
-            ) : null,
-            $hasVehicleCharacteristics ? new VehicleCharacteristicsView(
-                $row['maxWeight'],
-                $row['maxHeight'],
-                $row['maxWidth'],
-                $row['maxLength'],
             ) : null,
         );
     }

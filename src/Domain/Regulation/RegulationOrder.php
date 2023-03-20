@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-use App\Domain\Condition\RegulationCondition;
-
 class RegulationOrder
 {
-    private ?RegulationCondition $regulationCondition = null;
     private iterable $locations = [];
 
     public function __construct(
@@ -43,16 +40,6 @@ class RegulationOrder
     public function getEndDate(): ?\DateTimeInterface
     {
         return $this->endDate;
-    }
-
-    public function getRegulationCondition(): ?RegulationCondition
-    {
-        return $this->regulationCondition;
-    }
-
-    public function setRegulationCondition(RegulationCondition $regulationCondition): void
-    {
-        $this->regulationCondition = $regulationCondition;
     }
 
     public function getLocations(): iterable
