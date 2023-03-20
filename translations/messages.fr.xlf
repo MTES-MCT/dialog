@@ -234,42 +234,6 @@
                 <source>regulation.step2.to_house_number</source>
                 <target>Numéro de fin</target>
             </trans-unit>
-            <trans-unit id="regulation.step3.subtitle">
-                <source>regulation.step3.subtitle</source>
-                <target>Période de restriction</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.help">
-                <source>regulation.step3.help</source>
-                <target>Pendant quelle période la circulation est-elle réglementée ? Si la restriction est permanente, une date de début suffit.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.start_date">
-                <source>regulation.step3.start_date</source>
-                <target>Date de début</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.start_date.help">
-                <source>regulation.step3.start_date.help</source>
-                <target>Début d'effet de la restriction</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.start_time">
-                <source>regulation.step3.start_time</source>
-                <target>Heure de début</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.start_time.help">
-                <source>regulation.step3.start_time.help</source>
-                <target>Heure d'effet de la restriction</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.end_date">
-                <source>regulation.step3.end_date</source>
-                <target>Date de fin</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.end_date.help">
-                <source>regulation.step3.end_date.help</source>
-                <target>Laisser vide si la restriction est permanente.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.end_time">
-                <source>regulation.step3.end_time</source>
-                <target>Heure de fin</target>
-            </trans-unit>
             <trans-unit id="regulation.step4.vehicle_characteristics">
                 <source>regulation.step4.vehicle_characteristics</source>
                 <target>Véhicules concernés par la réglementation</target>
@@ -392,10 +356,6 @@
             <trans-unit id="regulation.stepper.step2">
                 <source>regulation.stepper.step2</source>
                 <target>Localisation</target>
-            </trans-unit>
-            <trans-unit id="regulation.stepper.step3">
-                <source>regulation.stepper.step3</source>
-                <target>Période</target>
             </trans-unit>
             <trans-unit id="regulation.stepper.step4">
                 <source>regulation.stepper.step4</source>

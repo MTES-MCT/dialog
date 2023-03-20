@@ -6,17 +6,14 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
-use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
 use App\Application\Condition\Query\VehicleCharacteristics\GetVehicleCharacteristicsByRegulationConditionQuery;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
 use App\Domain\Regulation\Location;
-use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Condition\VehicleCharacteristics;
@@ -155,7 +152,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step1command->endDate = $endDate;
 
         $this->originalRegulationCondition
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(1))
             ->method('getUuid')
             ->willReturn('d71d7c51-2a4b-49e2-8746-436466db1ade');
 
@@ -217,36 +214,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
                 )
             );
 
-        // OverallPeriod
-        $startDate = new \DateTime('2023-02-10');
-        $startTime = new \DateTime('22:00:00');
-        $endDate = new \DateTime('2023-02-12');
-        $endTime = new \DateTime('08:00:00');
-
-        $overallPeriod = $this->createMock(OverallPeriod::class);
-        $overallPeriod
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate);
-        $overallPeriod
-            ->expects(self::once())
-            ->method('getStartTime')
-            ->willReturn($startTime);
-        $overallPeriod
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($endDate);
-        $overallPeriod
-            ->expects(self::once())
-            ->method('getEndTime')
-            ->willReturn($endTime);
-
-        $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrderRecord);
-        $step3Command->startDate = $startDate;
-        $step3Command->startTime = $startTime;
-        $step3Command->endDate = $endDate;
-        $step3Command->endTime = $endTime;
-
         // VehicleCharacteristics
         $vehicleCharacteristics = $this->createMock(VehicleCharacteristics::class);
         $vehicleCharacteristics
@@ -273,19 +240,18 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step4Command->maxWidth = 2.0;
 
         $this->queryBus
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('handle')
             ->withConsecutive(
                 [new GetLocationByRegulationOrderQuery('2d2e886c-90a3-4cd5-b0bf-ae288ca45830')],
-                [new GetOverallPeriodByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
                 [new GetVehicleCharacteristicsByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
             )
-            ->willReturnOnConsecutiveCalls($location, $overallPeriod, $vehicleCharacteristics);
+            ->willReturnOnConsecutiveCalls($location, $vehicleCharacteristics);
 
         $this->commandBus
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('handle')
-            ->withConsecutive([$step1command], [$step3Command], [$step4Command])
+            ->withConsecutive([$step1command], [$step4Command])
             ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
 
         $handler = new DuplicateRegulationCommandHandler(
@@ -355,7 +321,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $step1command->endDate = $endDate;
 
         $this->originalRegulationCondition
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(1))
             ->method('getUuid')
             ->willReturn('d71d7c51-2a4b-49e2-8746-436466db1ade');
 
@@ -369,14 +335,13 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('save');
 
         $this->queryBus
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('handle')
             ->withConsecutive(
                 [new GetLocationByRegulationOrderQuery('2d2e886c-90a3-4cd5-b0bf-ae288ca45830')],
-                [new GetOverallPeriodByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
                 [new GetVehicleCharacteristicsByRegulationConditionQuery('d71d7c51-2a4b-49e2-8746-436466db1ade')],
             )
-            ->willReturnOnConsecutiveCalls(null, null, null);
+            ->willReturnOnConsecutiveCalls(null, null);
 
         $this->commandBus
             ->expects(self::exactly(1))

@@ -12,7 +12,7 @@
                     {% include "regulation/steps/_stepper.html.twig" with {
                         'stepName': 'regulation.stepper.step' ~ stepNumber,
                         'stepNumber': stepNumber,
-                        'nextStep': 'regulation.stepper.step' ~ (stepNumber + 1),
+                        'nextStep': 'regulation.stepper.step' ~ (nextStep|default(stepNumber + 1)),
                     } %}
                 </div>
             </div>

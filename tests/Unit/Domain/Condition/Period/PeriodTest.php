@@ -31,7 +31,5 @@ final class PeriodTest extends TestCase
         $this->assertSame([SpecialDayTypeEnum::PUBLIC_HOLIDAY], $period->getSpecialDays());
         $this->assertSame($start, $period->getDayStartTime());
         $this->assertSame($end, $period->getDayEndTime());
-        $this->assertSame(null, $period->getOverallValidPeriod()); // automatically set by Doctrine
-        $this->assertSame(null, $period->getOverallExceptionPeriod()); // automatically set by Doctrine
     }
 }

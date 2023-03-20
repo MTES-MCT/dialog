@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\Condition\Query\Period\GetOverallPeriodByRegulationConditionQuery;
 use App\Application\Condition\Query\VehicleCharacteristics\GetVehicleCharacteristicsByRegulationConditionQuery;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep3Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
-use App\Domain\Condition\Period\OverallPeriod;
 use App\Domain\Condition\RegulationCondition;
 use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
@@ -53,7 +50,6 @@ final class DuplicateRegulationCommandHandler
         $duplicatedRegulationOrder = $duplicatedRegulationOrderRecord->getRegulationOrder();
 
         $this->duplicateLocation($originalRegulationOrder, $duplicatedRegulationOrder);
-        $this->duplicateOverallPeriod($originalRegulationCondition, $duplicatedRegulationOrderRecord);
         $this->duplicateVehicleCharacteristics($originalRegulationCondition, $duplicatedRegulationOrderRecord);
 
         return $duplicatedRegulationOrderRecord;
@@ -90,24 +86,6 @@ final class DuplicateRegulationCommandHandler
                     $location,
                 ),
             );
-        }
-    }
-
-    private function duplicateOverallPeriod(
-        RegulationCondition $originalRegulationCondition,
-        RegulationOrderRecord $duplicatedRegulationOrderRecord,
-    ): void {
-        $overallPeriod = $this->queryBus->handle(
-            new GetOverallPeriodByRegulationConditionQuery($originalRegulationCondition->getUuid()),
-        );
-
-        if ($overallPeriod instanceof OverallPeriod) {
-            $step3Command = new SaveRegulationStep3Command($duplicatedRegulationOrderRecord);
-            $step3Command->startDate = $overallPeriod->getStartDate();
-            $step3Command->startTime = $overallPeriod->getStartTime();
-            $step3Command->endDate = $overallPeriod->getEndDate();
-            $step3Command->endTime = $overallPeriod->getEndTime();
-            $this->commandBus->handle($step3Command);
         }
     }
 
