@@ -8,6 +8,25 @@
             <li>{{ regulationOrderRecord.description }}</li>
             <li>{{ 'regulation.detail.for_what.no_entry'|trans }}</li>
         </ul>
+
+        <h3 class="summary-card__title">{{ 'regulation.detail.when'|trans }}</h3>
+        {% if regulationOrderRecord.startDate %}
+            {% set startDate = regulationOrderRecord.startDate %}
+            {% set endDate = regulationOrderRecord.endDate %}
+            {% set isFuture = app_is_future(startDate) %}
+            <ul class="fr-ml-1w fr-my-0">
+                <li>
+                    {% if startDate and endDate %}
+                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
+                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
+                    {% elseif isFuture %}
+                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) }) }}
+                    {% else %}
+                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) }) }}
+                    {% endif %}
+                </li>
+            </ul>
+        {% endif %}
     </div>
     {% if canEdit %}
         <div class="summary-card__action">
@@ -35,39 +54,6 @@
     {% if canEdit %}
     <div class="summary-card__action">
         <a href="{{ path('app_regulations_steps_2', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-    </div>
-    {% endif %}
-</div>
-
-<div class="fr-card fr-card--horizontal summary-card fr-mt-3w when">
-    <div class="summary-card__img">
-        <span class="fr-icon-calendar-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-    </div>
-    <div class="summary-card__content">
-        <h3 class="summary-card__title">{{ 'regulation.detail.when'|trans }}</h3>
-        {% if regulationOrderRecord.startDate %}
-            {% set startDate = regulationOrderRecord.startDate %}
-            {% set endDate = regulationOrderRecord.endDate %}
-            {% set isFuture = app_is_future(startDate) %}
-            <ul class="fr-ml-1w fr-my-0">
-                <li>
-                    {% if startDate and endDate %}
-                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
-                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-                    {% elseif isFuture %}
-                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) }) }}
-                    {% else %}
-                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) }) }}
-                    {% endif %}
-                </li>
-            </ul>
-        {% endif %}
-    </div>
-    {% if canEdit %}
-    <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_3', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
             {{ 'common.update'|trans }}
         </a>
     </div>

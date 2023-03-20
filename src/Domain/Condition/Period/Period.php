@@ -6,9 +6,6 @@ namespace App\Domain\Condition\Period;
 
 class Period
 {
-    private ?OverallPeriod $overallValidPeriod = null;
-    private ?OverallPeriod $overallExceptionPeriod = null;
-
     public function __construct(
         private string $uuid,
         private ?array $applicableDays = [],
@@ -47,15 +44,5 @@ class Period
     public function getDayEndTime(): ?\DateTimeInterface
     {
         return $this->dayEndTime;
-    }
-
-    public function getOverallValidPeriod(): ?OverallPeriod
-    {
-        return $this->overallValidPeriod;
-    }
-
-    public function getOverallExceptionPeriod(): ?OverallPeriod
-    {
-        return $this->overallExceptionPeriod;
     }
 }

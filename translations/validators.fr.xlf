@@ -22,18 +22,6 @@
                 <source>regulation.step1.error.end_date_before_start_date</source>
                 <target>La date de fin doit être après le {{ compared_value }}.</target>
             </trans-unit>
-            <trans-unit id="regulation.step3.error.end_time_without_end_date">
-                <source>regulation.step3.error.end_time_without_end_date</source>
-                <target>Veuillez indiquer une date de fin, ou retirer l'heure de fin.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.error.end_date_before_start_date">
-                <source>regulation.step3.error.end_date_before_start_date</source>
-                <target>La date de fin doit être après le {{ compared_value }}.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step3.error.end_time_before_start_time">
-                <source>regulation.step3.error.end_time_before_start_time</source>
-                <target>L'heure de fin doit être après {{ compared_value }}.</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>

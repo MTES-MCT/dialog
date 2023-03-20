@@ -66,7 +66,7 @@ final class Step2Controller extends AbstractRegulationController
 
             if (!$commandFailed) {
                 return new RedirectResponse(
-                    url: $this->router->generate('app_regulations_steps_3', ['uuid' => $uuid]),
+                    url: $this->router->generate('app_regulations_steps_4', ['uuid' => $uuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
             }
@@ -78,6 +78,7 @@ final class Step2Controller extends AbstractRegulationController
                 context: [
                     'form' => $form->createView(),
                     'stepNumber' => 2,
+                    'nextStep' => 4,
                     'uuid' => $uuid,
                 ],
             ),

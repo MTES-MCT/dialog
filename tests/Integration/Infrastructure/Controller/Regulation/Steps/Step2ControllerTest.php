@@ -34,7 +34,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Étape 2 sur 4 Localisation', $crawler->filter('h2')->text());
-        $this->assertSame('Étape suivante : Période', $crawler->filter('p.fr-stepper__details')->text());
+        $this->assertSame('Étape suivante : Véhicules concernés', $crawler->filter('p.fr-stepper__details')->text());
         $this->assertMetaTitle("Étape 2 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
@@ -49,7 +49,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_regulations_steps_3');
+        $this->assertRouteSame('app_regulations_steps_4');
     }
 
     public function testEditUnchanged(): void
@@ -66,7 +66,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_regulations_steps_3');
+        $this->assertRouteSame('app_regulations_steps_4');
     }
 
     private function provideInvalidPostalCode(): array {
