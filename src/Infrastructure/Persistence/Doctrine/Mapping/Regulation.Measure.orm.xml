@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Regulation\Measure"
+    table="measure">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="type" type="string" column="type" nullable="false" length="16"/>
+    <many-to-one field="location" target-entity="App\Domain\Regulation\Location" inversed-by="measures">
+        <join-columns>
+            <join-column name="location_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+        </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
