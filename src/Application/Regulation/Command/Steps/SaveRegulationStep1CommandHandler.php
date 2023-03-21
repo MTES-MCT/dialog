@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Steps;
 
 use App\Application\IdFactoryInterface;
-use App\Domain\Condition\RegulationCondition;
-use App\Domain\Condition\Repository\RegulationConditionRepositoryInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -17,7 +15,6 @@ final class SaveRegulationStep1CommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
-        private RegulationConditionRepositoryInterface $regulationConditionRepository,
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private \DateTimeInterface $now,
@@ -37,16 +34,6 @@ final class SaveRegulationStep1CommandHandler
                     endDate: $command->endDate,
                 ),
             );
-
-            $regulationCondition = $this->regulationConditionRepository->save(
-                new RegulationCondition(
-                    uuid: $this->idFactory->make(),
-                    negate: false,
-                    regulationOrder: $regulationOrder,
-                ),
-            );
-
-            $regulationOrder->setRegulationCondition($regulationCondition);
 
             $regulationOrderRecord = $this->regulationOrderRecordRepository->save(
                 new RegulationOrderRecord(

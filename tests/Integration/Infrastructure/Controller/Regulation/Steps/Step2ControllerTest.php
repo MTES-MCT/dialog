@@ -49,7 +49,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_regulations_steps_4');
+        $this->assertRouteSame('app_regulation_detail');
     }
 
     public function testEditUnchanged(): void
@@ -66,7 +66,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_regulations_steps_4');
+        $this->assertRouteSame('app_regulation_detail');
     }
 
     private function provideInvalidPostalCode(): array {

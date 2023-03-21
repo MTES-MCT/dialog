@@ -32,10 +32,6 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Rue : du 15 au 37bis, Route du Grand Brossais', $step2->filter('li')->eq(1)->text());
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2', $step2->filter('a')->link()->getUri());
 
-        // Step 4
-        $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/4', $step4->filter('a')->link()->getUri());
-        $this->assertCount(0, $step4->filter('li'));
-
         // Status action
         $draftInput = $crawler->filter('input[id="publish_form_status_0"]')->first();
         $draftLabel = $draftInput->siblings()->filter('[for="publish_form_status_0"]')->first();
