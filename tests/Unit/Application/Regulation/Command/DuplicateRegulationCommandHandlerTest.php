@@ -134,7 +134,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ])
             ->willReturn('Description (copie)');
 
-        // RegulationCondition, RegulationOrder and RegulationOrderRecord
+        // Condition, RegulationOrder and RegulationOrderRecord
         $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';
@@ -270,7 +270,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ])
             ->willReturn('Description (copie)');
 
-        // RegulationCondition, RegulationOrder and RegulationOrderRecord
+        // Condition, RegulationOrder and RegulationOrderRecord
         $step1command = new SaveRegulationStep1Command($this->organization);
         $step1command->issuingAuthority = 'Autorité compétente';
         $step1command->description = 'Description (copie)';

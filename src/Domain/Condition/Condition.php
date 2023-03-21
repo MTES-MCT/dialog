@@ -7,7 +7,7 @@ namespace App\Domain\Condition;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Measure;
 
-class RegulationCondition
+class Condition
 {
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
     private ?Period $period = null;

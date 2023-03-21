@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition\Period;
 
-use App\Domain\Condition\RegulationCondition;
+use App\Domain\Condition\Condition;
 
 class Period
 {
     public function __construct(
         private string $uuid,
-        private RegulationCondition $regulationCondition,
+        private Condition $condition,
         private ?array $applicableDays = [],
         private ?array $applicableMonths = [],
         private ?array $specialDays = [],
@@ -49,8 +49,8 @@ class Period
         return $this->dayEndTime;
     }
 
-    public function getRegulationCondition(): RegulationCondition
+    public function getCondition(): Condition
     {
-        return $this->regulationCondition;
+        return $this->condition;
     }
 }
