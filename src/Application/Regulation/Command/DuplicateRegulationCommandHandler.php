@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\Condition\Query\VehicleCharacteristics\GetVehicleCharacteristicsByRegulationConditionQuery;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep4Command;
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
-use App\Domain\Condition\RegulationCondition;
-use App\Domain\Condition\VehicleCharacteristics;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
 use App\Domain\Regulation\Factory\LocationFactory;
 use App\Domain\Regulation\Location;
@@ -40,7 +36,6 @@ final class DuplicateRegulationCommandHandler
         $organization = $command->organization;
         $originalRegulationOrderRecord = $command->originalRegulationOrderRecord;
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
-        $originalRegulationCondition = $originalRegulationOrder->getRegulationCondition();
 
         if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($originalRegulationOrderRecord, $organization)) {
             throw new RegulationCannotBeDuplicated();
@@ -50,7 +45,6 @@ final class DuplicateRegulationCommandHandler
         $duplicatedRegulationOrder = $duplicatedRegulationOrderRecord->getRegulationOrder();
 
         $this->duplicateLocation($originalRegulationOrder, $duplicatedRegulationOrder);
-        $this->duplicateVehicleCharacteristics($originalRegulationCondition, $duplicatedRegulationOrderRecord);
 
         return $duplicatedRegulationOrderRecord;
     }
@@ -86,24 +80,6 @@ final class DuplicateRegulationCommandHandler
                     $location,
                 ),
             );
-        }
-    }
-
-    private function duplicateVehicleCharacteristics(
-        RegulationCondition $originalRegulationCondition,
-        RegulationOrderRecord $duplicatedRegulationOrderRecord,
-    ): void {
-        $vehicleCharacteristics = $this->queryBus->handle(
-            new GetVehicleCharacteristicsByRegulationConditionQuery($originalRegulationCondition->getUuid()),
-        );
-
-        if ($vehicleCharacteristics instanceof VehicleCharacteristics) {
-            $step4Command = new SaveRegulationStep4Command($duplicatedRegulationOrderRecord);
-            $step4Command->maxHeight = $vehicleCharacteristics->getMaxHeight();
-            $step4Command->maxLength = $vehicleCharacteristics->getMaxLength();
-            $step4Command->maxWeight = $vehicleCharacteristics->getMaxWeight();
-            $step4Command->maxWidth = $vehicleCharacteristics->getMaxWidth();
-            $this->commandBus->handle($step4Command);
         }
     }
 }

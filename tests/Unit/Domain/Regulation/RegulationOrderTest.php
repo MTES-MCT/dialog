@@ -27,7 +27,6 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
         $this->assertSame($start, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
-        $this->assertSame(null, $regulationOrder->getRegulationCondition()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getLocations()); // Automatically set by Doctrine
     }
 

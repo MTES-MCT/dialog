@@ -60,35 +60,3 @@
     {% endif %}
 </div>
 
-<div class="fr-card fr-card--horizontal summary-card fr-mt-3w vehicles">
-    <div class="summary-card__img">
-        <span class="fr-icon-car-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-    </div>
-    <div class="summary-card__content">
-        <h3 class="summary-card__title">{{ 'regulation.detail.vehicles'|trans }}</h3>
-        {% if regulationOrderRecord.vehicleCharacteristics %}
-            {% set vehicleCharacteristics = regulationOrderRecord.vehicleCharacteristics %}
-            <ul class="fr-ml-1w fr-my-0">
-                {% if vehicleCharacteristics.maxWeight %}
-                    <li>{{ 'regulation.detail.vehicles.weight'|trans({ '%weight%': vehicleCharacteristics.maxWeight }) }}</li>
-                {% endif %}
-                {% if vehicleCharacteristics.maxWidth %}
-                    <li>{{ 'regulation.detail.vehicles.width'|trans({ '%width%': vehicleCharacteristics.maxWidth }) }}</li>
-                {% endif %}
-                {% if vehicleCharacteristics.maxHeight %}
-                    <li>{{ 'regulation.detail.vehicles.height'|trans({ '%height%': vehicleCharacteristics.maxHeight }) }}</li>
-                {% endif %}
-                {% if vehicleCharacteristics.maxLength %}
-                    <li>{{ 'regulation.detail.vehicles.length'|trans({ '%length%': vehicleCharacteristics.maxLength }) }}</li>
-                {% endif %}
-            </ul>
-        {% endif %}
-    </div>
-    {% if canEdit %}
-    <div class="summary-card__action">
-        <a href="{{ path('app_regulations_steps_4', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-            {{ 'common.update'|trans }}
-        </a>
-    </div>
-    {% endif %}
-</div>

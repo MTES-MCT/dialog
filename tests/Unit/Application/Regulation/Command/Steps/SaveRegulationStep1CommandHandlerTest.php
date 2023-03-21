@@ -7,8 +7,6 @@ namespace App\Tests\Unit\Application\Regulation\Command\Steps;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep1CommandHandler;
-use App\Domain\Condition\RegulationCondition;
-use App\Domain\Condition\Repository\RegulationConditionRepositoryInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -22,7 +20,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
     public function testCreate(): void
     {
         $idFactory = $this->createMock(IdFactoryInterface::class);
-        $regulationConditionRepository = $this->createMock(RegulationConditionRepositoryInterface::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $organization = $this->createMock(Organization::class);
@@ -31,11 +28,10 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $end = new \DateTimeImmutable('2023-03-15');
 
         $idFactory
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('make')
             ->willReturn(
                 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
-                'f331d768-ed8b-496d-81ce-b97008f338d0',
                 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
             );
 
@@ -58,21 +54,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
             )
             ->willReturn($createdRegulationOrder);
 
-        $regulationCondition = new RegulationCondition(
-            uuid: 'f331d768-ed8b-496d-81ce-b97008f338d0',
-            negate: false,
-            regulationOrder: $createdRegulationOrder,
-        );
-        $regulationConditionRepository
-            ->expects(self::once())
-            ->method('save')
-            ->with($this->equalTo($regulationCondition))
-            ->willReturn($regulationCondition);
-        $createdRegulationOrder
-            ->expects(self::once())
-            ->method('setRegulationCondition')
-            ->with($regulationCondition);
-
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('save')
@@ -91,7 +72,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
 
         $handler = new SaveRegulationStep1CommandHandler(
             $idFactory,
-            $regulationConditionRepository,
             $regulationOrderRepository,
             $regulationOrderRecordRepository,
             $now,
@@ -111,7 +91,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
     public function testUpdate(): void
     {
         $idFactory = $this->createMock(IdFactoryInterface::class);
-        $regulationConditionRepository = $this->createMock(RegulationConditionRepositoryInterface::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $now = new \DateTimeImmutable('2022-01-09');
@@ -123,10 +102,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
         $idFactory
             ->expects(self::never())
             ->method('make');
-
-        $regulationConditionRepository
-            ->expects(self::never())
-            ->method('save');
 
         $createdRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $createdRegulationOrderRecord
@@ -161,7 +136,6 @@ final class SaveRegulationStep1CommandHandlerTest extends TestCase
 
         $handler = new SaveRegulationStep1CommandHandler(
             $idFactory,
-            $regulationConditionRepository,
             $regulationOrderRepository,
             $regulationOrderRecordRepository,
             $now,

@@ -6,16 +6,9 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="negate" type="boolean" column="negate" nullable="false"/>
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\Condition\VehicleCharacteristics" mapped-by="regulationCondition"/>
-    <one-to-one field="conditionSet" target-entity="App\Domain\Condition\ConditionSet" mapped-by="regulationCondition"/>
-    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="regulationCondition">
-      <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
-    </one-to-one>
-    <many-to-one
-      field="parentConditionSet"
-      target-entity="App\Domain\Condition\ConditionSet"
-      inversed-by="conditions"
-    >
-      <join-column name="parent_condition_set_uuid" referenced-column-name="uuid" nullable="true" />
+    <one-to-one field="period" target-entity="App\Domain\Condition\Period\Period" mapped-by="regulationCondition"/>
+    <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="regulationConditions">
+        <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE" nullable="false"/>
     </many-to-one>
   </entity>
 </doctrine-mapping>

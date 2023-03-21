@@ -8,16 +8,19 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\ApplicableMonthEnum;
 use App\Domain\Condition\Period\Enum\SpecialDayTypeEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\RegulationCondition;
 use PHPUnit\Framework\TestCase;
 
 final class PeriodTest extends TestCase
 {
     public function testGetters(): void
     {
+        $regulationCondition = $this->createMock(RegulationCondition::class);
         $start = new \DateTimeImmutable('2022-12-20 09:00:00');
         $end = new \DateTimeImmutable('2022-12-20 18:00:00');
         $period = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+            $regulationCondition,
             [ApplicableDayEnum::MONDAY, ApplicableDayEnum::THURSDAY],
             [ApplicableMonthEnum::JANUARY, ApplicableMonthEnum::FEBRUARY],
             [SpecialDayTypeEnum::PUBLIC_HOLIDAY],
@@ -31,5 +34,6 @@ final class PeriodTest extends TestCase
         $this->assertSame([SpecialDayTypeEnum::PUBLIC_HOLIDAY], $period->getSpecialDays());
         $this->assertSame($start, $period->getDayStartTime());
         $this->assertSame($end, $period->getDayEndTime());
+        $this->assertSame($regulationCondition, $period->getRegulationCondition());
     }
 }

@@ -9,6 +9,5 @@
     <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
     <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
     <one-to-many field="locations" target-entity="App\Domain\Regulation\Location" mapped-by="regulationOrder"/>
-    <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" mapped-by="regulationOrder" />
   </entity>
 </doctrine-mapping>

@@ -16,7 +16,6 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
         public readonly ?DetailLocationView $location,
-        public readonly ?VehicleCharacteristicsView $vehicleCharacteristics,
     ) {
     }
 

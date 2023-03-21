@@ -45,7 +45,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            RegulationConditionFixture::class,
+            RegulationOrderFixture::class,
         ];
     }
 }

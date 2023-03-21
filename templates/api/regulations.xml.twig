@@ -23,7 +23,7 @@
         {% set startDate = regulationOrder.startDate %}
         {% set endDate = regulationOrder.endDate %}
         {% set location = regulationOrder.location %}
-        {% set vehicleCharacteristics = regulationOrder.vehicleCharacteristics %}
+        {% set vehicleCharacteristics = null %}
         <trafficRegulationOrder id="{{ regulationOrder.uuid }}" version="1">
             <description>
                 <com:values>

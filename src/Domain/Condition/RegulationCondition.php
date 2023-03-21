@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition;
 
-use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Condition\Period\Period;
+use App\Domain\Regulation\Measure;
 
 class RegulationCondition
 {
     private ?VehicleCharacteristics $vehicleCharacteristics = null;
-    private ?ConditionSet $conditionSet = null;
+    private ?Period $period = null;
 
     public function __construct(
         private string $uuid,
         private bool $negate,
-        private RegulationOrder $regulationOrder,
-        private ?ConditionSet $parentConditionSet = null,
+        private Measure $measure,
     ) {
     }
 
@@ -29,14 +29,9 @@ class RegulationCondition
         return $this->negate;
     }
 
-    public function getRegulationOrder(): RegulationOrder
+    public function getMeasure(): Measure
     {
-        return $this->regulationOrder;
-    }
-
-    public function getParentConditionSet(): ?ConditionSet
-    {
-        return $this->parentConditionSet;
+        return $this->measure;
     }
 
     public function getVehicleCharacteristics(): ?VehicleCharacteristics
@@ -44,8 +39,8 @@ class RegulationCondition
         return $this->vehicleCharacteristics;
     }
 
-    public function getConditionSet(): ?ConditionSet
+    public function getPeriod(): ?Period
     {
-        return $this->conditionSet;
+        return $this->period;
     }
 }
