@@ -24,6 +24,6 @@ final class MeasureTest extends TestCase
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $measure->getUuid());
         $this->assertSame($location, $measure->getLocation());
         $this->assertSame(MeasureTypeEnum::NO_ENTRY, $measure->getType());
-        $this->assertEmpty($measure->getRegulationConditions()); // Automatically set by Doctrine
+        $this->assertEmpty($measure->getConditions()); // Automatically set by Doctrine
     }
 }

@@ -8,17 +8,17 @@ use App\Domain\Condition\Enum\VehicleCritairEnum;
 use App\Domain\Condition\Enum\VehicleTypeEnum;
 use App\Domain\Condition\Enum\VehicleUsageEnum;
 use App\Domain\Condition\VehicleCharacteristics;
-use App\Domain\Condition\RegulationCondition;
+use App\Domain\Condition\Condition;
 use PHPUnit\Framework\TestCase;
 
 final class VehicleCharacteristicsTest extends TestCase
 {
     public function testGetters(): void
     {
-        $regulationCondition = $this->createMock(RegulationCondition::class);
+        $condition = $this->createMock(Condition::class);
         $vehicleCharacteristics = new VehicleCharacteristics(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $regulationCondition,
+            $condition,
             VehicleUsageEnum::NON_COMMERCIAL,
             VehicleTypeEnum::ELECTRIC_VEHICLES,
             VehicleCritairEnum::EL,
@@ -29,7 +29,7 @@ final class VehicleCharacteristicsTest extends TestCase
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $vehicleCharacteristics->getUuid());
-        $this->assertSame($regulationCondition, $vehicleCharacteristics->getRegulationCondition());
+        $this->assertSame($condition, $vehicleCharacteristics->getCondition());
         $this->assertSame(VehicleUsageEnum::NON_COMMERCIAL, $vehicleCharacteristics->getVehicleUsage());
         $this->assertSame(VehicleTypeEnum::ELECTRIC_VEHICLES, $vehicleCharacteristics->getVehicleType());
         $this->assertSame(VehicleCritairEnum::EL, $vehicleCharacteristics->getVehicleCritair());
@@ -41,10 +41,10 @@ final class VehicleCharacteristicsTest extends TestCase
 
     public function testUpdate(): void
     {
-        $regulationCondition = $this->createMock(RegulationCondition::class);
+        $condition = $this->createMock(Condition::class);
         $vehicleCharacteristics = new VehicleCharacteristics(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $regulationCondition,
+            $condition,
             VehicleUsageEnum::NON_COMMERCIAL,
             VehicleTypeEnum::ELECTRIC_VEHICLES,
             VehicleCritairEnum::EL,
