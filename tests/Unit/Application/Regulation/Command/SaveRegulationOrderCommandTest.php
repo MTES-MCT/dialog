@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command\Steps;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
+use App\Application\Regulation\Command\SaveRegulationOrderCommand;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
-final class SaveRegulationStep1CommandTest extends TestCase
+final class SaveRegulationOrderCommandTest extends TestCase
 {
     public function testWithoutRegulationOrderRecord(): void
     {
-        $organization = $this->createMock(Organization::class);
-        $organization->expects(self::once())
-            ->method('getName')
-            ->willReturn('DiaLog');
+        $command = SaveRegulationOrderCommand::create();
 
-        $command = SaveRegulationStep1Command::create($organization);
-
-        $this->assertSame('DiaLog', $command->issuingAuthority);
+        $this->assertEmpty($command->identifier);
+        $this->assertEmpty($command->organization);
         $this->assertEmpty($command->description);
         $this->assertEmpty($command->startDate);
         $this->assertEmpty($command->endDate);
@@ -36,8 +32,8 @@ final class SaveRegulationStep1CommandTest extends TestCase
 
         $regulationOrder
             ->expects(self::once())
-            ->method('getIssuingAuthority')
-            ->willReturn('Autorité');
+            ->method('getIdentifier')
+            ->willReturn('F02/2023');
 
         $regulationOrder
             ->expects(self::once())
@@ -60,11 +56,17 @@ final class SaveRegulationStep1CommandTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
 
-        $command = SaveRegulationStep1Command::create($organization, $regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
-        $this->assertSame($command->issuingAuthority, 'Autorité');
+        $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
+
+        $this->assertSame($command->identifier, 'F02/2023');
         $this->assertSame($command->description, 'Description');
         $this->assertSame($command->startDate, $start);
         $this->assertSame($command->endDate, $end);
+        $this->assertSame($command->organization, $organization);
     }
 }

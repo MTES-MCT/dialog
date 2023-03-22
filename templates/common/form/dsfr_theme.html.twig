@@ -77,3 +77,9 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
     </p>
   {% endif %}
 {% endblock form_errors %}
+
+{% block choice_widget %}
+  {%- set widget_class = (widget_class|default('') ~ ' ' ~ attr.class|default(''))|trim -%}
+  {%- set attr = attr|merge({class: widget_class}) -%}
+  {{ parent() }}
+{% endblock choice_widget %}
