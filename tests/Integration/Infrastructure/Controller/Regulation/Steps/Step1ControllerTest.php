@@ -20,7 +20,8 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle("Étape 1 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[issuingAuthority]"] = "Ville de Paris";
+        $form["step1_form[identifier]"] = "F022023";
+        $form["step1_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
         $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
         $form["step1_form[startDate]"] = "2023-02-14";
         $client->submit($form);
@@ -38,11 +39,10 @@ final class Step1ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[issuingAuthority]"] = ""; // Reset the default value
         $form["step1_form[startDate]"] = "";
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_identifier_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_description_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step1_form_startDate_error')->text());
     }
@@ -54,7 +54,8 @@ final class Step1ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[issuingAuthority]"] = "Paris"; // Reset the default value
+        $form["step1_form[identifier]"] = "F022030";
+        $form["step1_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
         $form["step1_form[description]"] = "Travaux";
         $form["step1_form[startDate]"] = "2023-02-12";
         $form["step1_form[endDate]"] = "2023-02-11";
@@ -62,6 +63,43 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame("La date de fin doit être après le 12/02/2023.", $crawler->filter('#step1_form_endDate_error')->text());
     }
+
+    public function testCreateWithAnAlreadyExistingIdentifier(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/form');
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[identifier]"] = "FO1/2023";
+        $form["step1_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
+        $form["step1_form[description]"] = "Travaux";
+        $form["step1_form[startDate]"] = "2023-02-12";
+        $form["step1_form[endDate]"] = "2024-02-11";
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("L'identifiant est déjà utilisé sur un autre arrêté.", $crawler->filter('#step1_form_identifier_error')->text());
+    }
+
+    public function testEditWithAnAlreadyExistingIdentifier(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/form/867d2be6-0d80-41b5-b1ff-8452b30a95f5');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form["step1_form[identifier]"] = "FO1/2023";
+        $form["step1_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
+        $form["step1_form[description]"] = "Travaux";
+        $form["step1_form[startDate]"] = "2023-02-12";
+        $form["step1_form[endDate]"] = "2024-02-11";
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("L'identifiant est déjà utilisé sur un autre arrêté.", $crawler->filter('#step1_form_identifier_error')->text());
+    }
+
 
     public function testRegulationOrderRecordNotFound(): void
     {
@@ -80,7 +118,8 @@ final class Step1ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[issuingAuthority]"] = "Ville de Paris";
+        $form["step1_form[identifier]"] = "FIOIUS";
+        $form["step1_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
         $form["step1_form[description]"] = "Interdiction de circuler dans Paris";
         $form["step1_form[startDate]"] = "2023-02-14";
         $client->submit($form);
@@ -118,12 +157,12 @@ final class Step1ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form["step1_form[issuingAuthority]"] = str_repeat('a', 256);
+        $form["step1_form[identifier]"] = str_repeat('a', 61);
         $form["step1_form[description]"] = str_repeat('a', 256);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_issuingAuthority_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.", $crawler->filter('#step1_form_identifier_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_description_error')->text());
     }
 

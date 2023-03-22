@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Steps;
+namespace App\Application\Regulation\Command;
 
 use App\Application\IdFactoryInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -10,25 +10,40 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
+use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 
-final class SaveRegulationStep1CommandHandler
+final class SaveRegulationOrderCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
+        private DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier $doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
         private \DateTimeInterface $now,
     ) {
     }
 
-    public function __invoke(SaveRegulationStep1Command $command): RegulationOrderRecord
+    public function __invoke(SaveRegulationOrderCommand $command): RegulationOrderRecord
     {
-        // If submitting step 1 for the first time, we create the regulationOrder and regulationOrderRecord
+        // Checking the unicity of an regulation order identifier in an organization
+        $regulationOrder = $command->regulationOrderRecord?->getRegulationOrder();
+        $hasIdentifierChanged = $regulationOrder?->getIdentifier() !== $command->identifier;
+        $hasOrganizationChanged = $command->regulationOrderRecord?->getOrganization() !== $command->organization;
+
+        if ($hasIdentifierChanged || $hasOrganizationChanged) {
+            if ($this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
+                ->isSatisfiedBy($command->identifier, $command->organization)) {
+                throw new OrganizationAlreadyHasRegulationOrderWithThisIdentifierException();
+            }
+        }
+
+        // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
             $regulationOrder = $this->regulationOrderRepository->save(
                 new RegulationOrder(
                     uuid: $this->idFactory->make(),
-                    issuingAuthority: $command->issuingAuthority,
+                    identifier: $command->identifier,
                     description: $command->description,
                     startDate: $command->startDate,
                     endDate: $command->endDate,
@@ -48,8 +63,9 @@ final class SaveRegulationStep1CommandHandler
             return $regulationOrderRecord;
         }
 
+        $command->regulationOrderRecord->updateOrganization($command->organization);
         $command->regulationOrderRecord->getRegulationOrder()->update(
-            issuingAuthority: $command->issuingAuthority,
+            identifier: $command->identifier,
             description: $command->description,
             startDate: $command->startDate,
             endDate: $command->endDate,

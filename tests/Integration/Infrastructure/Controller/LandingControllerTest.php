@@ -33,7 +33,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('Mathieu MARCHOIS', $crawler->filter('div.user ul')->filter('li')->eq(0)->text());
 
         $enterLink = $crawler->filter('[data-testid="enter-link"]');
-        $this->assertSame('Accéder aux réglementations', $enterLink->text());
+        $this->assertSame('Accéder aux arrếtés', $enterLink->text());
         $this->assertSame('/regulations', $enterLink->attr('href'));
     }
 }

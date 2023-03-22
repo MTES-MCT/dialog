@@ -46,7 +46,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-            'issuingAuthority' => 'Autorité 1',
+            'organizationName' => 'Autorité 1',
             'description' => 'Description 1',
             'startDate' => $startDate1,
             'endDate' => $endDate1,
@@ -62,7 +62,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
-            'issuingAuthority' => 'Autorité 2',
+            'organizationName' => 'Autorité 2',
             'description' => 'Description 2',
             'startDate' => $startDate2,
             'endDate' => null,
@@ -89,7 +89,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             [
                 new RegulationOrderDatexListItemView(
                     uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                    issuingAuthority: 'Autorité 1',
+                    organization: 'Autorité 1',
                     description: 'Description 1',
                     startDate: $startDate1,
                     endDate: $endDate1,
@@ -97,7 +97,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                 ),
                 new RegulationOrderDatexListItemView(
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
-                    issuingAuthority: 'Autorité 2',
+                    organization: 'Autorité 2',
                     description: 'Description 2',
                     startDate: $startDate2,
                     endDate: null,
