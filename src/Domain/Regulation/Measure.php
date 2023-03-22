@@ -6,7 +6,7 @@ namespace App\Domain\Regulation;
 
 class Measure
 {
-    private iterable $regulationConditions = [];
+    private iterable $conditions = [];
 
     public function __construct(
         private string $uuid,
@@ -30,8 +30,8 @@ class Measure
         return $this->location;
     }
 
-    public function getRegulationConditions(): iterable
+    public function getConditions(): iterable
     {
-        return $this->regulationConditions;
+        return $this->conditions;
     }
 }

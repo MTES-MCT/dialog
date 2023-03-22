@@ -23,7 +23,7 @@ final class SaveRegulationStep1CommandHandler
 
     public function __invoke(SaveRegulationStep1Command $command): RegulationOrderRecord
     {
-        // If submitting step 1 for the first time, we create the regulationOrder, regulationCondition and regulationOrderRecord
+        // If submitting step 1 for the first time, we create the regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
             $regulationOrder = $this->regulationOrderRepository->save(
                 new RegulationOrder(

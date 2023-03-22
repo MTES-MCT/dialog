@@ -8,7 +8,7 @@ class VehicleCharacteristics
 {
     public function __construct(
         private string $uuid,
-        private RegulationCondition $regulationCondition,
+        private Condition $condition,
         private ?string $vehicleUsage = null,
         private ?string $vehicleType = null,
         private ?string $vehicleCritair = null,
@@ -24,9 +24,9 @@ class VehicleCharacteristics
         return $this->uuid;
     }
 
-    public function getRegulationCondition(): RegulationCondition
+    public function getCondition(): Condition
     {
-        return $this->regulationCondition;
+        return $this->condition;
     }
 
     public function getMaxWeight(): ?float

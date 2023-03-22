@@ -9,8 +9,8 @@
     <field name="applicableDays" type="array" column="applicable_days" nullable="true"/>
     <field name="applicableMonths" type="array" column="applicable_months" nullable="true"/>
     <field name="specialDays" type="array" column="special_days" nullable="true"/>
-    <one-to-one field="regulationCondition" target-entity="App\Domain\Condition\RegulationCondition" inversed-by="period">
-        <join-column name="regulation_condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
+    <one-to-one field="condition" target-entity="App\Domain\Condition\Condition" inversed-by="period">
+        <join-column name="condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
     </one-to-one>
   </entity>
 </doctrine-mapping>

@@ -10,7 +10,7 @@ use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
 use App\Domain\Regulation\Location;
-use App\Domain\Condition\RegulationCondition;
+use App\Domain\Condition\Condition;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\RegulationOrder;
