@@ -129,6 +129,7 @@ check: ## Run checks
 	make php_lint ARGS="--dry-run"
 	make twig_lint
 	make phpstan
+	make security_check
 	${BIN_CONSOLE} doctrine:schema:validate
 
 format: php_lint ## Format code
