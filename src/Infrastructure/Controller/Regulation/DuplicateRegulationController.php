@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
+use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -48,6 +49,9 @@ final class DuplicateRegulationController extends AbstractRegulationController
             throw new BadRequestHttpException('Invalid CSRF token');
         }
 
+        /** @var FlashBagAwareSessionInterface */
+        $session = $request->getSession();
+
         /** @var SymfonyUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
@@ -57,8 +61,6 @@ final class DuplicateRegulationController extends AbstractRegulationController
                 new DuplicateRegulationCommand($user->getOrganization(), $regulationOrderRecord),
             );
 
-            /** @var FlashBagAwareSessionInterface */
-            $session = $request->getSession();
             $session->getFlashBag()->add('success', $this->translator->trans('regulation.duplicated.success'));
 
             return new RedirectResponse(
@@ -69,6 +71,13 @@ final class DuplicateRegulationController extends AbstractRegulationController
             );
         } catch (RegulationCannotBeDuplicated) {
             throw new AccessDeniedHttpException();
+        } catch (OrganizationAlreadyHasRegulationOrderWithThisIdentifierException) {
+            $session->getFlashBag()->add('error', $this->translator->trans('regulation.duplicated.identifier_error'));
+
+            return new RedirectResponse(
+                url: $this->router->generate('app_regulations_list'),
+                status: Response::HTTP_SEE_OTHER,
+            );
         }
     }
 }

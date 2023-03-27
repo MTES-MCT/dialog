@@ -16,14 +16,14 @@ final class RegulationOrderTest extends TestCase
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
-            issuingAuthority: 'Commune de Savenay',
+            identifier: 'F02/2023',
             description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             startDate: $start,
             endDate: $end,
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrder->getUuid());
-        $this->assertSame('Commune de Savenay', $regulationOrder->getIssuingAuthority());
+        $this->assertSame('F02/2023', $regulationOrder->getIdentifier());
         $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
         $this->assertSame($start, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
@@ -38,20 +38,20 @@ final class RegulationOrderTest extends TestCase
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
-            issuingAuthority: 'Commune de Savenay',
+            identifier: 'F02/2023',
             description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             startDate: $start,
             endDate: null,
         );
 
         $regulationOrder->update(
-            issuingAuthority: 'Commune de Paris',
+            identifier: 'F01/2023',
             description: 'Arrêté temporaire',
             startDate: $newStart,
             endDate: $end,
         );
 
-        $this->assertSame('Commune de Paris', $regulationOrder->getIssuingAuthority());
+        $this->assertSame('F01/2023', $regulationOrder->getIdentifier());
         $this->assertSame('Arrêté temporaire', $regulationOrder->getDescription());
         $this->assertSame($newStart, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());

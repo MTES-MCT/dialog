@@ -7,7 +7,6 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
 use App\Domain\Regulation\Factory\LocationFactory;
@@ -53,11 +52,12 @@ final class DuplicateRegulationCommandHandler
         Organization $organization,
         RegulationOrder $originalRegulationOrder,
     ): RegulationOrderRecord {
-        $step1Command = new SaveRegulationStep1Command($organization);
-        $step1Command->issuingAuthority = $originalRegulationOrder->getIssuingAuthority();
-        $step1Command->description = $this->translator->trans('regulation.description.copy', [
-            '%description%' => $originalRegulationOrder->getDescription(),
+        $step1Command = new SaveRegulationOrderCommand();
+        $step1Command->organization = $organization;
+        $step1Command->identifier = $this->translator->trans('regulation.identifier.copy', [
+            '%identifier%' => $originalRegulationOrder->getIdentifier(),
         ]);
+        $step1Command->description = $originalRegulationOrder->getDescription();
         $step1Command->startDate = $originalRegulationOrder->getStartDate();
         $step1Command->endDate = $originalRegulationOrder->getEndDate();
 

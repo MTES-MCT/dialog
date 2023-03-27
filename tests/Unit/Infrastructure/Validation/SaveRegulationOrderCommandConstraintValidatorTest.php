@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Test\Unit\Infrastructure\Validation;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
+use App\Application\Regulation\Command\SaveRegulationOrderCommand;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\User\Organization;
-use App\Infrastructure\Validator\SaveRegulationStep1CommandConstraint;
-use App\Infrastructure\Validator\SaveRegulationStep1CommandConstraintValidator;
+use App\Infrastructure\Validator\SaveRegulationOrderCommandConstraint;
+use App\Infrastructure\Validator\SaveRegulationOrderCommandConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class SaveRegulationStep1CommandConstraintValidatorTest extends ConstraintValidatorTestCase
+class SaveRegulationOrderCommandConstraintValidatorTest extends ConstraintValidatorTestCase
 {
     private $constraintObj;
     private $organization;
@@ -23,14 +22,13 @@ class SaveRegulationStep1CommandConstraintValidatorTest extends ConstraintValida
     {
         $this->defaultTimezone = 'UTC';
         parent::setUp();
-        $this->constraintObj = new SaveRegulationStep1CommandConstraint();
-        $this->organization = $this->createMock(Organization::class);
+        $this->constraintObj = new SaveRegulationOrderCommandConstraint();
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
     }
 
     protected function createValidator(): ConstraintValidatorInterface
     {
-        return new SaveRegulationStep1CommandConstraintValidator(clientTimezone: 'Europe/Paris');
+        return new SaveRegulationOrderCommandConstraintValidator(clientTimezone: 'Europe/Paris');
     }
 
     public function testUnexpectedValue(): void
@@ -65,7 +63,7 @@ class SaveRegulationStep1CommandConstraintValidatorTest extends ConstraintValida
      */
     public function testValid(string $startDate, string $endDate): void
     {
-        $command = new SaveRegulationStep1Command($this->organization, $this->regulationOrderRecord);
+        $command = new SaveRegulationOrderCommand($this->regulationOrderRecord);
         $command->startDate = new \DateTimeImmutable($startDate);
         $command->endDate = $endDate ? new \DateTimeImmutable($endDate) : null;
 
@@ -75,7 +73,7 @@ class SaveRegulationStep1CommandConstraintValidatorTest extends ConstraintValida
 
     public function testInvalidEndDateBeforeStartDate(): void
     {
-        $command = new SaveRegulationStep1Command($this->organization, $this->regulationOrderRecord);
+        $command = new SaveRegulationOrderCommand($this->regulationOrderRecord);
         $command->startDate = new \DateTimeImmutable('2023-03-12');
         $command->endDate = new \DateTimeImmutable('2023-03-11');
 

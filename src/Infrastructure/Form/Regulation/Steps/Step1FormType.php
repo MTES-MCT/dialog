@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation\Steps;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -22,6 +23,14 @@ final class Step1FormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add(
+                'identifier',
+                TextType::class,
+                options: [
+                    'label' => 'regulation.step1.identifier',
+                    'help' => 'regulation.step1.identifier.help',
+                ],
+            )
             ->add(
                 'startDate',
                 DateType::class,
@@ -44,11 +53,14 @@ final class Step1FormType extends AbstractType
                 ],
             )
             ->add(
-                'issuingAuthority',
-                TextType::class,
+                'organization',
+                ChoiceType::class,
                 options: [
-                    'label' => 'regulation.step1.issuing_authority',
-                    'help' => 'regulation.step1.issuing_authority.help',
+                    'label' => 'regulation.step1.organization',
+                    'help' => 'regulation.step1.organization.help',
+                    'choices' => $options['organizations'],
+                    'choice_value' => 'uuid',
+                    'choice_label' => 'name',
                 ],
             )
             ->add(
@@ -73,6 +85,8 @@ final class Step1FormType extends AbstractType
     {
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
+            'organizations' => [],
         ]);
+        $resolver->setAllowedTypes('organizations', 'array');
     }
 }
