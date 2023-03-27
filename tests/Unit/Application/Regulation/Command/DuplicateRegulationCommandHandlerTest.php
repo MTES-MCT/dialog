@@ -10,7 +10,7 @@ use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
+use App\Application\Regulation\Command\SaveRegulationOrderCommand;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
@@ -100,8 +100,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
-            ->method('getIssuingAuthority')
-            ->willReturn('Autorité compétente');
+            ->method('getIdentifier')
+            ->willReturn('F01/2023');
 
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -129,17 +129,18 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->translator
             ->expects(self::once())
             ->method('trans')
-            ->with('regulation.description.copy', [
-                '%description%' => 'Description',
+            ->with('regulation.identifier.copy', [
+                '%identifier%' => 'F01/2023',
             ])
-            ->willReturn('Description (copie)');
+            ->willReturn('F01/2023 (copie)');
 
         // Condition, RegulationOrder and RegulationOrderRecord
-        $step1command = new SaveRegulationStep1Command($this->organization);
-        $step1command->issuingAuthority = 'Autorité compétente';
-        $step1command->description = 'Description (copie)';
+        $step1command = new SaveRegulationOrderCommand();
+        $step1command->identifier = 'F01/2023 (copie)';
+        $step1command->description = 'Description';
         $step1command->startDate = $startDate;
         $step1command->endDate = $endDate;
+        $step1command->organization = $this->organization;
 
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -237,8 +238,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
-            ->method('getIssuingAuthority')
-            ->willReturn('Autorité compétente');
+            ->method('getIdentifier')
+            ->willReturn('F01/2023');
 
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -265,16 +266,17 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->translator
             ->expects(self::once())
             ->method('trans')
-            ->with('regulation.description.copy', [
-                '%description%' => 'Description',
+            ->with('regulation.identifier.copy', [
+                '%identifier%' => 'F01/2023',
             ])
-            ->willReturn('Description (copie)');
+            ->willReturn('F01/2023 (copie)');
 
-        // Condition, RegulationOrder and RegulationOrderRecord
-        $step1command = new SaveRegulationStep1Command($this->organization);
-        $step1command->issuingAuthority = 'Autorité compétente';
-        $step1command->description = 'Description (copie)';
+        // RegulationOrder and RegulationOrderRecord
+        $step1command = new SaveRegulationOrderCommand();
+        $step1command->identifier = 'F01/2023 (copie)';
+        $step1command->description = 'Description';
         $step1command->startDate = $startDate;
+        $step1command->organization = $this->organization;
         $step1command->endDate = $endDate;
 
         $this->originalRegulationOrder

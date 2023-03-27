@@ -2,11 +2,17 @@
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
-    <class name="App\Application\Regulation\Command\Steps\SaveRegulationStep1Command">
-        <property name="issuingAuthority">
+    <class name="App\Application\Regulation\Command\SaveRegulationOrderCommand">
+        <property name="identifier">
             <constraint name="NotBlank" />
             <constraint name="Length">
-                <option name="max">255</option>
+                <option name="max">60</option>
+            </constraint>
+        </property>
+        <property name="organization">
+            <constraint name="NotBlank" />
+            <constraint name="Type">
+                <option name="type">App\Domain\User\Organization</option>
             </constraint>
         </property>
         <property name="description">
@@ -30,6 +36,6 @@
                 <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
-        <constraint name="App\Infrastructure\Validator\SaveRegulationStep1CommandConstraint" />
+        <constraint name="App\Infrastructure\Validator\SaveRegulationOrderCommandConstraint" />
     </class>
 </constraint-mapping>

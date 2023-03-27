@@ -22,6 +22,10 @@
                 <source>regulation.step1.error.end_date_before_start_date</source>
                 <target>La date de fin doit être après le {{ compared_value }}.</target>
             </trans-unit>
+            <trans-unit id="regulation.step1.error.identifier">
+                <source>regulation.step1.error.identifier</source>
+                <target>L'identifiant est déjà utilisé sur un autre arrêté.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

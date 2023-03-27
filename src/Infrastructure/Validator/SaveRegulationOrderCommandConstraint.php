@@ -6,7 +6,7 @@ namespace App\Infrastructure\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-final class SaveRegulationStep1CommandConstraint extends Constraint
+final class SaveRegulationOrderCommandConstraint extends Constraint
 {
     public function getTargets(): string
     {

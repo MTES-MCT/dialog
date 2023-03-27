@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Validator;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep1Command;
+use App\Application\Regulation\Command\SaveRegulationOrderCommand;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-final class SaveRegulationStep1CommandConstraintValidator extends ConstraintValidator
+final class SaveRegulationOrderCommandConstraintValidator extends ConstraintValidator
 {
     public function __construct(
         private string $clientTimezone,
@@ -18,8 +18,8 @@ final class SaveRegulationStep1CommandConstraintValidator extends ConstraintVali
 
     public function validate(mixed $command, Constraint $constraint): void
     {
-        if (!$command instanceof SaveRegulationStep1Command) {
-            throw new UnexpectedValueException($command, SaveRegulationStep1Command::class);
+        if (!$command instanceof SaveRegulationOrderCommand) {
+            throw new UnexpectedValueException($command, SaveRegulationOrderCommand::class);
         }
 
         if ($command->endDate !== null && $command->endDate < $command->startDate) {

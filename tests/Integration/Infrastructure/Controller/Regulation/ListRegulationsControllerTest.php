@@ -14,12 +14,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Réglementations', $pageOne->filter('h3')->text());
-        $this->assertMetaTitle("Liste des réglementations - DiaLog", $pageOne);
+        $this->assertSame('Arrêtés de circulation', $pageOne->filter('h3')->text());
+        $this->assertMetaTitle("Arrêtés de circulation - DiaLog", $pageOne);
         $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
 
         $this->assertSame("tablist", $tabs->attr("role"));
-        $this->assertSame("Brouillons (2) Publiée (1)", $tabs->text());
+        $this->assertSame("Brouillons (3) Publiée (1)", $tabs->text());
 
         // Test draft reglementation rendering
         $pageOneDraftRows = $pageOne->filter('#draft-panel tbody > tr');
@@ -37,12 +37,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
 
         $tabs = $pageTwo->filter('.fr-tabs__list')->eq(0);
-        $this->assertSame("Brouillons (2) Publiée (1)", $tabs->text());
+        $this->assertSame("Brouillons (3) Publiée (1)", $tabs->text());
 
         $pageTwoDraftRows = $pageTwo->filter('#draft-panel tbody > tr');
         $pageTwoDraftRow1 = $pageTwoDraftRows->eq(0)->filter('td');
 
-        $this->assertSame("depuis le 11/03/2023 permanent", $pageTwoDraftRow1->eq(0)->text());
+        $this->assertSame("du 13/03/2023 au 15/03/2023", $pageTwoDraftRow1->eq(0)->text());
         $this->assertSame("Brouillon", $pageTwoDraftRow1->eq(1)->text());
 
         // Test published reglementation rendering
@@ -63,8 +63,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame("Page précédente", $navLi->eq(1)->filter('a')->text());
         $this->assertSame("1", $navLi->eq(2)->filter('a')->text());
         $this->assertSame("2", $navLi->eq(3)->filter('a')->text());
-        $this->assertSame("Page suivante", $navLi->eq(4)->filter('a')->text());
-        $this->assertSame("Dernière page", $navLi->eq(5)->filter('a')->text());
+        $this->assertSame("3", $navLi->eq(4)->filter('a')->text());
+        $this->assertSame("Page suivante", $navLi->eq(5)->filter('a')->text());
+        $this->assertSame("Dernière page", $navLi->eq(6)->filter('a')->text());
 
     }
 

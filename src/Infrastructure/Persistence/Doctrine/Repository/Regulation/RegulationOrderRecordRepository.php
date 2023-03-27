@@ -95,7 +95,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select(
                 'ro.uuid',
-                'ro.issuingAuthority',
+                'o.name as organizationName',
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
@@ -110,6 +110,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ST_Y(loc.toPoint) as toLatitude',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
+            ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
@@ -124,5 +125,21 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $this->getEntityManager()->persist($regulationOrderRecord);
 
         return $regulationOrderRecord;
+    }
+
+    public function findOneByOrganizationAndIdentifier(
+        Organization $organization,
+        string $identifier,
+    ): ?RegulationOrderRecord {
+        return $this->createQueryBuilder('roc')
+            ->select('partial roc.{uuid}')
+            ->where('roc.organization = :organization')
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
+            ->setParameters([
+                'identifier' => $identifier,
+                'organization' => $organization,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

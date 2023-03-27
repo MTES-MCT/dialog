@@ -10,7 +10,7 @@ class RegulationOrder
 
     public function __construct(
         private string $uuid,
-        private string $issuingAuthority,
+        private string $identifier,
         private string $description,
         private ?\DateTimeInterface $startDate,
         private ?\DateTimeInterface $endDate = null,
@@ -22,9 +22,9 @@ class RegulationOrder
         return $this->uuid;
     }
 
-    public function getIssuingAuthority(): string
+    public function getIdentifier(): string
     {
-        return $this->issuingAuthority;
+        return $this->identifier;
     }
 
     public function getDescription(): string
@@ -48,12 +48,12 @@ class RegulationOrder
     }
 
     public function update(
-        string $issuingAuthority,
+        string $identifier,
         string $description,
         \DateTimeInterface $startDate,
         ?\DateTimeInterface $endDate = null,
     ): void {
-        $this->issuingAuthority = $issuingAuthority;
+        $this->identifier = $identifier;
         $this->description = $description;
         $this->startDate = $startDate;
         $this->endDate = $endDate;

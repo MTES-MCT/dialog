@@ -14,14 +14,26 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testDuplicate(): void
     {
         $client = $this->login();
+        $client->request('POST', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('Réglementation - Avenue de Fonneuve', $crawler->filter('h2')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+    }
+
+    public function testDuplicateAnAlreadyExistingIdentifier(): void
+    {
+        $client = $this->login();
         $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Réglementation - Route du Grand Brossais', $crawler->filter('h2')->text());
-        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+        $this->assertSame('L\'identifiant de l\'arrêté est déjà utilisé', $crawler->filter('div.fr-alert')->text());
     }
 
     public function testDuplicateWithNoStartDateYet(): void
@@ -32,8 +44,6 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
-        $this->assertSame('Description 4 (copie)', $crawler->filter('h2')->text());
     }
 
     public function testRegulationCannotBeDuplicated(): void

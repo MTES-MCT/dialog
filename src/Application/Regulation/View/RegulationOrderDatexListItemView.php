@@ -8,7 +8,7 @@ final class RegulationOrderDatexListItemView
 {
     public function __construct(
         public readonly string $uuid,
-        public readonly string $issuingAuthority,
+        public readonly string $organization,
         public readonly string $description,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,

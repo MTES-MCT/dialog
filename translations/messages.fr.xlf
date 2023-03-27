@@ -132,7 +132,7 @@
             </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
-                <target>Réglementations</target>
+                <target>Arrêtés de circulation</target>
             </trans-unit>
             <trans-unit id="regulation.status.draft">
                 <source>regulation.status.draft</source>
@@ -160,19 +160,15 @@
             </trans-unit>
             <trans-unit id="regulation.list.empty">
                 <source>regulation.list.empty</source>
-                <target>Aucune réglementation</target>
+                <target>Aucun arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.list.add_button">
                 <source>regulation.list.add_button</source>
-                <target>Nouvelle réglementation</target>
+                <target>Ajouter un arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.breadcrumb">
                 <source>regulation.breadcrumb</source>
-                <target>Réglementations</target>
-            </trans-unit>
-            <trans-unit id="regulation.step1.expected_disruption">
-                <source>regulation.step1.expected_disruption</source>
-                <target>Perturbation prévue</target>
+                <target>Arrêtés de circulation</target>
             </trans-unit>
             <trans-unit id="regulation.step1.description">
                 <source>regulation.step1.description</source>
@@ -198,13 +194,21 @@
                 <source>regulation.step1.description.help</source>
                 <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur la voie")</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.issuing_authority">
-                <source>regulation.step1.issuing_authority</source>
-                <target>Autorité compétente</target>
+            <trans-unit id="regulation.step1.identifier">
+                <source>regulation.step1.identifier</source>
+                <target>Identifiant</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.issuing_authority.help">
-                <source>regulation.step1.issuing_authority.help</source>
-                <target>Commune, département ou entité responsable de la réglementation</target>
+            <trans-unit id="regulation.step1.identifier.help">
+                <source>regulation.step1.identifier.help</source>
+                <target>Numéro ou nom de l'arrêté (identifiant unique)</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.organization">
+                <source>regulation.step1.organization</source>
+                <target>Organisation compétente</target>
+            </trans-unit>
+            <trans-unit id="regulation.step1.organization.help">
+                <source>regulation.step1.organization.help</source>
+                <target>Commune, département ou entité responsable de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.step2.subtitle">
                 <source>regulation.step2.subtitle</source>
@@ -277,6 +281,12 @@
                     <![CDATA[<p>]]>Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.<![CDATA[</p>]]>
                 </target>
             </trans-unit>
+            <trans-unit id="regulation.duplicated.identifier_error">
+                <source>regulation.duplicated.identifier_error</source>
+                <target>
+                    <![CDATA[<h3 class="fr-alert__title">]]>L'identifiant de l'arrêté est déjà utilisé<![CDATA[</h3>]]>
+                </target>
+            </trans-unit>
             <trans-unit id="regulation.detail.published.description">
                 <source>regulation.detail.published.description</source>
                 <target>La réglementation sera communiquée aux GPS (bientôt).</target>
@@ -321,9 +331,9 @@
                 <source>regulation.stepper.next</source>
                 <target>Étape suivante :</target>
             </trans-unit>
-            <trans-unit id="regulation.description.copy">
-                <source>regulation.description.copy</source>
-                <target>%description% (copie)</target>
+            <trans-unit id="regulation.identifier.copy">
+                <source>regulation.identifier.copy</source>
+                <target>%identifier% (copie)</target>
             </trans-unit>
             <trans-unit id="pagination.first">
                 <source>pagination.first</source>
@@ -363,7 +373,7 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.logged">
                 <source>landing.jumbotron.logged</source>
-                <target>Accéder aux réglementations</target>
+                <target>Accéder aux arrếtés</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.contact">
                 <source>landing.jumbotron.contact</source>
@@ -530,7 +540,7 @@
             </trans-unit>
             <trans-unit id="regulation.list.meta.title">
                 <source>regulation.list.meta.title</source>
-                <target>Liste des réglementations</target>
+                <target>Arrêtés de circulation</target>
             </trans-unit>
         </body>
     </file>

@@ -52,4 +52,9 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface
     {
         $this->status = $status;
     }
+
+    public function updateOrganization(Organization $organization): void
+    {
+        $this->organization = $organization;
+    }
 }
