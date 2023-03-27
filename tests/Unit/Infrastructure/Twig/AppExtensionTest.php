@@ -17,7 +17,7 @@ class AppExtensionTest extends TestCase
     protected function setUp(): void
     {
         $this->setDefaultTimezone('UTC');
-        $this->extension = new AppExtension('Europe/Paris');
+        $this->extension = new AppExtension('Etc/GMT-1'); // Independent of Daylight Saving Time (DST).
     }
 
     public function testGetFunctions(): void
