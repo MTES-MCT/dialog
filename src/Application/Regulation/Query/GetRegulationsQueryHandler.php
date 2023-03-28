@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
+use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -21,20 +22,25 @@ final class GetRegulationsQueryHandler
             $query->organization,
             $query->pageSize,
             $query->page,
-            $query->status,
+            $query->permanent,
         );
         $totalItems = $this->repository->countRegulationsByOrganization(
             $query->organization,
-            $query->status,
+            $query->permanent,
         );
         $regulationOrderViews = [];
 
         foreach ($regulations as $regulation) {
             $regulationOrderViews[] = new RegulationOrderListItemView(
                 $regulation['uuid'],
-                $regulation['status'],
+                $regulation['identifier'],
+                $regulation['city'] ? new LocationView(
+                    $regulation['city'],
+                    $regulation['roadName'],
+                ) : null,
                 $regulation['startDate'],
                 $regulation['endDate'],
+                $regulation['status'],
             );
         }
 

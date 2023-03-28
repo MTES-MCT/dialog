@@ -6,8 +6,8 @@
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-list">
-        {% set isDraftTab = tab == 'draft' %}
-        {% set isPublishedTab = tab == 'published' %}
+        {% set isTemporaryTab = tab == 'temporary' %}
+        {% set isPermanent = tab == 'permanent' %}
         <h3 id="regulation-list">{{ 'regulation.list.title'|trans }}</h3>
         <a href="{{ path('app_regulations_steps_1') }}" class="fr-btn fr-btn--sm">
             {{ "regulation.list.add_button"|trans }}
@@ -15,41 +15,41 @@
         <div class="fr-tabs fr-mt-2w">
             <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.list.title'|trans }}">
                 <li role="presentation">
-                    <button id="draft" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="{{ isDraftTab ? "true" : "false" }}" aria-controls="draft-panel">
-                        {{ 'regulation.list.total_draft'|trans({'%count%': draftPagination.totalItems}) }}
+                    <button id="temporary" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="{{ isTemporaryTab ? "true" : "false" }}" aria-controls="temporary-panel">
+                        {{ 'regulation.list.total_temporary'|trans({'%count%': temporaryRegulations.totalItems}) }}
                     </button>
                 </li>
                 <li role="presentation">
-                    <button id="published" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="{{ isPublishedTab ? "true" : "false" }}" aria-controls="published-panel">
-                        {{ 'regulation.list.total_published'|trans({'%count%': publishedPagination.totalItems}) }}
+                    <button id="permanent" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="{{ isPermanent ? "true" : "false" }}" aria-controls="permanent-panel">
+                        {{ 'regulation.list.total_permanent'|trans({'%count%': permanentRegulations.totalItems}) }}
                     </button>
                 </li>
             </ul>
             <div
-                id="draft-panel"
-                class="fr-tabs__panel {% if isDraftTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-start{% endif %}"
+                id="temporary-panel"
+                class="fr-tabs__panel {% if isTemporaryTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-start{% endif %}"
                 role="tabpanel"
-                aria-labelledby="draft"
+                aria-labelledby="temporary"
                 tabindex="0"
             >
-                {% include "regulation/_items.html.twig" with { pagination: draftPagination } only %}
+                {% include "regulation/_items.html.twig" with { pagination: temporaryRegulations } only %}
                 {% include "common/pagination.html.twig" with {
-                    pagination: draftPagination,
-                    currentPage: isDraftTab ? app.request.get('page', 1) : 1,
+                    pagination: temporaryRegulations,
+                    currentPage: isTemporaryTab ? app.request.get('page', 1) : 1,
                     queryParams: app.request.query.all,
                 } only %}
             </div>
             <div
-                id="published-panel"
-                class="fr-tabs__panel {% if isPublishedTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-end{% endif %}"
+                id="permanent-panel"
+                class="fr-tabs__panel {% if isPermanent %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-end{% endif %}"
                 role="tabpanel"
-                aria-labelledby="published"
+                aria-labelledby="permanent"
                 tabindex="1"
             >
-                {% include "regulation/_items.html.twig" with { pagination: publishedPagination } only %}
+                {% include "regulation/_items.html.twig" with { pagination: permanentRegulations } only %}
                 {% include "common/pagination.html.twig" with {
-                    pagination: publishedPagination,
-                    currentPage: isPublishedTab ? app.request.get('page', 1) : 1,
+                    pagination: permanentRegulations,
+                    currentPage: isPermanent ? app.request.get('page', 1) : 1,
                     queryParams: app.request.query.all,
                 } only %}
             </div>

@@ -17,10 +17,10 @@ interface RegulationOrderRecordRepositoryInterface
         Organization $organization,
         int $maxItemsPerPage,
         int $page,
-        string $status,
+        bool $permanent,
     ): array;
 
-    public function countRegulationsByOrganization(Organization $organization, string $status): int;
+    public function countRegulationsByOrganization(Organization $organization, bool $permanent): int;
 
     public function findOneForSummary(string $uuid): array|null;
 

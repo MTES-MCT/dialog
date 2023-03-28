@@ -22,14 +22,15 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         Organization $organization,
         int $maxItemsPerPage,
         int $page,
-        string $status,
+        bool $permanent,
     ): array {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.startDate, ro.endDate, roc.status')
-            ->where('roc.status = :status')
-            ->andWhere('roc.organization = :organization')
-            ->setParameters(['status' => $status, 'organization' => $organization->getUuid()])
+            ->select('roc.uuid, ro.identifier, loc.city, loc.roadName, ro.startDate, ro.endDate, roc.status')
+            ->where('roc.organization = :organization')
+            ->setParameters(['organization' => $organization->getUuid()])
+            ->andWhere($permanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->innerJoin('roc.regulationOrder', 'ro')
+            ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
@@ -38,13 +39,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function countRegulationsByOrganization(Organization $organization, string $status): int
+    public function countRegulationsByOrganization(Organization $organization, bool $permanent): int
     {
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
-            ->where('roc.status = :status')
-            ->andWhere('roc.organization = :organization')
-            ->setParameters(['status' => $status, 'organization' => $organization->getUuid()])
+            ->where('roc.organization = :organization')
+            ->setParameters(['organization' => $organization->getUuid()])
+            ->andWhere($permanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->getQuery()
             ->getSingleScalarResult()
         ;

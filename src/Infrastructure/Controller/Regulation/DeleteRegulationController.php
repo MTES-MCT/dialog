@@ -8,7 +8,6 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
-use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -59,11 +58,14 @@ final class DeleteRegulationController
             // Don't fail, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
             return new RedirectResponse(
                 url: $this->router->generate('app_regulations_list', [
-                    'tab' => RegulationOrderRecordStatusEnum::DRAFT,
+                    'tab' => 'temporary',
                 ]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }
+
+        // Get before the entity gets deleted.
+        $endDate = $regulationOrderRecord->getRegulationOrder()->getEndDate();
 
         try {
             $this->commandBus->handle(new DeleteRegulationCommand($user->getOrganization(), $regulationOrderRecord));
@@ -72,7 +74,9 @@ final class DeleteRegulationController
         }
 
         return new RedirectResponse(
-            url: $this->router->generate('app_regulations_list', ['tab' => $regulationOrderRecord->getStatus()]),
+            url: $this->router->generate('app_regulations_list', [
+                'tab' => $endDate ? 'temporary' : 'permanent',
+            ]),
             status: Response::HTTP_SEE_OTHER,
         );
     }
