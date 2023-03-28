@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Query\Location;
+namespace App\Tests\Unit\Application\Regulation\Location;
 
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQueryHandler;
