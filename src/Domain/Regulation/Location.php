@@ -14,10 +14,10 @@ class Location
         private string $postalCode,
         private string $city,
         private string $roadName,
-        private string $fromHouseNumber,
-        private string $fromPoint,
-        private string $toHouseNumber,
-        private string $toPoint,
+        private ?string $fromHouseNumber,
+        private ?string $fromPoint,
+        private ?string $toHouseNumber,
+        private ?string $toPoint,
     ) {
     }
 
@@ -46,22 +46,22 @@ class Location
         return $this->roadName;
     }
 
-    public function getFromHouseNumber(): string
+    public function getFromHouseNumber(): ?string
     {
         return $this->fromHouseNumber;
     }
 
-    public function getFromPoint(): string
+    public function getFromPoint(): ?string
     {
         return $this->fromPoint;
     }
 
-    public function getToHouseNumber(): string
+    public function getToHouseNumber(): ?string
     {
         return $this->toHouseNumber;
     }
 
-    public function getToPoint(): string
+    public function getToPoint(): ?string
     {
         return $this->toPoint;
     }
@@ -75,10 +75,10 @@ class Location
         string $postalCode,
         string $city,
         string $roadName,
-        string $fromHouseNumber,
-        string $fromPoint,
-        string $toHouseNumber,
-        string $toPoint,
+        ?string $fromHouseNumber,
+        ?string $fromPoint,
+        ?string $toHouseNumber,
+        ?string $toPoint,
     ): void {
         $this->postalCode = $postalCode;
         $this->city = $city;

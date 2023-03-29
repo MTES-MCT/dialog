@@ -47,7 +47,13 @@
             {% set loc = regulationOrderRecord.location %}
             <ul class="fr-ml-1w fr-my-0">
                 <li>{{ 'regulation.detail.where.city'|trans({'%postalCode%': loc.postalCode, '%city%': loc.city}) }}</li>
-                <li>{{ 'regulation.detail.where.road_segment'|trans({'%roadName%': loc.roadName, '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber}) }}</li>
+                <li>{{ 'regulation.detail.where.road_name'|trans({'%roadName%': loc.roadName}) }}</li>
+                {% if loc.fromHouseNumber %}
+                    <li>{{ 'regulation.detail.where.from_house_number'|trans({'%number%': loc.fromHouseNumber}) }}</li>
+                {% endif %}
+                {% if loc.toHouseNumber %}
+                    <li>{{ 'regulation.detail.where.to_house_number'|trans({'%number%': loc.toHouseNumber}) }}</li>
+                {% endif %}
             </ul>
         {% endif %}
     </div>

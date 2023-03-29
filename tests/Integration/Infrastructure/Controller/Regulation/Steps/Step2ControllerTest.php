@@ -23,11 +23,32 @@ final class Step2ControllerTest extends AbstractWebTestCase
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_postalCode_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_city_error')->text());
         $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_roadName_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
     }
 
-    public function testAdd(): void
+    public function testAddFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('Étape 2 sur 4 Localisation', $crawler->filter('h2')->text());
+        $this->assertSame('Étape suivante : Véhicules concernés', $crawler->filter('p.fr-stepper__details')->text());
+        $this->assertMetaTitle("Étape 2 sur 4 - DiaLog", $crawler);
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['step2_form[postalCode]'] = '44260';
+        $form['step2_form[city]'] = 'Savenay';
+        $form['step2_form[roadName]'] = 'Route du Grand Brossais';
+
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_regulation_detail');
+    }
+
+    public function testAddRoadSection(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/2'); // Has no location yet

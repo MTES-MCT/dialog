@@ -19,7 +19,6 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle("Réglementation - Route du Grand Brossais - DiaLog", $crawler);
         $step1 = $crawler->filter('div.for-what');
         $step2 = $crawler->filter('div.where');
-        $step4 = $crawler->filter('div.vehicles');
 
         // Step 1
         $this->assertSame('Description 1', $step1->filter('li')->eq(0)->text());
@@ -29,7 +28,9 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         // Step 2
         $this->assertSame('Ville : 44260 Savenay', $step2->filter('li')->eq(0)->text());
-        $this->assertSame('Rue : du 15 au 37bis, Route du Grand Brossais', $step2->filter('li')->eq(1)->text());
+        $this->assertSame('Rue : Route du Grand Brossais', $step2->filter('li')->eq(1)->text());
+        $this->assertSame('Numéro de début : 15', $step2->filter('li')->eq(2)->text());
+        $this->assertSame('Numéro de fin : 37bis', $step2->filter('li')->eq(3)->text());
         $this->assertSame('http://localhost/regulations/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5/2', $step2->filter('a')->link()->getUri());
 
         // Status action

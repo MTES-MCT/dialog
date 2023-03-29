@@ -23,13 +23,11 @@
             </constraint>
         </property>
         <property name="fromHouseNumber">
-            <constraint name="NotBlank" />
             <constraint name="Length">
                 <option name="max">8</option>
             </constraint>
        </property>
        <property name="toHouseNumber">
-            <constraint name="NotBlank" />
             <constraint name="Length">
                 <option name="max">8</option>
             </constraint>
