@@ -22,11 +22,11 @@ final class GetRegulationsQueryHandler
             $query->organization,
             $query->pageSize,
             $query->page,
-            $query->permanent,
+            $query->isPermanent,
         );
         $totalItems = $this->repository->countRegulationsByOrganization(
             $query->organization,
-            $query->permanent,
+            $query->isPermanent,
         );
         $regulationOrderViews = [];
 
@@ -34,13 +34,13 @@ final class GetRegulationsQueryHandler
             $regulationOrderViews[] = new RegulationOrderListItemView(
                 $regulation['uuid'],
                 $regulation['identifier'],
+                $regulation['status'],
                 $regulation['city'] ? new LocationView(
                     $regulation['city'],
                     $regulation['roadName'],
                 ) : null,
                 $regulation['startDate'],
                 $regulation['endDate'],
-                $regulation['status'],
             );
         }
 

@@ -9,10 +9,10 @@ final class RegulationOrderListItemView
     public function __construct(
         public readonly string $uuid,
         public readonly string $identifier,
+        public readonly string $status,
         public readonly ?LocationView $location,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
-        public readonly string $status,
     ) {
     }
 }

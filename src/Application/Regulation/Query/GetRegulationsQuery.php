@@ -13,7 +13,7 @@ final class GetRegulationsQuery implements QueryInterface
         public readonly Organization $organization,
         public readonly int $pageSize,
         public readonly int $page,
-        public readonly bool $permanent,
+        public readonly bool $isPermanent,
     ) {
     }
 }

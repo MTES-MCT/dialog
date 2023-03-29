@@ -49,7 +49,7 @@ final class ListRegulationsController
                 $user->getOrganization(),
                 $pageSize,
                 $tab === 'temporary' ? $page : 1,
-                permanent: false,
+                isPermanent: false,
             ),
         );
         $permanentRegulations = $this->queryBus->handle(
@@ -57,7 +57,7 @@ final class ListRegulationsController
                 $user->getOrganization(),
                 $pageSize,
                 $tab === 'permanent' ? $page : 1,
-                permanent: true,
+                isPermanent: true,
             ),
         );
 

@@ -22,14 +22,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         Organization $organization,
         int $maxItemsPerPage,
         int $page,
-        bool $permanent,
+        bool $isPermanent,
     ): array {
         return $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, loc.city, loc.roadName, ro.startDate, ro.endDate, roc.status')
             ->where('roc.organization = :organization')
-            ->setParameters(['organization' => $organization->getUuid()])
-            ->andWhere($permanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
-            ->innerJoin('roc.regulationOrder', 'ro')
+            ->setParameter('organization', $organization->getUuid())
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
@@ -39,14 +38,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function countRegulationsByOrganization(Organization $organization, bool $permanent): int
+    public function countRegulationsByOrganization(Organization $organization, bool $isPermanent): int
     {
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
             ->where('roc.organization = :organization')
-            ->setParameters(['organization' => $organization->getUuid()])
-            ->andWhere($permanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
-            ->innerJoin('roc.regulationOrder', 'ro')
+            ->setParameter('organization', $organization->getUuid())
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->getQuery()
             ->getSingleScalarResult()
         ;

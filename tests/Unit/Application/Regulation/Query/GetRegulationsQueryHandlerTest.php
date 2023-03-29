@@ -59,25 +59,25 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->willReturn(2);
 
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, permanent: true));
+        $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, isPermanent: true));
 
         $pagination = new Pagination(
             [
                 new RegulationOrderListItemView(
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     'F02/2023',
+                    'draft',
                     null,
                     $startDate2,
                     null,
-                    'draft',
                 ),
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     'F01/2023',
+                    'draft',
                     $location,
                     $startDate1,
                     null,
-                    'draft',
                 ),
             ], 2, 1, 20,
         );
