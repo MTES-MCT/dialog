@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Organization;
 
@@ -6,7 +8,6 @@ use App\Domain\Organization\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use PhpParser\Node\Expr\Cast\String_;
 
 class OrganizationRepository extends ServiceEntityRepository implements OrganizationRepositoryInterface
 {
@@ -14,14 +15,16 @@ class OrganizationRepository extends ServiceEntityRepository implements Organiza
     {
         parent::__construct($registry, Organization::class);
     }
+
     public function findOrganizations(): array
     {
         return $this->createQueryBuilder('o')
-        ->addOrderBy('o.name','ASC')
+        ->addOrderBy('o.name', 'ASC')
         ->getQuery()
         ->getResult()
         ;
     }
+
     public function save(Organization $organization): Organization
     {
         $this->getEntityManager()->persist($organization);
@@ -39,5 +42,4 @@ class OrganizationRepository extends ServiceEntityRepository implements Organiza
         ->getOneOrNullResult()
         ;
     }
-    
 }

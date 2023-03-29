@@ -46,13 +46,14 @@ class User
 
         return $this->organizations[0];
     }
+
     public function update(
         string $fullName,
         string $email,
         string $password)
-        {
-            $this->fullName=$fullName;
-            $this->email=$email;
-            $this->password=$password;
-        }
+    {
+        $this->fullName = $fullName;
+        $this->email = $email;
+        $this->password = $password;
+    }
 }

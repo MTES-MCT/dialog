@@ -32,9 +32,9 @@ class Organization
 
     public function addUser(User $user): void
     {
-
         $this->users[] = $user;
     }
+
     public function update(
         string $name,
     ): void {

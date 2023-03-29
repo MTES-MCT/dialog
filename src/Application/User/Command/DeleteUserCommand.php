@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\User\Command;
 
 use App\Application\CommandInterface;
@@ -9,7 +11,6 @@ class DeleteUserCommand implements CommandInterface
 {
     public function __construct(
         public User $user,
-    )
-    {   
+    ) {
     }
 }

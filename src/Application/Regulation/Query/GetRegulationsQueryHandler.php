@@ -10,7 +10,7 @@ use App\Domain\Pagination;
 use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
-final class GetRegulationsQueryHandler 
+final class GetRegulationsQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,

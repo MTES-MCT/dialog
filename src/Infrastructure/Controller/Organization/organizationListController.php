@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Controller\Organization;
 
 use App\Application\Organization\Query\GetOrganizationsQuery;
@@ -13,8 +15,7 @@ class organizationListController
     public function __construct(
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
-        private readonly TranslatorInterface $translator,
-    ){
+    ) {
     }
 
     #[Route(
@@ -22,12 +23,14 @@ class organizationListController
         name: 'app_organization_list',
         methods: ['GET'],
     )]
-    public function __invoke(){
+    public function __invoke()
+    {
         $organizations = $this->queryBus->handle(
             new GetOrganizationsQuery());
+
         return new Response($this->twig->render(
             name: 'organization/index.html.twig',
-            context: ['organizations'=>$organizations],
+            context: ['organizations' => $organizations],
         ));
     }
 }

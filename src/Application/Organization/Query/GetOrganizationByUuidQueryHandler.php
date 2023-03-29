@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Organization\Query;
 
 use App\Domain\Organization\Repository\OrganizationRepositoryInterface;
@@ -12,10 +14,11 @@ class GetOrganizationByUuidQueryHandler
     ) {
     }
 
-    public function __invoke(GetOrganizationByUuidQuery $query) : Organization|null
+    public function __invoke(GetOrganizationByUuidQuery $query): Organization|null
     {
         // dd($query);
         $organization = $this->repository->findByUuid($query->uuid);
+
         return $organization;
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
-namespace
-App\Infrastructure\Controller\User;
+declare(strict_types=1);
+
+namespace App\Infrastructure\Controller\User;
 
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetUsersQuery;
@@ -14,8 +15,7 @@ class ListUserController
     public function __construct(
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
-        private readonly TranslatorInterface $translator,
-    ){
+    ) {
     }
 
     #[Route(
@@ -23,11 +23,13 @@ class ListUserController
         name: 'app_list_user',
         methods: ['GET'],
     )]
-    public function __invoke(){
-        $users=$this->queryBus->handle(new GetUsersQuery());
+    public function __invoke()
+    {
+        $users = $this->queryBus->handle(new GetUsersQuery());
+
         return new Response($this->twig->render(
             name: 'user/index.html.twig',
-            context:['users'=>$users],
+            context: ['users' => $users],
         ));
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Form\User;
 
 use Symfony\Component\Form\AbstractType;
@@ -19,36 +21,36 @@ class AddUserFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        -> add ('fullName',
-        TextType ::class,
-        options: [
-            'label' => 'user.fullname',
-        ],
+        ->add('fullName',
+            TextType::class,
+            options: [
+                'label' => 'user.fullname',
+            ],
         )
-        -> add ('email',
-        EmailType ::class,
-        options: [
-            'label' => 'user.email',
-        ],
+        ->add('email',
+            EmailType::class,
+            options: [
+                'label' => 'user.email',
+            ],
         )
-        -> add ('password',
-        RepeatedType ::class,
-        options: [
-            'type'=> PasswordType::class,
-                'invalid_message'=>'Le mot de passe ne correspond pas',
-                'required'=>true,
-                'options' => ['attr'=> [
-                    "class" => 'fr-input',]],
-                'first_options'=>['label'=>'mot de passe',],
-                'second_options'=>['label'=>'confirmation du mot de passe',
-                ]
-        ],
+        ->add('password',
+            RepeatedType::class,
+            options: [
+                'type' => PasswordType::class,
+                    'invalid_message' => 'Le mot de passe ne correspond pas',
+                    'required' => true,
+                    'options' => ['attr' => [
+                        'class' => 'fr-input', ]],
+                    'first_options' => ['label' => 'mot de passe'],
+                    'second_options' => ['label' => 'confirmation du mot de passe',
+                    ],
+            ],
         )
-        -> add ('save',
-        SubmitType ::class,
-        options: [
-            'label' => 'common.form.save',
-        ]
+        ->add('save',
+            SubmitType::class,
+            options: [
+                'label' => 'common.form.save',
+            ],
         );
     }
 }

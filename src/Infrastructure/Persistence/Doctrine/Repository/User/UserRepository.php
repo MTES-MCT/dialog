@@ -27,6 +27,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             ->getOneOrNullResult()
         ;
     }
+
     public function findUsers(): array
     {
         return $this->createQueryBuilder('u')
@@ -34,13 +35,15 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         ->getResult()
         ;
     }
+
     public function save(User $user): User
     {
         $this->getEntityManager()->persist($user);
 
         return $user;
     }
-    public function findUserByUuid(string $uuid): User| null
+
+    public function findUserByUuid(string $uuid): User|null
     {
         return $this->createQueryBuilder('u')
             ->where('u.uuid = :uuid')
@@ -52,7 +55,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         ;
     }
 
-    public function delete(User $user):void
+    public function delete(User $user): void
     {
         $this->getEntityManager()->remove($user);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Controller\User;
 
 use App\Application\CommandBusInterface;
@@ -9,9 +11,6 @@ use App\Application\User\Query\GetUserByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\User\Exception\UserCannotBeDeletedException;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,35 +18,34 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class DeleteUserController {
-    function __construct(
+class DeleteUserController
+{
+    public function __construct(
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private CsrfTokenManagerInterface $csrfTokenManager,
-        private Security $security,
         private RouterInterface $router,
-    )
-    {   
+    ) {
     }
 
     #[Route('/users/{uuid}',
-    name: 'app_user_delete',
-    requirements: ['uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'],
-    methods: ['DELETE'],
+        name: 'app_user_delete',
+        requirements: ['uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'],
+        methods: ['DELETE'],
     )]
-
-    public function __invoke(Request $request,string $uuid):Response
+    public function __invoke(Request $request, string $uuid): Response
     {
-        $csrfToken = new CsrfToken('deleteUser',$request->request->get('token'));
-        if(!$this->csrfTokenManager->isTokenValid($csrfToken))
-        {
+        $csrfToken = new CsrfToken('deleteUser', $request->request->get('token'));
+        if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
             throw new BadRequestException('Invalid CSRF token');
         }
 
-        try{
+        try {
             $user = $this->queryBus->handle(new GetUserByUuidQuery($uuid));
-        }catch(RegulationOrderRecordNotFoundException) {
+        } catch (RegulationOrderRecordNotFoundException) {
             // The regulation may have been deleted before.
             // Don't fail, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
             return new RedirectResponse(
@@ -67,5 +65,4 @@ class DeleteUserController {
             status: Response::HTTP_SEE_OTHER,
         );
     }
-
 }
