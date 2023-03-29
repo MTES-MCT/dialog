@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Application\Organization\Command;
+
+use App\Domain\Organization\Repository\OrganizationRepositoryInterface;
+use App\Domain\User\Organization;
+
+class UpdateOrganizationCommandHandler
+{
+    public function __construct(
+        private OrganizationRepositoryInterface $organizationRepositoryInterface,
+    ){
+    }
+    public function __invoke(UpdateOrganizationCommand $command) : void
+    {
+        $organization = $this->organizationRepositoryInterface->findByUuid($command->organizationUuid);
+        
+        $organization->update($command->name);
+    }
+}

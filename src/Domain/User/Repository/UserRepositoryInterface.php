@@ -9,4 +9,8 @@ use App\Domain\User\User;
 interface UserRepositoryInterface
 {
     public function findOneByEmail(string $email): ?User;
+    public function findUsers(): array;
+    public function save(User $user): User;
+    public function findUserByUuid(string $uuid): User| null;
+    public function delete(User $user):void;
 }

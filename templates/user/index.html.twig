@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% set deleteCsrfToken = csrf_token('deleteUser') %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+	<section class="fr-container fr-py-5w" aria-labelledby="regulation-list">
+		<div class="fr-table">
+			<table>
+				<caption>{{ "user.list"|trans }}</caption>
+				<thead>
+					<tr>
+						<th scope="col">Nom</th>
+						<th scope="col">Email</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{% for user in users %}
+						<tr>
+							<td>{{ user.fullName }}</td>
+							<td>{{ user.email }}</td>
+							<td>
+								<div class="fr-btns-group fr-btns-group--inline-sm">
+									<a href="{{ path ('app_user_edit',{ uuid: user.uuid })}}" class="fr-btn     fr-icon-edit-line fr-btn--tertiary-no-outline">
+										{{ 'common.update'|trans }}
+									</a>
+
+
+									{# <a href="{{ path ('app_user_delete',{ uuid: user.uuid }) }}" class="fr-btn   fr-btn--tertiary-no-outline fr-icon-delete-bin-line"> {{ 'common.delete'|trans }}
+									                        </a> #}
+									<form method="delete" action="{{ path('app_user_delete', { uuid: user.uuid }) }}" data-controller="form-submit" data-form-submit-event-name-value="modal-trigger:submit">
+										<button class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line" data-controller="modal-trigger" data-modal-trigger-modal-outlet="#user-delete-modal" data-modal-trigger-key-value="{{ user.uuid }}" data-action="modal-trigger#showModal:prevent" aria-controls="user-delete-modal" title="{{ 'common.delete'|trans }}"></button>
+										<input type="hidden" name="token" value="{{ deleteCsrfToken }}"/>
+									</form>
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</section>
+{% endblock %}
+{% block body_end %}
+	{{ parent() }}
+	{% include 'user/_delete_user_modal.html.twig' %}
+{% endblock %}

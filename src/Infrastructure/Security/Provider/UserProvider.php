@@ -21,7 +21,6 @@ final class UserProvider implements UserProviderInterface
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $user = $this->userRepository->findOneByEmail($identifier);
-
         if (!$user instanceof User) {
             throw new UserNotFoundException(sprintf('Unable to find the user %s', $identifier));
         }

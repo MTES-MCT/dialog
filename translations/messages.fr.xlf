@@ -582,6 +582,27 @@
                 <source>regulation.list.meta.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="user.delete_modal.title">
+                <source>user.delete_modal.title</source>
+                <target>Supprimer cet utilisateur?</target>
+            </trans-unit>
+            
+            <trans-unit id="user.list">
+                <source>user.list</source>
+                <target>Liste des utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="organization.list">
+                <source>organization.list</source>
+                <target>Liste des organisations</target>
+            </trans-unit>
+            <trans-unit id="organization.add">
+                <source>organization.add</source>
+                <target>Nouvelle organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.name">
+                <source>organization.name</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -32,10 +32,12 @@ class Organization
 
     public function addUser(User $user): void
     {
-        if (\in_array($user, $this->users, true)) {
-            return;
-        }
 
         $this->users[] = $user;
+    }
+    public function update(
+        string $name,
+    ): void {
+        $this->name = $name;
     }
 }

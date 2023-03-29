@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+{% block body %}
+	<div class="fr-table">
+		<table>
+			<caption>{{ "organization.list"|trans }}</caption>
+			<thead>
+				<tr>
+					<th scope="col">Titre</th>
+					<th scope="col">Titre</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+                {% for organization in organizations %}
+				    <tr>
+                    <td>
+                    <a href="{{ path ('app_organization_edit',{ uuid: organization.uuid })}}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline"> {{ 'common.update'|trans }}
+                    </a></td>
+					    <td>{{ organization.name }}</td>
+				
+				    </tr>
+				
+			    {% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{%block title %}
+{% endblock %}
+
+{%block body %}
+{{form_start(form)}}
+
+    {{ form_row(form.name, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+    {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
+
+{{ form_end(form) }}
+{% endblock %}

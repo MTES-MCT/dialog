@@ -27,4 +27,33 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             ->getOneOrNullResult()
         ;
     }
+    public function findUsers(): array
+    {
+        return $this->createQueryBuilder('u')
+        ->getQuery()
+        ->getResult()
+        ;
+    }
+    public function save(User $user): User
+    {
+        $this->getEntityManager()->persist($user);
+
+        return $user;
+    }
+    public function findUserByUuid(string $uuid): User| null
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('u.organizations', 'o')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function delete(User $user):void
+    {
+        $this->getEntityManager()->remove($user);
+    }
 }
