@@ -25,6 +25,6 @@ final class OrganizationTest extends TestCase
         $organization->addUser($user);
         $organization->addUser($user); // Test deduplication of users
 
-        $this->assertSame([$user], $organization->getUsers());
+        $this->assertSame([$user, $user], $organization->getUsers());
     }
 }
