@@ -48,9 +48,9 @@ final class Step2Controller extends AbstractRegulationController
         $command = SaveRegulationStep2Command::create($regulationOrderRecord, $location);
         $form = $this->formFactory->create(Step2FormType::class, $command);
         $form->handleRequest($request);
+        $commandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $commandFailed = false;
 
             try {
                 $this->commandBus->handle($command);
@@ -82,7 +82,9 @@ final class Step2Controller extends AbstractRegulationController
                     'uuid' => $uuid,
                 ],
             ),
-            status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
+            status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed
+                ? Response::HTTP_UNPROCESSABLE_ENTITY
+                : Response::HTTP_OK,
         );
     }
 }
