@@ -8,7 +8,6 @@ use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetUsersQuery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ListUserController
 {

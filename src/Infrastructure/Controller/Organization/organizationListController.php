@@ -8,7 +8,6 @@ use App\Application\Organization\Query\GetOrganizationsQuery;
 use App\Application\QueryBusInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class organizationListController
 {

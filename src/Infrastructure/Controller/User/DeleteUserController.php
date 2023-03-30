@@ -10,7 +10,6 @@ use App\Application\User\Command\DeleteUserCommand;
 use App\Application\User\Query\GetUserByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\User\Exception\UserCannotBeDeletedException;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Organization\Query;
 
+use App\Application\Organization\View\OrganizationListView;
 use App\Domain\Organization\Repository\OrganizationRepositoryInterface;
 
 class GetOrganizationsQueryHandler
@@ -15,8 +16,15 @@ class GetOrganizationsQueryHandler
 
     public function __invoke(GetOrganizationsQuery $query): array
     {
-        $organization = $this->repository->findOrganizations();
-
-        return $organization;
+        $organizations = $this->repository->findOrganizations();
+        $data = [];
+        foreach ($organizations as $organization) {
+            $data[] = new OrganizationListView(
+                $organization->getUuid(),
+                $organization->getName(),
+            );
+        }
+        // dd($data);
+        return $data;
     }
 }
