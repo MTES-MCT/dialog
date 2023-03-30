@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\Regulation\Query\GetRegulationsQueryHandler;
+use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -17,26 +18,30 @@ final class GetRegulationsQueryHandlerTest extends TestCase
     public function testGetAll(): void
     {
         $startDate1 = new \DateTime('2022-12-07');
-        $endDate1 = new \DateTime('2022-12-17');
         $startDate2 = new \DateTime('2022-12-10');
         $organization = $this->createMock(Organization::class);
+
+        $location = new LocationView(
+            city: 'Montauban',
+            roadName: 'Avenue de Fonneuve',
+        );
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            'identifier' => 'F01/2023',
+            'city' => $location->city,
+            'roadName' => $location->roadName,
             'startDate' => $startDate1,
-            'endDate' => $endDate1,
+            'endDate' => null,
             'status' => 'draft',
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
+            'identifier' => 'F02/2023',
+            'city' => null,
+            'roadName' => null,
             'startDate' => $startDate2,
-            'endDate' => null,
-            'status' => 'draft',
-        ];
-        $regulationOrder3 = [
-            'uuid' => 'c421193a-5437-431a-9228-db6288d36a16',
-            'startDate' => null,
             'endDate' => null,
             'status' => 'draft',
         ];
@@ -44,39 +49,37 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method("findRegulationsByOrganization")
-            ->with($organization, 20, 1, 'draft')
-            ->willReturn([$regulationOrder1, $regulationOrder2, $regulationOrder3]);
+            ->with($organization, 20, 1, true)
+            ->willReturn([$regulationOrder2, $regulationOrder1]);
 
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method("countRegulationsByOrganization")
-            ->with($organization, 'draft')
-            ->willReturn(3);
+            ->with($organization, true)
+            ->willReturn(2);
 
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, 'draft'));
+        $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, isPermanent: true));
 
         $pagination = new Pagination(
             [
                 new RegulationOrderListItemView(
-                    '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                    'draft',
-                    $startDate1,
-                    $endDate1,
-                ),
-                new RegulationOrderListItemView(
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
+                    'F02/2023',
                     'draft',
+                    null,
                     $startDate2,
                     null,
                 ),
                 new RegulationOrderListItemView(
-                    'c421193a-5437-431a-9228-db6288d36a16',
+                    '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                    'F01/2023',
                     'draft',
-                    null,
+                    $location,
+                    $startDate1,
                     null,
                 ),
-            ], 3, 1, 20,
+            ], 2, 1, 20,
         );
 
         $this->assertEquals($pagination, $regulationOrders);

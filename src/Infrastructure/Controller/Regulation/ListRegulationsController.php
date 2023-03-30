@@ -6,7 +6,6 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationsQuery;
-use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +34,7 @@ final class ListRegulationsController
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-        $tab = $request->query->get('tab', RegulationOrderRecordStatusEnum::DRAFT);
+        $tab = $request->query->get('tab', 'temporary');
         $pageSize = min($request->query->getInt('pageSize', 20), 100);
         $page = $request->query->getInt('page', 1);
 
@@ -45,28 +44,28 @@ final class ListRegulationsController
             );
         }
 
-        $draftPagination = $this->queryBus->handle(
+        $temporaryRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 $user->getOrganization(),
                 $pageSize,
-                $tab === RegulationOrderRecordStatusEnum::DRAFT ? $page : 1,
-                RegulationOrderRecordStatusEnum::DRAFT,
+                $tab === 'temporary' ? $page : 1,
+                isPermanent: false,
             ),
         );
-        $publishedPagination = $this->queryBus->handle(
+        $permanentRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 $user->getOrganization(),
                 $pageSize,
-                $tab === RegulationOrderRecordStatusEnum::PUBLISHED ? $page : 1,
-                RegulationOrderRecordStatusEnum::PUBLISHED,
+                $tab === 'permanent' ? $page : 1,
+                isPermanent: true,
             ),
         );
 
         return new Response($this->twig->render(
             name: 'regulation/index.html.twig',
             context: [
-                'draftPagination' => $draftPagination,
-                'publishedPagination' => $publishedPagination,
+                'temporaryRegulations' => $temporaryRegulations,
+                'permanentRegulations' => $permanentRegulations,
                 'tab' => $tab,
                 'pageSize' => $pageSize,
                 'page' => $page,
