@@ -27,6 +27,10 @@ final class Version20230329092116 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        $this->addSql('UPDATE location SET from_house_number = \'N/C\' WHERE from_house_number IS NULL');
+        $this->addSql('UPDATE location SET from_point = POINT(0, 0)::geometry WHERE from_point IS NULL');
+        $this->addSql('UPDATE location SET to_house_number = \'N/C\' WHERE to_house_number IS NULL');
+        $this->addSql('UPDATE location SET to_point = POINT(0, 0)::geometry WHERE to_point IS NULL');
         $this->addSql('ALTER TABLE location ALTER from_house_number SET NOT NULL');
         $this->addSql('ALTER TABLE location ALTER from_point SET NOT NULL');
         $this->addSql('ALTER TABLE location ALTER to_house_number SET NOT NULL');
