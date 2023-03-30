@@ -2,21 +2,19 @@
 
 {% block body %}
     <section class="fr-container fr-py-5w">
-        <turbo-frame id="step-content" data-turbo-action="advance" autoscroll>
-            {% include "common/breadcrumb.html.twig" with { items: [
-                { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
-                { title: 'regulation.list.add_button'},
-            ]} %}
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
+            { title: 'regulation.list.add_button'},
+        ]} %}
 
-                <div class="fr-grid-row">
-                    {% include "regulation/steps/_stepper.html.twig" with {
-                        'stepName': 'regulation.stepper.step' ~ stepNumber,
-                        'stepNumber': stepNumber,
-                        'nextStep': 'regulation.stepper.step' ~ (nextStep|default(stepNumber + 1)),
-                    } %}
-                </div>
+            <div class="fr-grid-row">
+                {% include "regulation/steps/_stepper.html.twig" with {
+                    'stepName': 'regulation.stepper.step' ~ stepNumber,
+                    'stepNumber': stepNumber,
+                    'nextStep': 'regulation.stepper.step' ~ (nextStep|default(stepNumber + 1)),
+                } %}
             </div>
-            {% block step_body %}{% endblock %}
-        </turbo-frame>
+        </div>
+        {% block step_body %}{% endblock %}
     </section>
 {% endblock %}
