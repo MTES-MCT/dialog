@@ -39,8 +39,12 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return $dateTime->format($format);
     }
 
-    public function isFuture(\DateTimeInterface $date, \DateTimeInterface $time = null, \DateTimeInterface $reference = null): bool
+    public function isFuture(\DateTimeInterface $date = null, \DateTimeInterface $time = null, \DateTimeInterface $reference = null): bool
     {
+        if (!$date) {
+            $date = new \DateTimeImmutable('now');
+        }
+
         if (!$reference) {
             $reference = new \DateTimeImmutable('now');
         }

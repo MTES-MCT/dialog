@@ -22,14 +22,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         Organization $organization,
         int $maxItemsPerPage,
         int $page,
-        string $status,
+        bool $isPermanent,
     ): array {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.startDate, ro.endDate, roc.status')
-            ->where('roc.status = :status')
-            ->andWhere('roc.organization = :organization')
-            ->setParameters(['status' => $status, 'organization' => $organization->getUuid()])
-            ->innerJoin('roc.regulationOrder', 'ro')
+            ->select('roc.uuid, ro.identifier, loc.city, loc.roadName, ro.startDate, ro.endDate, roc.status')
+            ->where('roc.organization = :organization')
+            ->setParameter('organization', $organization->getUuid())
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
+            ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
@@ -38,13 +38,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function countRegulationsByOrganization(Organization $organization, string $status): int
+    public function countRegulationsByOrganization(Organization $organization, bool $isPermanent): int
     {
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
-            ->where('roc.status = :status')
-            ->andWhere('roc.organization = :organization')
-            ->setParameters(['status' => $status, 'organization' => $organization->getUuid()])
+            ->where('roc.organization = :organization')
+            ->setParameter('organization', $organization->getUuid())
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->getQuery()
             ->getSingleScalarResult()
         ;

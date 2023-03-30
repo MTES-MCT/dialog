@@ -33,6 +33,7 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'FO3/2023',
             description: 'Description 3',
             startDate: new \DateTimeImmutable('2023-03-11'),
+            endDate: null,
         );
 
         $regulationOrder4 = new RegulationOrder(
@@ -40,6 +41,7 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'FO4/2023',
             description: 'Description 4',
             startDate: null, // Simulate a regulation order before migration
+            endDate: null,
         );
 
         $regulationOrder5 = new RegulationOrder(

@@ -19,7 +19,7 @@ final class PaginationTest extends WebTestCase
             'queryParams' => [
                 'page' => 1,
                 'pageSize' => 10,
-                'tab' => 'draft',
+                'tab' => 'temporary',
             ],
             'pagination' => [
                 'windowPages' => [3, 4, 5],

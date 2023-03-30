@@ -122,13 +122,21 @@
                 <source>common.date.to</source>
                 <target>au %date%</target>
             </trans-unit>
-            <trans-unit id="common.date.since">
-                <source>common.date.since</source>
-                <target>depuis le %date%</target>
-            </trans-unit>
             <trans-unit id="common.date.starting">
                 <source>common.date.starting</source>
                 <target>à partir du %date%</target>
+            </trans-unit>
+            <trans-unit id="common.date.upcoming">
+                <source>common.date.upcoming</source>
+                <target>à venir</target>
+            </trans-unit>
+            <trans-unit id="common.date.ongoing">
+                <source>common.date.ongoing</source>
+                <target>en cours</target>
+            </trans-unit>
+            <trans-unit id="common.date.passed">
+                <source>common.date.passed</source>
+                <target>passé</target>
             </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
@@ -138,6 +146,10 @@
                 <source>regulation.status.draft</source>
                 <target>Brouillon</target>
             </trans-unit>
+            <trans-unit id="regulation.status.published">
+                <source>regulation.status.published</source>
+                <target>Publié</target>
+            </trans-unit>
             <trans-unit id="regulation.status">
                 <source>regulation.status</source>
                 <target>Statut</target>
@@ -146,13 +158,13 @@
                 <source>regulation.city</source>
                 <target>Commune</target>
             </trans-unit>
-            <trans-unit id="regulation.list.total_draft">
-                <source>regulation.list.total_draft</source>
-                <target>{0}Brouillon (0)|{1}Brouillon (1)|]1,Inf[Brouillons (%count%)</target>
+            <trans-unit id="regulation.list.total_temporary">
+                <source>regulation.list.total_temporary</source>
+                <target>Temporaires (%count%)</target>
             </trans-unit>
-            <trans-unit id="regulation.list.total_published">
-                <source>regulation.list.total_published</source>
-                <target>{0}Publiée (0)|{1}Publiée (1)|]1,Inf[Publiées (%count%)</target>
+            <trans-unit id="regulation.list.total_permanent">
+                <source>regulation.list.total_permanent</source>
+                <target>Permanents (%count%)</target>
             </trans-unit>
             <trans-unit id="regulation.link.datex">
                 <source>regulation.link.datex</source>
@@ -294,6 +306,14 @@
             <trans-unit id="regulation.detail.draft.description">
                 <source>regulation.detail.draft.description</source>
                 <target>La réglementation ne sera pas encore diffusée.</target>
+            </trans-unit>
+            <trans-unit id="regulation.identifier">
+                <source>regulation.identifier</source>
+                <target>Identifiant</target>
+            </trans-unit>
+            <trans-unit id="regulation.locations">
+                <source>regulation.locations</source>
+                <target>Localisations</target>
             </trans-unit>
             <trans-unit id="regulation.period">
                 <source>regulation.period</source>

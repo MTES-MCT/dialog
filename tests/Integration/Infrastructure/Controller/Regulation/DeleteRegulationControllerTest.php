@@ -12,48 +12,48 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     use SessionHelper;
 
     private function countRows($crawler) {
-        $numDrafts = $crawler->filter("#draft-panel tbody > tr:not([data-testid=empty-row])")->count();
-        $numPublished = $crawler->filter("#published-panel tbody > tr:not([data-testid=empty-row])")->count();
-        return [$numDrafts, $numPublished];
+        $numTemporary = $crawler->filter("#temporary-panel tbody > tr:not([data-testid=empty-row])")->count();
+        $numPermanent = $crawler->filter("#permanent-panel tbody > tr:not([data-testid=empty-row])")->count();
+        return [$numTemporary, $numPermanent];
     }
 
-    public function testDeleteDraft(): void
+    public function testDeleteTemporary(): void
     {
         $client = $this->login();
 
         $crawler = $client->request('GET', '/regulations');
-        [$numDrafts, $numPublished] = $this->countRows($crawler);
-
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', [
-            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
-        ]);
-        $this->assertResponseRedirects('/regulations?tab=draft', 303);
-        $crawler = $client->followRedirect();
-        // Doesn't appear in list of drafts anymore.
-        $this->assertEquals([$numDrafts - 1, $numPublished], $this->countRows($crawler));
-    }
-
-    public function testDeletePublished(): void
-    {
-        $client = $this->login();
-
-        $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
-        $this->assertResponseStatusCodeSame(200);
-
-        $crawler = $client->request('GET', '/regulations');
-        [$numDrafts, $numPublished] = $this->countRows($crawler);
+        [$numTemporary, $numPermanent] = $this->countRows($crawler);
 
         $client->request('DELETE', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5', [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
-        $this->assertResponseRedirects('/regulations?tab=published', 303);
+        $this->assertResponseRedirects('/regulations?tab=temporary', 303);
+        $crawler = $client->followRedirect();
+        // Doesn't appear in list of temporary regulations anymore.
+        $this->assertEquals([$numTemporary - 1, $numPermanent], $this->countRows($crawler));
+    }
+
+    public function testDeletePermanent(): void
+    {
+        $client = $this->login();
+
+        $client->request('GET', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $this->assertResponseStatusCodeSame(200);
+
+        $crawler = $client->request('GET', '/regulations');
+        [$numTemporary, $numPermanent] = $this->countRows($crawler);
+
+        $client->request('DELETE', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', [
+            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+        ]);
+        $this->assertResponseRedirects('/regulations?tab=permanent', 303);
         $crawler = $client->followRedirect();
 
-        // Doesn't appear in list of published regulations anymore.
-        $this->assertSame([$numDrafts, $numPublished - 1], $this->countRows($crawler), $crawler->html());
+        // Doesn't appear in list of permanent regulations anymore.
+        $this->assertSame([$numTemporary, $numPermanent - 1], $this->countRows($crawler), $crawler->html());
 
         // Detail page doesn't exist anymore.
-        $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $client->request('GET', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
         $this->assertResponseStatusCodeSame(404);
     }
 
@@ -72,7 +72,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $client->request('DELETE', '/regulations/547a5639-655a-41c3-9428-a5256b5a9e38', [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
-        $this->assertResponseRedirects('/regulations?tab=draft', 303);
+        $this->assertResponseRedirects('/regulations?tab=temporary', 303);
     }
 
     public function testInvalidCsrfToken(): void

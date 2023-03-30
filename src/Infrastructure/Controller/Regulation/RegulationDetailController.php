@@ -70,7 +70,7 @@ final class RegulationDetailController
 
                 return new RedirectResponse(
                     url: $this->router->generate('app_regulations_list', [
-                        'tab' => $command->status,
+                        'tab' => 'temporary',
                     ]),
                     status: Response::HTTP_SEE_OTHER,
                 );
