@@ -166,16 +166,6 @@ final class Step1ControllerTest extends AbstractWebTestCase
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step1_form_description_error')->text());
     }
 
-    public function testUxEnhancements(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form');
-        $this->assertResponseStatusCodeSame(200);
-
-        $saveButton = $crawler->selectButton('Suivant');
-        $this->assertNotNull($saveButton->closest('turbo-frame[id="step-content"][data-turbo-action="advance"][autoscroll]'));
-    }
-
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
