@@ -9,8 +9,6 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            # by default, the feature allows 5 login attempts per minute
-            login_throttling: ~
             lazy: true
             provider: user
             form_login:
