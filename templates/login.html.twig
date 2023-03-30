@@ -22,18 +22,18 @@
                                             <fieldset class="fr-fieldset" id="credentials" aria-labelledby="credentials-message">
                                                 <div class="fr-fieldset__element">
                                                     <div class="fr-input-group">
-                                                        <label class="fr-label" for="username">
+                                                        <label class="fr-label" for="email">
                                                             {{ 'login.email'|trans }}
                                                             <span class="fr-hint-text">{{ 'login.email_format'|trans }}</span>
                                                         </label>
-                                                        <input class="fr-input" type="email" autocomplete="email" id="username" required name="_username" value="{{ last_username }}"/>
+                                                        <input class="fr-input" type="email" autocomplete="email" id="email" required name="email" value="{{ last_username }}"/>
                                                     </div>
                                                 </div>
                                                 <div class="fr-fieldset__element">
                                                     <div class="fr-password">
                                                         <label class="fr-label" for="password">{{ 'login.password'|trans }}</label>
                                                         <div class="fr-input-wrap">
-                                                            <input class="fr-password__input fr-input" aria-required="true" required name="_password" autocomplete="current-password" id="password" type="password"/>
+                                                            <input class="fr-password__input fr-input" aria-required="true" required name="password" autocomplete="current-password" id="password" type="password"/>
                                                         </div>
                                                         <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
                                                             <input aria-label="{{ 'login.display'|trans }}" id="password-show" type="checkbox"/>
