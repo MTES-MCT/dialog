@@ -94,6 +94,22 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $crawler->filter('form')->count()); // No form found
     }
 
+    public function testSeeAll(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+
+        $this->assertSecurityHeaders();
+        $this->assertResponseStatusCodeSame(200);
+
+        $crawler = $client->clickLink('Toutes les réglementations');
+        $this->assertRouteSame('app_regulations_list');
+
+        // Temporary regulation order list is shown.
+        $temporaryPanel = $crawler->filter('#temporary-panel');
+        $this->assertStringContainsString('fr-tabs__panel--selected', $temporaryPanel->attr('class'));
+    }
+
     public function testCantBePublished(): void
     {
         $client = $this->login();
