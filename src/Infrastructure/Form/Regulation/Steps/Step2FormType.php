@@ -41,6 +41,7 @@ final class Step2FormType extends AbstractType
                 'fromHouseNumber',
                 TextType::class,
                 options: [
+                    'required' => false,
                     'label' => 'regulation.step2.from_house_number',
                 ],
             )
@@ -48,6 +49,7 @@ final class Step2FormType extends AbstractType
                 'toHouseNumber',
                 TextType::class,
                 options: [
+                    'required' => false,
                     'label' => 'regulation.step2.to_house_number',
                 ],
             )

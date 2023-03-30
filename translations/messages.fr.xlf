@@ -258,9 +258,17 @@
                 <source>regulation.detail.where.city</source>
                 <target>Ville : %postalCode% %city%</target>
             </trans-unit>
-            <trans-unit id="regulation.detail.where.road_segment">
-                <source>regulation.detail.where.road_segment</source>
-                <target>Rue : du %from% au %to%, %roadName%</target>
+            <trans-unit id="regulation.detail.where.road_name">
+                <source>regulation.detail.where.road_name</source>
+                <target>Rue : %roadName%</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.where.from_house_number">
+                <source>regulation.detail.where.from_house_number</source>
+                <target>Numéro de début : %number%</target>
+            </trans-unit>
+            <trans-unit id="regulation.detail.where.to_house_number">
+                <source>regulation.detail.where.to_house_number</source>
+                <target>Numéro de fin : %number%</target>
             </trans-unit>
             <trans-unit id="regulation.detail.when">
                 <source>regulation.detail.when</source>

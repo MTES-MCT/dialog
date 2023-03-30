@@ -10,8 +10,8 @@ class DetailLocationView
         public readonly string $postalCode,
         public readonly string $city,
         public readonly string $roadName,
-        public readonly string $fromHouseNumber,
-        public readonly string $toHouseNumber,
+        public readonly ?string $fromHouseNumber,
+        public readonly ?string $toHouseNumber,
     ) {
     }
 }

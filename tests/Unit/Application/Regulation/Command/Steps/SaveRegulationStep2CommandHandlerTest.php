@@ -10,7 +10,6 @@ use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
 use App\Domain\Regulation\Location;
-use App\Domain\Condition\Condition;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\RegulationOrder;
@@ -165,6 +164,55 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
+
+        $this->assertEmpty($handler($command));
+    }
+
+    public function testHouseNumbersOptional(): void
+    {
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                $this->postalCode,
+                $this->city,
+                $this->roadName,
+            );
+
+        $idFactory = $this->createMock(IdFactoryInterface::class);
+        $idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $geometryFormatter = $this->createMock(GeometryFormatter::class);
+        $geometryFormatter
+            ->expects(self::never())
+            ->method('formatPoint');
+
+        $locationRepository = $this->createMock(LocationRepositoryInterface::class);
+        $locationRepository
+            ->expects(self::never())
+            ->method('save');
+
+        $handler = new SaveRegulationStep2CommandHandler(
+            $idFactory,
+            $locationRepository,
+            $geocoder,
+            $geometryFormatter,
+        );
+
+        $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
+        $command->postalCode = $this->postalCode;
+        $command->city = $this->city;
+        $command->roadName = $this->roadName;
+        $command->fromHouseNumber = null;
+        $command->toHouseNumber = null;
 
         $this->assertEmpty($handler($command));
     }

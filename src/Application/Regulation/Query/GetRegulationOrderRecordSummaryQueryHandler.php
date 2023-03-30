@@ -28,9 +28,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
 
         $hasLocation = $row['postalCode']
             && $row['city']
-            && $row['roadName']
-            && $row['fromHouseNumber']
-            && $row['toHouseNumber'];
+            && $row['roadName'];
 
         return new RegulationOrderRecordSummaryView(
             $row['uuid'],

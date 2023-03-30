@@ -34,8 +34,8 @@ final class SaveRegulationStep2CommandHandler
 
         // If submitting step 2 for the first time, we create the location
         if (!$command->location instanceof Location) {
-            $fromPoint = $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber);
-            $toPoint = $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber);
+            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber) : null;
+            $toPoint = $command->toHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber) : null;
 
             $this->locationRepository->save(
                 new Location(
@@ -63,7 +63,7 @@ final class SaveRegulationStep2CommandHandler
         $fromPointNeedsUpdating = $hasRoadChanged || ($command->fromHouseNumber !== $command->location->getFromHouseNumber());
 
         if ($fromPointNeedsUpdating) {
-            $fromPoint = $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber);
+            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber) : null;
         } else {
             $fromPoint = $command->location->getFromPoint();
         }
@@ -71,7 +71,7 @@ final class SaveRegulationStep2CommandHandler
         $toPointNeedsUpdating = $hasRoadChanged || ($command->toHouseNumber !== $command->location->getToHouseNumber());
 
         if ($toPointNeedsUpdating) {
-            $toPoint = $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber);
+            $toPoint = $command->toHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber) : null;
         } else {
             $toPoint = $command->location->getToPoint();
         }

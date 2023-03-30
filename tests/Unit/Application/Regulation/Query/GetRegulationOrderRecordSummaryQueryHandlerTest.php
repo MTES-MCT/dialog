@@ -14,15 +14,35 @@ use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 {
-    public function testGetOne(): void
+    public function provideGetOne(): array
     {
-        $location = new DetailLocationView(
-            postalCode: '82000',
-            city: 'Montauban',
-            roadName: 'Avenue de Fonneuve',
-            fromHouseNumber: '695',
-            toHouseNumber: '253',
-        );
+        return [
+            [
+                new DetailLocationView(
+                    postalCode: '82000',
+                    city: 'Montauban',
+                    roadName: 'Avenue de Fonneuve',
+                    fromHouseNumber: '695',
+                    toHouseNumber: '253',
+                ),
+            ],
+            [
+                new DetailLocationView(
+                    postalCode: '82000',
+                    city: 'Montauban',
+                    roadName: 'Avenue de Fonneuve',
+                    fromHouseNumber: null,
+                    toHouseNumber: null,
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideGetOne
+     */
+    public function testGetOne(DetailLocationView $location): void
+    {
 
         $startDate = new \DateTime('2022-12-07');
         $endDate = new \DateTime('2022-12-17');
@@ -66,7 +86,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                     $location->fromHouseNumber,
                     $location->toHouseNumber,
                 ),
-                null,
             ),
             $regulationOrders,
         );
@@ -104,7 +123,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 'draft',
                 'Description 1',
-                null,
                 null,
                 null,
                 null,
