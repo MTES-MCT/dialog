@@ -5,6 +5,8 @@
     <table>
         <thead>
             <tr>
+                <th scope="col">{{ 'regulation.identifier'|trans }}</th>
+                <th scope="col">{{ 'regulation.locations'|trans }}</th>
                 <th scope="col">{{ 'regulation.period'|trans }}</th>
                 <th scope="col">{{ 'regulation.status'|trans }}</th>
                 <th scope="col">{{ 'common.actions'|trans }}</th>
@@ -12,39 +14,46 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
-                {% set isFuture = regulation.startDate ? app_is_future(regulation.startDate) : null %}
+                {% set isUpcoming = regulation.startDate ? app_is_future(regulation.startDate) : null %}
+                {% set hasPassed = regulation.endDate ? app_is_future(null, null, regulation.endDate) : null %}
                 <tr>
+                    <td>
+                        {{ regulation.identifier }}
+                    </td>
+                    <td>
+                        {% if regulation.location %}
+                            {{ regulation.location.city }}
+                            <br />
+                            <b>{{ regulation.location.roadName }}</b>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if regulation.startDate %}
                             {% set startDate = regulation.startDate %}
                             {% set endDate = regulation.endDate %}
                             {% if startDate and endDate %}
-                                <b>
                                 {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
                                 {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-                                </b>
                             {% else %}
-                                <b>
-                                    {% if isFuture %}
-                                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) }) }}
-                                    {% else %}
-                                        {{ 'common.date.since'|trans({ '%date%': app_datetime(startDate) })}}
-                                    {% endif %}
-                                </b>
-                                <br/>
-                                <em>{{ 'common.permanent'|trans }}</em>
+                                {{ 'common.date.starting'|trans({ '%date%': app_datetime(startDate) }) }}
                             {% endif %}
+                            <br />
+                            <b>
+                                {% if isUpcoming %}
+                                    {{ 'common.date.upcoming'|trans }}
+                                {% elseif hasPassed %}
+                                    {{ 'common.date.passed'|trans }}
+                                {% else %}
+                                    {{ 'common.date.ongoing'|trans }}
+                                {% endif %}
+                            </b>
                         {% endif %}
                     </td>
                     <td>
                         {% if regulation.status == 'draft' %}
                             <p class="fr-badge fr-badge--info">{{'regulation.status.draft'|trans}}</p>
-                        {% elseif regulation.status == 'published' %}
-                            {% if isFuture %}
-                                <p class="fr-badge fr-badge--new">{{'regulation.future'|trans}}</p>
-                            {% else %}
-                                <p class="fr-badge fr-badge--success">{{'regulation.present'|trans}}</p>
-                            {% endif %}
+                        {% else %}
+                            <p class="fr-badge fr-badge--new">{{'regulation.status.published'|trans}}</p>
                         {% endif %}
                     </td>
                     <td>
@@ -84,7 +93,7 @@
                 </tr>
             {% else %}
                 <tr data-testid="empty-row">
-                    <td colspan="3">
+                    <td colspan="4">
                         <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                     </td>
                 </tr>
