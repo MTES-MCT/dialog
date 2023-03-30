@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\User\Query;
 
+use App\Application\User\View\UserListView;
 use App\Domain\User\Repository\UserRepositoryInterface;
 
 class GetUsersQueryHandler
@@ -15,10 +16,18 @@ class GetUsersQueryHandler
 
     public function __invoke(GetUsersQuery $query): array
     {
-        $user =
+        $users =
         $this->repository->findUsers(
         );
+        $data = [];
+        foreach ($users as $user) {
+            $data[] = new UserListView(
+                $user->getUuid(),
+                $user->getFullName(),
+                $user->getEmail(),
+            );
+        }
 
-        return $user;
+        return $data;
     }
 }

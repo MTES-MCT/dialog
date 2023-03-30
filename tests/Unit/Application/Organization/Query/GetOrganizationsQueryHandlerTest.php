@@ -51,7 +51,6 @@ class GetOrganizationsQueryHandlerTest extends TestCase
         $handler = new GetOrganizationsQueryHandler($organizationRepository);
         $result = $handler->__invoke(new GetOrganizationsQuery());
         $this->assertEquals($organizationListView,$result);
-
         // $this->assertEquals([$organization,$organization2],$result);
     }
 }
