@@ -107,8 +107,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
     public function findAddresses(string $search): array
     {
-        // TODO: caching en fonction de $search
-
         $response = $this->apiAdresseClient->request('GET', '/search/', [
             'headers' => [
                 'Accept' => 'application/json',
@@ -122,13 +120,17 @@ final class APIAdresseGeocoder implements GeocoderInterface
         ]);
 
         $requestUrl = $response->getInfo()['url'];
-        $errorMsgPrefix = sprintf('requesting %s', $requestUrl);
 
         try {
             $data = $response->toArray(throw: true);
         } catch (\Exception $exc) {
-            $message = sprintf('%s: error while reading json response: %s', $errorMsgPrefix, $exc->getMessage());
-            throw new GeocodingFailureException($message);
+            throw new GeocodingFailureException(
+                sprintf(
+                    '%s: error while reading json response: %s',
+                    sprintf('requesting %s', $requestUrl),
+                    $exc->getMessage(),
+                ),
+            );
         }
 
         $addresses = [];
