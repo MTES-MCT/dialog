@@ -19,14 +19,14 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         return [
             [
                 new DetailLocationView(
-                    address: 'Avenue de Fonneuve 820000 Montauban',
+                    address: 'Avenue de Fonneuve 82000 Montauban',
                     fromHouseNumber: '695',
                     toHouseNumber: '253',
                 ),
             ],
             [
                 new DetailLocationView(
-                    address: 'Avenue de Fonneuve 820000 Montauban',
+                    address: 'Avenue de Fonneuve 82000 Montauban',
                     fromHouseNumber: null,
                     toHouseNumber: null,
                 ),
