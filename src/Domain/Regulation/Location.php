@@ -11,9 +11,7 @@ class Location
     public function __construct(
         private string $uuid,
         private RegulationOrder $regulationOrder,
-        private string $postalCode,
-        private string $city,
-        private string $roadName,
+        private string $address,
         private ?string $fromHouseNumber,
         private ?string $fromPoint,
         private ?string $toHouseNumber,
@@ -31,19 +29,9 @@ class Location
         return $this->regulationOrder;
     }
 
-    public function getPostalCode(): string
+    public function getAddress(): string
     {
-        return $this->postalCode;
-    }
-
-    public function getCity(): string
-    {
-        return $this->city;
-    }
-
-    public function getRoadName(): string
-    {
-        return $this->roadName;
+        return $this->address;
     }
 
     public function getFromHouseNumber(): ?string
@@ -72,17 +60,13 @@ class Location
     }
 
     public function update(
-        string $postalCode,
-        string $city,
-        string $roadName,
+        string $address,
         ?string $fromHouseNumber,
         ?string $fromPoint,
         ?string $toHouseNumber,
         ?string $toPoint,
     ): void {
-        $this->postalCode = $postalCode;
-        $this->city = $city;
-        $this->roadName = $roadName;
+        $this->address = $address;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->fromPoint = $fromPoint;
         $this->toHouseNumber = $toHouseNumber;

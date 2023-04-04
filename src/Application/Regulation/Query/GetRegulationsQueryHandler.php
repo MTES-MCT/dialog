@@ -35,9 +35,8 @@ final class GetRegulationsQueryHandler
                 $regulation['uuid'],
                 $regulation['identifier'],
                 $regulation['status'],
-                $regulation['city'] ? new LocationView(
-                    $regulation['city'],
-                    $regulation['roadName'],
+                $regulation['address'] ? new LocationView(
+                    $regulation['address'],
                 ) : null,
                 $regulation['startDate'],
                 $regulation['endDate'],

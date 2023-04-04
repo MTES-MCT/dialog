@@ -20,9 +20,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_postalCode_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_city_error')->text());
-        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_roadName_error')->text());
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#step2_form_address_error')->text());
     }
 
     public function testAddFullRoad(): void
@@ -36,9 +34,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle("Étape 2 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form['step2_form[postalCode]'] = '44260';
-        $form['step2_form[city]'] = 'Savenay';
-        $form['step2_form[roadName]'] = 'Route du Grand Brossais';
+        $form['step2_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
 
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -59,9 +55,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle("Étape 2 sur 4 - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form['step2_form[postalCode]'] = '44260';
-        $form['step2_form[city]'] = 'Savenay';
-        $form['step2_form[roadName]'] = 'Route du Grand Brossais';
+        $form['step2_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
         $form['step2_form[fromHouseNumber]'] = '15';
         $form['step2_form[toHouseNumber]'] = '37bis';
 
@@ -90,36 +84,6 @@ final class Step2ControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_regulation_detail');
     }
 
-    private function provideInvalidPostalCode(): array {
-        return [
-            ['4426'],
-            ['442600'],
-            ['notanumber'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideInvalidPostalCode
-     */
-    public function testInvalidPostalCode(string $postalCode): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form/3ede8b1a-1816-4788-8510-e08f45511cb5/2');
-
-        $this->assertResponseStatusCodeSame(200);
-        $saveButton = $crawler->selectButton('Suivant');
-        $form = $saveButton->form();
-        $form['step2_form[postalCode]'] = $postalCode;
-        $form['step2_form[city]'] = 'Savenay';
-        $form['step2_form[roadName]'] = 'Route du Grand Brossais';
-        $form['step2_form[fromHouseNumber]'] = '15';
-        $form['step2_form[toHouseNumber]'] = '37bis';
-
-        $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette valeur n'est pas valide. Un code postal est composé de 5 chiffres.", $crawler->filter('#step2_form_postalCode_error')->text());
-    }
-
     public function testGeocodingFailure(): void
     {
         $client = $this->login();
@@ -128,9 +92,7 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form['step2_form[postalCode]'] = '44260';
-        $form['step2_form[city]'] = 'Savenay';
-        $form['step2_form[roadName]'] = 'Route du GEOCODING_FAILURE';
+        $form['step2_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
         $form['step2_form[fromHouseNumber]'] = '15';
         $form['step2_form[toHouseNumber]'] = '37bis';
 
@@ -174,16 +136,13 @@ final class Step2ControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
-        $form['step2_form[postalCode]'] = '44260';
-        $form['step2_form[city]'] = str_repeat('a', 256);
-        $form['step2_form[roadName]'] = str_repeat('a', 61);
+        $form['step2_form[address]'] = str_repeat('a', 256);
         $form['step2_form[fromHouseNumber]'] = str_repeat('a', 9);
         $form['step2_form[toHouseNumber]'] = str_repeat('a', 9);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step2_form_city_error')->text());
-        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.", $crawler->filter('#step2_form_roadName_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#step2_form_address_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_fromHouseNumber_error')->text());
         $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#step2_form_toHouseNumber_error')->text());
     }

@@ -151,16 +151,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())
-            ->method('getPostalCode')
-            ->willReturn('44260');
-        $location
-            ->expects(self::once())
-            ->method('getCity')
-            ->willReturn('Savenay');
-        $location
-            ->expects(self::once())
-            ->method('getRoadName')
-            ->willReturn('Route du Grand Brossais');
+            ->method('getAddress')
+            ->willReturn('Route du Grand Brossais 44260 Savenay');
         $location
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -190,9 +182,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
                 new Location(
                     uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
                     regulationOrder: $duplicatedRegulationOrder,
-                    postalCode: '44260',
-                    city: 'Savenay',
-                    roadName: 'Route du Grand Brossais',
+                    address: 'Route du Grand Brossais 44260 Savenay',
                     fromHouseNumber: '15',
                     fromPoint: 'POINT(-1.935836 47.347024)',
                     toHouseNumber: '37bis',

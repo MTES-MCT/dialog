@@ -16,9 +16,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
     public function testGetAll(): void
     {
         $location1 = new DatexLocationView(
-            postalCode: '82000',
-            city: 'Montauban',
-            roadName: 'Avenue de Fonneuve',
+            address: 'Avenue de Fonneuve 82000 Montauban',
             fromHouseNumber: '695',
             fromLongitude: '1.362275',
             fromLatitude: '44.028996',
@@ -28,9 +26,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location2 = new DatexLocationView(
-            postalCode :'44260',
-            city :'Savenay',
-            roadName :'Route du Grand Brossais',
+            address: 'Route du Grand Brossais 44260 Savenay',
             fromHouseNumber :'15',
             fromLatitude :'47.347024',
             fromLongitude :'-1.935836',
@@ -50,9 +46,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startDate' => $startDate1,
             'endDate' => $endDate1,
-            'postalCode' => $location1->postalCode,
-            'city' => $location1->city,
-            'roadName' => $location1->roadName,
+            'address' => $location1->address,
             'fromHouseNumber' => $location1->fromHouseNumber,
             'fromLatitude' => $location1->fromLatitude,
             'fromLongitude' => $location1->fromLongitude,
@@ -66,9 +60,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'description' => 'Description 2',
             'startDate' => $startDate2,
             'endDate' => null,
-            'postalCode' => $location2->postalCode,
-            'city' => $location2->city,
-            'roadName' => $location2->roadName,
+            'address' => $location2->address,
             'fromHouseNumber' => $location2->fromHouseNumber,
             'fromLatitude' => $location2->fromLatitude,
             'fromLongitude' => $location2->fromLongitude,

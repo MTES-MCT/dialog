@@ -17,24 +17,10 @@ final class Step2FormType extends AbstractType
     {
         $builder
             ->add(
-                'postalCode',
+                'address',
                 TextType::class,
                 options: [
-                    'label' => 'regulation.step2.postal_code',
-                ],
-            )
-            ->add(
-                'city',
-                TextType::class,
-                options: [
-                    'label' => 'regulation.step2.city',
-                ],
-            )
-            ->add(
-                'roadName',
-                TextType::class,
-                options: [
-                    'label' => 'regulation.step2.road_name',
+                    'label' => 'regulation.step2.address',
                 ],
             )
             ->add(

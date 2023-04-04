@@ -10,9 +10,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 
 final class SaveRegulationStep2Command implements CommandInterface
 {
-    public ?string $postalCode;
-    public ?string $city;
-    public ?string $roadName;
+    public ?string $address;
     public ?string $fromHouseNumber;
     public ?string $toHouseNumber;
 
@@ -28,9 +26,7 @@ final class SaveRegulationStep2Command implements CommandInterface
     ): self {
         $command = new self($regulationOrderRecord, $location);
 
-        $command->postalCode = $location?->getPostalCode();
-        $command->city = $location?->getCity();
-        $command->roadName = $location?->getRoadName();
+        $command->address = $location?->getAddress();
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
 

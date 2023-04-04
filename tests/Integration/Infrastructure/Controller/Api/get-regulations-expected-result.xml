@@ -37,24 +37,13 @@
                     </conditions>
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:secondarySupplementaryDescription>
-                                <loc:namedArea>
-                                    <loc:areaName>
-                                        <com:values>
-                                            <com:value>82000 Montauban</com:value>
-                                        </com:values>
-                                    </loc:areaName>
-                                    <loc:namedAreaType>municipality</loc:namedAreaType>
-                                    <loc:country>FR</loc:country>
-                                </loc:namedArea>
-                            </loc:secondarySupplementaryDescription>
                             <loc:linearWithinLinearElement>
                                 <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
                                 <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
                                 <loc:linearElement xsi:type="loc:LinearElementByPoints">
                                     <loc:roadName>
                                         <com:values>
-                                            <com:value>Avenue de Fonneuve</com:value>
+                                            <com:value>Avenue de Fonneuve 82000 Montauban</com:value>
                                         </com:values>
                                     </loc:roadName>
                                     <loc:startPointOfLinearElement>

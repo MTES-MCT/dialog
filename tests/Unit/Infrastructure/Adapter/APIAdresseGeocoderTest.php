@@ -13,29 +13,8 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 final class APIAdresseGeocoderTest extends TestCase
 {
     private string $address = '15 Route du Grand Brossais 44260 Savenay';
-    private string $postalCode = '44260';
 
     public function testComputeCoordinates(): void
-    {
-        $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
-        $response = new MockResponse($body, ['http_code' => 200]);
-        $http = new MockHttpClient([$response], 'https://testserver');
-
-        $geocoder = new APIAdresseGeocoder($http);
-
-        $coords = $geocoder->computeCoordinates($this->address, postalCodeHint: $this->postalCode);
-
-        $this->assertSame(44.3, $coords->latitude);
-        $this->assertSame(0.5, $coords->longitude);
-
-        $this->assertSame('GET', $response->getRequestMethod());
-        $this->assertSame(
-            'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber&postcode=44260',
-            $response->getRequestUrl()
-        );
-    }
-
-    public function testComputeCoordinatesPostCodeHintOmitted(): void
     {
         $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
         $response = new MockResponse($body, ['http_code' => 200]);

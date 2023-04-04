@@ -20,10 +20,10 @@ final class SaveRegulationStep2CommandHandler
     ) {
     }
 
-    private function computePoint(string $postalCode, string $city, string $roadName, string $houseNumber): string
+    private function computePoint(string $address, string $houseNumber): string
     {
-        $address = sprintf('%s %s %s %s', $houseNumber, $roadName, $postalCode, $city);
-        $coords = $this->geocoder->computeCoordinates($address, postalCodeHint: $postalCode);
+        $houseAddress = sprintf('%s %s', $houseNumber, $address);
+        $coords = $this->geocoder->computeCoordinates($houseAddress);
 
         return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
     }
@@ -34,16 +34,14 @@ final class SaveRegulationStep2CommandHandler
 
         // If submitting step 2 for the first time, we create the location
         if (!$command->location instanceof Location) {
-            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber) : null;
-            $toPoint = $command->toHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber) : null;
+            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
+            $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
 
             $this->locationRepository->save(
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
-                    postalCode: $command->postalCode,
-                    city: $command->city,
-                    roadName: $command->roadName,
+                    address: $command->address,
                     fromHouseNumber: $command->fromHouseNumber,
                     fromPoint: $fromPoint,
                     toHouseNumber: $command->toHouseNumber,
@@ -54,16 +52,12 @@ final class SaveRegulationStep2CommandHandler
             return;
         }
 
-        $hasRoadChanged = (
-            $command->postalCode !== $command->location->getPostalCode()
-            || $command->city !== $command->location->getCity()
-            || $command->roadName !== $command->location->getRoadName()
-        );
+        $hasRoadChanged = $command->address !== $command->location->getAddress();
 
         $fromPointNeedsUpdating = $hasRoadChanged || ($command->fromHouseNumber !== $command->location->getFromHouseNumber());
 
         if ($fromPointNeedsUpdating) {
-            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->fromHouseNumber) : null;
+            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
         } else {
             $fromPoint = $command->location->getFromPoint();
         }
@@ -71,15 +65,13 @@ final class SaveRegulationStep2CommandHandler
         $toPointNeedsUpdating = $hasRoadChanged || ($command->toHouseNumber !== $command->location->getToHouseNumber());
 
         if ($toPointNeedsUpdating) {
-            $toPoint = $command->toHouseNumber ? $this->computePoint($command->postalCode, $command->city, $command->roadName, $command->toHouseNumber) : null;
+            $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
         } else {
             $toPoint = $command->location->getToPoint();
         }
 
         $command->location->update(
-            postalCode: $command->postalCode,
-            city: $command->city,
-            roadName: $command->roadName,
+            address: $command->address,
             fromHouseNumber: $command->fromHouseNumber,
             fromPoint: $fromPoint,
             toHouseNumber: $command->toHouseNumber,

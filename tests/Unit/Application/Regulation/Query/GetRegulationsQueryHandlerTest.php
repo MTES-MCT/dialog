@@ -22,16 +22,14 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $organization = $this->createMock(Organization::class);
 
         $location = new LocationView(
-            city: 'Montauban',
-            roadName: 'Avenue de Fonneuve',
+            address: 'Avenue de Fonneuve 82000 Montauban',
         );
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'identifier' => 'F01/2023',
-            'city' => $location->city,
-            'roadName' => $location->roadName,
+            'address' => $location->address,
             'startDate' => $startDate1,
             'endDate' => null,
             'status' => 'draft',
@@ -39,8 +37,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
             'identifier' => 'F02/2023',
-            'city' => null,
-            'roadName' => null,
+            'address' => null,
             'startDate' => $startDate2,
             'endDate' => null,
             'status' => 'draft',
