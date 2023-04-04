@@ -50,6 +50,29 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                 ],
             ];
+        } else if ($query === 'Le Mesnil') {
+            $body = [
+                'features' => [
+                    [
+                        'properties' => [
+                            'city' => "Le Mesnil",
+                            'postcode' => "50580",
+                        ],
+                    ],
+                    [
+                        'properties' => [
+                            'city' => "Le Mesnil-Esnard",
+                            'postcode' => "76240",
+                        ],
+                    ],
+                    [
+                        'properties' => [
+                            'city' => "Le Mesnil-le-Roi",
+                            'postcode' => "78600",
+                        ],
+                    ],
+                ],
+            ];
         } else {
             $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
         }

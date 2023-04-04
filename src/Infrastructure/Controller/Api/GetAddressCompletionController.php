@@ -25,12 +25,13 @@ final class GetAddressCompletionController
     public function __invoke(Request $request): JsonResponse
     {
         $search = $request->query->get('search');
+        $type = $request->query->get('type');
 
-        if (!$search) {
+        if (!$search || ($type !== 'street' && $type !== 'municipality')) {
             throw new BadRequestHttpException();
         }
 
-        $addresses = $this->geocoder->findAddresses($search);
+        $addresses = $this->geocoder->findAddresses($type, $search);
 
         return new JsonResponse(['addresses' => $addresses]);
     }
