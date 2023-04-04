@@ -98,7 +98,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Rue Eugene');
+        $addresses = $geocoder->findAddresses('Rue Eugene', "street");
         $this->assertEquals(['Rue Eugene Berthoud 75018 Paris'], $addresses);
     }
 
@@ -109,7 +109,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test');
+        $addresses = $geocoder->findAddresses('Test', "street");
         $this->assertEquals([], $addresses);
     }
 
@@ -119,7 +119,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test');
+        $addresses = $geocoder->findAddresses('Test', "street");
         $this->assertEquals([], $addresses);
     }
 
@@ -129,7 +129,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test');
+        $addresses = $geocoder->findAddresses('Test', "street");
         $this->assertEquals([], $addresses);
     }
 }

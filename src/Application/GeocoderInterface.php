@@ -10,5 +10,5 @@ interface GeocoderInterface
 {
     public function computeCoordinates(string $address): Coordinates;
 
-    public function findAddresses(string $search): array;
+    public function findAddresses(string $type, string $search): array;
 }
