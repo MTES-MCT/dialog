@@ -111,4 +111,46 @@ final class APIAdresseGeocoderTest extends TestCase
         $geocoder = new APIAdresseGeocoder($http);
         $geocoder->computeCoordinates($this->address);
     }
+
+    public function testFindAddresses(): void
+    {
+        $body = '{"features": [{"properties": {"label": "Rue Eugene Berthoud 75018 Paris"}}]}';
+        $response = new MockResponse($body, ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $addresses = $geocoder->findAddresses('Rue Eugene');
+        $this->assertEquals(['Rue Eugene Berthoud 75018 Paris'], $addresses);
+    }
+
+    public function testFindAddressesIncompleteFeature(): void
+    {
+        $body = '{"features": [{}]}';
+        $response = new MockResponse($body, ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $addresses = $geocoder->findAddresses('Test');
+        $this->assertEquals([], $addresses);
+    }
+
+    public function testFindAddressesAPIFailure(): void
+    {
+        $response = new MockResponse('...', ['http_code' => 500]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $addresses = $geocoder->findAddresses('Test');
+        $this->assertEquals([], $addresses);
+    }
+
+    public function testFindAddressesInvalidJSON(): void
+    {
+        $response = new MockResponse('{"blah', ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $addresses = $geocoder->findAddresses('Test');
+        $this->assertEquals([], $addresses);
+    }
 }
