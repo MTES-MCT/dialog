@@ -29,11 +29,30 @@ final class APIAdresseMockClient extends MockHttpClient
 
     private function getSearchMock(array $options): MockResponse
     {
+        $query = $options['query']['q'];
+
         if (\str_contains($options['query']['q'], 'GEOCODING_FAILURE')) {
             throw new GeocodingFailureException();
         }
 
-        $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
+        if ($query === 'Rue Eugène Berthoud') {
+            $body = [
+                'features' => [
+                    [
+                        'properties' => [
+                            'label' => "Rue Eugène Berthoud 93400 Saint-Ouen-sur-Seine",
+                        ],
+                    ],
+                    [
+                        'properties' => [
+                            'label' => "Impasse Eugène Berthou 29480 Le Relecq-Kerhuon",
+                        ],
+                    ],
+                ],
+            ];
+        } else {
+            $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
+        }
 
         return new MockResponse(
             json_encode($body, JSON_THROW_ON_ERROR),

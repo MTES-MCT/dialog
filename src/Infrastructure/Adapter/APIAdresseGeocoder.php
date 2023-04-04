@@ -104,4 +104,43 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
         return Coordinates::fromLonLat($lonLat[0], $lonLat[1]);
     }
+
+    public function findAddresses(string $search): array
+    {
+        $response = $this->apiAdresseClient->request('GET', '/search/', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'query' => [
+                'q' => $search,
+                'type' => 'street',
+                'autocomplete' => '1',
+                'limit' => 7,
+            ],
+        ]);
+
+        try {
+            $data = $response->toArray(throw: true);
+        } catch (\Exception $exc) {
+            \Sentry\captureException($exc);
+
+            return [];
+        }
+
+        $addresses = [];
+
+        foreach ($data['features'] as $feature) {
+            if (empty($feature['properties'])) {
+                continue;
+            }
+
+            $label = $feature['properties']['label'];
+
+            if (!empty($label)) {
+                $addresses[] = $label;
+            }
+        }
+
+        return $addresses;
+    }
 }
