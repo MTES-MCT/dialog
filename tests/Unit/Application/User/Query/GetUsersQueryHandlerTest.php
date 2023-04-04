@@ -34,15 +34,15 @@ class GetUsersQueryHandlerTest extends TestCase
         $user1
         ->expects(self::once())
         ->method('getUuid')
-        ->willReturn('999b41a8-b48a-4487-81e6-7285f464c15b');
+        ->willReturn('d32b3680-95c6-4bc7-9119-3e71157410c2');
         $user1
         ->expects(self::once())
         ->method('getFullName')
-        ->willReturn('Mathieu MARCHOIS');
+        ->willReturn('Claire Lefoulon');
         $user1
         ->expects(self::once())
         ->method('getEmail')
-        ->willReturn('mathieu.marchois@beta.gouv.fr');
+        ->willReturn('claire@beta.gouv.fr');
 
         $user2
         ->expects(self::once())
@@ -58,8 +58,9 @@ class GetUsersQueryHandlerTest extends TestCase
         ->willReturn('florimond.manca@beta.gouv.fr');
         
         $userListView = [
-            new UserListView('999b41a8-b48a-4487-81e6-7285f464c15b','Mathieu MARCHOIS','mathieu.marchois@beta.gouv.fr' ), new UserListView('7115057a-30ad-4ed9-9c3e-42372834afee','Florimond MANCA','florimond.manca@beta.gouv.fr')
+            new UserListView('d32b3680-95c6-4bc7-9119-3e71157410c2','Claire Lefoulon','claire@beta.gouv.fr' ), new UserListView('7115057a-30ad-4ed9-9c3e-42372834afee','Florimond MANCA','florimond.manca@beta.gouv.fr')
         ];
+        // dd($userListView);
         $handler = new GetUsersQueryHandler($userRepository);
         $result = $handler->__invoke(new GetUsersQuery());
         $this->assertEquals($userListView,$result);

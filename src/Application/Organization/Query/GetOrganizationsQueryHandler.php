@@ -21,7 +21,7 @@ class GetOrganizationsQueryHandler
         foreach ($organizations as $organization) {
             $data[] = new OrganizationListView(
                 $organization->getUuid(),
-                $organization->getName(),
+                strtoupper($organization->getName()),
             );
         }
         // dd($data);

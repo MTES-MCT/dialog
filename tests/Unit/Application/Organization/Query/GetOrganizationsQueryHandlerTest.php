@@ -46,7 +46,7 @@ class GetOrganizationsQueryHandlerTest extends TestCase
 
 
         $organizationListView = [
-            new OrganizationListView('2229f88c-6480-4a93-a498-1d384d4256eb','Apouet bis'),new OrganizationListView('e0d93630-acf7-4722-81e8-ff7d5fa64b66','DiaLog')
+            new OrganizationListView('2229f88c-6480-4a93-a498-1d384d4256eb','APOUET BIS'),new OrganizationListView('e0d93630-acf7-4722-81e8-ff7d5fa64b66','DIALOG')
         ];
         $handler = new GetOrganizationsQueryHandler($organizationRepository);
         $result = $handler->__invoke(new GetOrganizationsQuery());
