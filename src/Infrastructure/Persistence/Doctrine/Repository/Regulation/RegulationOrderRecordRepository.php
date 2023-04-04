@@ -73,9 +73,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
-                'l.postalCode',
-                'l.city',
-                'l.roadName',
+                'l.address',
                 'l.fromHouseNumber',
                 'l.toHouseNumber',
             )
