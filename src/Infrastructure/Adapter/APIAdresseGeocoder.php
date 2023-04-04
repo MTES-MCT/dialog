@@ -17,12 +17,12 @@ final class APIAdresseGeocoder implements GeocoderInterface
     ) {
     }
 
-    public function computeHouseCoordinates(string $houseAddress): Coordinates
+    public function computeCoordinates(string $address): Coordinates
     {
         // See: https://adresse.data.gouv.fr/api-doc/adresse
 
         $query = [
-            'q' => $houseAddress,
+            'q' => $address,
             'limit' => 1,
             'type' => 'housenumber',
         ];

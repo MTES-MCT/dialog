@@ -8,7 +8,7 @@ use App\Domain\Geography\Coordinates;
 
 interface GeocoderInterface
 {
-    public function computeHouseCoordinates(string $houseAddress): Coordinates;
+    public function computeCoordinates(string $address): Coordinates;
 
     public function findAddresses(string $search): array;
 }

@@ -23,7 +23,7 @@ final class SaveRegulationStep2CommandHandler
     private function computePoint(string $address, string $houseNumber): string
     {
         $houseAddress = sprintf('%s %s', $houseNumber, $address);
-        $coords = $this->geocoder->computeHouseCoordinates($houseAddress);
+        $coords = $this->geocoder->computeCoordinates($houseAddress);
 
         return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
     }

@@ -28,9 +28,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 $regulationOrder['startDate'],
                 $regulationOrder['endDate'],
                 new DatexLocationView(
-                    postalCode: $regulationOrder['postalCode'],
-                    city: $regulationOrder['city'],
-                    roadName: $regulationOrder['roadName'],
+                    address: $regulationOrder['address'],
                     fromHouseNumber: $regulationOrder['fromHouseNumber'],
                     fromLongitude: $regulationOrder['fromLongitude'],
                     fromLatitude: $regulationOrder['fromLatitude'],

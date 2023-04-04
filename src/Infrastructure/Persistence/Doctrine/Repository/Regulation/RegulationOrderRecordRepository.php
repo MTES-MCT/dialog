@@ -25,7 +25,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         bool $isPermanent,
     ): array {
         return $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.identifier, loc.city, loc.roadName, ro.startDate, ro.endDate, roc.status')
+            ->select('roc.uuid, ro.identifier, loc.address, ro.startDate, ro.endDate, roc.status')
             ->where('roc.organization = :organization')
             ->setParameter('organization', $organization->getUuid())
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
@@ -97,9 +97,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
-                'loc.postalCode',
-                'loc.city',
-                'loc.roadName',
+                'loc.address',
                 'loc.fromHouseNumber',
                 'ST_X(loc.fromPoint) as fromLongitude',
                 'ST_Y(loc.fromPoint) as fromLatitude',
