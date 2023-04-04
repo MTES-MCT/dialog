@@ -230,17 +230,9 @@
                 <source>regulation.step2.help</source>
                 <target>Indiquez la rue impactée par la restriction.</target>
             </trans-unit>
-            <trans-unit id="regulation.step2.postal_code">
-                <source>regulation.step2.postal_code</source>
-                <target>Code postal</target>
-            </trans-unit>
-            <trans-unit id="regulation.step2.city">
-                <source>regulation.step2.city</source>
-                <target>Ville</target>
-            </trans-unit>
-            <trans-unit id="regulation.step2.road_name">
-                <source>regulation.step2.road_name</source>
-                <target>Nom de la voie</target>
+            <trans-unit id="regulation.step2.address">
+                <source>regulation.step2.address</source>
+                <target>Adresse</target>
             </trans-unit>
             <trans-unit id="regulation.step2.from_house_number">
                 <source>regulation.step2.from_house_number</source>
@@ -253,14 +245,6 @@
             <trans-unit id="regulation.detail.where">
                 <source>regulation.detail.where</source>
                 <target>Où ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.where.city">
-                <source>regulation.detail.where.city</source>
-                <target>Ville : %postalCode% %city%</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.where.road_name">
-                <source>regulation.detail.where.road_name</source>
-                <target>Rue : %roadName%</target>
             </trans-unit>
             <trans-unit id="regulation.detail.where.from_house_number">
                 <source>regulation.detail.where.from_house_number</source>
@@ -476,7 +460,7 @@
             </trans-unit>
             <trans-unit id="regulation.detail.title">
                 <source>regulation.detail.title</source>
-                <target>Réglementation - %roadName%</target>
+                <target>Réglementation - %address%</target>
             </trans-unit>
             <trans-unit id="regulation.detail.see_all">
                 <source>regulation.detail.see_all</source>

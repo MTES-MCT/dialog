@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% form_theme form _self %}
 
-{% set title = regulationOrderRecord.location ? 'regulation.detail.title'|trans({ '%roadName%': regulationOrderRecord.location.roadName}) : regulationOrderRecord.description %}
+{% set title = regulationOrderRecord.location ? 'regulation.detail.title'|trans({ '%address%': regulationOrderRecord.location.address}) : regulationOrderRecord.description %}
 
 {% block title %}
      {{ title }} - {{ parent() }}

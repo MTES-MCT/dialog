@@ -19,18 +19,14 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         return [
             [
                 new DetailLocationView(
-                    postalCode: '82000',
-                    city: 'Montauban',
-                    roadName: 'Avenue de Fonneuve',
+                    address: 'Avenue de Fonneuve 82000 Montauban',
                     fromHouseNumber: '695',
                     toHouseNumber: '253',
                 ),
             ],
             [
                 new DetailLocationView(
-                    postalCode: '82000',
-                    city: 'Montauban',
-                    roadName: 'Avenue de Fonneuve',
+                    address: 'Avenue de Fonneuve 82000 Montauban',
                     fromHouseNumber: null,
                     toHouseNumber: null,
                 ),
@@ -56,9 +52,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'postalCode' => $location->postalCode,
-            'city' => $location->city,
-            'roadName' => $location->roadName,
+            'address' => $location->address,
             'fromHouseNumber' => $location->fromHouseNumber,
             'toHouseNumber' => $location->toHouseNumber,
         ];
@@ -80,9 +74,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 $startDate,
                 $endDate,
                 new DetailLocationView(
-                    $location->postalCode,
-                    $location->city,
-                    $location->roadName,
+                    $location->address,
                     $location->fromHouseNumber,
                     $location->toHouseNumber,
                 ),
@@ -102,9 +94,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startDate' => null,
             'endDate' => null,
-            'postalCode' => null,
-            'city' => null,
-            'roadName' => null,
+            'address' => null,
             'fromHouseNumber' => null,
             'toHouseNumber' => null,
         ];

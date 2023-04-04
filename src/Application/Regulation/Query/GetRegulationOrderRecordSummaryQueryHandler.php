@@ -26,9 +26,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             throw new RegulationOrderRecordNotFoundException();
         }
 
-        $hasLocation = $row['postalCode']
-            && $row['city']
-            && $row['roadName'];
+        $hasLocation = !empty($row['address']);
 
         return new RegulationOrderRecordSummaryView(
             $row['uuid'],
@@ -38,9 +36,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             $row['startDate'],
             $row['endDate'],
             $hasLocation ? new DetailLocationView(
-                $row['postalCode'],
-                $row['city'],
-                $row['roadName'],
+                $row['address'],
                 $row['fromHouseNumber'],
                 $row['toHouseNumber'],
             ) : null,

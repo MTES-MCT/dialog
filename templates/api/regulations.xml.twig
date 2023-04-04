@@ -58,17 +58,6 @@
                     </conditions>
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:secondarySupplementaryDescription>
-                                <loc:namedArea>
-                                    <loc:areaName>
-                                        <com:values>
-                                            <com:value>{{ location.postalCode }} {{ location.city }}</com:value>
-                                        </com:values>
-                                    </loc:areaName>
-                                    <loc:namedAreaType>municipality</loc:namedAreaType>
-                                    <loc:country>FR</loc:country>
-                                </loc:namedArea>
-                            </loc:secondarySupplementaryDescription>
                             <loc:linearWithinLinearElement>
                                 <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
                                 <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
@@ -76,7 +65,7 @@
                                     <loc:linearElement xsi:type="loc:LinearElementByPoints">
                                         <loc:roadName>
                                             <com:values>
-                                                <com:value>{{ location.roadName }}</com:value>
+                                                <com:value>{{ location.address }}</com:value>
                                             </com:values>
                                         </loc:roadName>
                                         {% if location.fromHouseNumber %}
@@ -110,7 +99,7 @@
                                     </loc:toPoint>
                                 {% else %}
                                     <loc:linearElement xsi:type="loc:LinearElement">
-                                        <loc:roadName>{{ location.roadName }}</loc:roadName>
+                                        <loc:roadName>{{ location.address }}</loc:roadName>
                                     </loc:linearElement>
                                 {% endif %}
                             </loc:linearWithinLinearElement>

@@ -17,9 +17,7 @@ class LocationFactory
         return new Location(
             uuid: $uuid,
             regulationOrder: $regulationOrder,
-            postalCode: $location->getPostalCode(),
-            city: $location->getCity(),
-            roadName: $location->getRoadName(),
+            address: $location->getAddress(),
             fromHouseNumber: $location->getFromHouseNumber(),
             fromPoint: $location->getFromPoint(),
             toHouseNumber: $location->getToHouseNumber(),

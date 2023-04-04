@@ -17,7 +17,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
     ) {
     }
 
-    public function computeCoordinates(string $address, ?string $postalCodeHint = null): Coordinates
+    public function computeCoordinates(string $address): Coordinates
     {
         // See: https://adresse.data.gouv.fr/api-doc/adresse
 
@@ -26,10 +26,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
             'limit' => 1,
             'type' => 'housenumber',
         ];
-
-        if ($postalCodeHint) {
-            $query['postcode'] = $postalCodeHint;
-        }
 
         $response = $this->apiAdresseClient->request('GET', '/search/', [
             'headers' => [
