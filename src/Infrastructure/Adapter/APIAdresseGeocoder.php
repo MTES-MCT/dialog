@@ -119,18 +119,12 @@ final class APIAdresseGeocoder implements GeocoderInterface
             ],
         ]);
 
-        $requestUrl = $response->getInfo()['url'];
-
         try {
             $data = $response->toArray(throw: true);
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(
-                sprintf(
-                    '%s: error while reading json response: %s',
-                    sprintf('requesting %s', $requestUrl),
-                    $exc->getMessage(),
-                ),
-            );
+            \Sentry\captureException($exc);
+
+            return [];
         }
 
         $addresses = [];

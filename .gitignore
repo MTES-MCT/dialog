@@ -25,6 +25,7 @@
 ###< phpunit/phpunit ###
 
 coverage.xml
+coverage/
 
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
