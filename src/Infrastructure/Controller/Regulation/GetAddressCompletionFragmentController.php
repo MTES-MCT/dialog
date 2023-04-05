@@ -2,27 +2,28 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Api;
+namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\GeocoderInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetAddressCompletionController
+final class GetAddressCompletionFragmentController
 {
     public function __construct(
         private GeocoderInterface $geocoder,
+        private \Twig\Environment $twig,
     ) {
     }
 
     #[Route(
-        '/api/address-completion',
+        '/_fragment/address-completion',
         methods: 'GET',
-        name: 'api_address_completion',
+        name: 'fragment_address_completion',
     )]
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request): Response
     {
         $search = $request->query->get('search');
         $type = $request->query->get('type');
@@ -33,6 +34,13 @@ final class GetAddressCompletionController
 
         $addresses = $this->geocoder->findAddresses($type, $search);
 
-        return new JsonResponse(['addresses' => $addresses]);
+        return new Response(
+            $this->twig->render(
+                name: 'regulation/fragments/_addressCompletion.html.twig',
+                context: [
+                    'addresses' => $addresses,
+                ],
+            ),
+        );
     }
 }
