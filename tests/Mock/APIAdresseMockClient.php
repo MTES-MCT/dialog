@@ -40,12 +40,24 @@ final class APIAdresseMockClient extends MockHttpClient
                 'features' => [
                     [
                         'properties' => [
-                            'label' => "Rue Eugène Berthoud 93400 Saint-Ouen-sur-Seine",
+                            'type' => 'street',
+                            'name' => "Rue Eugène Berthoud",
+                            'postcode' => "93400",
+                            'city' => "Saint-Ouen-sur-Seine",
                         ],
                     ],
                     [
                         'properties' => [
-                            'label' => "Impasse Eugène Berthou 29480 Le Relecq-Kerhuon",
+                            'type' => 'housenumber',
+                            'label' => "10 Rue Eugène Berthoud, 93400 Saint-Ouen-sur-Seine",
+                        ],
+                    ],
+                    [
+                        'properties' => [
+                            'type' => 'street',
+                            'name' => "Impasse Eugène Berthou",
+                            'city' => 'Le Relecq-Kerhuon',
+                            'postcode' => '29480',
                         ],
                     ],
                 ],
@@ -55,18 +67,28 @@ final class APIAdresseMockClient extends MockHttpClient
                 'features' => [
                     [
                         'properties' => [
+                            'type' => 'municipality',
                             'city' => "Le Mesnil",
                             'postcode' => "50580",
                         ],
                     ],
                     [
                         'properties' => [
+                            'type' => 'housenumber',
+                            'label' => "55 rue Le Mesnil",
+                            'postcode' => "50580",
+                        ],
+                    ],
+                    [
+                        'properties' => [
+                            'type' => 'municipality',
                             'city' => "Le Mesnil-Esnard",
                             'postcode' => "76240",
                         ],
                     ],
                     [
                         'properties' => [
+                            'type' => 'municipality',
                             'city' => "Le Mesnil-le-Roi",
                             'postcode' => "78600",
                         ],

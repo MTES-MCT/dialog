@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Copied from: https://github.com/afcapel/stimulus-autocomplete/tree/94e37bad034eabe2b2c61dcf8f3f06fe1f5d4c54
+
 const optionSelector = "[role='option']:not([aria-disabled])"
 const activeSelector = "[aria-selected='true']"
 
@@ -130,15 +132,7 @@ export default class Autocomplete extends Controller {
 
     const textValue = selected.getAttribute("data-autocomplete-label") || selected.textContent.trim()
     const value = selected.getAttribute("data-autocomplete-value") || textValue
-    this.inputTarget.value = textValue
-
-    if (this.hasHiddenTarget) {
-      this.hiddenTarget.value = value
-      this.hiddenTarget.dispatchEvent(new Event("input"))
-      this.hiddenTarget.dispatchEvent(new Event("change"))
-    } else {
-      this.inputTarget.value = value
-    }
+    this.inputTarget.value = value
 
     this.inputTarget.focus()
     this.hideAndRemoveOptions()
@@ -153,7 +147,6 @@ export default class Autocomplete extends Controller {
 
   clear() {
     this.inputTarget.value = ""
-    if (this.hasHiddenTarget) this.hiddenTarget.value = ""
   }
 
   onResultsClick = (event) => {
@@ -170,8 +163,6 @@ export default class Autocomplete extends Controller {
   }
 
   onInputChange = () => {
-    if (this.hasHiddenTarget) this.hiddenTarget.value = ""
-
     const query = this.inputTarget.value.trim()
     if (query && query.length >= this.minLengthValue) {
       this.fetchResults(query)
@@ -195,6 +186,7 @@ export default class Autocomplete extends Controller {
     if (!this.hasUrlValue) return
 
     const url = this.buildURL(query)
+
     try {
       this.element.dispatchEvent(new CustomEvent("loadstart"))
       const html = await this.doFetch(url)
@@ -209,9 +201,9 @@ export default class Autocomplete extends Controller {
   }
 
   buildURL(query) {
-    const url = new URL(this.urlValue, window.location.href)
-    const params = new URLSearchParams(url.search.slice(1))
-    params.append(this.queryParamValue, query)
+    const url = new URL(this.urlValue, window.location.href);
+    const params = new URLSearchParams(url.search.slice(1));
+    params.append(this.queryParamValue, query);
     url.search = params.toString()
 
     return url.toString()

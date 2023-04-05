@@ -19,24 +19,23 @@ final class GetAddressCompletionFragmentController
     }
 
     #[Route(
-        '/_fragment/address-completion',
+        '/_fragment/address-completions',
         methods: 'GET',
         name: 'fragment_address_completion',
     )]
     public function __invoke(Request $request): Response
     {
         $search = $request->query->get('search');
-        $type = $request->query->get('type');
 
-        if (!$search || ($type !== 'street' && $type !== 'municipality')) {
+        if (!$search) {
             throw new BadRequestHttpException();
         }
 
-        $addresses = $this->geocoder->findAddresses($type, $search);
+        $addresses = $this->geocoder->findAddresses($search);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_addressCompletion.html.twig',
+                name: 'regulation/fragments/_address_completions.html.twig',
                 context: [
                     'addresses' => $addresses,
                 ],
