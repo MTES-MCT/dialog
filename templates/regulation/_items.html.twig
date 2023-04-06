@@ -10,6 +10,7 @@
                 <th scope="col">{{ 'regulation.period'|trans }}</th>
                 <th scope="col">{{ 'regulation.status'|trans }}</th>
                 <th scope="col">{{ 'common.actions'|trans }}</th>
+                <th scope="col">{{ 'regulation.step1.email'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -84,7 +85,9 @@
                             </form>
                         </div>
                     </td>
-                </tr>
+                    <td>                    
+                        {{ regulation.email }}
+                    </tr>
             {% else %}
                 <tr data-testid="empty-row">
                     <td colspan="5">

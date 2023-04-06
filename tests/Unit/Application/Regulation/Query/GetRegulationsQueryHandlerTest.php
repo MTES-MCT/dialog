@@ -68,6 +68,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     null,
                     $startDate2,
                     null,
+                    null,
                 ),
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -75,6 +76,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'draft',
                     $location,
                     $startDate1,
+                    null,
                     null,
                 ),
             ], 2, 1, 20,

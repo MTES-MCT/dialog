@@ -68,7 +68,6 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $regulationOrderRecord = $this->commandBus->handle($command);
-
                 return new RedirectResponse(
                     url: $this->router->generate($isEdit ? 'fragment_regulations_general_info' : 'app_regulation_detail', [
                         'uuid' => $regulationOrderRecord->getUuid(),

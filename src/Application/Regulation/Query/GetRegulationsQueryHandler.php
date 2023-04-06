@@ -42,6 +42,7 @@ final class GetRegulationsQueryHandler
                 ) : null,
                 $regulation['startDate'],
                 $regulation['endDate'],
+                $regulation['email'],
             );
         }
 

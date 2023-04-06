@@ -7,11 +7,11 @@ namespace App\Domain\Regulation;
 class RegulationOrder
 {
     private iterable $locations = [];
-
     public function __construct(
         private string $uuid,
         private string $identifier,
         private string $description,
+        private ?string $email = null,
         private ?\DateTimeInterface $startDate,
         private ?\DateTimeInterface $endDate = null,
     ) {
@@ -32,6 +32,11 @@ class RegulationOrder
         return $this->description;
     }
 
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
     public function getStartDate(): ?\DateTimeInterface
     {
         return $this->startDate;
@@ -50,11 +55,13 @@ class RegulationOrder
     public function update(
         string $identifier,
         string $description,
+        string $email,
         \DateTimeInterface $startDate,
         ?\DateTimeInterface $endDate = null,
     ): void {
         $this->identifier = $identifier;
-        $this->description = $description;
+        $this->description = $description;        
+        $this->email = $email;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
     }

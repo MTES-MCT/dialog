@@ -13,6 +13,7 @@ final class SaveRegulationOrderCommand implements CommandInterface
     public ?string $identifier;
     public ?string $description;
     public ?Organization $organization;
+    public ?string $email= null;
     public ?\DateTimeInterface $startDate;
     public ?\DateTimeInterface $endDate = null;
 
@@ -27,6 +28,7 @@ final class SaveRegulationOrderCommand implements CommandInterface
         $regulationOrder = $regulationOrderRecord?->getRegulationOrder();
         $command = new self($regulationOrderRecord);
         $command->organization = $regulationOrderRecord?->getOrganization();
+        $command->email = $regulationOrder?->getEmail();
         $command->identifier = $regulationOrder?->getIdentifier();
         $command->description = $regulationOrder?->getDescription();
         $command->startDate = $regulationOrder?->getStartDate();

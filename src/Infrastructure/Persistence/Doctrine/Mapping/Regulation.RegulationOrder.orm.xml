@@ -6,6 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="identifier" type="string" column="identifier" length="60" nullable="false"/>
     <field name="description" type="text" column="description" nullable="false"/>
+    <field name="email" type="text" column="email" nullable="true"/>
     <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
     <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
     <one-to-many field="locations" target-entity="App\Domain\Regulation\Location" mapped-by="regulationOrder"/>

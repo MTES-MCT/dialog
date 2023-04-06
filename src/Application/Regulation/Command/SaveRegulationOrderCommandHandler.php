@@ -45,6 +45,7 @@ final class SaveRegulationOrderCommandHandler
                     uuid: $this->idFactory->make(),
                     identifier: $command->identifier,
                     description: $command->description,
+                    email: $command->email,
                     startDate: $command->startDate,
                     endDate: $command->endDate,
                 ),
@@ -67,6 +68,7 @@ final class SaveRegulationOrderCommandHandler
         $command->regulationOrderRecord->getRegulationOrder()->update(
             identifier: $command->identifier,
             description: $command->description,
+            email: $command->email,
             startDate: $command->startDate,
             endDate: $command->endDate,
         );

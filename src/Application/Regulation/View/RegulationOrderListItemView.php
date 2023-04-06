@@ -13,6 +13,7 @@ final class RegulationOrderListItemView
         public readonly ?LocationView $location,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
+        public readonly ? string $email,
     ) {
     }
 }
