@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="fr" datatype="plaintext" original="file.ext">
         <body>
+            <trans-unit id="common.results">
+                <source>common.results</source>
+                <target>Résultats</target>
+            </trans-unit>
             <trans-unit id="common.title">
                 <source>common.title</source>
                 <target>DiaLog</target>
@@ -221,6 +225,10 @@
             <trans-unit id="regulation.step1.organization.help">
                 <source>regulation.step1.organization.help</source>
                 <target>Commune, département ou entité responsable de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.step2.address.results_label">
+                <source>regulation.step2.address.results_label</source>
+                <target>Adresses suggérées</target>
             </trans-unit>
             <trans-unit id="regulation.step2.subtitle">
                 <source>regulation.step2.subtitle</source>

@@ -15,7 +15,13 @@
 
     {{ form_start(form) }}
         {{ form_errors(form) }}
-        {{ form_row(form.address, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+        {{ form_row(form.address, {
+            group_class: 'fr-input-group',
+            widget_class: 'fr-input',
+            autocomplete: true,
+            autocomplete_url: path('fragment_address_completion'),
+            autocomplete_results_label: 'regulation.step2.address.results_label'|trans,
+        }) }}
         {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
         {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
 

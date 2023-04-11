@@ -76,3 +76,31 @@ label.required > .fr-x-label-content::after {
 .summary-card__action {
     order: 2;
 }
+
+.fr-x-autocomplete-wrapper {
+    position: relative;
+
+    ul[role="listbox"] {
+        border: 1px solid var(--background-contrast-grey-active);
+        list-style-type: none;
+        margin: 0;
+        max-height: 220px;
+        overflow-y: auto;
+        padding: 0;
+        top: 100%;
+        width: 100%;
+        z-index: 3;
+        position: absolute;
+
+        li[role="option"] {
+            border-bottom: 1px solid var(--background-contrast-grey-active);
+            padding: 10px;
+            cursor: pointer;
+            background: var(--background-default-grey);
+        }
+
+        li[role="option"]:hover, li[role="option"].active {
+            background-color: var(--background-contrast-grey);
+        }
+    }
+}
