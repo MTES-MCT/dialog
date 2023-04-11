@@ -186,97 +186,69 @@
                 <source>regulation.breadcrumb</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.description">
-                <source>regulation.step1.description</source>
-                <target>Description</target>
+            <trans-unit id="regulation.create.title">
+                <source>regulation.create.title</source>
+                <target>Nouvel arrêté temporaire</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.start_date">
-                <source>regulation.step1.start_date</source>
-                <target>Date de début</target>
+            <trans-unit id="regulation.temporary">
+                <source>regulation.temporary</source>
+                <target>Arrêté temporaire</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.start_date.help">
-                <source>regulation.step1.start_date.help</source>
-                <target>Début d'effet de l'arrêté</target>
-            </trans-unit>
-            <trans-unit id="regulation.step1.end_date">
-                <source>regulation.step1.end_date</source>
-                <target>Date de fin</target>
-            </trans-unit>
-            <trans-unit id="regulation.step1.end_date.help">
-                <source>regulation.step1.end_date.help</source>
-                <target>Laisser vide si l'arrêté est permanent.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step1.description.help">
-                <source>regulation.step1.description.help</source>
-                <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur la voie")</target>
-            </trans-unit>
-            <trans-unit id="regulation.step1.identifier">
-                <source>regulation.step1.identifier</source>
+            <trans-unit id="regulation.general_info.identifier">
+                <source>regulation.general_info.identifier</source>
                 <target>Identifiant</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.identifier.help">
-                <source>regulation.step1.identifier.help</source>
+            <trans-unit id="regulation.general_info.identifier.help">
+                <source>regulation.general_info.identifier.help</source>
                 <target>Numéro ou nom de l'arrêté (identifiant unique)</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.organization">
-                <source>regulation.step1.organization</source>
+            <trans-unit id="regulation.general_info.organization">
+                <source>regulation.general_info.organization</source>
                 <target>Organisation compétente</target>
             </trans-unit>
-            <trans-unit id="regulation.step1.organization.help">
-                <source>regulation.step1.organization.help</source>
+            <trans-unit id="regulation.general_info.organization.help">
+                <source>regulation.general_info.organization.help</source>
                 <target>Commune, département ou entité responsable de l'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation.step2.address.results_label">
-                <source>regulation.step2.address.results_label</source>
+            <trans-unit id="regulation.general_info.description">
+                <source>regulation.general_info.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.description.help">
+                <source>regulation.general_info.description.help</source>
+                <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur la voie")</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.start_date">
+                <source>regulation.general_info.start_date</source>
+                <target>Date de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.start_date.help">
+                <source>regulation.general_info.start_date.help</source>
+                <target>Début d'effet de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.end_date">
+                <source>regulation.general_info.end_date</source>
+                <target>Date de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.end_date.help">
+                <source>regulation.general_info.end_date.help</source>
+                <target>Laisser vide si l'arrêté est permanent.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.address.results_label">
+                <source>regulation.location.address.results_label</source>
                 <target>Adresses suggérées</target>
             </trans-unit>
-            <trans-unit id="regulation.step2.subtitle">
-                <source>regulation.step2.subtitle</source>
-                <target>Ville et rue</target>
-            </trans-unit>
-            <trans-unit id="regulation.step2.help">
-                <source>regulation.step2.help</source>
-                <target>Indiquez la rue impactée par la restriction.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step2.address">
-                <source>regulation.step2.address</source>
+            <trans-unit id="regulation.location.address">
+                <source>regulation.location.address</source>
                 <target>Adresse</target>
             </trans-unit>
-            <trans-unit id="regulation.step2.from_house_number">
-                <source>regulation.step2.from_house_number</source>
+            <trans-unit id="regulation.location.from_house_number">
+                <source>regulation.location.from_house_number</source>
                 <target>Numéro de début</target>
             </trans-unit>
-            <trans-unit id="regulation.step2.to_house_number">
-                <source>regulation.step2.to_house_number</source>
+            <trans-unit id="regulation.location.to_house_number">
+                <source>regulation.location.to_house_number</source>
                 <target>Numéro de fin</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.where">
-                <source>regulation.detail.where</source>
-                <target>Où ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.where.from_house_number">
-                <source>regulation.detail.where.from_house_number</source>
-                <target>Numéro de début : %number%</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.where.to_house_number">
-                <source>regulation.detail.where.to_house_number</source>
-                <target>Numéro de fin : %number%</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.when">
-                <source>regulation.detail.when</source>
-                <target>Quand ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.for_what">
-                <source>regulation.detail.for_what</source>
-                <target>Quoi ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.for_what.no_entry">
-                <source>regulation.detail.for_what.no_entry</source>
-                <target>Circulation interdite</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.and_now">
-                <source>regulation.detail.and_now</source>
-                <target>Et maintenant ?</target>
             </trans-unit>
             <trans-unit id="regulation.detail.draft">
                 <source>regulation.detail.draft</source>

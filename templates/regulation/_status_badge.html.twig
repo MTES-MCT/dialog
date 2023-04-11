@@ -1,0 +1,5 @@
+{% if status == 'draft' %}
+    <span class="fr-badge fr-badge--info">{{'regulation.status.draft'|trans}}</span>
+{% else %}
+    <span class="fr-badge fr-badge--new">{{'regulation.status.published'|trans}}</span>
+{% endif %}

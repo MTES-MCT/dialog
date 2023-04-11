@@ -30,7 +30,9 @@ final class GetRegulationOrderRecordSummaryQueryHandler
 
         return new RegulationOrderRecordSummaryView(
             $row['uuid'],
+            $row['identifier'],
             $row['organizationUuid'],
+            $row['organizationName'],
             $row['status'],
             $row['description'],
             $row['startDate'],

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'regulation.create.title'|trans %}
+
+{% block title %}
+     {{ title }} - {{ parent() }}
+{% endblock %}
+
+{% block page_class %}app-background--alt-grey{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-py-5w" aria-labelledby="add-title">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
+            { title },
+        ]} %}
+
+        <h3 id="add-title">
+            {{ 'regulation.temporary'|trans }}
+        </h3>
+
+        {% include "regulation/blocks/_general_info_form.html.twig" with { form, uuid } only %}
+    </div>
+{% endblock %}

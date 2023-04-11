@@ -1,0 +1,40 @@
+<turbo-frame id="block_general_info">
+    <div class="app-card">
+        <div class="app-card__img">
+            <span class="fr-icon-close-circle-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+        </div>
+        <div class="app-card__content">
+            <h3 class="fr-h4">
+                Arrêté {{ regulationOrderRecord.identifier }}
+            </h3>
+
+            <ul class="fr-ml-1w fr-my-0">
+                <li>{{ regulationOrderRecord.organizationName }}</li>
+                <li>{{ regulationOrderRecord.description }}</li>
+                {% set startDate = regulationOrderRecord.startDate %}
+                {% set endDate = regulationOrderRecord.endDate %}
+                {% set isFuture = app_is_future(startDate) %}
+                <li>
+                    {% if startDate and endDate %}
+                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
+                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
+                    {% elseif isFuture %}
+                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) }) }}
+                    {% else %}
+                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) }) }}
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+
+        {% if canEdit %}
+        <ul class="app-card__actions">
+            <li>
+                <a href="{{ path('app_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                    {{ 'common.update'|trans }}
+                </a>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+</turbo-frame>

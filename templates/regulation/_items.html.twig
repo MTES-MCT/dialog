@@ -48,11 +48,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if regulation.status == 'draft' %}
-                            <p class="fr-badge fr-badge--info">{{'regulation.status.draft'|trans}}</p>
-                        {% else %}
-                            <p class="fr-badge fr-badge--new">{{'regulation.status.published'|trans}}</p>
-                        {% endif %}
+                        {% include 'regulation/_status_badge.html.twig' with { status: regulation.status } only %}
                     </td>
                     <td>
                         <div class="fr-btns-group fr-btns-group--inline-sm">

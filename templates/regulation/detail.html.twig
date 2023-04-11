@@ -1,71 +1,54 @@
 {% extends 'base.html.twig' %}
-{% form_theme form _self %}
 
-{% set title = regulationOrderRecord.location ? 'regulation.detail.title'|trans({ '%address%': regulationOrderRecord.location.address}) : regulationOrderRecord.description %}
+{% set title = 'Arrêté temporaire' %}
 
 {% block title %}
      {{ title }} - {{ parent() }}
 {% endblock %}
 
-{% block _publish_form_status_widget %}
-    {%- for child in form %}
-        <div class="fr-radio-group fr-mt-0 fr-radio-rich">
-            {{ form_widget(child) }}
-            <label class="fr-label" for="{{ child.vars.id }}">
-                <b>{{ child.vars.label|trans }}</b>
-                <span class="fr-hint-text">
-                    {{ ('regulation.detail.' ~ child.vars.value ~ '.description')|trans }}
-                </span>
-            </label>
-            <div class="fr-radio-rich__img">
-                {% if child.vars.value == 'draft' %}
-                    <span class="fr-icon-contrast-fill fr-icon--lg fr-m-3w" aria-hidden="true"></span>
-                {% else %}
-                    <span class="fr-icon-check-line fr-icon--lg fr-m-3w" aria-hidden="true"></span>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
-{% endblock %}
+{% block page_class %}app-background--alt-grey{% endblock %}
 
 {% block body %}
     {% set isDraft = regulationOrderRecord.status == 'draft' %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
-        {% if isDraft %}
-            <span class="fr-badge fr-badge--info">{{ 'common.draft'|trans }}</span>
-        {% else %}
-            <span class="fr-badge fr-badge--success">{{ 'common.published'|trans }}</span>
-        {% endif %}
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
+            { title: 'regulation.list.add_button'},
+        ]} %}
 
-        <h2 id="regulation-detail">
-            {{ title }}                
-        </h2>
+        <div>
+            <h2 id="regulation-detail">
+                {{ title }}                
+            </h2>
 
-        {% include "regulation/_summary.html.twig" with { 'canEdit': isDraft, regulationOrderRecord} only %}
+            <div class="fr-x-container--fluid">
+                <div class="fr-grid-row">
+                    <div class="fr-col">
+                        {% include "regulation/blocks/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
 
-        {% if isDraft %}
-            <h3 class="fr-mt-4w">{{ 'regulation.detail.and_now'|trans }}</h3>
-
-            {{ form_start(form) }}
-                <div class="fr-container--fluid">
-                    <div class="fr-grid-row">
-                        <div class="fr-form-group fr-col-12 fr-col-lg-6">
-                            <fieldset class="fr-fieldset">
-                                <div class="fr-fieldset__content">
-                                    {{ form_widget(form.status) }}
-                                </div>
-                            </fieldset>
-                        </div>
+                        <h3 class="fr-h4 fr-mt-5w">Localisation</h3>
+                        {% include "regulation/blocks/_location.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
                     </div>
-                </div>
 
-                {{ form_widget(form.save, {attr: {class: 'fr-btn'}}) }}
-            {{ form_end(form) }}
-        {% endif %}
-        <div class="fr-mt-4w">
-            <a href="{{ path('app_regulations_list') }}" class="fr-link fr-fi-arrow-left-line fr-link--icon-left">
-                {{ 'regulation.detail.see_all'|trans }}
-            </a>
+                    <aside class="fr-col-3 fr-ml-3w">
+                        <div class="app-card">
+                            <div class="app-card__content">
+                                <h3 class="fr-h4">Statut</h3>
+                                {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status } %}
+
+                                <hr class="fr-mt-2w" />
+
+                                <h3 class="fr-h4">Actions</h3>
+                                <ul class="fr-btns-group">
+                                    <li>
+                                        <button class="fr-btn fr-btn--secondary">Dupliquer</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
         </div>
     </section>
 {% endblock %}

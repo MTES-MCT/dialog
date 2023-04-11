@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation\Steps;
+namespace App\Infrastructure\Controller\Regulation\Blocks;
 
 use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
+use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\Form\Regulation\Steps\Step2FormType;
+use App\Infrastructure\Form\Regulation\LocationFormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class Step2Controller extends AbstractRegulationController
+final class LocationFormController extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -34,19 +34,26 @@ final class Step2Controller extends AbstractRegulationController
     }
 
     #[Route(
-        '/regulations/form/{uuid}/2',
-        name: 'app_regulations_steps_2',
+        '/regulations/{uuid}/location/form',
+        name: 'app_regulations_location_form',
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+
         $location = $this->queryBus->handle(
             new GetLocationByRegulationOrderQuery($regulationOrderRecord->getRegulationOrder()->getUuid()),
         );
 
-        $command = SaveRegulationStep2Command::create($regulationOrderRecord, $location);
-        $form = $this->formFactory->create(Step2FormType::class, $command);
+        $command = SaveRegulationLocationCommand::create($regulationOrderRecord, $location);
+
+        $form = $this->formFactory->create(
+            type: LocationFormType::class,
+            data: $command,
+            options: ['action' => $request->getUri()],
+        );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -59,14 +66,14 @@ final class Step2Controller extends AbstractRegulationController
                 \Sentry\captureException($exc);
                 $form->addError(
                     new FormError(
-                        $this->translator->trans('regulation.step2.error.geocoding_failed', [], 'validators'),
+                        $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),
                 );
             }
 
             if (!$commandFailed) {
                 return new RedirectResponse(
-                    url: $this->router->generate('app_regulation_detail', ['uuid' => $uuid]),
+                    url: $this->router->generate('app_regulations_location', ['uuid' => $uuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
             }
@@ -74,13 +81,8 @@ final class Step2Controller extends AbstractRegulationController
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/steps/step2.html.twig',
-                context: [
-                    'form' => $form->createView(),
-                    'stepNumber' => 2,
-                    'nextStep' => 4,
-                    'uuid' => $uuid,
-                ],
+                name: 'regulation/blocks/_location_form.html.twig',
+                context: ['form' => $form->createView(), 'uuid' => $uuid],
             ),
             status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
         );

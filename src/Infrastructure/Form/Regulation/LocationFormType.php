@@ -2,16 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Form\Regulation\Steps;
+namespace App\Infrastructure\Form\Regulation;
 
-use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class Step2FormType extends AbstractType
+final class LocationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -20,7 +18,7 @@ final class Step2FormType extends AbstractType
                 'address',
                 TextType::class,
                 options: [
-                    'label' => 'regulation.step2.address',
+                    'label' => 'regulation.location.address',
                 ],
             )
             ->add(
@@ -28,7 +26,7 @@ final class Step2FormType extends AbstractType
                 TextType::class,
                 options: [
                     'required' => false,
-                    'label' => 'regulation.step2.from_house_number',
+                    'label' => 'regulation.location.from_house_number',
                 ],
             )
             ->add(
@@ -36,7 +34,7 @@ final class Step2FormType extends AbstractType
                 TextType::class,
                 options: [
                     'required' => false,
-                    'label' => 'regulation.step2.to_house_number',
+                    'label' => 'regulation.location.to_house_number',
                 ],
             )
             ->add(
@@ -47,12 +45,5 @@ final class Step2FormType extends AbstractType
                 ],
             )
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => SaveRegulationStep2Command::class,
-        ]);
     }
 }

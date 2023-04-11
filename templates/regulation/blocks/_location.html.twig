@@ -1,0 +1,48 @@
+<turbo-frame id="block_location">
+    {% set loc = regulationOrderRecord.location %}
+
+    {% if loc is null %}
+        <form action="{{ path('app_regulations_location_form', { uuid: regulationOrderRecord.uuid }) }}?card=1" method="get">
+            <button type="submit" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
+                Définir la localisation
+            </button>
+        </form>
+    {% else %}
+        <div class="app-card fr-mt-3w">
+            <div class="app-card__icon">
+                <span class="fr-icon-map-pin-2-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+            </div>
+
+            <div class="app-card__content">
+                <h3 class="fr-h4">
+                    {{ loc.roadName }}
+                </h3>
+                <ul class="fr-ml-1w fr-my-0">
+                    <li>{{ loc.city }} ({{ loc.postCode }})</li>
+                    <li>
+                        {{ loc.roadName }}
+
+                        {% if loc.fromHouseNumber and loc.toHouseNumber %}
+                            - du n° {{ loc.fromHouseNumber }} au n° {{ loc.toHouseNumber }}
+                        {% elseif loc.fromHouseNumber %}
+                            - à partir du n° {{ loc.fromHouseNumber }}
+                        {% elseif loc.toHouseNumber %}
+                            - jusqu'au n° {{ loc.toHouseNumber }}
+                        {% endif %}
+                    </li>
+                    <li>Circulation interdite pour tous les véhicules</li>
+                </ul>
+            </div>
+
+            {% if canEdit %}
+            <ul class="app-card__actions">
+                <li>
+                    <a href="{{ path('app_regulations_location_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                        {{ 'common.update'|trans }}
+                    </a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+</turbo-frame>
