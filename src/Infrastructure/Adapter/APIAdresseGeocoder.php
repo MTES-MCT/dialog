@@ -101,7 +101,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
         return Coordinates::fromLonLat($lonLat[0], $lonLat[1]);
     }
 
-    public function findAddresses(string $type, string $search): array
+    public function findAddresses(string $search): array
     {
         $response = $this->apiAdresseClient->request('GET', '/search/', [
             'headers' => [
@@ -109,7 +109,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
             ],
             'query' => [
                 'q' => $search,
-                'type' => $type,
                 'autocomplete' => '1',
                 'limit' => 7,
             ],
@@ -117,28 +116,31 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
         try {
             $data = $response->toArray(throw: true);
+            $addresses = [];
+
+            foreach ($data['features'] as $feature) {
+                $type = $feature['properties']['type'];
+
+                if ($type === 'housenumber') {
+                    continue;
+                }
+
+                $label = match ($type) {
+                    'street', 'locality' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
+                    'municipality' => sprintf('%s %s', $feature['properties']['postcode'], $feature['properties']['city']),
+                    default => null,
+                };
+
+                if (!empty($label)) {
+                    $addresses[] = $label;
+                }
+            }
+
+            return $addresses;
         } catch (\Exception $exc) {
             \Sentry\captureException($exc);
 
             return [];
         }
-
-        $addresses = [];
-
-        foreach ($data['features'] as $feature) {
-            if (empty($feature['properties'])) {
-                continue;
-            }
-
-            $label = $type === 'municipality'
-                ? sprintf('%s %s', $feature['properties']['postcode'], $feature['properties']['city'])
-                : $feature['properties']['label'];
-
-            if (!empty($label)) {
-                $addresses[] = $label;
-            }
-        }
-
-        return $addresses;
     }
 }

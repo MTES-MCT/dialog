@@ -16,6 +16,13 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
     {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
   {%- endif -%}
 
+   {% if autocomplete|default(false) %}
+    {% set row_attr = row_attr|merge({
+        class: ('fr-x-autocomplete-wrapper ' ~ row_attr.class|default(''))|trim,
+        'data-controller': 'autocomplete',
+        'data-autocomplete-url-value': autocomplete_url,
+    }) %}
+  {% endif %}
   {%- set row_class = (group_class|default('') ~ ' ' ~ row_attr.class|default(''))|trim -%}
 
   <div {% with {attr: row_attr|merge({class: row_class} )} %} {{ block('attributes') }} {% endwith %}>
@@ -53,9 +60,18 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
   {%- endif -%}
 
   {%- set widget_class = (widget_class|default('') ~ ' ' ~ attr.class|default(''))|trim -%}
-
   {%- set attr = attr|merge({class: widget_class}) -%}
-  {{ parent() }}
+  {%- if autocomplete|default(false) %}
+    {%- set attr = attr|merge({
+      'data-autocomplete-target': 'input',
+      'aria-controls': id ~ '-results',
+    }) -%}
+    {{ parent() }}
+    {%- set autocomplete_results_label = autocomplete_results_label|default('common.results'|trans) %}
+    <ul id="{{ id }}-results" role="listbox" aria-label="{{ autocomplete_results_label }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
+  {%- else %}
+    {{ parent() }}
+  {%- endif -%}
 {% endblock %}
 
 {% block date_widget %}

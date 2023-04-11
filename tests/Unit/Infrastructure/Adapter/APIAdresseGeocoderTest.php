@@ -93,13 +93,13 @@ final class APIAdresseGeocoderTest extends TestCase
 
     public function testFindAddresses(): void
     {
-        $body = '{"features": [{"properties": {"label": "Rue Eugene Berthoud 75018 Paris"}}]}';
+        $body = '{"features": [{"properties": {"name": "Rue Eugene Berthoud", "postcode": "75018", "city": "Paris", "type": "street"}}]}';
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
         $addresses = $geocoder->findAddresses('Rue Eugene', "street");
-        $this->assertEquals(['Rue Eugene Berthoud 75018 Paris'], $addresses);
+        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
     }
 
     public function testFindAddressesIncompleteFeature(): void
