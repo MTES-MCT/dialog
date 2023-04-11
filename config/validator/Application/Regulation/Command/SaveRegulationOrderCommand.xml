@@ -36,6 +36,10 @@
                 <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
+        <property name="email">
+            <constraint name="NotBlank" />
+            <constraint name="Email" />
+        </property>
         <constraint name="App\Infrastructure\Validator\SaveRegulationOrderCommandConstraint" />
     </class>
 </constraint-mapping>

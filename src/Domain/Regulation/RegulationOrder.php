@@ -7,6 +7,7 @@ namespace App\Domain\Regulation;
 class RegulationOrder
 {
     private iterable $locations = [];
+
     public function __construct(
         private string $uuid,
         private string $identifier,
@@ -60,7 +61,7 @@ class RegulationOrder
         ?\DateTimeInterface $endDate = null,
     ): void {
         $this->identifier = $identifier;
-        $this->description = $description;        
+        $this->description = $description;
         $this->email = $email;
         $this->startDate = $startDate;
         $this->endDate = $endDate;

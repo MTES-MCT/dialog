@@ -13,7 +13,7 @@ final class SaveRegulationOrderCommand implements CommandInterface
     public ?string $identifier;
     public ?string $description;
     public ?Organization $organization;
-    public ?string $email= null;
+    public ?string $email = null;
     public ?\DateTimeInterface $startDate;
     public ?\DateTimeInterface $endDate = null;
 
