@@ -39,6 +39,9 @@
         <property name="email">
             <constraint name="NotBlank" />
             <constraint name="Email" />
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
         </property>
         <constraint name="App\Infrastructure\Validator\SaveRegulationOrderCommandConstraint" />
     </class>

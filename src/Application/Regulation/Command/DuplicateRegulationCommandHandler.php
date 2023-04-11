@@ -40,6 +40,7 @@ final class DuplicateRegulationCommandHandler
             '%identifier%' => $originalRegulationOrder->getIdentifier(),
         ]);
         $step1Command->description = $originalRegulationOrder->getDescription();
+        $step1Command->email = $originalRegulationOrder->getEmail();
         $step1Command->startDate = $originalRegulationOrder->getStartDate();
         $step1Command->endDate = $originalRegulationOrder->getEndDate();
 

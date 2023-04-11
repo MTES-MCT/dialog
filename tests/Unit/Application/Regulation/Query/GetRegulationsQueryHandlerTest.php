@@ -34,6 +34,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => null,
             'status' => 'draft',
+            'email' => 'lea.lefoulon@gmail.com',
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -42,6 +43,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             'startDate' => $startDate2,
             'endDate' => null,
             'status' => 'draft',
+            'email' => 'claire.lefoulon@gmail.com',
         ];
 
         $regulationOrderRecordRepository
@@ -68,7 +70,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     null,
                     $startDate2,
                     null,
-                    null,
+                    'claire.lefoulon@gmail.com',
+                    
                 ),
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -77,7 +80,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     $location,
                     $startDate1,
                     null,
-                    null,
+                    'lea.lefoulon@gmail.com',
                 ),
             ], 2, 1, 20,
         );

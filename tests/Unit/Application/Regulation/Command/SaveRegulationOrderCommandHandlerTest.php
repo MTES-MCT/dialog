@@ -62,8 +62,9 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
                         description: 'Interdiction de circuler',
                         startDate: $start,
                         endDate: $end,
-                    ),
-                ),
+                        email: 'lea.lefoulon@gmail.com',
+                    )
+                )
             )
             ->willReturn($createdRegulationOrder);
 
@@ -103,6 +104,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
         $command->startDate = $start;
         $command->endDate = $end;
         $command->organization = $this->organization;
+        $command->email = 'lea.lefoulon@gmail.com';
 
         $result = $handler($command);
 
@@ -187,6 +189,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             ->with(
                 'FO2/2030',
                 'Interdiction de circuler',
+                'lea.lefoulon@gmail.com',
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
             );
@@ -223,6 +226,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
         $command->endDate = $end;
+        $command->email = 'lea.lefoulon@gmail.com';
 
         $result = $handler($command);
 
@@ -264,6 +268,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             ->with(
                 'FO2/2030',
                 'Interdiction de circuler',
+                'lea.lefoulon@gmail.com',
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
             );
@@ -302,6 +307,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
         $command->endDate = $end;
+        $command->email = 'lea.lefoulon@gmail.com';
 
         $result = $handler($command);
 

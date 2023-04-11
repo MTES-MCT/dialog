@@ -16,7 +16,7 @@ final class RegulationOrderFixture extends Fixture
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
             identifier: 'FO1/2023',
             description: 'Description 1',
-            email: null,
+            email: 'lea.lefoulon@gmail.com',
             startDate: new \DateTimeImmutable('2023-03-13'),
             endDate: new \DateTimeImmutable('2023-03-15'),
         );
@@ -25,7 +25,7 @@ final class RegulationOrderFixture extends Fixture
             uuid: '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
             identifier: 'FO2/2023',
             description: 'Description 2',
-            email: null,
+            email: 'lea.lefoulon@gmail.com',
             startDate: new \DateTimeImmutable('2023-03-10'),
             endDate: new \DateTimeImmutable('2023-03-20'),
         );
@@ -34,7 +34,7 @@ final class RegulationOrderFixture extends Fixture
             uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
             identifier: 'FO3/2023',
             description: 'Description 3',
-            email: null,
+            email: 'lea.lefoulon@gmail.com',
             startDate: new \DateTimeImmutable('2023-03-11'),
             endDate: null,
         );
@@ -43,7 +43,7 @@ final class RegulationOrderFixture extends Fixture
             uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
             identifier: 'FO4/2023',
             description: 'Description 4',
-            email: null,
+            email: 'lea.lefoulon@gmail.com',
             startDate: null, // Simulate a regulation order before migration
             endDate: null,
         );
@@ -52,7 +52,7 @@ final class RegulationOrderFixture extends Fixture
             uuid: 'e589f277-ccd4-4364-967a-7e9db80e6d34',
             identifier: 'FO1/2023 (copie)',
             description: 'Description 5',
-            email: null,
+            email: 'lea.lefoulon@gmail.com',
             startDate: new \DateTimeImmutable('2023-03-13'),
             endDate: new \DateTimeImmutable('2023-03-15'),
         );

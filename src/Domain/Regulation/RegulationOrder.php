@@ -13,7 +13,7 @@ class RegulationOrder
         private string $identifier,
         private string $description,
         private ?string $email = null,
-        private ?\DateTimeInterface $startDate,
+        private ?\DateTimeInterface $startDate = null,
         private ?\DateTimeInterface $endDate = null,
     ) {
     }
@@ -33,7 +33,7 @@ class RegulationOrder
         return $this->description;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }

@@ -18,6 +18,7 @@ final class RegulationOrderTest extends TestCase
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             identifier: 'F02/2023',
             description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
+            email: null,
             startDate: $start,
             endDate: $end,
         );
@@ -25,6 +26,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrder->getUuid());
         $this->assertSame('F02/2023', $regulationOrder->getIdentifier());
         $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
+        $this->assertSame(null, $regulationOrder->getEmail());
         $this->assertSame($start, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
         $this->assertEmpty($regulationOrder->getLocations()); // Automatically set by Doctrine
@@ -40,6 +42,7 @@ final class RegulationOrderTest extends TestCase
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             identifier: 'F02/2023',
             description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
+            email: null,
             startDate: $start,
             endDate: null,
         );
@@ -47,6 +50,7 @@ final class RegulationOrderTest extends TestCase
         $regulationOrder->update(
             identifier: 'F01/2023',
             description: 'Arrêté temporaire',
+            email: 'lea.lefoulon@gmail.com',
             startDate: $newStart,
             endDate: $end,
         );
@@ -55,5 +59,6 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('Arrêté temporaire', $regulationOrder->getDescription());
         $this->assertSame($newStart, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
+        $this->assertSame('lea.lefoulon@gmail.com',$regulationOrder->getEmail());
     }
 }
