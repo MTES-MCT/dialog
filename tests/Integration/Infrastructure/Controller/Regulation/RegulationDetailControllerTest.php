@@ -15,18 +15,18 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Arrêté temporaire', $crawler->filter('h2')->text());
-        $this->assertMetaTitle("Arrêté temporaire - DiaLog", $crawler);
+        $this->assertSame('Arrêté temporaire FO1/2023', $crawler->filter('h2')->text());
+        $this->assertMetaTitle("Arrêté temporaire FO1/2023 - DiaLog", $crawler);
         $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
 
         $generalInfo = $crawler->filter('[data-testid="general_info"]');
         $location = $crawler->filter('[data-testid="location"]');
 
         // General info
-        $this->assertSame('Arrêté FO1/2023', $generalInfo->filter('h3')->text());
+        $this->assertSame('Informations générales', $generalInfo->filter('h3')->text());
         $this->assertSame('DiaLog', $generalInfo->filter('li')->eq(0)->text());
         $this->assertSame('Description 1', $generalInfo->filter('li')->eq(1)->text());
-        $this->assertSame('du 13/03/2023 au 15/03/2023', $generalInfo->filter('li')->eq(2)->text());
+        $this->assertSame('Du 13/03/2023 au 15/03/2023', $generalInfo->filter('li')->eq(2)->text());
         $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/general_info/form', $generalInfo->filter('a')->link()->getUri());
 
         // Location

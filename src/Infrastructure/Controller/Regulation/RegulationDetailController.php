@@ -4,31 +4,23 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation;
 
-use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class RegulationDetailController
 {
     public function __construct(
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
-        private readonly CommandBusInterface $commandBus,
-        private readonly FormFactoryInterface $formFactory,
-        private readonly RouterInterface $router,
-        private readonly TranslatorInterface $translator,
         private readonly CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         private readonly Security $security,
     ) {

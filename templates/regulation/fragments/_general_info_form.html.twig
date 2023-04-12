@@ -4,6 +4,9 @@
             <span class="fr-icon-close-circle-fill regulation-detail-icon fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
         </div>
         <div class="app-card__content">
+            <h3 class="fr-h4">
+                {{ 'regulation.general_info'|trans }}
+            </h3>
             {% include 'regulation/fragments/_general_info_form_content.html.twig' with { form, uuid } only %}
         </div>
     </div>

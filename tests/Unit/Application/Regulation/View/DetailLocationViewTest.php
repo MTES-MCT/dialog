@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command;
+namespace App\Tests\Unit\Application\Regulation\View;
 
 use App\Application\Regulation\View\DetailLocationView;
 use PHPUnit\Framework\TestCase;

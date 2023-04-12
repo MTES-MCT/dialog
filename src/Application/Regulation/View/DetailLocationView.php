@@ -22,8 +22,6 @@ class DetailLocationView
         $this->parsedAddress = $matches;
     }
 
-    // TODO tests
-
     public function getCity(): string
     {
         return $this->parsedAddress['city'];

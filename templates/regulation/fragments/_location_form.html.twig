@@ -5,6 +5,9 @@
         </div>
 
         <div class="app-card__content">
+            <h3 class="fr-h4">
+                {{ 'regulation.location'|trans }}
+            </h3>
             {% include 'regulation/fragments/_location_form_content.html.twig' with { form, uuid } only %}
         </div>
     </div>

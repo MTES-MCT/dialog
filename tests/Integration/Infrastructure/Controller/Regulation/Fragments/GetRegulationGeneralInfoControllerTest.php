@@ -16,10 +16,10 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Arrêté FO3/2023', $crawler->filter('h3')->text());
+        $this->assertSame('Informations générales', $crawler->filter('h3')->text());
         $this->assertSame('DiaLog', $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Description 3', $crawler->filter('li')->eq(1)->text());
-        $this->assertSame('depuis le 11/03/2023', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(2)->text());
         $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/general_info/form', $crawler->filter('a')->link()->getUri());
     }
 

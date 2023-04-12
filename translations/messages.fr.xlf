@@ -192,11 +192,15 @@
             </trans-unit>
             <trans-unit id="regulation.create.title">
                 <source>regulation.create.title</source>
-                <target>Nouvel arrêté temporaire</target>
+                <target>Nouvel arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.temporary">
                 <source>regulation.temporary</source>
                 <target>Arrêté temporaire</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info">
+                <source>regulation.general_info</source>
+                <target>Informations générales</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
@@ -286,6 +290,10 @@
             <trans-unit id="regulation.identifier">
                 <source>regulation.identifier</source>
                 <target>Identifiant</target>
+            </trans-unit>
+            <trans-unit id="regulation.location">
+                <source>regulation.location</source>
+                <target>Localisation</target>
             </trans-unit>
             <trans-unit id="regulation.locations">
                 <source>regulation.locations</source>
@@ -444,11 +452,7 @@
             </trans-unit>
             <trans-unit id="regulation.detail.title">
                 <source>regulation.detail.title</source>
-                <target>Réglementation - %address%</target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.see_all">
-                <source>regulation.detail.see_all</source>
-                <target>Toutes les réglementations</target>
+                <target>Arrêté temporaire %identifier%</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>

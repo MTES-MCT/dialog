@@ -1,9 +1,9 @@
 {{ form_start(form) }}
-    {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+    {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
     {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
     {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
-    {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
-    {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+    {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+    {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
 
     {% if uuid %}
         <a href="{{ path('fragment_regulations_general_info', { uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">

@@ -53,6 +53,10 @@ label.required > .fr-x-label-content::after {
     text-align: center;
 }
 
+.fr-text--default-grey {
+    color: var(--text-default-grey);
+}
+
 .fr-title--blue-france {
     color: var(--blue-france-sun-113-625);
 }

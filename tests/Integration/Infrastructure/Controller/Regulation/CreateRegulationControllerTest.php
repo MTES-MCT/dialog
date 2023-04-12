@@ -15,8 +15,8 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Arrêté temporaire', $crawler->filter('h2')->text());
-        $this->assertMetaTitle("Nouvel arrêté temporaire - DiaLog", $crawler);
+        $this->assertSame('Nouvel arrêté', $crawler->filter('h2')->text());
+        $this->assertMetaTitle("Nouvel arrêté - DiaLog", $crawler);
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "F022023";

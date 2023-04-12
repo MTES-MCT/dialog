@@ -5,7 +5,7 @@
         </div>
         <div class="app-card__content">
             <h3 class="fr-h4">
-                Arrêté {{ regulationOrderRecord.identifier }}
+                {{ 'regulation.general_info'|trans }}
             </h3>
 
             <ul class="fr-ml-1w fr-my-0">
@@ -16,12 +16,12 @@
                 {% set isFuture = app_is_future(startDate) %}
                 <li>
                     {% if startDate and endDate %}
-                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
+                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
                         {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
                     {% elseif isFuture %}
-                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) }) }}
+                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
                     {% else %}
-                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) }) }}
+                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
                     {% endif %}
                 </li>
             </ul>
