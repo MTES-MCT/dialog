@@ -32,12 +32,12 @@ final class CreateRegulationController
     ) {
     }
 
-    protected function getTemplateName(): string
+    protected function getGeneralInfoFormTemplateName(): string
     {
         return 'regulation/create.html.twig';
     }
 
-    protected function getSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string
+    protected function getGeneralInfoFormSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string
     {
         return $this->router->generate('app_regulation_detail', [
             'uuid' => $regulationOrderRecord->getUuid(),
@@ -53,6 +53,6 @@ final class CreateRegulationController
     {
         $command = new SaveRegulationOrderCommand();
 
-        return $this->handle($request, $command);
+        return $this->handleGeneralInfoForm($request, $command);
     }
 }

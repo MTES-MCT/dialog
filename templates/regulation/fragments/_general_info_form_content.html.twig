@@ -6,7 +6,7 @@
     {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
 
     {% if uuid %}
-        <a href="{{ path('app_regulations_general_info', { uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+        <a href="{{ path('fragment_regulations_general_info', { uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
             {{ "common.cancel"|trans }}
         </a>
     {% else %}

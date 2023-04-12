@@ -19,9 +19,9 @@ final class GeneralInfoController
     }
 
     #[Route(
-        '/regulations/{uuid}/general_info',
-        name: 'app_regulations_general_info',
-        methods: ['GET'],
+        '/_fragment/regulations/{uuid}/general_info',
+        name: 'fragment_regulations_general_info',
+        methods: 'GET',
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
@@ -30,7 +30,7 @@ final class GeneralInfoController
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/blocks/_general_info.html.twig',
+                name: 'regulation/fragments/_general_info.html.twig',
                 context: ['regulationOrderRecord' => $regulationOrderRecord, 'canEdit' => $regulationOrderRecord->status === 'draft'],
             ),
         );

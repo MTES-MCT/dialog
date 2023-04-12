@@ -33,21 +33,21 @@ final class GeneralInfoFormController extends AbstractRegulationController
         parent::__construct($queryBus);
     }
 
-    protected function getTemplateName(): string
+    protected function getGeneralInfoFormTemplateName(): string
     {
-        return 'regulation/blocks/_general_info_form.html.twig';
+        return 'regulation/fragments/_general_info_form.html.twig';
     }
 
-    protected function getSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string
+    protected function getGeneralInfoFormSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string
     {
-        return $this->router->generate('app_regulations_general_info', [
+        return $this->router->generate('fragment_regulations_general_info', [
             'uuid' => $regulationOrderRecord->getUuid(),
         ]);
     }
 
     #[Route(
-        '/regulations/{uuid}/general/form',
-        name: 'app_regulations_general_info_form',
+        '/_fragment/regulations/{uuid}/general/form',
+        name: 'fragment_regulations_general_info_form',
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response
@@ -56,6 +56,6 @@ final class GeneralInfoFormController extends AbstractRegulationController
         // TODO: rename to SaveRegulationGeneralInfoCommand
         $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
 
-        return $this->handle($request, $command);
+        return $this->handleGeneralInfoForm($request, $command);
     }
 }

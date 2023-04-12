@@ -26,11 +26,11 @@ trait GeneralInfoFormControllerTrait
     private Security $security;
     private TranslatorInterface $translator;
 
-    abstract protected function getTemplateName(): string;
+    abstract protected function getGeneralInfoFormTemplateName(): string;
 
-    abstract protected function getSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string;
+    abstract protected function getGeneralInfoFormSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string;
 
-    protected function handle(Request $request, SaveRegulationOrderCommand $command): Response
+    protected function handleGeneralInfoForm(Request $request, SaveRegulationOrderCommand $command): Response
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
@@ -53,7 +53,7 @@ trait GeneralInfoFormControllerTrait
                 $regulationOrderRecord = $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->getSuccessUrl($regulationOrderRecord),
+                    url: $this->getGeneralInfoFormSuccessUrl($regulationOrderRecord),
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (OrganizationAlreadyHasRegulationOrderWithThisIdentifierException) {
@@ -68,7 +68,7 @@ trait GeneralInfoFormControllerTrait
 
         return new Response(
             $this->twig->render(
-                name: $this->getTemplateName(),
+                name: $this->getGeneralInfoFormTemplateName(),
                 context: ['form' => $form->createView(), 'uuid' => $command->regulationOrderRecord?->getUuid()],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $hasCommandFailed

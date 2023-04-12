@@ -24,10 +24,10 @@
             <div class="fr-x-container--fluid">
                 <div class="fr-grid-row">
                     <div class="fr-col">
-                        {% include "regulation/blocks/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
+                        {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
 
                         <h3 class="fr-h4 fr-mt-5w">Localisation</h3>
-                        {% include "regulation/blocks/_location.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
+                        {% include "regulation/fragments/_location.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
                     </div>
 
                     <aside class="fr-col-3 fr-ml-3w">
@@ -41,7 +41,12 @@
                                 <h3 class="fr-h4">Actions</h3>
                                 <ul class="fr-btns-group">
                                     <li>
-                                        <button class="fr-btn fr-btn--secondary">Dupliquer</button>
+                                        {# TODO implement duplication form #}
+                                        <button class="fr-btn fr-btn--secondary" disabled>Dupliquer</button>
+                                    </li>
+                                    <li>
+                                        {# TODO implement publish form #}
+                                        <button class="fr-btn fr-btn--secondary" disabled>Publier</button>
                                     </li>
                                 </ul>
                             </div>

@@ -34,8 +34,8 @@ final class LocationFormController extends AbstractRegulationController
     }
 
     #[Route(
-        '/regulations/{uuid}/location/form',
-        name: 'app_regulations_location_form',
+        '/_fragment/regulations/{uuid}/location/form',
+        name: 'fragment_regulations_location_form',
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response
@@ -73,7 +73,7 @@ final class LocationFormController extends AbstractRegulationController
 
             if (!$commandFailed) {
                 return new RedirectResponse(
-                    url: $this->router->generate('app_regulations_location', ['uuid' => $uuid]),
+                    url: $this->router->generate('fragment_regulations_location', ['uuid' => $uuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
             }
@@ -81,7 +81,7 @@ final class LocationFormController extends AbstractRegulationController
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/blocks/_location_form.html.twig',
+                name: 'regulation/fragments/_location_form.html.twig',
                 context: ['form' => $form->createView(), 'uuid' => $uuid],
             ),
             status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
