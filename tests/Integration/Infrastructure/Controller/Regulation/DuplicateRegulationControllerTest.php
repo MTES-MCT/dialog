@@ -20,7 +20,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Réglementation - Avenue de Fonneuve 82000 Montauban', $crawler->filter('h2')->text());
+        $this->assertSame('Arrêté FO2/2023 (copie)', $crawler->filter('[data-testid="general_info"] h3')->text());
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
     }
 

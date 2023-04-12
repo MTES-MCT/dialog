@@ -130,6 +130,10 @@
                 <source>common.date.starting</source>
                 <target>à partir du %date%</target>
             </trans-unit>
+            <trans-unit id="common.date.since">
+                <source>common.date.since</source>
+                <target>depuis le %date%</target>
+            </trans-unit>
             <trans-unit id="common.date.upcoming">
                 <source>common.date.upcoming</source>
                 <target>à venir</target>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation\Blocks;
+namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\SaveRegulationOrderCommand;
@@ -10,7 +10,6 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\SymfonyUser;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,23 +17,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-trait GeneralInfoFormControllerTrait
+trait GeneralInfoFormTrait
 {
     private \Twig\Environment $twig;
     private FormFactoryInterface $formFactory;
     private CommandBusInterface $commandBus;
-    private Security $security;
     private TranslatorInterface $translator;
 
     abstract protected function getGeneralInfoFormTemplateName(): string;
 
     abstract protected function getGeneralInfoFormSuccessUrl(RegulationOrderRecord $regulationOrderRecord): string;
 
-    protected function handleGeneralInfoForm(Request $request, SaveRegulationOrderCommand $command): Response
+    protected function handleGeneralInfoForm(Request $request, SymfonyUser $user, SaveRegulationOrderCommand $command): Response
     {
-        /** @var SymfonyUser */
-        $user = $this->security->getUser();
-
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
             data: $command,

@@ -1,0 +1,153 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
+
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+
+final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
+{
+    public function testInvalidBlank(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("Cette valeur ne doit pas être vide.", $crawler->filter('#location_form_address_error')->text());
+    }
+
+    public function testAddFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '4ce75a1f-82f3-40ee-8f95-48d0f04446aa']);
+    }
+
+    public function testAddRoadSection(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[fromHouseNumber]'] = '15';
+        $form['location_form[toHouseNumber]'] = '37bis';
+
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '4ce75a1f-82f3-40ee-8f95-48d0f04446aa']);
+    }
+
+    public function testEditUnchanged(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form'); // Already has a location
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '3ede8b1a-1816-4788-8510-e08f45511cb5']);
+    }
+
+    public function testGeocodingFailure(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
+        $form['location_form[fromHouseNumber]'] = '15';
+        $form['location_form[toHouseNumber]'] = '37bis';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringStartsWith("En raison d'un problème technique", $crawler->filter('#location_form_error')->text());
+    }
+
+    public function testRegulationOrderRecordNotFound(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/_fragment/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b/location/form');
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testBadUuid(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/_fragment/regulations/aaaaaaaa/location/form');
+
+        $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function testCancel(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $client->clickLink('Annuler');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '3ede8b1a-1816-4788-8510-e08f45511cb5']);
+    }
+
+    public function testFieldsTooLong(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Suivant');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = str_repeat('a', 256);
+        $form['location_form[fromHouseNumber]'] = str_repeat('a', 9);
+        $form['location_form[toHouseNumber]'] = str_repeat('a', 9);
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#location_form_fromHouseNumber_error')->text());
+        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.", $crawler->filter('#location_form_toHouseNumber_error')->text());
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form');
+        $this->assertResponseRedirects('http://localhost/login', 302);
+    }
+}

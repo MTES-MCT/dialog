@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
-use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationOrderCommand;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Infrastructure\Controller\Regulation\Blocks\GeneralInfoFormControllerTrait;
+use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class CreateRegulationController
 {
-    use GeneralInfoFormControllerTrait;
+    use GeneralInfoFormTrait;
 
     public function __construct(
         private \Twig\Environment $twig,
@@ -27,7 +26,6 @@ final class CreateRegulationController
         private CommandBusInterface $commandBus,
         private Security $security,
         private TranslatorInterface $translator,
-        private QueryBusInterface $queryBus,
         private RouterInterface $router,
     ) {
     }
@@ -51,8 +49,10 @@ final class CreateRegulationController
     )]
     public function __invoke(Request $request, string $uuid = null): Response
     {
+        /** @var SymfonyUser */
+        $user = $this->security->getUser();
         $command = new SaveRegulationOrderCommand();
 
-        return $this->handleGeneralInfoForm($request, $command);
+        return $this->handleGeneralInfoForm($request, $user, $command);
     }
 }

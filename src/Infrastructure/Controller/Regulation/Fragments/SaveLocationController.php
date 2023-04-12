@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation\Blocks;
+namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class LocationFormController extends AbstractRegulationController
+final class SaveLocationController extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,

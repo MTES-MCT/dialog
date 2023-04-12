@@ -1,5 +1,5 @@
 {% if status == 'draft' %}
-    <span class="fr-badge fr-badge--info">{{'regulation.status.draft'|trans}}</span>
+    <span class="fr-badge fr-badge--info" data-testid="status-badge">{{ 'regulation.status.draft'|trans }}</span>
 {% else %}
-    <span class="fr-badge fr-badge--new">{{'regulation.status.published'|trans}}</span>
+    <span class="fr-badge fr-badge--new" data-testid="status-badge">{{ 'regulation.status.published'|trans }}</span>
 {% endif %}

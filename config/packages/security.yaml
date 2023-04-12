@@ -21,6 +21,7 @@ security:
                 path: app_logout
     access_control:
         - { path: ^/regulations, roles: ROLE_USER }
+        - { path: ^/_fragment/regulations, roles: ROLE_USER }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
     role_hierarchy:

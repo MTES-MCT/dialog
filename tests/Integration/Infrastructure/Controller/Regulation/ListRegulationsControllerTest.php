@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+
 final class ListRegulationsControllerTest extends AbstractWebTestCase
 {
     public function testPageAndTabs(): void
