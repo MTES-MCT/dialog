@@ -2,7 +2,7 @@
     {% set loc = regulationOrderRecord.location %}
 
     {% if loc is null %}
-        <form action="{{ path('fragment_regulations_location_form', { uuid: regulationOrderRecord.uuid }) }}?card=1" method="get">
+        <form method="get" action="{{ path('fragment_regulations_location_form', { uuid: regulationOrderRecord.uuid }) }}">
             <button type="submit" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line">
                 Définir la localisation
             </button>
@@ -23,25 +23,25 @@
                         {{ loc.roadName }}
 
                         {% if loc.fromHouseNumber and loc.toHouseNumber %}
-                            - du n° {{ loc.fromHouseNumber }} au n° {{ loc.toHouseNumber }}
+                            - {{ 'regulation.location.house_number_from_to'|trans({ '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber }) }}
                         {% elseif loc.fromHouseNumber %}
-                            - à partir du n° {{ loc.fromHouseNumber }}
+                            - {{ 'regulation.location.house_number_from'|trans({ '%from%': loc.fromHouseNumber }) }}
                         {% elseif loc.toHouseNumber %}
-                            - jusqu'au n° {{ loc.toHouseNumber }}
+                            - {{ 'regulation.location.house_number_to'|trans({ '%to%': loc.toHouseNumber }) }}
                         {% endif %}
                     </li>
-                    <li>Circulation interdite pour tous les véhicules</li>
+                    <li>{{ 'regulation.location.all_vehicles_forbidden'|trans }}</li>
                 </ul>
             </div>
 
             {% if canEdit %}
-            <ul class="app-card__actions">
-                <li>
-                    <a href="{{ path('fragment_regulations_location_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                        {{ 'common.update'|trans }}
-                    </a>
-                </li>
-            </ul>
+                <ul class="app-card__actions">
+                    <li>
+                        <a href="{{ path('fragment_regulations_location_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                            {{ 'common.update'|trans }}
+                        </a>
+                    </li>
+                </ul>
             {% endif %}
         </div>
     {% endif %}

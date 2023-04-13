@@ -11,7 +11,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testInvalidBlank(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/location/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa'); // Has no location yet
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -26,7 +26,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testAddFullRoad(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/location/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa'); // Has no location yet
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -45,7 +45,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testAddRoadSection(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/location/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa'); // Has no location yet
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -66,7 +66,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testEditUnchanged(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form'); // Already has a location
+        $crawler = $client->request('GET', '/_fragment/regulations/location/form/3ede8b1a-1816-4788-8510-e08f45511cb5'); // Already has a location
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -84,7 +84,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testGeocodingFailure(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/location/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Suivant');
@@ -101,7 +101,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b/location/form');
+        $client->request('GET', '/_fragment/regulations/location/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -109,7 +109,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testBadUuid(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/aaaaaaaa/location/form');
+        $client->request('GET', '/_fragment/regulations/location/form/aaaaaaaa');
 
         $this->assertResponseStatusCodeSame(400);
     }
@@ -117,7 +117,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form');
+        $client->request('GET', '/_fragment/regulations/location/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
         $client->clickLink('Annuler');
@@ -128,7 +128,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testFieldsTooLong(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/location/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Suivant');
@@ -147,7 +147,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/form');
+        $client->request('GET', '/_fragment/regulations/location/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

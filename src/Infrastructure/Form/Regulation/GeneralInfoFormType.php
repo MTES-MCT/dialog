@@ -76,9 +76,6 @@ final class GeneralInfoFormType extends AbstractType
                 SubmitType::class,
                 options: [
                     'label' => 'common.form.next',
-                    'attr' => $options['targetTop'] ? [
-                        'data-turbo-frame' => '_top',
-                    ] : [],
                 ],
             )
         ;
@@ -89,9 +86,7 @@ final class GeneralInfoFormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'organizations' => [],
-            'targetTop' => false,
         ]);
         $resolver->setAllowedTypes('organizations', 'array');
-        $resolver->setAllowedTypes('targetTop', 'bool');
     }
 }

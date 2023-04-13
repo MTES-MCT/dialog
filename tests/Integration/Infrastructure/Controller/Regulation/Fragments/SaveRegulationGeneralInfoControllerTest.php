@@ -11,7 +11,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testEditWithAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/general_info/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -31,7 +31,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b/general_info/form');
+        $client->request('GET', '/_fragment/regulations/general_info/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -39,7 +39,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testEditRegulationOrderWithNoStartDateYet(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/general_info/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
 
         $this->assertResponseStatusCodeSame(200);
 
@@ -60,7 +60,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testBadUuid(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/aaaaaaaa/general_info/form');
+        $client->request('GET', '/_fragment/regulations/general_info/form/aaaaaaaa');
 
         $this->assertResponseStatusCodeSame(400);
     }
@@ -68,7 +68,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testFieldsTooLong(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/general_info/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Suivant');
@@ -85,7 +85,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/general_info/form');
+        $client->request('GET', '/_fragment/regulations/general_info/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -93,7 +93,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/general_info/form');
+        $client->request('GET', '/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

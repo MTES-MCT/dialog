@@ -28,13 +28,13 @@
         </div>
 
         {% if canEdit %}
-        <ul class="app-card__actions">
-            <li>
-                <a href="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                    {{ 'common.update'|trans }}
-                </a>
-            </li>
-        </ul>
+            <ul class="app-card__actions">
+                <li>
+                    <a href="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                        {{ 'common.update'|trans }}
+                    </a>
+                </li>
+            </ul>
         {% endif %}
     </div>
 </turbo-frame>

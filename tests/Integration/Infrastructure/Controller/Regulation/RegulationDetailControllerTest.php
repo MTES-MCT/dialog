@@ -27,14 +27,14 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('DiaLog', $generalInfo->filter('li')->eq(0)->text());
         $this->assertSame('Description 1', $generalInfo->filter('li')->eq(1)->text());
         $this->assertSame('Du 13/03/2023 au 15/03/2023', $generalInfo->filter('li')->eq(2)->text());
-        $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/general_info/form', $generalInfo->filter('a')->link()->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/general_info/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $generalInfo->filter('a')->link()->getUri());
 
         // Location
         $this->assertSame('Route du Grand Brossais', $location->filter('h3')->text());
         $this->assertSame('Savenay (44260)', $location->filter('li')->eq(0)->text());
         $this->assertSame('Route du Grand Brossais - du n° 15 au n° 37bis', $location->filter('li')->eq(1)->text());
         $this->assertSame('Circulation interdite pour tous les véhicules', $location->filter('li')->eq(2)->text());
-        $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/form', $location->filter('a')->link()->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/location/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $location->filter('a')->link()->getUri());
 
         // Actions
         $duplicateBtn = $crawler->selectButton('Dupliquer');

@@ -34,7 +34,7 @@ final class SaveLocationController extends AbstractRegulationController
     }
 
     #[Route(
-        '/_fragment/regulations/{uuid}/location/form',
+        '/_fragment/regulations/location/form/{uuid}',
         name: 'fragment_regulations_location_form',
         methods: ['GET', 'POST'],
     )]
@@ -51,7 +51,9 @@ final class SaveLocationController extends AbstractRegulationController
         $form = $this->formFactory->create(
             type: LocationFormType::class,
             data: $command,
-            options: ['action' => $request->getUri()],
+            options: [
+                'action' => $this->router->generate('fragment_regulations_location_form', ['uuid' => $uuid]),
+            ],
         );
 
         $form->handleRequest($request);
@@ -82,7 +84,10 @@ final class SaveLocationController extends AbstractRegulationController
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_location_form.html.twig',
-                context: ['form' => $form->createView(), 'uuid' => $uuid],
+                context: [
+                    'form' => $form->createView(),
+                    'uuid' => $uuid,
+                ],
             ),
             status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
         );

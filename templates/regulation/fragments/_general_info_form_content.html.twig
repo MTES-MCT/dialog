@@ -9,10 +9,11 @@
         <a href="{{ path('fragment_regulations_general_info', { uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
             {{ "common.cancel"|trans }}
         </a>
+        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
     {% else %}
         <a href="{{ path('app_regulations_list') }}" data-turbo-frame="_top" class="fr-btn fr-btn--tertiary fr-mr-3w">
             {{ "common.cancel"|trans }}
         </a>
+        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line', 'data-turbo-frame': '_top'}}) }}
     {% endif %}
-    {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
 {{ form_end(form) }}

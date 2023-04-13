@@ -34,7 +34,7 @@ final class GetGeneralInfoController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        // TODO: specific GetRegulationGeneralInfoQuery
+        // TODO: use a specific GetRegulationGeneralInfoQuery
         try {
             $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
         } catch (RegulationOrderRecordNotFoundException) {

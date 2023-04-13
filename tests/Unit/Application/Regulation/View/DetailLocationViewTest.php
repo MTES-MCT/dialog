@@ -11,7 +11,7 @@ final class DetailLocationViewTest extends TestCase
 {
     public function testParsingFailure(): void
     {
-        $this->expectExceptionMessageMatches("/^Address 'this is not a valid address' did not have expected format/i");
+        $this->expectExceptionMessageMatches("/^Address 'This is not a valid address' did not have expected format/");
         new DetailLocationView('This is not a valid address', null, null);
     }
 
