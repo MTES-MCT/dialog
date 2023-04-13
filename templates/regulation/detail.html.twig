@@ -13,7 +13,7 @@
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
-            { title: 'regulation.list.add_button'},
+            { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': regulationOrderRecord.identifier }) },
         ]} %}
 
         <div>

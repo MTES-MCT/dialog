@@ -19,6 +19,6 @@
             {{ title }}
         </h2>
 
-        {% include "regulation/fragments/_general_info_form.html.twig" with { form, uuid } only %}
+        {% include "regulation/fragments/_general_info_form.html.twig" with { form, uuid: null } only %}
     </div>
 {% endblock %}

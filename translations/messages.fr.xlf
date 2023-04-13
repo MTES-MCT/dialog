@@ -190,6 +190,10 @@
                 <source>regulation.breadcrumb</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="regulation.detail.breadcrumb">
+                <source>regulation.detail.breadcrumb</source>
+                <target>Arrêté %identifier%</target>
+            </trans-unit>
             <trans-unit id="regulation.create.title">
                 <source>regulation.create.title</source>
                 <target>Nouvel arrêté</target>
