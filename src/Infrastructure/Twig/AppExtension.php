@@ -43,18 +43,27 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     {
         if (!$date) {
             $date = new \DateTimeImmutable('now');
+
+            $date = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
+            $date = $date->setTime(0,0,0,0);
+           
         }
 
         if (!$reference) {
             $reference = new \DateTimeImmutable('now');
+            $reference = \DateTimeImmutable::createFromInterface($reference)->setTimeZone($this->clientTimezone);
         }
-
-        $dateTime = \DateTimeImmutable::createFromInterface($date);
-
+        else{
+            $reference = \DateTimeImmutable::createFromInterface($reference)->setTimeZone($this->clientTimezone);
+            }
+       
+        $dateTime = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
+        
         if ($time) {
             $dateTime = $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
         }
-
+    
         return $reference < $dateTime;
+        
     }
 }
