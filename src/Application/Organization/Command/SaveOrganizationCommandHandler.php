@@ -20,7 +20,6 @@ class SaveOrganizationCommandHandler
     {
         if ($command->organization) {
             $command->organization->update($command->name);
-            $this->OrganizationRepository->save($command->organization);
         } else {
             $this->OrganizationRepository->save(new Organization(
                 uuid: $this->idFactory->make(),

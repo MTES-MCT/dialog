@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Application\User\Query;
 
 use App\Application\User\Query\GetUserByUuidQuery;
@@ -10,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class GetUserByUuidQueryHandlerTest extends TestCase
 {
-    function testGetUser()
+    public function testGetUser()
     {
         $user = $this->createMock(User::class);
         $userRepository = $this->createMock(UserRepositoryInterface::class);
@@ -23,7 +25,6 @@ class GetUserByUuidQueryHandlerTest extends TestCase
         $handler = new GetUserByUuidQueryHandler($userRepository);
         $result = $handler->__invoke(new GetUserByUuidQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
-        $this->assertEquals($user,$result);
+        $this->assertEquals($user, $result);
     }
-    }
-   
+}

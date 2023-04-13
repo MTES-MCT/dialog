@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Application\User\Query;
 
 use App\Application\User\Query\GetUsersQuery;
@@ -10,8 +13,9 @@ use PHPUnit\Framework\TestCase;
 
 class GetUsersQueryHandlerTest extends TestCase
 {
-    function testGetUsers(){
-        //PREMIERE METHODE SANS COUCHE VIEW
+    public function testGetUsers()
+    {
+        // PREMIERE METHODE SANS COUCHE VIEW
         // $user1 = $this->createMock(User::class);
         // $user2 = $this->createMock(User::class);
         // $userRepository = $this->createMock(UserRepositoryInterface::class);
@@ -29,7 +33,7 @@ class GetUsersQueryHandlerTest extends TestCase
         $userRepository
         ->expects(self::once())
         ->method('findUsers')
-        ->willReturn([$user1,$user2]);
+        ->willReturn([$user1, $user2]);
 
         $user1
         ->expects(self::once())
@@ -56,13 +60,13 @@ class GetUsersQueryHandlerTest extends TestCase
         ->expects(self::once())
         ->method('getEmail')
         ->willReturn('florimond.manca@beta.gouv.fr');
-        
+
         $userListView = [
-            new UserListView('d32b3680-95c6-4bc7-9119-3e71157410c2','Claire Lefoulon','claire@beta.gouv.fr' ), new UserListView('7115057a-30ad-4ed9-9c3e-42372834afee','Florimond MANCA','florimond.manca@beta.gouv.fr')
+            new UserListView('d32b3680-95c6-4bc7-9119-3e71157410c2', 'Claire Lefoulon', 'claire@beta.gouv.fr'), new UserListView('7115057a-30ad-4ed9-9c3e-42372834afee', 'Florimond MANCA', 'florimond.manca@beta.gouv.fr'),
         ];
         // dd($userListView);
         $handler = new GetUsersQueryHandler($userRepository);
         $result = $handler->__invoke(new GetUsersQuery());
-        $this->assertEquals($userListView,$result);
+        $this->assertEquals($userListView, $result);
     }
 }

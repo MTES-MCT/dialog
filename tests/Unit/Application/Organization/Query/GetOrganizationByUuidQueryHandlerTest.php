@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Application\Organization\Query;
 
 use App\Application\Organization\Query\GetOrganizationByUuidQuery;
@@ -10,7 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 class GetOrganizationByUuidQueryHandlerTest extends TestCase
 {
-    function testGetOne(){
+    public function testGetOne()
+    {
         $organization = $this->createMock(Organization::class);
         $organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
         $organizationRepository
@@ -22,6 +25,6 @@ class GetOrganizationByUuidQueryHandlerTest extends TestCase
         $handler = new GetOrganizationByUuidQueryHandler($organizationRepository);
         $result = $handler->__invoke(new GetOrganizationByUuidQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
-        $this->assertEquals($organization,$result);
+        $this->assertEquals($organization, $result);
     }
 }

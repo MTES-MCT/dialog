@@ -71,7 +71,6 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     $startDate2,
                     null,
                     'claire.lefoulon@gmail.com',
-                    
                 ),
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',

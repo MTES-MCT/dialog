@@ -63,8 +63,8 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
                         startDate: $start,
                         endDate: $end,
                         email: 'lea.lefoulon@gmail.com',
-                    )
-                )
+                    ),
+                ),
             )
             ->willReturn($createdRegulationOrder);
 

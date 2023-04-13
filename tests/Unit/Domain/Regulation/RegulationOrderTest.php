@@ -59,6 +59,6 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('Arrêté temporaire', $regulationOrder->getDescription());
         $this->assertSame($newStart, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
-        $this->assertSame('lea.lefoulon@gmail.com',$regulationOrder->getEmail());
+        $this->assertSame('lea.lefoulon@gmail.com', $regulationOrder->getEmail());
     }
 }
