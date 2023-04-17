@@ -41,7 +41,7 @@ class LocationAddress
     {
         $matches = [];
 
-        if (!preg_match(self::ADDRESS_PATTERN, $address, $matches, PREG_UNMATCHED_AS_NULL)) {
+        if (!preg_match(self::ADDRESS_PATTERN, $address, $matches)) {
             $message = sprintf("Address '%s' did not have expected format '%s'", $address, self::ADDRESS_PATTERN);
             throw new LocationAddressParsingException($message);
         }
@@ -49,7 +49,7 @@ class LocationAddress
         return new LocationAddress(
             postCode: $matches['postCode'],
             city: $matches['city'],
-            roadName: $matches['roadName'] ? trim($matches['roadName']) : null,
+            roadName: empty($matches['roadName']) ? null : trim($matches['roadName']),
         );
     }
 

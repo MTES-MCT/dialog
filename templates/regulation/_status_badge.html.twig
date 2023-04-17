@@ -2,8 +2,12 @@
 {% set text = 'regulation.status_badge.' ~ status ~ '.text' %}
 {% set hint = 'regulation.status_badge.' ~ status ~ '.hint' %}
 
-<span class="fr-badge fr-badge--{{ type }}" data-testid="status-badge">{{ text|trans }}</span>
+<span class="fr-badge fr-badge--{{ type }}" data-testid="status-badge">
+    {{ text|trans }}
+</span>
 
 {% if withHint|default(false) %}
-    <p class="fr-text--sm fr-text-mention--grey fr-mt-1v">{{ hint|trans }}</p>
+    <p class="fr-text--sm fr-text-mention--grey fr-mt-1v">
+        {{ hint|trans }}
+    </p>
 {% endif %}

@@ -8,7 +8,7 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
 {
-    public function testCreate(): void
+    public function testAdd(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/add');
@@ -17,7 +17,10 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Nouvel arrêté', $crawler->filter('h2')->text());
         $this->assertMetaTitle("Nouvel arrêté - DiaLog", $crawler);
+
         $saveButton = $crawler->selectButton('Continuer');
+        $this->assertSame('_top', $saveButton->attr('data-turbo-frame'));
+
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "F022023";
         $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
@@ -63,7 +66,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame("La date de fin doit être après le 12/02/2023.", $crawler->filter('#general_info_form_endDate_error')->text());
     }
 
-    public function testCreateWithAnAlreadyExistingIdentifier(): void
+    public function testAddWithAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/add');
@@ -83,10 +86,13 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/regulations/add');
+        $crawler = $client->request('GET', '/regulations/add');
         $this->assertResponseStatusCodeSame(200);
 
-        $client->clickLink('Annuler');
+        $link = $crawler->selectLink('Annuler');
+        $this->assertSame('_top', $link->attr('data-turbo-frame'));
+
+        $client->click($link->link());
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_list');
     }

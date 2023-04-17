@@ -48,7 +48,9 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         /** @var SymfonyUser */
         $user = $this->security->getUser();
 
-        $regulationOrderRecord = $uuid ? $this->getRegulationOrderRecord($uuid) : null;
+        $isEdit = $uuid !== null;
+
+        $regulationOrderRecord = $isEdit ? $this->getRegulationOrderRecord($uuid) : null;
 
         if ($uuid && !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
             throw new AccessDeniedHttpException();
@@ -56,8 +58,6 @@ final class SaveGeneralInfoController extends AbstractRegulationController
 
         // TODO: rename to SaveRegulationGeneralInfoCommand
         $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
-
-        $isEdit = $uuid !== null;
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
@@ -78,7 +78,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                 $regulationOrderRecord = $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->router->generate($uuid ? 'fragment_regulations_general_info' : 'app_regulation_detail', [
+                    url: $this->router->generate($isEdit ? 'fragment_regulations_general_info' : 'app_regulation_detail', [
                         'uuid' => $regulationOrderRecord->getUuid(),
                     ]),
                     status: Response::HTTP_SEE_OTHER,
