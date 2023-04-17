@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Form\Regulation\Steps;
+namespace App\Infrastructure\Form\Regulation;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class Step1FormType extends AbstractType
+final class GeneralInfoFormType extends AbstractType
 {
     public function __construct(
         private string $clientTimezone,
@@ -27,16 +27,16 @@ final class Step1FormType extends AbstractType
                 'identifier',
                 TextType::class,
                 options: [
-                    'label' => 'regulation.step1.identifier',
-                    'help' => 'regulation.step1.identifier.help',
+                    'label' => 'regulation.general_info.identifier',
+                    'help' => 'regulation.general_info.identifier.help',
                 ],
             )
             ->add(
                 'startDate',
                 DateType::class,
                 options: [
-                    'label' => 'regulation.step1.start_date',
-                    'help' => 'regulation.step1.start_date.help',
+                    'label' => 'regulation.general_info.start_date',
+                    'help' => 'regulation.general_info.start_date.help',
                     'widget' => 'single_text',
                     'view_timezone' => $this->clientTimezone,
                 ],
@@ -45,8 +45,8 @@ final class Step1FormType extends AbstractType
                 'endDate',
                 DateType::class,
                 options: [
-                    'label' => 'regulation.step1.end_date',
-                    'help' => 'regulation.step1.end_date.help',
+                    'label' => 'regulation.general_info.end_date',
+                    'help' => 'regulation.general_info.end_date.help',
                     'widget' => 'single_text',
                     'view_timezone' => $this->clientTimezone,
                     'required' => false,
@@ -56,8 +56,8 @@ final class Step1FormType extends AbstractType
                 'organization',
                 ChoiceType::class,
                 options: [
-                    'label' => 'regulation.step1.organization',
-                    'help' => 'regulation.step1.organization.help',
+                    'label' => 'regulation.general_info.organization',
+                    'help' => 'regulation.general_info.organization.help',
                     'choices' => $options['organizations'],
                     'choice_value' => 'uuid',
                     'choice_label' => 'name',
@@ -67,15 +67,19 @@ final class Step1FormType extends AbstractType
                 'description',
                 TextareaType::class,
                 options: [
-                    'label' => 'regulation.step1.description',
-                    'help' => 'regulation.step1.description.help',
+                    'label' => 'regulation.general_info.description',
+                    'help' => 'regulation.general_info.description.help',
                 ],
             )
             ->add(
                 'save',
                 SubmitType::class,
                 options: [
-                    'label' => 'common.form.next',
+                    'label' => $options['isEdit'] ? 'common.form.validate' : 'common.form.continue',
+                    'attr' => [
+                        'class' => $options['isEdit'] ? 'fr-btn' : 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line',
+                        'data-turbo-frame' => !$options['isEdit'] ? '_top' : null,
+                    ],
                 ],
             )
         ;
@@ -86,7 +90,9 @@ final class Step1FormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'organizations' => [],
+            'isEdit' => false,
         ]);
         $resolver->setAllowedTypes('organizations', 'array');
+        $resolver->setAllowedTypes('isEdit', 'bool');
     }
 }

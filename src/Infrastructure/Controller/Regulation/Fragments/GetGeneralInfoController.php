@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation;
+namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
@@ -16,24 +16,25 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class RegulationDetailController
+final class GetGeneralInfoController
 {
     public function __construct(
-        private \Twig\Environment $twig,
-        private QueryBusInterface $queryBus,
-        private readonly CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        private readonly \Twig\Environment $twig,
+        private readonly QueryBusInterface $queryBus,
         private readonly Security $security,
+        private readonly CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
     }
 
     #[Route(
-        '/regulations/{uuid}',
-        name: 'app_regulation_detail',
+        '/_fragment/regulations/{uuid}/general_info',
+        name: 'fragment_regulations_general_info',
         requirements: ['uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'],
-        methods: ['GET', 'POST'],
+        methods: 'GET',
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
+        // TODO: use a specific GetRegulationGeneralInfoQuery
         try {
             $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
         } catch (RegulationOrderRecordNotFoundException) {
@@ -49,11 +50,8 @@ final class RegulationDetailController
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/detail.html.twig',
-                context: [
-                    'regulationOrderRecord' => $regulationOrderRecord,
-                    'uuid' => $uuid,
-                ],
+                name: 'regulation/fragments/_general_info.html.twig',
+                context: ['regulationOrderRecord' => $regulationOrderRecord, 'canEdit' => $regulationOrderRecord->status === 'draft'],
             ),
         );
     }

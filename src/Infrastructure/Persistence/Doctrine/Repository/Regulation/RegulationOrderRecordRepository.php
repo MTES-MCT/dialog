@@ -68,7 +68,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select(
                 'roc.uuid',
+                'ro.identifier',
                 'org.uuid as organizationUuid',
+                'org.name as organizationName',
                 'roc.status',
                 'ro.description',
                 'ro.startDate',

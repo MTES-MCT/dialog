@@ -1,4 +1,5 @@
 @import url('../../node_modules/@gouvfr/dsfr/dist/dsfr.min.css');
+@import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css');
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css');
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css');
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css');
@@ -35,6 +36,13 @@ label.required > .fr-x-label-content::after {
   text-align: center;
 }
 
+.fr-x-container--fluid {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+    // No 'overflow: hidden' (contrary to '.fr-container--fluid')
+}
+
 .remixicons {
     font-size: 1.5rem !important; // Override to have the same size as the DSFR. Don't work without !important
 }
@@ -46,35 +54,20 @@ label.required > .fr-x-label-content::after {
     text-align: center;
 }
 
+.fr-text--default-grey {
+    color: var(--text-default-grey);
+}
+
+.fr-text-mention--grey {
+    color: var(--text-mention-grey);
+}
+
 .fr-title--blue-france {
     color: var(--blue-france-sun-113-625);
 }
 
 .fr-background-alt--blue-france {
     background-color: var(--blue-france-975-75);
-}
-
-.summary-card {
-    column-gap: 1.5rem;
-    padding: 1.5rem;
-}
-
-.summary-card__img {
-    order: 0;
-}
-
-.summary-card__content {
-    order: 1;
-    flex: 1;
-}
-
-.summary-card__title {
-    font-size: inherit;
-    margin: 0;
-}
-
-.summary-card__action {
-    order: 2;
 }
 
 .fr-x-autocomplete-wrapper {
@@ -103,4 +96,29 @@ label.required > .fr-x-label-content::after {
             background-color: var(--background-contrast-grey);
         }
     }
+}
+
+.app-card {
+    display: flex;
+    column-gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--background-raised-grey);
+    filter: drop-shadow(var(--raised-shadow));
+    z-index: calc(var(--ground) + 500);
+}
+
+.app-card__content {
+    flex: 1;
+}
+
+.app-card__actions {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    column-gap: 1rem;
+}
+
+.app-background--alt-grey {
+    background-color: var(--background-alt-grey);
 }

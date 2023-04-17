@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Steps;
+namespace App\Application\Regulation\Command;
 
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
@@ -10,7 +10,7 @@ use App\Domain\Geography\GeometryFormatter;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
-final class SaveRegulationStep2CommandHandler
+final class SaveRegulationLocationCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
@@ -28,11 +28,11 @@ final class SaveRegulationStep2CommandHandler
         return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
     }
 
-    public function __invoke(SaveRegulationStep2Command $command): void
+    public function __invoke(SaveRegulationLocationCommand $command): void
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
 
-        // If submitting step 2 for the first time, we create the location
+        // Create location if needed
         if (!$command->location instanceof Location) {
             $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
             $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;

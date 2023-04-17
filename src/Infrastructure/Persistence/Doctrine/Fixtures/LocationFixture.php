@@ -33,8 +33,19 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'POINT(1.35931 44.025665)',
         );
 
+        $location3 = new Location(
+            'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
+            $this->getReference('regulationOrder3'),
+            '75018 Paris 18e Arrondissement',
+            null,
+            null,
+            null,
+            null,
+        );
+
         $manager->persist($location1);
         $manager->persist($location2);
+        $manager->persist($location3);
         $manager->flush();
     }
 

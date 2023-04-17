@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Steps;
+namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrderRecord;
 
-final class SaveRegulationStep2Command implements CommandInterface
+final class SaveRegulationLocationCommand implements CommandInterface
 {
     public ?string $address;
     public ?string $fromHouseNumber;
