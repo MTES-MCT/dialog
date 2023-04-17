@@ -111,4 +111,11 @@ class AppExtensionTest extends TestCase
         $now = new \DateTimeImmutable($now);
         $this->assertSame($result, $this->extension->isFuture($date, $time, $now));
     }
+
+    public function testIsClientPastDay(): void
+    {
+        // Jour précédent => true
+        // Même jour => false
+        // Jour suivant => false
+    }
 }

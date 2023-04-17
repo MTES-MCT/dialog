@@ -19,6 +19,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return [
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
             new \Twig\TwigFunction('app_is_future', [$this, 'isFuture']),
+            new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
         ];
     }
 
@@ -65,5 +66,16 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     
         return $reference < $dateTime;
         
+    }
+
+    public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null)
+    {
+        if (!$today) {
+            $today = (new \DateTimeImmutable('now'))->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+        }
+
+        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        return $day < $today;
     }
 }

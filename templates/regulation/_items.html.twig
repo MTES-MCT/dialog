@@ -15,7 +15,7 @@
         <tbody>
             {% for regulation in pagination.items %}
                 {% set isUpcoming = regulation.startDate ? app_is_future(regulation.startDate) : null %}
-                {% set hasPassed = regulation.endDate ? app_is_future(null,null,regulation.endDate) : null %}
+                {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
 
                 <tr>
                     <td>
