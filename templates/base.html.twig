@@ -38,7 +38,7 @@
     {% if loop.last %}</div>{% endif %}
     {% endfor %}
 
-    <main id="contenu">
+    <main id="contenu" class="{% block page_class %}{% endblock page_class %}">
         {% block body %}{% endblock %}
     </main>
     {% include 'common/footer.html.twig' %}

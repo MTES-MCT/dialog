@@ -10,6 +10,7 @@ use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\LocationAddress;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
@@ -22,14 +23,14 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $organization = $this->createMock(Organization::class);
 
         $location = new LocationView(
-            address: 'Avenue de Fonneuve 82000 Montauban',
+            address: new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
         );
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrder1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'identifier' => 'F01/2023',
-            'address' => $location->address,
+            'address' => 'Avenue de Fonneuve 82000 Montauban',
             'startDate' => $startDate1,
             'endDate' => null,
             'status' => 'draft',

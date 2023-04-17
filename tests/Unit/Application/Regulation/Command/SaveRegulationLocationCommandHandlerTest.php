@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command\Steps;
+namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\GeocoderInterface;
 use App\Domain\Geography\GeometryFormatter;
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep2Command;
-use App\Application\Regulation\Command\Steps\SaveRegulationStep2CommandHandler;
+use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Command\SaveRegulationLocationCommandHandler;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
@@ -16,7 +16,7 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;
 
-final class SaveRegulationStep2CommandHandlerTest extends TestCase
+final class SaveRegulationLocationCommandHandlerTest extends TestCase
 {
     private $address;
     private $fromHouseNumber;
@@ -84,14 +84,14 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->method('save')
             ->with($this->equalTo($location));
 
-        $handler = new SaveRegulationStep2CommandHandler(
+        $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
             $locationRepository,
             $geocoder,
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord);
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
         $command->address = $this->address;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
@@ -141,14 +141,14 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $handler = new SaveRegulationStep2CommandHandler(
+        $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
             $locationRepository,
             $geocoder,
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
         $command->address = $this->address;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
@@ -186,14 +186,14 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $handler = new SaveRegulationStep2CommandHandler(
+        $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
             $locationRepository,
             $geocoder,
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
         $command->address = $this->address;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
@@ -257,14 +257,14 @@ final class SaveRegulationStep2CommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('save');
 
-        $handler = new SaveRegulationStep2CommandHandler(
+        $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
             $locationRepository,
             $geocoder,
             $geometryFormatter,
         );
 
-        $command = new SaveRegulationStep2Command($this->regulationOrderRecord, $location);
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
         $command->address = $this->address;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;

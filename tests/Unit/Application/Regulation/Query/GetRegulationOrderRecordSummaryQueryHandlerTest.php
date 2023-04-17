@@ -10,6 +10,7 @@ use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\LocationAddress;
 use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
@@ -18,18 +19,20 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
     {
         return [
             [
-                new DetailLocationView(
-                    address: 'Avenue de Fonneuve 82000 Montauban',
-                    fromHouseNumber: '695',
-                    toHouseNumber: '253',
-                ),
+                [
+                    'address' => 'Avenue de Fonneuve 82000 Montauban',
+                    'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
+                    'fromHouseNumber' => '695',
+                    'toHouseNumber' => '253',
+                ],
             ],
             [
-                new DetailLocationView(
-                    address: 'Avenue de Fonneuve 82000 Montauban',
-                    fromHouseNumber: null,
-                    toHouseNumber: null,
-                ),
+                [
+                    'address' => 'Avenue de Fonneuve 82000 Montauban',
+                    'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
+                    'fromHouseNumber' => null,
+                    'toHouseNumber' => null,
+                ],
             ],
         ];
     }
@@ -37,7 +40,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
     /**
      * @dataProvider provideGetOne
      */
-    public function testGetOne(DetailLocationView $location): void
+    public function testGetOne(array $location): void
     {
 
         $startDate = new \DateTime('2022-12-07');
@@ -47,14 +50,16 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
         $regulationOrderRecord = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            'identifier' => 'F01/2023',
             'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+            'organizationName' => 'DiaLog',
             'status' => 'draft',
             'description' => 'Description 1',
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'address' => $location->address,
-            'fromHouseNumber' => $location->fromHouseNumber,
-            'toHouseNumber' => $location->toHouseNumber,
+            'address' => $location['address'],
+            'fromHouseNumber' => $location['fromHouseNumber'],
+            'toHouseNumber' => $location['toHouseNumber'],
         ];
 
         $regulationOrderRecordRepository
@@ -68,15 +73,17 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $this->assertEquals(
             new RegulationOrderRecordSummaryView(
                 '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                'F01/2023',
                 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+                'DiaLog',
                 'draft',
                 'Description 1',
                 $startDate,
                 $endDate,
                 new DetailLocationView(
-                    $location->address,
-                    $location->fromHouseNumber,
-                    $location->toHouseNumber,
+                    $location['locationAddress'],
+                    $location['fromHouseNumber'],
+                    $location['toHouseNumber'],
                 ),
             ),
             $regulationOrders,
@@ -89,7 +96,9 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
         $regulationOrderRecord = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            'identifier' => 'F01/2023',
             'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+            'organizationName' => 'DiaLog',
             'status' => 'draft',
             'description' => 'Description 1',
             'startDate' => null,
@@ -110,7 +119,9 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $this->assertEquals(
             new RegulationOrderRecordSummaryView(
                 '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                'F01/2023',
                 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+                'DiaLog',
                 'draft',
                 'Description 1',
                 null,

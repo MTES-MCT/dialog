@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation\Steps;
+namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationOrderCommand;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\Form\Regulation\Steps\Step1FormType;
+use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -17,39 +18,59 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class Step1Controller extends AbstractRegulationController
+final class SaveGeneralInfoController extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
-        private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private Security $security,
         private TranslatorInterface $translator,
+        private RouterInterface $router,
+        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
     ) {
         parent::__construct($queryBus);
     }
 
     #[Route(
-        '/regulations/form/{uuid}',
-        name: 'app_regulations_steps_1',
+        '/_fragment/regulations/general_info/form/{uuid}',
+        name: 'fragment_regulations_general_info_form',
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request, string $uuid = null): Response
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-        $regulationOrderRecord = $uuid ? $this->getRegulationOrderRecord($uuid) : null;
 
+        $isEdit = $uuid !== null;
+
+        $regulationOrderRecord = $isEdit ? $this->getRegulationOrderRecord($uuid) : null;
+
+        if ($uuid && !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
+            throw new AccessDeniedHttpException();
+        }
+
+        // TODO: rename to SaveRegulationGeneralInfoCommand
         $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
-        $options = ['organizations' => [$user->getOrganization()]];
-        $form = $this->formFactory->create(Step1FormType::class, $command, $options);
+
+        $form = $this->formFactory->create(
+            type: GeneralInfoFormType::class,
+            data: $command,
+            options: [
+                'organizations' => [$user->getOrganization()],
+                'isEdit' => $isEdit,
+                'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
+            ],
+        );
+
         $form->handleRequest($request);
+
         $hasCommandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -57,7 +78,7 @@ final class Step1Controller extends AbstractRegulationController
                 $regulationOrderRecord = $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->router->generate('app_regulations_steps_2', [
+                    url: $this->router->generate($isEdit ? 'fragment_regulations_general_info' : 'app_regulation_detail', [
                         'uuid' => $regulationOrderRecord->getUuid(),
                     ]),
                     status: Response::HTTP_SEE_OTHER,
@@ -66,7 +87,7 @@ final class Step1Controller extends AbstractRegulationController
                 $hasCommandFailed = true;
                 $form->get('identifier')->addError(
                     new FormError(
-                        $this->translator->trans('regulation.step1.error.identifier', [], 'validators'),
+                        $this->translator->trans('regulation.general_info.error.identifier', [], 'validators'),
                     ),
                 );
             }
@@ -74,10 +95,11 @@ final class Step1Controller extends AbstractRegulationController
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/steps/step1.html.twig',
+                name: 'regulation/fragments/_general_info_form.html.twig',
                 context: [
                     'form' => $form->createView(),
-                    'stepNumber' => 1,
+                    'isEdit' => $isEdit,
+                    'uuid' => $uuid,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $hasCommandFailed

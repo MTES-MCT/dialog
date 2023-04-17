@@ -10,7 +10,7 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
 {
     public function testStreetAutoComplete(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/address-completions?search=Rue Eugène Berthoud');
 
         $this->assertResponseStatusCodeSame(200);
@@ -24,7 +24,7 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
 
     public function testMunicipalityAutoComplete(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/address-completions?search=Le Mesnil');
 
         $this->assertResponseStatusCodeSame(200);
@@ -39,10 +39,17 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
 
     public function testBadRequest(): void
     {
-        $client = static::createClient();
+        $client = $this->login();
         $client->request('GET', '/_fragment/address-completions');
         $client->getResponse();
 
         $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/_fragment/address-completions?search=Test');
+        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

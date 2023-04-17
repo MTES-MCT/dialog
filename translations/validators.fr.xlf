@@ -2,12 +2,8 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" datatype="plaintext" original="file.ext">
         <body>
-            <trans-unit id="regulation.step2.postal_code.error.invalid">
-                <source>regulation.step2.postal_code.error.invalid</source>
-                <target>Cette valeur n'est pas valide. Un code postal est composé de 5 chiffres.</target>
-            </trans-unit>
-            <trans-unit id="regulation.step2.error.geocoding_failed">
-                <source>regulation.step2.error.geocoding_failed</source>
+            <trans-unit id="regulation.location.error.geocoding_failed">
+                <source>regulation.location.error.geocoding_failed</source>
                 <target>En raison d'un problème technique, le traitement de cette adresse a échoué. Nous travaillons à rémédier à ce problème dès que possible.</target>
             </trans-unit>
             <trans-unit id="invalid.page_or_page_size">
@@ -25,6 +21,10 @@
             <trans-unit id="regulation.step1.error.identifier">
                 <source>regulation.step1.error.identifier</source>
                 <target>L'identifiant est déjà utilisé sur un autre arrêté.</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.error.identifier">
+                <source>regulation.general_info.error.identifier</source>
+                <target>Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.</target>
             </trans-unit>
         </body>
     </file>

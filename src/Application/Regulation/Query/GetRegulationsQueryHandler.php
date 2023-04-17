@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Query;
 use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
+use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationsQueryHandler
@@ -36,7 +37,7 @@ final class GetRegulationsQueryHandler
                 $regulation['identifier'],
                 $regulation['status'],
                 $regulation['address'] ? new LocationView(
-                    $regulation['address'],
+                    LocationAddress::fromString($regulation['address']),
                 ) : null,
                 $regulation['startDate'],
                 $regulation['endDate'],
