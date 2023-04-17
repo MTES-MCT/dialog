@@ -16,7 +16,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "FO1/2023";
         $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
@@ -43,7 +43,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "FIOIUS";
         $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
@@ -71,7 +71,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = str_repeat('a', 61);
         $form["general_info_form[description]"] = str_repeat('a', 256);

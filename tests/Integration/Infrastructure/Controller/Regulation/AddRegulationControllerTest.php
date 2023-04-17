@@ -17,7 +17,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Nouvel arrêté', $crawler->filter('h2')->text());
         $this->assertMetaTitle("Nouvel arrêté - DiaLog", $crawler);
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "F022023";
         $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
@@ -36,7 +36,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/add');
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form["general_info_form[startDate]"] = "";
         $crawler = $client->submit($form);
@@ -51,7 +51,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/add');
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "F022030";
         $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
@@ -68,7 +68,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/add');
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = "FO1/2023";
         $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
@@ -97,7 +97,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations/add');
         $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form["general_info_form[identifier]"] = str_repeat('a', 61);
         $form["general_info_form[description]"] = str_repeat('a', 256);

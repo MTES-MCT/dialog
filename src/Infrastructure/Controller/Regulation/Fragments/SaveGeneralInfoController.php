@@ -57,11 +57,14 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         // TODO: rename to SaveRegulationGeneralInfoCommand
         $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
 
+        $isEdit = $uuid !== null;
+
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
             data: $command,
             options: [
                 'organizations' => [$user->getOrganization()],
+                'isEdit' => $isEdit,
                 'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
             ],
         );
@@ -95,6 +98,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                 name: 'regulation/fragments/_general_info_form.html.twig',
                 context: [
                     'form' => $form->createView(),
+                    'isEdit' => $isEdit,
                     'uuid' => $uuid,
                 ],
             ),

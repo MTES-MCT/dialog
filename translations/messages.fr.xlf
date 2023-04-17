@@ -114,9 +114,13 @@
                 <source>common.actions</source>
                 <target>Actions</target>
             </trans-unit>
-            <trans-unit id="common.form.next">
-                <source>common.form.next</source>
-                <target>Suivant</target>
+            <trans-unit id="common.form.continue">
+                <source>common.form.continue</source>
+                <target>Continuer</target>
+            </trans-unit>
+            <trans-unit id="common.form.validate">
+                <source>common.form.validate</source>
+                <target>Valider</target>
             </trans-unit>
             <trans-unit id="common.date.from">
                 <source>common.date.from</source>
@@ -150,13 +154,21 @@
                 <source>regulation.list.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
-            <trans-unit id="regulation.status.draft">
-                <source>regulation.status.draft</source>
+            <trans-unit id="regulation.status_badge.draft.text">
+                <source>regulation.status_badge.draft.text</source>
                 <target>Brouillon</target>
             </trans-unit>
-            <trans-unit id="regulation.status.published">
-                <source>regulation.status.published</source>
+            <trans-unit id="regulation.status_badge.draft.hint">
+                <source>regulation.status_badge.draft.hint</source>
+                <target>Visible par votre organisation seulement</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.published.text">
+                <source>regulation.status_badge.published.text</source>
                 <target>Publié</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.published.hint">
+                <source>regulation.status_badge.published.hint</source>
+                <target>Données envoyées aux GPS</target>
             </trans-unit>
             <trans-unit id="regulation.status">
                 <source>regulation.status</source>
@@ -252,7 +264,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.address">
                 <source>regulation.location.address</source>
-                <target>Adresse</target>
+                <target>Voie ou ville</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.address.help">
+                <source>regulation.location.address.help</source>
+                <target>Indiquez la voie concernée et la ville. Si la restriction s'applique à toute la ville, indiquez la ville uniquement.</target>
             </trans-unit>
             <trans-unit id="regulation.location.from_house_number">
                 <source>regulation.location.from_house_number</source>

@@ -15,7 +15,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $crawler = $client->submit($form);
@@ -30,7 +30,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
 
@@ -49,7 +49,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
         $form['location_form[fromHouseNumber]'] = '15';
@@ -70,7 +70,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $client->submit($form);
@@ -87,7 +87,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/location/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
         $form['location_form[fromHouseNumber]'] = '15';
@@ -131,7 +131,7 @@ final class SaveRegulationLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/location/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
         $this->assertResponseStatusCodeSame(200);
 
-        $saveButton = $crawler->selectButton('Suivant');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['location_form[address]'] = str_repeat('a', 256);
         $form['location_form[fromHouseNumber]'] = str_repeat('a', 9);

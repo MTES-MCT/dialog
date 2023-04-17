@@ -19,6 +19,7 @@ final class LocationFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.address',
+                    'help' => 'regulation.location.address.help',
                 ],
             )
             ->add(
@@ -41,7 +42,7 @@ final class LocationFormType extends AbstractType
                 'save',
                 SubmitType::class,
                 options: [
-                    'label' => 'common.form.next',
+                    'label' => 'common.form.validate',
                 ],
             )
         ;
