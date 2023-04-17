@@ -9,6 +9,7 @@ use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\RoadAddress;
 
 final class GetRegulationOrderRecordSummaryQueryHandler
 {
