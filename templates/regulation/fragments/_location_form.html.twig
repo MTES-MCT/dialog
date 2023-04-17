@@ -1,9 +1,9 @@
-<turbo-frame id="block_location">
+{% set frame = uuid ? "block_location_" ~ uuid : 'block_location' %}
+<turbo-frame id="{{ frame }}">
     <div class="app-card fr-mt-3w">
         <div class="app-card__icon">
             <span class="fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
         </div>
-
         <div class="app-card__content">
             <h3 class="fr-h4">
                 {{ 'regulation.location'|trans }}
@@ -20,9 +20,7 @@
                 {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
                 {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
 
-                <a href="{{ path('fragment_regulations_location', { uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
-                    {{ "common.cancel"|trans }}
-                </a>
+                <a href="" class="fr-btn fr-btn--tertiary fr-mr-3w">{{ "common.cancel"|trans }}</a>
                 {{ form_widget(form.save, {attr: {class: 'fr-btn'}}) }}
             {{ form_end(form) }}
         </div>

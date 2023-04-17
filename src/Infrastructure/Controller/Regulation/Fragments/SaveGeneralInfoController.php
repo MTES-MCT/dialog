@@ -29,13 +29,13 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
-        private Security $security,
         private TranslatorInterface $translator,
         private RouterInterface $router,
-        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        Security $security,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
     ) {
-        parent::__construct($queryBus);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(
@@ -47,14 +47,8 @@ final class SaveGeneralInfoController extends AbstractRegulationController
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-
         $isEdit = $uuid !== null;
-
         $regulationOrderRecord = $isEdit ? $this->getRegulationOrderRecord($uuid) : null;
-
-        if ($uuid && !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
-            throw new AccessDeniedHttpException();
-        }
 
         // TODO: rename to SaveRegulationGeneralInfoCommand
         $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
@@ -70,7 +64,6 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         );
 
         $form->handleRequest($request);
-
         $hasCommandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -9,7 +9,6 @@
 {% block page_class %}app-background--alt-grey{% endblock %}
 
 {% block body %}
-    {% set isDraft = regulationOrderRecord.status == 'draft' %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
@@ -18,18 +17,25 @@
 
         <div>
             <h2 id="regulation-detail">
-                {{ title }}                
+                {{ title }}
             </h2>
 
             <div class="fr-x-container--fluid">
                 <div class="fr-grid-row">
                     <div class="fr-col">
-                        {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
+                        {% include "regulation/fragments/_general_info.html.twig" with { regulationOrderRecord } only %}
 
                         <h3 class="fr-h5 fr-text--default-grey fr-mt-5w">
                             {{ 'regulation.locations'|trans }}
                         </h3>
-                        {% include "regulation/fragments/_location.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
+                        {% for location in regulationOrderRecord.locations %}
+                            {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord } only %}
+                        {% endfor %}
+                        <turbo-frame id="block_location">
+                            <a href="{{ path('fragment_regulations_location_create', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line fr-mt-3w">
+                                {{ 'regulation.location.add'|trans }}
+                            </a>
+                        </turbo-frame>
                     </div>
 
                     <aside class="fr-col-3 fr-ml-3w">

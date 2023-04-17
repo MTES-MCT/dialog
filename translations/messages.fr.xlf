@@ -70,6 +70,10 @@
                 <source>common.save</source>
                 <target>Sauvegarder</target>
             </trans-unit>
+            <trans-unit id="common.validate">
+                <source>common.validate</source>
+                <target>Valider</target>
+            </trans-unit>
             <trans-unit id="common.update">
                 <source>common.update</source>
                 <target>Modifier</target>
@@ -261,6 +265,10 @@
             <trans-unit id="regulation.location.address.results_label">
                 <source>regulation.location.address.results_label</source>
                 <target>Adresses suggérées</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.add">
+                <source>regulation.location.add</source>
+                <target>Ajouter une localisation</target>
             </trans-unit>
             <trans-unit id="regulation.location.address">
                 <source>regulation.location.address</source>

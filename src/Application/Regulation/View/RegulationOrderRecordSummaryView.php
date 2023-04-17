@@ -17,12 +17,17 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
         public readonly string $description,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
-        public readonly ?DetailLocationView $location,
+        public readonly ?array $locations,
     ) {
     }
 
     public function getOrganizationUuid(): ?string
     {
         return $this->organizationUuid;
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft';
     }
 }

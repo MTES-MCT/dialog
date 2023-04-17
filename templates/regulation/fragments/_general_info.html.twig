@@ -27,7 +27,7 @@
             </ul>
         </div>
 
-        {% if canEdit %}
+        {% if regulationOrderRecord.isDraft %}
             <ul class="app-card__actions">
                 <li>
                     <a href="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">

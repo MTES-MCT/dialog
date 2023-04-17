@@ -8,9 +8,10 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
-use App\Application\Regulation\Query\Location\GetLocationByRegulationOrderQuery;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\LocationFormType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,49 +21,47 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class SaveLocationController extends AbstractRegulationController
+final class CreateLocationController extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
-        private QueryBusInterface $queryBus,
         private TranslatorInterface $translator,
+        QueryBusInterface $queryBus,
+        Security $security,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
-        parent::__construct($queryBus);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(
-        '/_fragment/regulations/location/form/{uuid}',
-        name: 'fragment_regulations_location_form',
+        '/_fragment/regulations/{uuid}/location',
+        name: 'fragment_regulations_location_create',
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $command = SaveRegulationLocationCommand::create($regulationOrderRecord);
 
-        $location = $this->queryBus->handle(
-            new GetLocationByRegulationOrderQuery($regulationOrderRecord->getRegulationOrder()->getUuid()),
-        );
-
-        $command = SaveRegulationLocationCommand::create($regulationOrderRecord, $location);
-
-        $form = $this->formFactory->create(
-            type: LocationFormType::class,
-            data: $command,
-            options: [
-                'action' => $this->router->generate('fragment_regulations_location_form', ['uuid' => $uuid]),
-            ],
-        );
-
+        $form = $this->formFactory->create(LocationFormType::class, $command, [
+            'action' => $this->router->generate('fragment_regulations_location_create', ['uuid' => $uuid]),
+        ]);
         $form->handleRequest($request);
+        $commandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $commandFailed = false;
-
             try {
                 $this->commandBus->handle($command);
+
+                return new RedirectResponse(
+                    url: $this->router->generate('app_regulation_detail', [
+                        'uuid' => $regulationOrderRecord->getUuid(),
+                    ]),
+                    status: Response::HTTP_SEE_OTHER,
+                );
             } catch (GeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
@@ -72,13 +71,6 @@ final class SaveLocationController extends AbstractRegulationController
                     ),
                 );
             }
-
-            if (!$commandFailed) {
-                return new RedirectResponse(
-                    url: $this->router->generate('fragment_regulations_location', ['uuid' => $uuid]),
-                    status: Response::HTTP_SEE_OTHER,
-                );
-            }
         }
 
         return new Response(
@@ -86,10 +78,13 @@ final class SaveLocationController extends AbstractRegulationController
                 name: 'regulation/fragments/_location_form.html.twig',
                 context: [
                     'form' => $form->createView(),
-                    'uuid' => $uuid,
+                    'regulationOrderRecord' => $regulationOrderRecord,
+                    'uuid' => null,
                 ],
             ),
-            status: $form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK,
+            status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed
+                ? Response::HTTP_UNPROCESSABLE_ENTITY
+                : Response::HTTP_OK,
         );
     }
 }

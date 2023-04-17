@@ -28,6 +28,11 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface
         return $this->status;
     }
 
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft';
+    }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;

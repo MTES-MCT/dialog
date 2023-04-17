@@ -9,7 +9,6 @@ use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\Regulation\RoadAddress;
 
 final class GetRegulationOrderRecordSummaryQueryHandler
 {
@@ -28,7 +27,22 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             throw new RegulationOrderRecordNotFoundException();
         }
 
-        $hasLocation = !empty($row['address']);
+        $locations = [];
+
+        foreach ($row as $regulationOrder) {
+            if (!$regulationOrder['locationUuid']) {
+                continue;
+            }
+
+            $locations[] = new DetailLocationView(
+                $regulationOrder['locationUuid'],
+                LocationAddress::fromString($regulationOrder['address']),
+                $regulationOrder['fromHouseNumber'],
+                $regulationOrder['toHouseNumber'],
+            );
+        }
+
+        $row = current($row);
 
         return new RegulationOrderRecordSummaryView(
             $row['uuid'],
@@ -39,11 +53,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             $row['description'],
             $row['startDate'],
             $row['endDate'],
-            $hasLocation ? new DetailLocationView(
-                LocationAddress::fromString($row['address']),
-                $row['fromHouseNumber'],
-                $row['toHouseNumber'],
-            ) : null,
+            $locations,
         );
     }
 }

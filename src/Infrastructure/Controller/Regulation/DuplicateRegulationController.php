@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationCannotBeDuplicated;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,12 +29,13 @@ final class DuplicateRegulationController extends AbstractRegulationController
     public function __construct(
         private CommandBusInterface $commandBus,
         private RouterInterface $router,
-        private Security $security,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private TranslatorInterface $translator,
+        Security $security,
         QueryBusInterface $queryBus,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
-        parent::__construct($queryBus);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(

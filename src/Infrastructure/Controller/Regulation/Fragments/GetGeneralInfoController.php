@@ -51,7 +51,9 @@ final class GetGeneralInfoController
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_general_info.html.twig',
-                context: ['regulationOrderRecord' => $regulationOrderRecord, 'canEdit' => $regulationOrderRecord->status === 'draft'],
+                context: [
+                    'regulationOrderRecord' => $regulationOrderRecord,
+                ],
             ),
         );
     }
