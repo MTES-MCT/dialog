@@ -31,7 +31,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageOne = $client->request('GET', '/regulations?pageSize=1');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
- 
+
         $pageOneTemporaryRows = $pageOne->filter('#temporary-panel tbody > tr');
         $this->assertSame(1, $pageOneTemporaryRows->count()); // One item per page
 
@@ -70,7 +70,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageThree = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=3');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
- 
+
         $pageThreeTemporaryRows = $pageThree->filter('#temporary-panel tbody > tr');
         $this->assertSame(1, $pageThreeTemporaryRows->count());
 
