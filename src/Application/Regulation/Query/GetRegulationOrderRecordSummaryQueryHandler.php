@@ -8,6 +8,7 @@ use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\LocationAddress;
 
 final class GetRegulationOrderRecordSummaryQueryHandler
 {
@@ -38,7 +39,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             $row['startDate'],
             $row['endDate'],
             $hasLocation ? new DetailLocationView(
-                $row['address'],
+                LocationAddress::fromString($row['address']),
                 $row['fromHouseNumber'],
                 $row['toHouseNumber'],
             ) : null,

@@ -15,12 +15,12 @@
 
             <div class="app-card__content">
                 <h3 class="fr-h4">
-                    {{ loc.roadName }}
+                    {{ loc.address.roadName }}
                 </h3>
                 <ul class="fr-ml-1w fr-my-0">
-                    <li>{{ loc.city }} ({{ loc.postCode }})</li>
+                    <li>{{ loc.address.city }} ({{ loc.address.postCode }})</li>
                     <li>
-                        {{ loc.roadName }}
+                        {{ loc.address.roadName }}
 
                         {% if loc.fromHouseNumber and loc.toHouseNumber %}
                             - {{ 'regulation.location.house_number_from_to'|trans({ '%from%': loc.fromHouseNumber, '%to%': loc.toHouseNumber }) }}

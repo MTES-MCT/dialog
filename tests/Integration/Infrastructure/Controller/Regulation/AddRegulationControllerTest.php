@@ -6,12 +6,12 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class CreateRegulationControllerTest extends AbstractWebTestCase
+final class AddRegulationControllerTest extends AbstractWebTestCase
 {
     public function testCreate(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form');
+        $crawler = $client->request('GET', '/regulations/add');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -34,7 +34,7 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
     public function testEmptyData(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form');
+        $crawler = $client->request('GET', '/regulations/add');
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
@@ -49,7 +49,7 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
     public function testBadPeriod(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form');
+        $crawler = $client->request('GET', '/regulations/add');
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
@@ -66,7 +66,7 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
     public function testCreateWithAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form');
+        $crawler = $client->request('GET', '/regulations/add');
 
         $saveButton = $crawler->selectButton('Suivant');
         $form = $saveButton->form();
@@ -83,7 +83,7 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/regulations/form');
+        $client->request('GET', '/regulations/add');
         $this->assertResponseStatusCodeSame(200);
 
         $client->clickLink('Annuler');
@@ -94,7 +94,7 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
     public function testFieldsTooLong(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/form');
+        $crawler = $client->request('GET', '/regulations/add');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Suivant');
@@ -111,7 +111,7 @@ final class CreateRegulationControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations/form');
+        $client->request('GET', '/regulations/add');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

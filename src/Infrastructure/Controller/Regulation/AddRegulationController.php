@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class CreateRegulationController
+final class AddRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -25,8 +25,8 @@ final class CreateRegulationController
     }
 
     #[Route(
-        '/regulations/form',
-        name: 'app_regulation_create',
+        '/regulations/add',
+        name: 'app_regulation_add',
         methods: ['GET', 'POST'],
     )]
     public function __invoke(Request $request): Response

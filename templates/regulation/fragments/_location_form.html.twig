@@ -8,7 +8,23 @@
             <h3 class="fr-h4">
                 {{ 'regulation.location'|trans }}
             </h3>
-            {% include 'regulation/fragments/_location_form_content.html.twig' with { form, uuid } only %}
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.address, {
+                    group_class: 'fr-input-group',
+                    widget_class: 'fr-input',
+                    autocomplete: true,
+                    autocomplete_url: path('fragment_address_completion'),
+                    autocomplete_results_label: 'regulation.location.address.results_label'|trans,
+                }) }}
+                {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+                {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+
+                <a href="{{ path('fragment_regulations_location', { uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                    {{ "common.cancel"|trans }}
+                </a>
+                {{ form_widget(form.save, {attr: {class: 'fr-btn'}}) }}
+            {{ form_end(form) }}
         </div>
     </div>
 </turbo-frame>
