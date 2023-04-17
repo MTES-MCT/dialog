@@ -8,12 +8,12 @@ use App\Domain\Regulation\Exception\LocationAddressParsingException;
 
 class LocationAddress
 {
-    private const ADDRESS_PATTERN = "/(?<roadName>[^\d,]+),? (?<postCode>\d{5}) (?<city>\D+)/i";
+    private const ADDRESS_PATTERN = "/((?<roadName>[^\d,]+),? )?(?<postCode>\d{5}) (?<city>.+)/i";
 
     public function __construct(
         private string $postCode,
         private string $city,
-        private string $roadName,
+        private string|null $roadName,
     ) {
     }
 
@@ -27,7 +27,7 @@ class LocationAddress
         return $this->city;
     }
 
-    public function getRoadName(): string
+    public function getRoadName(): string|null
     {
         return $this->roadName;
     }
@@ -41,7 +41,7 @@ class LocationAddress
     {
         $matches = [];
 
-        if (!preg_match(self::ADDRESS_PATTERN, $address, $matches)) {
+        if (!preg_match(self::ADDRESS_PATTERN, $address, $matches, PREG_UNMATCHED_AS_NULL)) {
             $message = sprintf("Address '%s' did not have expected format '%s'", $address, self::ADDRESS_PATTERN);
             throw new LocationAddressParsingException($message);
         }
@@ -49,7 +49,16 @@ class LocationAddress
         return new LocationAddress(
             postCode: $matches['postCode'],
             city: $matches['city'],
-            roadName: trim($matches['roadName']),
+            roadName: $matches['roadName'] ? trim($matches['roadName']) : null,
         );
+    }
+
+    public function __toString(): string
+    {
+        if ($this->roadName) {
+            return sprintf('%s, %s %s', $this->roadName, $this->postCode, $this->city);
+        } else {
+            return sprintf('%s %s', $this->postCode, $this->city);
+        }
     }
 }

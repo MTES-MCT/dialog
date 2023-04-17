@@ -23,7 +23,21 @@ final class GetRegulationLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/location/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $crawler->filter('a')->link()->getUri());
     }
 
-    public function testGetPublished(): void
+    public function testGetCityOnly(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/location/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $this->assertSame('Paris 18e Arrondissement', $crawler->filter('h3')->text());
+        $this->assertSame('Paris 18e Arrondissement (75018)', $crawler->filter('li')->eq(0)->text());
+        $this->assertSame('Circulation interdite pour tous les véhicules', $crawler->filter('li')->eq(1)->text());
+        $this->assertSame('http://localhost/_fragment/regulations/location/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', $crawler->filter('a')->link()->getUri());
+    }
+
+    public function testIfPublishedThenCannotEdit(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/location/3ede8b1a-1816-4788-8510-e08f45511cb5');
@@ -31,7 +45,7 @@ final class GetRegulationLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame(0, $crawler->filter('a')->count()); // Cannot edit
+        $this->assertSame(0, $crawler->filter('a')->count());
     }
 
     public function testRegulationDoesNotExist(): void
