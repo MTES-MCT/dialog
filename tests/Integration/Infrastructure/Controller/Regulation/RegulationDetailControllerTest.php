@@ -34,7 +34,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Savenay (44260)', $location->filter('li')->eq(0)->text());
         $this->assertSame('Route du Grand Brossais - du n° 15 au n° 37bis', $location->filter('li')->eq(1)->text());
         $this->assertSame('Circulation interdite pour tous les véhicules', $location->filter('li')->eq(2)->text());
-        $this->assertSame('http://localhost/_fragment/regulations/location/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $location->filter('a')->link()->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/edit', $location->filter('a')->link()->getUri());
 
         // Actions
         $duplicateBtn = $crawler->selectButton('Dupliquer');

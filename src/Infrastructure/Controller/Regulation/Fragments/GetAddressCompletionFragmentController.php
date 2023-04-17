@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation;
+namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\GeocoderInterface;
 use Symfony\Component\HttpFoundation\Request;

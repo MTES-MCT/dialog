@@ -30,8 +30,10 @@ final class RegulationOrderRecordTest extends TestCase
         $this->assertSame($organization, $regulationOrderRecord->getOrganization());
         $this->assertSame($createdAt, $regulationOrderRecord->getCreatedAt());
         $this->assertSame(RegulationOrderRecordStatusEnum::PUBLISHED, $regulationOrderRecord->getStatus());
+        $this->assertFalse($regulationOrderRecord->isDraft());
 
         $regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::DRAFT);
         $this->assertSame(RegulationOrderRecordStatusEnum::DRAFT, $regulationOrderRecord->getStatus());
+        $this->assertTrue($regulationOrderRecord->isDraft());
     }
 }

@@ -23,12 +23,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         return $location;
     }
 
-    public function findOneByRegulationOrderUuid(string $uuid): ?Location
+    public function findOneByUuid(string $uuid): ?Location
     {
         return $this->createQueryBuilder('loc')
-            ->where('ro.uuid = :uuid')
+            ->where('loc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
-            ->innerJoin('loc.regulationOrder', 'ro')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

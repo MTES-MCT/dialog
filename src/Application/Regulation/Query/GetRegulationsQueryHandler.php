@@ -25,6 +25,7 @@ final class GetRegulationsQueryHandler
             $query->page,
             $query->isPermanent,
         );
+
         $totalItems = $this->repository->countRegulationsByOrganization(
             $query->organization,
             $query->isPermanent,
