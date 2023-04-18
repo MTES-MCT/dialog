@@ -9,7 +9,6 @@ use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -29,7 +28,7 @@ final class AddRegulationController
         name: 'app_regulation_add',
         methods: ['GET', 'POST'],
     )]
-    public function __invoke(Request $request): Response
+    public function __invoke(): Response
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
