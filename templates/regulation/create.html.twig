@@ -11,7 +11,7 @@
 {% block body %}
     <div class="fr-container fr-py-5w" aria-labelledby="add-title">
         {% include "common/breadcrumb.html.twig" with { items: [
-            { title: 'regulation.breadcrumb', path: 'app_regulations_list'},
+            { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
             { title },
         ]} %}
 

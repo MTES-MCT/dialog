@@ -4,11 +4,11 @@
             {% for item in items %}
                 {% if loop.last %}
                     <li>
-                        <a class="fr-breadcrumb__link" aria-current="page">{{ item.title|trans }}</a>
+                        <a class="fr-breadcrumb__link" aria-current="page">{{ item.title }}</a>
                     </li>
                 {% else %}
                     <li>
-                        <a class="fr-breadcrumb__link" href="{{ path(item.path) }}">{{ item.title|trans }}</a>
+                        <a class="fr-breadcrumb__link" href="{{ path(item.path) }}">{{ item.title }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
