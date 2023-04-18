@@ -5,52 +5,56 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
+use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetLocationController
+final class GetLocationController extends AbstractRegulationController
 {
     public function __construct(
         private readonly \Twig\Environment $twig,
-        private readonly QueryBusInterface $queryBus,
-        private readonly Security $security,
-        private readonly CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        Security $security,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        QueryBusInterface $queryBus,
     ) {
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(
-        '/_fragment/regulations/location/{uuid}',
+        '/_fragment/regulations/{regulationOrderRecordUuid}/location/{uuid}',
         name: 'fragment_regulations_location',
         methods: ['GET'],
+        requirements: [
+            'regulationOrderRecordUuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+            'uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+        ],
     )]
-    public function __invoke(Request $request, string $uuid): Response
+    public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
     {
-        // TODO: use a specific GetRegulationLocationQuery
-        try {
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
-        } catch (RegulationOrderRecordNotFoundException) {
+        $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+
+        $location = $this->queryBus->handle(new GetLocationByUuidQuery($uuid));
+        if (!$location) {
             throw new NotFoundHttpException();
         }
 
-        /** @var SymfonyUser */
-        $user = $this->security->getUser();
-
-        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
+        if ($location->getRegulationOrder() !== $regulationOrderRecord->getRegulationOrder()) {
             throw new AccessDeniedHttpException();
         }
 
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_location.html.twig',
-                context: ['regulationOrderRecord' => $regulationOrderRecord, 'canEdit' => $regulationOrderRecord->status === 'draft'],
+                context: [
+                    'location' => DetailLocationView::fromEntity($location),
+                    'regulationOrderRecord' => $regulationOrderRecord,
+                ],
             ),
         );
     }

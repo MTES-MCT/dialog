@@ -6,10 +6,10 @@ namespace App\Application\Regulation\Query\Location;
 
 use App\Application\QueryInterface;
 
-final class GetLocationByRegulationOrderQuery implements QueryInterface
+final class GetLocationByUuidQuery implements QueryInterface
 {
     public function __construct(
-        public readonly string $regulationOrderUuid,
+        public readonly string $uuid,
     ) {
     }
 }

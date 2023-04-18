@@ -57,4 +57,9 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface
     {
         $this->organization = $organization;
     }
+
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft';
+    }
 }

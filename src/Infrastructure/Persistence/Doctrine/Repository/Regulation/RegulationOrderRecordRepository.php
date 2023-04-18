@@ -75,6 +75,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
+                'l.uuid as locationUuid',
                 'l.address',
                 'l.fromHouseNumber',
                 'l.toHouseNumber',
@@ -84,9 +85,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->leftJoin('ro.locations', 'l')
-            ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
 

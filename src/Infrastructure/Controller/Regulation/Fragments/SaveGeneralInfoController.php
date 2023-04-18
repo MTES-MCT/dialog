@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -29,13 +28,13 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
-        private Security $security,
         private TranslatorInterface $translator,
         private RouterInterface $router,
-        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        Security $security,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
     ) {
-        parent::__construct($queryBus);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(
@@ -47,14 +46,8 @@ final class SaveGeneralInfoController extends AbstractRegulationController
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-
         $isEdit = $uuid !== null;
-
         $regulationOrderRecord = $isEdit ? $this->getRegulationOrderRecord($uuid) : null;
-
-        if ($uuid && !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
-            throw new AccessDeniedHttpException();
-        }
 
         // TODO: rename to SaveRegulationGeneralInfoCommand
         $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
@@ -70,7 +63,6 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         );
 
         $form->handleRequest($request);
-
         $hasCommandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {

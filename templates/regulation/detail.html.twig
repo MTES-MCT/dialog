@@ -18,7 +18,7 @@
 
         <div>
             <h2 id="regulation-detail">
-                {{ title }}                
+                {{ title }}
             </h2>
 
             <div class="fr-x-container--fluid">
@@ -29,7 +29,14 @@
                         <h3 class="fr-h5 fr-text--default-grey fr-mt-5w">
                             {{ 'regulation.locations'|trans }}
                         </h3>
-                        {% include "regulation/fragments/_location.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
+                        {% for location in regulationOrderRecord.locations %}
+                            {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord } only %}
+                        {% endfor %}
+                        <turbo-frame id="block_location">
+                            <a href="{{ path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line fr-mt-3w">
+                                {{ 'regulation.location.add'|trans }}
+                            </a>
+                        </turbo-frame>
                     </div>
 
                     <aside class="fr-col-3 fr-ml-3w">

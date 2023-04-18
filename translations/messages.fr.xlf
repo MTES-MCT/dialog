@@ -294,6 +294,10 @@
                 <source>regulation.location.all_vehicles_forbidden</source>
                 <target>Circulation interdite pour tous les véhicules</target>
             </trans-unit>
+            <trans-unit id="regulation.location.add">
+                <source>regulation.location.add</source>
+                <target>Ajouter une localisation</target>
+            </trans-unit>
             <trans-unit id="regulation.detail.draft">
                 <source>regulation.detail.draft</source>
                 <target>Sauvegarder le brouillon</target>

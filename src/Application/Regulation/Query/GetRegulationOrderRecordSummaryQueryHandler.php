@@ -27,7 +27,21 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             throw new RegulationOrderRecordNotFoundException();
         }
 
-        $hasLocation = !empty($row['address']);
+        $locations = [];
+        foreach ($row as $regulationOrder) {
+            if (empty($regulationOrder['locationUuid'])) {
+                continue;
+            }
+
+            $locations[] = new DetailLocationView(
+                $regulationOrder['locationUuid'],
+                LocationAddress::fromString($regulationOrder['address']),
+                $regulationOrder['fromHouseNumber'],
+                $regulationOrder['toHouseNumber'],
+            );
+        }
+
+        $row = current($row);
 
         return new RegulationOrderRecordSummaryView(
             $row['uuid'],
@@ -36,13 +50,9 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             $row['organizationName'],
             $row['status'],
             $row['description'],
+            $locations,
             $row['startDate'],
             $row['endDate'],
-            $hasLocation ? new DetailLocationView(
-                LocationAddress::fromString($row['address']),
-                $row['fromHouseNumber'],
-                $row['toHouseNumber'],
-            ) : null,
         );
     }
 }

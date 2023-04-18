@@ -10,5 +10,5 @@ interface LocationRepositoryInterface
 {
     public function save(Location $location): Location;
 
-    public function findOneByRegulationOrderUuid(string $uuid): ?Location;
+    public function findOneByUuid(string $uuid): ?Location;
 }
