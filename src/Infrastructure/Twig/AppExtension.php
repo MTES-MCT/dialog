@@ -19,12 +19,17 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return [
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
 <<<<<<< HEAD
+<<<<<<< HEAD
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
 =======
             new \Twig\TwigFunction('app_is_future', [$this, 'isFuture']),
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
 >>>>>>> 4d86199 (Begin new methods)
+=======
+            new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
+            new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
+>>>>>>> 3bd8435 (rename functions and tests)
         ];
     }
 
@@ -47,6 +52,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
     {
+<<<<<<< HEAD
         $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
         $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
@@ -63,9 +69,20 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
         return $today < $day;
+=======
+        if (!$today) {
+            $today = (new \DateTimeImmutable('now'))->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+        } else {
+            $today = \DateTimeImmutable::createFromInterface($today)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+        }
+
+        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        return $day < $today;
+>>>>>>> 3bd8435 (rename functions and tests)
     }
 
-    public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null)
+    public function isClientFutureDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
     {
         if (!$today) {
             $today = (new \DateTimeImmutable('now'))->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
@@ -73,6 +90,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
         $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
-        return $day < $today;
+        return $today < $day;
     }
 }
