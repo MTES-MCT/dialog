@@ -8,7 +8,7 @@ use App\Domain\Regulation\Location;
 
 interface LocationRepositoryInterface
 {
-    public function save(Location $location): Location;
+    public function add(Location $location): Location;
 
     public function findOneByUuid(string $uuid): ?Location;
 }
