@@ -37,7 +37,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $pageOneTemporaryRow0 = $pageOneTemporaryRows->eq(0)->filter('td');
         $this->assertSame("FO1/2023", $pageOneTemporaryRow0->eq(0)->text());
-        $this->assertSame('Route du Grand Brossais, 44260 Savenay', $pageOneTemporaryRow0->eq(1)->text());
+        $this->assertSame('Savenay Route du Grand Brossais + 2 localisations', $pageOneTemporaryRow0->eq(1)->text());
         $this->assertSame("du 13/03/2023 au 15/03/2023 passé", $pageOneTemporaryRow0->eq(2)->text());
         $this->assertSame("Brouillon", $pageOneTemporaryRow0->eq(3)->text());
 
@@ -76,7 +76,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $pageThreeTemporaryRow0 = $pageThreeTemporaryRows->eq(0)->filter('td');
         $this->assertSame('FO2/2023', $pageThreeTemporaryRow0->eq(0)->text());
-        $this->assertSame('Avenue de Fonneuve, 82000 Montauban', $pageThreeTemporaryRow0->eq(1)->text());
+        $this->assertSame('Montauban Avenue de Fonneuve', $pageThreeTemporaryRow0->eq(1)->text());
         $this->assertSame('du 10/03/2023 au 20/03/2023 passé', $pageThreeTemporaryRow0->eq(2)->text());
         $this->assertSame("Publié", $pageThreeTemporaryRow0->eq(3)->text());
 
@@ -97,7 +97,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $pageOnePermanentRow0 = $pageOnePermanentRows->eq(0)->filter('td');
         $this->assertSame("FO3/2023", $pageOnePermanentRow0->eq(0)->text());
-        $this->assertSame('75018 Paris 18e Arrondissement', $pageOnePermanentRow0->eq(1)->text());
+        $this->assertSame('Paris 18e Arrondissement', $pageOnePermanentRow0->eq(1)->text());
         $this->assertSame('à partir du 11/03/2023 en cours', $pageOnePermanentRow0->eq(2)->text());
         $this->assertSame('Brouillon', $pageOnePermanentRow0->eq(3)->text());
 

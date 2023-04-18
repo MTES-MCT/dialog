@@ -5,7 +5,7 @@
                 <a class="fr-pagination__link fr-pagination__link--first"
                     role="link"
                     {% if currentPage > 1 %}
-                        href="{{ path('app_regulations_list', queryParams|merge({ page: 1 })) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: 1, tab })) }}"
                     {% else %}
                         aria-disabled="true"
                     {% endif %}
@@ -17,7 +17,7 @@
                 <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
                     role="link"
                     {% if currentPage > 1 %}
-                        href="{{ path('app_regulations_list', queryParams|merge({ page: currentPage-1 })) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: currentPage-1, tab })) }}"
                     {% else %}
                         aria-disabled="true"
                     {% endif %}
@@ -29,7 +29,7 @@
                 <li>
                     <a class="fr-pagination__link"
                         title="{{ 'pagination.page'|trans({'%page%': 1}) }}"
-                        href="{{ path('app_regulations_list', queryParams|merge({ page: 1 })) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: 1, tab })) }}"
                     >
                         1
                     </a>
@@ -47,7 +47,7 @@
                         {% if page == currentPage %}
                             aria-current="page"
                         {% else %}
-                            href="{{ path('app_regulations_list', queryParams|merge({ page })) }}"
+                            href="{{ path('app_regulations_list', queryParams|merge({ page, tab })) }}"
                         {% endif %}
                     >
                         {{ page }}
@@ -63,7 +63,7 @@
                 <li>
                     <a class="fr-pagination__link"
                         title="{{ 'pagination.page'|trans({'%page%': pagination.lastPage }) }}"
-                        href="{{ path('app_regulations_list', queryParams|merge({ page: pagination.lastPage })) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: pagination.lastPage, tab })) }}"
                     >
                         {{ pagination.lastPage }}
                     </a>
@@ -72,7 +72,7 @@
             <li>
                 <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
                     {% if currentPage + 1 <= pagination.lastPage %}
-                        href="{{ path('app_regulations_list', queryParams|merge({ page: currentPage + 1 })) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: currentPage + 1, tab })) }}"
                     {% else %}
                         aria-disabled="true"
                     {% endif %}
@@ -83,7 +83,7 @@
             <li>
                 <a class="fr-pagination__link fr-pagination__link--last"
                     {% if currentPage + 1 <= pagination.lastPage %}
-                        href="{{ path('app_regulations_list', queryParams|merge({ page: pagination.lastPage })) }}"
+                        href="{{ path('app_regulations_list', queryParams|merge({ page: pagination.lastPage, tab })) }}"
                     {% else %}
                         aria-disabled="true"
                     {% endif %}

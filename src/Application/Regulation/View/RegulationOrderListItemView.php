@@ -10,6 +10,7 @@ final class RegulationOrderListItemView
         public readonly string $uuid,
         public readonly string $identifier,
         public readonly string $status,
+        public readonly int $nbMoreLocations,
         public readonly ?LocationView $location,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,

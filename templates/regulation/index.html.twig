@@ -37,6 +37,7 @@
                     pagination: temporaryRegulations,
                     currentPage: isTemporaryTab ? app.request.get('page', 1) : 1,
                     queryParams: app.request.query.all,
+                    tab: 'temporary',
                 } only %}
             </div>
             <div
@@ -51,6 +52,7 @@
                     pagination: permanentRegulations,
                     currentPage: isPermanent ? app.request.get('page', 1) : 1,
                     queryParams: app.request.query.all,
+                    tab: 'permanent',
                 } only %}
             </div>
         </div>

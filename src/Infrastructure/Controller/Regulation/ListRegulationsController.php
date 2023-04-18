@@ -52,6 +52,7 @@ final class ListRegulationsController
                 isPermanent: false,
             ),
         );
+
         $permanentRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 $user->getOrganization(),
