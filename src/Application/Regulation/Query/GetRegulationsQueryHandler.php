@@ -19,7 +19,7 @@ final class GetRegulationsQueryHandler
 
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
-        $regulations = $this->repository->findRegulationsByOrganization(
+        $regulationOrderRecords = $this->repository->findRegulationsByOrganization(
             $query->organization,
             $query->pageSize,
             $query->page,
@@ -32,16 +32,21 @@ final class GetRegulationsQueryHandler
         );
         $regulationOrderViews = [];
 
-        foreach ($regulations as $regulation) {
+        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+            $locations = $regulationOrder->getLocations();
+            $nbLocations = $locations->count();
+
             $regulationOrderViews[] = new RegulationOrderListItemView(
-                $regulation['uuid'],
-                $regulation['identifier'],
-                $regulation['status'],
-                $regulation['address'] ? new LocationView(
-                    LocationAddress::fromString($regulation['address']),
+                uuid: $regulationOrderRecord->getUuid(),
+                identifier: $regulationOrder->getIdentifier(),
+                status: $regulationOrderRecord->getStatus(),
+                numLocations: $nbLocations,
+                location: $nbLocations ? new LocationView(
+                    LocationAddress::fromString($locations->first()->getAddress()),
                 ) : null,
-                $regulation['startDate'],
-                $regulation['endDate'],
+                startDate: $regulationOrder->getStartDate(),
+                endDate: $regulationOrder->getEndDate(),
             );
         }
 
