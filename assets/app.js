@@ -11,14 +11,4 @@ import './styles/app.scss';
 // start the Stimulus application
 import './bootstrap';
 
-    const responsive = document.querySelector(".responsive");
-
-     window.addEventListener("resize", () => {
-        if (window.innerWidth<768) {
-            responsive.classList.replace("fr-ml-3w","fr-mt-3w");
-        }else{
-            responsive.classList.replace("fr-mt-3w","fr-ml-3w");
-        }
-    });
-
 
