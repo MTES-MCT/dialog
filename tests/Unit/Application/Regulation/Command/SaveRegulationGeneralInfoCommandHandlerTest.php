@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\SaveRegulationOrderCommand;
-use App\Application\Regulation\Command\SaveRegulationOrderCommandHandler;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -17,7 +17,7 @@ use App\Domain\User\Organization;
 use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 use PHPUnit\Framework\TestCase;
 
-final class SaveRegulationOrderCommandHandlerTest extends TestCase
+final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
 {
     private $idFactory;
     private $regulationOrderRecordRepository;
@@ -89,7 +89,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             )
             ->willReturn($createdRegulationOrderRecord);
 
-        $handler = new SaveRegulationOrderCommandHandler(
+        $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
@@ -97,7 +97,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationOrderCommand();
+        $command = new SaveRegulationGeneralInfoCommand();
         $command->identifier = 'FO2/2023';
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
@@ -135,7 +135,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
-        $handler = new SaveRegulationOrderCommandHandler(
+        $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
@@ -143,7 +143,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationOrderCommand();
+        $command = new SaveRegulationGeneralInfoCommand();
         $command->identifier = 'FO2/2023';
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
@@ -209,7 +209,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('isSatisfiedBy');
 
-        $handler = new SaveRegulationOrderCommandHandler(
+        $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
@@ -217,7 +217,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationOrderCommand($regulationOrderRecord);
+        $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
         $command->identifier = 'FO2/2030';
         $command->organization = $this->organization;
         $command->description = 'Interdiction de circuler';
@@ -288,7 +288,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             ->with('FO2/2030', $organization)
             ->willReturn(false);
 
-        $handler = new SaveRegulationOrderCommandHandler(
+        $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
@@ -296,7 +296,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
             $now,
         );
 
-        $command = new SaveRegulationOrderCommand($regulationOrderRecord);
+        $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
         $command->identifier = 'FO2/2030';
         $command->organization = $organization;
         $command->description = 'Interdiction de circuler';

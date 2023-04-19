@@ -13,7 +13,7 @@ use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 
-final class SaveRegulationOrderCommandHandler
+final class SaveRegulationGeneralInfoCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
@@ -24,7 +24,7 @@ final class SaveRegulationOrderCommandHandler
     ) {
     }
 
-    public function __invoke(SaveRegulationOrderCommand $command): RegulationOrderRecord
+    public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
         // Checking the unicity of an regulation order identifier in an organization
         $regulationOrder = $command->regulationOrderRecord?->getRegulationOrder();
