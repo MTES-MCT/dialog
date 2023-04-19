@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
+use App\Domain\Regulation\RegulationPublicationInterface;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 
-class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessInterface
+class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessInterface, RegulationPublicationInterface
 {
     public function __construct(
         public readonly string $uuid,
@@ -29,5 +30,10 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
     public function isDraft(): bool
     {
         return $this->status === 'draft';
+    }
+
+    public function getLocationCount(): int
+    {
+        return \count($this->locations);
     }
 }
