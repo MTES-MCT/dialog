@@ -343,6 +343,10 @@
                 <source>regulation.period</source>
                 <target>Période</target>
             </trans-unit>
+            <trans-unit id="regulation.locations.more">
+                <source>regulation.locations.more</source>
+                <target>+ 1 localisation |+ %count% localisations</target>
+            </trans-unit>
             <trans-unit id="regulation.present">
                 <source>regulation.present</source>
                 <target>Réglementation en cours</target>
