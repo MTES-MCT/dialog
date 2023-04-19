@@ -78,11 +78,17 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             toPoint: $this->toPoint,
         );
 
+        $createdLocation = $this->createMock(Location::class);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('73504e1a-45a1-4993-b82a-1189500715db');
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::once())
             ->method('add')
-            ->with($this->equalTo($location));
+            ->with($this->equalTo($location))
+            ->willReturn($createdLocation);
 
         $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
@@ -96,12 +102,16 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
 
-        $this->assertEmpty($handler($command));
+        $this->assertSame('73504e1a-45a1-4993-b82a-1189500715db', $handler($command));
     }
 
     public function testUpdate(): void
     {
         $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('73504e1a-45a1-4993-b82a-1189500715db');
         $location
             ->expects(self::once())
             ->method('update')
@@ -153,12 +163,16 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
 
-        $this->assertEmpty($handler($command));
+        $this->assertSame('73504e1a-45a1-4993-b82a-1189500715db', $handler($command));
     }
 
     public function testHouseNumbersOptional(): void
     {
         $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('73504e1a-45a1-4993-b82a-1189500715db');
         $location
             ->expects(self::once())
             ->method('update')
@@ -198,13 +212,16 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
 
-        $this->assertEmpty($handler($command));
+        $this->assertSame('73504e1a-45a1-4993-b82a-1189500715db', $handler($command));
     }
 
     public function testUpdateNoChangeDoesNotRecomputePoints(): void
     {
         $location = $this->createMock(Location::class);
-
+        $location
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('73504e1a-45a1-4993-b82a-1189500715db');
         $location
             ->expects(self::once())
             ->method('getAddress')
@@ -269,6 +286,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
 
-        $this->assertEmpty($handler($command));
+        $this->assertSame('73504e1a-45a1-4993-b82a-1189500715db', $handler($command));
     }
 }

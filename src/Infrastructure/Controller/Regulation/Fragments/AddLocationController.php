@@ -8,18 +8,20 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
+use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\LocationFormType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class AddLocationController extends AbstractRegulationController
 {
@@ -54,13 +56,18 @@ final class AddLocationController extends AbstractRegulationController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->commandBus->handle($command);
+                $locationUuid = $this->commandBus->handle($command);
+                $location = $this->queryBus->handle(new GetLocationByUuidQuery($locationUuid));
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
-                return new RedirectResponse(
-                    url: $this->router->generate('app_regulation_detail', [
-                        'uuid' => $regulationOrderRecord->getUuid(),
-                    ]),
-                    status: Response::HTTP_SEE_OTHER,
+                return new Response(
+                    $this->twig->render(
+                        name: 'regulation/fragments/_location.added.stream.html.twig',
+                        context: [
+                            'location' => DetailLocationView::fromEntity($location),
+                            'regulationOrderRecord' => $regulationOrderRecord,
+                        ],
+                    ),
                 );
             } catch (GeocodingFailureException $exc) {
                 $commandFailed = true;

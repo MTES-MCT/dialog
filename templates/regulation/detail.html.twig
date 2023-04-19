@@ -9,7 +9,7 @@
 {% block page_class %}app-background--alt-grey{% endblock %}
 
 {% block body %}
-    {% set isDraft = regulationOrderRecord.status == 'draft' %}
+    {% set isDraft = regulationOrderRecord.isDraft %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
@@ -29,14 +29,17 @@
                         <h3 class="fr-h5 fr-text--default-grey fr-mt-5w">
                             {{ 'regulation.locations'|trans }}
                         </h3>
-                        {% for location in regulationOrderRecord.locations %}
-                            {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord } only %}
-                        {% endfor %}
-                        <turbo-frame id="block_location">
-                            <a href="{{ path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line fr-mt-3w">
-                                {{ 'regulation.location.add'|trans }}
-                            </a>
-                        </turbo-frame>
+
+                        <ul id="location_list" class="fr-raw-list">
+                            {% for location in regulationOrderRecord.locations %}
+                                <li>
+                                    {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord } only %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {% if isDraft %}
+                            {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                        {% endif %}
                     </div>
 
                     <aside class="fr-col-3 fr-ml-3w">

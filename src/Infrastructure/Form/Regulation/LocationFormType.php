@@ -8,7 +8,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class LocationFormType extends AbstractType
 {
@@ -44,19 +43,8 @@ final class LocationFormType extends AbstractType
                 SubmitType::class,
                 options: [
                     'label' => 'common.form.validate',
-                    'attr' => [
-                        'data-turbo-frame' => !$options['isEdit'] ? '_top' : null,
-                    ],
                 ],
             )
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'isEdit' => false,
-        ]);
-        $resolver->setAllowedTypes('isEdit', 'bool');
     }
 }

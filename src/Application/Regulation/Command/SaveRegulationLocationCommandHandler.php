@@ -28,7 +28,7 @@ final class SaveRegulationLocationCommandHandler
         return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
     }
 
-    public function __invoke(SaveRegulationLocationCommand $command): void
+    public function __invoke(SaveRegulationLocationCommand $command): string
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
 
@@ -37,7 +37,7 @@ final class SaveRegulationLocationCommandHandler
             $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
             $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
 
-            $this->locationRepository->add(
+            $location = $this->locationRepository->add(
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
@@ -49,7 +49,7 @@ final class SaveRegulationLocationCommandHandler
                 ),
             );
 
-            return;
+            return $location->getUuid();
         }
 
         $hasRoadChanged = $command->address !== $command->location->getAddress();
@@ -77,5 +77,7 @@ final class SaveRegulationLocationCommandHandler
             toHouseNumber: $command->toHouseNumber,
             toPoint: $toPoint,
         );
+
+        return $command->location->getUuid();
     }
 }
