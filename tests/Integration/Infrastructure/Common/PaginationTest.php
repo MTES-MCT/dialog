@@ -17,9 +17,9 @@ final class PaginationTest extends WebTestCase
 
         $html = $twig->render('common/pagination.html.twig', [
             'queryParams' => [
+                'tab' => 'temporary',
                 'page' => 1,
                 'pageSize' => 10,
-                'tab' => 'temporary',
             ],
             'pagination' => [
                 'windowPages' => [3, 4, 5],

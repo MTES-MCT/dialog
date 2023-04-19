@@ -22,7 +22,11 @@
                     </td>
                     <td>
                         {% if regulation.location %}
-                            {{ regulation.location.address }}
+                            {{ regulation.location.address.city }}<br/>
+                            <b>{{ regulation.location.address.roadName }}</b>
+                            {% if regulation.numLocations > 1%}
+                                <em>{{ 'regulation.locations.more'|trans({'%count%': regulation.numLocations - 1}) }}</em>
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td>

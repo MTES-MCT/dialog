@@ -36,7 +36,7 @@
                 {% include "common/pagination.html.twig" with {
                     pagination: temporaryRegulations,
                     currentPage: isTemporaryTab ? app.request.get('page', 1) : 1,
-                    queryParams: app.request.query.all,
+                    queryParams: app.request.query.all|merge({ tab: 'temporary' }),
                 } only %}
             </div>
             <div
@@ -50,7 +50,7 @@
                 {% include "common/pagination.html.twig" with {
                     pagination: permanentRegulations,
                     currentPage: isPermanent ? app.request.get('page', 1) : 1,
-                    queryParams: app.request.query.all,
+                    queryParams: app.request.query.all|merge({ tab: 'permanent' }),
                 } only %}
             </div>
         </div>
