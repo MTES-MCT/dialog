@@ -63,7 +63,6 @@ final class UpdateLocationController extends AbstractRegulationController
                     'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
                     'uuid' => $uuid,
                 ]),
-                'isEdit' => true,
             ],
         );
         $form->handleRequest($request);
