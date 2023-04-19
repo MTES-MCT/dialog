@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetRegulationGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
+use App\Application\Regulation\View\RegulationGeneralInfoView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Security\SymfonyUser;
@@ -34,9 +36,9 @@ final class GetGeneralInfoController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        // TODO: use a specific GetRegulationGeneralInfoQuery
         try {
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
+            /** @var RegulationGeneralInfoView */
+            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationGeneralInfoQuery($uuid));
         } catch (RegulationOrderRecordNotFoundException) {
             throw new NotFoundHttpException();
         }
@@ -51,7 +53,7 @@ final class GetGeneralInfoController
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_general_info.html.twig',
-                context: ['regulationOrderRecord' => $regulationOrderRecord, 'canEdit' => $regulationOrderRecord->status === 'draft'],
+                context: ['regulationOrderRecord' => $regulationOrderRecord, 'canEdit' => $regulationOrderRecord->isDraft()],
             ),
         );
     }

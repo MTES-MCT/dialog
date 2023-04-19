@@ -26,6 +26,8 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findRegulationOrdersForDatexFormat(): array;
 
+    public function findOneGeneralInfoByUuid(string $uuid): array|null;
+
     public function findOneByOrganizationAndIdentifier(
         Organization $organization,
         string $identifier,
