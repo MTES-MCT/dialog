@@ -118,7 +118,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function save(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
+    public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
     {
         $this->getEntityManager()->persist($regulationOrderRecord);
 

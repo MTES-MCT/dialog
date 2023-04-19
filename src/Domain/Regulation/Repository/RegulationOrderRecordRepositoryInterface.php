@@ -9,7 +9,7 @@ use App\Domain\User\Organization;
 
 interface RegulationOrderRecordRepositoryInterface
 {
-    public function save(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord;
+    public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord;
 
     public function findOneByUuid(string $uuid): RegulationOrderRecord|null;
 

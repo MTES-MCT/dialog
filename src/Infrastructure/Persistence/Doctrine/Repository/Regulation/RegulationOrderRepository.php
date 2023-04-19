@@ -16,7 +16,7 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
         parent::__construct($registry, RegulationOrder::class);
     }
 
-    public function save(RegulationOrder $regulationOrder): RegulationOrder
+    public function add(RegulationOrder $regulationOrder): RegulationOrder
     {
         $this->getEntityManager()->persist($regulationOrder);
 

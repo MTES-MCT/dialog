@@ -37,7 +37,7 @@ final class SaveRegulationLocationCommandHandler
             $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
             $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
 
-            $this->locationRepository->save(
+            $this->locationRepository->add(
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
