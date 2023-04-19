@@ -66,6 +66,7 @@ final class AddLocationController extends AbstractRegulationController
                         context: [
                             'location' => DetailLocationView::fromEntity($location),
                             'regulationOrderRecord' => $regulationOrderRecord,
+                            'isFirstLocation' => $regulationOrderRecord->countLocations() === 0,
                         ],
                     ),
                 );

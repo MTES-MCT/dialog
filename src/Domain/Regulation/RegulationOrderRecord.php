@@ -63,7 +63,7 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface, Re
         return $this->status === 'draft';
     }
 
-    public function getLocationCount(): int
+    public function countLocations(): int
     {
         return \count($this->regulationOrder->getLocations());
     }

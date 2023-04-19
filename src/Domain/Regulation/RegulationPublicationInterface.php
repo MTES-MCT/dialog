@@ -6,5 +6,5 @@ namespace App\Domain\Regulation;
 
 interface RegulationPublicationInterface
 {
-    public function getLocationCount(): int;
+    public function countLocations(): int;
 }

@@ -1,7 +1,7 @@
 <turbo-stream action="append" target="location_list">
     <template>
         <li>
-            {% include 'regulation/fragments/_location.html.twig' with { location, regulationOrderRecord } only %}
+            {% include 'regulation/fragments/_location.html.twig' with { location, regulationOrderRecord, isFirstLocation } only %}
         </li>
     </template>
 </turbo-stream>

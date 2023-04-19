@@ -10,6 +10,6 @@ class CanRegulationOrderRecordBePublished
 {
     public function isSatisfiedBy(RegulationPublicationInterface $regulation): bool
     {
-        return $regulation->getLocationCount() >= 1;
+        return $regulation->countLocations() >= 1;
     }
 }

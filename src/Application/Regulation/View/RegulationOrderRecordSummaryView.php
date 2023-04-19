@@ -32,7 +32,7 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
         return $this->status === 'draft';
     }
 
-    public function getLocationCount(): int
+    public function countLocations(): int
     {
         return \count($this->locations);
     }
