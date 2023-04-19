@@ -16,7 +16,7 @@
             {% for regulation in pagination.items %}
                 {% set isUpcoming = regulation.startDate ? app_is_future(regulation.startDate) : null %}
                 {% set hasPassed = regulation.endDate ? app_is_future(null, null, regulation.endDate) : null %}
-                <tr>
+                <tr id="regulation_{{ regulation.uuid }}">
                     <td>
                         {{ regulation.identifier }}
                     </td>
@@ -71,7 +71,7 @@
                             </form>
                             <form
                                 method="delete"
-                                action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
+                                action="{{ path('fragment_regulation_delete', { uuid: regulation.uuid }) }}"
                                 data-controller="form-submit"
                                 data-form-submit-event-name-value="modal-trigger:submit"
                             >
@@ -84,6 +84,7 @@
                                     aria-controls="regulation-delete-modal"
                                     title="{{ 'common.delete'|trans }}"
                                 ></button>
+                                <input type="hidden" name="tab" value="{{ tab }}" />
                                 <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
                             </form>
                         </div>

@@ -15,12 +15,12 @@
         <div class="fr-tabs fr-mt-2w">
             <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.list.title'|trans }}">
                 <li role="presentation">
-                    <button id="temporary" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="{{ isTemporaryTab ? "true" : "false" }}" aria-controls="temporary-panel">
+                    <button id="total_temporary_regulation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="{{ isTemporaryTab ? "true" : "false" }}" aria-controls="temporary-panel">
                         {{ 'regulation.list.total_temporary'|trans({'%count%': temporaryRegulations.totalItems}) }}
                     </button>
                 </li>
                 <li role="presentation">
-                    <button id="permanent" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="{{ isPermanent ? "true" : "false" }}" aria-controls="permanent-panel">
+                    <button id="total_permanent_regulation" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="{{ isPermanent ? "true" : "false" }}" aria-controls="permanent-panel">
                         {{ 'regulation.list.total_permanent'|trans({'%count%': permanentRegulations.totalItems}) }}
                     </button>
                 </li>
@@ -29,10 +29,10 @@
                 id="temporary-panel"
                 class="fr-tabs__panel {% if isTemporaryTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-start{% endif %}"
                 role="tabpanel"
-                aria-labelledby="temporary"
+                aria-labelledby="total_temporary_regulation"
                 tabindex="0"
             >
-                {% include "regulation/_items.html.twig" with { pagination: temporaryRegulations } only %}
+                {% include "regulation/_items.html.twig" with { pagination: temporaryRegulations, tab: 'temporary' } only %}
                 {% include "common/pagination.html.twig" with {
                     pagination: temporaryRegulations,
                     currentPage: isTemporaryTab ? app.request.get('page', 1) : 1,
@@ -43,10 +43,10 @@
                 id="permanent-panel"
                 class="fr-tabs__panel {% if isPermanent %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-end{% endif %}"
                 role="tabpanel"
-                aria-labelledby="permanent"
+                aria-labelledby="total_permanent_regulation"
                 tabindex="1"
             >
-                {% include "regulation/_items.html.twig" with { pagination: permanentRegulations } only %}
+                {% include "regulation/_items.html.twig" with { pagination: permanentRegulations, tab: 'permanent' } only %}
                 {% include "common/pagination.html.twig" with {
                     pagination: permanentRegulations,
                     currentPage: isPermanent ? app.request.get('page', 1) : 1,

@@ -1,0 +1,6 @@
+<turbo-stream action="remove" target="regulation_{{ uuid }}"></turbo-stream>
+<turbo-stream action="update" target="total_{{ tab }}_regulation">
+    <template>
+        {{ ('regulation.list.total_' ~ tab)|trans({'%count%': totalRegulations }) }}
+    </template>
+</turbo-stream>

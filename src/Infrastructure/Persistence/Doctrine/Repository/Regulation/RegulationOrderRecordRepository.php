@@ -30,6 +30,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
+            ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)

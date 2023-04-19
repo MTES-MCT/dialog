@@ -28,7 +28,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $client = $this->login();
 
         // First item
-        $pageOne = $client->request('GET', '/regulations?pageSize=1');
+        $pageOne = $client->request('GET', '/regulations?pageSize=1&tab=temporary');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
