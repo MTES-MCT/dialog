@@ -7,33 +7,30 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\PublishRegulationCommand;
-use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
-use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-final class PublishRegulationController
+final class PublishRegulationController extends AbstractRegulationController
 {
     public function __construct(
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
-        private QueryBusInterface $queryBus,
-        private Security $security,
         private CsrfTokenManagerInterface $csrfTokenManager,
-        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        QueryBusInterface $queryBus,
+        Security $security,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(
@@ -49,23 +46,10 @@ final class PublishRegulationController
             throw new BadRequestHttpException('Invalid CSRF token');
         }
 
-        /** @var SymfonyUser */
-        $user = $this->security->getUser();
+        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
 
         try {
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
-        } catch (RegulationOrderRecordNotFoundException) {
-            throw new NotFoundHttpException();
-        }
-
-        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $command = new PublishRegulationCommand($regulationOrderRecord);
-
-        try {
-            $this->commandBus->handle($command);
+            $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
         } catch (RegulationOrderRecordCannotBePublishedException) {
             throw new AccessDeniedHttpException();
         }
