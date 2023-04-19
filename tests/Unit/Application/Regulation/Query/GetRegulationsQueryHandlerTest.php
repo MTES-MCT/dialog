@@ -9,11 +9,11 @@ use App\Application\Regulation\Query\GetRegulationsQueryHandler;
 use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\LocationAddress;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Location;
+use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
@@ -56,10 +56,10 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getStartDate')
             ->willReturn($startDate1);
-            $regulationOrder1
-                ->expects(self::once())
-                ->method('getIdentifier')
-                ->willReturn('F01/2023');
+        $regulationOrder1
+            ->expects(self::once())
+            ->method('getIdentifier')
+            ->willReturn('F01/2023');
         $regulationOrder1
             ->expects(self::once())
             ->method('getLocations')
