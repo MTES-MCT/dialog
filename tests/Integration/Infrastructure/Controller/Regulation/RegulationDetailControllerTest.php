@@ -16,7 +16,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Arrêté temporaire FO1/2023', $crawler->filter('h2')->text());
-        $this->assertMetaTitle("Arrêté temporaire FO1/2023 - DiaLog", $crawler);
+        $this->assertMetaTitle('Arrêté temporaire FO1/2023 - DiaLog', $crawler);
         $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
 
         $generalInfo = $crawler->filter('[data-testid="general_info"]');

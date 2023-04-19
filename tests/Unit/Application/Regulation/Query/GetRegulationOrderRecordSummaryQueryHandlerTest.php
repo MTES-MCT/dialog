@@ -9,8 +9,8 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\LocationAddress;
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
@@ -95,12 +95,12 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'address' => $location[1]['address'],
                 'fromHouseNumber' => $location[1]['fromHouseNumber'],
                 'toHouseNumber' => $location[1]['toHouseNumber'],
-            ]
+            ],
         ];
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("findOneForSummary")
+            ->method('findOneForSummary')
             ->willReturn($regulationOrderRecord);
 
         $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
@@ -158,7 +158,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("findOneForSummary")
+            ->method('findOneForSummary')
             ->willReturn($regulationOrderRecord);
 
         $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
@@ -188,7 +188,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("findOneForSummary")
+            ->method('findOneForSummary')
             ->willReturn(null);
 
         $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);

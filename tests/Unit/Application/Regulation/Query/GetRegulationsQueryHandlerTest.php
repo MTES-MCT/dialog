@@ -9,8 +9,8 @@ use App\Application\Regulation\Query\GetRegulationsQueryHandler;
 use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\LocationAddress;
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
@@ -46,13 +46,13 @@ final class GetRegulationsQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("findRegulationsByOrganization")
+            ->method('findRegulationsByOrganization')
             ->with($organization, 20, 1, true)
             ->willReturn([$regulationOrder2, $regulationOrder1]);
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("countRegulationsByOrganization")
+            ->method('countRegulationsByOrganization')
             ->with($organization, true)
             ->willReturn(2);
 

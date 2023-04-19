@@ -11,9 +11,11 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
 {
     use SessionHelper;
 
-    private function countRows($crawler) {
-        $numTemporary = $crawler->filter("#temporary-panel tbody > tr:not([data-testid=empty-row])")->count();
-        $numPermanent = $crawler->filter("#permanent-panel tbody > tr:not([data-testid=empty-row])")->count();
+    private function countRows($crawler)
+    {
+        $numTemporary = $crawler->filter('#temporary-panel tbody > tr:not([data-testid=empty-row])')->count();
+        $numPermanent = $crawler->filter('#permanent-panel tbody > tr:not([data-testid=empty-row])')->count();
+
         return [$numTemporary, $numPermanent];
     }
 

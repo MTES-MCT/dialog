@@ -12,8 +12,8 @@ final class PaginationTest extends TestCase
     public function testWithTruncature(): void
     {
         $pagination = new Pagination(
-           [[], [], [], [], [], [], [], [], [], [], []],
-           11,
+            [[], [], [], [], [], [], [], [], [], [], []],
+            11,
             5,
             1,
         );
@@ -31,8 +31,8 @@ final class PaginationTest extends TestCase
     public function testWithoutTruncature(): void
     {
         $pagination = new Pagination(
-           [[], [], [], [], [], [], [], [], [], [], []],
-           11,
+            [[], [], [], [], [], [], [], [], [], [], []],
+            11,
             1,
             10,
         );

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
-use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
+use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -27,12 +27,12 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
         $location2 = new DatexLocationView(
             address: 'Route du Grand Brossais 44260 Savenay',
-            fromHouseNumber :'15',
-            fromLatitude :'47.347024',
-            fromLongitude :'-1.935836',
-            toHouseNumber :'37bis',
-            toLatitude :'47.347917',
-            toLongitude :'-1.930973',
+            fromHouseNumber : '15',
+            fromLatitude : '47.347024',
+            fromLongitude : '-1.935836',
+            toHouseNumber : '37bis',
+            toLatitude : '47.347917',
+            toLongitude : '-1.930973',
         );
 
         $startDate1 = new \DateTime('2022-12-07');
@@ -71,7 +71,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method("findRegulationOrdersForDatexFormat")
+            ->method('findRegulationOrdersForDatexFormat')
             ->willReturn([$regulationOrder1, $regulationOrder2]);
 
         $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);

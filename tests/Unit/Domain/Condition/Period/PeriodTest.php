@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Condition\Period;
 
+use App\Domain\Condition\Condition;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\ApplicableMonthEnum;
 use App\Domain\Condition\Period\Enum\SpecialDayTypeEnum;
 use App\Domain\Condition\Period\Period;
-use App\Domain\Condition\Condition;
 use PHPUnit\Framework\TestCase;
 
 final class PeriodTest extends TestCase

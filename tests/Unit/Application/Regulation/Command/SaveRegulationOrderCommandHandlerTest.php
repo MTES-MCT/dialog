@@ -62,8 +62,8 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
                         description: 'Interdiction de circuler',
                         startDate: $start,
                         endDate: $end,
-                    )
-                )
+                    ),
+                ),
             )
             ->willReturn($createdRegulationOrder);
 
@@ -84,8 +84,8 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
                         regulationOrder: $createdRegulationOrder,
                         createdAt: $now,
                         organization: $this->organization,
-                    )
-                )
+                    ),
+                ),
             )
             ->willReturn($createdRegulationOrderRecord);
 
@@ -119,7 +119,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
         $this->idFactory
             ->expects(self::never())
             ->method('make')
-           ;
+        ;
 
         $this->regulationOrderRepository
             ->expects(self::never())
@@ -189,7 +189,6 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
                 'Interdiction de circuler',
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
-
             );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -267,7 +266,6 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
                 'Interdiction de circuler',
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
-
             );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
