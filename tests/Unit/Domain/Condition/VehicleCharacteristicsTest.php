@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Condition;
 
+use App\Domain\Condition\Condition;
 use App\Domain\Condition\Enum\VehicleCritairEnum;
 use App\Domain\Condition\Enum\VehicleTypeEnum;
 use App\Domain\Condition\Enum\VehicleUsageEnum;
 use App\Domain\Condition\VehicleCharacteristics;
-use App\Domain\Condition\Condition;
 use PHPUnit\Framework\TestCase;
 
 final class VehicleCharacteristicsTest extends TestCase

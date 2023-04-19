@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Test\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\GeocoderInterface;
-use App\Domain\Geography\GeometryFormatter;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeometryFormatter;
 use App\Infrastructure\Symfony\Command\GeocodeCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;

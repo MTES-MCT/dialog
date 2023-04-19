@@ -14,12 +14,12 @@ final class LoginControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Connexion à DiaLog', $crawler->filter('h1')->text());
-        $this->assertMetaTitle("Connexion - DiaLog", $crawler);
+        $this->assertMetaTitle('Connexion - DiaLog', $crawler);
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
 
-        $form["email"] = "mathieu.marchois@beta.gouv.fr";
-        $form["password"] = "password";
+        $form['email'] = 'mathieu.marchois@beta.gouv.fr';
+        $form['password'] = 'password';
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
         $crawler = $client->followRedirect();
@@ -35,8 +35,8 @@ final class LoginControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
-        $form["email"] = "mathieu@fairness.coop";
-        $form["password"] = "password";
+        $form['email'] = 'mathieu@fairness.coop';
+        $form['password'] = 'password';
 
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);

@@ -23,7 +23,7 @@ final class PaginationTest extends WebTestCase
             ],
             'pagination' => [
                 'windowPages' => [3, 4, 5],
-                'lastPage' =>  15,
+                'lastPage' => 15,
                 'hasFirstPageLandmark' => true,
                 'hasLeftTruncature' => true,
                 'hasRightTruncature' => true,
@@ -37,16 +37,16 @@ final class PaginationTest extends WebTestCase
         $crawler = new Crawler($html);
         $navLi = $crawler->filter('nav.fr-pagination')->filter('li');
 
-        $this->assertSame("Première page", $navLi->eq(0)->filter('a')->text());
-        $this->assertSame("Page précédente", $navLi->eq(1)->filter('a')->text());
-        $this->assertSame("1", $navLi->eq(2)->filter('a')->text());
-        $this->assertSame("...", $navLi->eq(3)->filter('span')->text());
-        $this->assertSame("3", $navLi->eq(4)->filter('a')->text());
-        $this->assertSame("4", $navLi->eq(5)->filter('a')->text());
-        $this->assertSame("5", $navLi->eq(6)->filter('a')->text());
-        $this->assertSame("...", $navLi->eq(7)->filter('span')->text());
-        $this->assertSame("15", $navLi->eq(8)->filter('a')->text());
-        $this->assertSame("Page suivante", $navLi->eq(9)->filter('a')->text());
-        $this->assertSame("Dernière page", $navLi->eq(10)->filter('a')->text());
+        $this->assertSame('Première page', $navLi->eq(0)->filter('a')->text());
+        $this->assertSame('Page précédente', $navLi->eq(1)->filter('a')->text());
+        $this->assertSame('1', $navLi->eq(2)->filter('a')->text());
+        $this->assertSame('...', $navLi->eq(3)->filter('span')->text());
+        $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
+        $this->assertSame('4', $navLi->eq(5)->filter('a')->text());
+        $this->assertSame('5', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('...', $navLi->eq(7)->filter('span')->text());
+        $this->assertSame('15', $navLi->eq(8)->filter('a')->text());
+        $this->assertSame('Page suivante', $navLi->eq(9)->filter('a')->text());
+        $this->assertSame('Dernière page', $navLi->eq(10)->filter('a')->text());
     }
 }

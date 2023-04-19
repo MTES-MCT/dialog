@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Mock;
 
-use App\Tests\Mock\APIAdresseMockClient;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class APIAdresseMockClientTest extends KernelTestCase

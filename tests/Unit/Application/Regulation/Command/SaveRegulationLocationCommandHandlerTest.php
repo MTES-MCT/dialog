@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\GeocoderInterface;
-use App\Domain\Geography\GeometryFormatter;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommandHandler;
-use App\Domain\Regulation\Location;
-use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationLocationCommandHandlerTest extends TestCase

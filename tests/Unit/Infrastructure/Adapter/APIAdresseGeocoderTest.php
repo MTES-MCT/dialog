@@ -30,7 +30,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
             'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
-            $response->getRequestUrl()
+            $response->getRequestUrl(),
         );
     }
 
@@ -51,7 +51,7 @@ final class APIAdresseGeocoderTest extends TestCase
 
     /**
      * @dataProvider provideStatusErrorData
-    */
+     */
     public function testComputeCoordinatesStatusError(int $statusCode, string $pattern): void
     {
         $this->expectException(GeocodingFailureException::class);
@@ -98,7 +98,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Rue Eugene', "street");
+        $addresses = $geocoder->findAddresses('Rue Eugene', 'street');
         $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
     }
 
@@ -109,7 +109,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test', "street");
+        $addresses = $geocoder->findAddresses('Test', 'street');
         $this->assertEquals([], $addresses);
     }
 
@@ -119,7 +119,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test', "street");
+        $addresses = $geocoder->findAddresses('Test', 'street');
         $this->assertEquals([], $addresses);
     }
 
@@ -129,7 +129,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test', "street");
+        $addresses = $geocoder->findAddresses('Test', 'street');
         $this->assertEquals([], $addresses);
     }
 }
