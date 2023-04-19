@@ -18,14 +18,14 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form["general_info_form[identifier]"] = "FO1/2023";
-        $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
-        $form["general_info_form[description]"] = "Travaux";
-        $form["general_info_form[startDate]"] = "2023-02-12";
-        $form["general_info_form[endDate]"] = "2024-02-11";
+        $form['general_info_form[identifier]'] = 'FO1/2023';
+        $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
+        $form['general_info_form[description]'] = 'Travaux';
+        $form['general_info_form[startDate]'] = '2023-02-12';
+        $form['general_info_form[endDate]'] = '2024-02-11';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.", $crawler->filter('#general_info_form_identifier_error')->text());
+        $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('#general_info_form_identifier_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
@@ -45,10 +45,10 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form["general_info_form[identifier]"] = "FIOIUS";
-        $form["general_info_form[organization]"] = "0eed3bec-7fe0-469b-a3e9-1c24251bf48c"; // Dialog
-        $form["general_info_form[description]"] = "Interdiction de circuler dans Paris";
-        $form["general_info_form[startDate]"] = "2023-02-14";
+        $form['general_info_form[identifier]'] = 'FIOIUS';
+        $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
+        $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
+        $form['general_info_form[startDate]'] = '2023-02-14';
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
@@ -73,13 +73,13 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form["general_info_form[identifier]"] = str_repeat('a', 61);
-        $form["general_info_form[description]"] = str_repeat('a', 256);
+        $form['general_info_form[identifier]'] = str_repeat('a', 61);
+        $form['general_info_form[description]'] = str_repeat('a', 256);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.", $crawler->filter('#general_info_form_identifier_error')->text());
-        $this->assertSame("Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.", $crawler->filter('#general_info_form_description_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.', $crawler->filter('#general_info_form_identifier_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_description_error')->text());
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

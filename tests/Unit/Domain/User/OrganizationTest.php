@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\User;
 
-use PHPUnit\Framework\TestCase;
 use App\Domain\User\Organization;
 use App\Domain\User\User;
+use PHPUnit\Framework\TestCase;
 
 final class OrganizationTest extends TestCase
 {

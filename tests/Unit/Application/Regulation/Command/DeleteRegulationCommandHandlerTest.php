@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command;
 
-use App\Application\Regulation\Command\DeleteRegulationCommandHandler;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\DeleteRegulationCommandHandler;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -22,7 +22,8 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
     private $regulationOrderRecord;
     private $regulationOrder;
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         $this->organization = $this->createMock(Organization::class);
         $this->canOrganizationAccessToRegulation = $this->createMock(CanOrganizationAccessToRegulation::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);

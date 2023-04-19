@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Geography;
 
-use PHPUnit\Framework\TestCase;
 use App\Domain\Geography\Coordinates;
+use PHPUnit\Framework\TestCase;
 
 final class CoordinatesTest extends TestCase
 {

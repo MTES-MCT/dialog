@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation;
 
-use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
 
