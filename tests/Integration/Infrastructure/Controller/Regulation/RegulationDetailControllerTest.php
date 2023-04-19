@@ -40,7 +40,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $duplicateBtn = $crawler->selectButton('Dupliquer');
         $this->assertNotNull($duplicateBtn->attr('disabled'));
         $publishBtn = $crawler->selectButton('Publier');
-        $this->assertNotNull($publishBtn->attr('disabled'));
+        $this->assertStringStartsWith('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish?token=', $publishBtn->form()->getUri());
     }
 
     public function testPublishedRegulationDetail(): void
@@ -53,6 +53,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Publié', $crawler->filter('[data-testid="status-badge"]')->text());
         $this->assertSame(0, $crawler->selectButton('Modifier')->count()); // No edit buttons
+        $this->assertSame(0, $crawler->selectButton('Publier')->count());
     }
 
     public function testSeeAll(): void

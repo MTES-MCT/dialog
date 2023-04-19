@@ -90,6 +90,10 @@
                 <source>common.back</source>
                 <target>Précédent</target>
             </trans-unit>
+            <trans-unit id="common.publish">
+                <source>common.publish</source>
+                <target>Publier</target>
+            </trans-unit>
             <trans-unit id="common.published">
                 <source>common.published</source>
                 <target>Publiée</target>
@@ -305,6 +309,18 @@
             <trans-unit id="regulation.detail.published">
                 <source>regulation.detail.published</source>
                 <target>Valider la réglementation</target>
+            </trans-unit>
+            <trans-unit id="regulation.publish_modal.title">
+                <source>regulation.publish_modal.title</source>
+                <target>Publier cet arrêté ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.publish_modal.confirm">
+                <source>regulation.publish_modal.confirm</source>
+                <target>Publier</target>
+            </trans-unit>
+            <trans-unit id="regulation.publish_modal.cancel">
+                <source>regulation.publish_modal.cancel</source>
+                <target>Ne pas publier</target>
             </trans-unit>
             <trans-unit id="regulation.duplicated.success">
                 <source>regulation.duplicated.success</source>

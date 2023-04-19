@@ -49,9 +49,32 @@
 
                                 <h3 class="fr-h4">Actions</h3>
                                 <ul class="fr-btns-group fr-btns-group--icon-left">
-                                    <li>
-                                        <button class="fr-btn fr-btn--secondary" disabled>Publier</button>
-                                    </li>
+                                    {% if isDraft %}
+                                        <li>
+                                            {% if canPublish %}
+                                                {% set publishCsrfToken = csrf_token('publish-regulation') %}
+                                                <form
+                                                    action="{{ path('app_regulation_publish', { uuid: regulationOrderRecord.uuid }) }}"
+                                                    data-controller="form-submit"
+                                                    data-form-submit-event-name-value="modal-trigger:submit"
+                                                >
+                                                    <button
+                                                        class="fr-btn fr-btn--secondary"
+                                                        data-controller="modal-trigger"
+                                                        data-modal-trigger-modal-outlet="#regulation-publish-modal"
+                                                        data-modal-trigger-key-value="publish"
+                                                        data-action="modal-trigger#showModal:prevent"
+                                                        aria-controls="regulation-publish-modal"
+                                                    >
+                                                        {{ 'common.publish'|trans }}
+                                                    </button>
+                                                    <input type="hidden" name="token" value="{{ publishCsrfToken }}" />
+                                                </form>
+                                            {% else %}
+                                                <button class="fr-btn fr-btn--secondary" disabled>{{ 'common.publish'|trans }}</button>
+                                            {% endif %}
+                                        </li>
+                                    {% endif %}
                                     <li>
                                         <button class="fr-btn fr-btn--secondary" disabled>Dupliquer</button>
                                     </li>
@@ -66,4 +89,11 @@
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block body_end %}
+    {{ parent() }}
+    {% if isDraft %}
+        {% include 'regulation/_publish_modal.html.twig' %}
+    {% endif %}
 {% endblock %}
