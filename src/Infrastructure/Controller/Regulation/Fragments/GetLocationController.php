@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetRegulationForLocationQuery;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\DetailLocationView;
+use App\Application\Regulation\View\RegulationForLocationView;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,9 +22,9 @@ final class GetLocationController extends AbstractRegulationController
 {
     public function __construct(
         private readonly \Twig\Environment $twig,
+        protected QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
-        QueryBusInterface $queryBus,
     ) {
         parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
@@ -37,14 +40,18 @@ final class GetLocationController extends AbstractRegulationController
     )]
     public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
     {
-        $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+        /** @var RegulationForLocationView */
+        $regulationOrderRecord = $this->getRegulationOrderRecordUsing(function () use ($regulationOrderRecordUuid) {
+            return $this->queryBus->handle(new GetRegulationForLocationQuery($regulationOrderRecordUuid));
+        });
 
+        /** @var ?Location */
         $location = $this->queryBus->handle(new GetLocationByUuidQuery($uuid));
         if (!$location) {
             throw new NotFoundHttpException();
         }
 
-        if ($location->getRegulationOrder() !== $regulationOrderRecord->getRegulationOrder()) {
+        if ($location->getRegulationOrder()->getUuid() !== $regulationOrderRecord->regulationOrderUuid) {
             throw new AccessDeniedHttpException();
         }
 

@@ -139,6 +139,24 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function findOneForLocationByUuid(string $uuid): array|null
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(
+                'roc.uuid',
+                'org.uuid as organizationUuid',
+                'ro.uuid as regulationOrderUuid',
+                'roc.status',
+            )
+            ->where('roc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('roc.organization', 'org')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
     {
         $this->getEntityManager()->persist($regulationOrderRecord);

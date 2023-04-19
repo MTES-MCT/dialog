@@ -28,6 +28,8 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findOneGeneralInfoByUuid(string $uuid): array|null;
 
+    public function findOneForLocationByUuid(string $uuid): array|null;
+
     public function findOneByOrganizationAndIdentifier(
         Organization $organization,
         string $identifier,

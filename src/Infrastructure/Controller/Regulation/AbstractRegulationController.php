@@ -9,6 +9,7 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Domain\User\OrganizationRegulationAccessInterface;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -25,16 +26,13 @@ abstract class AbstractRegulationController
     ) {
     }
 
-    protected function getRegulationOrderRecord(string $uuid): RegulationOrderRecord
+    protected function getRegulationOrderRecordUsing(callable $func): mixed
     {
-        if (!Uuid::isValid($uuid)) {
-            throw new BadRequestHttpException();
-        }
-
+        /** @var ?OrganizationRegulationAccessInterface */
         $regulationOrderRecord = null;
 
         try {
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
+            $regulationOrderRecord = \call_user_func($func);
         } catch (RegulationOrderRecordNotFoundException) {
             throw new NotFoundHttpException();
         }
@@ -47,5 +45,16 @@ abstract class AbstractRegulationController
         }
 
         return $regulationOrderRecord;
+    }
+
+    protected function getRegulationOrderRecord(string $uuid): RegulationOrderRecord
+    {
+        if (!Uuid::isValid($uuid)) {
+            throw new BadRequestHttpException();
+        }
+
+        return $this->getRegulationOrderRecordUsing(function () use ($uuid) {
+            return $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
+        });
     }
 }

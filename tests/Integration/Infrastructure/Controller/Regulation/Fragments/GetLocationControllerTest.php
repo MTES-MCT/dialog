@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
+/** @group only */
 final class GetLocationControllerTest extends AbstractWebTestCase
 {
     public function testGet(): void
