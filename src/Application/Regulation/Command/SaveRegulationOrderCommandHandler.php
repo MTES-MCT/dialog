@@ -40,7 +40,7 @@ final class SaveRegulationOrderCommandHandler
 
         // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
-            $regulationOrder = $this->regulationOrderRepository->save(
+            $regulationOrder = $this->regulationOrderRepository->add(
                 new RegulationOrder(
                     uuid: $this->idFactory->make(),
                     identifier: $command->identifier,
@@ -50,7 +50,7 @@ final class SaveRegulationOrderCommandHandler
                 ),
             );
 
-            $regulationOrderRecord = $this->regulationOrderRecordRepository->save(
+            $regulationOrderRecord = $this->regulationOrderRecordRepository->add(
                 new RegulationOrderRecord(
                     uuid: $this->idFactory->make(),
                     status: RegulationOrderRecordStatusEnum::DRAFT,

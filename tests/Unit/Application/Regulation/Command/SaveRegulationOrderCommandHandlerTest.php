@@ -53,7 +53,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
 
         $this->regulationOrderRepository
             ->expects(self::once())
-            ->method('save')
+            ->method('add')
             ->with(
                 $this->equalTo(
                     new RegulationOrder(
@@ -75,7 +75,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('save')
+            ->method('add')
             ->with(
                 $this->equalTo(
                     new RegulationOrderRecord(
@@ -123,7 +123,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
 
         $this->regulationOrderRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
             ->expects(self::once())
@@ -133,7 +133,7 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
 
         $this->regulationOrderRecordRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $handler = new SaveRegulationOrderCommandHandler(
             $this->idFactory,
@@ -170,11 +170,11 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
 
         $this->regulationOrderRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $this->regulationOrderRecordRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder
@@ -248,11 +248,11 @@ final class SaveRegulationOrderCommandHandlerTest extends TestCase
 
         $this->regulationOrderRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $this->regulationOrderRecordRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder

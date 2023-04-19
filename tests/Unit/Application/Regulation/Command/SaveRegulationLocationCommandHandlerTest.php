@@ -81,7 +81,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::once())
-            ->method('save')
+            ->method('add')
             ->with($this->equalTo($location));
 
         $handler = new SaveRegulationLocationCommandHandler(
@@ -139,7 +139,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
@@ -184,7 +184,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,
@@ -255,7 +255,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $locationRepository
             ->expects(self::never())
-            ->method('save');
+            ->method('add');
 
         $handler = new SaveRegulationLocationCommandHandler(
             $idFactory,

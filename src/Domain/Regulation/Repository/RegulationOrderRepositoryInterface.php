@@ -8,7 +8,7 @@ use App\Domain\Regulation\RegulationOrder;
 
 interface RegulationOrderRepositoryInterface
 {
-    public function save(RegulationOrder $regulationOrder): RegulationOrder;
+    public function add(RegulationOrder $regulationOrder): RegulationOrder;
 
     public function delete(RegulationOrder $regulationOrder): void;
 }
