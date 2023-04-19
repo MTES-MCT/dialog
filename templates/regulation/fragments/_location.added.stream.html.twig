@@ -1,0 +1,13 @@
+<turbo-stream action="append" target="location_list">
+    <template>
+        <li>
+            {% include 'regulation/fragments/_location.html.twig' with { location, regulationOrderRecord } only %}
+        </li>
+    </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="block_location">
+    <template>
+        {% include 'regulation/fragments/_add_location_link.html.twig' with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+    </template>
+</turbo-frame>
