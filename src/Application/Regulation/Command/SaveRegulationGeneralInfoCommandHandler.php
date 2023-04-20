@@ -44,6 +44,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                 new RegulationOrder(
                     uuid: $this->idFactory->make(),
                     identifier: $command->identifier,
+                    category: $command->category,
                     description: $command->description,
                     startDate: $command->startDate,
                     endDate: $command->endDate,
@@ -66,6 +67,7 @@ final class SaveRegulationGeneralInfoCommandHandler
         $command->regulationOrderRecord->updateOrganization($command->organization);
         $command->regulationOrderRecord->getRegulationOrder()->update(
             identifier: $command->identifier,
+            category: $command->category,
             description: $command->description,
             startDate: $command->startDate,
             endDate: $command->endDate,

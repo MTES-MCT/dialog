@@ -11,6 +11,7 @@ class RegulationOrder
     public function __construct(
         private string $uuid,
         private string $identifier,
+        private string $category,
         private string $description,
         private ?\DateTimeInterface $startDate,
         private ?\DateTimeInterface $endDate = null,
@@ -25,6 +26,11 @@ class RegulationOrder
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function getCategory(): string
+    {
+        return $this->category;
     }
 
     public function getDescription(): string
@@ -49,11 +55,13 @@ class RegulationOrder
 
     public function update(
         string $identifier,
+        string $category,
         string $description,
         \DateTimeInterface $startDate,
         ?\DateTimeInterface $endDate = null,
     ): void {
         $this->identifier = $identifier;
+        $this->category = $category;
         $this->description = $description;
         $this->startDate = $startDate;
         $this->endDate = $endDate;

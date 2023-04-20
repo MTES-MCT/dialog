@@ -11,6 +11,7 @@ use App\Domain\User\Organization;
 final class SaveRegulationGeneralInfoCommand implements CommandInterface
 {
     public ?string $identifier;
+    public ?string $category;
     public ?string $description;
     public ?Organization $organization;
     public ?\DateTimeInterface $startDate;
@@ -29,6 +30,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command = new self($regulationOrderRecord);
         $command->organization = $regulationOrderRecord?->getOrganization();
         $command->identifier = $regulationOrder?->getIdentifier();
+        $command->category = $regulationOrder?->getCategory();
         $command->description = $regulationOrder?->getDescription();
         $command->startDate = $startDate ?? $regulationOrder?->getStartDate();
         $command->endDate = $regulationOrder?->getEndDate();

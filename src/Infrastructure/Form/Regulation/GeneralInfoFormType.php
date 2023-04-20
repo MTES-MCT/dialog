@@ -64,6 +64,18 @@ final class GeneralInfoFormType extends AbstractType
                 ],
             )
             ->add(
+                'category',
+                ChoiceType::class,
+                options: [
+                    'label' => 'regulation.general_info.category',
+                    'help' => 'regulation.general_info.cause.help',
+                    'choices' => [
+                      'regulation.cause1' => 'category_travaux',
+                      'regulation.cause2' => 'category_evenement',
+                    ],
+                ],
+            )
+            ->add(
                 'description',
                 TextareaType::class,
                 options: [

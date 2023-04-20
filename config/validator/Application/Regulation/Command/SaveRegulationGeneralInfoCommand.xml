@@ -15,6 +15,12 @@
                 <option name="type">App\Domain\User\Organization</option>
             </constraint>
         </property>
+        <property name="category">
+            <constraint name="NotBlank" />
+            <constraint name="length">
+                <option name="max">50</option>
+            </constraint>
+        </property>
         <property name="description">
             <constraint name="NotBlank" />
             <constraint name="Length">

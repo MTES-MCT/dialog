@@ -194,6 +194,14 @@
                 <source>regulation.city</source>
                 <target>Commune</target>
             </trans-unit>
+            <trans-unit id="regulation.cause1">
+                <source>regulation.cause1</source>
+                <target>Travaux</target>
+            </trans-unit>
+            <trans-unit id="regulation.cause2">
+                <source>regulation.cause2</source>
+                <target>Evènement</target>
+            </trans-unit>
             <trans-unit id="regulation.list.total_temporary">
                 <source>regulation.list.total_temporary</source>
                 <target>Temporaires (%count%)</target>
@@ -253,6 +261,14 @@
             <trans-unit id="regulation.general_info.organization.help">
                 <source>regulation.general_info.organization.help</source>
                 <target>Commune, département ou entité responsable de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.category">
+                <source>regulation.general_info.category</source>
+                <target>Nature de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.cause.help">
+                <source>regulation.general_info.cause.help</source>
+                <target>Type de perturbation</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.description">
                 <source>regulation.general_info.description</source>
