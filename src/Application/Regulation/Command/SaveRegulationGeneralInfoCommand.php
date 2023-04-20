@@ -8,7 +8,7 @@ use App\Application\CommandInterface;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 
-final class SaveRegulationOrderCommand implements CommandInterface
+final class SaveRegulationGeneralInfoCommand implements CommandInterface
 {
     public ?string $identifier;
     public ?string $description;

@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
-use App\Application\Regulation\Command\SaveRegulationOrderCommand;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -76,7 +76,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('F01/2023 (copie)');
 
         // Condition, RegulationOrder and RegulationOrderRecord
-        $step1command = new SaveRegulationOrderCommand();
+        $step1command = new SaveRegulationGeneralInfoCommand();
         $step1command->identifier = 'F01/2023 (copie)';
         $step1command->description = 'Description';
         $step1command->startDate = $startDate;

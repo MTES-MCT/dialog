@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command;
 
-use App\Application\Regulation\Command\SaveRegulationOrderCommand;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
-final class SaveRegulationOrderCommandTest extends TestCase
+final class SaveRegulationGeneralInfoCommandTest extends TestCase
 {
     public function testWithoutRegulationOrderRecord(): void
     {
-        $command = SaveRegulationOrderCommand::create();
+        $command = SaveRegulationGeneralInfoCommand::create();
 
         $this->assertEmpty($command->identifier);
         $this->assertEmpty($command->organization);
@@ -61,7 +61,7 @@ final class SaveRegulationOrderCommandTest extends TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
+        $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $this->assertSame($command->identifier, 'F02/2023');
         $this->assertSame($command->description, 'Description');

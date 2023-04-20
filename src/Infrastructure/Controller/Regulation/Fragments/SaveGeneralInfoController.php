@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Command\SaveRegulationOrderCommand;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -49,8 +49,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $isEdit = $uuid !== null;
         $regulationOrderRecord = $isEdit ? $this->getRegulationOrderRecord($uuid) : null;
 
-        // TODO: rename to SaveRegulationGeneralInfoCommand
-        $command = SaveRegulationOrderCommand::create($regulationOrderRecord);
+        $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
