@@ -38,7 +38,11 @@
                             {% endfor %}
                         </ul>
                         {% if isDraft %}
-                            {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                            {% if regulationOrderRecord.locations|length > 0 %}
+                                {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                            {% else %}
+                                {{ render(path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid })) }}
+                            {% endif %}
                         {% endif %}
                     </div>
 
