@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation;
 
-use App\Application\Regulation\Command\SaveRegulationOrderCommand;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -35,7 +35,7 @@ final class AddRegulationController
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
-            data: new SaveRegulationOrderCommand(),
+            data: new SaveRegulationGeneralInfoCommand(),
             options: [
                 'organizations' => [$user->getOrganization()],
                 'action' => $this->router->generate('fragment_regulations_general_info_form'),
