@@ -22,7 +22,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(2, $this->extension->getFunctions());
+        $this->assertCount(3, $this->extension->getFunctions());
     }
 
     public function testFormatDateTimeDateOnly(): void
@@ -44,59 +44,72 @@ class AppExtensionTest extends TestCase
         );
     }
 
+    private function provideIsPast(): array
+    {
+        return [
+            // Day after
+            [
+                'date' => '2023-01-07',
+                'now' => '2023-01-06',
+                'result' => false,
+            ],
+            // Day before
+            [
+                'date' => '2023-01-05',
+                'now' => '2023-01-06',
+                'result' => true,
+            ],
+            // Same day
+            [
+                'date' => '2023-01-06',
+                'now' => '2023-01-06',
+                'result' => false,
+            ],
+            // Same day  (time does not matter)
+            [
+                'date' => '2023-01-06T11:30:00',
+                'now' => '2023-01-06T08:00:00',
+                'result' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideIsPast
+     */
+    public function testIsClientPastDay(string $date, string $now, bool $result): void
+    {
+        $date = new \DateTimeImmutable($date);
+        $now = new \DateTimeImmutable($now);
+        $this->assertSame($result, $this->extension->isClientPastDay($date, $now));
+    }
+
     private function provideIsFuture(): array
     {
         return [
             // Day after
             [
                 'date' => '2023-01-07',
-                'time' => null,
-                'now' => '2023-01-06 10:30:00',
-                'result' => true,
-            ],
-            [
-                'date' => '2023-01-07',
-                'time' => '09:00:00',
-                'now' => '2023-01-06 10:30:00',
-                'result' => true,
-            ],
-            [
-                'date' => '2023-01-07',
-                'time' => '00:00:01',
                 'now' => '2023-01-06',
                 'result' => true,
             ],
             // Day before
             [
                 'date' => '2023-01-05',
-                'time' => null,
-                'now' => '2023-01-06 10:30:00',
-                'result' => false,
-            ],
-            [
-                'date' => '2023-01-05',
-                'time' => '23:59:59',
                 'now' => '2023-01-06',
                 'result' => false,
             ],
             // Same day
             [
                 'date' => '2023-01-06',
-                'time' => '10:29:59',
-                'now' => '2023-01-06 10:30:00',
+                'now' => '2023-01-06',
                 'result' => false,
             ],
+            // same day (time does not matter)
             [
-                'date' => '2023-01-06',
-                'time' => '10:30:00',
-                'now' => '2023-01-06 10:30:00',
+                'date' => '2023-01-06T08:00:00',
+                'now' => '2023-01-06T11:00:00',
                 'result' => false,
-            ],
-            [
-                'date' => '2023-01-06',
-                'time' => '10:30:01',
-                'now' => '2023-01-06 10:30:00',
-                'result' => true,
             ],
         ];
     }
@@ -104,11 +117,10 @@ class AppExtensionTest extends TestCase
     /**
      * @dataProvider provideIsFuture
      */
-    public function testIsFuture(string $date, string|null $time, string $now, bool $result): void
+    public function testIsClientFutureDay(string $date, string $now, bool $result): void
     {
         $date = new \DateTimeImmutable($date);
-        $time = $time ? new \DateTimeImmutable($time) : null;
         $now = new \DateTimeImmutable($now);
-        $this->assertSame($result, $this->extension->isFuture($date, $time, $now));
+        $this->assertSame($result, $this->extension->isClientFutureDay($date, $now));
     }
 }
