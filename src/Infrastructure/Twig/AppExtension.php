@@ -42,11 +42,8 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
     {
-        if (!$today) {
-            $today = (new \DateTimeImmutable('now'))->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-        } else {
-            $today = \DateTimeImmutable::createFromInterface($today)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-        }
+        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
+        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
         $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
@@ -55,9 +52,8 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function isClientFutureDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
     {
-        if (!$today) {
-            $today = (new \DateTimeImmutable('now'))->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-        }
+        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
+        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
         $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 

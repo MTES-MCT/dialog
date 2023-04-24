@@ -65,20 +65,25 @@ class AppExtensionTest extends TestCase
                 'now' => '2023-01-06',
                 'result' => false,
             ],
+            // Same day  (time does not matter)
+            [
+                'date' => '2023-01-06T11:30:00',
+                'now' => '2023-01-06T08:00:00',
+                'result' => false,
+            ],
         ];
     }
 
     /**
      * @dataProvider provideIsPast
      */
-    
-    public function testIsClientPastDay(string $date,string $now, bool $result): void
+    public function testIsClientPastDay(string $date, string $now, bool $result): void
     {
         $date = new \DateTimeImmutable($date);
         $now = new \DateTimeImmutable($now);
         $this->assertSame($result, $this->extension->isClientPastDay($date, $now));
     }
-    
+
     private function provideIsFuture(): array
     {
         return [
@@ -100,13 +105,19 @@ class AppExtensionTest extends TestCase
                 'now' => '2023-01-06',
                 'result' => false,
             ],
+            // same day (time does not matter)
+            [
+                'date' => '2023-01-06T08:00:00',
+                'now' => '2023-01-06T11:00:00',
+                'result' => false,
+            ],
         ];
     }
+
     /**
      * @dataProvider provideIsFuture
      */
-
-    public function testIsClientFutureDay(string $date,string $now, bool $result):void
+    public function testIsClientFutureDay(string $date, string $now, bool $result): void
     {
         $date = new \DateTimeImmutable($date);
         $now = new \DateTimeImmutable($now);
