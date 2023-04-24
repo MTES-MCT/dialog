@@ -1,3 +1,5 @@
 {% for address in addresses %}
-    <li class="list-group-item" role="option">{{address}}</li>
+    <li role="option" data-condition-value="{{ address.type }}">
+        {{ address.label }}
+    </li>
 {% endfor %}

@@ -132,7 +132,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
                 };
 
                 if (!empty($label)) {
-                    $addresses[] = $label;
+                    $addresses[] = ['type' => $type, 'label' => $label];
                 }
             }
 

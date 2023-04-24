@@ -160,7 +160,7 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $geocoder = new APIAdresseGeocoder($http);
         $addresses = $geocoder->findAddresses($search);
-        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
+        $this->assertEquals([['type' => 'street', 'label' => 'Rue Eugene Berthoud, 75018 Paris']], $addresses);
     }
 
     public function testFindAddressesIncompleteFeature(): void

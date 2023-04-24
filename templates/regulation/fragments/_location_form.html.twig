@@ -47,17 +47,47 @@
         <div class="app-card__content">
             {{ form_start(form) }}
                 {{ form_errors(form) }}
+
                 {{ form_row(form.address, {
                     group_class: 'fr-input-group',
                     widget_class: 'fr-input',
                     autocomplete: true,
                     autocomplete_url: path('fragment_address_completion'),
                     autocomplete_results_label: 'regulation.location.address.results_label'|trans,
+                    row_attr: {
+                        'data-controller': 'disable condition',
+                        'data-disable-target-outlet': '.disabled-if-municipality',
+                        'data-condition-equals-value': 'municipality',
+                        'data-condition-event-target-path-value': 'detail.selected',
+                        'data-action': 'autocomplete.change->condition#compute condition.true->disable#disable condition.false->disable#clear',
+                    },
                 }) }}
+
                 <div class="fr-container--fluid">
                     <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
-                        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-                        {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                        {{ form_row(form.fromHouseNumber, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            row_attr: {
+                                class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3',
+                            },
+                            attr: {
+                                'data-controller': 'target',
+                                class: 'disabled-if-municipality',
+                            },
+                        }) }}
+
+                        {{ form_row(form.toHouseNumber, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            row_attr: {
+                                class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3',
+                            },
+                            attr: {
+                                'data-controller': 'target',
+                                class: 'disabled-if-municipality',
+                            },
+                        }) }}
                     </div>
                 </div>
 
