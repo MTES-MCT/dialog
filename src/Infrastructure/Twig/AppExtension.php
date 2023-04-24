@@ -18,7 +18,8 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     {
         return [
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
-            new \Twig\TwigFunction('app_is_future', [$this, 'isFuture']),
+            new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
+            new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
         ];
     }
 
@@ -39,22 +40,23 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return $dateTime->format($format);
     }
 
-    public function isFuture(\DateTimeInterface $date = null, \DateTimeInterface $time = null, \DateTimeInterface $reference = null): bool
+    public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
     {
-        if (!$date) {
-            $date = new \DateTimeImmutable('now');
-        }
+        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
+        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
-        if (!$reference) {
-            $reference = new \DateTimeImmutable('now');
-        }
+        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
-        $dateTime = \DateTimeImmutable::createFromInterface($date);
+        return $day < $today;
+    }
 
-        if ($time) {
-            $dateTime = $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
-        }
+    public function isClientFutureDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
+    {
+        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
+        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
-        return $reference < $dateTime;
+        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        return $today < $day;
     }
 }
