@@ -93,23 +93,79 @@ final class APIAdresseGeocoderTest extends TestCase
 
     public function testFindAddresses(): void
     {
-        $body = '{"features": [{"properties": {"name": "Rue Eugene Berthoud", "postcode": "75018", "city": "Paris", "type": "street"}}]}';
-        $response = new MockResponse($body, ['http_code' => 200]);
-        $http = new MockHttpClient([$response]);
+        $expectedRequests = [
+            function ($method, $url, $options) {
+                $this->assertSame('GET', $method);
+                $this->assertEmpty(
+                    array_diff(
+                        ['scheme' => 'http', 'host' => 'testserver', 'path' => '/search/'],
+                        parse_url($url),
+                    ),
+                );
+                $this->assertContains('Accept: application/json', $options['headers']);
+                $this->assertSame('Rue Eugene', $options['query']['q']);
+                $this->assertSame('1', $options['query']['autocomplete']);
+                $this->assertSame(7, $options['query']['limit']);
+
+                return new MockResponse(
+                    json_encode([
+                        'features' => [['properties' => ['name' => 'Rue Eugene Berthoud', 'postcode' => '75018', 'city' => 'Paris', 'type' => 'street']]],
+                    ]),
+                    ['http_code' => 200],
+                );
+            },
+        ];
+
+        $http = new MockHttpClient($expectedRequests, 'http://testserver');
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Rue Eugene', 'street');
+        $addresses = $geocoder->findAddresses('Rue Eugene');
+        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
+    }
+
+    private function provideFindAddressesLeadingHouseNumberIsRemoved(): array
+    {
+        return [
+            ['search' => '3 Rue Eugene'],
+            ['search' => '3bis Rue Eugene'],
+            ['search' => '3ter Rue Eugene'],
+            ['search' => '12 bis Rue Eugene'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFindAddressesLeadingHouseNumberIsRemoved
+     */
+    public function testFindAddressesLeadingHouseNumberIsRemoved(string $search): void
+    {
+        $expectedRequests = [
+            function ($method, $url, $options) {
+                $this->assertSame('Rue Eugene', $options['query']['q']);
+
+                return new MockResponse(
+                    json_encode([
+                        'features' => [['properties' => ['name' => 'Rue Eugene Berthoud', 'postcode' => 75018, 'city' => 'Paris', 'type' => 'street']]],
+                    ]),
+                    ['http_code' => 200],
+                );
+            },
+        ];
+
+        $http = new MockHttpClient($expectedRequests);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $addresses = $geocoder->findAddresses($search);
         $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
     }
 
     public function testFindAddressesIncompleteFeature(): void
     {
-        $body = '{"features": [{}]}';
+        $body = json_encode(['features' => [[]]]);
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test', 'street');
+        $addresses = $geocoder->findAddresses('Test');
         $this->assertEquals([], $addresses);
     }
 
@@ -119,7 +175,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test', 'street');
+        $addresses = $geocoder->findAddresses('Test');
         $this->assertEquals([], $addresses);
     }
 
@@ -129,7 +185,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test', 'street');
+        $addresses = $geocoder->findAddresses('Test');
         $this->assertEquals([], $addresses);
     }
 }
