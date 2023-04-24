@@ -102,10 +102,6 @@
                 <source>common.draft</source>
                 <target>Brouillon</target>
             </trans-unit>
-            <trans-unit id="common.accessibilty">
-                <source>common.accessibilty</source>
-                <target>Accessibilité</target>
-            </trans-unit>
             <trans-unit id="common.licence">
                 <source>common.licence</source>
                 <target>Sauf mention contraire, tous les contenus de ce site sont sous <![CDATA[<a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank">licence etalab-2.0</a>]]></target>
@@ -153,6 +149,10 @@
             <trans-unit id="common.date.passed">
                 <source>common.date.passed</source>
                 <target>passé</target>
+            </trans-unit>
+            <trans-unit id="accessibility.status">
+                <source>accessibility.status</source>
+                <target>Accessibilité : non conforme</target>
             </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
