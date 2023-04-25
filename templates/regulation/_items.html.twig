@@ -14,7 +14,11 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
+<<<<<<< HEAD
                 {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
+=======
+                {% set isUpcoming = regulation.startDate ? app_is_future(regulation.startDate) : null %}
+>>>>>>> 4d86199 (Begin new methods)
                 {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
 
                 <tr>
