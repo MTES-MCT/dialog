@@ -39,6 +39,9 @@
         <testsuite name="Integration">
             <directory>tests/Integration</directory>
         </testsuite>
+        <testsuite name="E2E">
+            <directory>tests/E2E</directory>
+        </testsuite>
     </testsuites>
 
     <listeners>
@@ -47,5 +50,6 @@
 
     <extensions>
         <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+        <extension class="Symfony\Component\Panther\ServerExtension" />
     </extensions>
 </phpunit>

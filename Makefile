@@ -155,6 +155,9 @@ test_unit: ## Run unit tests only
 test_integration: ## Run integration tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
 
+test_e2e: ## Run browser tests only
+	${BIN_PHP} ./bin/phpunit --testsuite=E2E ${ARGS}
+
 ##
 ## ----------------
 ## CI

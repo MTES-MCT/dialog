@@ -43,4 +43,12 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
    mv composer.phar /usr/local/bin/composer
 
+# Install browsers for Panther
+ENV PANTHER_NO_SANDBOX 1
+ARG GECKODRIVER_VERSION=0.33.0
+RUN apt-get install -y --no-install-recommends firefox-esr
+RUN curl -fsSL https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz > ./geckodriver.tar.gz; \
+    tar -zxf ./geckodriver.tar.gz -C /usr/bin; \
+    rm ./geckodriver.tar.gz
+
 CMD ["php-fpm"]
