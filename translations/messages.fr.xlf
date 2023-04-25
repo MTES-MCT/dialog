@@ -359,6 +359,10 @@
                 <source>regulation.stepper.steps</source>
                 <target>Étape %step% sur 4</target>
             </trans-unit>
+            <trans-unit id="regulation.step1.email">
+                <source>regulation.step1.email</source>
+                <target>Email</target>
+            </trans-unit>
             <trans-unit id="regulation.stepper.step1">
                 <source>regulation.stepper.step1</source>
                 <target>Restriction</target>
@@ -586,11 +590,27 @@
                 <source>user.delete_modal.title</source>
                 <target>Supprimer cet utilisateur?</target>
             </trans-unit>
-            
             <trans-unit id="user.list">
                 <source>user.list</source>
                 <target>Liste des utilisateurs</target>
             </trans-unit>
+            <trans-unit id="user.create.title">
+                <source>user.create.title</source>
+                <target>Nouvel utilisateur</target>
+            </trans-unit>
+            <trans-unit id="user.fullname">
+                <source>user.fullname</source>
+                <target>Nom </target>
+            </trans-unit>
+            <trans-unit id="user.email">
+                <source>user.email</source>
+                <target>Adresse e-mail</target>
+            </trans-unit>
+            <trans-unit id="password.confirm">
+                <source>password.confirm</source>
+                <target>Confirmation du mot de passe</target>
+            </trans-unit>
+            
             <trans-unit id="organization.list">
                 <source>organization.list</source>
                 <target>Liste des organisations</target>

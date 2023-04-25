@@ -1,21 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{%block title %}
-{% endblock %}
+{%block title %}{% endblock %}
 
 {%block body %}
-<section class="fr-container fr-py-5w">
-    <div class="fr-stepper fr-col fr-col-lg-6">
-    {{form_start(form)}}
 
-    {{ form_row(form.fullName, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
-    {{ form_row(form.email, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
-    {{ form_row(form.password) }}<br/>
-    
-    {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
+	<section class="fr-container fr-py-5w">
+		<h2 id="add-title">{{ 'user.create.title'|trans }}</h2>
+		<div class="fr-stepper fr-col fr-col-lg-6">
+			{{form_start(form)}}
 
-    {{ form_end(form) }}
-    </div>
-</section>
+			{{ form_row(form.fullName, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+			{{ form_row(form.email, {group_class: 'fr-input-group', widget_class: 'fr-input', label_content_attr: {class: 'fr-text--bold'}}) }}
+			{{ form_row(form.password) }}<br/>
+
+			{{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line'}}) }}
+
+			{{ form_end(form) }}
+		</div>
+	</section>
 
 {% endblock %}

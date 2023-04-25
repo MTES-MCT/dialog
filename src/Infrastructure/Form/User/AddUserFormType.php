@@ -41,8 +41,8 @@ class AddUserFormType extends AbstractType
                     'required' => true,
                     'options' => ['attr' => [
                         'class' => 'fr-input', ]],
-                    'first_options' => ['label' => 'mot de passe'],
-                    'second_options' => ['label' => 'confirmation du mot de passe',
+                    'first_options' => ['label' => 'login.password'],
+                    'second_options' => ['label' => 'password.confirm',
                     ],
             ],
         )

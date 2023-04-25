@@ -26,6 +26,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
         $form['general_info_form[startDate]'] = '2023-02-14';
+        $form['general_info_form[email]'] = 'user@example.org';
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
@@ -47,6 +48,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_identifier_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_description_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_startDate_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_email_error')->text());
     }
 
     public function testBadPeriod(): void
@@ -61,6 +63,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2023-02-11';
+        $form['general_info_form[email]'] = 'lea.liloo@gmail.com';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('La date de fin doit être après le 12/02/2023.', $crawler->filter('#general_info_form_endDate_error')->text());
@@ -78,6 +81,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2024-02-11';
+        $form['general_info_form[email]'] = 'lea.liloo@gmail.com';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('#general_info_form_identifier_error')->text());
