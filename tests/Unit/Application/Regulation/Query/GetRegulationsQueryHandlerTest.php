@@ -113,13 +113,10 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findRegulationsByOrganization')
             ->with($organization, 20, 1, true)
-            ->willReturn([$regulationOrderRecord2, $regulationOrderRecord1]);
-
-        $regulationOrderRecordRepository
-            ->expects(self::once())
-            ->method('countRegulationsByOrganization')
-            ->with($organization, true)
-            ->willReturn(2);
+            ->willReturn([
+                'count' => 2,
+                'items' => [$regulationOrderRecord2, $regulationOrderRecord1],
+            ]);
 
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, isPermanent: true));
