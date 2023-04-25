@@ -1,12 +1,58 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Déclaration d'accessibilité - {{ parent() }}
+    Accessibilité : non conforme - {{ parent() }}
 {% endblock %}
 
 {% block body %}
     <div class="fr-container fr-mt-3w">
-        <h1>Déclaration d'accessibilité</h1>
+        <h1>Accessibilité</h1>
+
+        <h2>Qu'est-ce que l'accessibilité numérique ?</h2>
+
+        <p>
+            Un site web accessible suit un ensemble de règles et de bonnes pratiques pour
+            s'assurer qu'il puisse être utilisé sans difficulté par les personnes en situation de handicap.
+        </p>
+
+        <h2>Démarche d'accessibilité</h2>
+
+        <p>
+            Le site <a href="{{ path('app_landing') }}">DiaLog</a> n'a pas fait l'objet d'un audit RGAA 4.1. Il est donc impossible
+            en l'état d'en évaluer la conformité avec le référentiel. Par défaut, le site est donc considéré comme <strong>non conforme</strong>.
+        </p>
+
+        <p>
+            Il a cependant été conçu pour être accessible au plus grand nombre. Pour cela, nous avons veillé à :
+        </p>
+
+        <ul>
+            <li>produire un code source HTML valide ;</li>
+            <li>structurer chaque page avec titres et sémantique ;</li>
+            <li>faire en sorte que la navigation au clavier soit fonctionnelle et visible ;</li>
+            <li>respecter les règles de contraste pour que le site soit lisibile.</li>
+        </ul>
+
+        <p>Vous devriez donc pouvoir, par exemple :</p>
+
+        <ul>
+            <li>Changer les couleurs, les niveaux de contraste et les polices de caractères via le navigateur ou le système d'exploitation ;</li>
+            <li>Naviguer sur le site site sans utiliser la souris, par exemple avec le clavier ou via un écran tactile.</li>
+        </ul>
+
+        <h3>Défauts d'accessibilité</h3>
+
+        <p>
+            Nous ne pouvons pas garantir l'accessibilité des pages ou portions de pages suivantes :
+        </p>
+
+        <ul>
+            <li>Liste des arrêtés avec lecteur d'écran.</li>
+        </ul>
+
+        <hr class="fr-mt-5w" />
+
+        <h2>Déclaration de conformité RGAA</h2>
         <p>Établie le <span>24 avril 2023</span>.</p>
         <p>
             Le <span>Ministère de la Transition écologique et de la Cohésion des territoires</span>
@@ -17,7 +63,7 @@
             Cette déclaration d'accessibilité s'applique à <strong>DiaLog</strong><span>
                 (<span>https://dialog.beta.gouv.fr</span>)</span>.
         </p>
-        <h2>État de conformité</h2>
+        <h3>État de conformité</h3>
         <p>
             <strong>DiaLog</strong> est
             <strong><span data-printfilter="lowercase">non conforme</span></strong> avec
@@ -25,7 +71,7 @@
             <abbr title="Référentiel général d'amélioration de l'accessibilité">RGAA</abbr>.
             <span>Le site n'a encore pas été audité.</span>
         </p>
-        <h2>Amélioration et contact</h2>
+        <h3>Amélioration et contact</h3>
         <p>
             Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez
             contacter le responsable de <span>DiaLog</span> pour être orienté vers une
@@ -36,7 +82,7 @@
                 E-mail&nbsp;: <a href="mailto:dialog@beta.gouv.fr">dialog@beta.gouv.fr</a>
             </li>
         </ul>
-        <h2>Voie de recours</h2>
+        <h3>Voie de recours</h3>
         <p>
             Cette procédure est à utiliser dans le cas suivant&nbsp;: vous avez signalé au
             responsable du site internet un défaut d'accessibilité qui vous empêche

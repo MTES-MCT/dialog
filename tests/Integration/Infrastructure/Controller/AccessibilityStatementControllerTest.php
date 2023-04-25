@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
-/** @group only */
-final class AccessibilityDeclarationControllerTest extends AbstractWebTestCase
+final class AccessibilityStatementControllerTest extends AbstractWebTestCase
 {
     public function testGet(): void
     {
@@ -15,7 +14,8 @@ final class AccessibilityDeclarationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('public, s-maxage=86400', $client->getResponse()->headers->get('Cache-Control'));
-        $this->assertSame('Déclaration d\'accessibilité', $crawler->filter('h1')->text());
+        $this->assertMetaTitle('Accessibilité : non conforme - DiaLog', $crawler);
+        $this->assertSame('Accessibilité', $crawler->filter('h1')->text());
         $this->assertStringContainsString('non conforme', $crawler->text());
     }
 
