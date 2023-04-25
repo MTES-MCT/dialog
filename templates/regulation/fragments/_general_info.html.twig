@@ -13,7 +13,7 @@
                 <li>{{ regulationOrderRecord.description }}</li>
                 {% set startDate = regulationOrderRecord.startDate %}
                 {% set endDate = regulationOrderRecord.endDate %}
-                {% set isFuture = app_is_future(startDate) %}
+                {% set isFuture = app_is_client_future_day(startDate) %}
                 <li>
                     {% if startDate and endDate %}
                         {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
