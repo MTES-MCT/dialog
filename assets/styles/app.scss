@@ -100,6 +100,7 @@ label.required > .fr-x-label-content::after {
 
 .app-card {
     display: flex;
+    flex-direction: column;
     column-gap: 1.5rem;
     padding: 1.5rem;
     background-color: var(--background-raised-grey);
@@ -123,9 +124,15 @@ label.required > .fr-x-label-content::after {
     background-color: var(--background-alt-grey);
 }
 
-@media screen and (max-width:767px){
+@media screen and (min-width:768px){
     
-    .app-card {
-        flex-direction: column;
+    .app-card{
+        flex-direction: row;
     }
 }
+// @media screen and (min-width:768px) and (max-width:958px){
+    
+//     .app-card{
+//         padding: 1.5rem 0;
+//     }
+// }
