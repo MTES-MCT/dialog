@@ -10,7 +10,6 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// TODO : Duplicate locations
 final class DuplicateRegulationCommandHandler
 {
     public function __construct(
@@ -26,6 +25,7 @@ final class DuplicateRegulationCommandHandler
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
 
         $duplicatedRegulationOrderRecord = $this->duplicateRegulationOrderRecord($organization, $originalRegulationOrder);
+        $this->duplicateRegulationLocations($originalRegulationOrder, $duplicatedRegulationOrderRecord);
 
         return $duplicatedRegulationOrderRecord;
     }
@@ -34,15 +34,29 @@ final class DuplicateRegulationCommandHandler
         Organization $organization,
         RegulationOrder $originalRegulationOrder,
     ): RegulationOrderRecord {
-        $step1Command = new SaveRegulationGeneralInfoCommand();
-        $step1Command->organization = $organization;
-        $step1Command->identifier = $this->translator->trans('regulation.identifier.copy', [
+        $generalInfo = new SaveRegulationGeneralInfoCommand();
+        $generalInfo->organization = $organization;
+        $generalInfo->identifier = $this->translator->trans('regulation.identifier.copy', [
             '%identifier%' => $originalRegulationOrder->getIdentifier(),
         ]);
-        $step1Command->description = $originalRegulationOrder->getDescription();
-        $step1Command->startDate = $originalRegulationOrder->getStartDate();
-        $step1Command->endDate = $originalRegulationOrder->getEndDate();
+        $generalInfo->description = $originalRegulationOrder->getDescription();
+        $generalInfo->startDate = $originalRegulationOrder->getStartDate();
+        $generalInfo->endDate = $originalRegulationOrder->getEndDate();
 
-        return $this->commandBus->handle($step1Command);
+        return $this->commandBus->handle($generalInfo);
+    }
+
+    private function duplicateRegulationLocations(
+        RegulationOrder $originalRegulationOrder,
+        RegulationOrderRecord $duplicatedRegulationOrderRecord,
+    ): void {
+        foreach ($originalRegulationOrder->getLocations() as $location) {
+            $locationCommand = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
+            $locationCommand->address = $location->getAddress();
+            $locationCommand->fromHouseNumber = $location->getFromHouseNumber();
+            $locationCommand->toHouseNumber = $location->getToHouseNumber();
+
+            $this->commandBus->handle($locationCommand);
+        }
     }
 }
