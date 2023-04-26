@@ -22,8 +22,12 @@
                     autocomplete_url: path('fragment_address_completion'),
                     autocomplete_results_label: 'regulation.location.address.results_label'|trans,
                 }) }}
-                {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-                {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+                <div class="fr-container--fluid">
+                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
+                        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                        {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                    </div>
+                </div>
 
                 <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">{{ "common.cancel"|trans }}</a>
                 {{ form_widget(form.save, {attr: {class: 'fr-btn'}}) }}
