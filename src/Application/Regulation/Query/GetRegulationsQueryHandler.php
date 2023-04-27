@@ -25,14 +25,9 @@ final class GetRegulationsQueryHandler
             $query->page,
             $query->isPermanent,
         );
-
-        $totalItems = $this->repository->countRegulationsByOrganization(
-            $query->organization,
-            $query->isPermanent,
-        );
         $regulationOrderViews = [];
 
-        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+        foreach ($regulationOrderRecords['items'] as $regulationOrderRecord) {
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
             $locations = $regulationOrder->getLocations();
             $nbLocations = $locations->count();
@@ -52,7 +47,7 @@ final class GetRegulationsQueryHandler
 
         return new Pagination(
             $regulationOrderViews,
-            $totalItems,
+            $regulationOrderRecords['count'],
             $query->page,
             $query->pageSize,
         );

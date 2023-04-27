@@ -9,6 +9,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class RegulationOrderRecordRepository extends ServiceEntityRepository implements RegulationOrderRecordRepositoryInterface
@@ -24,7 +25,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         int $page,
         bool $isPermanent,
     ): array {
-        return $this->createQueryBuilder('roc')
+        $query = $this->createQueryBuilder('roc')
             ->where('roc.organization = :organization')
             ->setParameter('organization', $organization->getUuid())
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
@@ -33,21 +34,19 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addGroupBy('ro, roc')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+            ->getQuery();
 
-    public function countRegulationsByOrganization(Organization $organization, bool $isPermanent): int
-    {
-        return $this->createQueryBuilder('roc')
-            ->select('count(roc.uuid)')
-            ->where('roc.organization = :organization')
-            ->setParameter('organization', $organization->getUuid())
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
+        $paginator = new Paginator($query, false);
+        $result = [
+            'items' => [],
+            'count' => \count($paginator),
+        ];
+
+        foreach ($paginator as $regulationOrderRecord) {
+            array_push($result['items'], $regulationOrderRecord);
+        }
+
+        return $result;
     }
 
     public function findOneByUuid(string $uuid): RegulationOrderRecord|null
