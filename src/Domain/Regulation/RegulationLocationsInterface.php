@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-interface RegulationPublicationInterface
+interface RegulationLocationsInterface
 {
     public function countLocations(): int;
 }

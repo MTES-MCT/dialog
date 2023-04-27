@@ -20,8 +20,6 @@ interface RegulationOrderRecordRepositoryInterface
         bool $isPermanent,
     ): array;
 
-    public function countRegulationsByOrganization(Organization $organization, bool $isPermanent): int;
-
     public function findOneForSummary(string $uuid): array|null;
 
     public function findRegulationOrdersForDatexFormat(): array;

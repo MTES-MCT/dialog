@@ -10,6 +10,7 @@ use App\Application\Regulation\Command\Location\DeleteRegulationLocationCommand;
 use App\Domain\Regulation\Exception\LocationCannotBeDeletedException;
 use App\Domain\Regulation\Exception\LocationDoesntBelongsToRegulationOrderException;
 use App\Domain\Regulation\Exception\LocationNotFoundException;
+use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -30,6 +31,7 @@ final class DeleteLocationFragmentController extends AbstractRegulationControlle
         private \Twig\Environment $twig,
         private CommandBusInterface $commandBus,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private CanDeleteLocations $canDeleteLocations,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
@@ -77,6 +79,8 @@ final class DeleteLocationFragmentController extends AbstractRegulationControlle
                 name: 'regulation/fragments/_location.deleted.stream.html.twig',
                 context: [
                     'uuid' => $uuid,
+                    'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
+                    'locationUuids' => $regulationOrderRecord->getLocationUuids(),
                 ],
             ),
         );

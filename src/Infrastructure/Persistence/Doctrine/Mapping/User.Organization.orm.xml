@@ -9,9 +9,6 @@
         <unique-constraint columns="name" name="organization_name" />
     </unique-constraints>
     <many-to-many field="users" inversed-by="organizations" target-entity="App\Domain\User\User">
-        <cascade>
-            <cascade-all/>
-        </cascade>
         <join-table name="organizations_users">
             <join-columns>
                 <join-column name="organization_uuid" referenced-column-name="uuid" />

@@ -12,6 +12,7 @@ use App\Domain\Regulation\Exception\LocationNotFoundException;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\LocationRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -21,6 +22,7 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
     private $location;
     private $regulationOrderRecord;
     private $regulationOrder;
+    private $canDeleteLocations;
     private $command;
 
     protected function setUp(): void
@@ -29,6 +31,7 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
         $this->location = $this->createMock(Location::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $this->canDeleteLocations = $this->createMock(CanDeleteLocations::class);
         $this->command = new DeleteRegulationLocationCommand(
             '0a7badfa-9d84-42f3-b4f0-e83ef2a3d03c',
             $this->regulationOrderRecord,
@@ -37,10 +40,11 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
 
     public function testDelete(): void
     {
-        $this->regulationOrderRecord
+        $this->canDeleteLocations
             ->expects(self::once())
-            ->method('countLocations')
-            ->willReturn(2);
+            ->method('isSatisfiedBy')
+            ->with($this->regulationOrderRecord)
+            ->willReturn(true);
 
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -62,7 +66,7 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
             ->method('delete')
             ->with($this->location);
 
-        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository);
+        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository, $this->canDeleteLocations);
         $this->assertEmpty($handler($this->command));
     }
 
@@ -72,10 +76,11 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
 
         $regulationOrder = $this->createMock(RegulationOrder::class);
 
-        $this->regulationOrderRecord
+        $this->canDeleteLocations
             ->expects(self::once())
-            ->method('countLocations')
-            ->willReturn(2);
+            ->method('isSatisfiedBy')
+            ->with($this->regulationOrderRecord)
+            ->willReturn(true);
 
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -96,7 +101,7 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('delete');
 
-        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository);
+        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository, $this->canDeleteLocations);
         $this->assertEmpty($handler($this->command));
     }
 
@@ -104,10 +109,11 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
     {
         $this->expectException(LocationNotFoundException::class);
 
-        $this->regulationOrderRecord
+        $this->canDeleteLocations
             ->expects(self::once())
-            ->method('countLocations')
-            ->willReturn(2);
+            ->method('isSatisfiedBy')
+            ->with($this->regulationOrderRecord)
+            ->willReturn(true);
 
         $this->locationRepository
             ->expects(self::once())
@@ -118,7 +124,7 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('delete');
 
-        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository);
+        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository, $this->canDeleteLocations);
         $this->assertEmpty($handler($this->command));
     }
 
@@ -126,10 +132,11 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
     {
         $this->expectException(LocationCannotBeDeletedException::class);
 
-        $this->regulationOrderRecord
+        $this->canDeleteLocations
             ->expects(self::once())
-            ->method('countLocations')
-            ->willReturn(1);
+            ->method('isSatisfiedBy')
+            ->with($this->regulationOrderRecord)
+            ->willReturn(false);
 
         $this->locationRepository
             ->expects(self::never())
@@ -139,7 +146,7 @@ final class DeleteRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('delete');
 
-        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository);
+        $handler = new DeleteRegulationLocationCommandHandler($this->locationRepository, $this->canDeleteLocations);
         $this->assertEmpty($handler($this->command));
     }
 }

@@ -9,18 +9,21 @@ use App\Domain\Regulation\Exception\LocationDoesntBelongsToRegulationOrderExcept
 use App\Domain\Regulation\Exception\LocationNotFoundException;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Domain\Regulation\Specification\CanDeleteLocations;
 
 final class DeleteRegulationLocationCommandHandler
 {
     public function __construct(
         private LocationRepositoryInterface $locationRepository,
+        private CanDeleteLocations $canDeleteLocations,
     ) {
     }
 
     public function __invoke(DeleteRegulationLocationCommand $command): void
     {
         $regulationOrderRecord = $command->regulationOrderRecord;
-        if ($regulationOrderRecord->countLocations() <= 1) {
+
+        if (!$this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord)) {
             throw new LocationCannotBeDeletedException();
         }
 

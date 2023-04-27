@@ -1,7 +1,20 @@
+{% if canDelete %}
+    {% set deleteCsrfToken = csrf_token('delete-location') %}
+    {% for locationUuid in locationUuids %}
+        <turbo-stream action="replace" target="location_{{ locationUuid }}_delete_button">
+            <template>
+                <li id="location_{{ locationUuid }}_delete_button">
+                    {% include 'regulation/fragments/_location_delete_form.html.twig' with { uuid: locationUuid, regulationOrderRecord, deleteCsrfToken } only %}
+                </li>
+            </template>
+        </turbo-stream>
+    {% endfor %}
+{% endif %}
+
 <turbo-stream action="append" target="location_list">
     <template>
         <li>
-            {% include 'regulation/fragments/_location.html.twig' with { location, regulationOrderRecord, isFirstLocation } only %}
+            {% include 'regulation/fragments/_location.html.twig' with { location, regulationOrderRecord, canDelete } only %}
         </li>
     </template>
 </turbo-stream>
