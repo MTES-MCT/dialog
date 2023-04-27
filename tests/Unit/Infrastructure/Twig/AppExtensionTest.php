@@ -22,7 +22,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(7, $this->extension->getFunctions());
+        $this->assertCount(3, $this->extension->getFunctions());
     }
 
     public function testFormatDateTimeDateOnly(): void

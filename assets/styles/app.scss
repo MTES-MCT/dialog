@@ -99,13 +99,15 @@ label.required > .fr-x-label-content::after {
 }
 
 .app-card {
-    display: flex;
-    flex-direction: column;
-    column-gap: 1.5rem;
     padding: 1.5rem;
     background-color: var(--background-raised-grey);
     filter: drop-shadow(var(--raised-shadow));
     z-index: calc(var(--ground) + 500);
+
+    @media screen and (min-width: 768px) {
+        display: flex;
+        column-gap: 1.5rem;
+    }
 }
 
 .app-card__content {
@@ -123,16 +125,3 @@ label.required > .fr-x-label-content::after {
 .app-background--alt-grey {
     background-color: var(--background-alt-grey);
 }
-
-@media screen and (min-width:768px){
-    
-    .app-card{
-        flex-direction: row;
-    }
-}
-// @media screen and (min-width:768px) and (max-width:958px){
-    
-//     .app-card{
-//         padding: 1.5rem 0;
-//     }
-// }

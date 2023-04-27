@@ -20,10 +20,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
-            new \Twig\TwigFunction('app_is_future', [$this, 'isFuture']),
-            new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
-            new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
-            new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
         ];
     }
 
