@@ -41,7 +41,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertNotNull($duplicateBtn->attr('disabled'));
         $publishBtn = $crawler->selectButton('Publier');
         $this->assertSame(0, $crawler->selectButton('Valider')->count()); // Location form
-        $this->assertStringStartsWith('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish?token=', $publishBtn->form()->getUri());
+        $this->assertStringStartsWith('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', $publishBtn->form()->getUri());
+        $this->assertSame('POST', $publishBtn->form()->getMethod());
     }
 
     public function testDraftRegulationDetailWithoutLocations(): void
