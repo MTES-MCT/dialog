@@ -17,9 +17,7 @@
         ]} %}
 
         <div>
-            <h2 id="regulation-detail">
-                {{ title }}
-            </h2>
+            <h2 id="regulation-detail">{{ title }}</h2>
 
             <div class="fr-x-container--fluid">
                 <div class="fr-grid-row">
@@ -33,7 +31,7 @@
                         <ul id="location_list" class="fr-raw-list">
                             {% for location in regulationOrderRecord.locations %}
                                 <li>
-                                    {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord } only %}
+                                    {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord, canDelete } only %}
                                 </li>
                             {% endfor %}
                         </ul>
@@ -103,5 +101,9 @@
     {{ parent() }}
     {% if isDraft %}
         {% include 'regulation/_publish_modal.html.twig' %}
+        {% include 'regulation/_delete_modal.html.twig' with {
+            modalId: 'location-delete-modal',
+            modalTitle: 'location.delete_modal.title',
+        } only %}
     {% endif %}
 {% endblock %}

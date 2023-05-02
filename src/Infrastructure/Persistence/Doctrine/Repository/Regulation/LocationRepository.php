@@ -23,6 +23,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         return $location;
     }
 
+    public function delete(Location $location): void
+    {
+        $this->getEntityManager()->remove($location);
+    }
+
     public function findOneByUuid(string $uuid): ?Location
     {
         return $this->createQueryBuilder('loc')

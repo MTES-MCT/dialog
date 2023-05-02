@@ -1,4 +1,5 @@
 {% set uuid = location.uuid %}
+{% set deleteCsrfToken = csrf_token('delete-location') %}
 
 <turbo-frame id="block_location_{{ uuid }}">
     <div class="app-card fr-mt-3w" data-testid="location">
@@ -28,9 +29,13 @@
                 <li>{{ 'regulation.location.all_vehicles_forbidden'|trans }}</li>
             </ul>
         </div>
-
         {% if regulationOrderRecord.isDraft %}
             <ul class="app-card__actions">
+                <li id="location_{{ uuid }}_delete_button">
+                    {% if canDelete %}
+                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
+                    {% endif %}
+                </li>
                 <li>
                     <a href="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
                         {{ 'common.update'|trans }}
