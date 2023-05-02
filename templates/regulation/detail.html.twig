@@ -73,7 +73,11 @@
                                     </li>
                                 {% endif %}
                                 <li>
-                                    <button class="fr-btn fr-btn--secondary" disabled>Dupliquer</button>
+                                    {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
+                                    <form method="post" action="{{ path('app_regulation_duplicate', { uuid: regulationOrderRecord.uuid })}}">
+                                        <button class="fr-btn fr-btn--secondary" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
+                                        <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
+                                    </form>
                                 </li>
                                 <li>
                                     <button class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line" disabled>Supprimer</button>
