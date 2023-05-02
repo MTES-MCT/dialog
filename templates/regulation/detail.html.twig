@@ -21,7 +21,7 @@
 
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col fr-col-12 fr-mt-8w fr-col-md-7 fr-col-lg-8 fr-mt-md-0">
-                        <div class="fr-mx-n4v">
+                        <div class="fr-mx-n4v fr-mx-md-0">
                         {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
                         </div>
 
@@ -45,8 +45,8 @@
                         {% endif %}
                     </div>
 
-                    <aside class="fr-col fr-mr-md-0">
-                        <div class="app-card fr-col-12 fr-col-md-8 fr-mt-8w fr-mx-n4v fr-mt-md-0 fr-ml-md-3w">
+                    <aside class="fr-col">
+                        <div class="app-card fr-col fr-col-md-8 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
                             <div class="app-card__content">
                                 <h3 class="fr-h4">Statut</h3>
                                 {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}

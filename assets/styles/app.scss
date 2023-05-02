@@ -104,19 +104,21 @@ label.required > .fr-x-label-content::after {
     filter: drop-shadow(var(--raised-shadow));
     z-index: calc(var(--ground) + 500);
     display: grid;
-    width: 100%;
     grid-template-areas: "logo title"
                          "detail detail"
                          "btn btn";
     grid-template-rows: auto;
-    grid-template-columns: auto;
+    grid-template-columns: auto 1fr;
+    column-gap: 1.5rem;
+    row-gap: 1rem;
+    align-items: center;
 
     @media screen and (min-width: 768px) {
-        grid-template-areas: "logo title btn"
-                         "detail detail detail";
-    grid-template-rows: auto;
-    grid-template-columns: auto;
-        // column-gap: 1.5rem;
+        grid-template-areas:
+            "logo title btn"
+            "detail detail detail";
+        grid-template-rows: auto;
+        grid-template-columns: auto 1fr auto;
     }
 }
 
@@ -125,6 +127,7 @@ label.required > .fr-x-label-content::after {
 }
 .app-card__title {
     grid-area: title;
+    margin-bottom: 0;
 }
 .app-card__content {
         grid-area: detail;
