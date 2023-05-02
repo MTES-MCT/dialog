@@ -1,31 +1,31 @@
 <dialog
     data-controller="modal"
-    id="regulation-publish-modal"
+    id="{{ id }}"
     class="fr-modal"
     role="dialog"
-    aria-labelledby="regulation-publish-modal-title"
+    aria-labelledby="{{ id }}-title"
 >
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <form method="dialog" class="fr-modal__body">
                     <div class="fr-modal__header">
-                        <button class="fr-link fr-link--close" aria-controls="regulation-publish-modal">
+                        <button class="fr-link fr-link--close" aria-controls="{{ id }}">
                             {{ 'common.close'|trans }}
                         </button>
                     </div>
                     <div class="fr-modal__content">
-                        <h1 id="regulation-publish-modal-title" class="fr-modal__title">
-                            {{ 'regulation.publish_modal.title'|trans }}
+                        <h1 id="{{ id }}-title" class="fr-modal__title">
+                            {{ title }}
                         </h1>
                     </div>
                     <div class="fr-modal__footer">
                         <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg">
                             <button data-modal-target="value" class="fr-btn">
-                                {{ 'regulation.publish_modal.confirm'|trans }}
+                                {{ confirmLabel }}
                             </button>
                             <button class="fr-btn fr-btn--secondary">
-                                {{ 'regulation.publish_modal.cancel'|trans }}
+                                {{ cancelLabel }}
                             </button>
                         </div>
                     </div>

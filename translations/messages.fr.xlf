@@ -46,6 +46,10 @@
                 <source>common.delete</source>
                 <target>Supprimer</target>
             </trans-unit>
+            <trans-unit id="common.do_not_delete">
+                <source>common.do_not_delete</source>
+                <target>Ne pas supprimer</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>
@@ -93,6 +97,10 @@
             <trans-unit id="common.publish">
                 <source>common.publish</source>
                 <target>Publier</target>
+            </trans-unit>
+            <trans-unit id="common.do_not_publish">
+                <source>common.do_not_publish</source>
+                <target>Ne pas publier</target>
             </trans-unit>
             <trans-unit id="common.published">
                 <source>common.published</source>
@@ -314,14 +322,6 @@
                 <source>regulation.publish_modal.title</source>
                 <target>Publier cet arrêté ?</target>
             </trans-unit>
-            <trans-unit id="regulation.publish_modal.confirm">
-                <source>regulation.publish_modal.confirm</source>
-                <target>Publier</target>
-            </trans-unit>
-            <trans-unit id="regulation.publish_modal.cancel">
-                <source>regulation.publish_modal.cancel</source>
-                <target>Ne pas publier</target>
-            </trans-unit>
             <trans-unit id="regulation.duplicated.success">
                 <source>regulation.duplicated.success</source>
                 <target>
@@ -521,14 +521,6 @@
             <trans-unit id="location.delete_modal.title">
                 <source>location.delete_modal.title</source>
                 <target>Supprimer cette localisation ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.delete_modal.confirm">
-                <source>regulation.delete_modal.confirm</source>
-                <target>Supprimer</target>
-            </trans-unit>
-            <trans-unit id="regulation.delete_modal.cancel">
-                <source>regulation.delete_modal.cancel</source>
-                <target>Ne pas supprimer</target>
             </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>

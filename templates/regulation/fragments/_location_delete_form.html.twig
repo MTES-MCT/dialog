@@ -2,7 +2,7 @@
     method="delete"
     action="{{ path('fragment_regulations_location_delete', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid }) }}"
     data-controller="form-submit"
-    data-form-submit-event-name-value="modal-trigger:submit"
+    data-action="modal-trigger:submit->form-submit#submit"
 >
     <button
         class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-line"
