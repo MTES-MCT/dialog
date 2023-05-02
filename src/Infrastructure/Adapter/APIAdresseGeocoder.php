@@ -12,6 +12,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class APIAdresseGeocoder implements GeocoderInterface
 {
+    private const HOUSENUMBER_FILTER_REGEX = '/^(\d+\s?(bis|b|ter|t|quater|q)?)\s/i';
+
     public function __construct(
         private HttpClientInterface $apiAdresseClient,
     ) {
@@ -103,6 +105,8 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
     public function findAddresses(string $search): array
     {
+        $search = preg_replace(self::HOUSENUMBER_FILTER_REGEX, '', $search);
+
         $response = $this->apiAdresseClient->request('GET', '/search/', [
             'headers' => [
                 'Accept' => 'application/json',
@@ -120,10 +124,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
             foreach ($data['features'] as $feature) {
                 $type = $feature['properties']['type'];
-
-                if ($type === 'housenumber') {
-                    continue;
-                }
 
                 $label = match ($type) {
                     'street', 'locality' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
