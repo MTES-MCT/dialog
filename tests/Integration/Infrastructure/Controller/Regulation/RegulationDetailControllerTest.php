@@ -37,8 +37,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form', $location->filter('a')->link()->getUri());
 
         // Actions
-        $duplicateBtn = $crawler->selectButton('Dupliquer');
-        $this->assertNotNull($duplicateBtn->attr('disabled'));
+        $duplicateForm = $crawler->selectButton('Dupliquer')->form();
+        $this->assertSame($duplicateForm->getUri(), 'http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate');
+        $this->assertSame($duplicateForm->getMethod(), 'POST');
+
         $publishBtn = $crawler->selectButton('Publier');
         $this->assertSame(0, $crawler->selectButton('Valider')->count()); // Location form
         $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', $publishBtn->form()->getUri());
