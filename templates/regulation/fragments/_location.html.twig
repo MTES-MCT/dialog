@@ -2,46 +2,51 @@
 {% set deleteCsrfToken = csrf_token('delete-location') %}
 
 <turbo-frame id="block_location_{{ uuid }}">
-    <div class="app-card fr-mt-3w" data-testid="location">
-        <div class="app-card__icon">
-            <span class="fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-        </div>
+	<div class="app-card fr-mt-3w" data-testid="location">
+		<div class="app-card__img">
+			<span class="fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+		</div>
 
-        <div class="app-card__content">
-            <h3 class="fr-h4">
-                {{ location.address.roadName ? location.address.roadName : location.address.city }}
-            </h3>
-            <ul class="fr-ml-1w fr-my-0 fr-list">
-                <li>{{ location.address.city }} ({{ location.address.postCode }})</li>
-                {% if location.address.roadName %}
-                    <li>
-                        {{ location.address.roadName }}
+		<h3 class="app-card__title fr-h4">
+			{{ location.address.roadName ? location.address.roadName : location.address.city }}
+		</h3>
 
-                        {% if location.fromHouseNumber and location.toHouseNumber %}
-                            - {{ 'regulation.location.house_number_from_to'|trans({ '%from%': location.fromHouseNumber, '%to%': location.toHouseNumber }) }}
-                        {% elseif location.fromHouseNumber %}
-                            - {{ 'regulation.location.house_number_from'|trans({ '%from%': location.fromHouseNumber }) }}
-                        {% elseif location.toHouseNumber %}
-                            - {{ 'regulation.location.house_number_to'|trans({ '%to%': location.toHouseNumber }) }}
-                        {% endif %}
-                    </li>
-                {% endif %}
-                <li>{{ 'regulation.location.all_vehicles_forbidden'|trans }}</li>
-            </ul>
-        </div>
-        {% if regulationOrderRecord.isDraft %}
-            <ul class="app-card__actions">
-                <li id="location_{{ uuid }}_delete_button">
-                    {% if canDelete %}
-                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
-                    {% endif %}
-                </li>
-                <li>
-                    <a href="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
-                        {{ 'common.update'|trans }}
-                    </a>
-                </li>
-            </ul>
-        {% endif %}
-    </div>
+		<div class="app-card__content">
+			<ul class="fr-ml-1w fr-my-0 fr-list">
+				<li>{{ location.address.city }}
+					({{ location.address.postCode }})</li>
+				{% if location.address.roadName %}
+					<li>
+						{{ location.address.roadName }}
+
+						{% if location.fromHouseNumber and location.toHouseNumber %}
+							-
+							{{ 'regulation.location.house_number_from_to'|trans({ '%from%': location.fromHouseNumber, '%to%': location.toHouseNumber }) }}
+						{% elseif location.fromHouseNumber %}
+							-
+							{{ 'regulation.location.house_number_from'|trans({ '%from%': location.fromHouseNumber }) }}
+						{% elseif location.toHouseNumber %}
+							-
+							{{ 'regulation.location.house_number_to'|trans({ '%to%': location.toHouseNumber }) }}
+						{% endif %}
+					</li>
+				{% endif %}
+				<li>{{ 'regulation.location.all_vehicles_forbidden'|trans }}</li>
+			</ul>
+		</div>
+		{% if regulationOrderRecord.isDraft %}
+			<ul class="app-card__actions">
+				<li id="location_{{ uuid }}_delete_button">
+					{% if canDelete %}
+						{% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
+					{% endif %}
+				</li>
+				<li>
+					<a href="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
+						{{ 'common.update'|trans }}
+					</a>
+				</li>
+			</ul>
+		{% endif %}
+	</div>
 </turbo-frame>
