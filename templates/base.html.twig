@@ -28,17 +28,17 @@
   <body>
     {% include 'common/header.html.twig' %}
 
-    {% for label, messages in app.flashes %}
-        {% if loop.first %}<div class="fr-container fr-mt-4w">{% endif %}
-        {% for message in messages %}
-            <div class="fr-alert fr-alert--{{ label }}">
-                {{ message|raw }}
-            </div>
-        {% endfor %}
-    {% if loop.last %}</div>{% endif %}
-    {% endfor %}
-
     <main id="contenu" class="{% block page_class %}{% endblock page_class %}">
+        {% for label, messages in app.flashes %}
+            {% if loop.first %}<div class="fr-container fr-pt-4w">{% endif %}
+            {% for message in messages %}
+                <div class="fr-alert fr-alert--{{ label }}">
+                    {{ message|raw }}
+                </div>
+            {% endfor %}
+            {% if loop.last %}</div>{% endif %}
+        {% endfor %}
+
         {% block body %}{% endblock %}
     </main>
     {% include 'common/footer.html.twig' %}
