@@ -41,6 +41,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame($duplicateForm->getUri(), 'http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate');
         $this->assertSame($duplicateForm->getMethod(), 'POST');
 
+        $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
+        $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $this->assertSame($formDelete->getMethod(), 'DELETE');
+
         $publishBtn = $crawler->selectButton('Publier');
         $this->assertSame(0, $crawler->selectButton('Valider')->count()); // Location form
         $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', $publishBtn->form()->getUri());
@@ -72,6 +76,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Publié', $crawler->filter('[data-testid="status-badge"]')->text());
         $this->assertSame(0, $crawler->selectButton('Modifier')->count()); // No edit buttons
         $this->assertSame(0, $crawler->selectButton('Publier')->count());
+
+        $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
+        $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $this->assertSame($formDelete->getMethod(), 'DELETE');
     }
 
     public function testSeeAll(): void
