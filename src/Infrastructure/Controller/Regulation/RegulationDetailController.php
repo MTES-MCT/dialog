@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,6 +20,7 @@ final class RegulationDetailController extends AbstractRegulationController
         private \Twig\Environment $twig,
         protected QueryBusInterface $queryBus,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
+        private CanDeleteLocations $canDeleteLocations,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
     ) {
@@ -45,6 +47,7 @@ final class RegulationDetailController extends AbstractRegulationController
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'isDraft' => $regulationOrderRecord->isDraft(),
                     'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
+                    'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
                     'uuid' => $uuid,
                 ],
             ),

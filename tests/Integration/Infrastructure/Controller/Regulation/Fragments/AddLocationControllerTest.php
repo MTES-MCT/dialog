@@ -41,9 +41,15 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
 
         $streams = $crawler->filter('turbo-stream');
-        $this->assertSame('Route du Grand Brossais', $streams->eq(0)->filter('h3')->text());
+        $this->assertSame($streams->eq(0)->attr('target'), 'location_f15ed802-fa9b-4d75-ab04-d62ea46597e9_delete_button');
+        $this->assertSame($streams->eq(0)->attr('action'), 'replace');
 
-        $form = $streams->eq(1)->selectButton('Ajouter une localisation');
+        $this->assertSame($streams->eq(1)->attr('target'), 'location_list');
+        $this->assertSame($streams->eq(1)->attr('action'), 'append');
+        $this->assertSame('Route du Grand Brossais', $streams->eq(1)->filter('h3')->text());
+
+        $this->assertSame($streams->eq(2)->attr('action'), 'replace');
+        $form = $streams->eq(2)->selectButton('Ajouter une localisation');
         $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $form->getUri());
     }
 

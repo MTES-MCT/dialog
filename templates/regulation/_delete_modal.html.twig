@@ -1,22 +1,25 @@
+{% set modalId = modalId|default('regulation-delete-modal') %}
+{% set modalTitle = modalTitle|default('regulation.delete_modal.title') %}
+
 <dialog
     data-controller="modal"
-    id="regulation-delete-modal"
+    id="{{ modalId }}"
     class="fr-modal"
     role="dialog"
-    aria-labelledby="regulation-delete-modal-title"
+    aria-labelledby="{{ modalId }}-title"
 >
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <form method="dialog" class="fr-modal__body">
                     <div class="fr-modal__header">
-                        <button class="fr-link fr-link--close" aria-controls="regulation-delete-modal">
+                        <button class="fr-link fr-link--close" aria-controls="{{ modalId }}">
                             {{ 'common.close'|trans }}
                         </button>
                     </div>
                     <div class="fr-modal__content">
-                        <h1 id="regulation-delete-modal-title" class="fr-modal__title">
-                            {{ 'regulation.delete_modal.title'|trans }}
+                        <h1 id="{{ modalId }}-title" class="fr-modal__title">
+                            {{ modalTitle|trans }}
                         </h1>
                     </div>
                     <div class="fr-modal__footer">

@@ -6,10 +6,10 @@ namespace App\Domain\Regulation\Specification;
 
 use App\Domain\Regulation\RegulationLocationsInterface;
 
-class CanRegulationOrderRecordBePublished
+final class CanDeleteLocations
 {
     public function isSatisfiedBy(RegulationLocationsInterface $regulation): bool
     {
-        return $regulation->countLocations() >= 1;
+        return $regulation->countLocations() > 1;
     }
 }

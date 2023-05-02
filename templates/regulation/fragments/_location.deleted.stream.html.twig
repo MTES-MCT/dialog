@@ -1,0 +1,11 @@
+{% if not canDelete %}
+    {% for locationUuid in locationUuids %}
+        <turbo-stream action="replace" target="location_{{ locationUuid }}_delete_button">
+            <template>
+                <li id="location_{{ locationUuid }}_delete_button"></li>
+            </template>
+        </turbo-stream>
+    {% endfor %}
+{% endif %}
+
+<turbo-stream action="remove" target="block_location_{{ uuid }}"></turbo-stream>

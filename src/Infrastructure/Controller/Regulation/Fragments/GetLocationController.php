@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\DetailLocationView;
+use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,6 +20,7 @@ final class GetLocationController extends AbstractRegulationController
 {
     public function __construct(
         private readonly \Twig\Environment $twig,
+        private CanDeleteLocations $canDeleteLocations,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
@@ -54,6 +56,7 @@ final class GetLocationController extends AbstractRegulationController
                 context: [
                     'location' => DetailLocationView::fromEntity($location),
                     'regulationOrderRecord' => $regulationOrderRecord,
+                    'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
                 ],
             ),
         );

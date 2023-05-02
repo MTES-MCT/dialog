@@ -518,6 +518,10 @@
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cette réglementation ?</target>
             </trans-unit>
+            <trans-unit id="location.delete_modal.title">
+                <source>location.delete_modal.title</source>
+                <target>Supprimer cette localisation ?</target>
+            </trans-unit>
             <trans-unit id="regulation.delete_modal.confirm">
                 <source>regulation.delete_modal.confirm</source>
                 <target>Supprimer</target>

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Regulation\Specification;
 
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Domain\Regulation\Specification\CanDeleteLocations;
 use PHPUnit\Framework\TestCase;
 
-final class CanRegulationOrderRecordBePublishedTest extends TestCase
+final class CanDeleteLocationsTest extends TestCase
 {
     private $regulationOrderRecord;
 
@@ -17,25 +17,25 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
     }
 
-    public function testRegulationCanBePublished(): void
+    public function testCanDeleteLocations(): void
+    {
+        $this->regulationOrderRecord
+            ->expects(self::once())
+            ->method('countLocations')
+            ->willReturn(2);
+
+        $specification = new CanDeleteLocations();
+        $this->assertTrue($specification->isSatisfiedBy($this->regulationOrderRecord));
+    }
+
+    public function testCantDeleteLocations(): void
     {
         $this->regulationOrderRecord
             ->expects(self::once())
             ->method('countLocations')
             ->willReturn(1);
 
-        $specification = new CanRegulationOrderRecordBePublished();
-        $this->assertTrue($specification->isSatisfiedBy($this->regulationOrderRecord));
-    }
-
-    public function testRegulationCannotBePublished(): void
-    {
-        $this->regulationOrderRecord
-            ->expects(self::once())
-            ->method('countLocations')
-            ->willReturn(0);
-
-        $specification = new CanRegulationOrderRecordBePublished();
+        $specification = new CanDeleteLocations();
         $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));
     }
 }

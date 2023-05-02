@@ -66,6 +66,8 @@ final class AddLocationController extends AbstractRegulationController
                         context: [
                             'location' => DetailLocationView::fromEntity($location),
                             'regulationOrderRecord' => $regulationOrderRecord,
+                            'canDelete' => ($regulationOrderRecord->countLocations() + 1) > 1,
+                            'locationUuids' => $regulationOrderRecord->getLocationUuids(),
                         ],
                     ),
                 );
