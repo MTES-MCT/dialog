@@ -13,6 +13,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $address;
     public ?string $fromHouseNumber;
     public ?string $toHouseNumber;
+    public ?iterable $measures;
 
     public function __construct(
         public readonly RegulationOrderRecord $regulationOrderRecord,
@@ -30,6 +31,19 @@ final class SaveRegulationLocationCommand implements CommandInterface
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
 
+        $measures = [];
+
+        foreach ($location?->getMeasures() as $measure) {
+            $measures[] = SaveMeasureCommand::create($location, $measure);
+        }
+
+        $command->measures = $measures;
+
         return $command;
+    }
+
+    public function addMeasure(SaveMeasureCommand $measure): void
+    {
+        array_push($this->measures, $measure);
     }
 }

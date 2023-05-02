@@ -30,6 +30,11 @@ class Measure
         return $this->location;
     }
 
+    public function setLocation(Location $location): void
+    {
+        $this->location = $location;
+    }
+
     public function getConditions(): iterable
     {
         return $this->conditions;

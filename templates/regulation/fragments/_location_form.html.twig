@@ -1,8 +1,17 @@
+{% form_theme form _self %}
+
 {% set frame = location ? "block_location_" ~ location.uuid : 'block_location' %}
 {% set cancelUrl = location
     ? path('fragment_regulations_location', {regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid})
     : path('fragment_regulation_location_add_link', {regulationOrderRecordUuid: regulationOrderRecord.uuid})
 %}
+
+{% block _location_form_measures_entry_widget %}
+    <li class="app-list-item">
+        {{ form_widget(form.type) }}
+    </li>
+{% endblock %}
+
 <turbo-frame id="{{ frame }}">
     <div class="app-card fr-mt-3w">
         <div class="app-card__icon">
@@ -27,6 +36,21 @@
                         {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
                         {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
                     </div>
+                </div>
+
+                <div
+                    data-controller="form-collection"
+                    data-form-collection-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
+                    data-form-collection-prototype-value="{{ form_widget(form.measures.vars.prototype)|e('html_attr') }}"
+                >
+                    <ul class="app-list" data-form-collection-target="collectionContainer"></ul>
+                    <button
+                        type="button"
+                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                        data-action="form-collection#addCollectionElement"
+                    >
+                        Ajouter une restriction
+                    </button>
                 </div>
 
                 <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">{{ "common.cancel"|trans }}</a>

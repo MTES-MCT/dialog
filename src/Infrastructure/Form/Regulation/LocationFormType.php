@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,6 +39,13 @@ final class LocationFormType extends AbstractType
                     'label' => 'regulation.location.to_house_number',
                 ],
             )
+            ->add('measures', CollectionType::class, [
+                'entry_type' => MeasureFormType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'by_reference' => false,
+                'block_name' => 'measures',
+            ])
             ->add(
                 'save',
                 SubmitType::class,

@@ -146,3 +146,17 @@ label.required > .fr-x-label-content::after {
 .app-background--alt-grey {
     background-color: var(--background-alt-grey);
 }
+
+.app-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.app-list-item {
+    border: 1px solid var(--border-default-grey);
+
+    &:not(:first-child) {
+        border-top: none;
+    }
+}

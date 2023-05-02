@@ -76,6 +76,7 @@ final class SaveRegulationLocationCommandHandler
             fromPoint: $fromPoint,
             toHouseNumber: $command->toHouseNumber,
             toPoint: $toPoint,
+            measures: $command->measureCommands,
         );
 
         return $command->location->getUuid();
