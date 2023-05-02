@@ -13,7 +13,8 @@ _SYMFONY = ${_DOCKER_EXEC_PHP} symfony
 BIN_PHP = ${_DOCKER_EXEC_PHP} php
 BIN_CONSOLE = ${_SYMFONY} console
 BIN_COMPOSER = ${_SYMFONY} composer
-NPM = ${_DOCKER_EXEC_PHP} npm
+BIN_NPM = ${_DOCKER_EXEC_PHP} npm
+BIN_NPX = ${_DOCKER_EXEC_PHP} npx
 
 ##
 ## ----------------
@@ -30,11 +31,12 @@ install: build start install_deps dbinstall assets ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
-	$(NPM) ci
+	$(BIN_NPM) ci
+	$(BIN_NPX) playwright install --with-deps firefox chromium
 
 update_deps:
 	make composer CMD="update"
-	$(NPM) update
+	$(BIN_NPM) update
 
 start: ## Start container
 	docker-compose up -d
@@ -95,10 +97,10 @@ cc: ## Run clear cache command
 	${BIN_CONSOLE} cache:clear
 
 watch: ## Watch assets
-	$(NPM) run watch
+	$(BIN_NPM) run watch
 
 assets: ## Build assets
-	$(NPM) run build
+	$(BIN_NPM) run build
 
 shell: ## Connect to the container
 	docker-compose exec php bash
@@ -145,6 +147,7 @@ format: php_lint ## Format code
 
 test: ## Run the test suite
 	${BIN_PHP} ${OPTIONS} ./bin/phpunit ${ARGS}
+	make test_e2e ARGS=""
 
 test_cov: ## Run the test suite (with code coverage)
 	make test OPTIONS="-d xdebug.mode=coverage" ARGS="--coverage-html coverage --coverage-clover coverage.xml"
@@ -154,6 +157,15 @@ test_unit: ## Run unit tests only
 
 test_integration: ## Run integration tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
+
+test_e2e: ## Run end-to-end tests only
+	make dbfixtures
+	$(BIN_NPX) playwright test --project desktop-firefox ${ARGS}
+	make dbfixtures
+	$(BIN_NPX) playwright test --project mobile-chromium ${ARGS}
+
+report_e2e: ## Open the Playwright HTML report
+	xdg-open playwright-report/index.html
 
 ##
 ## ----------------

@@ -83,7 +83,8 @@
                                     data-modal-trigger-key-value="{{ regulation.uuid }}"
                                     data-action="modal-trigger#showModal:prevent"
                                     aria-controls="regulation-delete-modal"
-                                    title="{{ 'common.delete'|trans }}"
+                                    aria-label="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
+                                    title="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
                                 ></button>
                                 <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
                             </form>

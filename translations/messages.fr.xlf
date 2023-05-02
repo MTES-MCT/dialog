@@ -166,6 +166,10 @@
                 <source>regulation.list.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="regulation.delete">
+                <source>regulation.delete</source>
+                <target>Supprimer l'arrêté %identifier%</target>
+            </trans-unit>
             <trans-unit id="regulation.status_badge.draft.text">
                 <source>regulation.status_badge.draft.text</source>
                 <target>Brouillon</target>
@@ -516,7 +520,7 @@
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
-                <target>Supprimer cette réglementation ?</target>
+                <target>Supprimer cet arrêté ?</target>
             </trans-unit>
             <trans-unit id="location.delete_modal.title">
                 <source>location.delete_modal.title</source>
