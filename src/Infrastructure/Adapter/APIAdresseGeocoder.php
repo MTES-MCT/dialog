@@ -12,7 +12,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class APIAdresseGeocoder implements GeocoderInterface
 {
-    private const HOUSENUMBER_FILTER_REGEX = '/^(\d+\s?(bis|ter)?)\s/i';
+    private const HOUSENUMBER_FILTER_REGEX = '/^(\d+\s?(bis|b|ter|t|quater|q)?)\s/i';
 
     public function __construct(
         private HttpClientInterface $apiAdresseClient,

@@ -128,8 +128,13 @@ final class APIAdresseGeocoderTest extends TestCase
         return [
             ['search' => '3 Rue Eugene'],
             ['search' => '3bis Rue Eugene'],
+            ['search' => '3b Rue Eugene'],
             ['search' => '3ter Rue Eugene'],
+            ['search' => '3t Rue Eugene'],
+            ['search' => '3quater Rue Eugene'],
+            ['search' => '3q Rue Eugene'],
             ['search' => '12 bis Rue Eugene'],
+            ['search' => '12 quater Rue Eugene'],
         ];
     }
 
