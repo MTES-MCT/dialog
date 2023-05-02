@@ -74,7 +74,7 @@
                                 method="delete"
                                 action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
                                 data-controller="form-submit"
-                                data-form-submit-event-name-value="modal-trigger:submit"
+                                data-action="modal-trigger:submit->form-submit#submit"
                             >
                                 <button
                                     class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"

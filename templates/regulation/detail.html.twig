@@ -62,7 +62,7 @@
                                                     method="post"
                                                     action="{{ path('app_regulation_publish', { uuid: regulationOrderRecord.uuid }) }}"
                                                     data-controller="form-submit"
-                                                    data-form-submit-event-name-value="modal-trigger:submit"
+                                                    data-action="modal-trigger:submit->form-submit#submit"
                                                 >
                                                     <button
                                                         class="fr-btn fr-btn--secondary"
@@ -99,11 +99,20 @@
 
 {% block body_end %}
     {{ parent() }}
+
     {% if isDraft %}
-        {% include 'regulation/_publish_modal.html.twig' %}
-        {% include 'regulation/_delete_modal.html.twig' with {
-            modalId: 'location-delete-modal',
-            modalTitle: 'location.delete_modal.title',
+        {% include "common/confirmation_modal.html.twig" with {
+            id: 'regulation-publish-modal',
+            title: 'regulation.publish_modal.title'|trans,
+            confirmLabel: 'common.publish'|trans,
+            cancelLabel: 'common.do_not_publish'|trans,
+        } only %}
+
+        {% include "common/confirmation_modal.html.twig" with {
+            id: 'location-delete-modal',
+            title: 'location.delete_modal.title'|trans,
+            confirmLabel: 'common.delete'|trans,
+            cancelLabel: 'common.do_not_delete'|trans,
         } only %}
     {% endif %}
 {% endblock %}

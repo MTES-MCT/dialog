@@ -62,5 +62,10 @@
 
 {% block body_end %}
     {{ parent() }}
-    {% include 'regulation/_delete_modal.html.twig' %}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'regulation-delete-modal',
+        title: 'regulation.delete_modal.title'|trans,
+        confirmLabel: 'common.delete'|trans,
+        cancelLabel: 'common.do_not_delete'|trans,
+    } only %}
 {% endblock %}
