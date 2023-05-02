@@ -16,7 +16,6 @@
             {% for regulation in pagination.items %}
                 {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
                 {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
-
                 <tr>
                     <td>
                         {{ regulation.identifier }}
