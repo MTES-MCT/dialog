@@ -3,10 +3,13 @@
 {% set title = 'regulation.detail.title'|trans({ '%identifier%': regulationOrderRecord.identifier }) %}
 
 {% block title %}
-     {{ title }} - {{ parent() }}
+    {{ title }}
+    -
+    {{ parent() }}
 {% endblock %}
 
-{% block page_class %}app-background--alt-grey{% endblock %}
+{% block page_class %}app-background--alt-grey
+{% endblock %}
 
 {% block body %}
     {% set isDraft = regulationOrderRecord.isDraft %}
@@ -19,100 +22,84 @@
         <div>
             <h2 id="regulation-detail">{{ title }}</h2>
 
-            <div class="fr-x-container--fluid">
-                <div class="fr-grid-row">
-                    <div class="fr-col">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col fr-col-12 fr-mt-8w fr-col-md-7 fr-col-lg-8 fr-mt-md-0">
+                    <div class="fr-mx-n4v fr-mx-md-0">
                         {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
-
-                        <h3 class="fr-h5 fr-text--default-grey fr-mt-5w">
-                            {{ 'regulation.locations'|trans }}
-                        </h3>
-
-                        <ul id="location_list" class="fr-raw-list">
-                            {% for location in regulationOrderRecord.locations %}
-                                <li>
-                                    {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord, canDelete } only %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        {% if isDraft %}
-                            {% if regulationOrderRecord.locations|length > 0 %}
-                                {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
-                            {% else %}
-                                {{ render(path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid })) }}
-                            {% endif %}
-                        {% endif %}
                     </div>
 
-                    <aside class="fr-col-3 fr-ml-3w">
-                        <div class="app-card">
-                            <div class="app-card__content">
-                                <h3 class="fr-h4">Statut</h3>
-                                {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}
+                    <h3 class="fr-h5 fr-text--default-grey fr-mt-5w">
+                        {{ 'regulation.locations'|trans }}
+                    </h3>
 
-                                <hr class="fr-mt-2w" />
-
-                                <h3 class="fr-h4">Actions</h3>
-                                <ul class="fr-btns-group fr-btns-group--icon-left">
-                                    {% if isDraft %}
-                                        <li>
-                                            {% if canPublish %}
-                                                {% set publishCsrfToken = csrf_token('publish-regulation') %}
-                                                <form
-                                                    method="post"
-                                                    action="{{ path('app_regulation_publish', { uuid: regulationOrderRecord.uuid }) }}"
-                                                    data-controller="form-submit"
-                                                    data-action="modal-trigger:submit->form-submit#submit"
-                                                >
-                                                    <button
-                                                        class="fr-btn fr-btn--secondary"
-                                                        data-controller="modal-trigger"
-                                                        data-modal-trigger-modal-outlet="#regulation-publish-modal"
-                                                        data-modal-trigger-key-value="publish"
-                                                        data-action="modal-trigger#showModal:prevent"
-                                                        aria-controls="regulation-publish-modal"
-                                                    >
-                                                        {{ 'common.publish'|trans }}
-                                                    </button>
-                                                    <input type="hidden" name="token" value="{{ publishCsrfToken }}" />
-                                                </form>
-                                            {% else %}
-                                                <button class="fr-btn fr-btn--secondary" disabled>{{ 'common.publish'|trans }}</button>
-                                            {% endif %}
-                                        </li>
-                                    {% endif %}
-                                    <li>
-                                        <button class="fr-btn fr-btn--secondary" disabled>Dupliquer</button>
-                                    </li>
-                                    <li>
-                                        <button class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line" disabled>Supprimer</button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </aside>
+                    <ul id="location_list" class="fr-raw-list">
+                        {% for location in regulationOrderRecord.locations %}
+                            <li class="fr-mx-n4v fr-mx-md-0">
+                                {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord, canDelete } only %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if isDraft %}
+                        {% if regulationOrderRecord.locations|length > 0 %}
+                            {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                        {% else %}
+                            {{ render(path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid })) }}
+                        {% endif %}
+                    {% endif %}
                 </div>
+
+                <aside class="fr-col">
+                    <div class="app-card fr-col fr-col-md-8 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
+                        <div class="app-card__content">
+                            <h3 class="fr-h4">Statut</h3>
+                                {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}
+                            <hr class="fr-mt-2w"/>
+
+                            <h3 class="fr-h4">Actions</h3>
+                            <ul class="fr-btns-group fr-btns-group--icon-left">
+                                {% if isDraft %}
+                                    <li>
+                                        {% if canPublish %}
+                                            {% set publishCsrfToken = csrf_token('publish-regulation') %}
+                                            <form method="post" action="{{ path('app_regulation_publish', { uuid: regulationOrderRecord.uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
+                                                <button class="fr-btn fr-btn--secondary" data-controller="modal-trigger" data-modal-trigger-modal-outlet="#regulation-publish-modal" data-modal-trigger-key-value="publish" data-action="modal-trigger#showModal:prevent" aria-controls="regulation-publish-modal">
+                                                    {{ 'common.publish'|trans }}
+                                                </button>
+                                                <input type="hidden" name="token" value="{{ publishCsrfToken }}"/>
+                                            </form>
+                                        {% else %}
+                                            <button class="fr-btn fr-btn--secondary" disabled>{{ 'common.publish'|trans }}</button>
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary" disabled>Dupliquer</button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line" disabled>Supprimer</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </div>
     </section>
 {% endblock %}
-
 {% block body_end %}
-    {{ parent() }}
+{{ parent() }}
 
-    {% if isDraft %}
-        {% include "common/confirmation_modal.html.twig" with {
+{% if isDraft %}
+    {% include "common/confirmation_modal.html.twig" with {
             id: 'regulation-publish-modal',
             title: 'regulation.publish_modal.title'|trans,
             confirmLabel: 'common.publish'|trans,
             cancelLabel: 'common.do_not_publish'|trans,
         } only %}
-
         {% include "common/confirmation_modal.html.twig" with {
             id: 'location-delete-modal',
             title: 'location.delete_modal.title'|trans,
             confirmLabel: 'common.delete'|trans,
             cancelLabel: 'common.do_not_delete'|trans,
         } only %}
-    {% endif %}
-{% endblock %}
+{% endif %}{% endblock %}

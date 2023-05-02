@@ -3,12 +3,12 @@
         <div class="app-card__img">
             <span class="fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
         </div>
+        <h3 class="app-card__title fr-h4">
+            {{ 'regulation.general_info'|trans }}
+        </h3>
         <div class="app-card__content">
-            <h3 class="fr-h4">
-                {{ 'regulation.general_info'|trans }}
-            </h3>
 
-            <ul class="fr-ml-1w fr-my-0">
+            <ul class="fr-ml-1w fr-my-0 fr-list">
                 <li>{{ regulationOrderRecord.organizationName }}</li>
                 <li>{{ regulationOrderRecord.description }}</li>
                 {% set startDate = regulationOrderRecord.startDate %}
