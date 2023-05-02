@@ -1,40 +1,40 @@
 <turbo-frame id="block_general_info">
-	<div class="app-card" data-testid="general_info">
-		<div class="app-card__img">
-			<span class="fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-		</div>
-		<h3 class="app-card__title fr-h4">
-			{{ 'regulation.general_info'|trans }}
-		</h3>
-		<div class="app-card__content">
+    <div class="app-card" data-testid="general_info">
+        <div class="app-card__img">
+            <span class="fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+        </div>
+        <h3 class="app-card__title fr-h4">
+            {{ 'regulation.general_info'|trans }}
+        </h3>
+        <div class="app-card__content">
 
-			<ul class="fr-ml-1w fr-my-0 fr-list">
-				<li>{{ regulationOrderRecord.organizationName }}</li>
-				<li>{{ regulationOrderRecord.description }}</li>
-				{% set startDate = regulationOrderRecord.startDate %}
-				{% set endDate = regulationOrderRecord.endDate %}
-				{% set isFuture = app_is_client_future_day(startDate) %}
-				<li>
-					{% if startDate and endDate %}
-						{{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
-						{{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-					{% elseif isFuture %}
-						{{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
-					{% else %}
-						{{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
-					{% endif %}
-				</li>
-			</ul>
-		</div>
+            <ul class="fr-ml-1w fr-my-0 fr-list">
+                <li>{{ regulationOrderRecord.organizationName }}</li>
+                <li>{{ regulationOrderRecord.description }}</li>
+                {% set startDate = regulationOrderRecord.startDate %}
+                {% set endDate = regulationOrderRecord.endDate %}
+                {% set isFuture = app_is_client_future_day(startDate) %}
+                <li>
+                    {% if startDate and endDate %}
+                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
+                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
+                    {% elseif isFuture %}
+                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+                    {% else %}
+                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
 
-		{% if canEdit %}
-			<ul class="app-card__actions">
-				<li>
-					<a href="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-						{{ 'common.update'|trans }}
-					</a>
-				</li>
-			</ul>
-		{% endif %}
-	</div>
+        {% if canEdit %}
+            <ul class="app-card__actions">
+                <li>
+                    <a href="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                        {{ 'common.update'|trans }}
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
 </turbo-frame>
