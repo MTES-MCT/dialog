@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -18,8 +19,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class DuplicateRegulationCommandHandlerTest extends TestCase
 {
     private $translator;
-    private $canOrganizationAccessToRegulation;
-    private $queryBus;
     private $commandBus;
     private $originalRegulationOrderRecord;
     private $organization;
@@ -28,7 +27,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
     public function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
         $this->originalRegulationOrder = $this->createMock(RegulationOrder::class);
@@ -44,6 +42,34 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
     {
         $startDate = new \DateTimeImmutable('2023-03-13');
         $endDate = new \DateTimeImmutable('2023-03-16');
+
+        $location1 = $this->createMock(Location::class);
+        $location1
+            ->expects(self::once())
+            ->method('getAddress')
+            ->willReturn('Route du Lac 44260 Savenay');
+        $location1
+            ->expects(self::once())
+            ->method('getFromHouseNumber')
+            ->willReturn('11');
+        $location1
+            ->expects(self::once())
+            ->method('getToHouseNumber')
+            ->willReturn('15');
+
+        $location2 = $this->createMock(Location::class);
+        $location2
+            ->expects(self::once())
+            ->method('getAddress')
+            ->willReturn('Route du Grand Brossais 44260 Savenay');
+        $location2
+            ->expects(self::once())
+            ->method('getFromHouseNumber')
+            ->willReturn(null);
+        $location2
+            ->expects(self::once())
+            ->method('getToHouseNumber')
+            ->willReturn(null);
 
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -65,6 +91,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getEndDate')
             ->willReturn($endDate);
 
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getLocations')
+            ->willReturn([$location1, $location2]);
+
         $duplicatedRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
 
         $this->translator
@@ -75,19 +106,28 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ])
             ->willReturn('F01/2023 (copie)');
 
-        // Condition, RegulationOrder and RegulationOrderRecord
-        $step1command = new SaveRegulationGeneralInfoCommand();
-        $step1command->identifier = 'F01/2023 (copie)';
-        $step1command->description = 'Description';
-        $step1command->startDate = $startDate;
-        $step1command->endDate = $endDate;
-        $step1command->organization = $this->organization;
+        $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
+        $generalInfoCommand->identifier = 'F01/2023 (copie)';
+        $generalInfoCommand->description = 'Description';
+        $generalInfoCommand->startDate = $startDate;
+        $generalInfoCommand->endDate = $endDate;
+        $generalInfoCommand->organization = $this->organization;
+
+        $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
+        $locationCommand1->address = 'Route du Lac 44260 Savenay';
+        $locationCommand1->fromHouseNumber = '11';
+        $locationCommand1->toHouseNumber = '15';
+
+        $locationCommand2 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
+        $locationCommand2->address = 'Route du Grand Brossais 44260 Savenay';
+        $locationCommand2->fromHouseNumber = null;
+        $locationCommand2->toHouseNumber = null;
 
         $this->commandBus
-            ->expects(self::exactly(1))
+            ->expects(self::exactly(3))
             ->method('handle')
-            ->with($step1command)
-            ->willReturn($duplicatedRegulationOrderRecord);
+            ->withConsecutive([$generalInfoCommand], [$locationCommand1], [$locationCommand2])
+            ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
 
         $handler = new DuplicateRegulationCommandHandler(
             $this->translator,
