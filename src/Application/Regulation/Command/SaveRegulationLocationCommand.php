@@ -31,19 +31,6 @@ final class SaveRegulationLocationCommand implements CommandInterface
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
 
-        $measures = [];
-
-        /*foreach ($location?->getMeasures() as $measure) {
-            $measures[] = SaveMeasureCommand::create($location, $measure);
-        }*/
-
-        $command->measures = $measures;
-
         return $command;
-    }
-
-    public function addMeasure(SaveMeasureCommand $measure): void
-    {
-        array_push($this->measures, $measure);
     }
 }

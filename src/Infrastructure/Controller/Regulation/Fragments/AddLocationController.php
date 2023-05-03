@@ -52,7 +52,6 @@ final class AddLocationController extends AbstractRegulationController
             'action' => $this->router->generate('fragment_regulations_location_add', ['uuid' => $uuid]),
         ]);
         $form->handleRequest($request);
-        dd($command);
         $commandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -602,6 +602,14 @@
                 <source>regulation.list.meta.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="measure.type">
+                <source>measure.type</source>
+                <target>Type de restriction</target>
+            </trans-unit>
+            <trans-unit id="measure.type.help">
+                <source>measure.type.help</source>
+                <target>Quel type de restriction ou limitation est prévu ?</target>
+            </trans-unit>
             <trans-unit id="measures.types.noEntry">
                 <source>measures.types.noEntry</source>
                 <target>Circulation interdite</target>

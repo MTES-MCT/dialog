@@ -65,13 +65,11 @@ class Location
         ?string $fromPoint,
         ?string $toHouseNumber,
         ?string $toPoint,
-        ?array $measures,
     ): void {
         $this->address = $address;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->fromPoint = $fromPoint;
         $this->toHouseNumber = $toHouseNumber;
         $this->toPoint = $toPoint;
-        $this->measures = $measures;
     }
 }
