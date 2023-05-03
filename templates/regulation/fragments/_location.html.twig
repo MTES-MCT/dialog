@@ -33,7 +33,7 @@
                 </li>
                 {% endif %}
                 {% for measure in location.measures %}
-                <li>{{ measure.type }}</li>
+                    <li>{{ ('measures.types.' ~ measure.type)|trans }}</li>
                 {% endfor %}
             </ul>
         </div>
