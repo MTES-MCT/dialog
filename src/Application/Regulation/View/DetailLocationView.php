@@ -14,7 +14,7 @@ class DetailLocationView
         public readonly LocationAddress $address,
         public readonly ?string $fromHouseNumber,
         public readonly ?string $toHouseNumber,
-        public readonly ?iterable $measures,
+        public ?array $measures,
     ) {
     }
 
@@ -23,7 +23,9 @@ class DetailLocationView
         $measures = [];
 
         foreach($location->getMeasures() as $measure) {
-            $measures[] = new MeasureView($measure->getType());
+            $measures[] = new MeasureView(
+                $measure->getType(),
+            );
         }
 
         return new self(

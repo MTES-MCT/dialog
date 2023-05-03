@@ -78,12 +78,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'l.address',
                 'l.fromHouseNumber',
                 'l.toHouseNumber',
+                'm.type',
             )
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->leftJoin('ro.locations', 'l')
+            ->leftJoin('l.measures', 'm')
             ->getQuery()
             ->getResult()
         ;
