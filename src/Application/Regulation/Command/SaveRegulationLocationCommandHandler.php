@@ -53,9 +53,10 @@ final class SaveRegulationLocationCommandHandler
                 ),
             );
 
-            foreach ($command->measures as $measureCmd) {
-                $measureCmd->location = $location;
-                $this->commandBus->handle($measureCmd);
+            foreach ($command->measures as $measureCommand) {
+                $measureCommand->location = $location;
+                $measure = $this->commandBus->handle($measureCommand);
+                $location->addMeasure($measure);
             }
 
             return $location->getUuid();

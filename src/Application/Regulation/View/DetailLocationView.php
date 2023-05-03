@@ -22,7 +22,7 @@ class DetailLocationView
     {
         $measures = [];
 
-        foreach($location->getMeasures() as $measure) {
+        foreach ($location->getMeasures() as $measure) {
             $measures[] = new MeasureView(
                 $measure->getType(),
             );
