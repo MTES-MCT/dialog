@@ -43,7 +43,6 @@ final class LocationFormType extends AbstractType
                 'entry_type' => MeasureFormType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => true,
-                'by_reference' => false,
                 'block_name' => 'measures',
             ])
             ->add(

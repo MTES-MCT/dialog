@@ -602,6 +602,18 @@
                 <source>regulation.list.meta.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="measures.types.noEntry">
+                <source>measures.types.noEntry</source>
+                <target>Circulation interdite</target>
+            </trans-unit>
+            <trans-unit id="measures.types.alternateRoad">
+                <source>measures.types.alternateRoad</source>
+                <target>Circulation alternée</target>
+            </trans-unit>
+            <trans-unit id="measures.types.oneWayTraffic">
+                <source>measures.types.oneWayTraffic</source>
+                <target>Circulation à sens unique</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

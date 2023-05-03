@@ -18,12 +18,12 @@ final class MeasureTest extends TestCase
         $measure = new Measure(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             location: $location,
-            type: MeasureTypeEnum::NO_ENTRY,
+            type: MeasureTypeEnum::NO_ENTRY->value,
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $measure->getUuid());
         $this->assertSame($location, $measure->getLocation());
-        $this->assertSame(MeasureTypeEnum::NO_ENTRY, $measure->getType());
+        $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $measure->getType());
         $this->assertEmpty($measure->getConditions()); // Automatically set by Doctrine
     }
 }

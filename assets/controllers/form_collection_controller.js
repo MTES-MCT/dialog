@@ -10,6 +10,7 @@ export default class extends Controller {
 
     addCollectionElement(_event) {
         const item = document.createElement('li');
+        item.className = 'app-list-item';
         item.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue);
         this.collectionContainerTarget.appendChild(item);
         this.indexValue++;

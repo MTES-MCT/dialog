@@ -6,12 +6,6 @@
     : path('fragment_regulation_location_add_link', {regulationOrderRecordUuid: regulationOrderRecord.uuid})
 %}
 
-{% block _location_form_measures_entry_widget %}
-    <li class="app-list-item">
-        {{ form_widget(form.type) }}
-    </li>
-{% endblock %}
-
 <turbo-frame id="{{ frame }}">
     <div class="app-card fr-mt-3w">
         <div class="app-card__icon">
@@ -43,7 +37,9 @@
                     data-form-collection-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
                     data-form-collection-prototype-value="{{ form_widget(form.measures.vars.prototype)|e('html_attr') }}"
                 >
-                    <ul class="app-list" data-form-collection-target="collectionContainer"></ul>
+                    <ul class="app-list" data-form-collection-target="collectionContainer">
+                        {{ form_widget(form.measures)}}
+                    </ul>
                     <button
                         type="button"
                         class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"

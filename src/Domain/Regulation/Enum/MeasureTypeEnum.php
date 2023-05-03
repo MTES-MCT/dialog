@@ -6,7 +6,19 @@ namespace App\Domain\Regulation\Enum;
 
 enum MeasureTypeEnum: string
 {
-    public const NO_ENTRY = 'noEntry';
-    public const ALTERNATE_ROAD = 'alternateRoad';
-    public const ONE_WAY_TRAFFIC = 'oneWayTraffic';
+    case NO_ENTRY = 'noEntry';
+    case ALTERNATE_ROAD = 'alternateRoad';
+    case ONE_WAY_TRAFFIC = 'oneWayTraffic';
+
+    public static function getFormChoices(): array
+    {
+        $values = array_column(self::cases(), 'value');
+        $choices = [];
+
+        foreach ($values as $value) {
+            $choices[sprintf('measures.types.%s', $value)] = $value;
+        }
+
+        return $choices;
+    }
 }
