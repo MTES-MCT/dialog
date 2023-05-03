@@ -32,7 +32,9 @@
                         {% endif %}
                 </li>
                 {% endif %}
-                <li>{{ 'regulation.location.all_vehicles_forbidden'|trans }}</li>
+                {% for measure in location.measures %}
+                <li>{{ measure.type }}</li>
+                {% endfor %}
             </ul>
         </div>
         {% if regulationOrderRecord.isDraft %}

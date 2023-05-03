@@ -38,6 +38,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
                 LocationAddress::fromString($regulationOrder['address']),
                 $regulationOrder['fromHouseNumber'],
                 $regulationOrder['toHouseNumber'],
+                [],
             );
         }
 
