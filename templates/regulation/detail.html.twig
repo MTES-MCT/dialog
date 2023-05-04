@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set title = 'regulation.detail.title'|trans({ '%identifier%': regulationOrderRecord.identifier }) %}
+{% set title = (regulationOrderRecord.endDate ? 'regulation.temporary' : 'regulation.permanent')|trans ~ ' ' ~ regulationOrderRecord.identifier  %}
 
 {% block title %}
     {{ title }}
@@ -8,8 +8,7 @@
     {{ parent() }}
 {% endblock %}
 
-{% block page_class %}app-background--alt-grey
-{% endblock %}
+{% block page_class %}app-background--alt-grey{% endblock %}
 
 {% block body %}
     {% set isDraft = regulationOrderRecord.isDraft %}
