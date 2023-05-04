@@ -15,6 +15,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
+        $this->assertSame('Description 3', $crawler->filter('h3')->text());
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();

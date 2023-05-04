@@ -16,7 +16,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Informations générales', $crawler->filter('h3')->text());
+        $this->assertSame('Description 3', $crawler->filter('h3')->text());
         $this->assertSame('DiaLog', $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Description 3', $crawler->filter('li')->eq(1)->text());
         $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(2)->text());

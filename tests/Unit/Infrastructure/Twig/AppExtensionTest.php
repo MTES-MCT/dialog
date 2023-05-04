@@ -123,4 +123,42 @@ class AppExtensionTest extends TestCase
         $now = new \DateTimeImmutable($now);
         $this->assertSame($result, $this->extension->isClientFutureDay($date, $now));
     }
+
+    private function provideRegulationGeneralInfoTitle(): array
+    {
+        return [
+            [
+                'description' => 'Description 1',
+                'expectedTitle' => 'Description 1',
+            ],
+            [
+                'description' => 'Just belowwwwww the truncature limit',
+                'expectedTitle' => 'Just belowwwwww the truncature limit',
+            ],
+            [
+                'description' => 'Just aboveeeeeee the truncature limit',
+                'expectedTitle' => 'Just aboveeeeeee the truncature...',
+            ],
+            [
+                'description' => 'Small description. More text',
+                'expectedTitle' => 'Small description',
+            ],
+            [
+                'description' => 'Very long description above the limit. More text',
+                'expectedTitle' => 'Very long description above the...',
+            ],
+            [
+                'description' => 'Travaux sur la N.02 à Tours. More text',
+                'expectedTitle' => 'Travaux sur la N.02 à Tours',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideRegulationGeneralInfoTitle
+     */
+    public function testRegulationGeneralInfoTitle(string $description, string $expectedTitle): void
+    {
+        $this->assertSame($expectedTitle, $this->extension->getRegulationGeneralInfoTitle($description));
+    }
 }
