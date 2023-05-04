@@ -19,6 +19,6 @@
             {{ title }}
         </h2>
 
-        {% include "regulation/fragments/_general_info_form.html.twig" with { form } only %}
+        {% include "regulation/_general_info_form.html.twig" with { form, cancelUrl } only %}
     </div>
 {% endblock %}

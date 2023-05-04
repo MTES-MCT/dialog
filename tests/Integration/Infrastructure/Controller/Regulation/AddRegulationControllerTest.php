@@ -19,8 +19,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle('Nouvel arrêté - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Continuer');
-        $this->assertSame('_top', $saveButton->attr('data-turbo-frame'));
-
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'F022023';
         $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
@@ -86,13 +84,10 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/add');
+        $client->request('GET', '/regulations/add');
         $this->assertResponseStatusCodeSame(200);
 
-        $link = $crawler->selectLink('Annuler');
-        $this->assertSame('_top', $link->attr('data-turbo-frame'));
-
-        $client->click($link->link());
+        $client->clickLink('Annuler');
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulations_list');
     }

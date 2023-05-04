@@ -42,12 +42,11 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         name: 'fragment_regulations_general_info_form',
         methods: ['GET', 'POST'],
     )]
-    public function __invoke(Request $request, string $uuid = null): Response
+    public function __invoke(Request $request, string $uuid): Response
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-        $isEdit = $uuid !== null;
-        $regulationOrderRecord = $isEdit ? $this->getRegulationOrderRecord($uuid) : null;
+        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
 
         $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
@@ -56,8 +55,13 @@ final class SaveGeneralInfoController extends AbstractRegulationController
             data: $command,
             options: [
                 'organizations' => [$user->getOrganization()],
-                'isEdit' => $isEdit,
                 'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
+                'save_options' => [
+                    'label' => 'common.form.validate',
+                    'attr' => [
+                        'class' => 'fr-btn',
+                    ],
+                ],
             ],
         );
 
@@ -66,11 +70,11 @@ final class SaveGeneralInfoController extends AbstractRegulationController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $regulationOrderRecord = $this->commandBus->handle($command);
+                $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->router->generate($isEdit ? 'fragment_regulations_general_info' : 'app_regulation_detail', [
-                        'uuid' => $regulationOrderRecord->getUuid(),
+                    url: $this->router->generate('fragment_regulations_general_info', [
+                        'uuid' => $uuid,
                     ]),
                     status: Response::HTTP_SEE_OTHER,
                 );
@@ -89,8 +93,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                 name: 'regulation/fragments/_general_info_form.html.twig',
                 context: [
                     'form' => $form->createView(),
-                    'isEdit' => $isEdit,
-                    'uuid' => $uuid,
+                    'cancelUrl' => $this->router->generate('fragment_regulations_general_info', ['uuid' => $uuid]),
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $hasCommandFailed
