@@ -18,6 +18,12 @@ final class SaveMeasureCommandHandler
 
     public function __invoke(SaveMeasureCommand $command): Measure
     {
+        if ($command->measure) {
+            $command->measure->update($command->type);
+
+            return $command->measure;
+        }
+
         return $this->measureRepository->add(
             new Measure(
                 uuid: $this->idFactory->make(),

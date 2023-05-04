@@ -80,6 +80,10 @@ final class SaveRegulationLocationCommandHandler
             $toPoint = $command->location->getToPoint();
         }
 
+        foreach ($command->measures as $measureCommand) {
+            $this->commandBus->handle($measureCommand);
+        }
+
         $command->location->update(
             address: $command->address,
             fromHouseNumber: $command->fromHouseNumber,
