@@ -1,10 +1,20 @@
-{% form_theme form _self %}
-
 {% set frame = location ? "block_location_" ~ location.uuid : 'block_location' %}
 {% set cancelUrl = location
     ? path('fragment_regulations_location', {regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid})
     : path('fragment_regulation_location_add_link', {regulationOrderRecordUuid: regulationOrderRecord.uuid})
 %}
+
+{% macro measures_list_item(form, index) %}
+    <li class="app-list-item fr-p-3w">
+        <h4 class="fr-h5 fr-mb-0">
+            {{ 'regulation.measure_list_item.title'|trans({'%index%': index}) }}
+        </h4>
+        <p class="fr-text-sm fr-text-mention--grey">
+            {{ 'regulation.measure_list_item.help'|trans }}
+        </p>
+        {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+    </li>
+{% endmacro %}
 
 <turbo-frame id="{{ frame }}">
     <div class="app-card fr-mt-3w">
@@ -35,17 +45,23 @@
                 <div
                     data-controller="form-collection"
                     data-form-collection-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
-                    data-form-collection-prototype-value="{{ form_widget(form.measures.vars.prototype)|e('html_attr') }}"
+                    data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__oneBasedIndex__')|e('html_attr') }}"
+                    class="fr-mb-4w"
                 >
-                    <ul class="app-list" data-form-collection-target="collectionContainer">
-                        {{ form_row(form.measures)}}
+                    <ul id="measure-list" class="fr-raw-list fr-mb-2w" data-form-collection-target="collectionContainer" aria-label="{{ form.measures.vars.label|trans }}">
+                        {% for item in form.measures %}
+                            {{ _self.measures_list_item(item, loop.index) }}
+                        {% else %}
+                            {% do form.measures.setRendered %}
+                        {% endfor %}
                     </ul>
                     <button
                         type="button"
-                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                        class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
                         data-action="form-collection#addCollectionElement"
+                        aria-controls="measure-list"
                     >
-                        Ajouter une restriction
+                        {{ 'regulation.measure.add'|trans }}
                     </button>
                 </div>
 

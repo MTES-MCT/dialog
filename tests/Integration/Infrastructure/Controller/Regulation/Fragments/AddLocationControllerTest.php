@@ -87,7 +87,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
         dd($crawler);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith("Cette valeur ne doit pas être vide.", $crawler->filter('#location_form_error')->text());
+        $this->assertStringStartsWith('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void

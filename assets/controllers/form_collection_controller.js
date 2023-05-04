@@ -5,14 +5,13 @@ export default class extends Controller {
 
     static values = {
         index: Number,
-        prototype:String,
+        prototype: String,
     };
 
     addCollectionElement(_event) {
-        const item = document.createElement('li');
-        item.className = 'app-list-item';
-        item.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue);
-        this.collectionContainerTarget.appendChild(item);
+        const el = document.createElement('div');
+        el.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue).replace(/__oneBasedIndex__/g, this.indexValue + 1);
+        this.collectionContainerTarget.appendChild(el.children[0]);
         this.indexValue++;
     }
 }

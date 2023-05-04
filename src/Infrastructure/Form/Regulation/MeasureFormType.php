@@ -21,11 +21,8 @@ final class MeasureFormType extends AbstractType
                 ChoiceType::class,
                 options: [
                     'choices' => MeasureTypeEnum::getFormChoices(),
-                    'label' => 'measure.type',
-                    'help' => 'measure.type.help',
-                    'attr' => [
-                        'class' => 'fr-select',
-                    ],
+                    'label' => 'regulation.measure.type',
+                    'help' => 'regulation.measure.type.help',
                 ],
             )
         ;
