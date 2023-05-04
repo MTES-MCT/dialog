@@ -81,6 +81,7 @@ final class SaveRegulationLocationCommandHandler
         }
 
         foreach ($command->measures as $measureCommand) {
+            $measureCommand->location = $command->location;
             $this->commandBus->handle($measureCommand);
         }
 

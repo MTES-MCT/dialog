@@ -8,6 +8,7 @@
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>
+            <constraint name="App\Infrastructure\Validator\ValidAddressConstraint" />
         </property>
         <property name="fromHouseNumber">
             <constraint name="Length">
@@ -20,6 +21,9 @@
             </constraint>
        </property>
        <property name="measures">
+            <constraint name="NotBlank">
+                <option name="message">location.measures.error.not_blank</option>
+            </constraint>
             <constraint name="Valid"/>
        </property>
     </class>

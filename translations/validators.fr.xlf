@@ -14,8 +14,8 @@
                 <source>regulation.detail.regulation_cant_be_published</source>
                 <target><![CDATA[<h3 class="fr-alert__title">]]>La réglementation ne peut pas être publiée. Vérifiez qu'elle a correctement été créée.<![CDATA[</h3>]]></target>
             </trans-unit>
-            <trans-unit id="regulation.step1.error.end_date_before_start_date">
-                <source>regulation.step1.error.end_date_before_start_date</source>
+            <trans-unit id="regulation.error.end_date_before_start_date">
+                <source>regulation.error.end_date_before_start_date</source>
                 <target>La date de fin doit être après le {{ compared_value }}.</target>
             </trans-unit>
             <trans-unit id="regulation.step1.error.identifier">
@@ -25,6 +25,14 @@
             <trans-unit id="regulation.general_info.error.identifier">
                 <source>regulation.general_info.error.identifier</source>
                 <target>Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.</target>
+            </trans-unit>
+            <trans-unit id="location.error.valid_address">
+                <source>location.error.valid_address</source>
+                <target>Veuillez saisir une adresse valide. Ex : Rue Saint-Léonard, 49000 Angers.</target>
+            </trans-unit>
+            <trans-unit id="location.measures.error.not_blank">
+                <source>location.measures.error.not_blank</source>
+                <target>Veuillez définir une ou plusieurs restrictions.</target>
             </trans-unit>
         </body>
     </file>
