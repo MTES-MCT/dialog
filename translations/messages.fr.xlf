@@ -494,9 +494,9 @@
             <trans-unit id="landing.itinerary.description">
                 <source>landing.itinerary.description</source>
                 <target>
-                    <![CDATA[<p>]]>Actuellement, les collectivités ont des <![CDATA[<b>]]>difficultés à communiquer les restrictions de circulations<![CDATA[</b>]]>, notamment celles spécifiques aux poids lourds. Cela cause des <![CDATA[<b>]]>problèmes d’usure du réseau routier<![CDATA[</b>]]>, ainsi que des <![CDATA[<b>]]>difficultés de circulation en période de travaux<![CDATA[</b>]]>.<![CDATA[</p>]]>
+                    <![CDATA[<p>]]>Actuellement, les collectivités ont des <![CDATA[<b>]]>difficultés à communiquer les restrictions de circulation<![CDATA[</b>]]>, notamment celles spécifiques aux poids lourds. Cela cause des <![CDATA[<b>]]>problèmes d’usure du réseau routier<![CDATA[</b>]]>, ainsi que des <![CDATA[<b>]]>difficultés de circulation en période de travaux<![CDATA[</b>]]>.<![CDATA[</p>]]>
                     <![CDATA[<p>]]>Afin de pallier à ce problème, <![CDATA[<b>]]>la loi Climat et Résilience (article 122-4)<![CDATA[</b>]]> impose aux calculateurs d’itinéraires d’intégrer les réglementations spécifiques aux poids lourds.<![CDATA[</p>]]>
-                    <![CDATA[<p>]]>L’équipe de DiaLog travaille donc avec les principaux services de <![CDATA[<b>]]>navigations GPS<![CDATA[</b>]]> pour <![CDATA[<b>]]>diffuser plus largement les règles de circulations.<![CDATA[</b>]]><![CDATA[</p>]]>
+                    <![CDATA[<p>]]>L’équipe de DiaLog travaille donc avec les principaux services de <![CDATA[<b>]]>navigation GPS<![CDATA[</b>]]> pour <![CDATA[<b>]]>diffuser plus largement les règles de circulation.<![CDATA[</b>]]><![CDATA[</p>]]>
                 </target>
             </trans-unit>
             <trans-unit id="landing.product.title">
