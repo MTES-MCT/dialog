@@ -13,9 +13,11 @@
 
         <div class="app-card__content">
             <ul class="fr-ml-1w fr-my-0 fr-list">
-                <li>{{ location.address.city }}
-				    ({{ location.address.postCode }})
-                </li>
+                {% if location.address.city %}
+                    <li>
+                        {{ location.address.city }} ({{ location.address.postCode }})
+                    </li>
+                {% endif %}
                 {% if location.address.roadName %}
                 <li>
                     {{ location.address.roadName }}

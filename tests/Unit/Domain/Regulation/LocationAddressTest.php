@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation;
 
-use App\Domain\Regulation\Exception\LocationAddressParsingException;
 use App\Domain\Regulation\LocationAddress;
 use PHPUnit\Framework\TestCase;
 
@@ -12,9 +11,10 @@ final class LocationAddressTest extends TestCase
 {
     public function testParsingFailure(): void
     {
-        $this->expectException(LocationAddressParsingException::class);
-        $this->expectExceptionMessageMatches("/^Address 'This is not a valid address' did not have expected format/");
-        LocationAddress::fromString('This is not a valid address');
+        $locationAddress = LocationAddress::fromString('This is not a valid address');
+        $this->assertSame(null, $locationAddress->getPostCode());
+        $this->assertSame(null, $locationAddress->getCity());
+        $this->assertSame('This is not a valid address', $locationAddress->getRoadName());
     }
 
     private function provideParseRoad(): array

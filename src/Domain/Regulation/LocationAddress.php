@@ -4,46 +4,42 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-use App\Domain\Regulation\Exception\LocationAddressParsingException;
-
 class LocationAddress
 {
     private const ADDRESS_PATTERN = "/((?<roadName>[^\d,]+),? )?(?<postCode>\d{5}) (?<city>.+)/i";
 
     public function __construct(
-        private string $postCode,
-        private string $city,
-        private string|null $roadName,
+        private ?string $postCode = null,
+        private ?string $city = null,
+        private ?string $roadName = null,
     ) {
     }
 
-    public function getPostCode(): string
+    public function getPostCode(): ?string
     {
         return $this->postCode;
     }
 
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
-    public function getRoadName(): string|null
+    public function getRoadName(): ?string
     {
         return $this->roadName;
     }
 
     /**
      * Convert a text address to a LocationAddress object.
-     *
-     * @throws LocationAddressParsingException: If parsing has failed.
      */
     public static function fromString(string $address): self
     {
         $matches = [];
 
+        // If parsing has failed
         if (!preg_match(self::ADDRESS_PATTERN, $address, $matches)) {
-            $message = sprintf("Address '%s' did not have expected format '%s'", $address, self::ADDRESS_PATTERN);
-            throw new LocationAddressParsingException($message);
+            return new LocationAddress(null, null, $address);
         }
 
         return new LocationAddress(
