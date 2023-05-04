@@ -74,13 +74,7 @@ final class GeneralInfoFormType extends AbstractType
             ->add(
                 'save',
                 SubmitType::class,
-                options: [
-                    'label' => $options['isEdit'] ? 'common.form.validate' : 'common.form.continue',
-                    'attr' => [
-                        'class' => $options['isEdit'] ? 'fr-btn' : 'fr-btn fr-btn--icon-right fr-icon-arrow-right-line',
-                        'data-turbo-frame' => !$options['isEdit'] ? '_top' : null,
-                    ],
-                ],
+                options: $options['save_options'],
             )
         ;
     }
@@ -90,9 +84,9 @@ final class GeneralInfoFormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'organizations' => [],
-            'isEdit' => false,
+            'save_options' => [],
         ]);
         $resolver->setAllowedTypes('organizations', 'array');
-        $resolver->setAllowedTypes('isEdit', 'bool');
+        $resolver->setAllowedTypes('save_options', 'array');
     }
 }
