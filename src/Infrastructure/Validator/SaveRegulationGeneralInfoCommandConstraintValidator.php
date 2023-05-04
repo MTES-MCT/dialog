@@ -27,7 +27,7 @@ final class SaveRegulationGeneralInfoCommandConstraintValidator extends Constrai
                 ->setTimezone(new \DateTimeZone($this->clientTimezone))
                 ->format('d/m/Y');
 
-            $this->context->buildViolation('regulation.step1.error.end_date_before_start_date')
+            $this->context->buildViolation('regulation.error.end_date_before_start_date')
                 ->setParameter('{{ compared_value }}', $viewStartDate)
                 ->atPath('endDate')
                 ->addViolation();

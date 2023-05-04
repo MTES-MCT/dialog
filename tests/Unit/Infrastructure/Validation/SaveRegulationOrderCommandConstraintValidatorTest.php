@@ -78,7 +78,7 @@ class SaveRegulationGeneralInfoCommandConstraintValidatorTest extends Constraint
         $command->endDate = new \DateTimeImmutable('2023-03-11');
 
         $this->validator->validate($command, $this->constraintObj);
-        $this->buildViolation('regulation.step1.error.end_date_before_start_date')
+        $this->buildViolation('regulation.error.end_date_before_start_date')
             ->setParameter('{{ compared_value }}', '12/03/2023')
             ->atPath('property.path.endDate')
             ->assertRaised();
