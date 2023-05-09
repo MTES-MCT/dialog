@@ -230,6 +230,10 @@
                 <source>regulation.temporary</source>
                 <target>Arrêté temporaire</target>
             </trans-unit>
+            <trans-unit id="regulation.permanent">
+                <source>regulation.permanent</source>
+                <target>Arrêté permanent</target>
+            </trans-unit>
             <trans-unit id="regulation.general_info">
                 <source>regulation.general_info</source>
                 <target>Informations générales</target>
@@ -513,10 +517,6 @@
                     <![CDATA[<li>]]><![CDATA[<b>]]>Fin 2023<![CDATA[</b>]]> : déploiement dans 5 territoires, pour tout type de réglementation.<![CDATA[</li>]]>
                     <![CDATA[</ul>]]>
                 </target>
-            </trans-unit>
-            <trans-unit id="regulation.detail.title">
-                <source>regulation.detail.title</source>
-                <target>Arrêté temporaire %identifier%</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>

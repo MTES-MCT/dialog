@@ -21,11 +21,10 @@
         <div class="app-card__icon">
             <span class="fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
         </div>
-
-        <div class="app-card__content">
-            <h3 class="fr-h4">
+        <h3 class="app-card__title fr-h4">
                 {{ location ? location.address.roadName : 'regulation.location'|trans }}
-            </h3>
+        </h3>
+        <div class="app-card__content">
             {{ form_start(form) }}
                 {{ form_errors(form) }}
                 {{ form_row(form.address, {

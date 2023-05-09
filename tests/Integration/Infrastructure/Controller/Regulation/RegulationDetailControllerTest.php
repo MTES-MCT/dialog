@@ -54,6 +54,17 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertCount(1, $publishBtn->siblings()->filter('input[name="token"]'));
     }
 
+    public function testPermanentRegulationDetail(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+
+        $this->assertSecurityHeaders();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('Arrêté permanent FO3/2023', $crawler->filter('h2')->text());
+        $this->assertMetaTitle('Arrêté permanent FO3/2023 - DiaLog', $crawler);
+    }
+
     public function testDraftRegulationDetailWithoutLocations(): void
     {
         $client = $this->login();
