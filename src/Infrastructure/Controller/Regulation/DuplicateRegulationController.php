@@ -50,7 +50,9 @@ final class DuplicateRegulationController extends AbstractRegulationController
         }
 
         /** @var FlashBagAwareSessionInterface */
-        $session = $request->getSession();
+        $session
+        = $request->getSession();
+
 
         /** @var SymfonyUser */
         $user = $this->security->getUser();
