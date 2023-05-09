@@ -150,7 +150,7 @@ check: ## Run checks
 	${BIN_CONSOLE} doctrine:schema:validate
 
 husky: ## Husky pre-commit hook
-	make php_lint_no_tty
+	make php_lint_no_tty ARGS="--dry-run"
 	make twig_lint_no_tty
 
 format: php_lint ## Format code

@@ -53,7 +53,6 @@ final class DuplicateRegulationController extends AbstractRegulationController
         $session
         = $request->getSession();
 
-
         /** @var SymfonyUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
