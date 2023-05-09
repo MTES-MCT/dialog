@@ -24,7 +24,8 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "scalingo-postbuild": "npm run build"
+        "scalingo-postbuild": "npm run build",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@gouvfr/dsfr": "^1.7.2",
