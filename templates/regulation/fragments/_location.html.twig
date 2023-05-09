@@ -45,9 +45,11 @@
                     {% endif %}
                 </li>
                 <li>
-                    <a href="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
-                        {{ 'common.update'|trans }}
-                    </a>
+                    <form method="GET" action="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}">
+                        <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
+                            {{ 'common.update'|trans }}
+                        </button>
+                    </form>
                 </li>
             </ul>
         {% endif %}

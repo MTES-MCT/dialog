@@ -19,13 +19,27 @@ final class MeasureFormType extends AbstractType
             ->add(
                 'type',
                 ChoiceType::class,
-                options: [
-                    'choices' => MeasureTypeEnum::getFormChoices(),
-                    'label' => 'regulation.measure.type',
-                    'help' => 'regulation.measure.type.help',
-                ],
+                options: $this->getTypeOptions(),
             )
         ;
+    }
+
+    private function getTypeOptions(): array
+    {
+        $choices = [];
+
+        foreach (MeasureTypeEnum::cases() as $case) {
+            $choices[sprintf('regulation.measure.type.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => array_merge(
+                ['regulation.measure.type.placeholder' => ''],
+                $choices,
+            ),
+            'label' => 'regulation.measure.type',
+            'help' => 'regulation.measure.type.help',
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver): void

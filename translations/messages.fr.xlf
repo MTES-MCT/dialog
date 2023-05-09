@@ -626,6 +626,10 @@
                 <source>regulation.measure.type.help</source>
                 <target>Quel type de restriction ou limitation est prévu ?</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.placeholder">
+                <source>regulation.measure.type.placeholder</source>
+                <target>Sélectionner un type de restriction...</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.type.noEntry">
                 <source>regulation.measure.type.noEntry</source>
                 <target>Circulation interdite</target>

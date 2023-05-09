@@ -36,7 +36,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
-        $form['location_form[measures][0][type]'] = 'noEntry';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(200);
@@ -65,27 +64,10 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
-        $form['location_form[measures][0][type]'] = 'noEntry';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith("En raison d'un problème technique", $crawler->filter('#location_form_error')->text());
-    }
-
-    public function testBlankMeasureType(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add');
-        $this->assertResponseStatusCodeSame(200);
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
-        $form['location_form[measures][0][type]'] = '';
-
-        $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
