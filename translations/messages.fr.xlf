@@ -602,6 +602,46 @@
                 <source>regulation.list.meta.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="measures">
+                <source>regulation.measure_list</source>
+                <target>Liste des restrictions</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure_list_item.title">
+                <source>regulation.measure_list_item.title</source>
+                <target>Restriction %index%</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure_list_item.help">
+                <source>regulation.measure_list_item.help</source>
+                <target>Quelle perturbation est prévue ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.add">
+                <source>regulation.measure.add</source>
+                <target>Ajouter une restriction</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type">
+                <source>regulation.measure.type</source>
+                <target>Type de restriction</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.help">
+                <source>regulation.measure.type.help</source>
+                <target>Quel type de restriction ou limitation est prévu ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.placeholder">
+                <source>regulation.measure.type.placeholder</source>
+                <target>Sélectionner un type de restriction...</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.noEntry">
+                <source>regulation.measure.type.noEntry</source>
+                <target>Circulation interdite</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.alternateRoad">
+                <source>regulation.measure.type.alternateRoad</source>
+                <target>Circulation alternée</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.oneWayTraffic">
+                <source>regulation.measure.type.oneWayTraffic</source>
+                <target>Circulation à sens unique</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

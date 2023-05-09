@@ -34,4 +34,9 @@ class Measure
     {
         return $this->conditions;
     }
+
+    public function update(string $type): void
+    {
+        $this->type = $type;
+    }
 }

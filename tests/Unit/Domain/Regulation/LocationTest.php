@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 final class LocationTest extends TestCase
 {
     public function testGetters(): void
     {
+        $measure1 = $this->createMock(Measure::class);
+        $measure2 = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $location = new Location(
             'b4812143-c4d8-44e6-8c3a-34688becae6e',
@@ -31,6 +35,12 @@ final class LocationTest extends TestCase
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame('POINT(-1.930973 47.347917)', $location->getToPoint());
         $this->assertEmpty($location->getMeasures());
+
+        $location->addMeasure($measure1);
+        $location->addMeasure($measure1); // Test doublon
+        $location->addMeasure($measure2);
+
+        $this->assertEquals(new ArrayCollection([$measure1, $measure2]), $location->getMeasures());
     }
 
     public function testUpdate(): void

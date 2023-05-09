@@ -20,5 +20,8 @@
                 <option name="max">8</option>
             </constraint>
        </property>
+       <property name="measures">
+            <constraint name="Valid"/>
+       </property>
     </class>
 </constraint-mapping>
