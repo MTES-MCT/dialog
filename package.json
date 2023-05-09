@@ -10,6 +10,7 @@
         "@symfony/webpack-encore": "^4.0.0",
         "core-js": "^3.23.0",
         "file-loader": "^6.0.0",
+        "husky": "^8.0.3",
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.56.1",
         "sass-loader": "^13.2.0",
