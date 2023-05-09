@@ -16,16 +16,7 @@ final class SaveMeasureCommand implements CommandInterface
     public function __construct(
         public readonly ?Measure $measure = null,
     ) {
-    }
-
-    public static function create(
-        ?Location $location = null,
-        ?Measure $measure = null,
-    ): self {
-        $command = new self($measure);
-        $command->location = $location;
-        $command->type = $measure?->getType();
-
-        return $command;
+        $this->location = $measure?->getLocation();
+        $this->type = $measure?->getType();
     }
 }

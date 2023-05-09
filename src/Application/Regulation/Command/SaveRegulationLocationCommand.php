@@ -34,7 +34,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
             foreach ($location->getMeasures() as $measure) {
                 array_push(
                     $command->measures,
-                    SaveMeasureCommand::create($location, $measure),
+                    new SaveMeasureCommand($measure),
                 );
             }
         }

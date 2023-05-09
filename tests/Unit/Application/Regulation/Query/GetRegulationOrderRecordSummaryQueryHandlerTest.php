@@ -20,7 +20,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
     public function provideGetOne(): array
     {
         return [
-            /*[
+            [
                 [
                     [
                         'uuid' => '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
@@ -39,7 +39,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                     ],
                 ],
-            ],*/
+            ],
             [
                 [
                     [
@@ -75,14 +75,14 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
     /**
      * @dataProvider provideGetOne
      */
-    public function testGetOne(array $location): void
+    public function testGetOne(array $locations): void
     {
         $startDate = new \DateTime('2022-12-07');
         $endDate = new \DateTime('2022-12-17');
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
-        $regulationOrderRecord = [
+        $summaryRows = [
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
@@ -92,11 +92,11 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'description' => 'Description 1',
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'locationUuid' => $location[0]['uuid'],
-                'address' => $location[0]['address'],
-                'fromHouseNumber' => $location[0]['fromHouseNumber'],
-                'toHouseNumber' => $location[0]['toHouseNumber'],
-                'measureType' => $location[0]['measureType'],
+                'locationUuid' => $locations[0]['uuid'],
+                'address' => $locations[0]['address'],
+                'fromHouseNumber' => $locations[0]['fromHouseNumber'],
+                'toHouseNumber' => $locations[0]['toHouseNumber'],
+                'measureType' => $locations[0]['measureType'],
             ],
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -107,18 +107,18 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'description' => 'Description 1',
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'locationUuid' => $location[1]['uuid'],
-                'address' => $location[1]['address'],
-                'fromHouseNumber' => $location[1]['fromHouseNumber'],
-                'toHouseNumber' => $location[1]['toHouseNumber'],
-                'measureType' => $location[1]['measureType'],
+                'locationUuid' => $locations[1]['uuid'],
+                'address' => $locations[1]['address'],
+                'fromHouseNumber' => $locations[1]['fromHouseNumber'],
+                'toHouseNumber' => $locations[1]['toHouseNumber'],
+                'measureType' => $locations[1]['measureType'],
             ],
         ];
 
-        $expectedLocation1Measures = [new MeasureView($location[1]['measureType'])];
+        $expectedLocation1Measures = [new MeasureView($locations[1]['measureType'])];
 
-        if (!empty($location[2])) {
-            $regulationOrderRecord[] = [
+        if (!empty($locations[2])) {
+            $summaryRows[] = [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
                 'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
@@ -127,26 +127,26 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'description' => 'Description 1',
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'locationUuid' => $location[2]['uuid'],
-                'address' => $location[2]['address'],
-                'fromHouseNumber' => $location[2]['fromHouseNumber'],
-                'toHouseNumber' => $location[2]['toHouseNumber'],
-                'measureType' => $location[2]['measureType'],
+                'locationUuid' => $locations[2]['uuid'],
+                'address' => $locations[2]['address'],
+                'fromHouseNumber' => $locations[2]['fromHouseNumber'],
+                'toHouseNumber' => $locations[2]['toHouseNumber'],
+                'measureType' => $locations[2]['measureType'],
             ];
 
             $expectedLocation1Measures = [
-                new MeasureView($location[1]['measureType']),
-                new MeasureView($location[2]['measureType']),
+                new MeasureView($locations[1]['measureType']),
+                new MeasureView($locations[2]['measureType']),
             ];
         }
 
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findOneForSummary')
-            ->willReturn($regulationOrderRecord);
+            ->willReturn($summaryRows);
 
         $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $summary = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(
             new RegulationOrderRecordSummaryView(
@@ -157,25 +157,25 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'draft',
                 'Description 1',
                 [
-                    $location[0]['uuid'] => new DetailLocationView(
-                        $location[0]['uuid'],
-                        $location[0]['locationAddress'],
-                        $location[0]['fromHouseNumber'],
-                        $location[0]['toHouseNumber'],
-                        [new MeasureView($location[0]['measureType'])],
+                    $locations[0]['uuid'] => new DetailLocationView(
+                        $locations[0]['uuid'],
+                        $locations[0]['locationAddress'],
+                        $locations[0]['fromHouseNumber'],
+                        $locations[0]['toHouseNumber'],
+                        [new MeasureView($locations[0]['measureType'])],
                     ),
-                    $location[1]['uuid'] => new DetailLocationView(
-                        $location[1]['uuid'],
-                        $location[1]['locationAddress'],
-                        $location[1]['fromHouseNumber'],
-                        $location[1]['toHouseNumber'],
+                    $locations[1]['uuid'] => new DetailLocationView(
+                        $locations[1]['uuid'],
+                        $locations[1]['locationAddress'],
+                        $locations[1]['fromHouseNumber'],
+                        $locations[1]['toHouseNumber'],
                         $expectedLocation1Measures,
                     ),
                 ],
                 $startDate,
                 $endDate,
             ),
-            $regulationOrders,
+            $summary,
         );
     }
 
@@ -206,7 +206,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->willReturn($regulationOrderRecord);
 
         $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $summary = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(
             new RegulationOrderRecordSummaryView(
@@ -220,7 +220,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 null,
                 null,
             ),
-            $regulationOrders,
+            $summary,
         );
     }
 
