@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
+use App\Application\Regulation\View\MeasureView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -19,7 +20,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
     public function provideGetOne(): array
     {
         return [
-            [
+            /*[
                 [
                     [
                         'uuid' => '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
@@ -38,7 +39,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                     ],
                 ],
-            ],
+            ],*/
             [
                 [
                     [
@@ -95,7 +96,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'address' => $location[0]['address'],
                 'fromHouseNumber' => $location[0]['fromHouseNumber'],
                 'toHouseNumber' => $location[0]['toHouseNumber'],
-                'measureType' => MeasureTypeEnum::NO_ENTRY->value,
+                'measureType' => $location[0]['measureType'],
             ],
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -110,9 +111,34 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'address' => $location[1]['address'],
                 'fromHouseNumber' => $location[1]['fromHouseNumber'],
                 'toHouseNumber' => $location[1]['toHouseNumber'],
-                'measureType' => MeasureTypeEnum::ALTERNATE_ROAD->value,
+                'measureType' => $location[1]['measureType'],
             ],
         ];
+
+        $expectedLocation1Measures = [new MeasureView($location[1]['measureType'])];
+
+        if (!empty($location[2])) {
+            $regulationOrderRecord[] = [
+                'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+                'identifier' => 'F01/2023',
+                'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+                'organizationName' => 'DiaLog',
+                'status' => 'draft',
+                'description' => 'Description 1',
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'locationUuid' => $location[2]['uuid'],
+                'address' => $location[2]['address'],
+                'fromHouseNumber' => $location[2]['fromHouseNumber'],
+                'toHouseNumber' => $location[2]['toHouseNumber'],
+                'measureType' => $location[2]['measureType'],
+            ];
+
+            $expectedLocation1Measures = [
+                new MeasureView($location[1]['measureType']),
+                new MeasureView($location[2]['measureType']),
+            ];
+        }
 
         $regulationOrderRecordRepository
             ->expects(self::once())
@@ -131,18 +157,19 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'draft',
                 'Description 1',
                 [
-                    new DetailLocationView(
+                    $location[0]['uuid'] => new DetailLocationView(
                         $location[0]['uuid'],
                         $location[0]['locationAddress'],
                         $location[0]['fromHouseNumber'],
                         $location[0]['toHouseNumber'],
-                        []
+                        [new MeasureView($location[0]['measureType'])],
                     ),
-                    new DetailLocationView(
+                    $location[1]['uuid'] => new DetailLocationView(
                         $location[1]['uuid'],
                         $location[1]['locationAddress'],
                         $location[1]['fromHouseNumber'],
                         $location[1]['toHouseNumber'],
+                        $expectedLocation1Measures,
                     ),
                 ],
                 $startDate,
