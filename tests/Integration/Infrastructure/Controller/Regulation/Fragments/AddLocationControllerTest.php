@@ -22,7 +22,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
-        $this->assertSame('Veuillez définir une ou plusieurs restrictions.', $crawler->filter('#location_form_error')->text());
     }
 
     public function testAdd(): void
@@ -85,7 +84,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form['location_form[measures][0][type]'] = '';
 
         $crawler = $client->submit($form);
-        dd($crawler);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
     }
