@@ -32,7 +32,7 @@ install: build start install_deps dbinstall assets ## Bootstrap project
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
 	$(BIN_NPM) ci
-	$(BIN_NPX) playwright install --with-deps firefox chromium
+	$(BIN_NPX) playwright install firefox chromium
 
 update_deps:
 	make composer CMD="update"

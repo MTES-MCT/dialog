@@ -3,6 +3,7 @@ version: "3.8"
 volumes:
   database: {}
   pgadmin-data: {}
+  playwright-data: {}
 
 services:
   database:
@@ -25,6 +26,7 @@ services:
     volumes:
       - ./:/var/www/dialog
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - playwright-data:/root/.cache/ms-playwright
     depends_on:
       - database
 
