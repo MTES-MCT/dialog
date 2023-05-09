@@ -137,6 +137,12 @@ check: ## Run checks
 	make phpstan
 	${BIN_CONSOLE} doctrine:schema:validate
 
+husky: ## Husky pre-commit hook
+	make php_lint ARGS="--dry-run"
+	make psr_lint
+	make twig_lint
+	make phpstan
+
 format: php_lint ## Format code
 
 ##
