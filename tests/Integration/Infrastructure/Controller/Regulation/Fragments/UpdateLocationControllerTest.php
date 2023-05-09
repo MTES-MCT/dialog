@@ -37,11 +37,16 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
-        $form['location_form[fromHouseNumber]'] = '15';
-        $form['location_form[toHouseNumber]'] = '37bis';
 
-        $crawler = $client->submit($form);
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['fromHouseNumber'] = '15';
+        $values['location_form']['toHouseNumber'] = '37bis';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
