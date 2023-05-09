@@ -122,9 +122,6 @@ shell: ## Connect to the container
 phpstan: ## PHP Stan
 	${BIN_PHP} ./vendor/bin/phpstan analyse -l 5 --xdebug src
 
-phpstan_no_tty: ## PHP Stan without TTY
-	${BIN_PHP_NO_TTY} ./vendor/bin/phpstan analyse -l 5 --xdebug src
-
 php_lint: ## PHP linter
 	${BIN_PHP} ./vendor/bin/php-cs-fixer fix -n ${ARGS}
 
@@ -154,7 +151,6 @@ check: ## Run checks
 
 husky: ## Husky pre-commit hook
 	make php_lint_no_tty
-	make phpstan_no_tty
 	make twig_lint_no_tty
 
 format: php_lint ## Format code
