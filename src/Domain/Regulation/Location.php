@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 class Location
 {
-    private iterable $measures = [];
+    private Collection $measures;
 
     public function __construct(
         private string $uuid,
@@ -17,6 +20,7 @@ class Location
         private ?string $toHouseNumber,
         private ?string $toPoint,
     ) {
+        $this->measures = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -57,6 +61,15 @@ class Location
     public function getMeasures(): iterable
     {
         return $this->measures;
+    }
+
+    public function addMeasure(Measure $measure): void
+    {
+        if ($this->measures->contains($measure)) {
+            return;
+        }
+
+        $this->measures->add($measure);
     }
 
     public function update(

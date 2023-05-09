@@ -6,7 +6,7 @@ namespace App\Domain\Regulation\Enum;
 
 enum MeasureTypeEnum: string
 {
-    public const NO_ENTRY = 'noEntry';
-    public const ALTERNATE_ROAD = 'alternateRoad';
-    public const ONE_WAY_TRAFFIC = 'oneWayTraffic';
+    case NO_ENTRY = 'noEntry';
+    case ALTERNATE_ROAD = 'alternateRoad';
+    case ONE_WAY_TRAFFIC = 'oneWayTraffic';
 }

@@ -19,9 +19,16 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
-        $crawler = $client->submit($form);
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = '';
+        $values['location_form']['measures'][0]['type'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
     public function testAdd(): void
@@ -33,11 +40,15 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
-        $form['location_form[fromHouseNumber]'] = '15';
-        $form['location_form[toHouseNumber]'] = '37bis';
 
-        $crawler = $client->submit($form);
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['fromHouseNumber'] = '15';
+        $values['location_form']['toHouseNumber'] = '37bis';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
 
         $streams = $crawler->filter('turbo-stream');
@@ -105,6 +116,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
+
         $form['location_form[address]'] = str_repeat('a', 256);
         $form['location_form[fromHouseNumber]'] = str_repeat('a', 9);
         $form['location_form[toHouseNumber]'] = str_repeat('a', 9);

@@ -19,10 +19,13 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['location_form[address]'] = ''; // reset
+        $form['location_form[measures][0][type]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_type_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
     public function testEdit(): void
@@ -34,11 +37,16 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
-        $form['location_form[fromHouseNumber]'] = '15';
-        $form['location_form[toHouseNumber]'] = '37bis';
 
-        $crawler = $client->submit($form);
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['fromHouseNumber'] = '15';
+        $values['location_form']['toHouseNumber'] = '37bis';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();

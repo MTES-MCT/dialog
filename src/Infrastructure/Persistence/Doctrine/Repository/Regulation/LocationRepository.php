@@ -33,6 +33,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         return $this->createQueryBuilder('loc')
             ->where('loc.uuid = :uuid')
             ->innerJoin('loc.regulationOrder', 'ro')
+            ->leftJoin('loc.measures', 'measure')
             ->setParameter('uuid', $uuid)
             ->setMaxResults(1)
             ->getQuery()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command;
 
+use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\Geography\GeometryFormatter;
@@ -14,6 +15,7 @@ final class SaveRegulationLocationCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
+        private CommandBusInterface $commandBus,
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private GeometryFormatter $geometryFormatter,
@@ -49,6 +51,12 @@ final class SaveRegulationLocationCommandHandler
                 ),
             );
 
+            foreach ($command->measures as $measureCommand) {
+                $measureCommand->location = $location;
+                $measure = $this->commandBus->handle($measureCommand);
+                $location->addMeasure($measure);
+            }
+
             return $location->getUuid();
         }
 
@@ -68,6 +76,11 @@ final class SaveRegulationLocationCommandHandler
             $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
         } else {
             $toPoint = $command->location->getToPoint();
+        }
+
+        foreach ($command->measures as $measureCommand) {
+            $measureCommand->location = $command->location;
+            $this->commandBus->handle($measureCommand);
         }
 
         $command->location->update(

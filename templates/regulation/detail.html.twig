@@ -27,24 +27,27 @@
                         {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
                     </div>
 
-                    <h3 class="fr-h5 fr-text--default-grey fr-mt-5w">
-                        {{ 'regulation.locations'|trans }}
-                    </h3>
+                    <section aria-labelledby="locations-title">
+                        <h3 id="locations-title" class="fr-h5 fr-text--default-grey fr-mt-5w">
+                            {{ 'regulation.locations'|trans }}
+                        </h3>
 
-                    <ul id="location_list" class="fr-raw-list">
-                        {% for location in regulationOrderRecord.locations %}
-                            <li class="fr-mx-n4v fr-mx-md-0">
-                                {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord, canDelete } only %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    {% if isDraft %}
-                        {% if regulationOrderRecord.locations|length > 0 %}
-                            {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
-                        {% else %}
-                            {{ render(path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid })) }}
+                        <ul id="location_list" class="fr-raw-list">
+                            {% for location in regulationOrderRecord.locations %}
+                                <li class="fr-mx-n4v fr-mx-md-0">
+                                    {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord, canDelete } only %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        {% if isDraft %}
+                            {% if regulationOrderRecord.locations|length > 0 %}
+                                {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                            {% else %}
+                                {{ render(path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid })) }}
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
+                    </section>
                 </div>
 
                 <aside class="fr-col">

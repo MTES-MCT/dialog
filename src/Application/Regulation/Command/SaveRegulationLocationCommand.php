@@ -13,6 +13,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $address;
     public ?string $fromHouseNumber;
     public ?string $toHouseNumber;
+    public array $measures = [];
 
     public function __construct(
         public readonly RegulationOrderRecord $regulationOrderRecord,
@@ -25,10 +26,18 @@ final class SaveRegulationLocationCommand implements CommandInterface
         Location $location = null,
     ): self {
         $command = new self($regulationOrderRecord, $location);
-
         $command->address = $location?->getAddress();
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
+
+        if ($location) {
+            foreach ($location->getMeasures() as $measure) {
+                array_push(
+                    $command->measures,
+                    new SaveMeasureCommand($measure),
+                );
+            }
+        }
 
         return $command;
     }
