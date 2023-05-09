@@ -50,6 +50,7 @@ final class DuplicateRegulationCommandHandler
         RegulationOrder $originalRegulationOrder,
         RegulationOrderRecord $duplicatedRegulationOrderRecord,
     ): void {
+        // todo : duplicate measures
         foreach ($originalRegulationOrder->getLocations() as $location) {
             $locationCommand = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
             $locationCommand->address = $location->getAddress();

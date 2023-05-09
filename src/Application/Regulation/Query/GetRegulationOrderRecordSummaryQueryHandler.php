@@ -38,7 +38,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             if (\array_key_exists($regulationOrder['locationUuid'], $locationViews)) {
                 array_push(
                     $locationViews[$regulationOrder['locationUuid']]->measures,
-                    new MeasureView($regulationOrder['type']),
+                    new MeasureView($regulationOrder['measureType']),
                 );
 
                 continue;
@@ -49,8 +49,8 @@ final class GetRegulationOrderRecordSummaryQueryHandler
                 LocationAddress::fromString($regulationOrder['address']),
                 $regulationOrder['fromHouseNumber'],
                 $regulationOrder['toHouseNumber'],
-                $regulationOrder['type'] ? [
-                    new MeasureView($regulationOrder['type']),
+                $regulationOrder['measureType'] ? [
+                    new MeasureView($regulationOrder['measureType']),
                 ] : null,
             );
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command;
 
+use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
@@ -25,6 +26,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     private $toPoint;
     private $regulationOrder;
     private $regulationOrderRecord;
+    private $commandBus;
+    private $idFactory;
+    private $locationRepository;
+    private $geocoder;
+    private $geometryFormatter;
 
     protected function setUp(): void
     {
@@ -34,7 +40,12 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $this->toHouseNumber = '37bis';
         $this->toPoint = 'POINT(-1.930973 47.347917)';
 
+        $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
+        $this->idFactory = $this->createMock(IdFactoryInterface::class);
+        $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
+        $this->geocoder = $this->createMock(GeocoderInterface::class);
+        $this->geometryFormatter = $this->createMock(GeometryFormatter::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -44,14 +55,12 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 
     public function testCreate(): void
     {
-        $idFactory = $this->createMock(IdFactoryInterface::class);
-        $idFactory
+        $this->idFactory
             ->expects(self::once())
             ->method('make')
             ->willReturn('4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8');
 
-        $geocoder = $this->createMock(GeocoderInterface::class);
-        $geocoder
+        $this->geocoder
             ->expects(self::exactly(2))
             ->method('computeCoordinates')
             ->willReturnOnConsecutiveCalls(
@@ -59,8 +68,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             );
 
-        $geometryFormatter = $this->createMock(GeometryFormatter::class);
-        $geometryFormatter
+        $this->geometryFormatter
             ->expects(self::exactly(2))
             ->method('formatPoint')
             ->willReturnOnConsecutiveCalls(
@@ -83,18 +91,18 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('73504e1a-45a1-4993-b82a-1189500715db');
-        $locationRepository = $this->createMock(LocationRepositoryInterface::class);
-        $locationRepository
+        $this->locationRepository
             ->expects(self::once())
             ->method('add')
             ->with($this->equalTo($location))
             ->willReturn($createdLocation);
 
         $handler = new SaveRegulationLocationCommandHandler(
-            $idFactory,
-            $locationRepository,
-            $geocoder,
-            $geometryFormatter,
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
@@ -123,13 +131,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 $this->toPoint,
             );
 
-        $idFactory = $this->createMock(IdFactoryInterface::class);
-        $idFactory
+        $this->idFactory
             ->expects(self::never())
             ->method('make');
 
-        $geocoder = $this->createMock(GeocoderInterface::class);
-        $geocoder
+        $this->geocoder
             ->expects(self::exactly(2))
             ->method('computeCoordinates')
             ->willReturnOnConsecutiveCalls(
@@ -137,8 +143,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             );
 
-        $geometryFormatter = $this->createMock(GeometryFormatter::class);
-        $geometryFormatter
+        $this->geometryFormatter
             ->expects(self::exactly(2))
             ->method('formatPoint')
             ->willReturnOnConsecutiveCalls(
@@ -146,16 +151,16 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 'POINT(-1.930973 47.347917)',
             );
 
-        $locationRepository = $this->createMock(LocationRepositoryInterface::class);
-        $locationRepository
+        $this->locationRepository
             ->expects(self::never())
             ->method('add');
 
         $handler = new SaveRegulationLocationCommandHandler(
-            $idFactory,
-            $locationRepository,
-            $geocoder,
-            $geometryFormatter,
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -180,31 +185,28 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 $this->address,
             );
 
-        $idFactory = $this->createMock(IdFactoryInterface::class);
-        $idFactory
+        $this->idFactory
             ->expects(self::never())
             ->method('make');
 
-        $geocoder = $this->createMock(GeocoderInterface::class);
-        $geocoder
+        $this->geocoder
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $geometryFormatter = $this->createMock(GeometryFormatter::class);
-        $geometryFormatter
+        $this->geometryFormatter
             ->expects(self::never())
             ->method('formatPoint');
 
-        $locationRepository = $this->createMock(LocationRepositoryInterface::class);
-        $locationRepository
+        $this->locationRepository
             ->expects(self::never())
             ->method('add');
 
         $handler = new SaveRegulationLocationCommandHandler(
-            $idFactory,
-            $locationRepository,
-            $geocoder,
-            $geometryFormatter,
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -254,31 +256,28 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 $this->toPoint,
             );
 
-        $idFactory = $this->createMock(IdFactoryInterface::class);
-        $idFactory
+        $this->idFactory
             ->expects(self::never())
             ->method('make');
 
-        $geocoder = $this->createMock(GeocoderInterface::class);
-        $geocoder
+        $this->geocoder
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $geometryFormatter = $this->createMock(GeometryFormatter::class);
-        $geometryFormatter
+        $this->geometryFormatter
             ->expects(self::never())
             ->method('formatPoint');
 
-        $locationRepository = $this->createMock(LocationRepositoryInterface::class);
-        $locationRepository
+        $this->locationRepository
             ->expects(self::never())
             ->method('add');
 
         $handler = new SaveRegulationLocationCommandHandler(
-            $idFactory,
-            $locationRepository,
-            $geocoder,
-            $geometryFormatter,
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);

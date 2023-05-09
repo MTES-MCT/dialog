@@ -10,7 +10,6 @@ use App\Application\IdFactoryInterface;
 use App\Domain\Geography\GeometryFormatter;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
-use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
 
 final class SaveRegulationLocationCommandHandler
 {
@@ -18,7 +17,6 @@ final class SaveRegulationLocationCommandHandler
         private IdFactoryInterface $idFactory,
         private CommandBusInterface $commandBus,
         private LocationRepositoryInterface $locationRepository,
-        private MeasureRepositoryInterface $measureRepository,
         private GeocoderInterface $geocoder,
         private GeometryFormatter $geometryFormatter,
     ) {

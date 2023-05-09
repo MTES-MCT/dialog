@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 final class MeasureTest extends TestCase
 {
-    public function testGetters(): void
+    public function testMeasure(): void
     {
         $location = $this->createMock(Location::class);
 
@@ -25,5 +25,8 @@ final class MeasureTest extends TestCase
         $this->assertSame($location, $measure->getLocation());
         $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $measure->getType());
         $this->assertEmpty($measure->getConditions()); // Automatically set by Doctrine
+
+        $measure->update(MeasureTypeEnum::ALTERNATE_ROAD->value);
+        $this->assertSame(MeasureTypeEnum::ALTERNATE_ROAD->value, $measure->getType());
     }
 }

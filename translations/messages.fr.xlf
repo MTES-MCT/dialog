@@ -626,16 +626,16 @@
                 <source>regulation.measure.type.help</source>
                 <target>Quel type de restriction ou limitation est prévu ?</target>
             </trans-unit>
-            <trans-unit id="measures.types.noEntry">
-                <source>measures.types.noEntry</source>
+            <trans-unit id="regulation.measure.type.noEntry">
+                <source>regulation.measure.type.noEntry</source>
                 <target>Circulation interdite</target>
             </trans-unit>
-            <trans-unit id="measures.types.alternateRoad">
-                <source>measures.types.alternateRoad</source>
+            <trans-unit id="regulation.measure.type.alternateRoad">
+                <source>regulation.measure.type.alternateRoad</source>
                 <target>Circulation alternée</target>
             </trans-unit>
-            <trans-unit id="measures.types.oneWayTraffic">
-                <source>measures.types.oneWayTraffic</source>
+            <trans-unit id="regulation.measure.type.oneWayTraffic">
+                <source>regulation.measure.type.oneWayTraffic</source>
                 <target>Circulation à sens unique</target>
             </trans-unit>
         </body>

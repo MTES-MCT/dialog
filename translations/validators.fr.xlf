@@ -30,10 +30,6 @@
                 <source>location.error.valid_address</source>
                 <target>Veuillez saisir une adresse valide. Ex : Rue Saint-Léonard, 49000 Angers.</target>
             </trans-unit>
-            <trans-unit id="location.measures.error.not_blank">
-                <source>location.measures.error.not_blank</source>
-                <target>Veuillez définir une ou plusieurs restrictions.</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>

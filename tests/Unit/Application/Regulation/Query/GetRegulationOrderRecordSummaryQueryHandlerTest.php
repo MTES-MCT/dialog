@@ -8,6 +8,7 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -26,6 +27,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
                         'fromHouseNumber' => '695',
                         'toHouseNumber' => '253',
+                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                     ],
                     [
                         'uuid' => '97ff1036-14cf-4fc4-b14b-0bb4095c9b39',
@@ -33,6 +35,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         'locationAddress' => new LocationAddress('82000', 'Montauban', 'Rue de Paris'),
                         'fromHouseNumber' => null,
                         'toHouseNumber' => null,
+                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                     ],
                 ],
             ],
@@ -44,6 +47,16 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
                         'fromHouseNumber' => null,
                         'toHouseNumber' => null,
+                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
+                    ],
+                    // Same locations with 2 differents measures
+                    [
+                        'uuid' => 'fe0a44cb-53b5-4e94-bb7e-dfb8d20be061',
+                        'address' => 'Avenue de Paris 82000 Montauban',
+                        'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Paris'),
+                        'fromHouseNumber' => '10',
+                        'toHouseNumber' => '90',
+                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                     ],
                     [
                         'uuid' => 'fe0a44cb-53b5-4e94-bb7e-dfb8d20be061',
@@ -51,6 +64,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Paris'),
                         'fromHouseNumber' => '10',
                         'toHouseNumber' => '90',
+                        'measureType' => MeasureTypeEnum::ALTERNATE_ROAD->value,
                     ],
                 ],
             ],
@@ -68,7 +82,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
         $regulationOrderRecord = [
-                [
+            [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
                 'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
@@ -81,6 +95,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'address' => $location[0]['address'],
                 'fromHouseNumber' => $location[0]['fromHouseNumber'],
                 'toHouseNumber' => $location[0]['toHouseNumber'],
+                'measureType' => MeasureTypeEnum::NO_ENTRY->value,
             ],
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -95,6 +110,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'address' => $location[1]['address'],
                 'fromHouseNumber' => $location[1]['fromHouseNumber'],
                 'toHouseNumber' => $location[1]['toHouseNumber'],
+                'measureType' => MeasureTypeEnum::ALTERNATE_ROAD->value,
             ],
         ];
 
@@ -120,6 +136,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         $location[0]['locationAddress'],
                         $location[0]['fromHouseNumber'],
                         $location[0]['toHouseNumber'],
+                        []
                     ),
                     new DetailLocationView(
                         $location[1]['uuid'],

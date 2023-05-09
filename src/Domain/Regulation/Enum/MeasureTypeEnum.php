@@ -16,7 +16,7 @@ enum MeasureTypeEnum: string
         $choices = [];
 
         foreach ($values as $value) {
-            $choices[sprintf('measures.types.%s', $value)] = $value;
+            $choices[sprintf('regulation.measure.type.%s', $value)] = $value;
         }
 
         return $choices;
