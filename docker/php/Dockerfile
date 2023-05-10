@@ -46,4 +46,7 @@ RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 # Install Playwright browser dependencies
 RUN npx playwright install-deps firefox chromium
 
+# Allow husky to install pre-commit hooks
+RUN git config --global --add safe.directory /var/www/dialog
+
 CMD ["php-fpm"]
