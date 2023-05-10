@@ -78,9 +78,23 @@ final class SaveRegulationLocationCommandHandler
             $toPoint = $command->location->getToPoint();
         }
 
+        $measuresStillPresentUuids = [];
+
+        // Measures provided with the command get created or updated...
         foreach ($command->measures as $measureCommand) {
+            if ($measureCommand->measure) {
+                $measuresStillPresentUuids[] = $measureCommand->measure->getUuid();
+            }
+
             $measureCommand->location = $command->location;
             $this->commandBus->handle($measureCommand);
+        }
+
+        // Measures that weren't present in the command get deleted.
+        foreach ($command->location->getMeasures() as $measure) {
+            if (!\in_array($measure->getUuid(), $measuresStillPresentUuids)) {
+                $this->commandBus->handle(new DeleteMeasureCommand($measure));
+            }
         }
 
         $command->location->update(

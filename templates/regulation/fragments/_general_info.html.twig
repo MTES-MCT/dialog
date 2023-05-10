@@ -1,13 +1,12 @@
 <turbo-frame id="block_general_info">
-    <div class="app-card" data-testid="general_info">
-        <div class="app-card__img">
-            <span class="fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+    <div class="app-card app-card--raised" data-testid="general_info">
+        <div class="app-card__header">
+            <span class="app-card__img fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+            <h3 class="app-card__title fr-h4 fr-mb-0">
+                {{ regulationOrderRecord.description|u.truncate(36, '...', false) }}
+            </h3>
         </div>
-        <h3 class="app-card__title fr-h4">
-            {{ regulationOrderRecord.description|u.truncate(36, '...', false) }}
-        </h3>
         <div class="app-card__content">
-
             <ul class="fr-ml-1w fr-my-0 fr-list">
                 <li>{{ regulationOrderRecord.organizationName }}</li>
                 <li>{{ regulationOrderRecord.description }}</li>
