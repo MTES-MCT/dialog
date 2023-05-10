@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
@@ -28,6 +29,7 @@ final class AddRegulationController
         private TranslatorInterface $translator,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -40,8 +42,7 @@ final class AddRegulationController
     {
         /** @var SymfonyUser */
         $user = $this->security->getUser();
-
-        $command = new SaveRegulationGeneralInfoCommand();
+        $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow());
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,

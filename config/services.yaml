@@ -74,6 +74,9 @@ when@test:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
             decorates: 'api.adresse.client'
             decoration_inner_name: 'App\Tests\Mock\APIAdresseMockClient::api.adresse.client'
+        App\Tests\Mock\DateUtilsMock:
+            decorates: App\Infrastructure\Adapter\DateUtils
+            arguments: ['@.inner']
 
         Psr\Log\NullLogger: ~
         logger: '@Psr\Log\NullLogger'
