@@ -20,6 +20,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
+        $this->assertSame('2023-05-10', $form->get('general_info_form[startDate]')->getValue()); // Init with tomorrow date
         $form['general_info_form[identifier]'] = 'F022023';
         $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
