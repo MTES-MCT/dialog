@@ -14,14 +14,22 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testDuplicate(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/duplicate', [
+        $client->request('POST', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Arrêté temporaire FO2/2023 (copie)', $crawler->filter('h2')->text());
+
+        $this->assertSame('Arrêté permanent FO3/2023 (copie)', $crawler->filter('h2')->text());
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+        $location = $crawler->filter('[data-testid="location"]');
+
+        // Location
+        $this->assertSame('Paris 18e Arrondissement', $location->filter('h3')->text());
+        $this->assertSame('Paris 18e Arrondissement (75018)', $location->filter('li')->eq(0)->text());
+        $this->assertSame('Circulation interdite', $location->filter('li')->eq(1)->text());
+        $this->assertSame('Circulation alternée', $location->filter('li')->eq(2)->text());
     }
 
     public function testDuplicateAnAlreadyExistingIdentifier(): void
