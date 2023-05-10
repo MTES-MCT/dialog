@@ -242,6 +242,30 @@
                 <source>regulation.permanent</source>
                 <target>Arrêté permanent</target>
             </trans-unit>
+            <trans-unit id="regulation.category.roadMaintenance">
+                <source>regulation.category.roadMaintenance</source>
+                <target>Travaux</target>
+            </trans-unit>
+            <trans-unit id="regulation.category.other">
+                <source>regulation.category.other</source>
+                <target>Autre</target>
+            </trans-unit>
+            <trans-unit id="regulation.category.event">
+                <source>regulation.category.event</source>
+                <target>Évènement</target>
+            </trans-unit>
+            <trans-unit id="regulation.category.permanentRegulation">
+                <source>regulation.category.permanentRegulation</source>
+                <target>Réglementation permanente</target>
+            </trans-unit>
+            <trans-unit id="regulation.category.incident">
+                <source>regulation.category.incident</source>
+                <target>Incident ou péril</target>
+            </trans-unit>
+            <trans-unit id="regulation.category.placeholder">
+                <source>regulation.category.placeholder</source>
+                <target>Sélectionner la nature de l'arrếté</target>
+            </trans-unit>
             <trans-unit id="regulation.general_info">
                 <source>regulation.general_info</source>
                 <target>Informations générales</target>
@@ -249,6 +273,10 @@
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
                 <target>Identifiant</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.otherCategoryText">
+                <source>regulation.general_info.otherCategoryText</source>
+                <target>Préciser la nature si autre</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier.help">
                 <source>regulation.general_info.identifier.help</source>
@@ -265,10 +293,6 @@
             <trans-unit id="regulation.general_info.category">
                 <source>regulation.general_info.category</source>
                 <target>Nature de l'arrêté</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.cause.help">
-                <source>regulation.general_info.cause.help</source>
-                <target>Type de perturbation</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.description">
                 <source>regulation.general_info.description</source>

@@ -48,6 +48,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                     description: $command->description,
                     startDate: $command->startDate,
                     endDate: $command->endDate,
+                    otherCategoryText: $command->otherCategoryText,
                 ),
             );
 
@@ -71,6 +72,7 @@ final class SaveRegulationGeneralInfoCommandHandler
             description: $command->description,
             startDate: $command->startDate,
             endDate: $command->endDate,
+            otherCategoryText: $command->otherCategoryText,
         );
 
         return $command->regulationOrderRecord;

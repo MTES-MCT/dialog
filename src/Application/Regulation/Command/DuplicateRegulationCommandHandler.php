@@ -35,6 +35,7 @@ final class DuplicateRegulationCommandHandler
         RegulationOrder $originalRegulationOrder,
     ): RegulationOrderRecord {
         $generalInfo = new SaveRegulationGeneralInfoCommand();
+        $generalInfo->category = $originalRegulationOrder->getCategory();
         $generalInfo->organization = $organization;
         $generalInfo->identifier = $this->translator->trans('regulation.identifier.copy', [
             '%identifier%' => $originalRegulationOrder->getIdentifier(),

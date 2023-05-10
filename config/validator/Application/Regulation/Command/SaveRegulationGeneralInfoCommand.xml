@@ -17,8 +17,17 @@
         </property>
         <property name="category">
             <constraint name="NotBlank" />
-            <constraint name="length">
-                <option name="max">50</option>
+            <constraint name="Choice">
+                <value>roadMaintenance</value>
+                <value>permanentRegulation</value>
+                <value>incident</value>
+                <value>event</value>
+                <value>other</value>
+            </constraint>
+        </property>
+        <property name="otherCategoryText">
+            <constraint name="Length">
+                <option name="max">100</option>
             </constraint>
         </property>
         <property name="description">

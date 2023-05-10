@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230420121012 extends AbstractMigration
+final class Version20230511093914 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,14 +20,12 @@ final class Version20230420121012 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE regulation_order ADD category VARCHAR(50)');
-        $this->addSql('UPDATE regulation_order SET category = \'N/C\'');
-        $this->addSql('ALTER TABLE regulation_order ALTER category SET NOT NULL');
+        $this->addSql('ALTER TABLE regulation_order ADD other_category_text VARCHAR(100) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE regulation_order DROP category');
+        $this->addSql('ALTER TABLE regulation_order DROP other_category_text');
     }
 }

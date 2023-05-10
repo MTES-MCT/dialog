@@ -9,6 +9,19 @@
         {{ form_start(form) }}
             {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
             {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
+            <div data-controller="showhide" data-showhide-show-if-value="other">
+                {{ form_row(form.category, {
+                    group_class: 'fr-select-group',
+                    widget_class: 'fr-select',
+                    attr: {
+                        'data-showhide-target': 'input',
+                        'data-action': 'change->showhide#toggle'
+                    }
+                }) }}
+                <div data-showhide-target="output" hidden="" class="fr-mb-3w">
+                    {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                </div>
+            </div>
             {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
             {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
             {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
@@ -18,4 +31,16 @@
             {{ form_widget(form.save) }}
         {{ form_end(form) }}
     </div>
+</div>
+
+
+<div data-controller="showhide" data-showhide-show-if-value="human">
+  <select data-showhide-target="input" data-action="change->showhide#toggle">
+    <option selected="selected" value=""></option>
+    <option value="human">human</option>
+    <option value="animal">animal</option>
+  </select>
+  <div data-showhide-target="output" hidden="">
+    an output if human
+  </div>
 </div>

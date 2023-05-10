@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
@@ -21,6 +22,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'FO1/2023';
         $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2024-02-11';
@@ -59,6 +61,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
         $form['general_info_form[startDate]'] = '2023-02-14';
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
@@ -83,8 +86,8 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['general_info_form[identifier]'] = str_repeat('a', 61);
         $form['general_info_form[description]'] = str_repeat('a', 256);
+        $form['general_info_form[identifier]'] = str_repeat('a', 61);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);

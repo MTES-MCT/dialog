@@ -11,6 +11,7 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
@@ -104,6 +105,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
+            ->method('getCategory')
+            ->willReturn(RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value);
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
             ->method('getStartDate')
             ->willReturn($startDate);
 
@@ -130,6 +136,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'F01/2023 (copie)';
         $generalInfoCommand->description = 'Description';
+        $generalInfoCommand->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $generalInfoCommand->startDate = $startDate;
         $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $this->organization;

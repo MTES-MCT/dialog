@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -66,13 +67,14 @@ final class GeneralInfoFormType extends AbstractType
             ->add(
                 'category',
                 ChoiceType::class,
+                options: $this->getCategoryOptions(),
+            )
+            ->add(
+                'otherCategoryText',
+                TextType::class,
                 options: [
-                    'label' => 'regulation.general_info.category',
-                    'help' => 'regulation.general_info.cause.help',
-                    'choices' => [
-                      'regulation.cause1' => 'category_travaux',
-                      'regulation.cause2' => 'category_evenement',
-                    ],
+                    'required' => false,
+                    'label' => 'regulation.general_info.otherCategoryText',
                 ],
             )
             ->add(
@@ -89,6 +91,22 @@ final class GeneralInfoFormType extends AbstractType
                 options: $options['save_options'],
             )
         ;
+    }
+
+    private function getCategoryOptions(): array
+    {
+        $choices = [
+            'regulation.category.placeholder' => '',
+        ];
+
+        foreach (RegulationOrderCategoryEnum::cases() as $case) {
+            $choices[sprintf('regulation.category.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.general_info.category',
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
