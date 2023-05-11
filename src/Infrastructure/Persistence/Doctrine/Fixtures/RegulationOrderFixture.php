@@ -47,7 +47,7 @@ final class RegulationOrderFixture extends Fixture
         $regulationOrder5 = new RegulationOrder(
             uuid: 'e589f277-ccd4-4364-967a-7e9db80e6d34',
             identifier: 'FO1/2023 (copie)',
-            description: 'Description 5',
+            description: 'Description 5 that is very long and will be truncated',
             startDate: new \DateTimeImmutable('2023-03-13'),
             endDate: new \DateTimeImmutable('2023-03-15'),
         );
