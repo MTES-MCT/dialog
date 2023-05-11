@@ -29,6 +29,15 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('#general_info_form_identifier_error')->text());
     }
 
+    public function testEditDescriptionTruncated(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Description 5 that is very long and...', $crawler->filter('h3')->text());
+    }
+
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();

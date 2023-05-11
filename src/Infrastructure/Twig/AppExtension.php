@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Twig;
 
-use Symfony\Component\String\UnicodeString;
-
 class AppExtension extends \Twig\Extension\AbstractExtension
 {
     private \DateTimeZone $clientTimezone;
@@ -22,13 +20,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
-        ];
-    }
-
-    public function getFilters(): array
-    {
-        return [
-            new \Twig\TwigFilter('app_regulation_general_info_title', [$this, 'getRegulationGeneralInfoTitle']),
         ];
     }
 
@@ -67,10 +58,5 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
         return $today < $day;
-    }
-
-    public function getRegulationGeneralInfoTitle(string $description): string
-    {
-        return (new UnicodeString($description))->split('. ')[0]->truncate(32, '...', false)->toString();
     }
 }

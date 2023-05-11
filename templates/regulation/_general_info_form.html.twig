@@ -3,7 +3,7 @@
         <span class="fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
     </div>
     <h3 class="app-card__title fr-h4">
-        {{ form.description.vars.value|default('regulation.general_info'|trans)|app_regulation_general_info_title }}
+        {{ form.description.vars.value|default('regulation.general_info'|trans)|u.truncate(36, '...', false) }}
     </h3>
     <div class="app-card__content">
         {{ form_start(form) }}

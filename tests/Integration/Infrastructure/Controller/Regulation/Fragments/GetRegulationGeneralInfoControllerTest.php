@@ -23,6 +23,15 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', $crawler->filter('a')->link()->getUri());
     }
 
+    public function testGetDescriptionTruncated(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2/general_info');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Description 5 that is very long and...', $crawler->filter('h3')->text());
+    }
+
     public function testGetPublished(): void
     {
         $client = $this->login();
