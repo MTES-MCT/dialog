@@ -23,7 +23,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $location = $crawler->filter('[data-testid="location"]');
 
         // General info
-        $this->assertSame('Informations générales', $generalInfo->filter('h3')->text());
+        $this->assertSame('Description 1', $generalInfo->filter('h3')->text());
         $this->assertSame('DiaLog', $generalInfo->filter('li')->eq(0)->text());
         $this->assertSame('Description 1', $generalInfo->filter('li')->eq(1)->text());
         $this->assertSame('Du 13/03/2023 au 15/03/2023', $generalInfo->filter('li')->eq(2)->text());

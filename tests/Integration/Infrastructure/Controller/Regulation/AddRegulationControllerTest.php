@@ -17,6 +17,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Nouvel arrêté', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Nouvel arrêté - DiaLog', $crawler);
+        $this->assertSame('Informations générales', $crawler->filter('h3')->text());
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
