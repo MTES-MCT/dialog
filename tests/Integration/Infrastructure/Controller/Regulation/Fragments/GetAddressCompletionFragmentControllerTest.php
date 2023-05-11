@@ -31,10 +31,11 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
         $this->assertSecurityHeaders();
 
         $li = $crawler->filter('li');
-        $this->assertSame(3, $li->count());
+        $this->assertSame(4, $li->count());
         $this->assertSame('50580 Le Mesnil', $li->eq(0)->text());
-        $this->assertSame('76240 Le Mesnil-Esnard', $li->eq(1)->text());
-        $this->assertSame('78600 Le Mesnil-le-Roi', $li->eq(2)->text());
+        $this->assertSame('Rue Le Mesnil, 14330 Saon', $li->eq(1)->text());
+        $this->assertSame('76240 Le Mesnil-Esnard', $li->eq(2)->text());
+        $this->assertSame('78600 Le Mesnil-le-Roi', $li->eq(3)->text());
     }
 
     public function testBadRequest(): void

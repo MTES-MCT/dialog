@@ -3,6 +3,47 @@ const { test, expect } = require('@playwright/test');
 
 test.use({ storageState: 'playwright/.auth/mathieu.json' });
 
+test('Manipulate location house number fields', async ({ page }) => {
+    // Enter edit mode of a location
+    await page.goto('/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+    const locations = page.getByRole('region', { name: 'Localisations' }).getByRole('list');
+    const location = locations.getByRole('listitem').first();
+    await location.getByRole('button', { name: 'Modifier' }).click();
+
+    const fromHouseNumberField = location.locator('text=Numéro de début');
+    await expect(fromHouseNumberField).not.toBeDisabled();
+    const toHouseNumberField = location.locator('text=Numéro de fin');
+    await expect(toHouseNumberField).not.toBeDisabled();
+
+    // Search for a municipality
+    const addressField = location.locator('text=Voie ou ville');
+    await addressField.fill('Le Mesnil');
+    // Check for address suggestions
+    const optionList = location.getByRole('listbox', { name: 'Adresses suggérées' });
+    await optionList.waitFor();
+    expect(await optionList.getByRole('option').count()).toBe(4);
+    // Click municipality option
+    const firstOption = optionList.getByRole('option').first();
+    await expect(firstOption).toHaveText('50580 Le Mesnil');
+    await firstOption.click();
+    // Check house number fields have been disabled
+    await expect(fromHouseNumberField).toBeDisabled();
+    await expect(toHouseNumberField).toBeDisabled();
+
+    // House number fields are re-enabled if any change happens
+    await addressField.dispatchEvent('change');
+    await expect(fromHouseNumberField).not.toBeDisabled();
+    await expect(toHouseNumberField).not.toBeDisabled();
+
+    // Select a street option
+    await addressField.fill('Rue Eugène Berthoud');
+    await expect(firstOption).toHaveText('Rue Eugène Berthoud, 93400 Saint-Ouen-sur-Seine');
+    await firstOption.click();
+    // Check fields were not disabled
+    await expect(fromHouseNumberField).not.toBeDisabled();
+    await expect(toHouseNumberField).not.toBeDisabled();
+});
+
 test('Manage regulation location measures', async ({ page }) => {
     /**
      * Add first location and a maesure

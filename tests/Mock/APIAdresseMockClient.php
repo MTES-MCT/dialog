@@ -74,9 +74,10 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                     [
                         'properties' => [
-                            'type' => 'housenumber',
-                            'label' => '55 rue Le Mesnil',
-                            'postcode' => '50580',
+                            'type' => 'street',
+                            'name' => 'Rue Le Mesnil',
+                            'city' => 'Saon',
+                            'postcode' => '14330',
                         ],
                     ],
                     [

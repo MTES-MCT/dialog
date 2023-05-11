@@ -56,10 +56,15 @@
                     autocomplete_results_label: 'regulation.location.address.results_label'|trans,
                     row_attr: {
                         'data-controller': 'disable condition',
-                        'data-disable-target-outlet': '.disabled-if-municipality',
+                        'data-disable-target-outlet': '[data-disabled-if-municipality]',
+                        'data-condition-event-attr-value': 'detail.selected.dataset.conditionValue',
                         'data-condition-equals-value': 'municipality',
-                        'data-condition-event-target-path-value': 'detail.selected',
-                        'data-action': 'autocomplete.change->condition#compute condition.true->disable#disable condition.false->disable#clear',
+                        'data-action': '
+                            autocomplete.change->condition#computeFromEvent
+                            condition.true->disable#disable
+                            condition.false->disable#clear
+                            change->disable#clear
+                        ',
                     },
                 }) }}
 
@@ -73,7 +78,7 @@
                             },
                             attr: {
                                 'data-controller': 'target',
-                                class: 'disabled-if-municipality',
+                                'data-disabled-if-municipality': true,
                             },
                         }) }}
 
@@ -85,7 +90,7 @@
                             },
                             attr: {
                                 'data-controller': 'target',
-                                class: 'disabled-if-municipality',
+                                'data-disabled-if-municipality': true,
                             },
                         }) }}
                     </div>

@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { getByPath } from '../lib/object';
+import { getAtPath } from '../lib';
 
 /**
  * Compute a boolean conditional and emit events based on the result.
@@ -7,19 +7,20 @@ import { getByPath } from '../lib/object';
 export default class extends Controller {
     static values = {
         equals: String,
-        eventTargetPath: String,
+        eventAttr: String,
     };
 
     connect() {
         if (!this.hasEqualsValue) {
-            throw new Error('Please define an "equals" value');
+            throw new Error('"equals" value is required');
+        }
+        if (!this.hasEventAttrValue) {
+            throw new Error('"event-attr" value is required');
         }
     }
 
-    compute(event) {
-        const value = getByPath(event, `${this.eventTargetPathValue}.dataset.conditionValue`);
-        this.element.dispatchEvent(
-            new CustomEvent(value === this.equalsValue ? 'condition.true' : 'condition.false')
-        );
+    computeFromEvent(event) {
+        const value = getAtPath(event, this.eventAttrValue);
+        this.element.dispatchEvent(new CustomEvent(value === this.equalsValue ? 'condition.true' : 'condition.false'));
     }
 }

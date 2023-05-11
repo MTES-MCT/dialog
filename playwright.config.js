@@ -8,7 +8,7 @@ const PORT = 8001;
  * @see https://playwright.dev/docs/test-configuration
  */
 module.exports = defineConfig({
-    testDir: './tests/e2e',
+    testDir: './tests',
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: 1,
@@ -20,6 +20,7 @@ module.exports = defineConfig({
     },
     projects: [
         { name: 'setup', testMatch: /.*\.setup\.js/ },
+        { name: 'unit', testMatch: /Unit\/assets\// },
         {
             name: 'desktop-firefox',
             use: { ...devices['Desktop Firefox'] },

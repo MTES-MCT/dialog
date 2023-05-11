@@ -174,6 +174,7 @@ test_cov: ## Run the test suite (with code coverage)
 
 test_unit: ## Run unit tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
+	$(BIN_NPX) playwright test --project unit ${PW_ARGS}
 
 test_integration: ## Run integration tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
