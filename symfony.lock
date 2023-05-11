@@ -324,5 +324,8 @@
             "package.json",
             "webpack.config.js"
         ]
+    },
+    "twig/extra-bundle": {
+        "version": "v3.6.0"
     }
 }
