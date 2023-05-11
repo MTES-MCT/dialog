@@ -28,7 +28,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
-    public function testEdit(): void
+    /** @group only */
+    public function testEditAndAddMeasure(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
@@ -40,18 +41,39 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
-        $values['location_form']['fromHouseNumber'] = '15';
-        $values['location_form']['toHouseNumber'] = '37bis';
-        $values['location_form']['measures'][0]['type'] = 'noEntry';
-        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
+        $values['location_form']['measures'][0]['type'] = 'oneWayTraffic'; // Edit
+        $values['location_form']['measures'][1]['type'] = 'alternateRoad'; // Add
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
+        $bulletPoints = $crawler->filter('li')->extract(['_text']);
+        $this->assertContains('Circulation à sens unique', $bulletPoints);
+        $this->assertContains('Circulation alternée', $bulletPoints);
+    }
+
+    public function testRemoveMeasure(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        unset($values['location_form']['measures'][0]);
+
+        $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
+        $this->assertNotContains('Circulation interdite', $crawler->filter('li')->extract(['_text']));
     }
 
     public function testGeocodingFailure(): void

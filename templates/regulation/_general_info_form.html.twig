@@ -1,10 +1,10 @@
-<div class="app-card">
-    <div class="app-card__img">
-        <span class="fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+<div class="app-card app-card--raised">
+    <div class="app-card__header">
+        <span class="app-card__img fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+        <h3 class="app-card__title fr-h4 fr-mb-0">
+            {{ form.description.vars.value|default('regulation.general_info'|trans)|u.truncate(36, '...', false) }}
+        </h3>
     </div>
-    <h3 class="app-card__title fr-h4">
-        {{ form.description.vars.value|default('regulation.general_info'|trans)|u.truncate(36, '...', false) }}
-    </h3>
     <div class="app-card__content">
         {{ form_start(form) }}
             {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}

@@ -44,6 +44,7 @@ final class LocationFormType extends AbstractType
                 'entry_options' => ['label' => false],
                 'label' => 'regulation.measure_list',
                 'allow_add' => true,
+                'allow_delete' => true,
             ])
             ->add(
                 'save',

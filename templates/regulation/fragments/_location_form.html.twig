@@ -5,25 +5,45 @@
 %}
 
 {% macro measures_list_item(form, index) %}
-    <li class="app-list-item fr-p-3w">
-        <h4 class="fr-h5 fr-mb-0">
-            {{ 'regulation.measure_list_item.title'|trans({'%index%': index}) }}
-        </h4>
-        <p class="fr-text-sm fr-text-mention--grey">
-            {{ 'regulation.measure_list_item.help'|trans }}
-        </p>
-        {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+    <li
+        class="app-card fr-p-3w"
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+    >
+        <div class="app-card__header">
+            <div class="app-card__title">
+                <h4 class="fr-h5 fr-mb-0" data-form-collection-indexed-template="{{ 'regulation.measure'|trans }} __\oneBasedIndex__">
+                    {{ 'regulation.measure'|trans }} {{ index }}
+                </h4>
+                <p class="fr-text-sm fr-text-mention--grey fr-m-0">
+                    {{ 'regulation.measure_list_item.help'|trans }}
+                </p>
+            </div>
+        </div>
+        <div class="app-card__content">
+            {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+        </div>
+        <div class="app-card__actions">
+            <button
+                type="button"
+                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
+                data-action="remove#removeElement"
+            >
+                {{ 'common.delete'|trans }}
+            </button>
+        </div>
     </li>
 {% endmacro %}
 
 <turbo-frame id="{{ frame }}">
-    <div class="app-card fr-mt-3w">
-        <div class="app-card__icon">
-            <span class="fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-        </div>
-        <h3 class="app-card__title fr-h4">
+    <div class="app-card app-card--raised fr-mt-3w">
+        <div class="app-card__header">
+            <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+            <h3 class="app-card__title fr-h4 fr-mb-0">
                 {{ location ? location.address.roadName : 'regulation.location'|trans }}
-        </h3>
+            </h3>
+        </div>
         <div class="app-card__content">
             {{ form_start(form) }}
                 {{ form_errors(form) }}
@@ -47,7 +67,14 @@
                     data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__oneBasedIndex__')|e('html_attr') }}"
                     class="fr-mb-4w"
                 >
-                    <ul id="measure-list" class="fr-raw-list fr-mb-2w" data-form-collection-target="collectionContainer" aria-label="{{ form.measures.vars.label|trans }}">
+                    <ul
+                        id="measure-list"
+                        class="fr-raw-list fr-mb-2w"
+                        data-testid="measure-list"
+                        data-form-collection-target="collectionContainer"
+                        data-action="remove:child-removed->form-collection#syncIndices"
+                        aria-label="{{ form.measures.vars.label|trans }}"
+                    >
                         {% for item in form.measures %}
                             {{ _self.measures_list_item(item, loop.index) }}
                         {% else %}

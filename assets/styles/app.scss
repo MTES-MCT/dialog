@@ -101,12 +101,11 @@ label.required > .fr-x-label-content::after {
 .app-card {
     padding: 1.5rem;
     background-color: var(--background-raised-grey);
-    filter: drop-shadow(var(--raised-shadow));
-    z-index: calc(var(--ground) + 500);
+    border: 1px solid var(--border-default-grey);
     display: grid;
-    grid-template-areas: "logo title"
-                         "detail detail"
-                         "btn btn";
+    grid-template-areas: "header"
+                         "content"
+                         "actions";
     grid-template-rows: auto;
     grid-template-columns: auto 1fr;
     column-gap: 1.5rem;
@@ -115,23 +114,38 @@ label.required > .fr-x-label-content::after {
 
     @media screen and (min-width: 992px) {
         grid-template-areas:
-            "logo title btn"
-            "detail detail detail";
-        grid-template-rows: auto;
-        grid-template-columns: auto 1fr auto;
+            "header actions"
+            "content content";
+        grid-template-rows: auto auto;
+        grid-template-columns: 1fr auto;
     }
 }
 
+li.app-card + li.app-card {
+    border-top: none;
+}
+
+.app-card--raised {
+    filter: drop-shadow(var(--raised-shadow));
+    z-index: calc(var(--ground) + 500);
+    border: none;
+}
+
+.app-card__header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+}
 .app-card__img {
-    grid-area: logo;
+    flex: 0;
 }
 .app-card__title {
-    grid-area: title;
-    margin-bottom: 0;
+    flex: 1;
 }
 .app-card__content {
-        grid-area: detail;
-        flex: 1;
+    grid-area: content;
+    flex: 1;
 }
 .app-card__actions {
     padding: 0;
@@ -139,17 +153,9 @@ label.required > .fr-x-label-content::after {
     list-style-type: none;
     display: flex;
     column-gap: 1rem;
-    grid-area: btn;
+    grid-area: actions;
 }
 
 .app-background--alt-grey {
     background-color: var(--background-alt-grey);
-}
-
-.app-list-item {
-    border: 1px solid var(--border-default-grey);
-
-    &:not(:first-child) {
-        border-top: none;
-    }
 }

@@ -19,8 +19,9 @@ test('Manage regulation location measures', async ({ page }) => {
 
     // Add a measure
     await page.getByRole('button', { name: 'Ajouter une restriction' }).click();
-    const measureItem = page.getByRole('listitem').filter({ has: page.getByText('Restriction 1') });
-    await measureItem.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation à sens unique' });
+    const measureItem1 = page.getByTestId('measure-list').getByRole('listitem').nth(0);
+    expect(await measureItem1.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 1');
+    await measureItem1.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation à sens unique' });
 
     // Submit and check location was added with the given measure
     await page.getByRole('button', { name: 'Valider' }).click();
@@ -41,7 +42,8 @@ test('Manage regulation location measures', async ({ page }) => {
 
     // Add a new measure
     await locationItem.getByRole('button', { name: 'Ajouter une restriction' }).click();
-    const measureItem2 = locationItem.getByRole('listitem').filter({ has: page.getByText('Restriction 2') });
+    const measureItem2 = locationItem.getByRole('listitem').nth(1);
+    expect(await measureItem2.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 2');
     await measureItem2.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation interdite' });
 
     // Submit and check new measure is shown
@@ -66,4 +68,31 @@ test('Manage regulation location measures', async ({ page }) => {
     await expect(locationItem).toContainText('Circulation à sens unique');
     await expect(locationItem).not.toContainText('Circulation interdite');
     await expect(locationItem).toContainText('Circulation alternée');
+
+    /**
+     * Delete a measure
+     */
+
+    // Enter location edit mode
+    await locationItem.getByRole('button', { name: 'Modifier' }).click();
+    await measureList.waitFor();
+
+    // Delete measure
+    await measureItem2.getByRole('button', { name: 'Supprimer' }).click();
+    expect(await measureList.getByRole('listitem').count()).toBe(1);
+
+    // Check that indices in measure item titles have been synced...
+    // * Measure previously shown as "Restriction 2" has become "Restriction 1"
+    expect(await measureItem1.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 1');
+    await expect(measureItem1.getByRole('combobox', { name: 'Type de restriction' })).toHaveValue('oneWayTraffic');
+    // * A new measure would have index 2 (instead of index 3 if indices hadn't been synced)
+    await locationItem.getByRole('button', { name: 'Ajouter une restriction' }).click();
+    const tempMeasureItem = measureList.getByRole('listitem').nth(1);
+    expect(await tempMeasureItem.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 2');
+    await tempMeasureItem.getByRole('button', { name: 'Supprimer' }).click();
+
+    // Submit and check measure has been deleted
+    await locationItem.getByRole('button', { name: 'Valider' }).click();
+    await expect(locationItem).toContainText('Circulation à sens unique');
+    await expect(locationItem).not.toContainText('Circulation alternée');
 });

@@ -602,13 +602,13 @@
                 <source>regulation.list.meta.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
-            <trans-unit id="measures">
+            <trans-unit id="regulation.measure_list">
                 <source>regulation.measure_list</source>
                 <target>Liste des restrictions</target>
             </trans-unit>
-            <trans-unit id="regulation.measure_list_item.title">
-                <source>regulation.measure_list_item.title</source>
-                <target>Restriction %index%</target>
+            <trans-unit id="regulation.measure">
+                <source>regulation.measure</source>
+                <target>Restriction</target>
             </trans-unit>
             <trans-unit id="regulation.measure_list_item.help">
                 <source>regulation.measure_list_item.help</source>

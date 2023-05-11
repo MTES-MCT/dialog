@@ -22,4 +22,9 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
 
         return $measure;
     }
+
+    public function delete(Measure $measure): void
+    {
+        $this->getEntityManager()->remove($measure);
+    }
 }
