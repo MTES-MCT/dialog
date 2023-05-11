@@ -2,14 +2,13 @@
 {% set deleteCsrfToken = csrf_token('delete-location') %}
 
 <turbo-frame id="block_location_{{ uuid }}">
-    <div class="app-card fr-mt-3w" data-testid="location">
-        <div class="app-card__img">
-            <span class="fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+    <div class="app-card app-card--raised fr-mt-3w" data-testid="location">
+        <div class="app-card__header">
+            <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+            <h3 class="app-card__title fr-h4 fr-mb-0">
+                {{ location.address.roadName|default(location.address.city) }}
+            </h3>
         </div>
-
-        <h3 class="app-card__title fr-h4">
-		    {{ location.address.roadName ? location.address.roadName : location.address.city }}
-        </h3>
 
         <div class="app-card__content">
             <ul class="fr-ml-1w fr-my-0 fr-list">
