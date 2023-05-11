@@ -26,6 +26,14 @@
             </constraint>
         </property>
         <property name="otherCategoryText">
+            <constraint name="When">
+                <option name="expression">
+                    this.category == 'other'
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
             <constraint name="Length">
                 <option name="max">100</option>
             </constraint>

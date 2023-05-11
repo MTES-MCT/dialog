@@ -74,7 +74,10 @@ final class GeneralInfoFormType extends AbstractType
                 TextType::class,
                 options: [
                     'required' => false,
-                    'label' => 'regulation.general_info.otherCategoryText',
+                    'label' => 'regulation.general_info.other_category_text',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(

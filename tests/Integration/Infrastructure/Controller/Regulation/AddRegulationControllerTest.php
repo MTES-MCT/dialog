@@ -44,6 +44,21 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
+        $form['general_info_form[otherCategoryText]'] = '';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_otherCategoryText_error')->text());
+    }
+
+    public function testOtherCategoryTextMissing(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/add');
+
+        $saveButton = $crawler->selectButton('Continuer');
+        $form = $saveButton->form();
         $form['general_info_form[startDate]'] = '';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);

@@ -194,14 +194,6 @@
                 <source>regulation.city</source>
                 <target>Commune</target>
             </trans-unit>
-            <trans-unit id="regulation.cause1">
-                <source>regulation.cause1</source>
-                <target>Travaux</target>
-            </trans-unit>
-            <trans-unit id="regulation.cause2">
-                <source>regulation.cause2</source>
-                <target>Evènement</target>
-            </trans-unit>
             <trans-unit id="regulation.list.total_temporary">
                 <source>regulation.list.total_temporary</source>
                 <target>Temporaires (%count%)</target>
@@ -274,9 +266,9 @@
                 <source>regulation.general_info.identifier</source>
                 <target>Identifiant</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.otherCategoryText">
-                <source>regulation.general_info.otherCategoryText</source>
-                <target>Préciser la nature si autre</target>
+            <trans-unit id="regulation.general_info.other_category_text">
+                <source>regulation.general_info.other_category_text</source>
+                <target>Si autre, préciser la nature de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier.help">
                 <source>regulation.general_info.identifier.help</source>

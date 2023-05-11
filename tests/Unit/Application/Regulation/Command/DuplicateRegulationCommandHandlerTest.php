@@ -110,6 +110,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
+            ->method('getOtherCategoryText')
+            ->willReturn(null);
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
             ->method('getStartDate')
             ->willReturn($startDate);
 
