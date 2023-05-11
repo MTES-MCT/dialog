@@ -5,6 +5,8 @@
     table="regulation_order">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="identifier" type="string" column="identifier" length="60" nullable="false"/>
+    <field name="category" type="string" column="category" length="50" nullable="false"/>
+    <field name="otherCategoryText" type="string" column="other_category_text" length="100" nullable="true"/>
     <field name="description" type="text" column="description" nullable="false"/>
     <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
     <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>

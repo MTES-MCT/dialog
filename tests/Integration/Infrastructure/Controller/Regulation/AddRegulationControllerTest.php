@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
@@ -26,6 +27,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
         $form['general_info_form[startDate]'] = '2023-02-14';
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
+        $form['general_info_form[otherCategoryText]'] = 'Trou en formation';
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
@@ -41,12 +44,28 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
+        $form['general_info_form[otherCategoryText]'] = '';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_otherCategoryText_error')->text());
+    }
+
+    public function testOtherCategoryTextMissing(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/add');
+
+        $saveButton = $crawler->selectButton('Continuer');
+        $form = $saveButton->form();
         $form['general_info_form[startDate]'] = '';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_identifier_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_description_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_startDate_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#general_info_form_category_error')->text());
     }
 
     public function testBadPeriod(): void
@@ -61,6 +80,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2023-02-11';
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
+
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('La date de fin doit être après le 12/02/2023.', $crawler->filter('#general_info_form_endDate_error')->text());
@@ -78,6 +99,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2024-02-11';
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
+
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('#general_info_form_identifier_error')->text());
@@ -104,11 +127,13 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = str_repeat('a', 61);
         $form['general_info_form[description]'] = str_repeat('a', 256);
+        $form['general_info_form[otherCategoryText]'] = str_repeat('a', 101);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.', $crawler->filter('#general_info_form_identifier_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_description_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#general_info_form_otherCategoryText_error')->text());
     }
 
     public function testWithoutAuthenticatedUser(): void

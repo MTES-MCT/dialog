@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -59,6 +60,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                     new RegulationOrder(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         identifier: 'FO2/2023',
+                        category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
                         description: 'Interdiction de circuler',
                         startDate: $start,
                         endDate: $end,
@@ -99,6 +101,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
 
         $command = new SaveRegulationGeneralInfoCommand();
         $command->identifier = 'FO2/2023';
+        $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
         $command->endDate = $end;
@@ -149,6 +152,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->startDate = $start;
         $command->endDate = $end;
         $command->organization = $this->organization;
+        $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
 
         $handler($command);
     }
@@ -186,6 +190,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 'FO2/2030',
+                RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
                 'Interdiction de circuler',
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
@@ -220,6 +225,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
         $command->identifier = 'FO2/2030';
         $command->organization = $this->organization;
+        $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
         $command->endDate = $end;
@@ -263,9 +269,11 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 'FO2/2030',
+                RegulationOrderCategoryEnum::OTHER->value,
                 'Interdiction de circuler',
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
+                'Trou en formation',
             );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -299,9 +307,11 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
         $command->identifier = 'FO2/2030';
         $command->organization = $organization;
+        $command->category = RegulationOrderCategoryEnum::OTHER->value;
         $command->description = 'Interdiction de circuler';
         $command->startDate = $start;
         $command->endDate = $end;
+        $command->otherCategoryText = 'Trou en formation';
 
         $result = $handler($command);
 
