@@ -106,8 +106,6 @@ label.required > .fr-x-label-content::after {
     grid-template-areas: "header"
                          "content"
                          "actions";
-    grid-template-rows: auto;
-    grid-template-columns: auto 1fr;
     column-gap: 1.5rem;
     row-gap: 1rem;
     align-items: center;
