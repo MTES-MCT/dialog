@@ -29,9 +29,11 @@
         {% if canEdit %}
             <ul class="app-card__actions">
                 <li>
-                    <a href="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
-                        {{ 'common.update'|trans }}
-                    </a>
+                    <form method="GET" action="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}">
+                        <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                            {{ 'common.update'|trans }}
+                        </button>
+                    </form>
                 </li>
             </ul>
         {% endif %}

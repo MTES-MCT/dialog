@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 
@@ -38,5 +39,12 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command->endDate = $regulationOrder?->getEndDate();
 
         return $command;
+    }
+
+    public function clean()
+    {
+        if ($this->category !== RegulationOrderCategoryEnum::OTHER->value) {
+            $this->otherCategoryText = null;
+        }
     }
 }
