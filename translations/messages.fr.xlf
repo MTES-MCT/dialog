@@ -276,7 +276,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.other_category_text">
                 <source>regulation.general_info.other_category_text</source>
-                <target>Si autre, préciser la nature de l'arrêté</target>
+                <target>Préciser la nature de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier.help">
                 <source>regulation.general_info.identifier.help</source>
