@@ -8,10 +8,12 @@
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-list">
         {% set isTemporaryTab = tab == 'temporary' %}
         {% set isPermanent = tab == 'permanent' %}
-        <h3 id="regulation-list">{{ 'regulation.list.title'|trans }}</h3>
-        <a href="{{ path('app_regulation_add') }}" class="fr-btn fr-btn--sm">
-            {{ "regulation.list.add_button"|trans }}
-        </a>
+        <div class="fr-grid-row">
+            <h3 id="regulation-list" class="fr-col fr-mb-0">{{ 'regulation.list.title'|trans }}</h3>
+            <a href="{{ path('app_regulation_add') }}" class="fr-ml-auto fr-btn fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ "regulation.list.add_button"|trans }}">
+                {{ "regulation.list.add_button"|trans }}
+            </a>
+        </div>
         <div class="fr-tabs fr-mt-2w">
             <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.list.title'|trans }}">
                 <li role="presentation">
