@@ -73,6 +73,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'org.uuid as organizationUuid',
                 'org.name as organizationName',
                 'roc.status',
+                'ro.category',
+                'ro.otherCategoryText',
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',

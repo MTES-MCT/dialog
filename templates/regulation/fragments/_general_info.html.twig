@@ -9,6 +9,13 @@
         <div class="app-card__content">
             <ul class="fr-ml-1w fr-my-0 fr-list">
                 <li>{{ regulationOrderRecord.organizationName }}</li>
+                <li>
+                    {% if regulationOrderRecord.category == 'other' %}
+                        {{ 'regulation.category.other'|trans }} : {{ regulationOrderRecord.otherCategoryText }}
+                    {% else %}
+                        {{ ('regulation.category.' ~ regulationOrderRecord.category)|trans }}
+                    {% endif %}
+                </li>
                 <li>{{ regulationOrderRecord.description }}</li>
                 {% set startDate = regulationOrderRecord.startDate %}
                 {% set endDate = regulationOrderRecord.endDate %}

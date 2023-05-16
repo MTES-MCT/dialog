@@ -15,6 +15,8 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
         public readonly string $organizationUuid,
         public readonly string $organizationName,
         public readonly string $status,
+        public readonly string $category,
+        public readonly ?string $otherCategoryText,
         public readonly string $description,
         public readonly array $locations,
         public readonly ?\DateTimeInterface $startDate,

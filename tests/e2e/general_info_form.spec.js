@@ -10,9 +10,9 @@ test('Edit category', async ({ page }) => {
 
     // Check category fields...
     await editButton.click();
-    const categoryField = page.getByRole('combobox', { name: 'Nature de l\'arrêté' });
+    const categoryField = page.getByRole('combobox', { name: "Nature de l'arrêté" });
     await expect(categoryField).toHaveValue('event');
-    const otherCategoryTextField = page.getByRole('textbox', { name: "Si autre, préciser la nature de l'arrêté" });
+    const otherCategoryTextField = page.getByRole('textbox', { name: "Préciser la nature de l'arrêté" });
     await expect(otherCategoryTextField).not.toBeVisible();
 
     // Set category to "Other"...

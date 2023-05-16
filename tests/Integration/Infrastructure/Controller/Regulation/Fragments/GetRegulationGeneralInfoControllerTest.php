@@ -18,8 +18,9 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Description 3', $crawler->filter('h3')->text());
         $this->assertSame('DiaLog', $crawler->filter('li')->eq(0)->text());
-        $this->assertSame('Description 3', $crawler->filter('li')->eq(1)->text());
-        $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Réglementation permanente', $crawler->filter('li')->eq(1)->text());
+        $this->assertSame('Description 3', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(3)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());
@@ -32,6 +33,15 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Description 5 that is very long and...', $crawler->filter('h3')->text());
+    }
+
+    public function testGetOtherCategoryTextDisplay(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2/general_info');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Autre : Dérogation préfectorale', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testGetPublished(): void

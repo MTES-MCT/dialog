@@ -63,6 +63,8 @@ final class GetRegulationOrderRecordSummaryQueryHandler
             organizationUuid: $row['organizationUuid'],
             organizationName: $row['organizationName'],
             status: $row['status'],
+            category: $row['category'],
+            otherCategoryText: $row['otherCategoryText'],
             description: $row['description'],
             locations: $locationViews,
             startDate: $row['startDate'],
