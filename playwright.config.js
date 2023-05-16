@@ -23,11 +23,13 @@ module.exports = defineConfig({
         {
             name: 'desktop-firefox',
             use: { ...devices['Desktop Firefox'] },
+            testIgnore: /.*\.mobile\.spec\.js/,
             dependencies: ['setup'],
         },
         {
             name: 'mobile-chromium',
             use: { ...devices['Pixel 5'] },
+            testMatch: /.*\.mobile\.spec\.js/,
             dependencies: ['setup'],
         },
     ],

@@ -21,6 +21,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $tabs = $crawler->filter('.fr-tabs__list')->eq(0);
         $this->assertSame('tablist', $tabs->attr('role'));
         $this->assertSame('Temporaires (3) Permanents (1)', $tabs->text());
+
+        $client->clickLink('Ajouter un arrêté');
+        $this->assertRouteSame('app_regulation_add');
     }
 
     public function testTemporaryRegulationRendering(): void

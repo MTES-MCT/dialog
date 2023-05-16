@@ -1,15 +1,16 @@
 {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
 {% set deleteCsrfToken = csrf_token('delete-regulation') %}
 
-<div class="fr-table fr-table--layout-fixed">
-    <table>
+<div class="fr-table fr-table--layout-fixed fr-table--no-caption">
+    <table class="app-regulation-table">
+        <caption>{{ 'regulation.list.title'|trans }}</caption>
         <thead>
             <tr>
-                <th scope="col">{{ 'regulation.identifier'|trans }}</th>
+                <th scope="col" class="app-regulation-table__identifier">{{ 'regulation'|trans }}</th>
                 <th scope="col">{{ 'regulation.locations'|trans }}</th>
-                <th scope="col">{{ 'regulation.period'|trans }}</th>
-                <th scope="col">{{ 'regulation.status'|trans }}</th>
-                <th scope="col">{{ 'common.actions'|trans }}</th>
+                <th scope="col" class="fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
+                <th scope="col" class="fr-hidden fr-x-revert-sm">{{ 'regulation.status'|trans }}</th>
+                <th scope="col" class="app-regulation-table__actions">{{ 'common.actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -29,7 +30,7 @@
                             {% endif %}
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="fr-hidden fr-x-revert-sm">
                         {% if regulation.startDate %}
                             {% set startDate = regulation.startDate %}
                             {% set endDate = regulation.endDate %}
@@ -51,7 +52,7 @@
                             </b>
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="fr-hidden fr-x-revert-sm">
                         {% include 'regulation/_status_badge.html.twig' with { status: regulation.status } only %}
                     </td>
                     <td>
@@ -65,15 +66,12 @@
                                     {{ 'common.update'|trans }}
                                 </a>
                             {% endif %}
-                            <form method="post" action="{{ path('app_regulation_duplicate', { uuid: regulation.uuid })}}">
-                                <button class="fr-btn ri-file-copy-line remixicons fr-btn--tertiary-no-outline" title="{{ 'common.duplicate'|trans }}"></button>
-                                <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
-                            </form>
                             <form
                                 method="delete"
                                 action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
                                 data-controller="form-submit"
                                 data-action="modal-trigger:submit->form-submit#submit"
+                                class="fr-hidden fr-unhidden-md"
                             >
                                 <button
                                     class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"

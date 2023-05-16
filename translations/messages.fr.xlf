@@ -170,6 +170,10 @@
                 <source>regulation.list.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="regulation">
+                <source>regulation</source>
+                <target>Arrêté</target>
+            </trans-unit>
             <trans-unit id="regulation.delete">
                 <source>regulation.delete</source>
                 <target>Supprimer l'arrêté %identifier%</target>
