@@ -55,6 +55,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', $publishBtn->form()->getUri());
         $this->assertSame('POST', $publishBtn->form()->getMethod());
         $this->assertCount(1, $publishBtn->siblings()->filter('input[name="token"]'));
+
+        // Go back link
+        $goBackLink = $crawler->selectLink('Revenir aux arrêtés');
+        $this->assertSame('/regulations?tab=temporary', $goBackLink->extract(['href'])[0]);
     }
 
     public function testPermanentRegulationDetail(): void
@@ -66,6 +70,9 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Arrêté permanent FO3/2023', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Arrêté permanent FO3/2023 - DiaLog', $crawler);
+
+        $goBackLink = $crawler->selectLink('Revenir aux arrêtés');
+        $this->assertSame('/regulations?tab=permanent', $goBackLink->extract(['href'])[0]);
     }
 
     public function testDraftRegulationDetailWithoutLocations(): void
