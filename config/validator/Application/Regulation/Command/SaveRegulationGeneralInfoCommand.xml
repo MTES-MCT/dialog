@@ -17,12 +17,19 @@
         </property>
         <property name="category">
             <constraint name="NotBlank" />
-            <constraint name="Choice">
-                <value>roadMaintenance</value>
-                <value>permanentRegulation</value>
-                <value>incident</value>
-                <value>event</value>
-                <value>other</value>
+            <constraint name="When">
+                <option name="expression">
+                    this.category != 'N/C'
+                </option>
+                <option name="constraints">
+                    <constraint name="Choice">
+                        <value>roadMaintenance</value>
+                        <value>permanentRegulation</value>
+                        <value>incident</value>
+                        <value>event</value>
+                        <value>other</value>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="otherCategoryText">

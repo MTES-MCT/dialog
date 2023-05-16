@@ -21,6 +21,12 @@
             </constraint>
        </property>
        <property name="measures">
+            <constraint name="NotBlank">
+                <option name="message">location.measures.error.not_blank</option>
+                <option name="groups">
+                    <value>html_form</value>
+                </option>
+            </constraint>
             <constraint name="Valid"/>
        </property>
     </class>

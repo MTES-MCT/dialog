@@ -89,6 +89,7 @@
                     >
                         {{ 'regulation.measure.add'|trans }}
                     </button>
+                    {{ form_errors(form.measures) }}
                 </div>
 
                 <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">{{ "common.cancel"|trans }}</a>

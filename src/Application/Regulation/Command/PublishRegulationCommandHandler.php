@@ -8,7 +8,6 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 
-// TODO : Verify locations
 final class PublishRegulationCommandHandler
 {
     public function __construct(

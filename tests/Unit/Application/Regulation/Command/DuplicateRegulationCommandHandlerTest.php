@@ -34,12 +34,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
         $this->originalRegulationOrder = $this->createMock(RegulationOrder::class);
-
         $this->originalRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $this->originalRegulationOrderRecord
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($this->originalRegulationOrder);
     }
 
     public function testRegulationFullyDuplicated(): void
@@ -56,6 +51,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::ALTERNATE_ROAD->value);
+
+        $this->originalRegulationOrderRecord
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($this->originalRegulationOrder);
 
         $location1 = $this->createMock(Location::class);
         $location1
