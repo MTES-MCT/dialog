@@ -55,6 +55,7 @@ final class DuplicateRegulationController extends AbstractRegulationController
         /** @var SymfonyUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
         try {
             $duplicatedRegulationOrderRecord = $this->commandBus->handle(
@@ -71,11 +72,13 @@ final class DuplicateRegulationController extends AbstractRegulationController
             );
         } catch (OrganizationAlreadyHasRegulationOrderWithThisIdentifierException) {
             $session->getFlashBag()->add('error', $this->translator->trans('regulation.duplicated.identifier_error'));
-
-            return new RedirectResponse(
-                url: $this->router->generate('app_regulations_list'),
-                status: Response::HTTP_SEE_OTHER,
-            );
         }
+
+        return new RedirectResponse(
+            url: $this->router->generate('app_regulations_list', [
+                'tab' => $regulationOrder->getEndDate() ? 'temporary' : 'permanent',
+            ]),
+            status: Response::HTTP_SEE_OTHER,
+        );
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class LocationFormType extends AbstractType
 {
@@ -45,6 +46,7 @@ final class LocationFormType extends AbstractType
                 'label' => 'regulation.measure_list',
                 'allow_add' => true,
                 'allow_delete' => true,
+                'error_bubbling' => false,
             ])
             ->add(
                 'save',
@@ -54,5 +56,12 @@ final class LocationFormType extends AbstractType
                 ],
             )
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'validation_groups' => ['Default', 'html_form'],
+        ]);
     }
 }
