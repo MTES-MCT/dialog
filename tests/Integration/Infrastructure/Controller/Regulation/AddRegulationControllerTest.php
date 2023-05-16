@@ -20,6 +20,12 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle('Nouvel arrêté - DiaLog', $crawler);
         $this->assertSame('Informations générales', $crawler->filter('h3')->text());
 
+        $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
+        $this->assertSame('', $crawler->selectButton('Publier')->attr('disabled'));
+        $this->assertSame('', $crawler->selectButton('Dupliquer')->attr('disabled'));
+        $deleteLink = $crawler->selectLink('Supprimer');
+        $this->assertSame('http://localhost/regulations', $deleteLink->link()->getUri());
+
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $this->assertSame('2023-05-10', $form->get('general_info_form[startDate]')->getValue()); // Init with tomorrow date

@@ -12,7 +12,7 @@
 
 {% block body %}
     {% set isDraft = regulationOrderRecord.isDraft %}
-    <section class="fr-container fr-py-5w" aria-labelledby="regulation-detail">
+    <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
             { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': regulationOrderRecord.identifier }) },
@@ -22,7 +22,7 @@
             <h2 id="regulation-detail">{{ title }}</h2>
 
             <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col fr-col-12 fr-mt-8w fr-col-md-7 fr-col-lg-8 fr-mt-md-0">
+                <div class="fr-col-12 fr-col-md-8 fr-col-xl-9">
                     <div class="fr-mx-n4v fr-mx-md-0">
                         {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
                     </div>
@@ -50,8 +50,8 @@
                     </section>
                 </div>
 
-                <aside class="fr-col">
-                    <div class="app-card app-card--raised fr-col fr-col-md-8 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
+                <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
+                    <div class="app-card app-card--raised">
                         <div class="app-card__content">
                             <h3 class="fr-h4">{{ 'regulation.status'|trans }}</h3>
                                 {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}
