@@ -64,7 +64,11 @@
             </trans-unit>
             <trans-unit id="common.breadcrumb.here">
                 <source>common.breadcrumb.here</source>
-                <target>vous êtes ici :</target>
+                <target>Vous êtes ici :</target>
+            </trans-unit>
+            <trans-unit id="common.breadcrumb.see">
+                <source>common.breadcrumb.see</source>
+                <target>Voir le fil d'Ariane</target>
             </trans-unit>
             <trans-unit id="common.legals">
                 <source>common.legals</source>
