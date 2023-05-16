@@ -210,10 +210,6 @@
                 <source>regulation.list.total_permanent</source>
                 <target>Permanents (%count%)</target>
             </trans-unit>
-            <trans-unit id="regulation.link.datex">
-                <source>regulation.link.datex</source>
-                <target>Accéder au flux de données (DATEX II)</target>
-            </trans-unit>
             <trans-unit id="regulation.list.empty">
                 <source>regulation.list.empty</source>
                 <target>Aucun arrêté</target>
