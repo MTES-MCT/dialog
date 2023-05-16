@@ -1,4 +1,7 @@
 <nav role="navigation" class="fr-breadcrumb" aria-label="{{ 'common.breadcrumb.here'|trans }}">
+    <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">
+        {{ 'common.breadcrumb.see'|trans }}
+    </button>
     <div class="fr-collapse" id="breadcrumb-1">
         <ol class="fr-breadcrumb__list">
             {% for item in items %}
