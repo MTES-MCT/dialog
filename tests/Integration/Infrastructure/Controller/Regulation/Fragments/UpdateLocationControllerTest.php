@@ -28,7 +28,6 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
-    /** @group only */
     public function testEditAndAddMeasure(): void
     {
         $client = $this->login();
@@ -58,7 +57,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
     public function testRemoveMeasure(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -72,7 +71,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => 'f15ed802-fa9b-4d75-ab04-d62ea46597e9']);
         $this->assertNotContains('Circulation interdite', $crawler->filter('li')->extract(['_text']));
     }
 

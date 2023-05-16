@@ -32,6 +32,31 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation alternée', $location->filter('li')->eq(2)->text());
     }
 
+    public function testWithoutLocations(): void
+    {
+        $client = $this->login();
+        $client->request('POST', '/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+
+        $crawler = $client->followRedirect();
+
+        $this->assertSame('Arrêté temporaire FO1/2023 (copie) (copie)', $crawler->filter('h2')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+    }
+
+    public function testWithoutRestrictions(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('POST', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+        $crawler = $client->followRedirect();
+
+        $this->assertSame('Arrêté temporaire FO2/2023 (copie)', $crawler->filter('h2')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+    }
+
     public function testDuplicateAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();

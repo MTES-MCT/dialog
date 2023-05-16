@@ -72,11 +72,15 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
-        $form['location_form[fromHouseNumber]'] = '15';
-        $form['location_form[toHouseNumber]'] = '37bis';
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
+        $values['location_form']['fromHouseNumber'] = '15';
+        $values['location_form']['toHouseNumber'] = '37bis';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
 
-        $crawler = $client->submit($form);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith("En raison d'un problème technique", $crawler->filter('#location_form_error')->text());
     }

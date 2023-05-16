@@ -86,6 +86,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $this->assertSame("Indiquez la voie concernée et la ville. Si la restriction s'applique à toute la ville, indiquez la ville uniquement.", $crawler->filter('#location_form_address_help')->text());
         $this->assertSame(1, $saveButton->count()); // Location form
+
+        $duplicateButton = $crawler->selectButton('Dupliquer')->form();
+        $this->assertSame($duplicateButton->getUri(), 'http://localhost/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2/duplicate');
+        $this->assertSame($duplicateButton->getMethod(), 'POST');
     }
 
     public function testPublishedRegulationDetail(): void
