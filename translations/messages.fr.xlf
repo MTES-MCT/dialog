@@ -346,6 +346,10 @@
                 <source>regulation.location.house_number_to</source>
                 <target>jusqu'au n° %to%</target>
             </trans-unit>
+            <trans-unit id="regulation.back">
+                <source>regulation.back</source>
+                <target>Revenir aux arrêtés</target>
+            </trans-unit>
             <trans-unit id="regulation.location.all_vehicles_forbidden">
                 <source>regulation.location.all_vehicles_forbidden</source>
                 <target>Circulation interdite pour tous les véhicules</target>
