@@ -26,7 +26,7 @@ final class SaveRegulationGeneralInfoCommandHandler
 
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
-        $command->clean();
+        $command->cleanOtherCategoryText();
 
         // Checking the unicity of an regulation order identifier in an organization
         $regulationOrder = $command->regulationOrderRecord?->getRegulationOrder();

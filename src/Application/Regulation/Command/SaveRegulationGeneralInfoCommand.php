@@ -41,7 +41,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         return $command;
     }
 
-    public function clean()
+    public function cleanOtherCategoryText(): void
     {
         if ($this->category !== RegulationOrderCategoryEnum::OTHER->value) {
             $this->otherCategoryText = null;

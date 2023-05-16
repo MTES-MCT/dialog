@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -68,5 +69,20 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
         $this->assertSame($command->startDate, $start);
         $this->assertSame($command->endDate, $end);
         $this->assertSame($command->organization, $organization);
+    }
+
+    public function testCleanOtherCategoryText(): void
+    {
+        $command = new SaveRegulationGeneralInfoCommand();
+        $command->category = RegulationOrderCategoryEnum::EVENT->value;
+        $command->otherCategoryText = 'Will be cleared';
+        $command->cleanOtherCategoryText();
+        $this->assertNull($command->otherCategoryText);
+
+        $command = new SaveRegulationGeneralInfoCommand();
+        $command->category = RegulationOrderCategoryEnum::OTHER->value;
+        $command->otherCategoryText = 'Will be kept';
+        $command->cleanOtherCategoryText();
+        $this->assertSame('Will be kept', $command->otherCategoryText);
     }
 }
