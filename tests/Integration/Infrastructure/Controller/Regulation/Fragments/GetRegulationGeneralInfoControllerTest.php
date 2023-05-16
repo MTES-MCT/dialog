@@ -20,7 +20,9 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSame('DiaLog', $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Description 3', $crawler->filter('li')->eq(1)->text());
         $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(2)->text());
-        $this->assertSame('http://localhost/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', $crawler->filter('a')->link()->getUri());
+        $editForm = $crawler->selectButton('Modifier')->form();
+        $this->assertSame('http://localhost/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', $editForm->getUri());
+        $this->assertSame('GET', $editForm->getMethod());
     }
 
     public function testGetDescriptionTruncated(): void
