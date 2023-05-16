@@ -210,10 +210,6 @@
                 <source>regulation.list.total_permanent</source>
                 <target>Permanents (%count%)</target>
             </trans-unit>
-            <trans-unit id="regulation.link.datex">
-                <source>regulation.link.datex</source>
-                <target>Accéder au flux de données (DATEX II)</target>
-            </trans-unit>
             <trans-unit id="regulation.list.empty">
                 <source>regulation.list.empty</source>
                 <target>Aucun arrêté</target>
@@ -349,6 +345,10 @@
             <trans-unit id="regulation.location.house_number_to">
                 <source>regulation.location.house_number_to</source>
                 <target>jusqu'au n° %to%</target>
+            </trans-unit>
+            <trans-unit id="regulation.back">
+                <source>regulation.back</source>
+                <target>Revenir aux arrêtés</target>
             </trans-unit>
             <trans-unit id="regulation.location.all_vehicles_forbidden">
                 <source>regulation.location.all_vehicles_forbidden</source>

@@ -107,6 +107,12 @@
                     </div>
                 </aside>
             </div>
+            <div class="fr-mt-22v">
+                {% set tab = regulationOrderRecord.startDate and regulationOrderRecord.endDate ? 'temporary' : 'permanent'  %}
+                <a href="{{ path('app_regulations_list', { tab }) }}" class="fr-link fr-fi-arrow-left-line fr-link--icon-left">
+                    {{ 'regulation.back'|trans }}
+                </a>
+            </div>
         </div>
     </section>
 {% endblock %}
