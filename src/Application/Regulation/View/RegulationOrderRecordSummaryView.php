@@ -19,7 +19,7 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
         public readonly array $locations,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
-        ) {
+    ) {
     }
 
     public function getOrganizationUuid(): ?string

@@ -7,7 +7,6 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 
 trait SessionHelper
@@ -17,9 +16,8 @@ trait SessionHelper
         $cookie = $client->getCookieJar()->get('MOCKSESSID');
 
         // create a new session object
-        $container = static::getContainer();
-        $sessionSavePath = $container->getParameter('session.save_path');
-        $sessionStorage = new MockFileSessionStorage($sessionSavePath);
+        $factory = $this->getContainer()->get('session.storage.factory.mock_file');
+        $sessionStorage = $factory->createStorage(null);
         $session = new Session($sessionStorage);
 
         if ($cookie) {
