@@ -9,6 +9,7 @@
                 <value>noEntry</value>
                 <value>alternateRoad</value>
                 <value>oneWayTraffic</value>
+                <value>speedLimitation</value>
             </constraint>
         </property>
     </class>

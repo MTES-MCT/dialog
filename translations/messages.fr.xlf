@@ -682,6 +682,10 @@
                 <source>regulation.measure.type.oneWayTraffic</source>
                 <target>Circulation à sens unique</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.speedLimitation">
+                <source>regulation.measure.type.speedLimitation</source>
+                <target>Limitation de vitesse</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
