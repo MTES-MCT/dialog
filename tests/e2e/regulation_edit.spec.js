@@ -46,6 +46,14 @@ test('Manage regulation location measures', async ({ page }) => {
     expect(await measureItem2.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 2');
     await measureItem2.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation interdite' });
 
+    // Add a period
+    await measureItem2.getByRole('button', { name: 'Ajouter un créneau horaire' }).click();
+    const periodItem = measureItem2.getByTestId('period-list').getByRole('listitem').nth(0);
+    await periodItem.getByText('Lundi').click();
+    await periodItem.getByText('Mardi').click();
+    await periodItem.getByLabel("Heure de début").fill('08:00');
+    await periodItem.getByLabel("Heure de fin").fill('08:30');
+
     // Submit and check new measure is shown
     await locationItem.getByRole('button', { name: 'Valider' }).click();
     await expect(locationItem).toContainText('Circulation à sens unique');
@@ -58,7 +66,7 @@ test('Manage regulation location measures', async ({ page }) => {
     // Enter location edit mode
     await locationItem.getByRole('button', { name: 'Modifier' }).click();
     await measureList.waitFor();
-    expect(await measureList.getByRole('listitem').count()).toBe(2);
+    expect(await measureList.getByRole('listitem').count()).toBe(3);
 
     // Change existing measure
     await measureItem2.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation alternée' });

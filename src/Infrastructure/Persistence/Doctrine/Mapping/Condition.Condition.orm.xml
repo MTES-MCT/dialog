@@ -8,7 +8,7 @@
     <one-to-one field="vehicleCharacteristics" target-entity="App\Domain\Condition\VehicleCharacteristics" mapped-by="condition"/>
     <one-to-one field="period" target-entity="App\Domain\Condition\Period\Period" mapped-by="condition"/>
     <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="conditions">
-        <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE" nullable="false"/>
+        <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE" nullable="false" />
     </many-to-one>
   </entity>
 </doctrine-mapping>

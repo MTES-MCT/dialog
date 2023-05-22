@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Regulation\Command\Condition\SavePeriodCommand">
+        <property name="applicableDays">
+            <constraint name="NotBlank" />
+        </property>
+        <property name="includeHolidays">
+            <constraint name="Type">
+                <option name="type">boolean</option>
+            </constraint>
+        </property>
+        <property name="startTime">
+            <constraint name="NotBlank"/>
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
+       </property>
+        <property name="endTime">
+            <constraint name="NotBlank"/>
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
+            <constraint name="Expression">
+                <option name="expression">
+                    this.endTime > this.startTime
+                </option>
+                <option name="message">regulation.period.error.end_time</option>
+            </constraint>
+       </property>
+    </class>
+</constraint-mapping>

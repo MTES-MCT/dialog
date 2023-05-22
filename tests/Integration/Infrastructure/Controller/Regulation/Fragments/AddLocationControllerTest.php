@@ -47,6 +47,10 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = ['monday', 'sunday'];
+        $values['location_form']['measures'][0]['periods'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][0]['periods'][0]['endTime'] = '16:00';
+        $values['location_form']['measures'][0]['periods'][0]['includeHolidays'] = true;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -62,6 +66,70 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertSame($streams->eq(2)->attr('action'), 'replace');
         $form = $streams->eq(2)->selectButton('Ajouter une localisation');
         $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $form->getUri());
+    }
+
+    public function testInvalidBlankPeriod(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Localisation', $crawler->filter('h3')->text());
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = '';
+        $values['location_form']['measures'][0]['periods'][0]['startTime'] = '';
+        $values['location_form']['measures'][0]['periods'][0]['endTime'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_startTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+    }
+
+    public function testInvalidPeriod(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Localisation', $crawler->filter('h3')->text());
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Bad period
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['periods'][0]['startTime'] = '10:00';
+        $values['location_form']['measures'][0]['periods'][0]['endTime'] = '08:00';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
+        $this->assertSame('L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+
+        // Bad values
+        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['startTime'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['endTime'] = 'test';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
+        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_startTime_error')->text());
+        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
     }
 
     public function testGeocodingFailure(): void

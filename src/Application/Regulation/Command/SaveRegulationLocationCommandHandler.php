@@ -22,14 +22,6 @@ final class SaveRegulationLocationCommandHandler
     ) {
     }
 
-    private function computePoint(string $address, string $houseNumber): string
-    {
-        $houseAddress = sprintf('%s %s', $houseNumber, $address);
-        $coords = $this->geocoder->computeCoordinates($houseAddress);
-
-        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
-    }
-
     public function __invoke(SaveRegulationLocationCommand $command): string
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
@@ -60,23 +52,7 @@ final class SaveRegulationLocationCommandHandler
             return $location->getUuid();
         }
 
-        $hasRoadChanged = $command->address !== $command->location->getAddress();
-
-        $fromPointNeedsUpdating = $hasRoadChanged || ($command->fromHouseNumber !== $command->location->getFromHouseNumber());
-
-        if ($fromPointNeedsUpdating) {
-            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
-        } else {
-            $fromPoint = $command->location->getFromPoint();
-        }
-
-        $toPointNeedsUpdating = $hasRoadChanged || ($command->toHouseNumber !== $command->location->getToHouseNumber());
-
-        if ($toPointNeedsUpdating) {
-            $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
-        } else {
-            $toPoint = $command->location->getToPoint();
-        }
+        [ $fromPoint, $toPoint ] = $this->computePoints($command);
 
         $measuresStillPresentUuids = [];
 
@@ -93,6 +69,7 @@ final class SaveRegulationLocationCommandHandler
         // Measures that weren't present in the command get deleted.
         foreach ($command->location->getMeasures() as $measure) {
             if (!\in_array($measure->getUuid(), $measuresStillPresentUuids)) {
+                $command->location->removeMeasure($measure);
                 $this->commandBus->handle(new DeleteMeasureCommand($measure));
             }
         }
@@ -106,5 +83,38 @@ final class SaveRegulationLocationCommandHandler
         );
 
         return $command->location->getUuid();
+    }
+
+    private function computePoint(string $address, string $houseNumber): string
+    {
+        $houseAddress = sprintf('%s %s', $houseNumber, $address);
+        $coords = $this->geocoder->computeCoordinates($houseAddress);
+
+        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
+    }
+
+    private function computePoints(SaveRegulationLocationCommand $command): array
+    {
+        $hasRoadChanged = $command->address !== $command->location->getAddress();
+        $fromPointNeedsUpdating = $hasRoadChanged || ($command->fromHouseNumber !== $command->location->getFromHouseNumber());
+
+        if ($fromPointNeedsUpdating) {
+            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
+        } else {
+            $fromPoint = $command->location->getFromPoint();
+        }
+
+        $toPointNeedsUpdating = $hasRoadChanged || ($command->toHouseNumber !== $command->location->getToHouseNumber());
+
+        if ($toPointNeedsUpdating) {
+            $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
+        } else {
+            $toPoint = $command->location->getToPoint();
+        }
+
+        return [
+            $fromPoint,
+            $toPoint,
+        ];
     }
 }
