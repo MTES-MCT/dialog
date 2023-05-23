@@ -38,11 +38,6 @@
         </div>
         {% if regulationOrderRecord.isDraft %}
             <ul class="app-card__actions">
-                <li id="location_{{ uuid }}_delete_button">
-                    {% if canDelete %}
-                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
-                    {% endif %}
-                </li>
                 <li>
                     <form method="GET" action="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}">
                         <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
@@ -50,6 +45,13 @@
                         </button>
                     </form>
                 </li>
+                {% if canDelete %}
+                    <li id="location_{{ uuid }}_delete_button">
+                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
+                    </li>
+                {% else %}
+                    <li id="location_{{ uuid }}_delete_button" role="presentation"></li>
+                {% endif %}
             </ul>
         {% endif %}
     </div>
