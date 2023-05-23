@@ -6,6 +6,7 @@
 parameters:
     server_timezone: '%env(APP_SERVER_TIMEZONE)%'
     client_timezone: '%env(APP_CLIENT_TIMEZONE)%'
+    gacs_credentials: '%env(APP_GACS_CREDENTIALS)%'
 
 services:
     # default configuration for services in *this* file
@@ -48,6 +49,10 @@ services:
 
     App\Infrastructure\Adapter\CommandBus:
         $commandBus: '@messenger.bus.commands'
+
+    App\Infrastructure\Integrations\Gacs\Client\GacsClient:
+        arguments:
+            $credentials: '%gacs_credentials%'
 
     command_handlers:
         namespace: App\Application\
