@@ -22,7 +22,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
 
         $this->assertSame('Arrêté permanent FO3/2023 (copie)', $crawler->filter('h2')->text());
-        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
         $location = $crawler->filter('[data-testid="location"]');
 
         // Location
@@ -42,7 +42,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
 
         $this->assertSame('Arrêté temporaire FO1/2023 (copie) (copie)', $crawler->filter('h2')->text());
-        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
     }
 
     public function testWithoutRestrictions(): void
@@ -54,7 +54,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
 
         $this->assertSame('Arrêté temporaire FO2/2023 (copie)', $crawler->filter('h2')->text());
-        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert')->text());
+        $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
     }
 
     public function testDuplicateAnAlreadyExistingIdentifier(): void
@@ -66,7 +66,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('L\'identifiant de l\'arrêté est déjà utilisé', $crawler->filter('div.fr-alert')->text());
+        $this->assertSame('L\'identifiant de l\'arrêté est déjà utilisé', $crawler->filter('div.fr-alert--error')->text());
     }
 
     public function testDuplicateWithNoStartDateYet(): void
