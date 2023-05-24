@@ -29,6 +29,13 @@
     {% include 'common/header.html.twig' %}
 
     <main id="contenu" class="{% block page_class %}{% endblock page_class %}">
+        <noscript>
+            <section class="fr-container fr-mt-3w">
+                <div class="fr-alert fr-alert--info">
+                    {{ 'common.javascript_required'|trans|raw }}
+                </div>
+            </section>
+        </noscript>
         {% for label, messages in app.flashes %}
             {% if loop.first %}<div class="fr-container fr-pt-4w">{% endif %}
             {% for message in messages %}
