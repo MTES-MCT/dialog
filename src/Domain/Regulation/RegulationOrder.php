@@ -64,8 +64,8 @@ class RegulationOrder
         string $category,
         string $description,
         \DateTimeInterface $startDate,
-        ?\DateTimeInterface $endDate = null,
-        ?string $otherCategoryText = null,
+        \DateTimeInterface $endDate = null,
+        string $otherCategoryText = null,
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;

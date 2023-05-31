@@ -65,10 +65,10 @@ class VehicleCharacteristics
     }
 
     public function update(
-        ?float $maxWeight = null,
-        ?float $maxHeight = null,
-        ?float $maxWidth = null,
-        ?float $maxLength = null,
+        float $maxWeight = null,
+        float $maxHeight = null,
+        float $maxWidth = null,
+        float $maxLength = null,
     ): void {
         $this->maxWeight = $maxWeight;
         $this->maxHeight = $maxHeight;
