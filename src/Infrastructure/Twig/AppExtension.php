@@ -26,7 +26,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     /**
      * Format a $date with an optional $time
      */
-    public function formatDateTime(\DateTimeInterface $date, ?\DateTimeInterface $time = null): string
+    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface $time = null): string
     {
         $dateTime = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
         $format = 'd/m/Y';
