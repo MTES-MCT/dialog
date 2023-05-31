@@ -49,6 +49,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][1]['periods'][0]['startTime'] = '08:00';
         $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
         $values['location_form']['measures'][1]['periods'][0]['includeHolidays'] = true;
+        $values['location_form']['measures'][1]['allVehicles'] = 'yes';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);

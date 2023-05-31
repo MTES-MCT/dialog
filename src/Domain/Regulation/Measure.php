@@ -17,6 +17,10 @@ class Measure
         private Location $location,
         private string $type,
         private \DateTimeInterface $createdAt,
+        private array $restrictedVehicleTypes = [],
+        private ?string $otherRestrictedVehicleTypeText = null,
+        private array $exemptedVehicleTypes = [],
+        private ?string $otherExemptedVehicleTypeText = null,
     ) {
         $this->periods = new ArrayCollection();
     }
@@ -64,8 +68,37 @@ class Measure
         $this->periods->removeElement($period);
     }
 
-    public function update(string $type): void
+    public function getRestrictedVehicleTypes(): array
     {
+        return $this->restrictedVehicleTypes;
+    }
+
+    public function getOtherRestrictedVehicleTypeText(): string|null
+    {
+        return $this->otherRestrictedVehicleTypeText;
+    }
+
+    public function getExemptedVehicleTypes(): array
+    {
+        return $this->exemptedVehicleTypes;
+    }
+
+    public function getOtherExemptedVehicleTypeText(): string|null
+    {
+        return $this->otherExemptedVehicleTypeText;
+    }
+
+    public function update(
+        string $type,
+        array $restrictedVehicleTypes = null,
+        string $otherRestrictedVehicleTypeText = null,
+        array $exemptedVehicleTypes = null,
+        string $otherExemptedVehicleTypeText = null,
+    ): void {
         $this->type = $type;
+        $this->restrictedVehicleTypes = $restrictedVehicleTypes ?: [];
+        $this->otherRestrictedVehicleTypeText = $otherRestrictedVehicleTypeText;
+        $this->exemptedVehicleTypes = $exemptedVehicleTypes ?: [];
+        $this->otherExemptedVehicleTypeText = $otherExemptedVehicleTypeText;
     }
 }

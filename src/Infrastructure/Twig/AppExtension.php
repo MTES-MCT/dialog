@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Twig;
 
+use App\Application\StringUtilsInterface;
+
 class AppExtension extends \Twig\Extension\AbstractExtension
 {
     private \DateTimeZone $clientTimezone;
 
     public function __construct(
         string $clientTimezone,
+        private StringUtilsInterface $stringUtils,
     ) {
         $this->clientTimezone = new \DateTimeZone($clientTimezone);
     }
@@ -20,6 +23,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
+            new \Twig\TwigFunction('app_vehicle_type_icon_name', [$this, 'getVehicleTypeIconName']),
         ];
     }
 
@@ -58,5 +62,17 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
 
         return $today < $day;
+    }
+
+    public function getVehicleTypeIconName(string $value): string
+    {
+        if ($value === 'other') {
+            return '';
+        }
+        if (str_starts_with($value, 'critair')) {
+            return 'critair';
+        }
+
+        return $this->stringUtils->toKebabCase($value);
     }
 }

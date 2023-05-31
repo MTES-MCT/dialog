@@ -88,11 +88,13 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 
 {% block form_errors %}
   {% if errors|length > 0 %}
-    <p class="fr-error-text" id="{{ id }}_error">
+    <div class="fr-messages-group" id="{{ id }}_error" aria-live="assertive">
       {%- for error in errors -%}
-        {{ error.message }}
+        <p class="fr-message fr-message--error">
+          {{ error.message }}
+        </p>
       {%- endfor -%}
-    </p>
+    </div>
   {% endif %}
 {% endblock form_errors %}
 

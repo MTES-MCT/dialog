@@ -29,6 +29,7 @@ final class SaveMeasureCommandTest extends TestCase
         $location = $this->createMock(Location::class);
         $period = $this->createMock(Period::class);
         $measure = $this->createMock(Measure::class);
+        $createdAt = new \DateTimeImmutable('2023-06-01');
 
         $measure
             ->expects(self::once())
@@ -45,11 +46,17 @@ final class SaveMeasureCommandTest extends TestCase
             ->method('getType')
             ->willReturn(MeasureTypeEnum::ALTERNATE_ROAD->value);
 
+        $measure
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn($createdAt);
+
         $command = new SaveMeasureCommand($measure);
 
         $this->assertSame($measure, $command->measure);
         $this->assertSame(MeasureTypeEnum::ALTERNATE_ROAD->value, $command->type);
         $this->assertSame($location, $command->location);
         $this->assertEquals([new SavePeriodCommand($period)], $command->periods);
+        $this->assertEquals($createdAt, $command->createdAt);
     }
 }

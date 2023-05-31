@@ -73,9 +73,8 @@ final class DuplicateRegulationCommandHandler
                     }
 
                     $measureCommand = new SaveMeasureCommand();
+                    $measureCommand->initFromEntity($measure);
                     $measureCommand->periods = $periodCommands;
-                    $measureCommand->type = $measure?->getType();
-                    $measureCommand->createdAt = $measure?->getCreatedAt();
                     $locationCommand->measures[] = $measureCommand;
                 }
             }

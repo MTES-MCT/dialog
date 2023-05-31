@@ -23,8 +23,16 @@ final class SaveMeasureCommandHandler
 
     public function __invoke(SaveMeasureCommand $command): Measure
     {
+        $command->cleanVehicleTypes();
+
         if ($command->measure) {
-            $command->measure->update($command->type);
+            $command->measure->update(
+                $command->type,
+                $command->restrictedVehicleTypes,
+                $command->otherRestrictedVehicleTypeText,
+                $command->exemptedVehicleTypes,
+                $command->otherExemptedVehicleTypeText,
+            );
 
             $periodsStillPresentUuids = [];
 
@@ -55,6 +63,10 @@ final class SaveMeasureCommandHandler
                 location: $command->location,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
+                restrictedVehicleTypes: $command->restrictedVehicleTypes,
+                otherRestrictedVehicleTypeText: $command->otherRestrictedVehicleTypeText,
+                exemptedVehicleTypes: $command->exemptedVehicleTypes,
+                otherExemptedVehicleTypeText: $command->otherExemptedVehicleTypeText,
             ),
         );
 

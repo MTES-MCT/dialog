@@ -151,8 +151,8 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $command = new SaveMeasureCommand();
         $command->location = $location;
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
-        $command->periods = [$periodCommand];
         $command->createdAt = $createdAt;
+        $command->periods = [$periodCommand];
 
         $result = $handler($command);
 
@@ -182,6 +182,11 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturn('28accfd6-d896-4ed9-96a3-1754f288f511');
 
         $measure = $this->createMock(Measure::class);
+
+        $measure
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn(new \DateTimeImmutable('2023-06-01'));
 
         $measure
             ->expects(self::once())

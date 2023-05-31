@@ -137,6 +137,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     public function testUpdate(): void
     {
         $measure = $this->createMock(Measure::class);
+        $measure
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn(new \DateTimeImmutable('2023-06-01'));
+
         $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())

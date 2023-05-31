@@ -12,6 +12,47 @@
                 <value>speedLimitation</value>
             </constraint>
         </property>
+        <property name="allVehicles">
+            <constraint name="Type">
+                <option name="type">boolean</option>
+            </constraint>
+       </property>
+       <property name="restrictedVehicleTypes">
+            <constraint name="When">
+                <option name="expression">
+                    this.allVehicles === false
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.measure.restricted_vehicle_types.error.not_blank</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+       <property name="otherRestrictedVehicleTypeText">
+            <constraint name="When">
+                <option name="expression">
+                    'other' in this.restrictedVehicleTypes
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">common.error.not_blank</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+       <property name="otherExemptedVehicleTypeText">
+            <constraint name="When">
+                <option name="expression">
+                    'other' in this.exemptedVehicleTypes
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">common.error.not_blank</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
         <property name="periods">
             <constraint name="Valid"/>
        </property>

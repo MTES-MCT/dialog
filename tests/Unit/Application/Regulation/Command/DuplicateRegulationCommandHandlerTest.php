@@ -79,7 +79,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getPeriods')
             ->willReturn([$period]);
-
+        $measure1
+            ->expects(self::exactly(2))
+            ->method('getRestrictedVehicleTypes')
+            ->willReturn([]);
         $measure2 = $this->createMock(Measure::class);
         $measure2
             ->expects(self::once())
@@ -92,6 +95,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measure2
             ->expects(self::once())
             ->method('getPeriods')
+            ->willReturn([]);
+        $measure2
+            ->expects(self::exactly(2))
+            ->method('getRestrictedVehicleTypes')
             ->willReturn([]);
 
         $this->originalRegulationOrderRecord
@@ -200,10 +207,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->periods = [
             $periodCommand1,
         ];
+        $measureCommand1->allVehicles = true;
 
         $measureCommand2 = new SaveMeasureCommand();
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $measureCommand2->createdAt = $startDate;
+        $measureCommand2->allVehicles = true;
 
         $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
         $locationCommand1->address = 'Route du Lac 44260 Savenay';
