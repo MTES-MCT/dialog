@@ -58,7 +58,7 @@ test('Manage regulation location measures', async ({ page }) => {
     // Submit and check new measure is shown
     await locationItem.getByRole('button', { name: 'Valider' }).click();
     await expect(locationItem).toContainText('Circulation à sens unique');
-    await expect(locationItem).toContainText('Circulation interdite');
+    await expect(locationItem).toContainText('Circulation interdite du lundi au mardi de 08h00 à 08h30');
 
     /**
      * Change an existing measure
@@ -75,7 +75,7 @@ test('Manage regulation location measures', async ({ page }) => {
     // Submit and check measure has been updated
     await locationItem.getByRole('button', { name: 'Valider' }).click();
     await expect(locationItem).toContainText('Circulation à sens unique');
-    await expect(locationItem).not.toContainText('Circulation interdite');
+    await expect(locationItem).not.toContainText('Circulation interdite du lundi au mardi de 08h00 à 08h30');
     await expect(locationItem).toContainText('Circulation alternée');
 
     /**

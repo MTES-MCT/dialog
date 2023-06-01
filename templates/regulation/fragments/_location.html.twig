@@ -32,7 +32,29 @@
                 </li>
                 {% endif %}
                 {% for measure in location.measures %}
-                    <li>{{ ('regulation.measure.type.' ~ measure.type)|trans }}</li>
+                    <li>
+                        {{ ('regulation.measure.type.' ~ measure.type)|trans }}
+                        {% for period in measure.periods %}
+                            {% for dayRange in period.applicableDays %}
+                                {% if dayRange.firstDay == dayRange.lastDay %}
+                                    {{ 'regulation.period.one_day'|trans({
+                                        '%firstDay%': ('regulation.period.days.' ~ dayRange.firstDay)|trans,
+                                        '%startTime%': period.startTime|date('H\\hi'),
+                                        '%endTime%': period.endTime|date('H\\hi'),
+                                    })|lower }}
+                                {% else %}
+                                    {{ 'regulation.period.many_days'|trans({
+                                        '%firstDay%': ('regulation.period.days.' ~ dayRange.firstDay)|trans,
+                                        '%lastDay%': ('regulation.period.days.' ~ dayRange.lastDay)|trans,
+                                        '%startTime%': period.startTime|date('H\\hi'),
+                                        '%endTime%': period.endTime|date('H\\hi'),
+                                    })|lower }}
+                                    {% if not loop.last %}, {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </li>
                 {% endfor %}
             </ul>
         </div>

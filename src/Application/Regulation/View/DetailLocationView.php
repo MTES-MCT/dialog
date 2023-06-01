@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
+use App\Application\Regulation\Query\Factory\LocationMeasuresViewsFactory;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationAddress;
 
@@ -14,26 +15,18 @@ class DetailLocationView
         public readonly LocationAddress $address,
         public readonly ?string $fromHouseNumber,
         public readonly ?string $toHouseNumber,
-        public ?array $measures,
+        public array $measures,
     ) {
     }
 
     public static function fromEntity(Location $location): self
     {
-        $measures = [];
-
-        foreach ($location->getMeasures() as $measure) {
-            $measures[] = new MeasureView(
-                $measure->getType(),
-            );
-        }
-
         return new self(
             uuid: $location->getUuid(),
             address: LocationAddress::fromString($location->getAddress()),
             fromHouseNumber: $location->getFromHouseNumber(),
             toHouseNumber: $location->getToHouseNumber(),
-            measures: $measures,
+            measures: LocationMeasuresViewsFactory::create($location),
         );
     }
 }

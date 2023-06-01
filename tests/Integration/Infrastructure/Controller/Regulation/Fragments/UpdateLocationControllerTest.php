@@ -52,9 +52,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $bulletPoints = $crawler->filter('li')->extract(['_text']);
-        $this->assertContains('Circulation à sens unique', $bulletPoints);
-        $this->assertContains('Circulation alternée', $bulletPoints);
+        $this->assertSame('Circulation à sens unique', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation alternée', $crawler->filter('li')->eq(3)->text());
     }
 
     public function testRemoveMeasure(): void

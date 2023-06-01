@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\Condition\DeletePeriodCommand;
+use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
 

@@ -6,8 +6,8 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\Condition\DeletePeriodCommand;
-use App\Application\Regulation\Command\Condition\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\DeletePeriodCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveMeasureCommandHandler;
 use App\Domain\Condition\Period\Period;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
-use App\Application\Regulation\Command\Condition\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 

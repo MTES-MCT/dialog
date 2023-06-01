@@ -746,6 +746,14 @@
                 <source>regulation.period.startTime</source>
                 <target>Heure de début</target>
             </trans-unit>
+            <trans-unit id="regulation.period.many_days">
+                <source>regulation.period.many_days</source>
+                <target>du %firstDay% au %lastDay% de %startTime% à %endTime%</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.one_day">
+                <source>regulation.period.one_day</source>
+                <target>%firstDay% de %startTime% à %endTime%</target>
+            </trans-unit>
             <trans-unit id="regulation.period.endTime">
                 <source>regulation.period.endTime</source>
                 <target>Heure de fin</target>

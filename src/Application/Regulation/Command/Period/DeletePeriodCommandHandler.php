@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Condition;
+namespace App\Application\Regulation\Command\Period;
 
 use App\Domain\Regulation\Repository\PeriodRepositoryInterface;
 

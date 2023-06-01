@@ -11,7 +11,7 @@ interface RegulationOrderRecordRepositoryInterface
 {
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord;
 
-    public function findOneByUuid(string $uuid): RegulationOrderRecord|null;
+    public function findOneByUuid(string $uuid): ?RegulationOrderRecord;
 
     public function findRegulationsByOrganization(
         Organization $organization,
@@ -20,7 +20,7 @@ interface RegulationOrderRecordRepositoryInterface
         bool $isPermanent,
     ): array;
 
-    public function findOneForSummary(string $uuid): array|null;
+    public function findOneForSummary(string $uuid): ?RegulationOrderRecord;
 
     public function findRegulationOrdersForDatexFormat(): array;
 
