@@ -16,6 +16,7 @@ final class LocationTest extends TestCase
     {
         $measure1 = $this->createMock(Measure::class);
         $measure2 = $this->createMock(Measure::class);
+        $measure3 = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $location = new Location(
             'b4812143-c4d8-44e6-8c3a-34688becae6e',
@@ -41,6 +42,11 @@ final class LocationTest extends TestCase
         $location->addMeasure($measure2);
 
         $this->assertEquals(new ArrayCollection([$measure1, $measure2]), $location->getMeasures());
+
+        $location->removeMeasure($measure3); // Measure that does not belong to the location
+        $location->removeMeasure($measure2);
+
+        $this->assertEquals(new ArrayCollection([$measure1]), $location->getMeasures());
     }
 
     public function testUpdate(): void

@@ -7,10 +7,11 @@
 @import url('../../node_modules/@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css');
 @import url('../../node_modules/remixicon/fonts/remixicon.css');
 
-/* label.required is set by Symfony for form types with 'required => true' */
-label.required > .fr-x-label-content::after {
+/* .required is set by Symfony for form types with 'required => true' */
+label.required > .fr-x-label-content::after, legend.required > .fr-x-label-content::after {
     content: ' *';
 }
+
 
 :root {
     --x-icon-decorative-blue-france: #CACAFB;

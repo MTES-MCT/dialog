@@ -72,6 +72,15 @@ class Location
         $this->measures->add($measure);
     }
 
+    public function removeMeasure(Measure $measure): void
+    {
+        if (!$this->measures->contains($measure)) {
+            return;
+        }
+
+        $this->measures->removeElement($measure);
+    }
+
     public function update(
         string $address,
         ?string $fromHouseNumber,

@@ -4,11 +4,10 @@
     name="App\Domain\Condition\Period\Period"
     table="period">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="dayStartTime" type="datetimetz_immutable" column="day_start_time" nullable="true"/>
-    <field name="dayEndTime" type="datetimetz_immutable" column="day_end_time" nullable="true"/>
-    <field name="applicableDays" type="array" column="applicable_days" nullable="true"/>
-    <field name="applicableMonths" type="array" column="applicable_months" nullable="true"/>
-    <field name="specialDays" type="array" column="special_days" nullable="true"/>
+    <field name="startTime" type="time" column="start_time" nullable="false"/>
+    <field name="endTime" type="time" column="end_time" nullable="false"/>
+    <field name="includeHolidays" type="boolean" column="include_holidays" nullable="false"/>
+    <field name="applicableDays" type="array" column="applicable_days" nullable="false"/>
     <one-to-one field="condition" target-entity="App\Domain\Condition\Condition" inversed-by="period">
         <join-column name="condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
     </one-to-one>

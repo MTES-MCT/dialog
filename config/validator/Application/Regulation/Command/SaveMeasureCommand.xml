@@ -12,5 +12,8 @@
                 <value>speedLimitation</value>
             </constraint>
         </property>
+        <property name="periods">
+            <constraint name="Valid"/>
+       </property>
     </class>
 </constraint-mapping>

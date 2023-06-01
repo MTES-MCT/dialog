@@ -6,23 +6,25 @@ export default class extends Controller {
     static values = {
         index: Number,
         prototype: String,
+        prototypeKey: String,
     };
 
     addCollectionElement(_event) {
         const el = document.createElement('div');
-        el.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue).replace(/__oneBasedIndex__/g, this.indexValue + 1);
+        el.innerHTML = this.prototypeValue
+            .replace(new RegExp(`__${this.prototypeKeyValue}_name__`, 'g'), this.indexValue)
+            .replace(new RegExp(`__${this.prototypeKeyValue}_index__`, 'g'), this.indexValue + 1);
+
         this.collectionContainerTarget.appendChild(el.children[0]);
         this.indexValue++;
     }
 
     syncIndices(_event) {
         this.indexValue = this.collectionItemTargets.length;
-
         this.collectionItemTargets.forEach((el, index) => {
             el.querySelectorAll('[data-form-collection-indexed-template]').forEach(templatedEl => {
-                const text = templatedEl.dataset.formCollectionIndexedTemplate.replace(/__\\?oneBasedIndex__/g, index + 1);
-                templatedEl.textContent = text;
-            })
+                templatedEl.textContent = `${templatedEl.dataset.formCollectionIndexedTemplate} ${index + 1}`;
+            });
         });
     }
 }

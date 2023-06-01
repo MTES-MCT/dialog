@@ -4,6 +4,63 @@
     : path('fragment_regulation_location_add_link', {regulationOrderRecordUuid: regulationOrderRecord.uuid})
 %}
 
+{% macro periods_list_item(form, index) %}
+    <li
+        class="app-card"
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+    >
+        <div class="app-card__content">
+            <fieldset class="fr-fieldset" aria-labelledby="applicableDays-{{ index }}-legend">
+                {{ form_label(form.applicableDays, null, {
+                    element: 'legend',
+                    label_attr: {
+                        id: form.applicableDays.vars.name ~ '-legend',
+                        class: 'fr-fieldset__legend fr-fieldset__legend--regular',
+                    }
+                }) }}
+                <div class="fr-fieldset__item">
+                    {% for day in form.applicableDays %}
+                        {% set dayBtnId = day.vars.id ~ '-btn' %}
+                        {% set isChecked = day.vars.value in form.applicableDays.vars.value ? "true" : "false" %}
+                        <label for="{{ dayBtnId }}">
+                            <button
+                                id="{{ dayBtnId }}"
+                                type="button"
+                                class="fr-tag fr-mb-1w"
+                                role="checkbox"
+                                aria-checked="{{ isChecked }}"
+                                aria-pressed="{{ isChecked }}"
+                                data-controller="chip-button"
+                            >
+                                {{ ('regulation.period.days.' ~ day.vars.value)|trans }}
+                                {{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
+                            </button>
+                        </label>
+                    {% endfor %}
+                    {{ form_errors(form.applicableDays) }}
+                </div>
+            </fieldset>
+            <div class="fr-toggle">
+                {{ form_widget(form.includeHolidays, { attr: {class: 'fr-toggle__input'}}) }}
+                {{ form_label(form.includeHolidays, null, { label_attr: {
+                    'class': 'fr-toggle__label',
+                    'data-fr-checked-label': 'common.enabled'|trans,
+                    'data-fr-unchecked-label': 'common.disabled'|trans
+                }}) }}
+                {{ form_errors(form.includeHolidays) }}
+            </div>
+            <div class="fr-container--fluid">
+                <div class="fr-grid-row fr-grid-row--gutters ">
+                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
+                </div>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
+
 {% macro measures_list_item(form, index) %}
     <li
         class="app-card fr-p-3w"
@@ -13,7 +70,7 @@
     >
         <div class="app-card__header">
             <div class="app-card__title">
-                <h4 class="fr-h5 fr-mb-0" data-form-collection-indexed-template="{{ 'regulation.measure'|trans }} __\oneBasedIndex__">
+                <h4 class="fr-h5 fr-mb-0" data-form-collection-indexed-template="{{ 'regulation.measure'|trans }}">
                     {{ 'regulation.measure'|trans }} {{ index }}
                 </h4>
                 <p class="fr-text-sm fr-text-mention--grey fr-m-0">
@@ -33,6 +90,40 @@
                 {{ 'common.delete'|trans }}
             </button>
         </div>
+
+        <fieldset
+            class="fr-fieldset"
+            aria-labelledby="periods-legend"
+            data-controller="form-collection"
+            data-form-collection-prototype-key-value="period"
+            data-form-collection-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
+            data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_index__')|e('html_attr') }}"
+        >
+            {{ form_label(form.periods, null, { label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
+            <ul
+                id="period-list"
+                class="fr-raw-list fr-mb-2w"
+                data-testid="period-list"
+                data-form-collection-target="collectionContainer"
+                data-action="remove:child-removed->form-collection#syncIndices"
+                aria-label="{{ form.periods.vars.label|trans }}"
+            >
+                {% for item in form.periods %}
+                    {{ _self.periods_list_item(item, loop.index) }}
+                {% else %}
+                    {% do form.periods.setRendered %}
+                {% endfor %}
+            </ul>
+
+            <button
+                type="button"
+                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                data-action="form-collection#addCollectionElement"
+                aria-controls="period-list"
+            >
+                {{ 'regulation.period.add'|trans }}
+            </button>
+        </fieldset>
     </li>
 {% endmacro %}
 
@@ -63,8 +154,9 @@
 
                 <div
                     data-controller="form-collection"
+                    data-form-collection-prototype-key-value="measure"
                     data-form-collection-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
-                    data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__oneBasedIndex__')|e('html_attr') }}"
+                    data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_index__')|e('html_attr') }}"
                     class="fr-mb-4w"
                 >
                     <ul

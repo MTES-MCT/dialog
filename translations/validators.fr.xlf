@@ -34,6 +34,10 @@
                 <source>location.measures.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs restrictions.</target>
             </trans-unit>
+            <trans-unit id="regulation.period.error.end_time">
+                <source>regulation.period.error.end_time</source>
+                <target>L'heure de fin doit être supérieure à l'heure de début.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
