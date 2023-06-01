@@ -42,6 +42,7 @@ final class LocationFormType extends AbstractType
             )
             ->add('measures', CollectionType::class, [
                 'entry_type' => MeasureFormType::class,
+                'prototype_name' => '__measure_name__',
                 'entry_options' => ['label' => false],
                 'label' => 'regulation.measure_list',
                 'allow_add' => true,

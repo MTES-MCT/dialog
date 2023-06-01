@@ -10,6 +10,14 @@
                 <source>common.results</source>
                 <target>Résultats</target>
             </trans-unit>
+            <trans-unit id="common.enabled">
+                <source>common.enabled</source>
+                <target>Activé</target>
+            </trans-unit>
+            <trans-unit id="common.disabled">
+                <source>common.disabled</source>
+                <target>Désactivé</target>
+            </trans-unit>
             <trans-unit id="common.title">
                 <source>common.title</source>
                 <target>DiaLog</target>
@@ -689,6 +697,70 @@
             <trans-unit id="regulation.measure.type.speedLimitation">
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.monday">
+                <source>regulation.period.days.monday</source>
+                <target>Lundi</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.tuesday">
+                <source>regulation.period.days.tuesday</source>
+                <target>Mardi</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.wednesday">
+                <source>regulation.period.days.wednesday</source>
+                <target>Mercredi</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.thursday">
+                <source>regulation.period.days.thursday</source>
+                <target>Jeudi</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.friday">
+                <source>regulation.period.days.friday</source>
+                <target>Vendredi</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.saturday">
+                <source>regulation.period.days.saturday</source>
+                <target>Samedi</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.sunday">
+                <source>regulation.period.days.sunday</source>
+                <target>Dimanche</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days">
+                <source>regulation.period.days</source>
+                <target>Jours applicables</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.time">
+                <source>regulation.period.time</source>
+                <target>Créneau horaire</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.days.help">
+                <source>regulation.period.days.help</source>
+                <target>Spécifiez les jours et horaires spécifiques sur lesquels la restriction s'applique</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.includeHolidays">
+                <source>regulation.period.includeHolidays</source>
+                <target>Jours fériés</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.startTime">
+                <source>regulation.period.startTime</source>
+                <target>Heure de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.endTime">
+                <source>regulation.period.endTime</source>
+                <target>Heure de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation.period_list">
+                <source>regulation.period_list</source>
+                <target>Créneaux horaires</target>
+            </trans-unit>
+            <trans-unit id="regulation.period_list.help">
+                <source>regulation.period_list.help</source>
+                <target>Par défaut, la restriction s'applique tous les jours sur la période de validité</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.add">
+                <source>regulation.period.add</source>
+                <target>Ajouter un créneau horaire</target>
             </trans-unit>
         </body>
     </file>

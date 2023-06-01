@@ -11,11 +11,10 @@ class Period
     public function __construct(
         private string $uuid,
         private Condition $condition,
-        private ?array $applicableDays = [],
-        private ?array $applicableMonths = [],
-        private ?array $specialDays = [],
-        private ?\DateTimeInterface $dayStartTime = null,
-        private ?\DateTimeInterface $dayEndTime = null,
+        private bool $includeHolidays,
+        private array $applicableDays,
+        private \DateTimeInterface $startTime,
+        private \DateTimeInterface $endTime,
     ) {
     }
 
@@ -29,28 +28,35 @@ class Period
         return $this->applicableDays;
     }
 
-    public function getApplicableMonths(): array
+    public function isIncludeHolidays(): bool
     {
-        return $this->applicableMonths;
+        return $this->includeHolidays;
     }
 
-    public function getSpecialDays(): array
+    public function getStartTime(): ?\DateTimeInterface
     {
-        return $this->specialDays;
+        return $this->startTime;
     }
 
-    public function getDayStartTime(): ?\DateTimeInterface
+    public function getEndTime(): ?\DateTimeInterface
     {
-        return $this->dayStartTime;
-    }
-
-    public function getDayEndTime(): ?\DateTimeInterface
-    {
-        return $this->dayEndTime;
+        return $this->endTime;
     }
 
     public function getCondition(): Condition
     {
         return $this->condition;
+    }
+
+    public function update(
+        bool $includeHolidays,
+        array $applicableDays,
+        \DateTimeInterface $startTime,
+        \DateTimeInterface $endTime,
+    ): void {
+        $this->includeHolidays = $includeHolidays;
+        $this->applicableDays = $applicableDays;
+        $this->startTime = $startTime;
+        $this->endTime = $endTime;
     }
 }

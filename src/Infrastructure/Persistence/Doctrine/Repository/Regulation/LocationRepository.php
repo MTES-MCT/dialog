@@ -34,6 +34,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ->where('loc.uuid = :uuid')
             ->innerJoin('loc.regulationOrder', 'ro')
             ->leftJoin('loc.measures', 'measure')
+            ->leftJoin('measure.conditions', 'conditions')
+            ->leftJoin('conditions.period', 'period')
             ->setParameter('uuid', $uuid)
             ->setMaxResults(1)
             ->getQuery()
