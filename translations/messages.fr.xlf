@@ -752,7 +752,11 @@
             </trans-unit>
             <trans-unit id="regulation.period.one_day">
                 <source>regulation.period.one_day</source>
-                <target>%firstDay% de %startTime% à %endTime%</target>
+                <target>le %firstDay% de %startTime% à %endTime%</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.all_days">
+                <source>regulation.period.all_days</source>
+                <target>tous les jours</target>
             </trans-unit>
             <trans-unit id="regulation.period.endTime">
                 <source>regulation.period.endTime</source>

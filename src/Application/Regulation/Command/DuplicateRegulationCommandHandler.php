@@ -62,6 +62,7 @@ final class DuplicateRegulationCommandHandler
                 foreach ($location->getMeasures() as $measure) {
                     $measureCommand = new SaveMeasureCommand();
                     $measureCommand->type = $measure?->getType();
+                    $measureCommand->createdAt = $measure?->getCreatedAt();
                     array_push($locationCommand->measures, $measureCommand);
                 }
             }

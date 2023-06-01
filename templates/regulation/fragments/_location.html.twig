@@ -35,7 +35,7 @@
                     <li>
                         {{ ('regulation.measure.type.' ~ measure.type)|trans }}
                         {% for period in measure.periods %}
-                            {% for dayRange in period.applicableDays %}
+                            {% for dayRange in period.dayRanges %}
                                 {% if dayRange.firstDay == dayRange.lastDay %}
                                     {{ 'regulation.period.one_day'|trans({
                                         '%firstDay%': ('regulation.period.days.' ~ dayRange.firstDay)|trans,
@@ -53,6 +53,8 @@
                                 {% endif %}
                             {% endfor %}
                             {% if not loop.last %}, {% endif %}
+                        {% else %}
+                            {{ 'regulation.period.all_days'|trans }}
                         {% endfor %}
                     </li>
                 {% endfor %}

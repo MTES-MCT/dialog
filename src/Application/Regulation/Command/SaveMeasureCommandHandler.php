@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Domain\Regulation\Measure;
@@ -16,6 +17,7 @@ final class SaveMeasureCommandHandler
         private IdFactoryInterface $idFactory,
         private MeasureRepositoryInterface $measureRepository,
         private CommandBusInterface $commandBus,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -52,6 +54,7 @@ final class SaveMeasureCommandHandler
                 uuid: $this->idFactory->make(),
                 location: $command->location,
                 type: $command->type,
+                createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
             ),
         );
 

@@ -15,4 +15,11 @@ final class DateUtilsTest extends TestCase
 
         $this->assertEquals(new \DateTimeImmutable('tomorrow'), $dateUtils->getTomorrow());
     }
+
+    public function testNow(): void
+    {
+        $dateUtils = new DateUtils('Europe/Paris');
+
+        $this->assertEquals((new \DateTimeImmutable('now'))->format('Y-m-d'), $dateUtils->getNow()->format('Y-m-d'));
+    }
 }

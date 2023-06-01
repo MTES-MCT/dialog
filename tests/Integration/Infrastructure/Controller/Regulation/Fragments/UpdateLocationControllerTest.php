@@ -45,15 +45,19 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
         // Add
         $values['location_form']['measures'][1]['type'] = 'alternateRoad';
+        $values['location_form']['measures'][1]['periods'][0]['applicableDays'] = ['monday'];
+        $values['location_form']['measures'][1]['periods'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
+        $values['location_form']['measures'][1]['periods'][0]['includeHolidays'] = true;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
-
         $crawler = $client->followRedirect();
+
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $this->assertSame('Circulation à sens unique', $crawler->filter('li')->eq(2)->text());
-        $this->assertSame('Circulation alternée', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('Circulation à sens unique tous les jours', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation alternée le lundi de 08h00 à 16h00', $crawler->filter('li')->eq(3)->text());
     }
 
     public function testRemoveMeasure(): void
@@ -74,7 +78,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => 'f15ed802-fa9b-4d75-ab04-d62ea46597e9']);
-        $this->assertNotContains('Circulation interdite', $crawler->filter('li')->extract(['_text']));
+        $this->assertNotContains('Circulation interdite tous les jours', $crawler->filter('li')->extract(['_text']));
     }
 
     public function testGeocodingFailure(): void

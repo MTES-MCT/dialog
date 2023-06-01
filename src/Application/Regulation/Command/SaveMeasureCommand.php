@@ -14,6 +14,7 @@ final class SaveMeasureCommand implements CommandInterface
     public ?string $type;
     public ?Location $location;
     public array $periods = [];
+    public ?\DateTimeInterface $createdAt = null;
 
     public function __construct(
         public readonly ?Measure $measure = null,

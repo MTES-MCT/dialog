@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
-use App\Application\Regulation\Query\Factory\LocationMeasuresViewsFactory;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
@@ -33,13 +31,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
         $locationViews = [];
 
         foreach ($regulationOrder->getLocations() as $location) {
-            $locationViews[] = new DetailLocationView(
-                uuid: $location->getUuid(),
-                address: LocationAddress::fromString($location->getAddress()),
-                fromHouseNumber: $location->getFromHouseNumber(),
-                toHouseNumber: $location->getToHouseNumber(),
-                measures: LocationMeasuresViewsFactory::create($location),
-            );
+            $locationViews[] = DetailLocationView::fromEntity($location);
         }
 
         return new RegulationOrderRecordSummaryView(

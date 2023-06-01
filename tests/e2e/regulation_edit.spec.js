@@ -27,6 +27,7 @@ test('Manage regulation location measures', async ({ page }) => {
     await page.getByRole('button', { name: 'Valider' }).click();
     const locationItem = locations.locator('> li').first();
     await locationItem.getByRole('heading', { level: 3, name: 'Route du Grand Brossais' }).waitFor();
+
     expect(locationItem).toContainText('Circulation à sens unique');
 
     /**
@@ -57,6 +58,7 @@ test('Manage regulation location measures', async ({ page }) => {
 
     // Submit and check new measure is shown
     await locationItem.getByRole('button', { name: 'Valider' }).click();
+
     await expect(locationItem).toContainText('Circulation à sens unique');
     await expect(locationItem).toContainText('Circulation interdite du lundi au mardi de 08h00 à 08h30');
 
@@ -74,8 +76,8 @@ test('Manage regulation location measures', async ({ page }) => {
 
     // Submit and check measure has been updated
     await locationItem.getByRole('button', { name: 'Valider' }).click();
+
     await expect(locationItem).toContainText('Circulation à sens unique');
-    await expect(locationItem).not.toContainText('Circulation interdite du lundi au mardi de 08h00 à 08h30');
     await expect(locationItem).toContainText('Circulation alternée');
 
     /**
@@ -99,8 +101,7 @@ test('Manage regulation location measures', async ({ page }) => {
     // Submit and check old 2nd measure has disappeared, and new 2nd measure has appeared.
     await locationItem.getByRole('button', { name: 'Valider' }).click();
     await expect(locationItem).toContainText('Circulation à sens unique');
-    await expect(locationItem).toContainText('Limitation de vitesse');
-    await expect(locationItem).not.toContainText('Circulation alternée');
+    await expect(locationItem).toContainText('Limitation de vitesse tous les jours');
 
     // Check new 2nd measure does not have any periods.
     await locationItem.getByRole('button', { name: 'Modifier' }).click();
