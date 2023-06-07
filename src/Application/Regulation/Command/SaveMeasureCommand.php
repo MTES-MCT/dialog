@@ -22,12 +22,8 @@ final class SaveMeasureCommand implements CommandInterface
         $this->type = $measure?->getType();
 
         if ($measure) {
-            foreach ($measure->getConditions() as $condition) {
-                if ($condition->getPeriod()) {
-                    $this->periods[] = new SavePeriodCommand($condition->getPeriod());
-
-                    continue;
-                }
+            foreach ($measure->getPeriods() as $period) {
+                $this->periods[] = new SavePeriodCommand($period);
             }
         }
     }

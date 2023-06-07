@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition\Period;
 
-use App\Domain\Condition\Condition;
+use App\Domain\Regulation\Measure;
 
 class Period
 {
     public function __construct(
         private string $uuid,
-        private Condition $condition,
+        private Measure $measure,
         private bool $includeHolidays,
         private array $applicableDays,
         private \DateTimeInterface $startTime,
@@ -43,9 +43,9 @@ class Period
         return $this->endTime;
     }
 
-    public function getCondition(): Condition
+    public function getMeasure(): Measure
     {
-        return $this->condition;
+        return $this->measure;
     }
 
     public function update(

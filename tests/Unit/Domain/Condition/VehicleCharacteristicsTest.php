@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Condition;
 
-use App\Domain\Condition\Condition;
 use App\Domain\Condition\Enum\VehicleCritairEnum;
 use App\Domain\Condition\Enum\VehicleTypeEnum;
 use App\Domain\Condition\Enum\VehicleUsageEnum;
@@ -15,10 +14,8 @@ final class VehicleCharacteristicsTest extends TestCase
 {
     public function testGetters(): void
     {
-        $condition = $this->createMock(Condition::class);
         $vehicleCharacteristics = new VehicleCharacteristics(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $condition,
             VehicleUsageEnum::NON_COMMERCIAL,
             VehicleTypeEnum::ELECTRIC_VEHICLES,
             VehicleCritairEnum::EL,
@@ -29,7 +26,6 @@ final class VehicleCharacteristicsTest extends TestCase
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $vehicleCharacteristics->getUuid());
-        $this->assertSame($condition, $vehicleCharacteristics->getCondition());
         $this->assertSame(VehicleUsageEnum::NON_COMMERCIAL, $vehicleCharacteristics->getVehicleUsage());
         $this->assertSame(VehicleTypeEnum::ELECTRIC_VEHICLES, $vehicleCharacteristics->getVehicleType());
         $this->assertSame(VehicleCritairEnum::EL, $vehicleCharacteristics->getVehicleCritair());
@@ -41,10 +37,8 @@ final class VehicleCharacteristicsTest extends TestCase
 
     public function testUpdate(): void
     {
-        $condition = $this->createMock(Condition::class);
         $vehicleCharacteristics = new VehicleCharacteristics(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $condition,
             VehicleUsageEnum::NON_COMMERCIAL,
             VehicleTypeEnum::ELECTRIC_VEHICLES,
             VehicleCritairEnum::EL,

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Condition\Period;
 
-use App\Domain\Condition\Condition;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
 
 final class PeriodTest extends TestCase
 {
     public function testGetters(): void
     {
-        $condition = $this->createMock(Condition::class);
+        $measure = $this->createMock(Measure::class);
         $start = new \DateTimeImmutable('2022-12-20 09:00:00');
         $end = new \DateTimeImmutable('2022-12-20 18:00:00');
         $period = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            $condition,
+            $measure,
             true,
             [ApplicableDayEnum::MONDAY, ApplicableDayEnum::THURSDAY],
             $start,
@@ -29,7 +29,7 @@ final class PeriodTest extends TestCase
         $this->assertSame([ApplicableDayEnum::MONDAY, ApplicableDayEnum::THURSDAY], $period->getApplicableDays());
         $this->assertSame($start, $period->getStartTime());
         $this->assertSame($end, $period->getEndTime());
-        $this->assertSame($condition, $period->getCondition());
+        $this->assertSame($measure, $period->getMeasure());
         $this->assertTrue($period->isIncludeHolidays());
 
         $newStart = new \DateTimeImmutable('2022-12-20 09:00:00');

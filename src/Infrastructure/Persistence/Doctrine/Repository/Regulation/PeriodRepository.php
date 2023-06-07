@@ -22,4 +22,9 @@ final class PeriodRepository extends ServiceEntityRepository implements PeriodRe
 
         return $period;
     }
+
+    public function delete(Period $period): void
+    {
+        $this->getEntityManager()->remove($period);
+    }
 }

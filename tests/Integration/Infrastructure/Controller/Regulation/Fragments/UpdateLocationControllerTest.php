@@ -40,8 +40,11 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['measures'][0]['type'] = 'oneWayTraffic'; // Edit
-        $values['location_form']['measures'][1]['type'] = 'alternateRoad'; // Add
+        // Edit
+        $values['location_form']['measures'][0]['type'] = 'oneWayTraffic';
+        $values['location_form']['measures'][0]['periods'] = []; // Remove period
+        // Add
+        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
