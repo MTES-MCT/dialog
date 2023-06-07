@@ -8,8 +8,8 @@
     <field name="endTime" type="time" column="end_time" nullable="false"/>
     <field name="includeHolidays" type="boolean" column="include_holidays" nullable="false"/>
     <field name="applicableDays" type="array" column="applicable_days" nullable="false"/>
-    <one-to-one field="condition" target-entity="App\Domain\Condition\Condition" inversed-by="period">
-        <join-column name="condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
-    </one-to-one>
+    <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="periods">
+        <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE" nullable="false" />
+    </many-to-one>
   </entity>
 </doctrine-mapping>

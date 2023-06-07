@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\Condition\DeletePeriodCommand;
 use App\Application\Regulation\Command\Condition\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveMeasureCommandHandler;
+use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
@@ -35,8 +37,14 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('d035fec0-30f3-4134-95b9-d74c68eb53e3');
 
+        $createdPeriod = $this->createMock(Period::class);
         $createdMeasure = $this->createMock(Measure::class);
         $location = $this->createMock(Location::class);
+
+        $createdMeasure
+            ->expects(self::once())
+            ->method('addPeriod')
+            ->with($createdPeriod);
 
         $this->measureRepository
             ->expects(self::once())
@@ -58,7 +66,8 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $this->commandBus
             ->expects(self::once())
             ->method('handle')
-            ->with($this->equalTo($periodCommand));
+            ->with($this->equalTo($periodCommand))
+            ->willReturn($createdPeriod);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,
@@ -82,23 +91,50 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
+        $period1 = $this->createMock(Period::class);
+        $period1
+            ->expects(self::exactly(2))
+            ->method('getUuid')
+            ->willReturn('e7ceb504-e6d2-43b7-9e1f-43f4baa17907');
+
+        $period2 = $this->createMock(Period::class);
+        $period2
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('28accfd6-d896-4ed9-96a3-1754f288f511');
+
         $measure = $this->createMock(Measure::class);
+
         $measure
             ->expects(self::once())
             ->method('update')
             ->with(MeasureTypeEnum::ALTERNATE_ROAD->value);
+
+        $measure
+            ->expects(self::exactly(2))
+            ->method('getPeriods')
+            ->willReturn([$period1, $period2]);
+
+        $measure
+            ->expects(self::once())
+            ->method('removePeriod')
+            ->with($period2);
 
         $this->measureRepository
             ->expects(self::never())
             ->method('add');
 
         $periodCommand = new SavePeriodCommand();
-        $periodCommand->measure = $measure;
+        $periodCommand1 = new SavePeriodCommand($period1);
+        $periodCommand1->measure = $measure;
+
+        $periodCommand2 = new SavePeriodCommand($period2);
+        $periodCommand2->measure = $measure;
 
         $this->commandBus
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('handle')
-            ->with($this->equalTo($periodCommand));
+            ->withConsecutive([$this->equalTo($periodCommand1)], [$this->equalTo(new DeletePeriodCommand($period2))]);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,
@@ -108,7 +144,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $command = new SaveMeasureCommand($measure);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
-        $command->periods = [$periodCommand];
+        $command->periods = [$periodCommand1]; // Removes period2.
 
         $result = $handler($command);
 
