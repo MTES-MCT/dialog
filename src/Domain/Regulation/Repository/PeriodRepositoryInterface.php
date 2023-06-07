@@ -9,4 +9,6 @@ use App\Domain\Condition\Period\Period;
 interface PeriodRepositoryInterface
 {
     public function add(Period $period): Period;
+
+    public function delete(Period $period): void;
 }

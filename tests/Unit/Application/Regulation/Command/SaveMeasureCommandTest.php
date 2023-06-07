@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\Regulation\Command\Condition\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
-use App\Domain\Condition\Condition;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
@@ -28,14 +27,8 @@ final class SaveMeasureCommandTest extends TestCase
     public function testWithMeasure(): void
     {
         $location = $this->createMock(Location::class);
-        $condition = $this->createMock(Condition::class);
         $period = $this->createMock(Period::class);
         $measure = $this->createMock(Measure::class);
-
-        $condition
-            ->expects(self::exactly(2))
-            ->method('getPeriod')
-            ->willReturn($period);
 
         $measure
             ->expects(self::once())
@@ -44,8 +37,8 @@ final class SaveMeasureCommandTest extends TestCase
 
         $measure
             ->expects(self::once())
-            ->method('getConditions')
-            ->willReturn([$condition]);
+            ->method('getPeriods')
+            ->willReturn([$period]);
 
         $measure
             ->expects(self::once())

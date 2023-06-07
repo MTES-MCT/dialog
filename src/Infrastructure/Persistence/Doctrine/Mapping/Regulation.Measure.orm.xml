@@ -10,6 +10,6 @@
             <join-column name="location_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
         </join-columns>
     </many-to-one>
-    <one-to-many field="conditions" target-entity="App\Domain\Condition\Condition" mapped-by="measure"/>
+    <one-to-many field="periods" target-entity="App\Domain\Condition\Period\Period" mapped-by="measure"/>
   </entity>
 </doctrine-mapping>

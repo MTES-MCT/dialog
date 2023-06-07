@@ -33,8 +33,10 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 {% endblock form_row %}
 
 {% block form_label %}
-  {%- set label_class = label_attr.class|default('fr-label') -%}
-  {%- set label_attr = label_attr|merge({class: label_class}) -%}
+  {% if element|default('label') == 'label' %}
+    {%- set label_class = (label_attr.class|default('') ~ ' fr-label')|trim -%}
+    {%- set label_attr = label_attr|merge({class: label_class}) -%}
+  {% endif %}
   {{ parent() }}
 {% endblock %}
 

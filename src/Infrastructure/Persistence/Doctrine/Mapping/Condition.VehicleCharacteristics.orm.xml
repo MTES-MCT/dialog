@@ -27,8 +27,5 @@
             <option name="comment">Unit in meters.</option>
         </options>
     </field>
-    <one-to-one field="condition" target-entity="App\Domain\Condition\Condition" inversed-by="vehicleCharacteristics">
-        <join-column name="condition_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE" />
-    </one-to-one>
   </entity>
 </doctrine-mapping>
