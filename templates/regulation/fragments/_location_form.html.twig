@@ -61,7 +61,7 @@
     </li>
 {% endmacro %}
 
-{% macro measures_list_item(form, index) %}
+{% macro measures_list_item(form, index, position) %}
     <li
         class="app-card fr-p-3w"
         data-controller="remove"
@@ -70,17 +70,15 @@
     >
         <div class="app-card__header">
             <div class="app-card__title">
-                <h4 class="fr-h5 fr-mb-0" data-form-collection-indexed-template="{{ 'regulation.measure'|trans }}">
-                    {{ 'regulation.measure'|trans }} {{ index }}
+                <h4 class="fr-h5 fr-mb-0" data-form-collection-position-template="{{ 'regulation.measure'|trans }}">
+                    {{ 'regulation.measure'|trans }} {{ position }}
                 </h4>
                 <p class="fr-text-sm fr-text-mention--grey fr-m-0">
                     {{ 'regulation.measure_list_item.help'|trans }}
                 </p>
             </div>
         </div>
-        <div class="app-card__content">
-            {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
-        </div>
+
         <div class="app-card__actions">
             <button
                 type="button"
@@ -91,39 +89,42 @@
             </button>
         </div>
 
-        <fieldset
-            class="fr-fieldset"
-            aria-labelledby="periods-legend"
-            data-controller="form-collection"
-            data-form-collection-prototype-key-value="period"
-            data-form-collection-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
-            data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_index__')|e('html_attr') }}"
-        >
-            {{ form_label(form.periods, null, { element: 'legend', label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
-            <ul
-                id="period-list"
-                class="fr-raw-list fr-mb-2w"
-                data-testid="period-list"
-                data-form-collection-target="collectionContainer"
-                data-action="remove:child-removed->form-collection#syncIndices"
-                aria-label="{{ form.periods.vars.label|trans }}"
-            >
-                {% for item in form.periods %}
-                    {{ _self.periods_list_item(item, loop.index) }}
-                {% else %}
-                    {% do form.periods.setRendered %}
-                {% endfor %}
-            </ul>
+        <div class="app-card__content">
+            {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
 
-            <button
-                type="button"
-                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
-                data-action="form-collection#addCollectionElement"
-                aria-controls="period-list"
+            <fieldset
+                class="fr-fieldset"
+                aria-labelledby="periods-legend"
+                data-controller="form-collection"
+                data-form-collection-prototype-key-value="period"
+                data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
+                data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
             >
-                {{ 'regulation.period.add'|trans }}
-            </button>
-        </fieldset>
+                {{ form_label(form.periods, null, { element: 'legend', label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
+                <ul
+                    id="period-list"
+                    class="fr-raw-list fr-mb-2w"
+                    data-testid="period-list"
+                    data-form-collection-target="collectionContainer"
+                    aria-label="{{ form.periods.vars.label|trans }}"
+                >
+                    {% for item in form.periods %}
+                        {{ _self.periods_list_item(item, loop.index) }}
+                    {% else %}
+                        {% do form.periods.setRendered %}
+                    {% endfor %}
+                </ul>
+
+                <button
+                    type="button"
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                    data-action="form-collection#addCollectionElement"
+                    aria-controls="period-list"
+                >
+                    {{ 'regulation.period.add'|trans }}
+                </button>
+            </fieldset>
+        </div>
     </li>
 {% endmacro %}
 
@@ -136,7 +137,7 @@
             </h3>
         </div>
         <div class="app-card__content">
-            {{ form_start(form) }}
+            {{ form_start(form, {attr: {id: 'location-form'}}) }}
                 {{ form_errors(form) }}
                 {{ form_row(form.address, {
                     group_class: 'fr-input-group',
@@ -155,8 +156,8 @@
                 <div
                     data-controller="form-collection"
                     data-form-collection-prototype-key-value="measure"
-                    data-form-collection-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
-                    data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_index__')|e('html_attr') }}"
+                    data-form-collection-next-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
+                    data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_name__', '__measure_position__')|e('html_attr') }}"
                     class="fr-mb-4w"
                 >
                     <ul
@@ -164,11 +165,11 @@
                         class="fr-raw-list fr-mb-2w"
                         data-testid="measure-list"
                         data-form-collection-target="collectionContainer"
-                        data-action="remove:child-removed->form-collection#syncIndices"
+                        data-action="remove:child-removed->form-collection#syncPositions"
                         aria-label="{{ form.measures.vars.label|trans }}"
                     >
                         {% for item in form.measures %}
-                            {{ _self.measures_list_item(item, loop.index) }}
+                            {{ _self.measures_list_item(item, loop.index, loop.index) }}
                         {% else %}
                             {% do form.measures.setRendered %}
                         {% endfor %}
@@ -184,9 +185,21 @@
                     {{ form_errors(form.measures) }}
                 </div>
 
-                <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">{{ "common.cancel"|trans }}</a>
-                {{ form_widget(form.save, {attr: {class: 'fr-btn'}}) }}
-            {{ form_end(form) }}
+                {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+
+            <ul class="fr-btns-group fr-btns-group--inline">
+                <li>
+                    <form method="GET" action="{{ cancelUrl }}">
+                        <button type="submit" class="fr-btn fr-btn--tertiary">
+                            {{ "common.cancel"|trans }}
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    {{ form_widget(form.save, {attr: {class: 'fr-btn', form: 'location-form'}}) }}
+                </li>
+            </ul>
         </div>
     </div>
 </turbo-frame>

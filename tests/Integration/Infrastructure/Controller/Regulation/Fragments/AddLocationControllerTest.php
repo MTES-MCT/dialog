@@ -172,10 +172,10 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/add');
+        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/add');
         $this->assertResponseStatusCodeSame(200);
 
-        $client->clickLink('Annuler');
+        $client->submit($crawler->selectButton('Annuler')->form());
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulation_location_add_link', ['regulationOrderRecordUuid' => '3ede8b1a-1816-4788-8510-e08f45511cb5']);
     }

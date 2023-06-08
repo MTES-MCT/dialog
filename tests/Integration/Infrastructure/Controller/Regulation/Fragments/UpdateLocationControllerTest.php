@@ -122,10 +122,10 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
         $this->assertResponseStatusCodeSame(200);
 
-        $client->clickLink('Annuler');
+        $client->submit($crawler->selectButton('Annuler')->form());
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
     }
