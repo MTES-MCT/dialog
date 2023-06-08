@@ -21,8 +21,17 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
         );
+        $period2 = new Period(
+            uuid: 'c01b254c-b7db-4761-9490-b8fea7d42312',
+            measure: $this->getReference('measure1'),
+            includeHolidays: true,
+            applicableDays: ['monday'],
+            startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
+            endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+        );
 
         $manager->persist($period1);
+        $manager->persist($period2);
 
         $manager->flush();
     }
