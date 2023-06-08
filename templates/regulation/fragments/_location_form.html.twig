@@ -185,21 +185,17 @@
                     {{ form_errors(form.measures) }}
                 </div>
 
-                {{ form_row(form._token) }}
-            {{ form_end(form, {render_rest: false}) }}
-
-            <ul class="fr-btns-group fr-btns-group--inline">
-                <li>
-                    <form method="GET" action="{{ cancelUrl }}">
-                        <button type="submit" class="fr-btn fr-btn--tertiary">
+                <ul class="fr-btns-group fr-btns-group--inline">
+                    <li>
+                        <a href="{{ cancelUrl }}" role="button" class="fr-btn fr-btn--tertiary">
                             {{ "common.cancel"|trans }}
-                        </button>
-                    </form>
-                </li>
-                <li>
-                    {{ form_widget(form.save, {attr: {class: 'fr-btn', form: 'location-form'}}) }}
-                </li>
-            </ul>
+                        </a>
+                    </li>
+                    <li>
+                        {{ form_widget(form.save, {attr: {class: 'fr-btn', form: 'location-form'}}) }}
+                    </li>
+                </ul>
+            {{ form_end(form) }}
         </div>
     </div>
 </turbo-frame>
