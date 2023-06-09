@@ -11,8 +11,8 @@ test('Manage regulation location measures', async ({ page }) => {
     await page.goto('/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2');
 
     // Check regulation has no location yet
-    const locations = page.getByRole('region', { name: 'Localisations' }).getByRole('list');
-    expect(await locations.getByRole('listitem').count()).toBe(0);
+    const locations = page.getByRole('region', { name: 'Localisations' }).getByRole('list').first();
+    expect(await locations.locator('> li').count()).toBe(0);
 
     // Fill mandatory location fields
     await page.locator('text=Voie ou ville').fill('Route du Grand Brossais, 44260 Savenay');
@@ -25,8 +25,7 @@ test('Manage regulation location measures', async ({ page }) => {
 
     // Submit and check location was added with the given measure
     await page.getByRole('button', { name: 'Valider' }).click();
-    expect(await locations.getByRole('listitem').count()).toBe(1);
-    const locationItem = locations.getByRole('listitem').first();
+    const locationItem = locations.locator('> li').first();
     await locationItem.getByRole('heading', { level: 3, name: 'Route du Grand Brossais' }).waitFor();
     expect(locationItem).toContainText('Circulation à sens unique');
 
@@ -44,7 +43,9 @@ test('Manage regulation location measures', async ({ page }) => {
     await locationItem.getByRole('button', { name: 'Ajouter une restriction' }).click();
     const measureItem2 = measureList.locator('> li').nth(1);
     expect(await measureItem2.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 2');
-    await measureItem2.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation interdite' });
+    const restrictionType2 = measureItem2.getByRole('combobox', { name: 'Type de restriction' });
+    expect(await restrictionType2.getAttribute('name')).toBe('location_form[measures][1][type]'); // Check field index.
+    await restrictionType2.selectOption({ label: 'Circulation interdite' });
 
     // Add a period
     await measureItem2.getByRole('button', { name: 'Ajouter un créneau horaire' }).click();
@@ -92,7 +93,8 @@ test('Manage regulation location measures', async ({ page }) => {
     // Add a new 2nd measure
     await locationItem.getByRole('button', { name: 'Ajouter une restriction' }).click();
     expect(await measureItem2.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 2');
-    await measureItem2.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Limitation de vitesse' });
+    expect(await restrictionType2.getAttribute('name')).toBe('location_form[measures][2][type]'); // Check field index.
+    await restrictionType2.selectOption({ label: 'Limitation de vitesse' });
 
     // Submit and check old 2nd measure has disappeared, and new 2nd measure has appeared.
     await locationItem.getByRole('button', { name: 'Valider' }).click();

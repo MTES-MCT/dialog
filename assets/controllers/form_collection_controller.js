@@ -4,26 +4,36 @@ export default class extends Controller {
     static targets = ['collectionContainer', 'collectionItem'];
 
     static values = {
-        index: Number,
+        nextIndex: Number,
         prototype: String,
         prototypeKey: String,
     };
 
+    connect() {
+        // This may be readjusted when the size of the collection changes (eg. an item gets deleted).
+        // But indexValue MUST NOT go down, only go up. This guarantees field element IDs remain unique.
+        this._nextPosition = this.nextIndexValue + 1;
+    }
+
     addCollectionElement(_event) {
         const el = document.createElement('div');
         el.innerHTML = this.prototypeValue
-            .replace(new RegExp(`__${this.prototypeKeyValue}_name__`, 'g'), this.indexValue)
-            .replace(new RegExp(`__${this.prototypeKeyValue}_index__`, 'g'), this.indexValue + 1);
+            .replace(new RegExp(`__${this.prototypeKeyValue}_name__`, 'g'), this.nextIndexValue)
+            .replace(new RegExp(`__${this.prototypeKeyValue}_position__`, 'g'), this._nextPosition);
 
         this.collectionContainerTarget.appendChild(el.children[0]);
-        this.indexValue++;
+        this.nextIndexValue++;
+        this._nextPosition++;
     }
 
-    syncIndices(_event) {
-        this.indexValue = this.collectionItemTargets.length;
+    syncPositions(_event) {
+        this._nextPosition = this.collectionItemTargets.length + 1;
+
         this.collectionItemTargets.forEach((el, index) => {
-            el.querySelectorAll('[data-form-collection-indexed-template]').forEach(templatedEl => {
-                templatedEl.textContent = `${templatedEl.dataset.formCollectionIndexedTemplate} ${index + 1}`;
+            const position = index + 1;
+
+            el.querySelectorAll('[data-form-collection-position-template]').forEach(templatedEl => {
+                templatedEl.textContent = `${templatedEl.dataset.formCollectionPositionTemplate} ${position}`;
             });
         });
     }
