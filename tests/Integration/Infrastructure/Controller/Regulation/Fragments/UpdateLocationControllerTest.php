@@ -61,6 +61,31 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation alternée le lundi de 08h00 à 16h00', $crawler->filter('li')->eq(3)->text());
     }
 
+    public function testDeletePeriod(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+
+        // Remove period
+        $values['location_form']['measures'][0]['periods'] = []; // Remove period
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
+        $this->assertSame('Circulation interdite tous les jours', $crawler->filter('li')->eq(2)->text());
+    }
+
     public function testRemoveMeasure(): void
     {
         $client = $this->login();

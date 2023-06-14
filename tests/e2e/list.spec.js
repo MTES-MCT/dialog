@@ -32,19 +32,19 @@ test.describe('Regulation list', () => {
         const deleteModal = page.locator('[id="regulation-delete-modal"]');
         await expect(deleteModal).not.toBeVisible();
 
-        const deleteBtn = page.getByRole('button', { name: "Supprimer l'arrêté FO1/2023", exact: true });
+        const deleteBtn = page.getByRole('button', { name: "Supprimer l'arrêté FO2/2023", exact: true });
         await deleteBtn.click();
         await expect(deleteModal).toBeVisible();
 
         // Don't delete
         await deleteModal.getByRole('button', { name: 'Ne pas supprimer', exact: true }).click();
         await expect(deleteModal).not.toBeVisible();
-        await expect(page.getByText('FO1/2023', { exact: true })).toBeVisible();
+        await expect(page.getByText('FO2/2023', { exact: true })).toBeVisible();
 
         // Proceed to deletion
         await deleteBtn.click();
         await deleteModal.getByRole('button', { name: 'Supprimer', exact: true }).click();
         await expect(deleteModal).not.toBeVisible();
-        await expect(page.getByText('FO1/2023', { exact: true })).not.toBeVisible();
+        await expect(page.getByText('FO2/2023', { exact: true })).not.toBeVisible();
     });
 });
