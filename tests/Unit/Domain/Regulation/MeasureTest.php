@@ -20,15 +20,19 @@ final class MeasureTest extends TestCase
         $period2 = $this->createMock(Period::class);
         $period3 = $this->createMock(Period::class);
 
+        $date = new \DateTime('2023-06-06');
+
         $measure = new Measure(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             location: $location,
             type: MeasureTypeEnum::NO_ENTRY->value,
+            createdAt: $date,
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $measure->getUuid());
         $this->assertSame($location, $measure->getLocation());
         $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $measure->getType());
+        $this->assertSame($date, $measure->getCreatedAt());
         $this->assertEmpty($measure->getPeriods()); // Automatically set by Doctrine
 
         $measure->update(MeasureTypeEnum::ALTERNATE_ROAD->value);

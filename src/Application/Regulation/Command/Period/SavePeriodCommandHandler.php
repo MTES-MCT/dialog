@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command\Condition;
+namespace App\Application\Regulation\Command\Period;
 
 use App\Application\IdFactoryInterface;
 use App\Domain\Condition\Period\Period;
@@ -18,6 +18,8 @@ final class SavePeriodCommandHandler
 
     public function __invoke(SavePeriodCommand $command): Period
     {
+        $command->sortApplicableDays();
+
         if ($command->period) {
             $command->period->update(
                 includeHolidays: $command->includeHolidays,

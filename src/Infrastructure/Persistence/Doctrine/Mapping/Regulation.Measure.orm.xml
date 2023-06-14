@@ -5,11 +5,12 @@
     table="measure">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="type" type="string" column="type" nullable="false" length="16"/>
+    <field name="createdAt" type="datetimetz" column="created_at" nullable="false"/>
     <many-to-one field="location" target-entity="App\Domain\Regulation\Location" inversed-by="measures">
         <join-columns>
             <join-column name="location_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
         </join-columns>
     </many-to-one>
-    <one-to-many field="periods" target-entity="App\Domain\Condition\Period\Period" mapped-by="measure"/>
+    <one-to-many field="periods" target-entity="App\Domain\Condition\Period\Period" mapped-by="measure" fetch="EAGER"/>
   </entity>
 </doctrine-mapping>

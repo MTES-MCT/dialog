@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command\Condition;
+namespace App\Tests\Unit\Application\Regulation\Command\Period;
 
-use App\Application\Regulation\Command\Condition\DeletePeriodCommand;
-use App\Application\Regulation\Command\Condition\DeletePeriodCommandHandler;
+use App\Application\Regulation\Command\Period\DeletePeriodCommand;
+use App\Application\Regulation\Command\Period\DeletePeriodCommandHandler;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Repository\PeriodRepositoryInterface;
 use PHPUnit\Framework\TestCase;

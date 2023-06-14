@@ -14,7 +14,7 @@ class DetailLocationView
         public readonly LocationAddress $address,
         public readonly ?string $fromHouseNumber,
         public readonly ?string $toHouseNumber,
-        public ?array $measures,
+        public array $measures,
     ) {
     }
 
@@ -23,9 +23,17 @@ class DetailLocationView
         $measures = [];
 
         foreach ($location->getMeasures() as $measure) {
-            $measures[] = new MeasureView(
-                $measure->getType(),
-            );
+            $periods = [];
+
+            foreach ($measure->getPeriods() as $period) {
+                $periods[] = new PeriodView(
+                    $period->getDaysRanges(),
+                    $period->getStartTime(),
+                    $period->getEndTime(),
+                );
+            }
+
+            $measures[] = new MeasureView($measure->getType(), $periods);
         }
 
         return new self(
