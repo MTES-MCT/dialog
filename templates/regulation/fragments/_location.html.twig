@@ -49,10 +49,10 @@
                                         '%startTime%': period.startTime|date('H\\hi'),
                                         '%endTime%': period.endTime|date('H\\hi'),
                                     })|lower }}
-                                    {% if not loop.last %}, {% endif %}
                                 {% endif %}
+                                {% if not loop.last %}- {% endif %}
                             {% endfor %}
-                            {% if not loop.last %}, {% endif %}
+                            {% if not loop.last %}- {% endif %}
                         {% else %}
                             {{ 'regulation.period.all_days'|trans }}
                         {% endfor %}
