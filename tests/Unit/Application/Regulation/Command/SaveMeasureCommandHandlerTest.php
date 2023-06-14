@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\Condition\DeletePeriodCommand;
-use App\Application\Regulation\Command\Condition\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\DeletePeriodCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveMeasureCommandHandler;
 use App\Domain\Condition\Period\Period;
@@ -22,12 +23,14 @@ final class SaveMeasureCommandHandlerTest extends TestCase
     private $idFactory;
     private $measureRepository;
     private $commandBus;
+    private $dateUtils;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->measureRepository = $this->createMock(MeasureRepositoryInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
     public function testCreate(): void
@@ -36,6 +39,12 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('make')
             ->willReturn('d035fec0-30f3-4134-95b9-d74c68eb53e3');
+
+        $now = new \DateTimeImmutable('2023-06-13');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($now);
 
         $createdPeriod = $this->createMock(Period::class);
         $createdMeasure = $this->createMock(Measure::class);
@@ -55,6 +64,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         location: $location,
                         type: MeasureTypeEnum::ALTERNATE_ROAD->value,
+                        createdAt: $now,
                     ),
                 ),
             )
@@ -73,6 +83,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->measureRepository,
             $this->commandBus,
+            $this->dateUtils,
         );
 
         $command = new SaveMeasureCommand();
@@ -85,11 +96,78 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $this->assertSame($createdMeasure, $result);
     }
 
+    public function testCreateWithCreatedCommand(): void
+    {
+        $createdAt = new \DateTimeImmutable('2023-06-12');
+
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('d035fec0-30f3-4134-95b9-d74c68eb53e3');
+        $this->dateUtils
+            ->expects(self::never())
+            ->method('getNow');
+
+        $createdPeriod = $this->createMock(Period::class);
+        $createdMeasure = $this->createMock(Measure::class);
+        $location = $this->createMock(Location::class);
+
+        $createdMeasure
+            ->expects(self::once())
+            ->method('addPeriod')
+            ->with($createdPeriod);
+
+        $this->measureRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Measure(
+                        uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
+                        location: $location,
+                        type: MeasureTypeEnum::ALTERNATE_ROAD->value,
+                        createdAt: $createdAt,
+                    ),
+                ),
+            )
+            ->willReturn($createdMeasure);
+
+        $periodCommand = new SavePeriodCommand();
+        $periodCommand->measure = $createdMeasure;
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with($this->equalTo($periodCommand))
+            ->willReturn($createdPeriod);
+
+        $handler = new SaveMeasureCommandHandler(
+            $this->idFactory,
+            $this->measureRepository,
+            $this->commandBus,
+            $this->dateUtils,
+        );
+
+        $command = new SaveMeasureCommand();
+        $command->location = $location;
+        $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->periods = [$periodCommand];
+        $command->createdAt = $createdAt;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdMeasure, $result);
+    }
+
     public function testUpdate(): void
     {
         $this->idFactory
             ->expects(self::never())
             ->method('make');
+
+        $this->dateUtils
+            ->expects(self::never())
+            ->method('getNow');
 
         $period1 = $this->createMock(Period::class);
         $period1
@@ -124,7 +202,6 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
-        $periodCommand = new SavePeriodCommand();
         $periodCommand1 = new SavePeriodCommand($period1);
         $periodCommand1->measure = $measure;
 
@@ -140,6 +217,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->measureRepository,
             $this->commandBus,
+            $this->dateUtils,
         );
 
         $command = new SaveMeasureCommand($measure);

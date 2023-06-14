@@ -12,4 +12,9 @@ final class DateUtilsMock implements DateUtilsInterface
     {
         return new \DateTimeImmutable('2023-05-10');
     }
+
+    public function getNow(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable('2023-06-09');
+    }
 }

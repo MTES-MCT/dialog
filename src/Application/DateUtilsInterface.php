@@ -7,4 +7,6 @@ namespace App\Application;
 interface DateUtilsInterface
 {
     public function getTomorrow(): \DateTimeImmutable;
+
+    public function getNow(): \DateTimeImmutable;
 }

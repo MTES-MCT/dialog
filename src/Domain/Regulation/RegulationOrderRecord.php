@@ -43,6 +43,11 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface, Re
         return $this->organization->getUuid();
     }
 
+    public function getOrganizationName(): ?string
+    {
+        return $this->organization->getName();
+    }
+
     public function getRegulationOrder(): RegulationOrder
     {
         return $this->regulationOrder;

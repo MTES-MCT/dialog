@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
-use App\Application\Regulation\Command\Condition\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

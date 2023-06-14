@@ -46,11 +46,20 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
+        $measure1
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn($startDate);
+
         $measure2 = $this->createMock(Measure::class);
         $measure2
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::ALTERNATE_ROAD->value);
+        $measure2
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn($startDate);
 
         $this->originalRegulationOrderRecord
             ->expects(self::once())
@@ -148,9 +157,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $measureCommand1 = new SaveMeasureCommand();
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand1->createdAt = $startDate;
 
         $measureCommand2 = new SaveMeasureCommand();
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $measureCommand2->createdAt = $startDate;
 
         $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
         $locationCommand1->address = 'Route du Lac 44260 Savenay';

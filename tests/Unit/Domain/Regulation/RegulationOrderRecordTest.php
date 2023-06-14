@@ -16,6 +16,14 @@ final class RegulationOrderRecordTest extends TestCase
     {
         $createdAt = new \DateTimeImmutable('2022-11-22');
         $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('4cea911e-edbc-49f1-a855-7a38d21e1209');
+        $organization
+            ->expects(self::once())
+            ->method('getName')
+            ->willReturn('Dialog');
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrderRecord = new RegulationOrderRecord(
             '6598fd41-85cb-42a6-9693-1bc45f4dd392',
@@ -28,6 +36,8 @@ final class RegulationOrderRecordTest extends TestCase
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrderRecord->getUuid());
         $this->assertSame($regulationOrder, $regulationOrderRecord->getRegulationOrder());
         $this->assertSame($organization, $regulationOrderRecord->getOrganization());
+        $this->assertSame('4cea911e-edbc-49f1-a855-7a38d21e1209', $regulationOrderRecord->getOrganizationUuid());
+        $this->assertSame('Dialog', $regulationOrderRecord->getOrganizationName());
         $this->assertSame($createdAt, $regulationOrderRecord->getCreatedAt());
         $this->assertSame(RegulationOrderRecordStatusEnum::PUBLISHED, $regulationOrderRecord->getStatus());
         $this->assertFalse($regulationOrderRecord->isDraft());

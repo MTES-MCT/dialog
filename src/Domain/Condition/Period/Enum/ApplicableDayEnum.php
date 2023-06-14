@@ -14,4 +14,16 @@ enum ApplicableDayEnum: string
     case FRIDAY = 'friday';
     case SATURDAY = 'saturday';
     case SUNDAY = 'sunday';
+
+    public static function getValues(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
+    public static function getDayIndex(string $day): ?int
+    {
+        $key = array_search($day, self::getValues());
+
+        return \is_int($key) ? $key : null;
+    }
 }

@@ -18,18 +18,21 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             'fa8f07e7-2db6-444d-bb41-3815b46198be',
             $this->getReference('location3'),
             MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-05-12'),
         );
 
         $measure2 = new Measure(
             'f0872729-a4da-453e-9cc7-af4d6e1fc53d',
             $this->getReference('location3'),
             MeasureTypeEnum::ALTERNATE_ROAD->value,
+            new \DateTime('2023-05-10'),
         );
 
         $measure3 = new Measure(
             'e48cbfff-bb04-428e-9cb0-22456fd7aab6',
             $this->getReference('location1'),
             MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-05-11'),
         );
 
         $manager->persist($measure1);

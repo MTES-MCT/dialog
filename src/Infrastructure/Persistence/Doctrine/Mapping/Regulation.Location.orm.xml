@@ -22,6 +22,10 @@
     <many-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="locations">
         <join-column name="regulation_order_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>
-    <one-to-many field="measures" target-entity="App\Domain\Regulation\Measure" mapped-by="location"/>
+    <one-to-many field="measures" target-entity="App\Domain\Regulation\Measure" mapped-by="location">
+        <order-by>
+            <order-by-field name="createdAt" direction="ASC" />
+        </order-by>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

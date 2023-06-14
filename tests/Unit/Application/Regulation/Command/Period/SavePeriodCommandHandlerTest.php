@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command\Condition;
+namespace App\Tests\Unit\Application\Regulation\Command\Period;
 
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\Condition\SavePeriodCommand;
-use App\Application\Regulation\Command\Condition\SavePeriodCommandHandler;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommandHandler;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Measure;
@@ -46,7 +46,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
                         includeHolidays: true,
-                        applicableDays: [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value],
+                        applicableDays: [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::WEDNESDAY->value],
                         startTime: $start,
                         endTime: $end,
                     ),
@@ -63,7 +63,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->measure = $measure;
         $command->startTime = $start;
         $command->endTime = $end;
-        $command->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value];
+        $command->applicableDays = [ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::WEDNESDAY->value];
         $command->includeHolidays = true;
 
         $result = $handler($command);
@@ -81,11 +81,10 @@ final class SavePeriodCommandHandlerTest extends TestCase
             ->method('make');
 
         $period = $this->createMock(Period::class);
-
         $period
             ->expects(self::once())
             ->method('update')
-            ->with(true, [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value], $start, $end);
+            ->with(true, [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::WEDNESDAY->value], $start, $end);
 
         $this->periodRepository
             ->expects(self::never())
@@ -99,7 +98,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command = new SavePeriodCommand($period);
         $command->startTime = $start;
         $command->endTime = $end;
-        $command->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value];
+        $command->applicableDays = [ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::WEDNESDAY->value];
         $command->includeHolidays = true;
 
         $result = $handler($command);

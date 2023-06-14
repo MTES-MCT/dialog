@@ -16,6 +16,7 @@ class Measure
         private string $uuid,
         private Location $location,
         private string $type,
+        private \DateTimeInterface $createdAt,
     ) {
         $this->periods = new ArrayCollection();
     }
@@ -38,6 +39,11 @@ class Measure
     public function getPeriods(): iterable
     {
         return $this->periods;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
     }
 
     public function addPeriod(Period $period): void

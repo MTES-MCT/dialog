@@ -8,207 +8,159 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\MeasureView;
+use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
-use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationAddress;
+use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
 {
-    public function provideGetOne(): array
-    {
-        return [
-            [
-                [
-                    [
-                        'uuid' => '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
-                        'address' => 'Avenue de Fonneuve 82000 Montauban',
-                        'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
-                        'fromHouseNumber' => '695',
-                        'toHouseNumber' => '253',
-                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
-                    ],
-                    [
-                        'uuid' => '97ff1036-14cf-4fc4-b14b-0bb4095c9b39',
-                        'address' => 'Rue de Paris 82000 Montauban',
-                        'locationAddress' => new LocationAddress('82000', 'Montauban', 'Rue de Paris'),
-                        'fromHouseNumber' => null,
-                        'toHouseNumber' => null,
-                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
-                    ],
-                ],
-            ],
-            [
-                [
-                    [
-                        'uuid' => '3edbb5e8-ad7e-4b81-99b9-6b097cf23cb9',
-                        'address' => 'Avenue de Fonneuve 82000 Montauban',
-                        'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
-                        'fromHouseNumber' => null,
-                        'toHouseNumber' => null,
-                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
-                    ],
-                    // Same locations with 2 differents measures
-                    [
-                        'uuid' => 'fe0a44cb-53b5-4e94-bb7e-dfb8d20be061',
-                        'address' => 'Avenue de Paris 82000 Montauban',
-                        'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Paris'),
-                        'fromHouseNumber' => '10',
-                        'toHouseNumber' => '90',
-                        'measureType' => MeasureTypeEnum::NO_ENTRY->value,
-                    ],
-                    [
-                        'uuid' => 'fe0a44cb-53b5-4e94-bb7e-dfb8d20be061',
-                        'address' => 'Avenue de Paris 82000 Montauban',
-                        'locationAddress' => new LocationAddress('82000', 'Montauban', 'Avenue de Paris'),
-                        'fromHouseNumber' => '10',
-                        'toHouseNumber' => '90',
-                        'measureType' => MeasureTypeEnum::ALTERNATE_ROAD->value,
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideGetOne
-     */
-    public function testGetOne(array $locations): void
+    public function testGetOne(): void
     {
         $startDate = new \DateTime('2022-12-07');
         $endDate = new \DateTime('2022-12-17');
 
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $startTime = new \DateTime('2022-12-07 08:00:00');
+        $endTime = new \DateTime('2022-12-17 19:00:00');
 
-        $summaryRows = [
+        $daysRange1 = [
             [
-                'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                'identifier' => 'F01/2023',
-                'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-                'organizationName' => 'DiaLog',
-                'status' => 'draft',
-                'category' => 'other',
-                'otherCategoryText' => 'Other category 1',
-                'description' => 'Description 1',
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'locationUuid' => $locations[0]['uuid'],
-                'address' => $locations[0]['address'],
-                'fromHouseNumber' => $locations[0]['fromHouseNumber'],
-                'toHouseNumber' => $locations[0]['toHouseNumber'],
-                'measureType' => $locations[0]['measureType'],
+                'firstDay' => ApplicableDayEnum::MONDAY->value,
+                'lastDay' => ApplicableDayEnum::WEDNESDAY->value,
             ],
             [
-                'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                'identifier' => 'F01/2023',
-                'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-                'organizationName' => 'DiaLog',
-                'status' => 'draft',
-                'category' => 'other',
-                'otherCategoryText' => 'Other category 1',
-                'description' => 'Description 1',
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'locationUuid' => $locations[1]['uuid'],
-                'address' => $locations[1]['address'],
-                'fromHouseNumber' => $locations[1]['fromHouseNumber'],
-                'toHouseNumber' => $locations[1]['toHouseNumber'],
-                'measureType' => $locations[1]['measureType'],
+                'firstDay' => ApplicableDayEnum::FRIDAY->value,
+                'lastDay' => ApplicableDayEnum::FRIDAY->value,
+            ],
+        ];
+        $daysRange2 = [
+            [
+                'firstDay' => ApplicableDayEnum::MONDAY->value,
+                'lastDay' => ApplicableDayEnum::MONDAY->value,
             ],
         ];
 
-        $expectedLocation1Measures = [new MeasureView($locations[1]['measureType'])];
-
-        if (!empty($locations[2])) {
-            $summaryRows[] = [
-                'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                'identifier' => 'F01/2023',
-                'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-                'organizationName' => 'DiaLog',
-                'status' => 'draft',
-                'category' => 'other',
-                'otherCategoryText' => 'Other category 1',
-                'description' => 'Description 1',
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'locationUuid' => $locations[2]['uuid'],
-                'address' => $locations[2]['address'],
-                'fromHouseNumber' => $locations[2]['fromHouseNumber'],
-                'toHouseNumber' => $locations[2]['toHouseNumber'],
-                'measureType' => $locations[2]['measureType'],
-            ];
-
-            $expectedLocation1Measures = [
-                new MeasureView($locations[1]['measureType']),
-                new MeasureView($locations[2]['measureType']),
-            ];
-        }
-
-        $regulationOrderRecordRepository
+        $period1 = $this->createMock(Period::class);
+        $period1
             ->expects(self::once())
-            ->method('findOneForSummary')
-            ->willReturn($summaryRows);
+            ->method('getDaysRanges')
+            ->willReturn($daysRange1);
+        $period1
+            ->expects(self::once())
+            ->method('getStartTime')
+            ->willReturn($startTime);
+        $period1
+            ->expects(self::once())
+            ->method('getEndTime')
+            ->willReturn($endTime);
 
-        $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $summary = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $period2 = $this->createMock(Period::class);
+        $period2
+            ->expects(self::once())
+            ->method('getDaysRanges')
+            ->willReturn($daysRange2);
+        $period2
+            ->expects(self::once())
+            ->method('getStartTime')
+            ->willReturn($startTime);
+        $period2
+            ->expects(self::once())
+            ->method('getEndTime')
+            ->willReturn($endTime);
 
-        $this->assertEquals(
-            new RegulationOrderRecordSummaryView(
-                uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                identifier: 'F01/2023',
-                organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-                organizationName: 'DiaLog',
-                status: 'draft',
-                category: 'other',
-                otherCategoryText: 'Other category 1',
-                description: 'Description 1',
-                locations: [
-                    $locations[0]['uuid'] => new DetailLocationView(
-                        $locations[0]['uuid'],
-                        $locations[0]['locationAddress'],
-                        $locations[0]['fromHouseNumber'],
-                        $locations[0]['toHouseNumber'],
-                        [new MeasureView($locations[0]['measureType'])],
-                    ),
-                    $locations[1]['uuid'] => new DetailLocationView(
-                        $locations[1]['uuid'],
-                        $locations[1]['locationAddress'],
-                        $locations[1]['fromHouseNumber'],
-                        $locations[1]['toHouseNumber'],
-                        $expectedLocation1Measures,
-                    ),
-                ],
-                startDate: $startDate,
-                endDate: $endDate,
-            ),
-            $summary,
-        );
-    }
+        $measure = $this->createMock(Measure::class);
+        $measure
+            ->expects(self::once())
+            ->method('getType')
+            ->willReturn('noEntry');
+        $measure
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([$period1, $period2]);
 
-    public function testGetOneWithoutExtraData(): void
-    {
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea');
+        $location
+            ->expects(self::once())
+            ->method('getAddress')
+            ->willReturn('Avenue de Fonneuve 82000 Montauban');
+        $location
+            ->expects(self::once())
+            ->method('getFromHouseNumber')
+            ->willReturn('95');
+        $location
+            ->expects(self::once())
+            ->method('getToHouseNumber')
+            ->willReturn('253');
+        $location
+            ->expects(self::once())
+            ->method('getMeasures')
+            ->willReturn([$measure]);
+
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
-        $regulationOrderRecord = [
-            [
-                'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                'identifier' => 'F01/2023',
-                'organizationUuid' => 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-                'organizationName' => 'DiaLog',
-                'status' => 'draft',
-                'category' => 'event',
-                'otherCategoryText' => null,
-                'description' => 'Description 1',
-                'startDate' => null,
-                'endDate' => null,
-                'locationUuid' => null,
-                'address' => null,
-                'fromHouseNumber' => null,
-                'toHouseNumber' => null,
-            ],
-        ];
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getIdentifier')
+            ->willReturn('F01/2023');
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getCategory')
+            ->willReturn('other');
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getOtherCategoryText')
+            ->willReturn('Other category 1');
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getDescription')
+            ->willReturn('Description 1');
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getStartDate')
+            ->willReturn($startDate);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getEndDate')
+            ->willReturn($endDate);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getLocations')
+            ->willReturn([$location]);
+
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf');
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganizationName')
+            ->willReturn('DiaLog');
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganizationUuid')
+            ->willReturn('a8439603-40f7-4b1e-8a35-cee9e53b98d4');
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getStatus')
+            ->willReturn('draft');
 
         $regulationOrderRecordRepository
             ->expects(self::once())
@@ -225,12 +177,25 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
                 organizationName: 'DiaLog',
                 status: 'draft',
-                category: 'event',
-                otherCategoryText: null,
+                category: 'other',
+                otherCategoryText: 'Other category 1',
                 description: 'Description 1',
-                locations: [],
-                startDate: null,
-                endDate: null,
+                locations: [
+                    new DetailLocationView(
+                        uuid: '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
+                        address: new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
+                        fromHouseNumber: '95',
+                        toHouseNumber: '253',
+                        measures: [
+                            new MeasureView('noEntry', [
+                                new PeriodView($daysRange1, $startTime, $endTime),
+                                new PeriodView($daysRange2, $startTime, $endTime),
+                            ]),
+                        ],
+                    ),
+                ],
+                startDate: $startDate,
+                endDate: $endDate,
             ),
             $summary,
         );

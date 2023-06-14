@@ -64,34 +64,19 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function findOneForSummary(string $uuid): array|null
+    public function findOneForSummary(string $uuid): ?RegulationOrderRecord
     {
         return $this->createQueryBuilder('roc')
-            ->select(
-                'roc.uuid',
-                'ro.identifier',
-                'org.uuid as organizationUuid',
-                'org.name as organizationName',
-                'roc.status',
-                'ro.category',
-                'ro.otherCategoryText',
-                'ro.description',
-                'ro.startDate',
-                'ro.endDate',
-                'l.uuid as locationUuid',
-                'l.address',
-                'l.fromHouseNumber',
-                'l.toHouseNumber',
-                'm.type as measureType',
-            )
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->leftJoin('ro.locations', 'l')
             ->leftJoin('l.measures', 'm')
+            ->leftJoin('m.periods', 'p')
+            ->setMaxResults(1)
             ->getQuery()
-            ->getResult()
+            ->getOneOrNullResult()
         ;
     }
 

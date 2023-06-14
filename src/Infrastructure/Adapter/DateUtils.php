@@ -16,6 +16,13 @@ final class DateUtils implements DateUtilsInterface
         $this->clientTimezone = new \DateTimeZone($clientTimezone);
     }
 
+    public function getNow(): \DateTimeImmutable
+    {
+        return \DateTimeImmutable::createFromInterface(
+            new \DateTime('now'),
+        )->setTimeZone($this->clientTimezone);
+    }
+
     public function getTomorrow(): \DateTimeImmutable
     {
         return \DateTimeImmutable::createFromInterface(
