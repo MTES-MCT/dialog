@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -60,10 +61,22 @@ final class DuplicateRegulationCommandHandler
 
             if (!empty($location->getMeasures())) {
                 foreach ($location->getMeasures() as $measure) {
+                    $periodCommands = [];
+
+                    foreach ($measure->getPeriods() as $period) {
+                        $cmd = new SavePeriodCommand();
+                        $cmd->applicableDays = $period->getApplicableDays();
+                        $cmd->startTime = $period->getStartTime();
+                        $cmd->endTime = $period->getEndTime();
+                        $cmd->includeHolidays = $period->isIncludeHolidays();
+                        $periodCommands[] = $cmd;
+                    }
+
                     $measureCommand = new SaveMeasureCommand();
+                    $measureCommand->periods = $periodCommands;
                     $measureCommand->type = $measure?->getType();
                     $measureCommand->createdAt = $measure?->getCreatedAt();
-                    array_push($locationCommand->measures, $measureCommand);
+                    $locationCommand->measures[] = $measureCommand;
                 }
             }
 

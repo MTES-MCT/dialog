@@ -7,9 +7,12 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Location;
@@ -41,6 +44,28 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
     {
         $startDate = new \DateTimeImmutable('2023-03-13');
         $endDate = new \DateTimeImmutable('2023-03-16');
+
+        $startTime = new \DateTimeImmutable('2023-03-13 08:00:00');
+        $endTime = new \DateTimeImmutable('2023-03-13 20:00:00');
+
+        $period = $this->createMock(Period::class);
+        $period
+            ->expects(self::once())
+            ->method('getApplicableDays')
+            ->willReturn([ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value]);
+        $period
+            ->expects(self::once())
+            ->method('getStartTime')
+            ->willReturn($startTime);
+        $period
+            ->expects(self::once())
+            ->method('getEndTime')
+            ->willReturn($endTime);
+        $period
+            ->expects(self::once())
+            ->method('isIncludeHolidays')
+            ->willReturn(true);
+
         $measure1 = $this->createMock(Measure::class);
         $measure1
             ->expects(self::once())
@@ -50,6 +75,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn($startDate);
+        $measure1
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([$period]);
 
         $measure2 = $this->createMock(Measure::class);
         $measure2
@@ -60,6 +89,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn($startDate);
+        $measure2
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([]);
 
         $this->originalRegulationOrderRecord
             ->expects(self::once())
@@ -155,9 +188,18 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $this->organization;
 
+        $periodCommand1 = new SavePeriodCommand();
+        $periodCommand1->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
+        $periodCommand1->startTime = $startTime;
+        $periodCommand1->endTime = $endTime;
+        $periodCommand1->includeHolidays = true;
+
         $measureCommand1 = new SaveMeasureCommand();
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand1->createdAt = $startDate;
+        $measureCommand1->periods = [
+            $periodCommand1,
+        ];
 
         $measureCommand2 = new SaveMeasureCommand();
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;

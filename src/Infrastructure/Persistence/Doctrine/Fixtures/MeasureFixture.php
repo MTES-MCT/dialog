@@ -39,6 +39,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($measure2);
         $manager->persist($measure3);
 
+        $this->addReference('measure1', $measure1);
         $this->addReference('measure3', $measure3);
 
         $manager->flush();
