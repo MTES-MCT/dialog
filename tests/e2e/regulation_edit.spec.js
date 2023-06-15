@@ -17,8 +17,7 @@ test('Manage regulation location measures', async ({ page }) => {
     // Fill mandatory location fields
     await page.locator('text=Voie ou ville').fill('Route du Grand Brossais, 44260 Savenay');
 
-    // Add a measure
-    await page.getByRole('button', { name: 'Ajouter une restriction' }).click();
+    // Fill empty measure
     const measureItem1 = page.getByTestId('measure-list').getByRole('listitem').nth(0);
     expect(await measureItem1.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 1');
     await measureItem1.getByRole('combobox', { name: 'Type de restriction' }).selectOption({ label: 'Circulation à sens unique' });
@@ -26,6 +25,7 @@ test('Manage regulation location measures', async ({ page }) => {
     // Submit and check location was added with the given measure
     await page.getByRole('button', { name: 'Valider' }).click();
     const locationItem = locations.locator('> li').first();
+
     await locationItem.getByRole('heading', { level: 3, name: 'Route du Grand Brossais' }).waitFor();
 
     expect(locationItem).toContainText('Circulation à sens unique');
