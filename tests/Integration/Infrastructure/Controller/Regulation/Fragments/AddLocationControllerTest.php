@@ -145,7 +145,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith("En raison d'un problème technique", $crawler->filter('#location_form_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#location_form_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
