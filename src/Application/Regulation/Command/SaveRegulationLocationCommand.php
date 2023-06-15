@@ -32,11 +32,10 @@ final class SaveRegulationLocationCommand implements CommandInterface
 
         if ($location) {
             foreach ($location->getMeasures() as $measure) {
-                array_push(
-                    $command->measures,
-                    new SaveMeasureCommand($measure),
-                );
+                $command->measures[] = new SaveMeasureCommand($measure);
             }
+        } else {
+            $command->measures[] = new SaveMeasureCommand();
         }
 
         return $command;
