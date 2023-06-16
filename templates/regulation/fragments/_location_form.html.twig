@@ -70,7 +70,7 @@
     >
         <div class="app-card__header">
             <div class="app-card__title">
-                <h4 class="fr-h5 fr-mb-0" data-form-collection-position-template="{{ 'regulation.measure'|trans }}">
+                <h4 class="fr-h6 fr-mb-0" data-form-collection-position-template="{{ 'regulation.measure'|trans }}">
                     {{ 'regulation.measure'|trans }} {{ position }}
                 </h4>
                 <p class="fr-text-sm fr-text-mention--grey fr-m-0">
@@ -100,7 +100,8 @@
                 data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
                 data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
             >
-                {{ form_label(form.periods, null, { element: 'legend', label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
+
+                {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
                 <ul
                     id="period-list"
                     class="fr-raw-list fr-mb-2w"
@@ -117,7 +118,7 @@
 
                 <button
                     type="button"
-                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
                     data-action="form-collection#addCollectionElement"
                     aria-controls="period-list"
                 >
