@@ -49,7 +49,6 @@ final class MeasureFormType extends AbstractType
                 $choices,
             ),
             'label' => 'regulation.measure.type',
-            'help' => 'regulation.measure.type.help',
         ];
     }
 
