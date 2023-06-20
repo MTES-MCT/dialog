@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
+use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -72,8 +73,17 @@ final class DuplicateRegulationCommandHandler
                         $periodCommands[] = $cmd;
                     }
 
+                    if ($vehicleSet = $measure->getVehicleSet()) {
+                        $vehicleSetCommand = new SaveVehicleSetCommand();
+                        $vehicleSetCommand->initFromEntity($vehicleSet);
+                    } else {
+                        $vehicleSetCommand = null;
+                    }
+
                     $measureCommand = new SaveMeasureCommand();
-                    $measureCommand->initFromEntity($measure);
+                    $measureCommand->type = $measure->getType();
+                    $measureCommand->createdAt = $measure->getCreatedAt();
+                    $measureCommand->vehicleSet = $vehicleSetCommand;
                     $measureCommand->periods = $periodCommands;
                     $locationCommand->measures[] = $measureCommand;
                 }

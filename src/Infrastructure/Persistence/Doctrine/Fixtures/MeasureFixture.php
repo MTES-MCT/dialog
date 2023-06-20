@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -41,8 +40,6 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('location2'),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-06-01'),
-            restrictedVehicleTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::CRITAIR_5->value],
-            exemptedVehicleTypes: [VehicleTypeEnum::PEDESTRIANS->value, VehicleTypeEnum::AMBULANCE->value],
         );
 
         $manager->persist($measure1);
@@ -52,6 +49,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
 
         $this->addReference('measure1', $measure1);
         $this->addReference('measure3', $measure3);
+        $this->addReference('measure4', $measure4);
 
         $manager->flush();
     }

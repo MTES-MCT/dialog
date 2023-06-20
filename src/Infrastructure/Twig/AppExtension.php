@@ -69,6 +69,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         if ($value === 'other') {
             return '';
         }
+
         if (str_starts_with($value, 'critair')) {
             return 'critair';
         }

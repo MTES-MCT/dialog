@@ -17,10 +17,7 @@ enum VehicleTypeEnum: string
     case CRITAIR_5 = 'critair5'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
     case OTHER = 'other';
 
-    /**
-     * @return VehicleTypeEnum[]
-     */
-    public static function forRestriction(): array
+    public static function restrictedCases(): array
     {
         return [
             VehicleTypeEnum::HEAVY_GOODS_VEHICLE,
@@ -30,10 +27,7 @@ enum VehicleTypeEnum: string
         ];
     }
 
-    /**
-     * @return VehicleTypeEnum[]
-     */
-    public static function forExemption(): array
+    public static function exemptedCases(): array
     {
         return [
             VehicleTypeEnum::BICYCLE,

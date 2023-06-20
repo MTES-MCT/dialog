@@ -23,16 +23,15 @@ final class SaveMeasureCommandHandler
 
     public function __invoke(SaveMeasureCommand $command): Measure
     {
-        $command->cleanVehicleTypes();
-
         if ($command->measure) {
-            $command->measure->update(
-                $command->type,
-                $command->restrictedVehicleTypes,
-                $command->otherRestrictedVehicleTypeText,
-                $command->exemptedVehicleTypes,
-                $command->otherExemptedVehicleTypeText,
-            );
+            $command->measure->update($command->type);
+
+            if ($command->vehicleSet) {
+                $command->vehicleSet->measure = $command->measure;
+                $this->commandBus->handle($command->vehicleSet);
+            } else {
+                $command->measure->setVehicleSet(null);
+            }
 
             $periodsStillPresentUuids = [];
 
@@ -46,7 +45,7 @@ final class SaveMeasureCommandHandler
                 $period = $this->commandBus->handle($periodCommand);
             }
 
-            // Periods that were not present in the command can deleted.
+            // Periods that were not present in the command get deleted.
             foreach ($command->measure->getPeriods() as $period) {
                 if (!\in_array($period->getUuid(), $periodsStillPresentUuids)) {
                     $this->commandBus->handle(new DeletePeriodCommand($period));
@@ -63,12 +62,14 @@ final class SaveMeasureCommandHandler
                 location: $command->location,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
-                restrictedVehicleTypes: $command->restrictedVehicleTypes,
-                otherRestrictedVehicleTypeText: $command->otherRestrictedVehicleTypeText,
-                exemptedVehicleTypes: $command->exemptedVehicleTypes,
-                otherExemptedVehicleTypeText: $command->otherExemptedVehicleTypeText,
             ),
         );
+
+        if ($command->vehicleSet) {
+            $command->vehicleSet->measure = $measure;
+            $vehicleSet = $this->commandBus->handle($command->vehicleSet);
+            $measure->setVehicleSet($vehicleSet);
+        }
 
         foreach ($command->periods as $periodCommand) {
             $periodCommand->measure = $measure;

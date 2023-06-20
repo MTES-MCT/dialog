@@ -770,104 +770,104 @@
                 <source>regulation.period.add</source>
                 <target>Ajouter un créneau horaire</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.all_vehicles">
-                <source>regulation.measure.all_vehicles</source>
+            <trans-unit id="regulation.vehicle_set.all_vehicles">
+                <source>regulation.vehicle_set.all_vehicles</source>
                 <target>Véhicules concernés</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.all_vehicles.help">
-                <source>regulation.measure.all_vehicles.help</source>
+            <trans-unit id="regulation.vehicle_set.all_vehicles.help">
+                <source>regulation.vehicle_set.all_vehicles.help</source>
                 <target>Sélectionnez les véhicules concernés par la restriction.</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.all_vehicles.yes">
-                <source>regulation.measure.all_vehicles.yes</source>
+            <trans-unit id="regulation.vehicle_set.all_vehicles.yes">
+                <source>regulation.vehicle_set.all_vehicles.yes</source>
                 <target>Tous les véhicules</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.all_vehicles.yes.help">
-                <source>regulation.measure.all_vehicles.yes.help</source>
+            <trans-unit id="regulation.vehicle_set.all_vehicles.yes.help">
+                <source>regulation.vehicle_set.all_vehicles.yes.help</source>
                 <target>Tous les véhicules sont concernés</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.all_vehicles.no">
-                <source>regulation.measure.all_vehicles.no</source>
+            <trans-unit id="regulation.vehicle_set.all_vehicles.no">
+                <source>regulation.vehicle_set.all_vehicles.no</source>
                 <target>Certains véhicules</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.all_vehicles.no.help">
+            <trans-unit id="regulation.vehicle_set.all_vehicles.no.help">
                 <source>regulation.measure.all_vehicles.no.help</source>
                 <target>Les véhicules concernés : poids lourds, matières dangereuses, Crit'Air 4 et 5...</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.restricted_vehicle_types">
-                <source>regulation.measure.restricted_vehicle_types</source>
+            <trans-unit id="regulation.vehicle_set.restricted_types">
+                <source>regulation.vehicle_set.restricted_types</source>
                 <target>Types de véhicules concernés</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.restricted_vehicle_types.help">
-                <source>regulation.measure.restricted_vehicle_types.help</source>
+            <trans-unit id="regulation.vehicle_set.restricted_types.help">
+                <source>regulation.vehicle_set.restricted_types.help</source>
                 <target>Spécifiez les véhicles pour lesquels la restriction s'applique :</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.other_restricted_vehicle_type_text">
-                <source>regulation.measure.other_restricted_vehicle_type_text</source>
+            <trans-unit id="regulation.vehicle_set.other_restricted_type_text">
+                <source>regulation.vehicle_set.other_restricted_type_text</source>
                 <target>Autres</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.other_restricted_vehicle_type_text.help">
-                <source>regulation.measure.other_restricted_vehicle_type_text.help</source>
+            <trans-unit id="regulation.vehicle_set.other_restricted_type_text.help">
+                <source>regulation.vehicle_set.other_restricted_type_text.help</source>
                 <target>Spécifiez les véhicles pour lesquels la restriction s'applique :</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.exempted_vehicles">
-                <source>regulation.measure.exempted_vehicles</source>
+            <trans-unit id="regulation.vehicle_set.exempted_vehicles">
+                <source>regulation.vehicle_set.exempted_vehicles</source>
                 <target>Sauf...</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.exempted_vehicles.add">
-                <source>regulation.measure.exempted_vehicles.add</source>
+            <trans-unit id="regulation.vehicle_set.exempted_vehicles.add">
+                <source>regulation.vehicle_set.exempted_vehicles.add</source>
                 <target>Définir une exception</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.exempted_vehicles.add.help">
-                <source>regulation.measure.exempted_vehicles.add.help</source>
+            <trans-unit id="regulation.vehicle_set.exempted_vehicles.add.help">
+                <source>regulation.vehicle_set.exempted_vehicles.add.help</source>
                 <target>Par exemple, vélo, bus, véhicules sanitaires...</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.exempted_vehicle_types">
-                <source>regulation.measure.exempted_vehicle_types</source>
+            <trans-unit id="regulation.vehicle_set.exempted_types">
+                <source>regulation.vehicle_set.exempted_types</source>
                 <target>Indiquez les exceptions à la restriction</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.other_exempted_vehicle_type_text">
-                <source>regulation.measure.other_exempted_vehicle_type_text</source>
+            <trans-unit id="regulation.vehicle_set.other_exempted_type_text">
+                <source>regulation.vehicle_set.other_exempted_type_text</source>
                 <target>Autres</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.other_exempted_vehicle_type_text.help">
-                <source>regulation.measure.other_exempted_vehicle_type_text.help</source>
+            <trans-unit id="regulation.vehicle_set.other_exempted_type_text.help">
+                <source>regulation.vehicle_set.other_exempted_type_text.help</source>
                 <target>Spécifiez les véhicles pour lesquels la restriction ne s'applique pas :</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.exempted_vehicles.delete">
+            <trans-unit id="regulation.vehicle_set.exempted_vehicles.delete">
                 <source>regulation.measure.exempted_vehicles.delete</source>
                 <target>Supprimer les exceptions</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.heavyGoodsVehicle">
-                <source>regulation.measure.vehicle_types.heavyGoodsVehicle</source>
+            <trans-unit id="regulation.vehicle_set.type.heavyGoodsVehicle">
+                <source>regulation.vehicle_set.type.heavyGoodsVehicle</source>
                 <target>Poids lourds</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.critair4">
-                <source>regulation.measure.vehicle_types.critair4</source>
+            <trans-unit id="regulation.vehicle_set.type.critair4">
+                <source>regulation.vehicle_set.type.critair4</source>
                 <target>Crit'Air 4</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.critair5">
-                <source>regulation.measure.vehicle_types.critair5</source>
+            <trans-unit id="regulation.vehicle_set.type.critair5">
+                <source>regulation.vehicle_set.type.critair5</source>
                 <target>Crit'Air 5</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.pedestrians">
-                <source>regulation.measure.vehicle_types.pedestrians</source>
+            <trans-unit id="regulation.vehicle_set.type.pedestrians">
+                <source>regulation.vehicle_set.type.pedestrians</source>
                 <target>Piétons</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.bus">
-                <source>regulation.measure.vehicle_types.bus</source>
+            <trans-unit id="regulation.vehicle_set.type.bus">
+                <source>regulation.vehicle_set.type.bus</source>
                 <target>Bus</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.bicycle">
-                <source>regulation.measure.vehicle_types.bicycle</source>
+            <trans-unit id="regulation.vehicle_set.type.bicycle">
+                <source>regulation.vehicle_set.type.bicycle</source>
                 <target>Vélos</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.ambulance">
-                <source>regulation.measure.vehicle_types.ambulance</source>
+            <trans-unit id="regulation.vehicle_set.type.ambulance">
+                <source>regulation.vehicle_set.type.ambulance</source>
                 <target>Véhicules sanitaires</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.vehicle_types.other">
-                <source>regulation.measure.vehicle_types.other</source>
+            <trans-unit id="regulation.vehicle_set.type.other">
+                <source>regulation.vehicle_set.type.other</source>
                 <target>Autres</target>
             </trans-unit>
         </body>

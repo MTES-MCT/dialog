@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace App\Domain\Regulation;
 
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\VehicleSet;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 class Measure
 {
     private Collection $periods;
+    private ?VehicleSet $vehicleSet = null;
 
     public function __construct(
         private string $uuid,
         private Location $location,
         private string $type,
         private \DateTimeInterface $createdAt,
-        private array $restrictedVehicleTypes = [],
-        private ?string $otherRestrictedVehicleTypeText = null,
-        private array $exemptedVehicleTypes = [],
-        private ?string $otherExemptedVehicleTypeText = null,
     ) {
         $this->periods = new ArrayCollection();
     }
@@ -50,6 +48,16 @@ class Measure
         return $this->createdAt;
     }
 
+    public function getVehicleSet(): ?VehicleSet
+    {
+        return $this->vehicleSet;
+    }
+
+    public function setVehicleSet(?VehicleSet $vehicleSet): void
+    {
+        $this->vehicleSet = $vehicleSet;
+    }
+
     public function addPeriod(Period $period): void
     {
         if ($this->periods->contains($period)) {
@@ -68,37 +76,8 @@ class Measure
         $this->periods->removeElement($period);
     }
 
-    public function getRestrictedVehicleTypes(): array
+    public function update(string $type): void
     {
-        return $this->restrictedVehicleTypes;
-    }
-
-    public function getOtherRestrictedVehicleTypeText(): string|null
-    {
-        return $this->otherRestrictedVehicleTypeText;
-    }
-
-    public function getExemptedVehicleTypes(): array
-    {
-        return $this->exemptedVehicleTypes;
-    }
-
-    public function getOtherExemptedVehicleTypeText(): string|null
-    {
-        return $this->otherExemptedVehicleTypeText;
-    }
-
-    public function update(
-        string $type,
-        array $restrictedVehicleTypes = null,
-        string $otherRestrictedVehicleTypeText = null,
-        array $exemptedVehicleTypes = null,
-        string $otherExemptedVehicleTypeText = null,
-    ): void {
         $this->type = $type;
-        $this->restrictedVehicleTypes = $restrictedVehicleTypes ?: [];
-        $this->otherRestrictedVehicleTypeText = $otherRestrictedVehicleTypeText;
-        $this->exemptedVehicleTypes = $exemptedVehicleTypes ?: [];
-        $this->otherExemptedVehicleTypeText = $otherExemptedVehicleTypeText;
     }
 }

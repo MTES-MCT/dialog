@@ -12,6 +12,7 @@ final class DatexVehicleConditionView
     public ?string $nonVehicularRoadUser = null;
     public ?string $euSpecialPurposeVehicle = null;
     public ?string $emissionClassificationOther = null;
+    public bool $isOther = false;
 
     public function __construct(
         string $vehicleType,
@@ -27,6 +28,9 @@ final class DatexVehicleConditionView
             case VehicleTypeEnum::CRITAIR_4->value:
             case VehicleTypeEnum::CRITAIR_5->value:
                 $this->emissionClassificationOther = $vehicleType;
+                break;
+            case VehicleTypeEnum::OTHER->value:
+                $this->isOther = true;
                 break;
             default:
                 $this->type = $vehicleType;

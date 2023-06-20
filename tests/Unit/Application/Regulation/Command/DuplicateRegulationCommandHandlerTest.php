@@ -11,8 +11,10 @@ use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Location;
@@ -48,6 +50,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $startTime = new \DateTimeImmutable('2023-03-13 08:00:00');
         $endTime = new \DateTimeImmutable('2023-03-13 20:00:00');
 
+        $vehicleSet = $this->createMock(VehicleSet::class);
+        $vehicleSet
+            ->expects(self::exactly(2))
+            ->method('getRestrictedTypes')
+            ->willReturn([]);
+
         $period = $this->createMock(Period::class);
         $period
             ->expects(self::once())
@@ -80,9 +88,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getPeriods')
             ->willReturn([$period]);
         $measure1
-            ->expects(self::exactly(2))
-            ->method('getRestrictedVehicleTypes')
-            ->willReturn([]);
+            ->expects(self::once())
+            ->method('getVehicleSet')
+            ->willReturn($vehicleSet);
         $measure2 = $this->createMock(Measure::class);
         $measure2
             ->expects(self::once())
@@ -97,9 +105,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getPeriods')
             ->willReturn([]);
         $measure2
-            ->expects(self::exactly(2))
-            ->method('getRestrictedVehicleTypes')
-            ->willReturn([]);
+            ->expects(self::once())
+            ->method('getVehicleSet')
+            ->willReturn(null);
 
         $this->originalRegulationOrderRecord
             ->expects(self::once())
@@ -195,6 +203,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $this->organization;
 
+        $vehicleSetCommand = new SaveVehicleSetCommand();
+        $vehicleSetCommand->allVehicles = true;
+
         $periodCommand1 = new SavePeriodCommand();
         $periodCommand1->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
         $periodCommand1->startTime = $startTime;
@@ -207,12 +218,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->periods = [
             $periodCommand1,
         ];
-        $measureCommand1->allVehicles = true;
+        $measureCommand1->vehicleSet = $vehicleSetCommand;
 
         $measureCommand2 = new SaveMeasureCommand();
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $measureCommand2->createdAt = $startDate;
-        $measureCommand2->allVehicles = true;
 
         $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
         $locationCommand1->address = 'Route du Lac 44260 Savenay';

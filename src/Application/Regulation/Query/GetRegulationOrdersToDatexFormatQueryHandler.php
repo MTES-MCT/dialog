@@ -22,7 +22,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
         $regulationOrderViews = [];
 
         foreach ($regulationOrders as $regulationOrder) {
-            // dd($regulationOrder);
             $vehicleConditions = [];
 
             foreach ($regulationOrder['restrictedVehicleTypes'] as $restrictedVehicleType) {

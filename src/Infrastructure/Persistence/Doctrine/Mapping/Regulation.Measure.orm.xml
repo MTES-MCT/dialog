@@ -6,15 +6,12 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="type" type="string" column="type" nullable="false" length="16"/>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false"/>
-    <field name="restrictedVehicleTypes" type="array" column="restricted_vehicle_types" nullable="false" />
-    <field name="otherRestrictedVehicleTypeText" type="string" column="other_restricted_vehicle_type_text" nullable="true" length="255"/>
-    <field name="exemptedVehicleTypes" type="array" column="exempted_vehicle_types" nullable="false" />
-    <field name="otherExemptedVehicleTypeText" type="string" column="other_exempted_vehicle_type_text" nullable="true" length="255"/>
     <many-to-one field="location" target-entity="App\Domain\Regulation\Location" inversed-by="measures">
         <join-columns>
             <join-column name="location_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
         </join-columns>
     </many-to-one>
+    <one-to-one field="vehicleSet" target-entity="App\Domain\Condition\VehicleSet" mapped-by="measure" fetch="EAGER"/>
     <one-to-many field="periods" target-entity="App\Domain\Condition\Period\Period" mapped-by="measure" fetch="EAGER"/>
   </entity>
 </doctrine-mapping>
