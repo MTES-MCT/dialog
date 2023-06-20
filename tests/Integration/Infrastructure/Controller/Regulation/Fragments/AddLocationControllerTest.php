@@ -28,7 +28,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
     public function testAdd(): void
@@ -47,6 +47,11 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = 'Matières dangereuses';
+        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['bus', 'other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = 'Déchets industriels';
         $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = ['monday', 'sunday'];
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '08:00';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '16:00';
@@ -61,6 +66,87 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertSame($streams->last()->attr('action'), 'replace');
         $form = $streams->last()->selectButton('Ajouter une localisation');
         $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $form->getUri());
+    }
+
+    public function testInvalidVehicleSetBlankRestrictedTypes(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_restrictedTypes_error')->text());
+    }
+
+    public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
+    }
+
+    public function testInvalidVehicleSetBlankOtherExemptedTypeText(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
+        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
+    }
+
+    public function testInvalidVehicleSetOtherTextsTooLong(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = str_repeat('a', 101);
+        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 101);
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testInvalidBlankPeriod(): void
@@ -78,6 +164,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = '';
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '';
@@ -87,7 +174,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_startTime_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide. L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
     }
 
     public function testInvalidPeriod(): void
@@ -105,6 +192,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '10:00';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '08:00';
 
@@ -141,6 +229,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -190,7 +279,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.Veuillez saisir une adresse valide. Ex : Rue Saint-Léonard, 49000 Angers.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères. Veuillez saisir une adresse valide. Ex : Rue Saint-Léonard, 49000 Angers.', $crawler->filter('#location_form_address_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#location_form_fromHouseNumber_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#location_form_toHouseNumber_error')->text());
     }

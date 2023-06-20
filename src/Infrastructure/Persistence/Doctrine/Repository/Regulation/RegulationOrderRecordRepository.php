@@ -96,10 +96,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.toHouseNumber',
                 'ST_X(loc.toPoint) as toLongitude',
                 'ST_Y(loc.toPoint) as toLatitude',
+                'v.restrictedTypes as restrictedVehicleTypes',
+                'v.exemptedTypes as exemptedVehicleTypes',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
+            ->innerJoin('loc.measures', 'm')
+            ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setMaxResults(20)

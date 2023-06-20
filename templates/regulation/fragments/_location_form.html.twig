@@ -24,15 +24,13 @@
                     {% for day in form.applicableDays %}
                         {% set dayBtnId = day.vars.id ~ '-btn' %}
                         {% set isChecked = day.vars.value in form.applicableDays.vars.value ? "true" : "false" %}
-                        <label for="{{ dayBtnId }}">
+                        <label for="{{ dayBtnId }}" data-controller="chip-button">
                             <button
                                 id="{{ dayBtnId }}"
                                 type="button"
                                 class="fr-tag fr-mb-1w"
-                                role="checkbox"
-                                aria-checked="{{ isChecked }}"
                                 aria-pressed="{{ isChecked }}"
-                                data-controller="chip-button"
+                                data-chip-button-target="button"
                             >
                                 {{ ('regulation.period.days.' ~ day.vars.value)|trans }}
                                 {{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
@@ -92,16 +90,17 @@
         <div class="app-card__content">
             {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
 
+            {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index } only %}
+
             <fieldset
                 class="fr-fieldset"
-                aria-labelledby="periods-legend"
+                aria-labelledby="periods-legend-{{ index }}"
                 data-controller="form-collection"
                 data-form-collection-prototype-key-value="period"
                 data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
                 data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
             >
-
-                {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
+                {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend-' ~ index, class: 'fr-fieldset__legend' } }) }}
                 <ul
                     id="period-list"
                     class="fr-raw-list fr-mb-2w"
@@ -170,7 +169,7 @@
                         aria-label="{{ form.measures.vars.label|trans }}"
                     >
                         {% for item in form.measures %}
-                            {{ _self.measures_list_item(item, loop.index, loop.index) }}
+                            {{ _self.measures_list_item(item, loop.index0, loop.index) }}
                         {% else %}
                             {% do form.measures.setRendered %}
                         {% endfor %}

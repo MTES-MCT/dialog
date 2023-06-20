@@ -74,7 +74,7 @@
                         {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
                     </li>
                 {% else %}
-                    <li id="location_{{ uuid }}_delete_button" role="presentation"></li>
+                    <li id="location_{{ uuid }}_delete_button" hidden></li>
                 {% endif %}
             </ul>
         {% endif %}

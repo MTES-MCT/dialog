@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" datatype="plaintext" original="file.ext">
         <body>
+            <trans-unit id="common.error.not_blank">
+                <source>common.error.not_blank</source>
+                <target>Cette valeur ne doit pas être vide.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.geocoding_failed">
                 <source>regulation.location.error.geocoding_failed</source>
                 <target>Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.</target>
@@ -33,6 +37,10 @@
             <trans-unit id="location.measures.error.not_blank">
                 <source>location.measures.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs restrictions.</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.restricted_types.error.not_blank">
+                <source>regulation.vehicle_set.restricted_types.error.not_blank</source>
+                <target>Veuillez spécifier un ou plusieurs véhicules concernés.</target>
             </trans-unit>
             <trans-unit id="regulation.period.error.end_time">
                 <source>regulation.period.error.end_time</source>

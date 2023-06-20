@@ -45,6 +45,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
         // Add
         $values['location_form']['measures'][1]['type'] = 'alternateRoad';
+        $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][1]['periods'][0]['applicableDays'] = ['monday'];
         $values['location_form']['measures'][1]['periods'][0]['startTime'] = '08:00';
         $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';

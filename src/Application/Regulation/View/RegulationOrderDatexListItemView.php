@@ -13,6 +13,7 @@ final class RegulationOrderDatexListItemView
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
         public readonly ?DatexLocationView $location,
+        public readonly array $vehicleConditions,
     ) {
     }
 }

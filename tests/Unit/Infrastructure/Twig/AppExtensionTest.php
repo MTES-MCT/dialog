@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Test\Unit\Infrastructure\Twig;
 
+use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use App\Infrastructure\Adapter\StringUtils;
 use App\Infrastructure\Twig\AppExtension;
 use App\Tests\TimezoneHelper;
 use PHPUnit\Framework\TestCase;
@@ -17,12 +19,12 @@ class AppExtensionTest extends TestCase
     protected function setUp(): void
     {
         $this->setDefaultTimezone('UTC');
-        $this->extension = new AppExtension('Etc/GMT-1'); // Independent of Daylight Saving Time (DST).
+        $this->extension = new AppExtension('Etc/GMT-1', new StringUtils()); // Independent of Daylight Saving Time (DST).
     }
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(3, $this->extension->getFunctions());
+        $this->assertCount(4, $this->extension->getFunctions());
     }
 
     public function testFormatDateTimeDateOnly(): void
@@ -122,5 +124,13 @@ class AppExtensionTest extends TestCase
         $date = new \DateTimeImmutable($date);
         $now = new \DateTimeImmutable($now);
         $this->assertSame($result, $this->extension->isClientFutureDay($date, $now));
+    }
+
+    public function testGetVehicleTypeIconName(): void
+    {
+        $this->assertSame('ambulance', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::AMBULANCE->value));
+        $this->assertSame('critair', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::CRITAIR_4->value));
+        $this->assertSame('critair', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::CRITAIR_5->value));
+        $this->assertSame('', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::OTHER->value));
     }
 }

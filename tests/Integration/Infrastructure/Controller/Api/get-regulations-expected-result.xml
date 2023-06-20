@@ -1,4 +1,4 @@
-<d2:payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:d2="http://datex2.eu/schema/3/d2Payload" xmlns:com="http://datex2.eu/schema/3/common" xmlns:loc="http://datex2.eu/schema/3/locationReferencing" xmlns="http://datex2.eu/schema/3/trafficRegulation" modelBaseVersion="3" lang="FR" xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd" xsi:type="TrafficRegulationPublication" id="910928b3-58a1-4462-881b-53dec84602f9">
+<d2:payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:d2="http://datex2.eu/schema/3/d2Payload" xmlns:com="http://datex2.eu/schema/3/common" xmlns:comx="http://datex2.eu/schema/3/commonExtension" xmlns:loc="http://datex2.eu/schema/3/locationReferencing" xmlns="http://datex2.eu/schema/3/trafficRegulation" modelBaseVersion="3" lang="FR" xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd" xsi:type="TrafficRegulationPublication" id="910928b3-58a1-4462-881b-53dec84602f9">
     <com:publicationTime>2022-11-10T15:11:00.000Z</com:publicationTime>
     <com:publicationCreator>
         <com:country>fr</com:country>
@@ -73,6 +73,36 @@
                                 </loc:toPoint>
                             </loc:linearWithinLinearElement>
                         </locationByOrder>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleType>heavyGoodsVehicle</com:vehicleType>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair5</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="NonVehicularRoadUserCondition">
+                        <negate>true</negate>
+                        <com:nonVehicularRoadUser>pedestrians</com:nonVehicularRoadUser>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>true</negate>
+                        <vehicleCharacteristics>
+                            <com:_vehicleCharacteristicsExtension>
+                                <com:vehicleCharacteristicsExtended>
+                                    <comx:regulatedCharacteristics>
+                                        <comx:euSpecialPurposeVehicle>ambulance</comx:euSpecialPurposeVehicle>
+                                    </comx:regulatedCharacteristics>
+                                </com:vehicleCharacteristicsExtended>
+                            </com:_vehicleCharacteristicsExtension>
+                        </vehicleCharacteristics>
                     </conditions>
                 </condition>
             </trafficRegulation>

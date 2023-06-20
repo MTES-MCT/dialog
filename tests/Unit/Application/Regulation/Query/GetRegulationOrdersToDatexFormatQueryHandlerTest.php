@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\View\DatexLocationView;
+use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -53,6 +54,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location1->toHouseNumber,
             'toLatitude' => $location1->toLatitude,
             'toLongitude' => $location1->toLongitude,
+            'restrictedVehicleTypes' => [],
+            'exemptedVehicleTypes' => [],
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -67,6 +70,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location2->toHouseNumber,
             'toLatitude' => $location2->toLatitude,
             'toLongitude' => $location2->toLongitude,
+            'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
+            'exemptedVehicleTypes' => ['bus'],
         ];
 
         $regulationOrderRecordRepository
@@ -86,6 +91,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     startDate: $startDate1,
                     endDate: $endDate1,
                     location: $location1,
+                    vehicleConditions: [],
                 ),
                 new RegulationOrderDatexListItemView(
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -94,6 +100,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     startDate: $startDate2,
                     endDate: null,
                     location: $location2,
+                    vehicleConditions: [
+                        new DatexVehicleConditionView('heavyGoodsVehicle'),
+                        new DatexVehicleConditionView('bus', isExempted: true),
+                    ],
                 ),
             ],
             $regulationOrders,

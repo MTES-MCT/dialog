@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\Regulation;
 
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\VehicleSet;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 class Measure
 {
     private Collection $periods;
+    private ?VehicleSet $vehicleSet = null;
 
     public function __construct(
         private string $uuid,
@@ -44,6 +46,16 @@ class Measure
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
+    }
+
+    public function getVehicleSet(): ?VehicleSet
+    {
+        return $this->vehicleSet;
+    }
+
+    public function setVehicleSet(?VehicleSet $vehicleSet): void
+    {
+        $this->vehicleSet = $vehicleSet;
     }
 
     public function addPeriod(Period $period): void
