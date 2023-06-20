@@ -24,13 +24,15 @@ final class SaveVehicleSetCommand implements CommandInterface
         $this->initFromEntity($vehicleSet);
     }
 
-    public function initFromEntity(?VehicleSet $vehicleSet)
+    public function initFromEntity(?VehicleSet $vehicleSet): self
     {
         $this->allVehicles = $vehicleSet ? empty($vehicleSet->getRestrictedTypes()) : null;
         $this->restrictedTypes = $vehicleSet?->getRestrictedTypes() ?? [];
         $this->otherRestrictedTypeText = $vehicleSet?->getOtherRestrictedTypeText();
         $this->exemptedTypes = $vehicleSet?->getExemptedTypes() ?? [];
         $this->otherExemptedTypeText = $vehicleSet?->getOtherExemptedTypeText();
+
+        return $this;
     }
 
     public function cleanTypes(): void

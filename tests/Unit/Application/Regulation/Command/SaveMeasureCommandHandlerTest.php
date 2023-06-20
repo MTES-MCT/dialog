@@ -11,7 +11,9 @@ use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveMeasureCommandHandler;
+use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
@@ -159,6 +161,69 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $this->assertSame($createdMeasure, $result);
     }
 
+    public function testCreateWithVehicleSet(): void
+    {
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('d035fec0-30f3-4134-95b9-d74c68eb53e3');
+
+        $now = new \DateTimeImmutable('2023-06-13');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($now);
+
+        $createdVehicleSet = $this->createMock(VehicleSet::class);
+        $createdMeasure = $this->createMock(Measure::class);
+        $location = $this->createMock(Location::class);
+
+        $createdMeasure
+            ->expects(self::once())
+            ->method('setVehicleSet')
+            ->with($createdVehicleSet);
+
+        $this->measureRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Measure(
+                        uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
+                        location: $location,
+                        type: MeasureTypeEnum::ALTERNATE_ROAD->value,
+                        createdAt: $now,
+                    ),
+                ),
+            )
+            ->willReturn($createdMeasure);
+
+        $vehicleSetCommand = new SaveVehicleSetCommand();
+        $vehicleSetCommand->measure = $createdMeasure;
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with($this->equalTo($vehicleSetCommand))
+            ->willReturn($createdVehicleSet);
+
+        $handler = new SaveMeasureCommandHandler(
+            $this->idFactory,
+            $this->measureRepository,
+            $this->commandBus,
+            $this->dateUtils,
+        );
+
+        $command = new SaveMeasureCommand();
+        $command->location = $location;
+        $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->vehicleSet = $vehicleSetCommand;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdMeasure, $result);
+    }
+
     public function testUpdate(): void
     {
         $this->idFactory
@@ -200,6 +265,11 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $measure
             ->expects(self::once())
+            ->method('setVehicleSet')
+            ->with(null);
+
+        $measure
+            ->expects(self::once())
             ->method('removePeriod')
             ->with($period2);
 
@@ -227,6 +297,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $command = new SaveMeasureCommand($measure);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->vehicleSet = null; // Removes vehicle set
         $command->periods = [$periodCommand1]; // Removes period2.
 
         $result = $handler($command);

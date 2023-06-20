@@ -5,9 +5,9 @@
     table="vehicle_set">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="restrictedTypes" type="array" column="restricted_types" nullable="false" />
-    <field name="otherRestrictedTypeText" type="string" column="other_restricted_type_text" nullable="true" length="255"/>
+    <field name="otherRestrictedTypeText" type="string" column="other_restricted_type_text" nullable="true" length="100"/>
     <field name="exemptedTypes" type="array" column="exempted_types" nullable="false" />
-    <field name="otherExemptedTypeText" type="string" column="other_exempted_type_text" nullable="true" length="255"/>
+    <field name="otherExemptedTypeText" type="string" column="other_exempted_type_text" nullable="true" length="100"/>
     <one-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="vehicleSet">
       <join-column name="measure_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>

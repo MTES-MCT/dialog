@@ -31,6 +31,9 @@
                     </constraint>
                 </option>
             </constraint>
+            <constraint name="Length">
+                <option name="max">100</option>
+            </constraint>
         </property>
        <property name="otherExemptedTypeText">
             <constraint name="When">
@@ -42,6 +45,9 @@
                         <option name="message">common.error.not_blank</option>
                     </constraint>
                 </option>
+            </constraint>
+            <constraint name="Length">
+                <option name="max">100</option>
             </constraint>
         </property>
     </class>

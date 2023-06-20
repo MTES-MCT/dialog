@@ -26,7 +26,9 @@ final class SaveMeasureCommand implements CommandInterface
         $this->createdAt = $measure?->getCreatedAt();
 
         if ($measure) {
-            if ($vehicleSet = $measure->getVehicleSet()) {
+            $vehicleSet = $measure->getVehicleSet();
+
+            if ($vehicleSet) {
                 $this->vehicleSet = new SaveVehicleSetCommand($vehicleSet);
             }
 

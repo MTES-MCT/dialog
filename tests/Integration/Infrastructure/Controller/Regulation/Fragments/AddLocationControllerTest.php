@@ -68,7 +68,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $form->getUri());
     }
 
-    public function testInvalidBlankVehicleSetRestrictedTypes(): void
+    public function testInvalidVehicleSetBlankRestrictedTypes(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
@@ -86,7 +86,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_restrictedTypes_error')->text());
     }
 
-    public function testInvalidBlankVehicleSetOtherRestrictedTypeText(): void
+    public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
@@ -106,7 +106,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
     }
 
-    public function testInvalidBlankVehicleSetOtherExemptedTypeText(): void
+    public function testInvalidVehicleSetBlankOtherExemptedTypeText(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
@@ -124,6 +124,29 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
+    }
+
+    public function testInvalidVehicleSetOtherTextsTooLong(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = str_repeat('a', 101);
+        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 101);
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testInvalidBlankPeriod(): void

@@ -73,12 +73,9 @@ final class DuplicateRegulationCommandHandler
                         $periodCommands[] = $cmd;
                     }
 
-                    if ($vehicleSet = $measure->getVehicleSet()) {
-                        $vehicleSetCommand = new SaveVehicleSetCommand();
-                        $vehicleSetCommand->initFromEntity($vehicleSet);
-                    } else {
-                        $vehicleSetCommand = null;
-                    }
+                    $vehicleSetCommand = $measure->getVehicleSet()
+                        ? (new SaveVehicleSetCommand())->initFromEntity($measure->getVehicleSet())
+                        : null;
 
                     $measureCommand = new SaveMeasureCommand();
                     $measureCommand->type = $measure->getType();

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command;
+namespace App\Tests\Unit\Application\Regulation\Command\VehicleSet;
 
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;

@@ -88,7 +88,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getPeriods')
             ->willReturn([$period]);
         $measure1
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getVehicleSet')
             ->willReturn($vehicleSet);
         $measure2 = $this->createMock(Measure::class);
