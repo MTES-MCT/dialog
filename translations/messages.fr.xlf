@@ -791,7 +791,7 @@
                 <target>Certains véhicules</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.all_vehicles.no.help">
-                <source>regulation.measure.all_vehicles.no.help</source>
+                <source>regulation.vehicle_set.all_vehicles.no.help</source>
                 <target>Les véhicules concernés : poids lourds, matières dangereuses, Crit'Air 4 et 5...</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.restricted_types">
