@@ -12,6 +12,9 @@
                 <value>speedLimitation</value>
             </constraint>
         </property>
+       <property name="vehicleSet">
+            <constraint name="Valid"/>
+        </property>
         <property name="periods">
             <constraint name="Valid"/>
        </property>

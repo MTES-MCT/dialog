@@ -22,6 +22,7 @@ final class MeasureFormType extends AbstractType
                 ChoiceType::class,
                 options: $this->getTypeOptions(),
             )
+            ->add('vehicleSet', VehicleSetFormType::class)
             ->add('periods', CollectionType::class, [
                 'entry_type' => PeriodFormType::class,
                 'entry_options' => ['label' => false],

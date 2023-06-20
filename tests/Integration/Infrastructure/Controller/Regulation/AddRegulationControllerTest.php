@@ -71,7 +71,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_identifier_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_description_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_startDate_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#general_info_form_category_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#general_info_form_category_error')->text());
     }
 
     public function testBadPeriod(): void

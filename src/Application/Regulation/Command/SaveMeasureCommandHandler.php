@@ -26,6 +26,13 @@ final class SaveMeasureCommandHandler
         if ($command->measure) {
             $command->measure->update($command->type);
 
+            if ($command->vehicleSet) {
+                $command->vehicleSet->measure = $command->measure;
+                $this->commandBus->handle($command->vehicleSet);
+            } else {
+                $command->measure->setVehicleSet(null);
+            }
+
             $periodsStillPresentUuids = [];
 
             // Periods provided with the command get created or updated...
@@ -38,7 +45,7 @@ final class SaveMeasureCommandHandler
                 $period = $this->commandBus->handle($periodCommand);
             }
 
-            // Periods that were not present in the command can deleted.
+            // Periods that were not present in the command get deleted.
             foreach ($command->measure->getPeriods() as $period) {
                 if (!\in_array($period->getUuid(), $periodsStillPresentUuids)) {
                     $this->commandBus->handle(new DeletePeriodCommand($period));
@@ -57,6 +64,12 @@ final class SaveMeasureCommandHandler
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
             ),
         );
+
+        if ($command->vehicleSet) {
+            $command->vehicleSet->measure = $measure;
+            $vehicleSet = $this->commandBus->handle($command->vehicleSet);
+            $measure->setVehicleSet($vehicleSet);
+        }
 
         foreach ($command->periods as $periodCommand) {
             $periodCommand->measure = $measure;

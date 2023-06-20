@@ -6,6 +6,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:d2="http://datex2.eu/schema/3/d2Payload"
   xmlns:com="http://datex2.eu/schema/3/common"
+  xmlns:comx="http://datex2.eu/schema/3/commonExtension"
   xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
   xmlns="http://datex2.eu/schema/3/trafficRegulation"
   xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
@@ -23,7 +24,7 @@
         {% set startDate = regulationOrder.startDate %}
         {% set endDate = regulationOrder.endDate %}
         {% set location = regulationOrder.location %}
-        {% set vehicleCharacteristics = null %}
+        {% set vehicleConditions = regulationOrder.vehicleConditions %}
         <trafficRegulationOrder id="{{ regulationOrder.uuid }}" version="1">
             <description>
                 <com:values>
@@ -105,37 +106,35 @@
                             </loc:linearWithinLinearElement>
                         </locationByOrder>
                     </conditions>
-                    {% if vehicleCharacteristics %}
-                        <conditions xsi:type="VehicleCondition">
-                            <negate>false</negate>
-                            <vehicleCharacteristics>
-                                {% if vehicleCharacteristics.maxLength %}
-                                    <com:lengthCharacteristic>
-                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
-                                        <com:vehicleLength>{{ vehicleCharacteristics.maxLength }}</com:vehicleLength>
-                                    </com:lengthCharacteristic>
-                                {% endif %}
-                                {% if vehicleCharacteristics.maxHeight %}
-                                    <com:heightCharacteristic>
-                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
-                                        <com:vehicleHeight>{{ vehicleCharacteristics.maxHeight }}</com:vehicleHeight>
-                                    </com:heightCharacteristic>
-                                {% endif %}
-                                {% if vehicleCharacteristics.maxWidth %}
-                                    <com:widthCharacteristic>
-                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
-                                        <com:vehicleWidth>{{ vehicleCharacteristics.maxWidth }}</com:vehicleWidth>
-                                    </com:widthCharacteristic>
-                                {% endif %}
-                                {% if vehicleCharacteristics.maxWeight %}
-                                    <com:grossWeightCharacteristic>
-                                        <com:comparisonOperator>greaterThanOrEqualTo</com:comparisonOperator>
-                                        <com:grossVehicleWeight>{{ vehicleCharacteristics.maxWeight }}</com:grossVehicleWeight>
-                                    </com:grossWeightCharacteristic>
-                                {% endif %}
-                            </vehicleCharacteristics>
-                        </conditions>
-                    {% endif %}
+                    {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
+                        {% if vehicle.nonVehicularRoadUser %}
+                            <conditions xsi:type="NonVehicularRoadUserCondition">
+                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                <com:nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</com:nonVehicularRoadUser>
+                            </conditions>
+                        {% else %}
+                            <conditions xsi:type="VehicleCondition">
+                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                <vehicleCharacteristics>
+                                    {% if vehicle.euSpecialPurposeVehicle %}
+                                        <com:_vehicleCharacteristicsExtension>
+                                            <com:vehicleCharacteristicsExtended>
+                                                <comx:regulatedCharacteristics>
+                                                    <comx:euSpecialPurposeVehicle>{{ vehicle.euSpecialPurposeVehicle }}</comx:euSpecialPurposeVehicle>
+                                                </comx:regulatedCharacteristics>
+                                            </com:vehicleCharacteristicsExtended>
+                                        </com:_vehicleCharacteristicsExtension>
+                                    {% elseif vehicle.emissionClassificationOther %}
+                                        <com:emissions>
+                                            <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
+                                        </com:emissions>
+                                    {% else %}
+                                        <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                                    {% endif %}
+                                </vehicleCharacteristics>
+                            </conditions>
+                        {% endif %}
+                    {% endfor %}
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>

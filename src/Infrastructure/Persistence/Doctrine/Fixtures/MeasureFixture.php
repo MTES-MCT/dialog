@@ -35,12 +35,21 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2023-05-11'),
         );
 
+        $measure4 = new Measure(
+            '59143d8d-d201-4950-be76-f367e39be522',
+            $this->getReference('location2'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-06-01'),
+        );
+
         $manager->persist($measure1);
         $manager->persist($measure2);
         $manager->persist($measure3);
+        $manager->persist($measure4);
 
         $this->addReference('measure1', $measure1);
         $this->addReference('measure3', $measure3);
+        $this->addReference('measure4', $measure4);
 
         $manager->flush();
     }
