@@ -28,8 +28,8 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         // Location
         $this->assertSame('Paris 18e Arrondissement', $location->filter('h3')->text());
         $this->assertSame('Paris 18e Arrondissement (75018)', $location->filter('li')->eq(0)->text());
-        $this->assertSame('Circulation alternée tous les jours', $location->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite le lundi de 08h00 à 22h00', $location->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation alternée tous les jours pour tous les véhicules', $location->filter('li')->eq(1)->text());
+        $this->assertSame('Circulation interdite le lundi de 08h00 à 22h00 pour tous les véhicules', $location->filter('li')->eq(2)->text());
     }
 
     public function testWithoutLocations(): void

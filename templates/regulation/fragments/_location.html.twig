@@ -34,6 +34,7 @@
                 {% for measure in location.measures %}
                     <li>
                         {{ ('regulation.measure.type.' ~ measure.type)|trans }}
+
                         {% for period in measure.periods %}
                             {% for dayRange in period.dayRanges %}
                                 {% if dayRange.firstDay == dayRange.lastDay %}
@@ -56,6 +57,32 @@
                         {% else %}
                             {{ 'regulation.period.all_days'|trans }}
                         {% endfor %}
+
+                        {% if measure.vehicleSet.restrictedTypes|length > 0 %}
+                            {{ 'regulation.vehicles.prefix'|trans }}
+                            {% for vehicleType in measure.vehicleSet.restrictedTypes %}
+                                {%- if vehicleType.isOther|default(false) -%}
+                                    {{ vehicleType.name|lower }}
+                                {%- else -%}
+                                    {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
+                                {%- endif -%}
+                                {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
+                            {% endfor -%}
+                        {% else %}
+                            {{ 'regulation.vehicles.all'|trans }}
+                        {% endif -%}
+
+                        {% if measure.vehicleSet.exemptedTypes|length > 0 -%}
+                            , {{ 'regulation.vehicles.except'|trans }}
+                            {% for vehicleType in measure.vehicleSet.exemptedTypes %}
+                                {%- if vehicleType.isOther|default(false) -%}
+                                    {{ vehicleType.name|lower }}
+                                {%- else -%}
+                                    {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
+                                {%- endif -%}
+                                {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
+                            {% endfor %}
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
