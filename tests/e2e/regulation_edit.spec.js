@@ -124,7 +124,7 @@ test('Manage regulation location measures', async ({ page }) => {
     await measureList.waitFor();
 
     // Delete 2nd measure
-    await measureItem2.getByRole('button', { name: 'Supprimer', exact: true }).click();
+    await measureItem2.getByRole('button', { name: 'Supprimer', exact: true }).nth(0).click();
     expect(await measureList.locator('> li').count()).toBe(1);
 
     // Add a new 2nd measure
@@ -143,4 +143,27 @@ test('Manage regulation location measures', async ({ page }) => {
     await locationItem.getByRole('button', { name: 'Modifier' }).click();
     await measureList.waitFor();
     expect(await measureItem2.getByRole('group', { name: 'Créneaux horaires' }).locator('> li').count()).toBe(0);
+});
+
+test('Delete a period', async ({ page }) => {
+    await page.goto('/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+
+    // Open first location
+    const locations = page.getByRole('region', { name: 'Localisations' }).getByRole('list').first();
+    const locationItem = locations.locator('> li').first();
+
+    await expect(locationItem).toContainText('Circulation interdite du lundi au mardi de 08h00 à 22h00');
+
+    await locationItem.getByRole('button', { name: 'Modifier' }).click();
+
+    let measureList = locationItem.getByRole('list', { name: 'Liste des restrictions' });
+    await measureList.waitFor();
+
+    const measureItem = measureList.locator('> li').nth(0);
+    expect(await measureItem.getByRole('heading', { level: 4 }).innerText()).toBe('Restriction 1');
+
+    await measureItem.getByTestId('delete-period-1').click();
+
+    await page.getByRole('button', { name: 'Valider' }).click();
+    await expect(locationItem).toContainText('Circulation interdite tous les jours');
 });
