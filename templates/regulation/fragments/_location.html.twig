@@ -35,30 +35,31 @@
                     <li>
                         {{ ('regulation.measure.type.' ~ measure.type)|trans }}
 
-                        {% for period in measure.periods %}
-                            {% for dayRange in period.dayRanges %}
-                                {% if dayRange.firstDay == dayRange.lastDay %}
+                        {%- for period in measure.periods -%}
+                            {%- for dayRange in period.dayRanges -%}
+                                {% if loop.first%} {% endif %}
+                                {%- if dayRange.firstDay == dayRange.lastDay -%}
                                     {{ 'regulation.period.one_day'|trans({
                                         '%firstDay%': ('regulation.period.days.' ~ dayRange.firstDay)|trans,
                                         '%startTime%': period.startTime|date('H\\hi'),
                                         '%endTime%': period.endTime|date('H\\hi'),
                                     })|lower }}
-                                {% else %}
+                                {%- else -%}
                                     {{ 'regulation.period.many_days'|trans({
                                         '%firstDay%': ('regulation.period.days.' ~ dayRange.firstDay)|trans,
                                         '%lastDay%': ('regulation.period.days.' ~ dayRange.lastDay)|trans,
                                         '%startTime%': period.startTime|date('H\\hi'),
                                         '%endTime%': period.endTime|date('H\\hi'),
                                     })|lower }}
-                                {% endif %}
-                                {% if not loop.last %}- {% endif %}
-                            {% endfor %}
-                            {% if not loop.last %}- {% endif %}
+                                {%- endif -%}
+                                {% if not loop.last %}, {% endif %}
+                            {%- endfor -%}
+                            {% if not loop.last %}, {% endif %}
                         {% else %}
                             {{ 'regulation.period.all_days'|trans }}
                         {% endfor %}
 
-                        {% if measure.vehicleSet.restrictedTypes|length > 0 %}
+                        {%- if measure.vehicleSet.restrictedTypes|length > 0 -%}
                             {{ 'regulation.vehicles.prefix'|trans }}
                             {% for vehicleType in measure.vehicleSet.restrictedTypes %}
                                 {%- if vehicleType.isOther|default(false) -%}
@@ -68,9 +69,9 @@
                                 {%- endif -%}
                                 {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
                             {% endfor -%}
-                        {% else %}
+                        {%- else -%}
                             {{ 'regulation.vehicles.all'|trans }}
-                        {% endif -%}
+                        {%- endif -%}
 
                         {% if measure.vehicleSet.exemptedTypes|length > 0 -%}
                             , {{ 'regulation.vehicles.except'|trans }}
