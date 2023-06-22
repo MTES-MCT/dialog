@@ -10,8 +10,10 @@ use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\MeasureView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationAddress;
@@ -47,6 +49,24 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 'lastDay' => ApplicableDayEnum::MONDAY->value,
             ],
         ];
+
+        $vehicleSet = $this->createMock(VehicleSet::class);
+        $vehicleSet
+            ->expects(self::once())
+            ->method('getRestrictedTypes')
+            ->willReturn(['heavyGoodsVehicle', 'other']);
+        $vehicleSet
+            ->expects(self::exactly(2))
+            ->method('getOtherRestrictedTypeText')
+            ->willReturn('Matières dangereuses');
+        $vehicleSet
+            ->expects(self::once())
+            ->method('getExemptedTypes')
+            ->willReturn(['bus', 'pedestrians', 'other']);
+        $vehicleSet
+            ->expects(self::exactly(2))
+            ->method('getOtherExemptedTypeText')
+            ->willReturn('Convois exceptionnels');
 
         $period1 = $this->createMock(Period::class);
         $period1
@@ -85,6 +105,10 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getPeriods')
             ->willReturn([$period1, $period2]);
+        $measure
+            ->expects(self::once())
+            ->method('getVehicleSet')
+            ->willReturn($vehicleSet);
 
         $location = $this->createMock(Location::class);
         $location
@@ -187,10 +211,24 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         fromHouseNumber: '95',
                         toHouseNumber: '253',
                         measures: [
-                            new MeasureView('noEntry', [
-                                new PeriodView($daysRange1, $startTime, $endTime),
-                                new PeriodView($daysRange2, $startTime, $endTime),
-                            ]),
+                            new MeasureView(
+                                'noEntry',
+                                [
+                                    new PeriodView($daysRange1, $startTime, $endTime),
+                                    new PeriodView($daysRange2, $startTime, $endTime),
+                                ],
+                                new VehicleSetView(
+                                    [
+                                        ['name' => 'heavyGoodsVehicle'],
+                                        ['name' => 'Matières dangereuses', 'isOther' => true],
+                                    ],
+                                    [
+                                        ['name' => 'bus'],
+                                        ['name' => 'pedestrians'],
+                                        ['name' => 'Convois exceptionnels', 'isOther' => true],
+                                    ],
+                                ),
+                            ),
                         ],
                     ),
                 ],
