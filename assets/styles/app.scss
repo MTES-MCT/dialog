@@ -63,6 +63,7 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
 @each $extraIcon in ('bus', 'ambulance', 'bicycle', 'pedestrians', 'critair', 'heavy-goods-vehicle') {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../public/images/icons/#{$extraIcon}.svg');
+        -webkit-mask-image: url('../../public/images/icons/#{$extraIcon}.svg');
     }
 }
 
