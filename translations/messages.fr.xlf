@@ -800,7 +800,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.restricted_types.help">
                 <source>regulation.vehicle_set.restricted_types.help</source>
-                <target>Spécifiez les véhicles pour lesquels la restriction s'applique :</target>
+                <target>Spécifiez les véhicules pour lesquels la restriction s'applique :</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.other_restricted_type_text">
                 <source>regulation.vehicle_set.other_restricted_type_text</source>
