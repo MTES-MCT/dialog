@@ -74,6 +74,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('ro.locations', 'l')
             ->leftJoin('l.measures', 'm')
             ->leftJoin('m.periods', 'p')
+            ->leftJoin('m.vehicleSet', 'v')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

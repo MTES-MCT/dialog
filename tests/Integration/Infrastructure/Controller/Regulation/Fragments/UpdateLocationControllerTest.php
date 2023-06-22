@@ -57,8 +57,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $this->assertSame('Circulation à sens unique tous les jours', $crawler->filter('li')->eq(2)->text());
-        $this->assertSame('Circulation alternée le lundi de 08h00 à 16h00', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('Circulation à sens unique tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation alternée le lundi de 08h00 à 16h00 pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
     }
 
     public function testDeletePeriod(): void
@@ -83,7 +83,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $this->assertSame('Circulation interdite tous les jours', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
     }
 
     public function testRemoveMeasure(): void
@@ -104,7 +104,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => 'f15ed802-fa9b-4d75-ab04-d62ea46597e9']);
-        $this->assertNotContains('Circulation interdite tous les jours', $crawler->filter('li')->extract(['_text']));
+        $this->assertNotContains('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
     }
 
     public function testGeocodingFailure(): void

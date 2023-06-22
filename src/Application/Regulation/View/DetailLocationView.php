@@ -33,7 +33,7 @@ class DetailLocationView
                 );
             }
 
-            $measures[] = new MeasureView($measure->getType(), $periods);
+            $measures[] = new MeasureView($measure->getType(), $periods, VehicleSetView::fromEntity($measure->getVehicleSet()));
         }
 
         return new self(

@@ -9,6 +9,7 @@ class MeasureView
     public function __construct(
         public readonly string $type,
         public readonly ?iterable $periods = null,
+        public readonly ?VehicleSetView $vehicleSet = null,
     ) {
     }
 }
