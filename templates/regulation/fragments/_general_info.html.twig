@@ -19,15 +19,19 @@
                 <li>{{ regulationOrderRecord.description }}</li>
                 {% set startDate = regulationOrderRecord.startDate %}
                 {% set endDate = regulationOrderRecord.endDate %}
-                {% set isFuture = app_is_client_future_day(startDate) %}
+                {% set isFuture = app_is_future_day(startDate) %}
                 <li>
                     {% if startDate and endDate %}
-                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
-                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
+                        {{ 'common.date.from'|trans|capitalize }}
+                        {% include 'common/date.html.twig' with { date: startDate } only %}
+                        {{ 'common.date.to'|trans }}
+                        {% include 'common/date.html.twig' with { date: endDate } only %}
                     {% elseif isFuture %}
-                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+                        {{ 'common.date.starting'|trans|capitalize }}
+                        {% include 'common/date.html.twig' with { date: startDate } only %}
                     {% else %}
-                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+                        {{ 'common.date.since'|trans|capitalize }}
+                        {% include 'common/date.html.twig' with { date: startDate } only %}
                     {% endif %}
                 </li>
             </ul>

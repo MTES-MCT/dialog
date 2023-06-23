@@ -16,11 +16,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class GeneralInfoFormType extends AbstractType
 {
-    public function __construct(
-        private string $clientTimezone,
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -39,7 +34,6 @@ final class GeneralInfoFormType extends AbstractType
                     'label' => 'regulation.general_info.start_date',
                     'help' => 'regulation.general_info.start_date.help',
                     'widget' => 'single_text',
-                    'view_timezone' => $this->clientTimezone,
                 ],
             )
             ->add(
@@ -49,7 +43,6 @@ final class GeneralInfoFormType extends AbstractType
                     'label' => 'regulation.general_info.end_date',
                     'help' => 'regulation.general_info.end_date.help',
                     'widget' => 'single_text',
-                    'view_timezone' => $this->clientTimezone,
                     'required' => false,
                 ],
             )

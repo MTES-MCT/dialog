@@ -11,11 +11,6 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 final class SaveRegulationGeneralInfoCommandConstraintValidator extends ConstraintValidator
 {
-    public function __construct(
-        private string $clientTimezone,
-    ) {
-    }
-
     public function validate(mixed $command, Constraint $constraint): void
     {
         if (!$command instanceof SaveRegulationGeneralInfoCommand) {
@@ -23,9 +18,7 @@ final class SaveRegulationGeneralInfoCommandConstraintValidator extends Constrai
         }
 
         if ($command->endDate !== null && $command->endDate < $command->startDate) {
-            $viewStartDate = \DateTimeImmutable::createFromInterface($command->startDate)
-                ->setTimezone(new \DateTimeZone($this->clientTimezone))
-                ->format('d/m/Y');
+            $viewStartDate = \DateTimeImmutable::createFromInterface($command->startDate)->format('d/m/Y');
 
             $this->context->buildViolation('regulation.error.end_date_before_start_date')
                 ->setParameter('{{ compared_value }}', $viewStartDate)

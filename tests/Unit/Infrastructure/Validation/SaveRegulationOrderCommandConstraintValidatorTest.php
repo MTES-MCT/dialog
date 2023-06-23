@@ -28,7 +28,7 @@ class SaveRegulationGeneralInfoCommandConstraintValidatorTest extends Constraint
 
     protected function createValidator(): ConstraintValidatorInterface
     {
-        return new SaveRegulationGeneralInfoCommandConstraintValidator(clientTimezone: 'Europe/Paris');
+        return new SaveRegulationGeneralInfoCommandConstraintValidator();
     }
 
     public function testUnexpectedValue(): void

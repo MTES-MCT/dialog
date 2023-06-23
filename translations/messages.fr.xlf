@@ -148,11 +148,11 @@
             </trans-unit>
             <trans-unit id="common.date.from">
                 <source>common.date.from</source>
-                <target>du %date%</target>
+                <target>du</target>
             </trans-unit>
             <trans-unit id="common.date.to">
                 <source>common.date.to</source>
-                <target>au %date%</target>
+                <target>au</target>
             </trans-unit>
             <trans-unit id="common.date.starting">
                 <source>common.date.starting</source>
