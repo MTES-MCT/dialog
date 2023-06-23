@@ -14,6 +14,16 @@ jobs:
         ports:
           - 5432:5432
 
+      redis:
+        image: redis:5-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
       - uses: actions/checkout@v1
 
@@ -46,6 +56,8 @@ jobs:
         # .env directly.
         run: |
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
+          echo "REDIS_HOST=localhost" >> .env
+          echo "REDIS_PORT=6379" >> .env
 
       - name: Install Symfony CLI
         # Required for E2E testing
