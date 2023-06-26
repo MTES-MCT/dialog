@@ -17,8 +17,11 @@ export class RegulationOrderPage {
         this.saveBtn = page.getByRole('button', { name: 'Valider' });
     }
 
-    async gotoRegulationOrderWithLocations() {
-        await this.page.goto('/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+    /**
+     * @param {string} uuid 
+     */
+    async goToRegulation(uuid) {
+        await this.page.goto(`/regulations/${uuid}`);
     }
 
     async beginNewLocation() {

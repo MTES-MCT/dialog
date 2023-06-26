@@ -16,7 +16,7 @@ test('Begin then cancel a location', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     await page.beginNewLocation();
     await page.cancelLocation();
 });
@@ -25,7 +25,7 @@ test('Add a minimal location', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await expect(location).toContainText('Circulation interdite tous les jours');
 });
@@ -34,7 +34,7 @@ test('Add a minimal measure to a location', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await page.addMinimalMeasureToLocation(location, {
         expectedIndex: 1,
@@ -49,7 +49,7 @@ test('Remove a measure and add another one to location', async ({ regulationOrde
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
 
     await page.addMinimalMeasureToLocation(location, {
@@ -75,7 +75,7 @@ test('Set vehicles on a measure', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await page.setVehiclesOnMeasureAndAssertChangesWereSaved(location, {
         measureIndex: 0,
@@ -90,7 +90,7 @@ test('Add a period to a measure', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await expect(location).toContainText('Circulation interdite tous les jours');
     await page.addPeriodToMeasure(location, {
@@ -106,7 +106,7 @@ test('Delete a period from a measure', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
-    await page.gotoRegulationOrderWithLocations();
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await page.addPeriodToMeasure(location, {
         measureIndex: 0,
