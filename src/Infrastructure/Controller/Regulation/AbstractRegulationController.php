@@ -40,7 +40,7 @@ abstract class AbstractRegulationController
         /** @var SymfonyUser */
         $user = $this->security->getUser();
 
-        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganization())) {
+        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganizationUuids())) {
             throw new AccessDeniedHttpException();
         }
 

@@ -27,7 +27,7 @@ final class UserTest extends TestCase
         $this->assertSame('Mathieu Marchois', $user->getFullName());
         $this->assertSame('mathieu@fairness.coop', $user->getEmail());
         $this->assertSame('password', $user->getPassword());
-        $this->assertSame($organization1, $user->getOrganization());
+        $this->assertSame([$organization1, $organization2], $user->getOrganizations());
     }
 
     public function testWithoutOrganization(): void
@@ -39,7 +39,7 @@ final class UserTest extends TestCase
             'password',
         );
 
-        $this->assertSame(null, $user->getOrganization());
+        $this->assertSame(null, $user->getOrganizations());
 
         $user2 = new User(
             '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
@@ -49,6 +49,6 @@ final class UserTest extends TestCase
             [],
         );
 
-        $this->assertSame(null, $user2->getOrganization());
+        $this->assertSame(null, $user2->getOrganizations());
     }
 }
