@@ -68,20 +68,6 @@ services:
     DateTimeInterface:
         class: DateTimeImmutable
 
-    # ------------
-    # Redis
-    # ------------
-    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
-        arguments:
-            - '@Redis'
-            - { 'ttl': 86400 }
-    Redis:
-        class: Redis
-        calls:
-           - connect:
-                - '%env(REDIS_HOST)%'
-                - '%env(int:REDIS_PORT)%'
-
 when@test:
     services:
         App\Tests\Mock\APIAdresseMockClient:

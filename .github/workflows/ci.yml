@@ -56,8 +56,7 @@ jobs:
         # .env directly.
         run: |
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
-          echo "REDIS_HOST=localhost" >> .env
-          echo "REDIS_PORT=6379" >> .env
+          echo "REDIS_URL=redis://localhost:6379" >> .env
 
       - name: Install Symfony CLI
         # Required for E2E testing
