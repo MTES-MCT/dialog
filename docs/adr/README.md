@@ -8,3 +8,5 @@ Table des matières :
 * [002 - Modèle conceptuel de données](./002_mcd.md)
 * [003 - Environnement technique](./003_technical_stack.md)
 * [004 - Architecture hexagonale](./004_hexagonal_architecture.md)
+* [005 - Choix d'un service de géocodage](./005_geocoding.md)
+* [006 - Ajout de Redis](./006_redis.md)

@@ -25,6 +25,9 @@ RUN apt-get update \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Redis
+RUN pecl install redis && docker-php-ext-enable redis
+
 # Install extensions
 RUN docker-php-ext-install pdo pdo_pgsql zip opcache exif pcntl intl
 RUN docker-php-ext-configure intl

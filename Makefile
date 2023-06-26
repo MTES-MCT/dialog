@@ -87,6 +87,8 @@ dbshell: ## Connect to the database
 dbfixtures: ## Load tests fixtures
 	make console CMD="doctrine:fixtures:load --env=test -n --purge-with-truncate"
 
+redisshell: ## Connect to the Redis container
+	docker-compose exec redis redis-cli
 ##
 ## ----------------
 ## Executable

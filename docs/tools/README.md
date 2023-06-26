@@ -9,3 +9,4 @@ Table des matières :
 - [Base de données](./db.md)
 - [Languages](./languages.md)
 - [Docker](./docker.md)
+- [Redis](./redis.md)

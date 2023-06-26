@@ -29,6 +29,7 @@ services:
       - playwright-data:/root/.cache/ms-playwright
     depends_on:
       - database
+      - redis
 
   nginx:
     image: nginx:stable-alpine
@@ -54,3 +55,9 @@ services:
       - pgadmin-data:/var/lib/pgadmin
     depends_on:
       - database
+
+  redis:
+    image: redis:5-alpine
+    ports:
+      - 6379:6379
+
