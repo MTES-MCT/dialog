@@ -35,15 +35,12 @@ class User
         return $this->password;
     }
 
-    /**
-     * For the moment we only manage the case of single organization
-     */
-    public function getOrganization(): ?Organization
+    public function getOrganizations(): ?iterable
     {
         if (!$this->organizations) {
             return null;
         }
 
-        return $this->organizations[0];
+        return $this->organizations;
     }
 }

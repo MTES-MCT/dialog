@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 final class DeleteRegulationCommandHandlerTest extends TestCase
 {
-    private $organization;
+    private $organizationUuids;
     private $canOrganizationAccessToRegulation;
     private $regulationOrderRepository;
     private $regulationOrderRecord;
@@ -24,7 +24,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->organization = $this->createMock(Organization::class);
+        $this->organizationUuids = ['c3d4444e-5e45-4134-ad22-32f1a72b8214'];
         $this->canOrganizationAccessToRegulation = $this->createMock(CanOrganizationAccessToRegulation::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -38,7 +38,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
         $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
-            ->with($this->regulationOrderRecord, $this->organization)
+            ->with($this->regulationOrderRecord, $this->organizationUuids)
             ->willReturn(true);
 
         $this->regulationOrderRepository
@@ -56,7 +56,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
             $this->canOrganizationAccessToRegulation,
         );
 
-        $command = new DeleteRegulationCommand($organization, $this->regulationOrderRecord);
+        $command = new DeleteRegulationCommand($this->organizationUuids, $this->regulationOrderRecord);
         $this->assertEmpty($handler($command));
     }
 
@@ -69,7 +69,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
         $this->canOrganizationAccessToRegulation
             ->expects(self::once())
             ->method('isSatisfiedBy')
-            ->with($this->regulationOrderRecord, $this->organization)
+            ->with($this->regulationOrderRecord, $this->organizationUuids)
             ->willReturn(false);
 
         $this->regulationOrderRepository
@@ -85,7 +85,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
             $this->canOrganizationAccessToRegulation,
         );
 
-        $command = new DeleteRegulationCommand($organization, $this->regulationOrderRecord);
+        $command = new DeleteRegulationCommand($this->organizationUuids, $this->regulationOrderRecord);
         $handler($command);
     }
 }

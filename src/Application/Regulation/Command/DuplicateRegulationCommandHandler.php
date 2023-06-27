@@ -22,7 +22,7 @@ final class DuplicateRegulationCommandHandler
 
     public function __invoke(DuplicateRegulationCommand $command): RegulationOrderRecord
     {
-        $organization = $command->organization;
+        $organization = $command->originalRegulationOrderRecord->getOrganization();
         $originalRegulationOrderRecord = $command->originalRegulationOrderRecord;
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
 

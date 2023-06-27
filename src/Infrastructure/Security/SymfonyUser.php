@@ -15,8 +15,8 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         private string $email,
         private string $fullName,
         private string $password,
+        private array $organizations,
         private array $roles,
-        private Organization $organization,
     ) {
     }
 
@@ -55,9 +55,17 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function getOrganization(): Organization
+    public function getOrganizations(): array
     {
-        return $this->organization;
+        return $this->organizations;
+    }
+
+    public function getOrganizationUuids(): array
+    {
+        return array_map(
+            function (Organization $organization) { return $organization->getUuid(); },
+            $this->organizations,
+        );
     }
 
     public function eraseCredentials(): void

@@ -30,14 +30,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
     private $translator;
     private $commandBus;
     private $originalRegulationOrderRecord;
-    private $organization;
     private $originalRegulationOrder;
 
     public function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->organization = $this->createMock(Organization::class);
         $this->originalRegulationOrder = $this->createMock(RegulationOrder::class);
         $this->originalRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
     }
@@ -113,6 +111,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($this->originalRegulationOrder);
+
+        $originalOrganization = $this->createMock(Organization::class);
+        $this->originalRegulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($originalOrganization);
 
         $location1 = $this->createMock(Location::class);
         $location1
@@ -201,7 +205,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $generalInfoCommand->startDate = $startDate;
         $generalInfoCommand->endDate = $endDate;
-        $generalInfoCommand->organization = $this->organization;
+        $generalInfoCommand->organization = $originalOrganization;
 
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = true;
@@ -249,7 +253,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             $this->commandBus,
         );
 
-        $command = new DuplicateRegulationCommand($this->organization, $this->originalRegulationOrderRecord);
+        $command = new DuplicateRegulationCommand($this->originalRegulationOrderRecord);
         $this->assertSame($duplicatedRegulationOrderRecord, $handler($command));
     }
 }

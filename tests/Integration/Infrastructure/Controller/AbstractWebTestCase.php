@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
+use App\Domain\User\Organization;
 use App\Infrastructure\Persistence\Doctrine\Repository\User\UserRepository;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -17,14 +18,21 @@ abstract class AbstractWebTestCase extends WebTestCase
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail($email);
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $organizations = [];
+
+        foreach ($testUser->getOrganizations() as $organization) {
+            $organizations[] = $em->getReference(Organization::class, $organization->getUuid());
+        }
+
         $client->loginUser(
             new SymfonyUser(
                 $testUser->getUuid(),
                 $testUser->getEmail(),
                 $testUser->getFullName(),
                 $testUser->getPassword(),
+                $organizations,
                 ['ROLE_USER'],
-                $testUser->getOrganization(),
             ),
         );
 

@@ -12,14 +12,16 @@ class SymfonyUserTest extends TestCase
 {
     public function testUser()
     {
-        $organization = new Organization('133fb411-7754-4749-9590-ce05a2abe108', 'Dialog');
+        $organizations = [
+            new Organization('133fb411-7754-4749-9590-ce05a2abe108', 'Dialog'),
+        ];
         $user = new SymfonyUser(
             '2d3724f1-2910-48b4-ba56-81796f6e100b',
             'mathieu.marchois@beta.gouv.fr',
             'Mathieu MARCHOIS',
             'password',
+            $organizations,
             ['ROLE_USER'],
-            $organization,
         );
 
         $this->assertSame('2d3724f1-2910-48b4-ba56-81796f6e100b', $user->getUuid());
@@ -29,7 +31,8 @@ class SymfonyUserTest extends TestCase
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $user->getUsername());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $user->getUserIdentifier());
         $this->assertSame('password', $user->getPassword());
-        $this->assertSame($organization, $user->getOrganization());
+        $this->assertSame($organizations, $user->getOrganizations());
+        $this->assertSame(['133fb411-7754-4749-9590-ce05a2abe108'], $user->getOrganizationUuids());
         $this->assertEmpty($user->eraseCredentials());
     }
 }

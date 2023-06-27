@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\QueryInterface;
-use App\Domain\User\Organization;
 
-final class GetRegulationsQuery implements QueryInterface
+final readonly class GetRegulationsQuery implements QueryInterface
 {
     public function __construct(
-        public readonly Organization $organization,
-        public readonly int $pageSize,
-        public readonly int $page,
-        public readonly bool $isPermanent,
+        public array $organizationUuids,
+        public int $pageSize,
+        public int $page,
+        public bool $isPermanent,
     ) {
     }
 }

@@ -24,7 +24,6 @@ final class GetRegulationsQueryHandlerTest extends TestCase
     {
         $startDate1 = new \DateTime('2022-12-07');
         $startDate2 = new \DateTime('2022-12-10');
-        $organization = $this->createMock(Organization::class);
 
         $location = $this->createMock(Location::class);
         $location
@@ -78,6 +77,16 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getStatus')
             ->willReturn('draft');
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::exactly(2))
+            ->method('getName')
+            ->willReturn('DiaLog');
+
+        $regulationOrderRecord1
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $regulationOrder2 = $this->createMock(RegulationOrder::class);
         $regulationOrder2
@@ -106,20 +115,29 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getStatus')
             ->willReturn('draft');
+        $regulationOrderRecord2
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findRegulationsByOrganization')
-            ->with($organization, 20, 1, true)
+            ->method('findRegulationsByOrganizations')
+            ->with(['dcab837f-4460-4355-99d5-bf4891c35f8f'], 20, 1, true)
             ->willReturn([
                 'count' => 2,
                 'items' => [$regulationOrderRecord2, $regulationOrderRecord1],
             ]);
 
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationsQuery($organization, 20, 1, isPermanent: true));
+        $regulationOrders = $handler(new GetRegulationsQuery(
+            ['dcab837f-4460-4355-99d5-bf4891c35f8f'],
+            20,
+            1,
+            isPermanent: true,
+        ));
 
         $pagination = new Pagination(
             [
@@ -128,6 +146,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'F02/2023',
                     'draft',
                     0,
+                    'DiaLog',
                     null,
                     $startDate2,
                     null,
@@ -137,6 +156,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'F01/2023',
                     'draft',
                     2,
+                    'DiaLog',
                     new LocationView(
                         address: new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
                     ),

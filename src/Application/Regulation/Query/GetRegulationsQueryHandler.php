@@ -19,8 +19,8 @@ final class GetRegulationsQueryHandler
 
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
-        $regulationOrderRecords = $this->repository->findRegulationsByOrganization(
-            $query->organization,
+        $regulationOrderRecords = $this->repository->findRegulationsByOrganizations(
+            $query->organizationUuids,
             $query->pageSize,
             $query->page,
             $query->isPermanent,
@@ -37,6 +37,7 @@ final class GetRegulationsQueryHandler
                 identifier: $regulationOrder->getIdentifier(),
                 status: $regulationOrderRecord->getStatus(),
                 numLocations: $nbLocations,
+                organizationName: $regulationOrderRecord->getOrganization()->getName(),
                 location: $nbLocations ? new LocationView(
                     LocationAddress::fromString($locations->first()->getAddress()),
                 ) : null,

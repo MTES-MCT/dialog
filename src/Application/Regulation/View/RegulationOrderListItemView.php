@@ -11,6 +11,7 @@ final class RegulationOrderListItemView
         public readonly string $identifier,
         public readonly string $status,
         public readonly int $numLocations,
+        public readonly string $organizationName,
         public readonly ?LocationView $location,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
