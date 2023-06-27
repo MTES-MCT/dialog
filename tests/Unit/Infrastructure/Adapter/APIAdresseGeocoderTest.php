@@ -193,4 +193,24 @@ final class APIAdresseGeocoderTest extends TestCase
         $addresses = $geocoder->findAddresses('Test');
         $this->assertEquals([], $addresses);
     }
+
+    public function testFindAddressesSearchTooShort(): void
+    {
+        $response = new MockResponse(
+            json_encode([
+                'features' => [['properties' => ['name' => 'Rue Eugene Berthoud', 'postcode' => '75018', 'city' => 'Paris', 'type' => 'street']]],
+            ]),
+            ['http_code' => 200],
+        );
+        $http = new MockHttpClient([$response]);
+        $geocoder = new APIAdresseGeocoder($http);
+
+        $addresses = $geocoder->findAddresses('aa');
+        $this->assertEquals([], $addresses);
+        $this->assertEquals(0, $http->getRequestsCount());
+
+        $addresses = $geocoder->findAddresses('aaa');
+        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
+        $this->assertEquals(1, $http->getRequestsCount());
+    }
 }

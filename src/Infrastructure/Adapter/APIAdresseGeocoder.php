@@ -107,6 +107,11 @@ final class APIAdresseGeocoder implements GeocoderInterface
     {
         $search = preg_replace(self::HOUSENUMBER_FILTER_REGEX, '', $search);
 
+        if (\strlen($search) < 3) {
+            // APIAdresse returns error if search string has length strictly less than 3.
+            return [];
+        }
+
         $response = $this->apiAdresseClient->request('GET', '/search/', [
             'headers' => [
                 'Accept' => 'application/json',
