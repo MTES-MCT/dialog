@@ -46,7 +46,7 @@ final class ListRegulationsController
 
         $temporaryRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
-                $user->getOrganization(),
+                $user->getOrganizationUuids(),
                 $pageSize,
                 $tab === 'temporary' ? $page : 1,
                 isPermanent: false,
@@ -54,7 +54,7 @@ final class ListRegulationsController
         );
         $permanentRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
-                $user->getOrganization(),
+                $user->getOrganizationUuids(),
                 $pageSize,
                 $tab === 'permanent' ? $page : 1,
                 isPermanent: true,

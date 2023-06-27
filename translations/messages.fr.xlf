@@ -294,6 +294,10 @@
                 <source>regulation.general_info.organization</source>
                 <target>Organisation compétente</target>
             </trans-unit>
+            <trans-unit id="regulation.organization">
+                <source>regulation.organization</source>
+                <target>Organisation</target>
+            </trans-unit>
             <trans-unit id="regulation.general_info.organization.help">
                 <source>regulation.general_info.organization.help</source>
                 <target>Commune, département ou entité responsable de l'arrêté</target>
