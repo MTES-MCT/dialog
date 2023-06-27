@@ -19,15 +19,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
-    public function findRegulationsByOrganization(
-        Organization $organization,
+    public function findRegulationsByOrganizations(
+        array $organizationUuids,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->where('roc.organization = :organization')
-            ->setParameter('organization', $organization->getUuid())
+            ->where('roc.organization IN (:organizationUuids)')
+            ->setParameter('organizationUuids', $organizationUuids)
+            ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')

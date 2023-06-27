@@ -9,7 +9,6 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
-use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,15 +50,12 @@ final class DuplicateRegulationController extends AbstractRegulationController
 
         /** @var FlashBagAwareSessionInterface */
         $session = $request->getSession();
-
-        /** @var SymfonyUser */
-        $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
         try {
             $duplicatedRegulationOrderRecord = $this->commandBus->handle(
-                new DuplicateRegulationCommand($user->getOrganization(), $regulationOrderRecord),
+                new DuplicateRegulationCommand($regulationOrderRecord),
             );
 
             $session->getFlashBag()->add('success', $this->translator->trans('regulation.duplicated.success'));
