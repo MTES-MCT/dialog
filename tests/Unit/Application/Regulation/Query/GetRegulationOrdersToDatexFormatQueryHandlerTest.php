@@ -55,7 +55,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toLatitude' => $location1->toLatitude,
             'toLongitude' => $location1->toLongitude,
             'restrictedVehicleTypes' => [],
-            'exemptedVehicleTypes' => [],
+            'exemptedVehicleTypes' => null,
         ];
         $regulationOrder2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
