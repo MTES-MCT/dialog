@@ -24,11 +24,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
         foreach ($regulationOrders as $regulationOrder) {
             $vehicleConditions = [];
 
-            foreach ($regulationOrder['restrictedVehicleTypes'] as $restrictedVehicleType) {
+            foreach ($regulationOrder['restrictedVehicleTypes'] ?: [] as $restrictedVehicleType) {
                 $vehicleConditions[] = new DatexVehicleConditionView($restrictedVehicleType);
             }
 
-            foreach ($regulationOrder['exemptedVehicleTypes'] as $exemptedVehicleType) {
+            foreach ($regulationOrder['exemptedVehicleTypes'] ?: [] as $exemptedVehicleType) {
                 $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
             }
 
