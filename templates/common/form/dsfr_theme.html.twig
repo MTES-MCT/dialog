@@ -77,6 +77,7 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 {% endblock %}
 
 {% block date_widget %}
+  {% set attr = attr|merge({'data-controller': ('datepicker-toggle ' ~ attr['data-controller']|default(''))|trim}) %}
   {%- if widget == 'single_text' -%}
     <div class="fr-input-wrap fr-fi-calendar-line">
       {{ parent() }}
