@@ -25,8 +25,8 @@
                 </div>
             </div>
             {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
-            {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-            {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+            {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-5'}}) }}
+            {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-5'}}) }}
             <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                 {{ "common.cancel"|trans }}
             </a>
