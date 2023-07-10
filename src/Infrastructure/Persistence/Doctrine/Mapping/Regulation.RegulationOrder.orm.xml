@@ -3,6 +3,9 @@
   <entity
     name="App\Domain\Regulation\RegulationOrder"
     table="regulation_order">
+    <indexes>
+        <index columns="end_date"/>
+    </indexes>
     <id name="uuid" type="guid" column="uuid"/>
     <field name="identifier" type="string" column="identifier" length="60" nullable="false"/>
     <field name="category" type="string" column="category" length="50" nullable="false"/>
