@@ -210,6 +210,14 @@
                 <source>regulation.status</source>
                 <target>Statut</target>
             </trans-unit>
+            <trans-unit id="regulation.export">
+                <source>regulation.export</source>
+                <target>Export</target>
+            </trans-unit>
+            <trans-unit id="regulation.export.doc">
+                <source>regulation.export.doc</source>
+                <target>Export format DOC</target>
+            </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
                 <target>Commune</target>
