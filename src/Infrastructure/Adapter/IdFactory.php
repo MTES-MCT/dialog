@@ -11,6 +11,6 @@ final class IdFactory implements IdFactoryInterface
 {
     public function make(): string
     {
-        return (string) Uuid::v4();
+        return (string) Uuid::v7();
     }
 }
