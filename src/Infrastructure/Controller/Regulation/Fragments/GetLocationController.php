@@ -10,6 +10,7 @@ use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
+use App\Infrastructure\Routing\Requirements;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -33,8 +34,8 @@ final class GetLocationController extends AbstractRegulationController
         name: 'fragment_regulations_location',
         methods: ['GET'],
         requirements: [
-            'regulationOrderRecordUuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-            'uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+            'regulationOrderRecordUuid' => Requirements::UUID,
+            'uuid' => Requirements::UUID,
         ],
     )]
     public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
