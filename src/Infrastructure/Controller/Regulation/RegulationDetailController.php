@@ -10,10 +10,10 @@ use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
-use App\Infrastructure\Routing\Requirements;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 final class RegulationDetailController extends AbstractRegulationController
 {
@@ -31,7 +31,7 @@ final class RegulationDetailController extends AbstractRegulationController
     #[Route(
         '/regulations/{uuid}',
         name: 'app_regulation_detail',
-        requirements: ['uuid' => Requirements::UUID],
+        requirements: ['uuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
     public function __invoke(string $uuid): Response

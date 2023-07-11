@@ -11,7 +11,6 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Infrastructure\Routing\Requirements;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -38,7 +38,7 @@ final class DeleteRegulationController
     #[Route(
         '/regulations/{uuid}',
         name: 'app_regulation_delete',
-        requirements: ['uuid' => Requirements::UUID],
+        requirements: ['uuid' => Requirement::UUID],
         methods: ['DELETE'],
     )]
     public function __invoke(Request $request, string $uuid): Response
