@@ -9,7 +9,6 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
-use App\Infrastructure\Routing\Requirements;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -39,7 +39,7 @@ final class DuplicateRegulationController extends AbstractRegulationController
     #[Route(
         '/regulations/{uuid}/duplicate',
         name: 'app_regulation_duplicate',
-        requirements: ['uuid' => Requirements::UUID],
+        requirements: ['uuid' => Requirement::UUID],
         methods: ['POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response

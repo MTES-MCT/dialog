@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
-use App\Infrastructure\Routing\Requirements;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 final class AddLocationLinkFragmentController
 {
@@ -20,7 +20,7 @@ final class AddLocationLinkFragmentController
         methods: 'GET',
         name: 'fragment_regulation_location_add_link',
         requirements: [
-            'regulationOrderRecordUuid' => Requirements::UUID,
+            'regulationOrderRecordUuid' => Requirement::UUID,
         ],
     )]
     public function __invoke(string $regulationOrderRecordUuid): Response
