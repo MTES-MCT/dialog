@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
+use App\Infrastructure\Routing\Requirements;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +39,7 @@ final class DuplicateRegulationController extends AbstractRegulationController
     #[Route(
         '/regulations/{uuid}/duplicate',
         name: 'app_regulation_duplicate',
-        requirements: ['uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'],
+        requirements: ['uuid' => Requirements::UUID],
         methods: ['POST'],
     )]
     public function __invoke(Request $request, string $uuid): Response
