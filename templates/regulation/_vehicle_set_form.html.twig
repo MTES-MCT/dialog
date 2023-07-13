@@ -126,7 +126,7 @@
             <div
                 class="app-card__content"
                 data-controller="visibility condition disable"
-                data-condition-includes-value="other"
+                data-condition-checked-value="other"
                 data-action="condition:yes->visibility#showTargets condition:yes->disable#enableTargets condition:no->visibility#hideTargets condition:no->disable#disableTargets"
             >
                 <fieldset
@@ -159,7 +159,7 @@
                                             hidden: true,
                                             'data-chip-button-target': 'checkbox',
                                             'data-condition-target': 'checkbox',
-                                            'data-action': 'change->condition#fromCheckboxChange',
+                                            'data-action': 'change->condition#dispatchFromCheckboxes',
                                         } }) }}
                                     </button>
                                 </label>
