@@ -2,11 +2,7 @@
     class="fr-fieldset {% if form.allVehicles.vars.errors|length > 0 %}fr-fieldset--error{% endif %}"
     role="radiogroup"
     aria-labelledby="allVehicles-legend-{{ index }} {% if form.allVehicles.vars.errors|length > 0 %}{{ form.allVehicles.vars.id }}_error{% endif %}"
-    data-controller="visibility disable"
-    data-visibility-show-if-value="no"
-    data-visibility-output-outlet="#someVehicles-output-{{ index }}"
-    data-disable-output-outlet="#someVehicles-fieldset-{{ index }}"
-    data-action="visibility:visible->disable#enableOutput visibility:hidden->disable#disableOutput"
+    data-controller="visibility"
 >
     {{ form_label(form.allVehicles, null, { 
         element: 'legend',
@@ -18,8 +14,9 @@
             <div class="fr-radio-group fr-radio-rich {% if option.vars.value == 'no' %}app-someVehicles__radiogroup{% endif %}">
                 {{ form_widget(option, {
                     attr: {
-                        'data-visibility-target': 'radio',
-                        'data-action': 'change->visibility#update',
+                        'data-controller': 'condition',
+                        'data-condition-equals-value': 'no',
+                        'data-action': 'change->condition#dispatchFromInputChange condition:yes->visibility#showTargets condition:no->visibility#hideTargets',
                     },
                 }) }}
                 {{ form_label(option, null, { help: (option.vars.label ~ '.help')|trans }) }}
@@ -31,29 +28,22 @@
         </div>
     {% endfor %}
 
-    <div id="someVehicles-output-{{ index }}" data-controller="output" class="fr-fieldset__element fr-mt-n4v" {% if form.allVehicles.vars.value != 'no' %}hidden{% endif %}>
+    <div class="fr-fieldset__element fr-mt-n4v" data-visibility-target="hideable" {% if form.allVehicles.vars.value != 'no' %}hidden{% endif %}>
         <div class="app-card app-card--content-only app-someVehicles__form">
             <div class="app-card__content">
-                <fieldset
-                    id="someVehicles-fieldset-{{ index }}"
-                    class="fr-x-fieldset--raw"
-                    data-controller="output"
-                >
-                    <fieldset
-                        class="fr-fieldset"
-                        aria-labelledby="restrictedTypes-legend-{{ index }}"
-                        data-controller="visibility disable"
-                        data-visibility-show-if-value="other"
-                        data-visibility-output-outlet="#otherRestrictedTypeText-output-{{ index }}"
-                        data-disable-output-outlet="#{{ form.otherRestrictedTypeText.vars.id }}"
-                        data-action="visibility:visible->disable#enableOutput visibility:hidden->disable#disableOutput"
-                    >
+                <fieldset class="fr-x-fieldset--raw" data-controller="visibility disable">
+                    <fieldset class="fr-fieldset" aria-labelledby="restrictedTypes-legend-{{ index }}">
                         {{ form_label(form.restrictedTypes, null, {
                             element: 'legend',
                             label_attr: { id: 'restrictedTypes-legend-' ~ index, class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
                         }) }}
 
-                        <ul class="fr-fieldset__item fr-tags-group">
+                        <ul
+                            class="fr-fieldset__item fr-tags-group"
+                            data-controller="condition"
+                            data-condition-checked-value="other"
+                            data-action="condition:yes->visibility#showTargets condition:yes->disable#enableTargets condition:no->visibility#hideTargets condition:no->disable#disableTargets"
+                        >
                             {% for vehicleType in form.restrictedTypes %}
                                 <li>
                                     {% set btnId = vehicleType.vars.id ~ '-btn' %}
@@ -74,8 +64,8 @@
                                         {{ form_widget(vehicleType, { attr: {
                                             hidden: true,
                                             'data-chip-button-target': 'checkbox',
-                                            'data-visibility-target': 'checkbox',
-                                            'data-action': 'change->visibility#update',
+                                            'data-condition-target': 'checkbox',
+                                            'data-action': 'change->condition#dispatchFromCheckboxes',
                                         } }) }}
                                     </label>
                                 </li>
@@ -85,12 +75,11 @@
 
                     {{ form_row(form.otherRestrictedTypeText, {
                         row_attr: {
-                            'data-controller': 'output',
-                            id: 'otherRestrictedTypeText-output-' ~ index,
+                            'data-visibility-target': 'hideable',
                             hidden: 'other' not in form.restrictedTypes.vars.value,
                         },
                         attr: {
-                            'data-controller': 'output',
+                            'data-disable-target': 'switchable',
                             disabled: 'other' not in form.restrictedTypes.vars.value,
                         },
                         group_class: 'fr-input-group',
@@ -109,6 +98,7 @@
 <fieldset
     class="fr-fieldset"
     aria-labelledby="exemptedVehicles-legend-{{ index }}"
+    data-controller="visibility"
 >
     <legend id="exemptedVehicles-legend-{{ index }}" class="fr-fieldset__legend">
         {{ 'regulation.vehicle_set.exempted_vehicles'|trans }}
@@ -116,13 +106,9 @@
 
     <button
         type="button"
-        id="defineExemptedVehiclesBtn-output-{{ index }}"
+        id="defineExemptedVehiclesBtn-{{ index }}"
         class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line fr-x-btn--with-hint"
-        data-controller="visibility output disable"
-        data-visibility-target="this"
-        data-visibility-output-outlet="#exemptedVehicles-{{ index }}"
-        data-disable-output-outlet="#exemptedVehicles-fieldset-{{ index }}"
-        data-action="click->visibility#hideThis click->visibility#revealOutput click->disable#enableOutput"
+        data-action="click->visibility#hideCurrentTarget click->visibility#showTargets"
         {% if form.exemptedTypes.vars.value|length > 0 %}hidden{% endif %}
     >
         {{ 'regulation.vehicle_set.exempted_vehicles.add'|trans }}
@@ -132,24 +118,21 @@
     </button>
 
     <div
-        id="exemptedVehicles-{{ index }}"
         class="fr-fieldset__element"
-        data-controller="visibility output"
-        data-visibility-target="this"
-        data-visibility-output-outlet="#defineExemptedVehiclesBtn-output-{{ index }}"
+        data-visibility-target="hideable"
         {% if form.exemptedTypes.vars.value|length == 0 %}hidden{% endif %}
     >
-        <div class="app-card app-card--no-header">
-            <div class="app-card__content">
+        <div class="app-card app-card--no-header" data-controller="disable">
+            <div
+                class="app-card__content"
+                data-controller="visibility condition disable"
+                data-condition-includes-value="other"
+                data-action="condition:yes->visibility#showTargets condition:yes->disable#enableTargets condition:no->visibility#hideTargets condition:no->disable#disableTargets"
+            >
                 <fieldset
                     id="exemptedVehicles-fieldset-{{ index }}"
                     class="fr-fieldset app-card__content"
                     aria-labelledby="exemptedTypes-legend-{{ index }}"
-                    data-controller="visibility disable output"
-                    data-visibility-show-if-value="other"
-                    data-visibility-output-outlet="#otherExemptedTypeText-output-{{ index }}"
-                    data-action="visibility:visible->disable#enableOutput visibility:hidden->disable#disableOutput"
-                    data-disable-output-outlet="#{{ form.otherExemptedTypeText.vars.id }}"
                 >
                     {{ form_label(form.exemptedTypes, null, {
                         element: 'legend',
@@ -175,11 +158,10 @@
                                         {{ form_widget(vehicleType, { attr: {
                                             hidden: true,
                                             'data-chip-button-target': 'checkbox',
-                                            'data-visibility-target': 'checkbox',
-                                            'data-action': 'change->visibility#update',
+                                            'data-condition-target': 'checkbox',
+                                            'data-action': 'change->condition#fromCheckboxChange',
                                         } }) }}
                                     </button>
-
                                 </label>
                             </li>
                         {% endfor %}
@@ -187,12 +169,11 @@
 
                     {{ form_row(form.otherExemptedTypeText, {
                         row_attr: {
-                            id: 'otherExemptedTypeText-output-' ~ index,
-                            'data-controller': 'output',
+                            'data-visibility-target': 'hideable',
                             hidden: 'other' not in form.exemptedTypes.vars.value
                         },
                         attr: {
-                            'data-controller': 'output',
+                            'data-disable-target': 'switchable',
                             disabled: 'other' not in form.exemptedTypes.vars.value,
                         },
                         group_class: 'fr-input-group',
@@ -207,9 +188,9 @@
                     class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line"
                     title="{{ 'regulation.measure.exempted_vehicles.delete'|trans }}"
                     aria-label="{{ 'regulation.measure.exempted_vehicles.delete'|trans }}"
-                    data-controller="disable output"
-                    data-disable-output-outlet="#exemptedVehicles-fieldset-{{ index }}"
-                    data-action="click->visibility#hideThis click->disable#disableOutput click->visibility#revealOutput"
+                    data-action="click->visibility#hideTargets click->visibility#showById click->disable#disableById"
+                    data-visibility-id-param="defineExemptedVehiclesBtn-{{ index }}"
+                    data-disable-id-param="exemptedVehicles-fieldset-{{ index }}"
                 ></button>
             </div>
         </div>
