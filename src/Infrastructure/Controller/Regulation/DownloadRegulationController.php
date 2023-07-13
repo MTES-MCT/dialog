@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 final class DownloadRegulationController extends AbstractRegulationController
 {
@@ -28,7 +29,7 @@ final class DownloadRegulationController extends AbstractRegulationController
     #[Route(
         '/regulations/{uuid}/download',
         name: 'app_regulation_download',
-        requirements: ['uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'],
+        requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]
     public function __invoke(string $uuid): Response
@@ -50,6 +51,7 @@ final class DownloadRegulationController extends AbstractRegulationController
             (new \Pandoc\Pandoc())
                 ->from('markdown')
                 ->input($content)
+                ->option('reference-doc', __DIR__ . '/reference.docx')
                 ->to('docx')
                 ->run(),
         );
