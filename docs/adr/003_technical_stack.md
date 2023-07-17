@@ -33,7 +33,7 @@ Concernant le frontend, nous avons choisi une **approche hybride** de type "_HTM
 
 En effet, le degré d'interactivité envisagé pour DiaLog étant limité (pages web, liens et formulaires), il n'a pas été jugé pertinent d'adopter dès le début un framework JS SPA (React, SvelteKit, etc).
 
-L'essentiel du frontend est donc géré avec Symfony lui-même, via des templates [Twig](https://twig.symfony.com/) (équivalent de Jinja2 en PHP/Symfony).
+L'essentiel du frontend est donc géré avec Symfony lui-même, via des templates [Twig](https://twig.symfony.com/) (équivalent de Jinja2 en Python).
 
 Les éléments d'interactivté sont gérés via [Turbo](https://turbo.hotwired.dev) (mise à jour sélective de l'interface via des fragments HTML échangés entre le navigateur et le serveur), et [Stimulus](https://stimulus.hotwired.dev) (interactivité côté client).
 
