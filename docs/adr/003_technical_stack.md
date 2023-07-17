@@ -1,12 +1,13 @@
 # 003 - Environnement technique
 
-* Date : 2022-09-14
+* Création : 2022-09-14
+* Dernière mise à jour : 2023-07-17
 * Personnes impliquées : Mathieu Marchois, Florimond Manca
 * Statut : Accepté
 
 ## Contexte
 
-Dans le cadre du projet DiaLog, nous devons choisir un environnement technique sur lequel on peut se reposer pour numériser un arrêté de circulation et le diffuser auprès des _calculateurs d'itinéraires_ via une _API_.
+Dans le cadre du projet DiaLog, nous devons choisir un environnement technique sur lequel on peut se reposer pour numériser un arrêté de circulation et le diffuser auprès des calculateurs d'itinéraires via une API.
 
 **Contraintes**
 
@@ -26,16 +27,26 @@ Nous avons choisi d'utiliser [PostgreSQL](https://www.postgresql.org/) en versio
 
 ### Language / Framework
 
-Nous avons choisi d'utiliser [PHP](https://php.net) en version 8 et [Symfony](https://symfony.com) en version 6. Le raisonnement détaillé est évoqué ci-dessous.
+Nous avons choisi d'utiliser [PHP](https://php.net) en version 8 et [Symfony](https://symfony.com) en version 6 (à la date de création de ce document). Le raisonnement détaillé est évoqué ci-dessous.
 
-Concernant le frontend, il sera pour l'instant géré avec Symfony lui-même, via des templates [Twig](https://twig.symfony.com/) (équivalent de Jinja2 en PHP/Symfony). Il n'a pas été jugé pertinent d'adopter dès le début un framework JS SPA (React, SvelteKit, etc).
+Concernant le frontend, nous avons choisi une **approche hybride** de type "_HTML with sprinkles of JS_" (HTML saupoudré de JS).
+
+En effet, le degré d'interactivité envisagé pour DiaLog étant limité (pages web, liens et formulaires), il n'a pas été jugé pertinent d'adopter dès le début un framework JS SPA (React, SvelteKit, etc).
+
+L'essentiel du frontend est donc géré avec Symfony lui-même, via des templates [Twig](https://twig.symfony.com/) (équivalent de Jinja2 en Python).
+
+Les éléments d'interactivté sont gérés via [Turbo](https://turbo.hotwired.dev) (mise à jour sélective de l'interface via des fragments HTML échangés entre le navigateur et le serveur), et [Stimulus](https://stimulus.hotwired.dev) (interactivité côté client).
+
+Cette approche devrait contribuer à l'écoconception du service numérique, ainsi qu'à son accessibilité pour les utilisateurs munis d'un équipement informatique contraint (matériel vieillissant, réseau ADSL...).
 
 ## Conséquences
 
-* Une base technique PHP/Symfony/PostgreSQL sera mise en place.
-* La documentation indiquera des ressources pour démarrer en PHP/Symfony, préférentiellement à destination d'utilisateurs de Python/Django ou Node.js.
+* Une base technique PHP/Symfony/PostgreSQL est mise en place.
+* La documentation indique des ressources pour démarrer en PHP/Symfony, préférentiellement à destination d'utilisateurs de Python/Django ou Node.js.
 
 ## Détails
+
+### Choix du langage PHP
 
 Nous (Mathieu et Florimond)  avons démarré le projet en octobre 2022 et nous étions familiers avec les langages suivants :
 
@@ -52,3 +63,20 @@ Concernant PHP, à notre sens il souffre d'idées préconçues qui ne semblent p
 Côté framework, Symfony a le même statut dans la communauté PHP que Django dans la communauté Python. C'est l'un des frameworks PHP les plus utilisés. Il dispose d'un écosystème très complet et, point différenciant par rapport à Django, d'une vaste communauté francophone. Il fut en effet créé par [SensioLabs](https://sensiolabs.com/fr/) en 2005 et a été téléchargé plus d'un milliard de fois.
 
 Nous avons donc jugé que pour des personnes déjà à l'aise avec Python et Django, comme cela est courant au sein de BetaGouv, la barrière à l'entrée était suffisamment faible pour reprendre un projet en **PHP/Symfony**.
+
+### Choix de Turbo et Stimulus
+
+Le choix de ne pas recourir à un framework JS SPA provient aussi d'une volonté de réduire la complexité de la stack frontend. Les évolutions récentes des frameworks SPA (_server-side component rendering_, _rehydration_ et autres) ne nous ont pas convaincu de leur pertinence pour notre cas d'usage de site métier avec peu d'interactivité et géré par une petite équipe. Il nous a semblé plus adapté de repartir d'une base HTML.
+
+À la différence d'une architecture "Multi-page app" (MPA) historique, où chaque navigation déclenchait un rechargement complet de la page, des éléments d'interactivité visant à améliorer l'expérience utilisateur (UX) sont possibles grâce à Turbo et Stimulus.
+
+* Turbo fournit des outils pour mettre à jour certaines zones de la page à partir de fragments HTML renvoyés par le serveur. En pratique, il intercepte les navigations natives du navigateur (liens, formulaires) et interprète la réponse du serveur pour mettre à jour la page de façon sélective. **N.B.** : Il n'y a donc pas d'API JSON entre le serveur et le navigateur : le serveur et le navigateur échangent du HTML tout-fait.
+* Stimulus est une librairie JavaScript qui permet d'ajouter des comportements interactifs à des éléments de la page (exemples : afficher une modale, autocompléter un champ de recherche, ...).
+
+Note : d'autres outils similaires existent. Par exemple [htmx](https://htmx.org) est similaire à Turbo ; [Catalyst](https://catalyst.rocks/) est similaire à Stimulus. Turbo et Stimulus ont été choisis pour leur intégration native à Symfony via le projet "_Symfony UX_".
+
+Cette approche constitue un entre-deux entre les MPA (tout-serveur) et les SPA (tout-client). Elle est déjà utilisée à l'échelle. Par exemple, c'est l'approche adoptée par GitHub (_cf_ les éléments `<turbo-frame>` dans le code source HTML de ses pages).
+
+Nous nous appuyons sur les standards du Web (HTTP, HTML, CSS, JS) et leurs développements récents. Par exemple, les modales sont gérées via l'élément natif `<dialog>`. L'appui sur les standards devrait favoriser la durabilité et la portabilité du service.
+
+Cette approche réduit aussi en principe (évaluations à faire) la charge sur les terminaux utilisateurs, en réduisant considérablement la quantité de JavaScript nécessaire. Cela contribue donc à l'écoconception du service numérique, ainsi qu'à l'accessibilité du service à des utilisateurs dont la qualité de connexion et d'équipement est variable (exemple : petites communes rurales avec ordinateur ancienne génération et réseau ADSL).
