@@ -17,13 +17,15 @@
                 </li>
                 {% if location.address.roadName %}
                     <li>
-                        {% include 'regulation/fragments/_location_number.html.twig' with { location } only %}
+                        {{ location.address.roadName }}
+                        {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                     </li>
                 {% endif %}
                 {% for measure in location.measures %}
                     <li>
-                        {% include 'regulation/fragments/_period.html.twig' with { periods: measure.periods, type: measure.type } only %}
-                        {% include 'regulation/fragments/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
+                        {{ ('regulation.measure.type.' ~ measure.type)|trans }}
+                        {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+                        {% include 'regulation/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
                     </li>
                 {% endfor %}
             </ul>

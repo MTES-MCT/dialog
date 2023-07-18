@@ -1,4 +1,3 @@
-{{ location.address.roadName|default(location.address.city) }}
 {% if location.fromHouseNumber and location.toHouseNumber %}
     - {{ 'regulation.location.house_number_from_to'|trans({ '%from%': location.fromHouseNumber, '%to%': location.toHouseNumber }) }}
 {% elseif location.fromHouseNumber %}

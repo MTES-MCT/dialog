@@ -1,5 +1,3 @@
-{{ ('regulation.measure.type.' ~ type)|trans }}
-
 {%- for period in periods -%}
     {%- for dayRange in period.dayRanges -%}
         {% if loop.first%} {% endif %}

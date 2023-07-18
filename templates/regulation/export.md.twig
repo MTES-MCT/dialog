@@ -10,7 +10,8 @@ ne garantit pas l'exactitude des informations. Il vous appartient de vérifier q
 toutes les informations sont correctes.
 
 • Les informations en [bleu]{custom-style="Dialog_VariableGras"} sont issues du formulaire, assurez-vous qu'elles soient toujours en cohérence avec les informations renseignées dans DiaLog.
-• Les informations en [italique]{custom-style="Dialog_ACompelter"} sont à compléter.
+
+• Les informations en [italique]{custom-style="Dialog_ACompleter"} sont à compléter.
 
 Vous pouvez supprimer cet encart une fois votre arrêté complété.
 :::
@@ -30,9 +31,12 @@ Le maire de [{{ regulationOrderRecord.organizationName }}]{custom-style="Dialog_
 :::
 
 [Vu]{custom-style="Dialog_GrasMajuscules"} :
+
 [Vu]{custom-style="Dialog_GrasMajuscules"} :
+
 [Vu]{custom-style="Dialog_GrasMajuscules"} :
-[Vu]{custom-style="Dialog_GrasMajuscules"} :
+
+[Vu]{custom-style="Dialog_GrasMajuscules"} :  
 
 [Considérant]{custom-style="Dialog_GrasMajuscules"} [que...]{custom-style="Dialog_ACompleter"}
 
@@ -46,18 +50,52 @@ Arrête
 [Article 1]{custom-style="Dialog_Gras"} - Circulation
 :::
 
-{% if startDate and endDate %}
-[Du {{ app_datetime(startDate) }} au {{ app_datetime(endDate) }}]{custom-style="Dialog_Variable"}
-{% else %}
-[A partir du {{ app_datetime(startDate) }}]{custom-style="Dialog_Variable"}
-{% endif %}
+[{% include 'regulation/_overall_period.html.twig' with { regulationOrderRecord } only %}]{custom-style="Dialog_Variable"}
 
-{% for location in regulationOrderRecord.locations %}
-[{% include 'regulation/fragments/_location_number.html.twig' with { location } only %}]{custom-style="Dialog_Variable"}
-–
-{% for measure in location.measures %}
-[{% include 'regulation/fragments/_period.html.twig' with { periods: measure.periods, type: measure.type } only %}]{custom-style="Dialog_Variable"}
-[{% include 'regulation/fragments/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}]{custom-style="Dialog_Variable"}
-{% endfor %}
-{% endfor %}
+{% for location in regulationOrderRecord.locations -%}
+    [
+    {{ location.address }}
+    {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
+    –
+    {% for measure in location.measures -%}
+        {{ ('regulation.measure.type.' ~ measure.type)|trans|lower }}
+        {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+        {% include 'regulation/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
+    {% endfor %}
+    {# New line #}
 
+    {# End new line #}
+    ]{custom-style="Dialog_Variable"}
+{%- endfor %}
+
+<br>
+
+::: {custom-style="Dialog_TitreArticle"}
+[Article 2]{custom-style="Dialog_Gras"} - Signalisation
+:::
+
+[Exemple : La signalisation temporaire conforme à l'IISR sera mise en place par les soins du pétitionnaire qui en sera le seul responsable. La signalisation relative au stationnement sera mise en place 24 heures avant le début de l'occupation.]{custom-style="Dialog_ACompleter"}
+
+::: {custom-style="Dialog_TitreArticle"}
+[Article 3]{custom-style="Dialog_Gras"} - Poursuites
+:::
+
+[Exemple : Toute infraction aux dispositions qui précèdent sera constpoursuivie conformément aux lois et règlements en vigueur.]{custom-style="Dialog_ACompleter"}
+
+::: {custom-style="Dialog_TitreArticle"}
+[Article 4]{custom-style="Dialog_Gras"} - Mise en oeuvre
+:::
+
+[Exemple : Madame la commissaire de XXXXXXX, monsieur le directeur de la police municipale de XXXXXXXX, madame la directrice générale des services de la ville de XXXXXX, sont chargés, chacun en ce qui les concernent, de l’exécution des prescriptions du présent arrêté.]{custom-style="Dialog_ACompleter"}
+
+<br>
+
+Arrêté publié le : [XXX]{custom-style="Dialog_ACompleter"}
+
+::: {custom-style="Dialog_AligneDroite"}
+[Fait à {{ regulationOrderRecord.organizationName }}, le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
+
+[Le maire / adjoint délégué / autre]{custom-style="Dialog_ACompleter"}
+
+[Signature et tampon]{custom-style="Dialog_ACompleter"}
+:::
