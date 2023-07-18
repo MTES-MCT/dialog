@@ -53,8 +53,8 @@ RUN npx playwright install-deps firefox chromium
 RUN apt-get install -y wget && \
     mkdir -p /usr/src/pandoc && \
     cd /usr/src/pandoc && \
-    wget https://github.com/jgm/pandoc/releases/download/2.15/pandoc-2.15-1-amd64.deb && \
-    dpkg -i pandoc-2.15-1-amd64.deb
+    wget https://github.com/jgm/pandoc/releases/download/3.1.5/pandoc-3.1.5-1-amd64.deb && \
+    dpkg -i pandoc-3.1.5-1-amd64.deb
 
 # Allow husky to install pre-commit hooks
 RUN git config --global --add safe.directory /var/www/dialog
