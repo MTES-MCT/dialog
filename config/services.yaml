@@ -15,7 +15,7 @@ services:
         bind:
             $clientTimezone: '%client_timezone%'
             $generatedRegulationOrderFolder: '%env(GENERATED_REGULATION_ORDER_FOLDER)%'
-
+            $projectDir: '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -23,6 +23,7 @@ final class DownloadRegulationController extends AbstractRegulationController
         Security $security,
         private readonly string $generatedRegulationOrderFolder,
         private readonly \Twig\Environment $twig,
+        private readonly string $projectDir,
     ) {
         parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
@@ -54,7 +55,7 @@ final class DownloadRegulationController extends AbstractRegulationController
             (new \Pandoc\Pandoc())
                 ->from('markdown')
                 ->input($content)
-                ->option('reference-doc', __DIR__ . '/reference.docx')
+                ->option('reference-doc', $this->projectDir . '/data/regulation-order-template.docx')
                 ->to('docx')
                 ->run(),
         );
