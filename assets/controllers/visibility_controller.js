@@ -1,42 +1,31 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["this", "input", "radio", "checkbox"];
-    static outlets = ["output"];
-    static values = { showIf: String };
+    static targets = ["hideable", "this"];
 
-    connect() {
-        this.update();
+    showTargets() {
+        this.hideableTargets.forEach(target => {
+            target.hidden = false;
+        });
     }
 
-    update() {
-        if (!this.hasRadioTarget && !this.hasCheckboxTarget && !this.hasInputTarget) {
-            return;
-        }
-
-        if (this.hasRadioTarget) {
-            const radio = this.radioTargets.find(radio => radio.checked);
-            const value = radio ? radio.value : undefined;
-            this.outputOutletElement.hidden = value !== this.showIfValue;
-        }
-
-        if (this.hasCheckboxTarget) {
-            const value = this.checkboxTargets.filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
-            this.outputOutletElement.hidden = !value.includes(this.showIfValue);
-        }
-
-        if (this.hasInputTarget) {
-            this.outputOutletElement.hidden = this.inputTarget.value !== this.showIfValue;
-        }
-
-        this.dispatch(this.outputOutletElement.hidden ? 'hidden' : 'visible');
+    hideTargets() {
+        this.hideableTargets.forEach(target => {
+            target.hidden = true;
+        });
     }
 
-    revealOutput() {
-        this.outputOutletElement.hidden = false;
+    hideCurrentTarget(event) {
+        event.currentTarget.hidden = true;
     }
 
-    hideThis() {
-        this.thisTarget.hidden = true;
+    showById(event) {
+        const element = document.querySelector(`#${event.params.id}`);
+
+        if (!element) {
+            throw new Error(`element #${event.params.id} does not exist`);
+        }
+
+        element.hidden = false;
     }
 }
