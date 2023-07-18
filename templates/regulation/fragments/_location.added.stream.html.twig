@@ -24,3 +24,9 @@
         {% include 'regulation/fragments/_add_location_link.html.twig' with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
     </template>
 </turbo-frame>
+
+<turbo-stream action="replace" target="block_export">
+    <template>
+        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+    </template>
+</turbo-frame>

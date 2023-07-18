@@ -1,6 +1,5 @@
 {%- for period in periods -%}
     {%- for dayRange in period.dayRanges -%}
-        {% if loop.first%} {% endif %}
         {%- if dayRange.firstDay == dayRange.lastDay -%}
             {{ 'regulation.period.one_day'|trans({
                 '%firstDay%': ('regulation.period.days.' ~ dayRange.firstDay)|trans,
