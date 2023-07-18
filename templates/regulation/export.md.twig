@@ -1,4 +1,5 @@
-{% set regulationOrder = regulationOrderRecord.regulationOrder %}
+{% set startDate = regulationOrderRecord.startDate %}
+{% set endDate = regulationOrderRecord.endDate %}
 
 ::: {custom-style="Dialog_Encart"}
 [Information importante :]{custom-style="Dialog_GrasSouligne"}
@@ -17,21 +18,21 @@ Vous pouvez supprimer cet encart une fois votre arrêté complété.
 <br/>
 
 ::: {custom-style="Dialog_TitrePrincipal"}
-Arrếté {{ regulationOrder.endDate ? 'temporaire' : 'permanent' }} [{{ regulationOrder.identifier }}]{custom-style="Dialog_Variable"}
+Arrếté {{ endDate ? 'temporaire' : 'permanent' }} [{{ regulationOrderRecord.identifier }}]{custom-style="Dialog_Variable"}
 :::
 
 ::: {custom-style="Dialog_Description"}
-[{{ regulationOrder.description }}]{custom-style="Dialog_Variable"}
+[{{ regulationOrderRecord.description }}]{custom-style="Dialog_Variable"}
 :::
 
 ::: {custom-style="Dialog_Organisation"}
 Le maire de [{{ regulationOrderRecord.organizationName }}]{custom-style="Dialog_ACompleter"}
 :::
 
-[Vu]{custom-style="Dialog_GrasMajuscules"} :  
-[Vu]{custom-style="Dialog_GrasMajuscules"} :  
-[Vu]{custom-style="Dialog_GrasMajuscules"} :  
-[Vu]{custom-style="Dialog_GrasMajuscules"} :  
+[Vu]{custom-style="Dialog_GrasMajuscules"} :
+[Vu]{custom-style="Dialog_GrasMajuscules"} :
+[Vu]{custom-style="Dialog_GrasMajuscules"} :
+[Vu]{custom-style="Dialog_GrasMajuscules"} :
 
 [Considérant]{custom-style="Dialog_GrasMajuscules"} [que...]{custom-style="Dialog_ACompleter"}
 
@@ -45,6 +46,18 @@ Arrête
 [Article 1]{custom-style="Dialog_Gras"} - Circulation
 :::
 
-[Du XXX au XXX]{custom-style="Dialog_Variable"}
+{% if startDate and endDate %}
+[Du {{ app_datetime(startDate) }} au {{ app_datetime(endDate) }}]{custom-style="Dialog_Variable"}
+{% else %}
+[A partir du {{ app_datetime(startDate) }}]{custom-style="Dialog_Variable"}
+{% endif %}
 
-[Rue de XXX, du n°]{custom-style="Dialog_Variable"}
+{% for location in regulationOrderRecord.locations %}
+[{% include 'regulation/fragments/_location_number.html.twig' with { location } only %}]{custom-style="Dialog_Variable"}
+–
+{% for measure in location.measures %}
+[{% include 'regulation/fragments/_period.html.twig' with { periods: measure.periods, type: measure.type } only %}]{custom-style="Dialog_Variable"}
+[{% include 'regulation/fragments/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}]{custom-style="Dialog_Variable"}
+{% endfor %}
+{% endfor %}
+

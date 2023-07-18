@@ -1,0 +1,25 @@
+{%- if restrictedTypes|length > 0 -%}
+    {{ 'regulation.vehicles.prefix'|trans }}
+    {% for vehicleType in restrictedTypes %}
+        {%- if vehicleType.isOther|default(false) -%}
+            {{ vehicleType.name|lower }}
+        {%- else -%}
+            {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
+        {%- endif -%}
+        {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
+    {% endfor -%}
+{%- else -%}
+    {{ 'regulation.vehicles.all'|trans }}
+{%- endif -%}
+
+{% if exemptedTypes|length > 0 -%}
+    , {{ 'regulation.vehicles.except'|trans }}
+    {% for vehicleType in exemptedTypes %}
+        {%- if vehicleType.isOther|default(false) -%}
+            {{ vehicleType.name|lower }}
+        {%- else -%}
+            {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
+        {%- endif -%}
+        {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
+    {% endfor %}
+{% endif %}

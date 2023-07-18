@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Filesystem\Filesystem;
@@ -34,7 +35,9 @@ final class DownloadRegulationController extends AbstractRegulationController
     )]
     public function __invoke(string $uuid): Response
     {
-        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $regulationOrderRecord = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
+            return $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
+        });
 
         $content = $this->twig->render(
             name: 'regulation/export.md.twig',
