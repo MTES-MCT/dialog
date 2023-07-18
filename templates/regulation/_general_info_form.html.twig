@@ -9,18 +9,19 @@
         {{ form_start(form) }}
             {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
             {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
-            <div class="fr-fieldset" data-controller="visibility" data-visibility-show-if-value="other" data-visibility-output-outlet="#otherCategoryText-output">
+            <div class="fr-fieldset" data-controller="visibility">
                 <div class="fr-fieldset__element">
                     {{ form_row(form.category, {
                         group_class: 'fr-select-group',
                         widget_class: 'fr-select',
                         attr: {
-                            'data-visibility-target': 'input',
-                            'data-action': 'change->visibility#update'
+                            'data-controller': 'condition',
+                            'data-condition-equals-value': 'other',
+                            'data-action': 'change->condition#dispatchFromInputChange condition:yes->visibility#showTargets condition:no->visibility#hideTargets',
                         }
                     }) }}
                 </div>
-                <div id="otherCategoryText-output" data-controller="output" class="fr-fieldset__element" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
+                <div id="otherCategoryText-output" class="fr-fieldset__element" data-visibility-target="hideable" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
                     {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                 </div>
             </div>
