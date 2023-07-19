@@ -17,6 +17,9 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        {# Defer CSS to improve First Contentful Paint (FCP) #}
+        <link rel="preload" href="{{ asset('build/styles.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="{{ asset('build/styles.css') }}"></noscript>
     {% endblock %}
 
     {% block javascripts %}
