@@ -1,0 +1,12 @@
+<hr />
+
+<h3 class="fr-h4">{{ 'regulation.export'|trans }}</h3>
+
+<div class="fr-mb-3w">
+    <a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-left" href="{{ path('app_regulation_export', { uuid: regulationOrderRecordUuid })}}">
+        {{ 'regulation.export.doc'|trans }}
+    </a>
+    <div class="fr-mt-1v fr-text--sm fr-text-mention--grey">
+        {{ 'regulation.export.doc.mention'|trans }}
+    </div>
+</div>

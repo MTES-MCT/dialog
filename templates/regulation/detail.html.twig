@@ -54,8 +54,13 @@
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
                             <h3 class="fr-h4">{{ 'regulation.status'|trans }}</h3>
-                                {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}
-                            <hr class="fr-mt-2w"/>
+                            {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}
+
+                            <turbo-frame id="block_export">
+                                {% if canPublish %}
+                                    {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                                {% endif %}
+                            </turbo-frame>
 
                             <h3 class="fr-h4">{{ 'common.actions'|trans }}</h3>
                             <ul class="fr-btns-group fr-btns-group--icon-left">
