@@ -6,7 +6,7 @@ const { expect } = require('@playwright/test');
 
 export class RegulationOrderPage {
     /**
-     * @param {Page} page 
+     * @param {Page} page
      */
     constructor(page) {
         this.page = page;
@@ -18,7 +18,7 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {string} uuid 
+     * @param {string} uuid
      */
     async goToRegulation(uuid) {
         await this.page.goto(`/regulations/${uuid}`);
@@ -30,7 +30,7 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator|undefined} location 
+     * @param {Locator|undefined} location
      */
     async cancelLocation(location = undefined) {
         const cancelBtn = (location || this.page).getByRole('button', { name: 'Annuler' });
@@ -40,7 +40,7 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {string} title 
+     * @param {string} title
      * @returns Locator
      */
     getLocationByTitle(title) {
@@ -50,11 +50,16 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {{address: string, restrictionType: string, expectedTitle: string}} options
+     * @param {{address: string, restrictionType: string, expectedTitle: string}} args
+     * @param {{doBegin: boolean}} options
+     *
      * @returns Locator
      */
-    async addLocation({ address, restrictionType, expectedTitle }) {
-        this.beginNewLocation();
+    async addLocation({ address, restrictionType, expectedTitle }, { doBegin }= { doBegin: true }) {
+        if (doBegin) {
+            await this.beginNewLocation();
+        }
+
         await this.page.getByLabel('Voie ou ville').fill(address);
         await this.page.getByLabel('Type de restriction').selectOption({ label: restrictionType });
         await this.page.getByText('Tous les véhicules', { exact: true }).check();
@@ -64,14 +69,14 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
+     * @param {Locator} location
      */
     async _beginEditLocation(location) {
         await location.getByRole('button', { name: 'Modifier' }).click();
     }
 
     /**
-     * @param {Locator} location 
+     * @param {Locator} location
      */
     async _endEditLocation(location) {
         await this.saveBtn.click();
@@ -79,8 +84,8 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
-     * @param {{expectedIndex: number, expectedPosition: number, restrictionType: string, isAlreadyEditing?: boolean}} options 
+     * @param {Locator} location
+     * @param {{expectedIndex: number, expectedPosition: number, restrictionType: string, isAlreadyEditing?: boolean}} options
      */
     async _doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, isAlreadyEditing = false }) {
         await location.getByRole('button', { name: 'Ajouter une restriction' }).click();
@@ -99,8 +104,8 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
-     * @param {{ expectedIndex: number, expectedPosition: number, restrictionType: string }} options 
+     * @param {Locator} location
+     * @param {{ expectedIndex: number, expectedPosition: number, restrictionType: string }} options
      */
     async addMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType }) {
         await this._beginEditLocation(location);
@@ -110,8 +115,8 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
-    * @param {{ indexToRemove: number, expectedIndex: number, expectedPosition: number, restrictionType: string }} options 
+     * @param {Locator} location
+    * @param {{ indexToRemove: number, expectedIndex: number, expectedPosition: number, restrictionType: string }} options
      */
     async removeMeasureAndAddAnotherOne(location, { indexToRemove, expectedIndex, expectedPosition, restrictionType }) {
         await this._beginEditLocation(location);
@@ -122,14 +127,14 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
+     * @param {Locator} location
      * @param {{
      *   measureIndex: number,
      *   restrictedVehicleTypes: string[],
      *   otherRestrictedVehicleType: string,
      *   exemptedVehicleTypes: string[],
      *   otherExemptedVehicleType: string,
-     * }} options 
+     * }} options
      */
     async setVehiclesOnMeasureAndAssertChangesWereSaved(location, {
         measureIndex,
@@ -202,7 +207,7 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
+     * @param {Locator} location
      * @param {{ measureIndex: number, periodIndex: number}} options
      */
     async removePeriodFromMeasure(location, { measureIndex, periodIndex }) {
@@ -217,7 +222,7 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {Locator} location 
+     * @param {Locator} location
      */
     async _waitForReadMode(location) {
         await location.getByRole('button', { name: 'Modifier' }).waitFor();
@@ -230,5 +235,10 @@ export class RegulationOrderPage {
             await location.getByRole('button', { name: 'Supprimer' }).click();
             await this.page.getByRole('dialog', { name: 'Supprimer cette localisation ?' }).getByRole('button', { name: 'Supprimer', exact: true }).click();
         }
+    }
+
+    async delete() {
+        await this.page.getByRole('button', { name: 'Supprimer'}).click();
+        await this.page.getByRole('dialog', { name: 'Supprimer cet arrêté ?' }).getByRole('button', { name: 'Supprimer', exact: true }).click();
     }
 }

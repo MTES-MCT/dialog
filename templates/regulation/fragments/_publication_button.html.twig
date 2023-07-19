@@ -1,0 +1,11 @@
+{% if canPublish %}
+    {% set publishCsrfToken = csrf_token('publish-regulation') %}
+    <form method="post" action="{{ path('app_regulation_publish', { uuid: regulationOrderRecord.uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
+        <button class="fr-btn fr-btn--secondary" data-controller="modal-trigger" data-modal-trigger-modal-outlet="#regulation-publish-modal" data-modal-trigger-key-value="publish" data-action="modal-trigger#showModal:prevent" aria-controls="regulation-publish-modal">
+            {{ 'common.publish'|trans }}
+        </button>
+        <input type="hidden" name="token" value="{{ publishCsrfToken }}"/>
+    </form>
+{% else %}
+    <button class="fr-btn fr-btn--secondary" disabled>{{ 'common.publish'|trans }}</button>
+{% endif %}
