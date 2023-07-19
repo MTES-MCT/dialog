@@ -17,18 +17,8 @@
                     {% endif %}
                 </li>
                 <li>{{ regulationOrderRecord.description }}</li>
-                {% set startDate = regulationOrderRecord.startDate %}
-                {% set endDate = regulationOrderRecord.endDate %}
-                {% set isFuture = app_is_client_future_day(startDate) %}
                 <li>
-                    {% if startDate and endDate %}
-                        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
-                        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-                    {% elseif isFuture %}
-                        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
-                    {% else %}
-                        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
-                    {% endif %}
+                    {% include 'regulation/_overall_period.html.twig' with { regulationOrderRecord } only %}
                 </li>
             </ul>
         </div>

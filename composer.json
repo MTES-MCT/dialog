@@ -16,6 +16,7 @@
         "symfony/console": "6.3.*",
         "symfony/dotenv": "6.3.*",
         "symfony/expression-language": "6.3.*",
+        "symfony/filesystem": "6.3.*",
         "symfony/flex": "^2",
         "symfony/form": "6.3.*",
         "symfony/framework-bundle": "6.3.*",
@@ -35,7 +36,8 @@
         "symfony/webpack-encore-bundle": "^1.16",
         "symfony/yaml": "6.3.*",
         "twig/extra-bundle": "^3.6",
-        "twig/string-extra": "^3.6"
+        "twig/string-extra": "^3.6",
+        "ueberdosis/pandoc": "^0.9.0"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^7.1",
