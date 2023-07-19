@@ -12,19 +12,15 @@ final class UserFixture extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $user1 = new User(
-            '0b507871-8b5e-4575-b297-a630310fc06e',
-            'Mathieu MARCHOIS',
-            'mathieu.marchois@beta.gouv.fr',
-            'password',
-        );
+        $user1 = (new User('0b507871-8b5e-4575-b297-a630310fc06e'))
+            ->setFullName('Mathieu MARCHOIS')
+            ->setEmail('mathieu.marchois@beta.gouv.fr')
+            ->setPassword('password');
 
-        $user2 = new User(
-            'd47badd9-989e-472b-a80e-9df642e93880',
-            'Florimond MANCA',
-            'florimond.manca@beta.gouv.fr',
-            'password',
-        );
+        $user2 = (new User('d47badd9-989e-472b-a80e-9df642e93880'))
+            ->setFullName('Florimond MANCA')
+            ->setEmail('florimond.manca@beta.gouv.fr')
+            ->setPassword('password');
 
         $manager->persist($user1);
         $manager->persist($user2);
