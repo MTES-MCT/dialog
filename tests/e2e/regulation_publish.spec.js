@@ -4,7 +4,7 @@ const { RegulationOrderPage } = require('./pages/regulation_order.page');
 
 test.use({ storageState: 'playwright/.auth/mathieu.json' });
 
-test.only('Create then publish a regulation order', async ({ page }) => {
+test('Create then publish a regulation order', async ({ page }) => {
     await page.goto('/regulations/add');
 
     await page.getByRole('textbox', { name: 'Identifiant' }).fill('F01/test');

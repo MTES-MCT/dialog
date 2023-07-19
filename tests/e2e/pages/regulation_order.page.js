@@ -55,7 +55,7 @@ export class RegulationOrderPage {
      *
      * @returns Locator
      */
-    async addLocation({ address, restrictionType, expectedTitle }, { doBegin }= { doBegin: true }) {
+    async addLocation({ address, restrictionType, expectedTitle }, { doBegin } = { doBegin: true }) {
         if (doBegin) {
             await this.beginNewLocation();
         }
