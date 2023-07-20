@@ -26,7 +26,7 @@ final class DashboardControllerTest extends AbstractWebTestCase
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
-    public function testDashboarsWithRoleUser(): void
+    public function testDashboardWithRoleUser(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
         $client->request('GET', '/admin');

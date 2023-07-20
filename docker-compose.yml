@@ -38,6 +38,7 @@ services:
     volumes:
       - ./:/var/www/dialog
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./paas/server.locations:/etc/nginx/server.locations
     depends_on:
       - php
       - database

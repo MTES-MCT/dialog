@@ -23,7 +23,7 @@
                         <p class="fr-header__service-tagline">{{ 'common.baseline'|trans }}</p>
                     </div>
                 </div>
-                <div class="fr-header__tools user">
+                <div class="fr-header__tools" data-testid="user-links">
                     <div class="fr-header__tools-links">
                         <ul class="fr-btns-group">
                             {% if app.user %}
@@ -32,6 +32,13 @@
                                         {{ app.user.fullName }}
                                     </a>
                                 </li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li>
+                                        <a class="fr-btn fr-icon-settings-5-line" href="{{ path('app_admin') }}">
+                                            Administration
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <li>
                                     <a class="fr-btn fr-icon-lock-unlock-line" href="{{ path('app_logout') }}" data-testid="logout-link">
                                         {{ 'common.logout'|trans }}

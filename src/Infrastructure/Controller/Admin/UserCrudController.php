@@ -52,7 +52,7 @@ final class UserCrudController extends AbstractCrudController
             TextField::new('fullName')->setLabel('Prénom / Nom'),
             EmailField::new('email'),
             AssociationField::new('organizations')
-                ->setFormTypeOptionIfNotSet('by_reference', false)
+                ->setFormTypeOption('by_reference', false)
                 ->setFormTypeOption('choice_label', 'name')
                 ->setLabel('Organisation(s)')
                 ->formatValue(function ($value, $entity) {
@@ -99,12 +99,9 @@ final class UserCrudController extends AbstractCrudController
                 return;
             }
 
-            foreach ($form->get('organizations')->getData() as $organization) {
-                $data->addOrganization($organization);
-            }
-
             $password = $form->get('password')->getData();
             if ($password) {
+                /* @phpstan-ignore-next-line */
                 $data->setPassword($this->userPasswordHasher->hashPassword($this->getUser(), $password));
             }
         });

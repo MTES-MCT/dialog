@@ -47,6 +47,13 @@ class Organization
         }
     }
 
+    public function removeUser(User $user): void
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+        }
+    }
+
     public function __toString(): string
     {
         return $this->name;

@@ -33,5 +33,8 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
+
+        yield MenuItem::section('Application');
+        yield MenuItem::linkToRoute('DiaLog', 'fa fa-globe', 'app_regulations_list');
     }
 }

@@ -12,9 +12,8 @@ class SymfonyUserTest extends TestCase
 {
     public function testUser()
     {
-        $organization = (new Organization())
-            ->setUuid('133fb411-7754-4749-9590-ce05a2abe108')
-            ->setName('Dialog');
+        $organization = (new Organization('133fb411-7754-4749-9590-ce05a2abe108'))
+            ->setName('Mairie de Saint-Ouen Sur Seine');
 
         $organizations = [$organization];
 

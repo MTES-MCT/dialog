@@ -69,8 +69,8 @@ class User
     public function addOrganization(Organization $organization): void
     {
         if (!$this->organizations->contains($organization)) {
-            //$organization->addUser($this);
             $this->organizations->add($organization);
+            $organization->addUser($this);
         }
     }
 
@@ -78,6 +78,7 @@ class User
     {
         if ($this->organizations->contains($organization)) {
             $this->organizations->removeElement($organization);
+            $organization->removeUser($this);
         }
     }
 }

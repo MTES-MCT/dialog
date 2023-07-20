@@ -29,12 +29,15 @@ final class UserTest extends TestCase
         $this->assertSame('mathieu@fairness.coop', $user->getEmail());
         $this->assertSame('password', $user->getPassword());
         $this->assertSame([$organization1, $organization2], $user->getOrganizations()->toArray());
+
+        $user->removeOrganization($organization1);
+        $user->removeOrganization($organization1); // Test removal of non existing organization
+        $this->assertSame([1 => $organization2], $user->getOrganizations()->toArray());
     }
 
     public function testWithoutOrganization(): void
     {
-        $user = (new User())
-            ->setUuid('9cebe00d-04d8-48da-89b1-059f6b7bfe44')
+        $user = (new User('9cebe00d-04d8-48da-89b1-059f6b7bfe44'))
             ->setFullName('Mathieu Marchois')
             ->setEmail('mathieu@fairness.coop')
             ->setPassword('password');
