@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 class Organization
 {
-    /** @var User[] */
-    private iterable $users = [];
+    private Collection $users;
+    private string $name;
 
     public function __construct(
         private string $uuid,
-        private string $name,
     ) {
+        $this->users = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -25,17 +28,34 @@ class Organization
         return $this->name;
     }
 
-    public function getUsers(): iterable
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUsers(): Collection
     {
         return $this->users;
     }
 
     public function addUser(User $user): void
     {
-        if (\in_array($user, $this->users, true)) {
-            return;
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
         }
+    }
 
-        $this->users[] = $user;
+    public function removeUser(User $user): void
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+        }
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
