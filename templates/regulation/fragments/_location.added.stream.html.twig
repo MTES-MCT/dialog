@@ -30,3 +30,9 @@
         {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
     </template>
 </turbo-frame>
+
+<turbo-stream action="replace" target="block_publication">
+    <template>
+        {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, regulationOrderRecord } only %}
+    </template>
+</turbo-frame>
