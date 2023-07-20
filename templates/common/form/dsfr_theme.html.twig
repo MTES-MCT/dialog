@@ -20,8 +20,7 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
     {% set row_attr = row_attr|merge({
         class: ('fr-x-autocomplete-wrapper ' ~ row_attr.class|default(''))|trim,
         'data-controller': 'autocomplete',
-        'data-autocomplete-url-value': autocomplete_url,
-    }) %}
+    })|merge(autocomplete_controller_options|default({})) %}
   {% endif %}
   {%- set row_class = (group_class|default('') ~ ' ' ~ row_attr.class|default(''))|trim -%}
 
