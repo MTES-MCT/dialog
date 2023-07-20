@@ -151,7 +151,11 @@
                     group_class: 'fr-input-group',
                     widget_class: 'fr-input',
                     autocomplete: true,
-                    autocomplete_url: path('fragment_address_completion'),
+                    autocomplete_controller_options: {
+                        'data-autocomplete-url-value': path('fragment_address_completion'),
+                        'data-autocomplete-min-length-value': 3,
+                        'data-autocomplete-delay-value': 500,
+                    },
                     autocomplete_results_label: 'regulation.location.address.results_label'|trans,
                 }) }}
                 <div class="fr-container--fluid">
