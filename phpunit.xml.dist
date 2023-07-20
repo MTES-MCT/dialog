@@ -28,6 +28,7 @@
             <file>src/Infrastructure/Adapter/IdFactory.php</file>
             <file>src/Infrastructure/Adapter/QueryBus.php</file>
             <directory suffix=".php">src/Infrastructure/Persistence/Doctrine/Fixtures</directory>
+            <directory suffix=".php">src/Infrastructure/Controller/Admin</directory>
             <file>src/Kernel.php</file>
         </exclude>
     </coverage>

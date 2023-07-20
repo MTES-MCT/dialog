@@ -9,6 +9,7 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
+        "easycorp/easyadmin-bundle": "^4.7",
         "jsor/doctrine-postgis": "^2.1",
         "nelmio/security-bundle": "^3.0",
         "sentry/sentry-symfony": "^4.5",

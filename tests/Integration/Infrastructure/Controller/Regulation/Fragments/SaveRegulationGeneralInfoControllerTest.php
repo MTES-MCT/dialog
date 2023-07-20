@@ -21,7 +21,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'FO1/2023';
-        $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
+        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
@@ -58,7 +58,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'FIOIUS';
-        $form['general_info_form[organization]'] = '0eed3bec-7fe0-469b-a3e9-1c24251bf48c'; // Dialog
+        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
         $form['general_info_form[startDate]'] = '2023-02-14';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;

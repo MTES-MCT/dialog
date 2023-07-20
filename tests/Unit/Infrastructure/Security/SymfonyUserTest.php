@@ -12,9 +12,11 @@ class SymfonyUserTest extends TestCase
 {
     public function testUser()
     {
-        $organizations = [
-            new Organization('133fb411-7754-4749-9590-ce05a2abe108', 'Dialog'),
-        ];
+        $organization = (new Organization('133fb411-7754-4749-9590-ce05a2abe108'))
+            ->setName('Mairie de Saint-Ouen Sur Seine');
+
+        $organizations = [$organization];
+
         $user = new SymfonyUser(
             '2d3724f1-2910-48b4-ba56-81796f6e100b',
             'mathieu.marchois@beta.gouv.fr',

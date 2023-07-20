@@ -20,9 +20,14 @@ abstract class AbstractWebTestCase extends WebTestCase
         $testUser = $userRepository->findOneByEmail($email);
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
         $organizations = [];
+        $role = 'ROLE_USER';
 
         foreach ($testUser->getOrganizations() as $organization) {
             $organizations[] = $em->getReference(Organization::class, $organization->getUuid());
+
+            if ($organization->getUuid() === 'e0d93630-acf7-4722-81e8-ff7d5fa64b66') {
+                $role = 'ROLE_ADMIN';
+            }
         }
 
         $client->loginUser(
@@ -32,7 +37,7 @@ abstract class AbstractWebTestCase extends WebTestCase
                 $testUser->getFullName(),
                 $testUser->getPassword(),
                 $organizations,
-                ['ROLE_USER'],
+                [$role],
             ),
         );
 
