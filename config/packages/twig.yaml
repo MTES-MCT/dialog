@@ -5,3 +5,10 @@ twig:
 when@test:
     twig:
         strict_variables: true
+
+when@prod:
+    twig:
+        globals:
+            matomo:
+                url: https://stats.data.gouv.fr/
+                site_id: 288
