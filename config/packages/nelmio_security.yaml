@@ -29,10 +29,10 @@ nelmio_security:
     csp:
         enabled: true
         enforce:
-            default-src: ['self']
-            script-src: ['self']
-            style-src: ['self']
-            connect-src: ['self']
+            default-src: ['self', 'stats.data.gouv.fr']
+            script-src: ['self', 'stats.data.gouv.fr']
+            style-src: ['self', 'stats.data.gouv.fr']
+            connect-src: ['self', 'stats.data.gouv.fr']
             font-src: ['self']
             img-src: ['self', 'data:']
             block-all-mixed-content: true
