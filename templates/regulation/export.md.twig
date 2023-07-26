@@ -66,11 +66,11 @@ Arrête
     {{ location.address }}
     {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
     –
-    {% for measure in location.measures -%}
+    {%- for measure in location.measures %}
         {{ ('regulation.measure.type.' ~ measure.type)|trans|lower }}
         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
         {% include 'regulation/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
-    {% endfor %}
+    {%- endfor %}
     {# New line #}
 
     {# End new line #}
