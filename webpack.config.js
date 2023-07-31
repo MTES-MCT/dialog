@@ -111,7 +111,9 @@ Encore
         ];
 
         variables.forEach((key) => {
-            options[`process.env.${key}`] = JSON.stringify(env.parsed[key]);
+            if (process.env[key] !== undefined) {
+                options[`process.env.${key}`] = JSON.stringify(process.env[key]);
+            }
         });
     })
 ;
