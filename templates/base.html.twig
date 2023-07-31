@@ -24,7 +24,6 @@
         <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}" defer></script>
         <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}" defer></script>
     {% endblock %}
-    {% include 'common/analytics.html.twig' with { _nonce } only %}
   </head>
   <body>
     {% include 'common/header.html.twig' %}

@@ -10,3 +10,4 @@ Table des matières :
 - [Languages](./languages.md)
 - [Docker](./docker.md)
 - [Redis](./redis.md)
+- [Analytics](./analytics.md)
