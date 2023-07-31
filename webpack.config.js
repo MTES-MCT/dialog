@@ -1,5 +1,6 @@
 const path = require('path');
 const glob = require('glob');
+const Dotenv = require('dotenv');
 const Encore = require('@symfony/webpack-encore');
 const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
 
@@ -96,6 +97,23 @@ Encore
         }
     }))
 
+    .configureDefinePlugin((options) => {
+        // Expose certain environment variables as process.env.* in client-side JS code.
+        // Inspired by: https://github.com/symfony/webpack-encore/issues/567#issuecomment-1339010091
+        const env = Dotenv.config();
+
+        if (env.error) {
+            throw env.error;
+        }
+
+        const variables = [
+            'MATOMO_ENABLED',
+        ];
+
+        variables.forEach((key) => {
+            options[`process.env.${key}`] = JSON.stringify(env.parsed[key]);
+        });
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
