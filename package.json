@@ -10,6 +10,7 @@
         "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^4.0.0",
         "core-js": "^3.23.0",
+        "dotenv": "^16.3.1",
         "file-loader": "^6.0.0",
         "husky": "^8.0.3",
         "purgecss-webpack-plugin": "^5.0.0",
