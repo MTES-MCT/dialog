@@ -62,46 +62,50 @@
                             <loc:linearWithinLinearElement>
                                 <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
                                 <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                {% if location.fromHouseNumber or location.toHouseNumber %}
-                                    <loc:linearElement xsi:type="loc:LinearElementByPoints">
-                                        <loc:roadName>
-                                            <com:values>
-                                                <com:value>{{ location.address }}</com:value>
-                                            </com:values>
-                                        </loc:roadName>
-                                        {% if location.fromHouseNumber %}
-                                            <loc:startPointOfLinearElement>
-                                                <loc:referentIdentifier>start</loc:referentIdentifier>
-                                                <loc:referentName>{{ location.fromHouseNumber }}</loc:referentName>
-                                                <loc:referentType>referenceMarker</loc:referentType>
-                                                <loc:pointCoordinates>
-                                                    <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
-                                                    <loc:longitude>{{ location.fromLongitude }}</loc:longitude>
-                                                </loc:pointCoordinates>
-                                            </loc:startPointOfLinearElement>
-                                        {% endif %}
-                                        {% if location.toHouseNumber %}
-                                            <loc:endPointOfLinearElement>
-                                                <loc:referentIdentifier>end</loc:referentIdentifier>
-                                                <loc:referentName>{{ location.toHouseNumber }}</loc:referentName>
-                                                <loc:referentType>referenceMarker</loc:referentType>
-                                                <loc:pointCoordinates>
-                                                    <loc:latitude>{{ location.toLatitude }}</loc:latitude>
-                                                    <loc:longitude>{{ location.toLongitude }}</loc:longitude>
-                                                </loc:pointCoordinates>
-                                            </loc:endPointOfLinearElement>
-                                        {% endif %}
-                                    </loc:linearElement>
+                                <loc:linearElement xsi:type="loc:LinearElement">
+                                    <loc:roadName>
+                                        <com:values>
+                                            <com:value lang="fr">{{ location.address }}</com:value>
+                                        </com:values>
+                                    </loc:roadName>
+                                </loc:linearElement>
+
+                                {% if location.fromHouseNumber %}
+                                    <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                        <loc:distanceAlong>0</loc:distanceAlong>
+                                        <loc:fromReferent>
+                                            <loc:referentIdentifier>start</loc:referentIdentifier>
+                                            <loc:referentName>{{ location.fromHouseNumber }}</loc:referentName>
+                                            <loc:referentType>referenceMarker</loc:referentType>
+                                            <loc:pointCoordinates>
+                                                <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
+                                                <loc:longitude>{{ location.fromLongitude }}</loc:longitude>
+                                            </loc:pointCoordinates>
+                                        </loc:fromReferent>
+                                    </loc:fromPoint>
+                                {% else %}
                                     <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
                                         <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
                                     </loc:fromPoint>
+                                {% endif %}
+
+                                {% if location.toHouseNumber %}
+                                    <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                        <loc:distanceAlong>0</loc:distanceAlong>
+                                        <loc:fromReferent>
+                                            <loc:referentIdentifier>end</loc:referentIdentifier>
+                                            <loc:referentName>{{ location.toHouseNumber }}</loc:referentName>
+                                            <loc:referentType>referenceMarker</loc:referentType>
+                                            <loc:pointCoordinates>
+                                                <loc:latitude>{{ location.toLatitude }}</loc:latitude>
+                                                <loc:longitude>{{ location.toLongitude }}</loc:longitude>
+                                            </loc:pointCoordinates>
+                                        </loc:fromReferent>
+                                    </loc:toPoint>
+                                {% else %}
                                     <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
                                         <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
                                     </loc:toPoint>
-                                {% else %}
-                                    <loc:linearElement xsi:type="loc:LinearElement">
-                                        <loc:roadName>{{ location.address }}</loc:roadName>
-                                    </loc:linearElement>
                                 {% endif %}
                             </loc:linearWithinLinearElement>
                         </locationByOrder>
@@ -110,7 +114,7 @@
                         {% if vehicle.nonVehicularRoadUser %}
                             <conditions xsi:type="NonVehicularRoadUserCondition">
                                 <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                <com:nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</com:nonVehicularRoadUser>
+                                <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
                             </conditions>
                         {% else %}
                             <conditions xsi:type="VehicleCondition">
