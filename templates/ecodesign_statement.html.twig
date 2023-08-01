@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Déclaration d'écoconception" %}
+
+{% block title %}
+    {{ title }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-py-2w fr-py-md-5w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing'},
+            { title: 'ecodesign_statement.breadcrumb'|trans },
+        ]} %}
+
+        <h1>{{ title }}</h1>
+
+        <p>
+            Ce site web a été pensé et développé dans une logique d'écoconception de services numériques.
+        </p>
+
+        <h2>Qu'est-ce que l'écoconception de services numériques ?</h2>
+
+
+        <p>
+            <strong>L'écoconception de services numériques est une démarche d'amélioration continue</strong>.
+            L'objectif est de limiter les ressources informatiques.
+            L'écoconception agit sur 3 niveaux : terminaux utilisateurs, réseau, et centres de données informatiques (datacenters).
+            Dans une démarche d'écoconception, on s'intéresse au service numérique dans sa globalité.
+        </p>
+
+        <p>
+            L'écoconception de services numériques est une branche du  <a href="https://ecoresponsable.numerique.gouv.fr/publications/guide-pratique-achats-numeriques-responsables/demarche-numerique-responsable/definition/">Numérique responsable</a>.
+            Le Numérique responsable est une démarche d'amélioration continue qui vise à améliorer l'empreinte écologique et sociale du numérique.
+        </p>
+
+        <h2>Raison d'être de ce service</h2>
+
+        <p>
+            Le site <a href="{{ path('app_landing') }}">DiaLog</a> vise à numériser et diffuser la réglementation de circulation afin de garantir la sécurité du public et de préserver les infrastructures routières.
+        </p>
+
+        <p>
+            Il y a 2 cibles utilisatrices principales. Tout d'abord, les agents publics
+            qui souhaitent communiquer à des tiers la réglementation de circulation sous format numérique.
+            Ensuite, les services tiers qui intègrent cette réglementation dans leurs services numériques à destination du public.
+        </p>
+
+        <p>
+            Le besoin métier est de permettre la numérisation et la diffusion de la réglementation de circulation de manière la plus accessible possible.
+        </p>
+
+        <h2>Stratégie et objectifs en matière de réduction ou de limitation des impacts environnementaux</h2>
+
+        <p>
+            Ce site web doit fonctionner sur des terminaux les plus anciens possibles et dans des conditions de connectivité variées.
+        </p>
+
+        <p>
+            Plusieurs mesures sont mises en place. En voici une liste non exhaustive :
+        </p>
+
+        <ul>
+            <li>Utilisation des composants d'interfaces du système de design de l'Etat (DSFR) : ils sont accessibles et leur empreinte est minimale.</li>
+            <li>Navigation la plus intuitive possible pour réduire le temps passé à trouver une information.</li>
+            <li>Nombre de requêtes serveurs maximum par écran : 30.</li>
+            <li>Poids des ressources maximum par écran : 300 ko.</li>
+            <li>Le site s'adapte à toutes les tailles d'écran.</li>
+            <li>Compression des images.</li>
+        </ul>
+
+        <h2>État de conformité au référentiel d'écoconception</h2>
+
+        <p>
+            Le site <a href="{{ path('app_landing') }}">DiaLog</a> est <strong>partiellement conforme</strong> en regard
+            des critères du Référentiel Général d'Écoconception des Services Numériques (RGESN).
+            Le taux de conformité général actuel du site est estimé à <strong>42 %</strong>.
+        </p>
+
+        <p>
+            L'équipe vise une mise en conformité progressive du site via une démarche d'amélioration continue.
+        </p>
+
+        <h3>Résultat des tests conduits sur le site</h3>
+
+        <p>
+            À l'aide de <a href="https://ecoresponsable.numerique.gouv.fr/publications/referentiel-general-ecoconception/numecodiag/">NumEcoDiag</a>,
+            l'auto-diagnostic initial donne un taux de conformité au RGESN de 42 %.
+        </p>
+
+        <p>
+            <a href="#">Télécharger l'audit de conformité RGESN initial à date de juillet 2023 (PDF - XX ko)</a>
+        </p>
+    
+        <p>
+            Le diagnostic a porté sur l'échantillon suivant :
+        </p>
+
+        <ul>
+            <li>
+                Consulter la page d'accueil
+            </li>
+            <li>
+                Consulter la liste des arrêtés
+            </li>
+            <li>
+                Consulter un arrêté
+            </li>
+            <li>
+                Consulter la déclaration d'accessibilité
+            </li>
+        </ul>
+
+        <p>
+            Les outils utilisés pour évaluer certains indicateurs techniques sont
+            l'inspecteur "Réseau" des outils de développement du navigateur
+            et l'extension <a href="https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/greenitanalysis/">Green IT Analysis</a> (disponible sous Firefox, Chrome).
+        </p>
+
+        <h3>Etablissement de cette déclaration de conformité</h3>
+
+        <p>
+            Cette déclaration est établie en version initiale le 01/08/2023.
+        </p>
+
+        <h2>Et après ?</h2>
+
+        <p>
+            Nous mettons en place une démarche d'amélioration continue grâce à une évaluation de l'impact
+            environnemental et social de notre site de manière régulière.
+            Nos outils nous fournissent des indicateurs de suivi pour adapter nos méthodes et nos contenus
+            tout au long du cycle de vie.
+        </p>
+    </div>
+{% endblock %}
