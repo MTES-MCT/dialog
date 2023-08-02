@@ -121,12 +121,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $regulationOrderRecord;
     }
 
-    public function findOneByOrganizationAndIdentifier(
+    public function doesOneExistInOrganizationWithIdentifier(
         Organization $organization,
         string $identifier,
-    ): ?RegulationOrderRecord {
-        return $this->createQueryBuilder('roc')
-            ->select('partial roc.{uuid}')
+    ): bool {
+        $row = $this->createQueryBuilder('roc')
+            ->select('roc.uuid')
             ->where('roc.organization = :organization')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
             ->setParameters([
@@ -135,5 +135,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ])
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $row !== null;
     }
 }
