@@ -21,6 +21,7 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
             exemptedTypes: [VehicleTypeEnum::PEDESTRIANS->value, VehicleTypeEnum::AMBULANCE->value, VehicleTypeEnum::OTHER->value],
             otherExemptedTypeText: 'Convois exceptionnels',
         );
+
         $vehicleSet2 = new VehicleSet(
             '6a65132f-7319-4d5a-aa2d-479685d49df3',
             measure: $this->getReference('measure3'),
@@ -29,8 +30,15 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
             otherExemptedTypeText: null,
         );
 
+        $vehicleSet3 = new VehicleSet(
+            '064ca7cf-a825-7e27-8000-42b09e3ccf61',
+            measure: $this->getReference('measure5'),
+            restrictedTypes: [VehicleTypeEnum::CRITAIR_4->value],
+        );
+
         $manager->persist($vehicleSet1);
         $manager->persist($vehicleSet2);
+        $manager->persist($vehicleSet3);
 
         $manager->flush();
     }

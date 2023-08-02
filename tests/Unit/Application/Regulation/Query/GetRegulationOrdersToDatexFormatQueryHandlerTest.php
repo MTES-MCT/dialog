@@ -7,8 +7,10 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\View\DatexLocationView;
+use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\ArrayUtils;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +28,16 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             toLatitude: '44.025665',
         );
 
+        $location1bis = new DatexLocationView(
+            address: "Rue de l'Hôtel de Ville 82000 Montauban",
+            fromHouseNumber: '30',
+            fromLongitude: '1.352126',
+            fromLatitude: '44.016833',
+            toHouseNumber: '12',
+            toLongitude: '1.353016',
+            toLatitude: '44.016402',
+        );
+
         $location2 = new DatexLocationView(
             address: 'Route du Grand Brossais 44260 Savenay',
             fromHouseNumber : '15',
@@ -41,7 +53,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $startDate2 = new \DateTime('2022-12-10');
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
-        $regulationOrder1 = [
+        $row1 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             'organizationName' => 'Autorité 1',
             'description' => 'Description 1',
@@ -57,7 +69,23 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'restrictedVehicleTypes' => [],
             'exemptedVehicleTypes' => null,
         ];
-        $regulationOrder2 = [
+        $row1bis = [
+            'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            'organizationName' => 'Autorité 1',
+            'description' => 'Description 1',
+            'startDate' => $startDate1,
+            'endDate' => $endDate1,
+            'address' => $location1bis->address,
+            'fromHouseNumber' => $location1bis->fromHouseNumber,
+            'fromLatitude' => $location1bis->fromLatitude,
+            'fromLongitude' => $location1bis->fromLongitude,
+            'toHouseNumber' => $location1bis->toHouseNumber,
+            'toLatitude' => $location1bis->toLatitude,
+            'toLongitude' => $location1bis->toLongitude,
+            'restrictedVehicleTypes' => [],
+            'exemptedVehicleTypes' => null,
+        ];
+        $row2 = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
             'organizationName' => 'Autorité 2',
             'description' => 'Description 2',
@@ -77,9 +105,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForDatexFormat')
-            ->willReturn([$regulationOrder1, $regulationOrder2]);
+            ->willReturn([$row1, $row1bis, $row2]);
 
-        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository, new ArrayUtils());
         $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
 
         $this->assertEquals(
@@ -90,8 +118,16 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     description: 'Description 1',
                     startDate: $startDate1,
                     endDate: $endDate1,
-                    location: $location1,
-                    vehicleConditions: [],
+                    trafficRegulations: [
+                        new DatexTrafficRegulationView(
+                            location: $location1,
+                            vehicleConditions: [],
+                        ),
+                        new DatexTrafficRegulationView(
+                            location: $location1bis,
+                            vehicleConditions: [],
+                        ),
+                    ],
                 ),
                 new RegulationOrderDatexListItemView(
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -99,10 +135,14 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     description: 'Description 2',
                     startDate: $startDate2,
                     endDate: null,
-                    location: $location2,
-                    vehicleConditions: [
-                        new DatexVehicleConditionView('heavyGoodsVehicle'),
-                        new DatexVehicleConditionView('bus', isExempted: true),
+                    trafficRegulations: [
+                        new DatexTrafficRegulationView(
+                            location: $location2,
+                            vehicleConditions: [
+                                new DatexVehicleConditionView('heavyGoodsVehicle'),
+                                new DatexVehicleConditionView('bus', isExempted: true),
+                            ],
+                        ),
                     ],
                 ),
             ],
