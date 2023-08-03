@@ -62,3 +62,24 @@ services:
     ports:
       - 6379:6379
 
+  addok:
+    image: etalab/addok
+    ports:
+      - '7878:7878'
+    volumes:
+      - ./docker/addok/data/addok.conf:/etc/addok/addok.conf
+      - ./docker/addok/data/addok.db:/data/addok.db
+      - ./docker/addok/data/junctions.json:/data/junctions.json
+    environment:
+      WORKERS: 1
+      WORKER_TIMEOUT: 30
+      LOG_QUERIES: 1
+      LOG_NOT_FOUND: 1
+      SLOW_QUERIES: 200
+    links:
+      - addok_redis:redis
+
+  addok_redis:
+    image: etalab/addok-redis
+    volumes:
+      - ./docker/addok/data/dump.rdb:/data/dump.rdb
