@@ -89,6 +89,7 @@ Encore
                 // Dynamic classes
                 /^fr-icon-x-/,
                 /^fr-modal--/,
+                /^fr-alert--/,
             ],
             greedy: [
                 // Source of complex selectors
