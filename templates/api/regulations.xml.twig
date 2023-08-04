@@ -20,128 +20,130 @@
     </com:publicationCreator>
 
     <trafficRegulationsFromCompetentAuthorities>
-    {% for regulationOrder in regulationOrders %}
-        {% set startDate = regulationOrder.startDate %}
-        {% set endDate = regulationOrder.endDate %}
-        {% set location = regulationOrder.location %}
-        {% set vehicleConditions = regulationOrder.vehicleConditions %}
-        <trafficRegulationOrder id="{{ regulationOrder.uuid }}" version="1">
-            <description>
-                <com:values>
-                    <com:value>{{ regulationOrder.description }}</com:value>
-                </com:values>
-            </description>
-            <issuingAuthority>
-                <com:values>
-                    <com:value>{{ regulationOrder.organization }}</com:value>
-                </com:values>
-            </issuingAuthority>
-            <regulationId>{{ regulationOrder.uuid }}</regulationId>
-            <status>madeAndImplemented</status>
-            <trafficRegulation>
-                <status>active</status>
-                <typeOfRegulation xsi:type="AccessRestriction">
-                    <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
-                <condition xsi:type="ConditionSet">
-                    <operator>and</operator>
-                    <conditions xsi:type="ValidityCondition">
-                        <negate>false</negate>
-                        <validityByOrder>
-                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                            <com:validityTimeSpecification>
-                                <com:overallStartTime>{{ startDate|date('Y-m-d') }}T00:00:00.000Z</com:overallStartTime>
-                                {% if endDate %}
-                                    <com:overallEndTime>{{ endDate|date('Y-m-d') }}T23:59:59.000Z</com:overallEndTime>
-                                {% endif %}
-                            </com:validityTimeSpecification>
-                        </validityByOrder>
-                    </conditions>
-                    <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:linearWithinLinearElement>
-                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                <loc:linearElement xsi:type="loc:LinearElement">
-                                    <loc:roadName>
-                                        <com:values>
-                                            <com:value lang="fr">{{ location.address }}</com:value>
-                                        </com:values>
-                                    </loc:roadName>
-                                </loc:linearElement>
+        {% include "api/_regulations_raw.xml.twig" %}
 
-                                {% if location.fromHouseNumber %}
-                                    <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                        <loc:distanceAlong>0</loc:distanceAlong>
-                                        <loc:fromReferent>
-                                            <loc:referentIdentifier>start</loc:referentIdentifier>
-                                            <loc:referentName>{{ location.fromHouseNumber }}</loc:referentName>
-                                            <loc:referentType>referenceMarker</loc:referentType>
-                                            <loc:pointCoordinates>
-                                                <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
-                                                <loc:longitude>{{ location.fromLongitude }}</loc:longitude>
-                                            </loc:pointCoordinates>
-                                        </loc:fromReferent>
-                                    </loc:fromPoint>
-                                {% else %}
-                                    <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
-                                        <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
-                                    </loc:fromPoint>
-                                {% endif %}
-
-                                {% if location.toHouseNumber %}
-                                    <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                        <loc:distanceAlong>0</loc:distanceAlong>
-                                        <loc:fromReferent>
-                                            <loc:referentIdentifier>end</loc:referentIdentifier>
-                                            <loc:referentName>{{ location.toHouseNumber }}</loc:referentName>
-                                            <loc:referentType>referenceMarker</loc:referentType>
-                                            <loc:pointCoordinates>
-                                                <loc:latitude>{{ location.toLatitude }}</loc:latitude>
-                                                <loc:longitude>{{ location.toLongitude }}</loc:longitude>
-                                            </loc:pointCoordinates>
-                                        </loc:fromReferent>
-                                    </loc:toPoint>
-                                {% else %}
-                                    <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
-                                        <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
-                                    </loc:toPoint>
-                                {% endif %}
-                            </loc:linearWithinLinearElement>
-                        </locationByOrder>
-                    </conditions>
-                    {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
-                        {% if vehicle.nonVehicularRoadUser %}
-                            <conditions xsi:type="NonVehicularRoadUserCondition">
-                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
-                            </conditions>
-                        {% else %}
-                            <conditions xsi:type="VehicleCondition">
-                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                <vehicleCharacteristics>
-                                    {% if vehicle.euSpecialPurposeVehicle %}
-                                        <com:_vehicleCharacteristicsExtension>
-                                            <com:vehicleCharacteristicsExtended>
-                                                <comx:regulatedCharacteristics>
-                                                    <comx:euSpecialPurposeVehicle>{{ vehicle.euSpecialPurposeVehicle }}</comx:euSpecialPurposeVehicle>
-                                                </comx:regulatedCharacteristics>
-                                            </com:vehicleCharacteristicsExtended>
-                                        </com:_vehicleCharacteristicsExtension>
-                                    {% elseif vehicle.emissionClassificationOther %}
-                                        <com:emissions>
-                                            <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
-                                        </com:emissions>
-                                    {% else %}
-                                        <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+        {% for regulationOrder in regulationOrders %}
+            {% set startDate = regulationOrder.startDate %}
+            {% set endDate = regulationOrder.endDate %}
+            {% set location = regulationOrder.location %}
+            {% set vehicleConditions = regulationOrder.vehicleConditions %}
+            <trafficRegulationOrder id="{{ regulationOrder.uuid }}" version="1">
+                <description>
+                    <com:values>
+                        <com:value>{{ regulationOrder.description }}</com:value>
+                    </com:values>
+                </description>
+                <issuingAuthority>
+                    <com:values>
+                        <com:value>{{ regulationOrder.organization }}</com:value>
+                    </com:values>
+                </issuingAuthority>
+                <regulationId>{{ regulationOrder.uuid }}</regulationId>
+                <status>madeAndImplemented</status>
+                <trafficRegulation>
+                    <status>active</status>
+                    <typeOfRegulation xsi:type="AccessRestriction">
+                        <accessRestrictionType>noEntry</accessRestrictionType>
+                    </typeOfRegulation>
+                    <condition xsi:type="ConditionSet">
+                        <operator>and</operator>
+                        <conditions xsi:type="ValidityCondition">
+                            <negate>false</negate>
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>{{ startDate|date('Y-m-d') }}T00:00:00.000Z</com:overallStartTime>
+                                    {% if endDate %}
+                                        <com:overallEndTime>{{ endDate|date('Y-m-d') }}T23:59:59.000Z</com:overallEndTime>
                                     {% endif %}
-                                </vehicleCharacteristics>
-                            </conditions>
-                        {% endif %}
-                    {% endfor %}
-                </condition>
-            </trafficRegulation>
-        </trafficRegulationOrder>
-    {% endfor %}
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                        <conditions xsi:type="LocationCondition">
+                            <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                                <loc:linearWithinLinearElement>
+                                    <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
+                                    <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
+                                    <loc:linearElement xsi:type="loc:LinearElement">
+                                        <loc:roadName>
+                                            <com:values>
+                                                <com:value lang="fr">{{ location.address }}</com:value>
+                                            </com:values>
+                                        </loc:roadName>
+                                    </loc:linearElement>
+
+                                    {% if location.fromHouseNumber %}
+                                        <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                            <loc:distanceAlong>0</loc:distanceAlong>
+                                            <loc:fromReferent>
+                                                <loc:referentIdentifier>start</loc:referentIdentifier>
+                                                <loc:referentName>{{ location.fromHouseNumber }}</loc:referentName>
+                                                <loc:referentType>referenceMarker</loc:referentType>
+                                                <loc:pointCoordinates>
+                                                    <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
+                                                    <loc:longitude>{{ location.fromLongitude }}</loc:longitude>
+                                                </loc:pointCoordinates>
+                                            </loc:fromReferent>
+                                        </loc:fromPoint>
+                                    {% else %}
+                                        <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                            <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
+                                        </loc:fromPoint>
+                                    {% endif %}
+
+                                    {% if location.toHouseNumber %}
+                                        <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                            <loc:distanceAlong>0</loc:distanceAlong>
+                                            <loc:fromReferent>
+                                                <loc:referentIdentifier>end</loc:referentIdentifier>
+                                                <loc:referentName>{{ location.toHouseNumber }}</loc:referentName>
+                                                <loc:referentType>referenceMarker</loc:referentType>
+                                                <loc:pointCoordinates>
+                                                    <loc:latitude>{{ location.toLatitude }}</loc:latitude>
+                                                    <loc:longitude>{{ location.toLongitude }}</loc:longitude>
+                                                </loc:pointCoordinates>
+                                            </loc:fromReferent>
+                                        </loc:toPoint>
+                                    {% else %}
+                                        <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                            <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
+                                        </loc:toPoint>
+                                    {% endif %}
+                                </loc:linearWithinLinearElement>
+                            </locationByOrder>
+                        </conditions>
+                        {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
+                            {% if vehicle.nonVehicularRoadUser %}
+                                <conditions xsi:type="NonVehicularRoadUserCondition">
+                                    <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                    <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
+                                </conditions>
+                            {% else %}
+                                <conditions xsi:type="VehicleCondition">
+                                    <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                    <vehicleCharacteristics>
+                                        {% if vehicle.euSpecialPurposeVehicle %}
+                                            <com:_vehicleCharacteristicsExtension>
+                                                <com:vehicleCharacteristicsExtended>
+                                                    <comx:regulatedCharacteristics>
+                                                        <comx:euSpecialPurposeVehicle>{{ vehicle.euSpecialPurposeVehicle }}</comx:euSpecialPurposeVehicle>
+                                                    </comx:regulatedCharacteristics>
+                                                </com:vehicleCharacteristicsExtended>
+                                            </com:_vehicleCharacteristicsExtension>
+                                        {% elseif vehicle.emissionClassificationOther %}
+                                            <com:emissions>
+                                                <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
+                                            </com:emissions>
+                                        {% else %}
+                                            <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                                        {% endif %}
+                                    </vehicleCharacteristics>
+                                </conditions>
+                            {% endif %}
+                        {% endfor %}
+                    </condition>
+                </trafficRegulation>
+            </trafficRegulationOrder>
+        {% endfor %}
     </trafficRegulationsFromCompetentAuthorities>
 </d2:payload>
