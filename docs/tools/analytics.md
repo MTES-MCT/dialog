@@ -7,11 +7,7 @@ Vous pouvez :
 * [Consulter les analytics du site sur stats.beta.gouv.fr](https://stats.beta.gouv.fr/index.php?module=CoreHome&action=index&date=yesterday&period=day&idSite=38)
 * [Consulter la documentation du Matomo BetaGouv](https://doc.incubateur.net/communaute/travailler-a-beta-gouv/jutilise-les-outils-de-la-communaute/matomo)
 
-## Configuration
-
-| Variable d'environnement | Valeurs | Valeur par défaut |
-|---|---|---|
-| `MATOMO_ENABLED` | Vide ou `false` pour désactiver ; toute autre valeur pour activer (par exemple `true`) | Vide |
+Les variables d'environnement servant à la configuration des analytics sont listées dans la [documentation de déploiement](../deployment/README.md#configuration).
 
 ## Notes d'implémentation
 
