@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\User\Specification;
 
-use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
@@ -15,13 +14,12 @@ final class DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifierTest ext
     public function testOrganizationAlreadyHasRegulationOrder(): void
     {
         $organization = $this->createMock(Organization::class);
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findOneByOrganizationAndIdentifier')
+            ->method('doesOneExistInOrganizationWithIdentifier')
             ->with($organization, 'FO1/2023')
-            ->willReturn($regulationOrderRecord);
+            ->willReturn(true);
 
         $specification = new DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier($regulationOrderRecordRepository);
         $this->assertTrue($specification->isSatisfiedBy('FO1/2023', $organization));
@@ -33,9 +31,9 @@ final class DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifierTest ext
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findOneByOrganizationAndIdentifier')
+            ->method('doesOneExistInOrganizationWithIdentifier')
             ->with($organization, 'FO1/2023')
-            ->willReturn(null);
+            ->willReturn(false);
 
         $specification = new DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier($regulationOrderRecordRepository);
         $this->assertFalse($specification->isSatisfiedBy('FO1/2023', $organization));
