@@ -108,6 +108,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->orderBy('roc.uuid')
             ->setMaxResults(20)
             ->getQuery()
             ->getResult()

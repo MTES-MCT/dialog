@@ -10,7 +10,6 @@ use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
-use App\Domain\ArrayUtils;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -107,7 +106,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForDatexFormat')
             ->willReturn([$row1, $row1bis, $row2]);
 
-        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository, new ArrayUtils());
+        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
 
         $this->assertEquals(

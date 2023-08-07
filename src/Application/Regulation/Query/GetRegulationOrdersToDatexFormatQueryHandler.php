@@ -8,14 +8,12 @@ use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
-use App\Domain\ArrayUtils;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
-        private ArrayUtils $arrayUtils,
     ) {
     }
 
@@ -23,14 +21,25 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
     {
         $rows = $this->repository->findRegulationOrdersForDatexFormat();
 
-        $regulationOrders = $this->arrayUtils->groupBy(fn ($row) => $row['uuid'], $rows);
-
+        // There is one row per unique combination of (regulationOrder, location, measure).
+        // Rows are sorted by regulationOrder uuid.
+        // So we iterate over rows, pushing a new regulation order view when the row's regulationOrder uuid changes.
         $regulationOrderViews = [];
+        $index = 0;
 
-        foreach ($regulationOrders as $regulationOrderRows) {
+        while ($index < \count($rows)) {
+            $currentRegulationOrder = $rows[$index];
             $trafficRegulations = [];
 
-            foreach ($regulationOrderRows as $row) {
+            while ($index < \count($rows)) {
+                $row = $rows[$index];
+
+                if ($row['uuid'] !== $currentRegulationOrder['uuid']) {
+                    break;
+                }
+
+                ++$index;
+
                 $vehicleConditions = [];
 
                 foreach ($row['restrictedVehicleTypes'] ?: [] as $restrictedVehicleType) {
@@ -58,11 +67,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             }
 
             $regulationOrderViews[] = new RegulationOrderDatexListItemView(
-                $regulationOrderRows[0]['uuid'],
-                $regulationOrderRows[0]['organizationName'],
-                $regulationOrderRows[0]['description'],
-                $regulationOrderRows[0]['startDate'],
-                $regulationOrderRows[0]['endDate'],
+                $currentRegulationOrder['uuid'],
+                $currentRegulationOrder['organizationName'],
+                $currentRegulationOrder['description'],
+                $currentRegulationOrder['startDate'],
+                $currentRegulationOrder['endDate'],
                 $trafficRegulations,
             );
         }
