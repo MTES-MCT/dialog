@@ -90,13 +90,13 @@ dbfixtures: ## Load tests fixtures
 redisshell: ## Connect to the Redis container
 	docker-compose exec redis redis-cli
 
-addok: addok_data addok_junctions ## Setup Addok instance
+addok: addok_data addok_import_junctions ## Setup Addok instance
 
 addok_data: ## Download and prepare Addok data for import
 	cd docker/addok && ./download_addok_france_bundle.sh
 	cd docker/addok && ./osm_junctions2addok.sh
 
-addok_junctions: ## Import junctions file into Addok
+addok_import_junctions: ## Import junctions file into Addok
 	docker-compose exec addok bash -c '[ -f /data/.junctions.init ] || addok batch /data/junctions.json'
 	docker-compose exec addok bash -c '[ -f /data/.junctions.init ] || addok ngrams'
 	docker-compose exec addok touch /data/.junctions.init
