@@ -24,8 +24,5 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findRegulationOrdersForDatexFormat(): array;
 
-    public function findOneByOrganizationAndIdentifier(
-        Organization $organization,
-        string $identifier,
-    ): ?RegulationOrderRecord;
+    public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 }
