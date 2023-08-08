@@ -133,7 +133,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
                 $label = match ($type) {
                     'street', 'locality' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
                     'municipality' => sprintf('%s %s', $feature['properties']['postcode'], $feature['properties']['city']),
-                    'poi' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['citycode'], $feature['properties']['city']),
+                    'poi' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
                     default => null,
                 };
 
