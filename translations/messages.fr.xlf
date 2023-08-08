@@ -216,11 +216,11 @@
             </trans-unit>
             <trans-unit id="regulation.export.doc">
                 <source>regulation.export.doc</source>
-                <target>Export format DOC</target>
+                <target>Télécharger le document</target>
             </trans-unit>
             <trans-unit id="regulation.export.doc.mention">
                 <source>regulation.export.doc.mention</source>
-                <target>DOC - moins de 100ko</target>
+                <target>DOCX - moins de 100ko</target>
             </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
