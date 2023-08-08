@@ -43,7 +43,7 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
     apt install symfony-cli
 
 # Install composer
-RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
+RUN curl -sSk https://getcomposer.org/installer | php -- && \
    mv composer.phar /usr/local/bin/composer
 
 # Install Playwright browser dependencies
