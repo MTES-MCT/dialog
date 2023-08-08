@@ -9,20 +9,10 @@
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-8">
                 <h1 id="jumbotron" class="fr-title--blue-france">{{ 'landing.jumbotron.title'|trans }}</h1>
-                <p class="fr-text--lead">{{ 'landing.jumbotron.description'|trans|raw }}</p>
+                <p class="fr-text--lead"><span class="fr-icon-check-line" aria-hidden="true"></span>{{ 'landing.jumbotron.description1'|trans|raw }}</p>
+                <p class="fr-text--lead"><span class="fr-icon-check-line" aria-hidden="true"></span>{{ 'landing.jumbotron.description2'|trans|raw }}</p>
+                <p class="fr-text--lead"><span class="fr-icon-check-line" aria-hidden="true"></span>{{ 'landing.jumbotron.description3'|trans|raw }}</p>
 
-                {% if app.user %}
-                    <a href="{{ path('app_regulations_list') }}" class="fr-btn fr-mr-2w" data-testid="enter-link">
-                        {{ 'landing.jumbotron.logged'|trans }}
-                    </a>
-                {% else %}
-                    <a href="{{ path('app_login') }}" class="fr-btn fr-mr-2w" data-testid="enter-link">
-                        {{ 'landing.jumbotron.login'|trans }}
-                    </a>
-                {% endif %}
-                <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary" data-testid="contact-link">
-                    {{ 'landing.jumbotron.contact'|trans }}
-                </a>
             </div>
             <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
                 <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" width="300" height="276"/>

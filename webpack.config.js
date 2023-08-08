@@ -91,7 +91,7 @@ Encore
                 'textarea',
                 'select',
                 // Dynamic classes
-                /^fr-icon-x-/,
+                // /^fr-icon-x-/,
                 /^fr-modal--/,
                 /^fr-alert--/,
             ],

@@ -497,11 +497,19 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.title">
                 <source>landing.jumbotron.title</source>
-                <target>Faciliter et sécuriser la circulation</target>
+                <target>Numériser la réglementation de circulation routière avec Dialog</target>
             </trans-unit>
-            <trans-unit id="landing.jumbotron.description">
-                <source>landing.jumbotron.description</source>
-                <target>Dialog permet <![CDATA[<b>]]>la numérisation de réglementations<![CDATA[</b>]]> pour garantir la sécurité du public et préserver les infrastructures routières.</target>
+            <trans-unit id="landing.jumbotron.description1">
+                <source>landing.jumbotron.description1</source>
+                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> la réglementation et lui donner plus d'impact.</target>
+            </trans-unit>
+            <trans-unit id="landing.jumbotron.description2">
+                <source>landing.jumbotron.description2</source>
+                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière en rendant la réglementation mieux connue.</target>
+            </trans-unit>
+            <trans-unit id="landing.jumbotron.description3">
+                <source>landing.jumbotron.description3</source>
+                <target><![CDATA[<b>]]>Décarboner<![CDATA[</b>]]> en promouvant les Zones à Faibles Émissions.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.illustration">
                 <source>landing.jumbotron.illustration</source>
@@ -521,7 +529,7 @@
             </trans-unit>
             <trans-unit id="landing.how-it-works.title">
                 <source>landing.how-it-works.title</source>
-                <target>Comment ça marche ?</target>
+                <target>Pour qui ?</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.city.title">
                 <source>landing.how-it-works.city.title</source>
