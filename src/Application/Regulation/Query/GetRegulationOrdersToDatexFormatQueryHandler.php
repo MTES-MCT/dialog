@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DatexLocationView;
+use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -18,38 +19,64 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
     public function __invoke(GetRegulationOrdersToDatexFormatQuery $query): array
     {
-        $regulationOrders = $this->repository->findRegulationOrdersForDatexFormat();
-        $regulationOrderViews = [];
+        $rows = $this->repository->findRegulationOrdersForDatexFormat();
 
-        foreach ($regulationOrders as $regulationOrder) {
+        // There is one row per unique combination of (regulationOrder, location, measure).
+        // Rows are sorted by regulationOrder uuid.
+        // So we iterate over rows, pushing a new regulation order view when the row's regulationOrder uuid changes.
+        $regulationOrderViews = [];
+        $currentRegulationOrder = $rows[0];
+        $trafficRegulations = [];
+
+        foreach ($rows as $row) {
+            if ($row['uuid'] !== $currentRegulationOrder['uuid']) {
+                $regulationOrderViews[] = new RegulationOrderDatexListItemView(
+                    $currentRegulationOrder['uuid'],
+                    $currentRegulationOrder['organizationName'],
+                    $currentRegulationOrder['description'],
+                    $currentRegulationOrder['startDate'],
+                    $currentRegulationOrder['endDate'],
+                    $trafficRegulations,
+                );
+                $currentRegulationOrder = $row;
+                $trafficRegulations = [];
+            }
+
             $vehicleConditions = [];
 
-            foreach ($regulationOrder['restrictedVehicleTypes'] ?: [] as $restrictedVehicleType) {
+            foreach ($row['restrictedVehicleTypes'] ?: [] as $restrictedVehicleType) {
                 $vehicleConditions[] = new DatexVehicleConditionView($restrictedVehicleType);
             }
 
-            foreach ($regulationOrder['exemptedVehicleTypes'] ?: [] as $exemptedVehicleType) {
+            foreach ($row['exemptedVehicleTypes'] ?: [] as $exemptedVehicleType) {
                 $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
             }
 
-            $regulationOrderViews[] = new RegulationOrderDatexListItemView(
-                $regulationOrder['uuid'],
-                $regulationOrder['organizationName'],
-                $regulationOrder['description'],
-                $regulationOrder['startDate'],
-                $regulationOrder['endDate'],
-                new DatexLocationView(
-                    address: $regulationOrder['address'],
-                    fromHouseNumber: $regulationOrder['fromHouseNumber'],
-                    fromLongitude: $regulationOrder['fromLongitude'],
-                    fromLatitude: $regulationOrder['fromLatitude'],
-                    toHouseNumber: $regulationOrder['toHouseNumber'],
-                    toLongitude: $regulationOrder['toLongitude'],
-                    toLatitude: $regulationOrder['toLatitude'],
-                ),
-                vehicleConditions: $vehicleConditions,
+            $location = new DatexLocationView(
+                address: $row['address'],
+                fromHouseNumber: $row['fromHouseNumber'],
+                fromLongitude: $row['fromLongitude'],
+                fromLatitude: $row['fromLatitude'],
+                toHouseNumber: $row['toHouseNumber'],
+                toLongitude: $row['toLongitude'],
+                toLatitude: $row['toLatitude'],
+            );
+
+            $trafficRegulations[] = new DatexTrafficRegulationView(
+                $location,
+                $vehicleConditions,
             );
         }
+
+        // Flush any pending regulation order data into a final view.
+        $regulationOrderViews[] = new RegulationOrderDatexListItemView(
+            $currentRegulationOrder['uuid'],
+            $currentRegulationOrder['organizationName'],
+            $currentRegulationOrder['description'],
+            $currentRegulationOrder['startDate'],
+            $currentRegulationOrder['endDate'],
+            $trafficRegulations,
+        );
 
         return $regulationOrderViews;
     }
