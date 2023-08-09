@@ -515,17 +515,9 @@
                 <source>landing.jumbotron.illustration</source>
                 <target>Illustration GPS</target>
             </trans-unit>
-            <trans-unit id="landing.jumbotron.login">
-                <source>landing.jumbotron.login</source>
-                <target>Se connecter</target>
-            </trans-unit>
             <trans-unit id="landing.jumbotron.logged">
                 <source>landing.jumbotron.logged</source>
                 <target>Accéder aux arrếtés</target>
-            </trans-unit>
-            <trans-unit id="landing.jumbotron.contact">
-                <source>landing.jumbotron.contact</source>
-                <target>Nous contacter</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.title">
                 <source>landing.how-it-works.title</source>
@@ -533,11 +525,11 @@
             </trans-unit>
             <trans-unit id="landing.how-it-works.city.title">
                 <source>landing.how-it-works.city.title</source>
-                <target>Pour les communes</target>
+                <target>Pour les collectivités</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.city.description">
                 <source>landing.how-it-works.city.description</source>
-                <target>La <![CDATA[<b>]]>numérisation des réglementations de circulation<![CDATA[</b>]]> permet de les <![CDATA[<b>]]>communiquer efficacement<![CDATA[</b>]]>.</target>
+                <target>Gagnez du temps sur la rédaction de vos arrêtés et communiquez plus efficacement avec les usagers de la route.</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.city.link">
                 <source>landing.how-it-works.city.link</source>
@@ -545,53 +537,46 @@
             </trans-unit>
             <trans-unit id="landing.how-it-works.gps.title">
                 <source>landing.how-it-works.gps.title</source>
-                <target>Pour les GPS</target>
+                <target>Pour les services numériques</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.gps.description">
                 <source>landing.how-it-works.gps.description</source>
-                <target><![CDATA[<b>]]>L’intégration<![CDATA[</b>]]> des réglementations dans les <![CDATA[<b>]]>calculateurs d'itinéraires<![CDATA[</b>]]> favorise la bonne circulation.</target>
+                <target>Accédez à la réglementation de circulation et de stationnement des territoires partenaires, dans des formats adaptés à vos besoins.</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.gps.link">
                 <source>landing.how-it-works.gps.link</source>
                 <target>Accéder aux données Open Data</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.trucks.title">
-                <source>landing.how-it-works.trucks.title</source>
-                <target>Pour les poids lourds</target>
+            <trans-unit id="landing.road-users.title">
+                <source>landing.road-users.title</source>
+                <target>Pour les usagers de la route</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.trucks.description">
-                <source>landing.how-it-works.trucks.description</source>
-                <target>Les chauffeurs ont enfin un <![CDATA[<b>]]>moyen fiable de connaître la réglementation<![CDATA[</b>]]>, directement via leurs GPS.</target>
+            <trans-unit id="landing.road-users.description">
+                <source>landing.road-users.description</source>
+                <target>Soyez mieux informés des conditions de circulation.</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.trucks.link">
-                <source>landing.how-it-works.trucks.link</source>
-                <target>Voir les GPS partenaires</target>
+            <trans-unit id="landing.road-users.link">
+                <source>landing.road-users.link</source>
+                <target>Comprendre nos missions</target>
             </trans-unit>
             <trans-unit id="landing.itinerary.title">
                 <source>landing.itinerary.title</source>
-                <target>Des itinéraires adaptés pour une circulation apaisée</target>
+                <target>Comment ça marche ?</target>
             </trans-unit>
             <trans-unit id="landing.itinerary.description">
                 <source>landing.itinerary.description</source>
                 <target>
-                    <![CDATA[<p>]]>Actuellement, les collectivités ont des <![CDATA[<b>]]>difficultés à communiquer les restrictions de circulation<![CDATA[</b>]]>, notamment celles spécifiques aux poids lourds. Cela cause des <![CDATA[<b>]]>problèmes d’usure du réseau routier<![CDATA[</b>]]>, ainsi que des <![CDATA[<b>]]>difficultés de circulation en période de travaux<![CDATA[</b>]]>.<![CDATA[</p>]]>
-                    <![CDATA[<p>]]>Afin de pallier à ce problème, <![CDATA[<b>]]>la loi Climat et Résilience (article 122-4)<![CDATA[</b>]]> impose aux calculateurs d’itinéraires d’intégrer les réglementations spécifiques aux poids lourds.<![CDATA[</p>]]>
-                    <![CDATA[<p>]]>L’équipe de DiaLog travaille donc avec les principaux services de <![CDATA[<b>]]>navigation GPS<![CDATA[</b>]]> pour <![CDATA[<b>]]>diffuser plus largement les règles de circulation.<![CDATA[</b>]]><![CDATA[</p>]]>
+                   DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite publiées aux services numériques. Les données de circulations sont ainsi consultables et réutilisables facilement par tous.
                 </target>
             </trans-unit>
-            <trans-unit id="landing.product.title">
-                <source>landing.product.title</source>
-                <target>Un produit en cours de construction</target>
+            <trans-unit id="landing.who-are-we.title">
+                <source>landing.who-are-we.title</source>
+                <target>Qui sommes-nous ?</target>
             </trans-unit>
-            <trans-unit id="landing.product.description">
-                <source>landing.product.description</source>
+            <trans-unit id="landing.who-are-we.description1">
+                <source>landing.who-are-we.description1</source>
                 <target>
-                    <![CDATA[<p>]]><![CDATA[<b>]]>Dialog est un service numérique public incubé par beta.gouv.fr<![CDATA[</b>]]>. Il est actuellement en <![CDATA[<b>]]>phase de construction<![CDATA[</b>]]>. L’équipe construit une première version, sur un périmètre réduit :<![CDATA[</p>]]>
-                    <![CDATA[<ul>]]>
-                    <![CDATA[<li>]]><![CDATA[<b>]]>Début 2023 : développement et tests<![CDATA[</b>]]> auprès de Rennes et Savenay (9000 habitants).<![CDATA[</li>]]>
-                    <![CDATA[<li>]]><![CDATA[<b>]]>Mars 2023<![CDATA[</b>]]> : mise en production de la plateforme Dialog, pour intégrer les <![CDATA[<b>]]>réglementations poids lourds et travaux<![CDATA[</b>]]>.<![CDATA[</li>]]>
-                    <![CDATA[<li>]]><![CDATA[<b>]]>Fin 2023<![CDATA[</b>]]> : déploiement dans 5 territoires, pour tout type de réglementation.<![CDATA[</li>]]>
-                    <![CDATA[</ul>]]>
+                    DiaLog a été créé et est opéré par la Direction Générale des Infrastructures de Transport et des Mobilités (DGITM), administration centrale chargée des transports.
                 </target>
             </trans-unit>
             <trans-unit id="landing.diagram.authorities">
@@ -733,6 +718,19 @@
             <trans-unit id="landing.authorities.pilots.saintrome.alt">
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
+            <trans-unit id="landing.who-are-we.description2">
+                <source>landing.who-are-we.description2</source>
+                <target>
+                    Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6 personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique est en cours de construction et d’amélioration continue. 
+                </target>
+            </trans-unit>
+            <trans-unit id="landing.who-are-we.experiment">
+                <source>landing.who-are-we.experiment</source>
+                <target>Participer à l'expérimentation</target>
+            </trans-unit>
+            <trans-unit id="landing.who-are-we.contact">
+                <source>landing.who-are-we.contact</source>
+                <target>Nous contacter</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
