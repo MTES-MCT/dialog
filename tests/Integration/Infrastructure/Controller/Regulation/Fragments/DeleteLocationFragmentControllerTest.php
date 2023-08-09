@@ -55,7 +55,7 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     public function testLocationCannotBeDeleted(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f/delete', [
+        $client->request('DELETE', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(400);

@@ -502,6 +502,135 @@
                     </conditions>
                 </condition>
             </trafficRegulation>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                            <com:validityTimeSpecification>
+                                <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                                <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                            </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                            <loc:linearWithinLinearElement>
+                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
+                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
+                                <loc:linearElement xsi:type="loc:LinearElement">
+                                    <loc:roadName>
+                                        <com:values>
+                                            <com:value lang="fr">Avenue de Fonneuve 82000 Montauban</com:value>
+                                        </com:values>
+                                    </loc:roadName>
+                                </loc:linearElement>
+
+                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:distanceAlong>0</loc:distanceAlong>
+                                    <loc:fromReferent>
+                                        <loc:referentIdentifier>start</loc:referentIdentifier>
+                                        <loc:referentName>695</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.028996</loc:latitude>
+                                            <loc:longitude>1.362275</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:fromReferent>
+                                </loc:fromPoint>
+
+                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:distanceAlong>0</loc:distanceAlong>
+                                    <loc:fromReferent>
+                                        <loc:referentIdentifier>end</loc:referentIdentifier>
+                                        <loc:referentName>253</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.025665</loc:latitude>
+                                            <loc:longitude>1.35931</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:fromReferent>
+                                </loc:toPoint>
+                            </loc:linearWithinLinearElement>
+                        </locationByOrder>
+                    </conditions>
+
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair4</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                            <com:validityTimeSpecification>
+                                <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                                <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                            </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                            <loc:linearWithinLinearElement>
+                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
+                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
+                                <loc:linearElement xsi:type="loc:LinearElement">
+                                    <loc:roadName>
+                                        <com:values>
+                                            <com:value lang="fr">Rue de l'Hôtel de Ville 82000 Montauban</com:value>
+                                        </com:values>
+                                    </loc:roadName>
+                                </loc:linearElement>
+
+                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:distanceAlong>0</loc:distanceAlong>
+                                    <loc:fromReferent>
+                                        <loc:referentIdentifier>start</loc:referentIdentifier>
+                                        <loc:referentName>30</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.016833</loc:latitude>
+                                            <loc:longitude>1.352126</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:fromReferent>
+                                </loc:fromPoint>
+
+                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:distanceAlong>0</loc:distanceAlong>
+                                    <loc:fromReferent>
+                                        <loc:referentIdentifier>end</loc:referentIdentifier>
+                                        <loc:referentName>12</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.016402</loc:latitude>
+                                            <loc:longitude>1.353016</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:fromReferent>
+                                </loc:toPoint>
+                            </loc:linearWithinLinearElement>
+                        </locationByOrder>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
         </trafficRegulationOrder>
     </trafficRegulationsFromCompetentAuthorities>
 </d2:payload>

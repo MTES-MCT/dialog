@@ -21,6 +21,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
         );
+
         $period2 = new Period(
             uuid: 'c01b254c-b7db-4761-9490-b8fea7d42312',
             measure: $this->getReference('measure1'),
@@ -30,8 +31,28 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
         );
 
+        $period3 = new Period(
+            uuid: '064ca7ce-ee4d-7bdb-8000-46856a6d9fa6',
+            measure: $this->getReference('measure4'),
+            includeHolidays: true,
+            applicableDays: ['thursday'],
+            startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
+            endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+        );
+
+        $period4 = new Period(
+            uuid: '064ca7cf-43a0-7d0f-8000-b608ba0d2344',
+            measure: $this->getReference('measure5'),
+            includeHolidays: true,
+            applicableDays: ['tuesday', 'wednesday'],
+            startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
+            endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+        );
+
         $manager->persist($period1);
         $manager->persist($period2);
+        $manager->persist($period3);
+        $manager->persist($period4);
 
         $manager->flush();
     }

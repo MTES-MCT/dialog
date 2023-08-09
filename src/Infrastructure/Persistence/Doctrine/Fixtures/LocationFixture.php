@@ -53,6 +53,16 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'POINT(1.35931 44.025665)',
         );
 
+        $location2Bis = new Location(
+            '064ca782-771c-783f-8000-e67473eabea6',
+            $this->getReference('regulationOrder2'),
+            "Rue de l'Hôtel de Ville 82000 Montauban",
+            '30',
+            'POINT(1.352126 44.016833)',
+            '12',
+            'POINT(1.353016 44.016402)',
+        );
+
         $location3 = new Location(
             'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
             $this->getReference('regulationOrder3'),
@@ -67,11 +77,13 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($location1Bis);
         $manager->persist($location1Ter);
         $manager->persist($location2);
+        $manager->persist($location2Bis);
         $manager->persist($location3);
         $manager->flush();
 
         $this->addReference('location1', $location1);
         $this->addReference('location2', $location2);
+        $this->addReference('location2Bis', $location2Bis);
         $this->addReference('location3', $location3);
     }
 
