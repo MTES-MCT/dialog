@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'landing.authorities.jumbotron.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-pt-4w fr-pb-2w">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-8">
+                <h1 class="fr-title--blue-france">{{ 'landing.authorities.jumbotron.title'|trans }}</h1>
+                <a class="fr-btn" href="mailto:dialog@beta.gouv.fr">{{ 'landing.authorities.jumbotron.cta'|trans }}</a>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
+                <img src="{{ asset('images/landing/illustration-gps.webp') }}" aria-hidden="true" width="300" height="276"/>
+            </div>
+        </div>
+        <div class="fr-grid-row fr-x-text--center">
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/calendar-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.authorities.why_fast'|trans }}</figcaption>
+            </figure>
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/map-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.authorities.why_efficient'|trans }}</figcaption>
+            </figure>
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/success-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.authorities.why_free'|trans }}</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="fr-container fr-x-container--fluid fr-py-4w fr-background-alt--blue-france">
+        <div class="fr-container">
+            <h2 class="fr-title--blue-france">{{ 'landing.authorities.value_prop'|trans }}</h2>
+
+            <div class="fr-grid-row fr-grid-row--gutters fr-text--lg">
+                <div class="fr-col-12 fr-col-md-6 fr-pr-md-5w">
+                    <h3>{{ 'landing.authorities.save_time'|trans }}</h3>
+                    <ul class="fr-text-mention--grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+                        <li>{{ 'landing.authorities.save_time.create_orders'|trans|raw }}</li>
+                        <li>{{ 'landing.authorities.save_time.send_to_gps'|trans|raw }}</li>
+                    </ul>
+                </div>
+                <div class="fr-col-12 fr-col-md-6 fr-pl-md-5w">
+                    <h3>{{ 'landing.authorities.simpler_interactions'|trans }}</h3>
+                    <ul class="fr-text-mention--grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+                        <li>{{ 'landing.authorities.simpler_interactions.other_authorities'|trans|raw }}</li>
+                        <li>{{ 'landing.authorities.simpler_interactions.other_services'|trans|raw }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fr-container fr-py-4w">
+        <h2 class="fr-title--blue-france">{{ 'landing.authorities.how_it_works'|trans }}</h2>
+        <p class="fr-text--xl fr-m-0">{{ 'landing.authorities.how_it_works.description'|trans }}</p>
+    </div>
+
+    <div class="fr-container fr-x-container--fluid fr-pb-4w">
+        <div class="fr-container fr-container--fluid">
+            <div class="fr-grid-row fr-grid-row--middle">
+                <div class="fr-col-12 fr-col-md-8 fr-px-3w fr-py-4w fr-background-alt--blue-france">
+                    <ol class="app-authorities__steplist">
+                        <li>
+                            <h3 class="fr-text--xl fr-my-0">
+                                {{ 'landing.authorities.steps.register'|trans }}
+                            </h3>
+                            <p class="fr-text--sm fr-my-0">
+                                <a href="mailto:dialog@beta.gouv.fr" class="fr-link fr-icon-arrow-right-line fr-link--icon-right">
+                                    {{ 'landing.authorities.steps.register.cta'|trans }}
+                                </a>
+                            </p>
+                        </li>
+                        <li>
+                            <h3 class="fr-text--xl fr-my-0">
+                                {{ 'landing.authorities.steps.add_regulation_orders'|trans }}
+                            </h3>
+                            <p class="fr-text--sm fr-my-0">
+                                {{ 'landing.authorities.steps.add_regulation_orders.description'|trans }}
+                            </p>
+                        </li>
+                        <li>
+                            <h3 class="fr-text--xl fr-my-0">
+                                {{ 'landing.authorities.steps.broadcast'|trans }}
+                            </h3>
+                            <p class="fr-text--sm fr-my-0">
+                                {{ 'landing.authorities.steps.broadcast.description'|trans }}
+                            </p>
+                        </li>
+                    </ol>
+                </div>
+                <div class="fr-col-12 fr-col-md-4 fr-x-text--center">
+                    <img src="{{ asset('images/landing/authorities/illustration-steps.png') }}" aria-hidden="true">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fr-container fr-mb-8w">
+        <h2>{{ 'landing.authorities.pilots'|trans }}</h2>
+
+        <div class="app-authorities__pilotgrid">
+            <div class="app-box">
+                <h3 class="fr-h4">
+                    {{ 'landing.authorities.pilots.join'|trans }}
+                </h3>
+                <p>{{ 'landing.authorities.pilots.join.description'|trans }}</p>
+                <a class="fr-btn" href="mailto:dialog@beta.gouv.fr">
+                    {{ 'landing.authorities.pilots.join.cta'|trans }}
+                </a>
+            </div>
+            <figure>
+                <img loading="lazy" src="{{ asset('images/landing/authorities/toulouse.jpg') }}" alt="{{ 'landing.authorities.pilots.toulouse.alt'|trans }}">
+                <figcaption>{{ 'landing.authorities.pilots.toulouse'|trans }}</figcaption>
+            </figure>
+            <figure>
+                <img loading="lazy" src="{{ asset('images/landing/authorities/savenay.jpg') }}" alt="{{ 'landing.authorities.pilots.savenay.alt'|trans }}">
+                <figcaption>{{ 'landing.authorities.pilots.savenay'|trans }}</figcaption>
+            </figure>
+            <figure>
+                <img loading="lazy" src="{{ asset('images/landing/authorities/saint-rome.jpg') }}" alt="{{ 'landing.authorities.pilots.saintrome.alt'|trans }}">
+                <figcaption>{{ 'landing.authorities.pilots.saintrome'|trans }}</figcaption>
+            </figure>
+        </div>
+    </div>
+{% endblock %}

@@ -586,6 +586,130 @@
                     <![CDATA[</ul>]]>
                 </target>
             </trans-unit>
+            <trans-unit id="landing.authorities.jumbotron.title">
+                <source>landing.authorities.jumbotron.title</source>
+                <target>Numériser votre réglementation de circulation routière avec DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.jumbotron.cta">
+                <source>landing.authorities.jumbotron.cta</source>
+                <target>Créer un compte pour ma commune</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.why">
+                <source>landing.authorities.why</source>
+                <target>Pourquoi DiaLog ?</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.why_fast">
+                <source>landing.authorities.why_fast</source>
+                <target>Rapide</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.why_efficient">
+                <source>landing.authorities.why_efficient</source>
+                <target>Efficace</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.why_free">
+                <source>landing.authorities.why_free</source>
+                <target>Gratuit</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.value_prop">
+                <source>landing.authorities.value_prop</source>
+                <target>Facilitez la vie de votre service voirie</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.save_time">
+                <source>landing.authorities.save_time</source>
+                <target>Gagnez du temps</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.save_time.create_orders">
+                <source>landing.authorities.save_time.create_orders</source>
+                <target><![CDATA[<strong>]]>Rédigez<![CDATA[</strong>]]> vos arrêtés via l'outil DiaLog ou <![CDATA[<strong>]]>connectez<![CDATA[</strong>]]> votre outil de gestion (Sogelink, outil interne...) pour éviter la double saisie</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.save_time.send_to_gps">
+                <source>landing.authorities.save_time.send_to_gps</source>
+                <target><![CDATA[<strong>]]>Transmettez<![CDATA[</strong>]]> vos données automatiquement aux services numériques</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.simpler_interactions">
+                <source>landing.authorities.simpler_interactions</source>
+                <target>Simplifiez vos échanges</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.simpler_interactions.other_authorities">
+                <source>landing.authorities.simpler_interactions.other_authorities</source>
+                <target><![CDATA[<strong>]]>Coordonnez-vous<![CDATA[</strong>]]> facilement avec votre métropole ou les communes voisines</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.simpler_interactions.other_services">
+                <source>landing.authorities.simpler_interactions.other_services</source>
+                <target><![CDATA[<strong>]]>Partagez<![CDATA[</strong>]]> la réglementation aux autres services (géomatique...)</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.how_it_works">
+                <source>landing.authorities.how_it_works</source>
+                <target>Comment ça marche ?</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.how_it_works.description">
+                <source>landing.authorities.how_it_works.description</source>
+                <target>DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite publiées aux services numériques. Les données de circulations sont ainsi consultables et réutilisables facilement par tous.</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.register">
+                <source>landing.authorities.steps.register</source>
+                <target>Créer un compte DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.register.cta">
+                <source>landing.authorities.steps.register.cta</source>
+                <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.add_regulation_orders">
+                <source>landing.authorities.steps.add_regulation_orders</source>
+                <target>Renseigner mes arrêtés</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.add_regulation_orders.description">
+                <source>landing.authorities.steps.add_regulation_orders.description</source>
+                <target>Numérisez facilement votre réglementation (arrêtés de circulation temporaires, permanents), dans un langage naturel.</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.broadcast">
+                <source>landing.authorities.steps.broadcast</source>
+                <target>Diffuser mes données</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.broadcast.description">
+                <source>landing.authorities.steps.broadcast.description</source>
+                <target>Publiez vos arrêtés pour les rendre accessibles à tous les services numériques connectés à DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots">
+                <source>landing.authorities.pilots</source>
+                <target>Rejoignez les communes pilotes</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.join">
+                <source>landing.authorities.pilots.join</source>
+                <target>Participez à l'expérimentation</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.join.description">
+                <source>landing.authorities.pilots.join.description</source>
+                <target>Rejoignez les communes qui utilisent DiaLog en avant première, pour nous aider à concevoir la plateforme la plus utile.</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.join.cta">
+                <source>landing.authorities.pilots.join.cta</source>
+                <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.toulouse">
+                <source>landing.authorities.pilots.toulouse</source>
+                <target>Toulouse (Haute-Garonne)</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.toulouse.alt">
+                <source>landing.authorities.pilots.toulouse.alt</source>
+                <target>Place de l'Hôtel de ville de Toulouse</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.savenay">
+                <source>landing.authorities.pilots.savenay</source>
+                <target>Savenay (Loire-Atlantique)</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.savenay.alt">
+                <source>landing.authorities.pilots.savenay.alt</source>
+                <target>Clocher de l'église Saint-Martin de Savenay</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.saintrome">
+                <source>landing.authorities.pilots.saintrome</source>
+                <target>Saint-Rome (Haute-Garonne)</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.pilots.saintrome.alt">
+                <source>landing.authorities.pilots.saintrome.alt</source>
+                <target>Maison typique de Saint-Rome</target>
+            </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>

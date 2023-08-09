@@ -57,4 +57,23 @@ abstract class AbstractWebTestCase extends WebTestCase
         $this->assertResponseHasHeader('X-Content-Security-Policy');
         $this->assertResponseHasHeader('Content-Security-Policy');
     }
+
+    /**
+     * Return a list of node name, text and attributes for headings, links and buttons.
+     */
+    protected function assertPageStructure(array $expectedStructure, Crawler $crawler): void
+    {
+        $actualStructure = $crawler
+            ->filter('h1, h2, h3, h4, h5, h6, main > :not(noscript) a, main button')
+            ->each(function (Crawler $node, int $i): array {
+                switch ($node->nodeName()) {
+                    case 'a':
+                        return ['a', $node->text(), ['href' => $node->attr('href')]];
+                    default:
+                        return [$node->nodeName(), $node->text()];
+                }
+            });
+
+        $this->assertEquals($expectedStructure, $actualStructure);
+    }
 }
