@@ -718,6 +718,7 @@
             <trans-unit id="landing.authorities.pilots.saintrome.alt">
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
+            </trans-unit>
             <trans-unit id="landing.who-are-we.description2">
                 <source>landing.who-are-we.description2</source>
                 <target>

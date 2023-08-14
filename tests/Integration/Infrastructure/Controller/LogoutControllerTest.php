@@ -22,7 +22,7 @@ final class LogoutControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_landing');
 
         $enterLink = $crawler->filter('[data-testid="enter-link"]');
-        $this->assertSame('Se connecter', $enterLink->text());
-        $this->assertSame('/login', $enterLink->attr('href'));
+        $this->assertSame('Participer à l\'expérimentation', $enterLink->text());
+        $this->assertSame('mailto:dialog@beta.gouv.fr', $enterLink->attr('href'));
     }
 }
