@@ -157,6 +157,21 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     grid-area: help;
 }
 
+ul.fr-x-list--checkmarks > li {
+    padding-inline-start: var(--ul-start);
+}
+
+ul.fr-x-list--checkmarks > li::marker {
+    content: url('../../public/images/icons/checkmark.svg');
+    color: var(--blue-france-sun-113-625);
+}
+
+@media screen and (min-width: 48em) {
+    .fr-x-md-stack > * + * {
+        padding-block-start: var(--stack-spacing, 1.5rem);
+    }
+}
+
 .app-regulation-table {
     // Take minimum amount of space on all screen sizes
     .app-regulation-table__identifier {
@@ -177,6 +192,12 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
             width: 20%;
         }
     }
+}
+
+.app-box {
+    padding: 2rem;
+    background-color: var(--background-raised-grey);
+    border: 1px solid var(--border-default-grey);
 }
 
 .app-card {
@@ -282,4 +303,59 @@ li.app-card + li.app-card {
 .app-someVehicles__form {
     border: 1px solid var(--border-action-high-blue-france);
     border-top: none;
+}
+
+ol.app-authorities__steplist {
+    counter-reset: li-steps;
+    padding: 0;
+    padding-inline-start: 5rem;
+
+    & > li {
+        position: relative;
+
+        & + li {
+            margin-block-start: 2rem;
+        }
+    }
+
+    & > li::marker {
+        content: none;
+    }
+
+    & > li::before {
+        counter-increment: li-steps;
+        content: counter(li-steps) '.';
+        position: absolute;
+        top: calc(50% - 1rem);
+        right: calc(100% + 1rem);
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--artwork-minor-blue-france);
+    }
+}
+
+.app-authorities__pilotgrid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    & > * {
+        // Estimated to be just below 1/4th of the row width on desktop.
+        width: 30ch;
+    }
+
+    figure {
+        margin: 0;
+    
+        img {
+            inline-size: 100%;
+        }
+
+        figcaption {
+            text-align: right;
+            font-size: 0.875rem;
+            color: var(--text-mention-grey);
+        }
+    }
 }
