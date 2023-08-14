@@ -16,7 +16,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
         $enterLink = $crawler->filter('[data-testid="enter-link"]');
         $this->assertSame('Participer à l\'expérimentation', $enterLink->text());
-        $this->assertSame('mailto:dialog@beta.gouv.fr', $enterLink->attr('href'));
+        $this->assertSame('/collectivites', $enterLink->attr('href'));
         $this->assertMetaTitle('Numériser la réglementation de circulation routière avec Dialog - DiaLog', $crawler);
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
         $this->assertSame('Nous contacter', $contactLink->text());
@@ -37,7 +37,7 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $enterLink = $crawler->filter('[data-testid="enter-link"]');
         $this->assertSame('Participer à l\'expérimentation', $enterLink->text());
-        $this->assertSame('mailto:dialog@beta.gouv.fr', $enterLink->attr('href'));
+        $this->assertSame('/collectivites', $enterLink->attr('href'));
     }
 
     public function testLandingWithoutRoleAdmin(): void
