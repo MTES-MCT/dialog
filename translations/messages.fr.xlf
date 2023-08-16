@@ -692,7 +692,7 @@
             </trans-unit>
             <trans-unit id="landing.authorities.pilots.toulouse.alt">
                 <source>landing.authorities.pilots.toulouse.alt</source>
-                <target>Place de l'Hôtel de ville de Toulouse</target>
+                <target>Place du Capitole à Toulouse</target>
             </trans-unit>
             <trans-unit id="landing.authorities.pilots.savenay">
                 <source>landing.authorities.pilots.savenay</source>
