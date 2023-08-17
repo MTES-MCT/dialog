@@ -741,6 +741,70 @@
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
             </trans-unit>
+            <trans-unit id="landing.digital.services.jumbotron.title">
+                <source>landing.digital.services.jumbotron.title</source>
+                <target>La réglementation de circulation accessible, à jour et standardisée</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.jumbotron.description">
+                <source>landing.digital.services.jumbotron.description</source>
+                <target>DiaLog est la <![CDATA[<strong>]]>base de données nationale<![CDATA[</strong>]]> des réglementations de circulation et de stationnement. </target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.jumbotron.cta">
+                <source>landing.digital.services.jumbotron.cta</source>
+                <target>Accéder aux données</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.quality.title">
+                <source>landing.digital.services.quality.title</source>
+                <target>Qualité</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.quality.description">
+                <source>landing.digital.services.quality.description</source>
+                <target>Données renseignées et validées directement par les collectivités</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why_up_to_date.title">
+                <source>landing.digital.services.why_up_to_date.title</source>
+                <target>À jour</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.open_data.title">
+                <source>landing.digital.services.open_data.title</source>
+                <target>Open Data</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why_quality.description">
+                <source>landing.digital.services.why_quality.description</source>
+                <target>Données renseignées et validées directement par les collectivités</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why_up_to_date.description">
+                <source>landing.digital.services.why_up_to_date.description</source>
+                <target>Restrictions permanentes et temporaires (travaux, événements...)</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.open_data.description">
+                <source>landing.digital.services.open_data.description</source>
+                <target>Diffusion au format standardisé, sous licence libre</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.how_it_works.title">
+                <source>landing.digital.services.how_it_works.title</source>
+                <target>Comment ça marche ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.how_it_works.description">
+                <source>landing.digital.services.how_it_works.description</source>
+                <target>DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite publiées aux services numériques. Les données de circulations sont ainsi consultables et réutilisables facilement par tous.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.qualitative_data.title">
+                <source>landing.digital.services.qualitative_data.title</source>
+                <target>Des données qualitatives</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.qualitative_data.description1">
+                <source>landing.digital.services.qualitative_data.description1</source>
+                <target>Récupérez la bonne information : les données sont renseignées directement par les gestionnaires d’infrastructure. Ces derniers s’assurent de la qualité et de la validation des informations.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.qualitative_data.description2">
+                <source>landing.digital.services.qualitative_data.description2</source>
+                <target>À jour : DiaLog permet le recueil des restrictions de circulation permanentes et temporaires. Bénéficiez d’une visibilité sur les travaux et évènements à venir sur les réseaux couverts !</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.qualitative_data.description3">
+                <source>landing.digital.services.qualitative_data.description3</source>
+                <target>Au bon format : les données sont accessibles au format XML via le point d’accès national aux données de transport. Dialog utilise le standard DATEX II afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+            </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>
