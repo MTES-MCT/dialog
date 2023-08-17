@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'landing.digital.services.jumbotron.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-pt-4w fr-pb-2w">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-8">
+                <h1 class="fr-title--blue-france">{{ 'landing.digital.services.jumbotron.title'|trans }}</h1>
+                <p class="fr-text--lead">{{ 'landing.digital.services.jumbotron.description'|trans }}
+                </p>
+                <a class="fr-btn" href="https://www.data.gouv.fr/fr/datasets/64947a4af5faf2f1f9eee299/">{{ 'landing.digital.services.jumbotron.cta'|trans }}</a>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
+                <img src="{{ asset('images/landing/illustration-gps-voiture.png') }}" aria-hidden="true" width="300" height="276"/>
+            </div>
+        </div>
+        <div class="fr-grid-row fr-x-text--center">
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/success-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.digital.services.quality.title'|trans }}</figcaption>
+            </figure>
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/france-localization.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.digital.services.why_up_to_date.title'|trans }}</figcaption>
+            </figure>
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/map-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.digital.services.open_data.title'|trans }}</figcaption>
+            </figure>
+        </div>
+        <p>
+            {{ 'landing.digital.services.open_data.description'|trans }}
+        </p>  
+    </div>
+{% endblock %}
+
