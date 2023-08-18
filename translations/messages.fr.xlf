@@ -586,6 +586,22 @@
                     <![CDATA[</ul>]]>
                 </target>
             </trans-unit>
+            <trans-unit id="landing.diagram.authorities">
+                <source>landing.diagram.authorities</source>
+                <target>Collectivités</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.dialog">
+                <source>landing.diagram.dialog</source>
+                <target>DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.digital_services">
+                <source>landing.diagram.digital_services</source>
+                <target>Services numériques</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.road_users">
+                <source>landing.diagram.road_users</source>
+                <target>Usagers de la route</target>
+            </trans-unit>
             <trans-unit id="landing.authorities.jumbotron.title">
                 <source>landing.authorities.jumbotron.title</source>
                 <target>Numériser votre réglementation de circulation routière avec DiaLog</target>

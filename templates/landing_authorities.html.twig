@@ -57,9 +57,10 @@
     <div class="fr-container fr-py-4w">
         <h2 class="fr-title--blue-france">{{ 'landing.authorities.how_it_works'|trans }}</h2>
         <p class="fr-text--xl fr-m-0">{{ 'landing.authorities.how_it_works.description'|trans }}</p>
+        {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: ['authorities', 'dialog']} only %}
     </div>
 
-    <div class="fr-container fr-x-container--fluid fr-pb-4w">
+    <div class="fr-container fr-x-container--fluid fr-py-4w">
         <div class="fr-container fr-container--fluid">
             <div class="fr-grid-row fr-grid-row--middle">
                 <div class="fr-col-12 fr-col-md-8 fr-px-3w fr-py-4w fr-background-alt--blue-france">
