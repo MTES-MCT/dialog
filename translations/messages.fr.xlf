@@ -795,15 +795,47 @@
             </trans-unit>
             <trans-unit id="landing.digital.services.qualitative_data.description1">
                 <source>landing.digital.services.qualitative_data.description1</source>
-                <target>Récupérez la bonne information : les données sont renseignées directement par les gestionnaires d’infrastructure. Ces derniers s’assurent de la qualité et de la validation des informations.</target>
+                <target><![CDATA[<strong>]]>Récupérez la bonne information :<![CDATA[</strong>]]> les données sont renseignées directement par les gestionnaires d’infrastructure. Ces derniers s’assurent de la qualité et de la validation des informations.</target>
             </trans-unit>
             <trans-unit id="landing.digital.services.qualitative_data.description2">
                 <source>landing.digital.services.qualitative_data.description2</source>
-                <target>À jour : DiaLog permet le recueil des restrictions de circulation permanentes et temporaires. Bénéficiez d’une visibilité sur les travaux et évènements à venir sur les réseaux couverts !</target>
+                <target><![CDATA[<strong>]]>À jour :<![CDATA[</strong>]]> DiaLog permet le recueil des restrictions de circulation permanentes et temporaires. Bénéficiez d’une visibilité sur les travaux et évènements à venir sur les réseaux couverts !</target>
             </trans-unit>
             <trans-unit id="landing.digital.services.qualitative_data.description3">
                 <source>landing.digital.services.qualitative_data.description3</source>
-                <target>Au bon format : les données sont accessibles au format XML via le point d’accès national aux données de transport. Dialog utilise le standard DATEX II afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le point d’accès national aux données de transport. Dialog utilise le standard DATEX II afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.qualitative_data.contact">
+                <source>landing.digital.services.qualitative_data.contact</source>
+                <target>Vous voulez intégrer les données Dialog dans votre service numérique ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.qualitative_data.contact.cta">
+                <source>landing.digital.services.qualitative_data.contact.cta</source>
+                <target>Contactez-nous</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.title">
+                <source>landing.digital.services.why-digitise.title</source>
+                <target>Pourquoi numériser la réglementation ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.description">
+                <source>landing.digital.services.why-digitise.description</source>
+                <target>La Loi Climat et Résilience oblige les calculateurs d’itinéraire spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]> Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les itinéraires adaptés à leur véhicule afin de :</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.argument1">
+                <source>landing.digital.services.why-digitise.argument1</source>
+                <target>Limiter les incidents</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.argument2">
+                <source>landing.digital.services.why-digitise.argument2</source>
+                <target>Assurer la sécurité des usagers de la route et des riverain</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.argument3">
+                <source>landing.digital.services.why-digitise.argument3</source>
+                <target>Pérenniser l’infrastructure routière.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.questions">
+                <source>landing.digital.services.why-digitise.questions</source>
+                <target>Vous avez des questions complémentaires au sujet de DiaLog et de l’article 122 de la loi Climat et Résilience ?</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
