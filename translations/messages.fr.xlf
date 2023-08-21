@@ -501,15 +501,15 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.description1">
                 <source>landing.jumbotron.description1</source>
-                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> la réglementation et lui donner plus d'impact.</target>
+                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> l'application de la réglementation.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description2">
                 <source>landing.jumbotron.description2</source>
-                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière en rendant la réglementation mieux connue.</target>
+                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière grâce à une diffusion plus large de la réglementation.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description3">
                 <source>landing.jumbotron.description3</source>
-                <target><![CDATA[<b>]]>Décarboner<![CDATA[</b>]]> en promouvant les Zones à Faibles Émissions.</target>
+                <target><![CDATA[<b>]]>Promouvoir<![CDATA[</b>]]> les Zones à Faibles Emissions.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.illustration">
                 <source>landing.jumbotron.illustration</source>
@@ -519,32 +519,32 @@
                 <source>landing.jumbotron.logged</source>
                 <target>Accéder aux arrếtés</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.title">
-                <source>landing.how-it-works.title</source>
+            <trans-unit id="landing.for-who.title">
+                <source>landing.for-who.title</source>
                 <target>Pour qui ?</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.city.title">
-                <source>landing.how-it-works.city.title</source>
+            <trans-unit id="landing.for-city.title">
+                <source>landing.for-city.title</source>
                 <target>Pour les collectivités</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.city.description">
-                <source>landing.how-it-works.city.description</source>
+            <trans-unit id="landing.for-city.description">
+                <source>landing.for-city.description</source>
                 <target>Gagnez du temps sur la rédaction de vos arrêtés et communiquez plus efficacement avec les usagers de la route.</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.city.link">
-                <source>landing.how-it-works.city.link</source>
+            <trans-unit id="landing.for-city.link">
+                <source>landing.for-city.link</source>
                 <target>Créer un compte pour ma commune</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.gps.title">
-                <source>landing.how-it-works.gps.title</source>
+            <trans-unit id="landing.for-gps.title">
+                <source>landing.for-gps.title</source>
                 <target>Pour les services numériques</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.gps.description">
-                <source>landing.how-it-works.gps.description</source>
+            <trans-unit id="landing.for-gps.description">
+                <source>landing.for-gps.description</source>
                 <target>Accédez à la réglementation de circulation et de stationnement des territoires partenaires, dans des formats adaptés à vos besoins.</target>
             </trans-unit>
-            <trans-unit id="landing.how-it-works.gps.link">
-                <source>landing.how-it-works.gps.link</source>
+            <trans-unit id="landing.for-gps.link">
+                <source>landing.for-gps.link</source>
                 <target>Accéder aux données Open Data</target>
             </trans-unit>
             <trans-unit id="landing.road-users.title">
@@ -559,12 +559,12 @@
                 <source>landing.road-users.link</source>
                 <target>Comprendre nos missions</target>
             </trans-unit>
-            <trans-unit id="landing.itinerary.title">
-                <source>landing.itinerary.title</source>
+            <trans-unit id="landing.how-it-works.title">
+                <source>landing.how-it-works.title</source>
                 <target>Comment ça marche ?</target>
             </trans-unit>
-            <trans-unit id="landing.itinerary.description">
-                <source>landing.itinerary.description</source>
+            <trans-unit id="landing.how-it-works.description">
+                <source>landing.how-it-works.description</source>
                 <target>
                    DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite publiées aux services numériques. Les données de circulations sont ainsi consultables et réutilisables facilement par tous.
                 </target>
@@ -594,6 +594,20 @@
             <trans-unit id="landing.diagram.road_users">
                 <source>landing.diagram.road_users</source>
                 <target>Usagers de la route</target>
+            </trans-unit>
+            <trans-unit id="landing.who-are-we.description2">
+                <source>landing.who-are-we.description2</source>
+                <target>
+                    Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6 personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique est en cours de construction et d’amélioration continue. 
+                </target>
+            </trans-unit>
+            <trans-unit id="landing.who-are-we.experiment">
+                <source>landing.who-are-we.experiment</source>
+                <target>Participer à l'expérimentation</target>
+            </trans-unit>
+            <trans-unit id="landing.who-are-we.contact">
+                <source>landing.who-are-we.contact</source>
+                <target>Nous contacter</target>
             </trans-unit>
             <trans-unit id="landing.authorities.jumbotron.title">
                 <source>landing.authorities.jumbotron.title</source>
@@ -718,20 +732,6 @@
             <trans-unit id="landing.authorities.pilots.saintrome.alt">
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
-            </trans-unit>
-            <trans-unit id="landing.who-are-we.description2">
-                <source>landing.who-are-we.description2</source>
-                <target>
-                    Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6 personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique est en cours de construction et d’amélioration continue. 
-                </target>
-            </trans-unit>
-            <trans-unit id="landing.who-are-we.experiment">
-                <source>landing.who-are-we.experiment</source>
-                <target>Participer à l'expérimentation</target>
-            </trans-unit>
-            <trans-unit id="landing.who-are-we.contact">
-                <source>landing.who-are-we.contact</source>
-                <target>Nous contacter</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>

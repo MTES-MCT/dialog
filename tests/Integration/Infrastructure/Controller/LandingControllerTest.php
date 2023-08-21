@@ -14,9 +14,9 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
-        $enterLink = $crawler->filter('[data-testid="enter-link"]');
-        $this->assertSame('Participer à l\'expérimentation', $enterLink->text());
-        $this->assertSame('/collectivites', $enterLink->attr('href'));
+        $joinLink = $crawler->selectLink("Participer à l'expérimentation");
+        $this->assertSame('Participer à l\'expérimentation', $joinLink->text());
+        $this->assertSame('/collectivites', $joinLink->attr('href'));
         $this->assertMetaTitle('Numériser la réglementation de circulation routière avec Dialog - DiaLog', $crawler);
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
         $this->assertSame('Nous contacter', $contactLink->text());
@@ -35,8 +35,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('Mathieu MARCHOIS', $userLinks->eq(0)->text());
         $this->assertSame('Administration', $userLinks->eq(1)->text());
 
-        $enterLink = $crawler->filter('[data-testid="enter-link"]');
-        $this->assertSame('Participer à l\'expérimentation', $enterLink->text());
+        $enterLink = $crawler->selectLink("Participer à l'expérimentation");
         $this->assertSame('/collectivites', $enterLink->attr('href'));
     }
 

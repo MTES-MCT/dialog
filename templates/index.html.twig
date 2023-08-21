@@ -5,14 +5,18 @@
 {% endblock %}
 
 {% block body %}
-    <section class="fr-container fr-pt-4w header" aria-labelledby="jumbotron">
+    <section class="fr-container fr-py-4w header" aria-labelledby="jumbotron">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-8">
                 <h1 id="jumbotron" class="fr-title--blue-france">{{ 'landing.jumbotron.title'|trans }}</h1>
-                <p class="fr-text--lead"><span class="fr-icon-check-line fr-mr-3w fr-title--blue-france" aria-hidden="true"></span>{{ 'landing.jumbotron.description1'|trans|raw }}</p>
-                <p class="fr-text--lead"><span class="fr-icon-check-line fr-mr-3w fr-title--blue-france" aria-hidden="true"></span>{{ 'landing.jumbotron.description2'|trans|raw }}</p>
-                <p class="fr-text--lead"><span class="fr-icon-check-line fr-mr-3w fr-title--blue-france" aria-hidden="true"></span>{{ 'landing.jumbotron.description3'|trans|raw }}</p>
-
+                <ul class="fr-text-mention--grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+                    <li>{{ 'landing.jumbotron.description1'|trans|raw }}
+                    </li>
+                    <li>{{ 'landing.jumbotron.description2'|trans|raw }}
+                    </li>
+                    <li>{{ 'landing.jumbotron.description3'|trans|raw }}
+                    </li>
+                </ul>
             </div>
             <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
                 <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" width="300" height="276"/>
@@ -21,18 +25,18 @@
     </section>
     <section class="how-it-works fr-background-alt--blue-france" aria-labelledby="how-it-works">
         <div class="fr-container fr-py-6w">
-            <h2 id="how-it-works">{{ 'landing.how-it-works.title'|trans }}</h2>
+            <h2 id="how-it-works">{{ 'landing.for-who.title'|trans }}</h2>
             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
                 <div class="fr-col-12 fr-col-md-4">
                     <div class="fr-card">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
-                                <h3 class="fr-card__title">{{ 'landing.how-it-works.city.title'|trans }}</h3>
+                                <h3 class="fr-card__title">{{ 'landing.for-city.title'|trans }}</h3>
                                 <p class="fr-card__desc">
-                                    {{ 'landing.how-it-works.city.description'|trans|raw }}
+                                    {{ 'landing.for-city.description'|trans|raw }}
                                     <br/>
                                     <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
-                                        {{ 'landing.how-it-works.city.link'|trans }}
+                                        {{ 'landing.for-city.link'|trans }}
                                     </a>
                                 </p>
                             </div>
@@ -46,12 +50,12 @@
                     <div class="fr-card">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
-                                <h3 class="fr-card__title">{{ 'landing.how-it-works.gps.title'|trans }}</h3>
+                                <h3 class="fr-card__title">{{ 'landing.for-gps.title'|trans }}</h3>
                                 <p class="fr-card__desc">
-                                    {{ 'landing.how-it-works.gps.description'|trans|raw }}
+                                    {{ 'landing.for-gps.description'|trans|raw }}
                                     <br/>
                                     <a href="https://www.data.gouv.fr/fr/datasets/64947a4af5faf2f1f9eee299/" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
-                                        {{ 'landing.how-it-works.gps.link'|trans }}
+                                        {{ 'landing.for-gps.link'|trans }}
                                     </a>
                                 </p>
                             </div>
@@ -76,7 +80,7 @@
                             </div>
                         </div>
                         <div class="fr-card__header fr-x-text--center">
-                            <img src="{{ asset('images/landing/community1.png') }}" alt="information" />
+                            <img src="{{ asset('images/landing/community.png') }}" alt="information" />
                         </div>
                     </div>
                 </div>
@@ -84,20 +88,16 @@
         </div>
     </section>
     <section class="itinerary fr-container fr-py-6w" aria-labelledby="itinerary">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12">
-                <h2 id="itinerary" class="fr-title--blue-france">{{ 'landing.itinerary.title'|trans }}</h2>
-                {{ 'landing.itinerary.description'|trans|raw }}
-            </div>
-        </div>
+        <h2 id="itinerary" class="fr-title--blue-france">{{ 'landing.how-it-works.title'|trans }}</h2>
+        <p>{{ 'landing.how-it-works.description'|trans|raw }}</p>
     </section>
-    <section class="fr-container fr-py-6w">
+    <section class="fr-container fr-pb-6w">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-8">
                 <h2 class="fr-title--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
                 <p>{{ 'landing.who-are-we.description1'|trans|raw }}</p>
                 <p>{{ 'landing.who-are-we.description2'|trans|raw }}</p>
-                <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w" data-testid="enter-link">
+                <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w">
                     {{ 'landing.who-are-we.experiment'|trans }}
                 </a>
                 <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary" data-testid="contact-link">
