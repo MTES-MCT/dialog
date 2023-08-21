@@ -13,11 +13,11 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Faciliter et sécuriser la circulation', $crawler->filter('h1')->text());
-        $enterLink = $crawler->filter('[data-testid="enter-link"]');
-        $this->assertSame('Se connecter', $enterLink->text());
-        $this->assertSame('/login', $enterLink->attr('href'));
-        $this->assertMetaTitle('Faciliter et sécuriser la circulation - DiaLog', $crawler);
+        $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
+        $joinLink = $crawler->selectLink("Participer à l'expérimentation");
+        $this->assertSame('Participer à l\'expérimentation', $joinLink->text());
+        $this->assertSame('/collectivites', $joinLink->attr('href'));
+        $this->assertMetaTitle('Numériser la réglementation de circulation routière avec Dialog - DiaLog', $crawler);
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
         $this->assertSame('Nous contacter', $contactLink->text());
         $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
@@ -29,15 +29,14 @@ final class LandingControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Faciliter et sécuriser la circulation', $crawler->filter('h1')->text());
+        $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
         $userLinks = $crawler->filter('[data-testid="user-links"]')->filter('li');
         $this->assertCount(3, $userLinks);
         $this->assertSame('Mathieu MARCHOIS', $userLinks->eq(0)->text());
         $this->assertSame('Administration', $userLinks->eq(1)->text());
 
-        $enterLink = $crawler->filter('[data-testid="enter-link"]');
-        $this->assertSame('Accéder aux arrếtés', $enterLink->text());
-        $this->assertSame('/regulations', $enterLink->attr('href'));
+        $enterLink = $crawler->selectLink("Participer à l'expérimentation");
+        $this->assertSame('/collectivites', $enterLink->attr('href'));
     }
 
     public function testLandingWithoutRoleAdmin(): void
