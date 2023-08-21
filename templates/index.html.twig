@@ -93,18 +93,14 @@
         {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: 'dialog'} only %}
     </section>
     <section class="fr-container fr-py-6w">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-8">
                 <h2 class="fr-title--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
-                <p>{{ 'landing.who-are-we.description1'|trans|raw }}</p>
-                <p>{{ 'landing.who-are-we.description2'|trans|raw }}</p>
+                <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
+                <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>
                 <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w">
                     {{ 'landing.who-are-we.experiment'|trans }}
                 </a>
                 <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary" data-testid="contact-link">
                     {{ 'landing.who-are-we.contact'|trans }}
                 </a>
-            </div>
-        </div>
     </section>
 {% endblock %}
