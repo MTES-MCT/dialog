@@ -21,6 +21,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
     {
         $rows = $this->repository->findRegulationOrdersForDatexFormat();
 
+        if (empty($rows)) {
+            return [];
+        }
+
         // There is one row per unique combination of (regulationOrder, location, measure).
         // Rows are sorted by regulationOrder uuid.
         // So we iterate over rows, pushing a new regulation order view when the row's regulationOrder uuid changes.

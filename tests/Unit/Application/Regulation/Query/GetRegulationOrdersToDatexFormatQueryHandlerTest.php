@@ -15,6 +15,21 @@ use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 {
+    public function testGetAllEmpty(): void
+    {
+        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+
+        $regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('findRegulationOrdersForDatexFormat')
+            ->willReturn([]);
+
+        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
+        $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
+
+        $this->assertEquals([], $regulationOrders);
+    }
+
     public function testGetAll(): void
     {
         $location1 = new DatexLocationView(
