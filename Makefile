@@ -134,10 +134,10 @@ php_lint_no_tty: ## PHP linter without TTY
 	${BIN_PHP_NO_TTY} ./vendor/bin/php-cs-fixer fix -n ${ARGS}
 
 twig_lint: ## Twig linter
-	${BIN_CONSOLE} lint:twig -n
+	${BIN_CONSOLE} lint:twig -n templates/
 
 twig_lint_no_tty: ## Twig linter without TTY
-	${BIN_CONSOLE_NO_TTY} lint:twig -n
+	${BIN_CONSOLE_NO_TTY} lint:twig -n templates/
 
 security_check: ## Security checks
 	${_SYMFONY} security:check
