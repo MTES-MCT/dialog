@@ -24,7 +24,7 @@
         </div>
     </section>
     <section class="how-it-works fr-background-alt--blue-france" aria-labelledby="how-it-works">
-        <div class="fr-container fr-py-6w">
+        <div class="fr-container fr-py-4w">
             <h2 id="how-it-works">{{ 'landing.for-who.title'|trans }}</h2>
             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
                 <div class="fr-col-12 fr-col-md-4">
@@ -89,9 +89,10 @@
     </section>
     <section class="itinerary fr-container fr-py-6w" aria-labelledby="itinerary">
         <h2 id="itinerary" class="fr-title--blue-france">{{ 'landing.how-it-works.title'|trans }}</h2>
-        <p>{{ 'landing.how-it-works.description'|trans|raw }}</p>
+        <p class="fr-text--xl fr-m-0">{{ 'landing.how-it-works.description'|trans|raw }}</p>
+        {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: 'dialog'} only %}
     </section>
-    <section class="fr-container fr-pb-6w">
+    <section class="fr-container fr-py-6w">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-8">
                 <h2 class="fr-title--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>

@@ -576,24 +576,8 @@
             <trans-unit id="landing.who-are-we.description1">
                 <source>landing.who-are-we.description1</source>
                 <target>
-                    DiaLog a été créé et est opéré par la Direction Générale des Infrastructures de Transport et des Mobilités (DGITM), administration centrale chargée des transports.
+                    DiaLog a été créé et est opéré par la <![CDATA[<strong>]]>Direction Générale des Infrastructures de Transport et des Mobilités <![CDATA[</strong>]]> (DGITM), administration centrale chargée des transports.
                 </target>
-            </trans-unit>
-            <trans-unit id="landing.diagram.authorities">
-                <source>landing.diagram.authorities</source>
-                <target>Collectivités</target>
-            </trans-unit>
-            <trans-unit id="landing.diagram.dialog">
-                <source>landing.diagram.dialog</source>
-                <target>DiaLog</target>
-            </trans-unit>
-            <trans-unit id="landing.diagram.digital_services">
-                <source>landing.diagram.digital_services</source>
-                <target>Services numériques</target>
-            </trans-unit>
-            <trans-unit id="landing.diagram.road_users">
-                <source>landing.diagram.road_users</source>
-                <target>Usagers de la route</target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.description2">
                 <source>landing.who-are-we.description2</source>
@@ -616,6 +600,22 @@
             <trans-unit id="landing.authorities.jumbotron.cta">
                 <source>landing.authorities.jumbotron.cta</source>
                 <target>Créer un compte pour ma commune</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.authorities">
+                <source>landing.diagram.authorities</source>
+                <target>Collectivités</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.dialog">
+                <source>landing.diagram.dialog</source>
+                <target>DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.digital_services">
+                <source>landing.diagram.digital_services</source>
+                <target>Services numériques</target>
+            </trans-unit>
+            <trans-unit id="landing.diagram.road_users">
+                <source>landing.diagram.road_users</source>
+                <target>Usagers de la route</target>
             </trans-unit>
             <trans-unit id="landing.authorities.why">
                 <source>landing.authorities.why</source>
