@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Déclaration d'écoconception" %}
+
+{% block title %}
+    {{ title }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-py-2w fr-py-md-5w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing'},
+            { title: 'ecodesign_statement.breadcrumb'|trans },
+        ]} %}
+
+        <h1>{{ title }}</h1>
+
+        <p>
+            Ce service numérique a été pensé et développé dans une logique d'écoconception de services numériques.
+        </p>
+
+        <h2>Qu'est-ce que l'écoconception de services numériques ?</h2>
+
+        <p>
+            <strong>L'écoconception de services numériques est une démarche d'amélioration continue</strong>.
+            L'objectif est de limiter les ressources informatiques.
+            L'écoconception agit sur 3 niveaux : terminaux utilisateurs, réseau, et centres de données informatiques (datacenters).
+            Dans une démarche d'écoconception, on s'intéresse au service numérique dans sa globalité.
+        </p>
+
+        <p>
+            L'écoconception de services numériques est une branche du  <a href="https://ecoresponsable.numerique.gouv.fr/publications/guide-pratique-achats-numeriques-responsables/demarche-numerique-responsable/definition/">Numérique responsable</a>.
+            Le Numérique responsable est une démarche d'amélioration continue qui vise à améliorer l'empreinte écologique et sociale du numérique.
+        </p>
+
+        <h2>Raison d'être de ce service</h2>
+
+        <p>
+            Le service <a href="{{ path('app_landing') }}">DiaLog</a> vise à numériser et diffuser la réglementation de circulation afin de garantir la sécurité du public et de préserver les infrastructures routières.
+        </p>
+
+        <p>Il y a 2 cibles utilisatrices principales :</p>
+
+        <ul>
+            <li>Les <strong>agents publics</strong> qui souhaitent communiquer à des tiers la réglementation de circulation sous format numérique ;</li>
+            <li>Les <strong>services tiers</strong> qui intègrent cette réglementation dans leurs services numériques à destination du public.</li>
+        </ul>
+
+        <p>
+            Le besoin métier est de permettre la numérisation et la diffusion de la réglementation de circulation de manière la plus accessible possible.
+        </p>
+
+        <p>
+            Les bénéficiaires finaux du service sont les usagers de la route, y compris les chauffeurs routiers, qui voient sur leurs outils de navigation les dernières reglementations en place (travaux, limitation de vitesse, circulation réduite, etc).
+        </p>
+
+        <h2>Stratégie et objectifs en matière de réduction ou de limitation des impacts environnementaux</h2>
+
+        <p>
+            Ce service doit fonctionner sur des terminaux les plus anciens possibles et dans des conditions de connectivité variées.
+        </p>
+
+        <p>
+            Plusieurs mesures sont mises en place. En voici une liste non exhaustive :
+        </p>
+
+        <ul>
+            <li>Utilisation des composants d'interfaces du système de design de l'Etat (DSFR) : ils sont accessibles et leur empreinte est minimale.</li>
+            <li>Navigation la plus intuitive possible, pour réduire le temps passé à trouver une information.</li>
+            <li>Nombre de requêtes serveurs maximum par écran : 30.</li>
+            <li>Poids des ressources maximum par écran : 300 ko.</li>
+            <li>Le service s'adapte à toutes les tailles d'écran.</li>
+            <li>Utilisation limitée d'images et compression des images.</li>
+        </ul>
+
+        <h2>État de conformité au référentiel d'écoconception</h2>
+
+        <p>
+            Le service <a href="{{ path('app_landing') }}">DiaLog</a> est <strong>partiellement conforme</strong> en regard
+            des critères du Référentiel Général d'Écoconception des Services Numériques (RGESN).
+            Le taux de conformité général actuel du service est estimé à <strong>43 %</strong>.
+        </p>
+
+        <p>
+            L'équipe vise une <strong>mise en conformité progressive</strong> du service via une démarche d'amélioration continue.
+        </p>
+
+        <h3>Résultat des tests conduits sur le service</h3>
+
+        <p>
+            À l'aide de <a href="https://ecoresponsable.numerique.gouv.fr/publications/referentiel-general-ecoconception/numecodiag/">NumEcoDiag</a>,
+            l'auto-diagnostic initial donne un taux de conformité au RGESN de 43 %.
+        </p>
+
+        <p>
+            <a href="{{ asset('files/2023-08-21 - Audit RGESN DiaLog.pdf') }}">Télécharger l'audit de conformité RGESN initial à date de juillet 2023 (PDF - 208 ko)</a>
+        </p>
+
+        <p>
+            Le diagnostic a porté sur l'échantillon suivant :
+        </p>
+
+        <ul>
+            <li>
+                Page d'accueil
+            </li>
+            <li>
+                Liste des arrêtés
+            </li>
+            <li>
+                Page d'un arrêté
+            </li>
+            <li>
+                Déclaration d'accessibilité
+            </li>
+        </ul>
+
+        <p>
+            Les outils utilisés pour évaluer certains indicateurs techniques sont
+            l'inspecteur "Réseau" des outils de développement du navigateur
+            et l'extension <a href="https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/greenitanalysis/">Green IT Analysis</a> (disponible sous Firefox, Chrome).
+        </p>
+
+        <h3>Evaluation du parcours avec GreenIT Analysis</h3>
+
+        <p>
+            L'<strong>unité fonctionnelle</strong> choisie pour l'évaluation du parcours est : "Saisir un arrêté temporaire de circulation".
+        </p>
+
+        <p>
+            L'évaluation du parcours a été faite le 21/08/2023 sur Firefox, après nettoyage du cache en début de parcours.
+            Afin d'éviter l'incrémentation des résultats sur ce parcours, les données réseaux sont nettoyées entre chaque étape.
+        </p> 
+
+        <p>Les étapes suivies sont : </p>
+
+        <ul>
+            <li>
+                <strong>Accéder à la page d'accueil de Dialog :</strong> score <strong>EcoIndex A</strong>
+                (23 requêtes, 752 Ko de données transférées, 155 éléments DOM) ;
+            </li>
+            <li>
+                <strong>Se connecter à Dialog :</strong> score <strong>EcoIndex A</strong>
+                (6 requêtes, 68 Ko, 119 éléments DOM) ;
+            </li>
+            <li>
+                <strong>Accéder à la liste des arrêtés et ajouter un arrêté :</strong> score <strong>EcoIndex A</strong>
+                (7 requêtes, 381 Ko, 283 éléments DOM) ;
+            </li>
+            <li>
+                <strong>Saisir un nouvel arrêté de travaux </strong> (circulation interdite sur 1 rue, à tous les véhicules sauf vélos et piétons) :
+                score <strong>EcoIndex A</strong> (25 requêtes, 575 Ko, 206 éléments DOM).
+            </li>
+        </ul>
+
+        <h3>Date de cette déclaration de conformité</h3>
+
+        <p>
+            Cette déclaration est établie en version initiale le 21/08/2023.
+        </p>
+
+        <h2>Et après ?</h2>
+
+        <p>
+            Nous mettons en place une démarche d'amélioration continue grâce à une évaluation de l'impact
+            environnemental et social de notre service de manière régulière.
+            Nos outils nous fournissent des indicateurs de suivi pour adapter nos méthodes et nos contenus
+            tout au long du cycle de vie.
+        </p>
+    </div>
+{% endblock %}

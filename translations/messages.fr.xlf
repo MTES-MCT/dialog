@@ -178,6 +178,14 @@
                 <source>accessibility.status</source>
                 <target>Accessibilité : non conforme</target>
             </trans-unit>
+            <trans-unit id="ecodesign_statement.link">
+                <source>ecodesign_statement.link</source>
+                <target>Écoconception</target>
+            </trans-unit>
+            <trans-unit id="ecodesign_statement.breadcrumb">
+                <source>ecodesign_statement.breadcrumb</source>
+                <target>Déclaration d'écoconception</target>
+            </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
                 <target>Arrêtés de circulation</target>
@@ -776,6 +784,10 @@
             <trans-unit id="login.legend">
                 <source>login.legend</source>
                 <target>Se connecter avec son compte</target>
+            </trans-unit>
+            <trans-unit id="home.breadcrumb">
+                <source>home.breadcrumb</source>
+                <target>Accueil</target>
             </trans-unit>
             <trans-unit id="error.home_link">
                 <source>error.home_link</source>
