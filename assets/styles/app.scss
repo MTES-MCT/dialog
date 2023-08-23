@@ -78,6 +78,16 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     }
 }
 
+.fr-x-text--italic {
+    font-style: italic;
+}
+
+.fr-x-text--regular {
+    // Higher priority than .fr-text--regular provided by DSFR, so it can work
+    // with DSFR classes declared after .fr-text--regular, such as .fr-h4.
+    font-weight: 400 !important;
+}
+
 .remixicons {
     font-size: 1.5rem !important; // Override to have the same size as the DSFR. Don't work without !important
 }

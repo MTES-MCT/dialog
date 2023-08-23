@@ -741,6 +741,102 @@
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
             </trans-unit>
+            <trans-unit id="landing.road_users.jumbotron.title">
+                <source>landing.road_users.jumbotron.title</source>
+                <target>Vous êtes sur la bonne voie !</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.jumbotron.description">
+                <source>landing.road_users.jumbotron.description</source>
+                <target>DiaLog permet de <![CDATA[<strong>]]>rendre la réglementation routière facile d'accès<![CDATA[</strong>]]> pour les autorités publiques.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works">
+                <source>landing.road_users.how_it_works</source>
+                <target>Comment ça marche ?</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.description">
+                <source>landing.road_users.how_it_works.description</source>
+                <target>DiaLog permet aux autorités qui conçoivent la réglementation de mieux la rendre accessible en la numérisant. Ainsi, ces informations peuvent être réutilisées par les applications de navigation par GPS.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.item1">
+                <source>landing.road_users.how_it_works.item1</source>
+                <target>Vous êtes <![CDATA[<strong>]]>mieux guidé<![CDATA[</strong>]]> par votre GPS favori.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.item2">
+                <source>landing.road_users.how_it_works.item2</source>
+                <target>Les règles de circulation du réseau routier sont <![CDATA[<strong>]]>mieux coordonnées<![CDATA[</strong>]]>.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.item3">
+                <source>landing.road_users.how_it_works.item3</source>
+                <target>Vous avez accès à de nouveaux services pour <![CDATA[<strong>]]>faciliter votre circulation<![CDATA[</strong>]]>.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.quote.part1">
+                <source>landing.road_users.how_it_works.quote.part1</source>
+                <target>La réglementation routière en France, ce n'est pas que les limitations de vitesse ou les sens interdits. Ce sont aussi les travaux, les événements festifs ou sportifs, les Zones à Faible Emissions (ZFE) ou les Zones à Trafic Limité (ZTL).</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.quote.part2">
+                <source>landing.road_users.how_it_works.quote.part2</source>
+                <target>Tous les conducteurs ont pu rencontre un jour des blocages liés à ces règles sur leur chemin.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.how_it_works.quote.author">
+                <source>landing.road_users.how_it_works.quote.author</source>
+                <target>Mathieu Fernandez, intrapreneur de DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.state_support.title">
+                <source>landing.road_users.state_support.title</source>
+                <target>Un dispositif soutenu par l'Etat</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.state_support.description">
+                <source>landing.road_users.state_support.description</source>
+                <target>DiaLog est un <![CDATA[<strong>]]>projet porté par le Ministère des Transports<![CDATA[</strong>]]>. Il a été initié en 2022 pour faciliter l'application de la <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat">]]>loi Climat et Résilience<![CDATA[</a>]]>. Ainsi, ce service permet de <![CDATA[<strong>]]>construire une base de données nationale de la réglementation de circulation<![CDATA[</strong>]]> pour <![CDATA[<strong>]]>tous les véhicules<![CDATA[</strong>]]>. Les applications numériques (type GPS) vont ainsi pouvoir se mettre en conformité avec leur <![CDATA[<strong>]]>obligation d'intégrer la réglementation relative aux poids lourds<![CDATA[</strong>]]>.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.learn_more.title">
+                <source>landing.road_users.learn_more.title</source>
+                <target>Pour en savoir plus</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.title">
+                <source>landing.road_users.road_network.title</source>
+                <target>Comment sont gérées les routes en France ?</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.city.title">
+                <source>landing.road_users.road_network.city.title</source>
+                <target>Voies communales</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.city.description.part1">
+                <source>landing.road_users.road_network.city.description.part1</source>
+                <target>Elles appartiennent aux communes. C'est le conseil municipal de la commune concernée qui prend les décisions concernant la construction, l'entretien, les travaux.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.city.description.part2">
+                <source>landing.road_users.road_network.city.description.part2</source>
+                <target>Dans certains cas, cette responsabilité est confiée à une Métropole ou une communauté de communes, d'agglomération ou urbaine. On compte près de 700 000 km de ces routes sur l'ensemble du territoire, gérées par plus de 36 000 communes.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.departement.title">
+                <source>landing.road_users.road_network.departement.title</source>
+                <target>Voies départementales</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.departement.description.part1">
+                <source>landing.road_users.road_network.departement.description.part1</source>
+                <target>Elles sont entretenues et gérées par les Conseils Départementaux. Elles représentent un maillage de proximité entre les agglomérations, et sont reconnaissables par leurs bornes kilométriques jaunes.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.departement.description.part2">
+                <source>landing.road_users.road_network.departement.description.part2</source>
+                <target>On en dénombre environ 380 000 km en France, gérées par les 96 départements.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.national.title">
+                <source>landing.road_users.road_network.national.title</source>
+                <target>Voies nationales</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.national.description.part1">
+                <source>landing.road_users.road_network.national.description.part1</source>
+                <target>Ce sont les routes de plus gros gabarit. Elles sont gérées directement par l'État et ses services. Leur accès est soumis à péage. Elles permettent de traverser l'ensemble du territoire métropolitain et d'outre-mer.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.national.description.part2">
+                <source>landing.road_users.road_network.national.description.part2</source>
+                <target>Reconnaissables à leurs bornes kilométriques rouges, ce sont les routes dites « non concédées », soit par des sociétés concessionnaires. On compte au total environ 21 000 km de routes nationales.</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.road_network.learn_more">
+                <source>landing.road_users.road_network.learn_more</source>
+                <target>Pour aller plus loin, consulter la page des <![CDATA[<a href="https://www.ecologie.gouv.fr/acteurs-route-en-france">]]>acteurs routiers<![CDATA[</a>]]> sur le site du Ministère de l'Ecologie.</target>
+            </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>
