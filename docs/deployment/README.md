@@ -98,6 +98,7 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | `REDIS_URL` | URL vers le serveur Redis | _(Obligatoire)_ `$SCALINGO_REDIS_URL` | La variable `$SCALINGO_REDIS_URL` est configurée automatiquement par Scalingo |
 | `SENTRY_DSN` | URL de collecte Sentry | | À récupérer sur l'instance Sentry. Voir : [Monitoring](../tools/monitoring.md) |
 | `WEB_CONCURRENCY` | Nombre de processus enfants créés par PHP-FPM (`pm.max_children`). | Dépend de la `memory_limit` et de la RAM de la machine. | Utiliser `2`. Peut être ajusté pour optimiser le fonctionnement du serveur. Voir : [PHP-FPM Concurrency (Scalingo docs)](https://www.php.net/manual/fr/install.fpm.configuration.php) |
+| `ADMIN_EMAIL` | Adresse email de l'administrateur | _(Obligatoire)_ mathieu.fernandez@beta.gouv.fr | |
 
 ## Retirer un environnement
 
