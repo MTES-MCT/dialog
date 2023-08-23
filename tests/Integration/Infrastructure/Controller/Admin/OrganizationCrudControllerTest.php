@@ -10,7 +10,7 @@ final class OrganizationCrudControllerTest extends AbstractWebTestCase
 {
     public function testIndex(): void
     {
-        $client = $this->login();
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
         $crawler = $client->request('GET', '/admin?crudAction=index&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5COrganizationCrudController');
 
         $this->assertResponseStatusCodeSame(200);

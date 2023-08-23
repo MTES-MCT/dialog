@@ -10,7 +10,7 @@ final class DashboardControllerTest extends AbstractWebTestCase
 {
     public function testDashboard(): void
     {
-        $client = $this->login();
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
         $crawler = $client->request('GET', '/admin');
 
         $this->assertResponseStatusCodeSame(200);

@@ -17,17 +17,14 @@ abstract class AbstractWebTestCase extends WebTestCase
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $testUser = $userRepository->findOneByEmail($email);
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
+        $adminEmail = static::getContainer()->getParameter('admin_email');
+        $testUser = $userRepository->findOneByEmail($email);
+        $role = $testUser->getEmail() === $adminEmail ? 'ROLE_ADMIN' : 'ROLE_USER';
         $organizations = [];
-        $role = 'ROLE_USER';
 
         foreach ($testUser->getOrganizations() as $organization) {
             $organizations[] = $em->getReference(Organization::class, $organization->getUuid());
-
-            if ($organization->getUuid() === 'e0d93630-acf7-4722-81e8-ff7d5fa64b66') {
-                $role = 'ROLE_ADMIN';
-            }
         }
 
         $client->loginUser(

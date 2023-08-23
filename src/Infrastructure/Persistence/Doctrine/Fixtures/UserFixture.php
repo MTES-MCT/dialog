@@ -22,11 +22,18 @@ final class UserFixture extends Fixture
             ->setEmail('florimond.manca@beta.gouv.fr')
             ->setPassword('password');
 
+        $user3 = (new User('5bc831a3-7a09-44e9-aefa-5ce3588dac33'))
+            ->setFullName('Mathieu FERNANDEZ')
+            ->setEmail('mathieu.fernandez@beta.gouv.fr')
+            ->setPassword('password');
+
         $manager->persist($user1);
         $manager->persist($user2);
+        $manager->persist($user3);
         $manager->flush();
 
         $this->addReference('user1', $user1);
         $this->addReference('user2', $user2);
+        $this->addReference('user3', $user3);
     }
 }
