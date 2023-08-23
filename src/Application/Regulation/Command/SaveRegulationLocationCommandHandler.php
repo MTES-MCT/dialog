@@ -52,7 +52,7 @@ final class SaveRegulationLocationCommandHandler
             return $location->getUuid();
         }
 
-        [ $fromPoint, $toPoint ] = $this->computePoints($command);
+        [$fromPoint, $toPoint] = $this->computePoints($command);
 
         $measuresStillPresentUuids = [];
 
