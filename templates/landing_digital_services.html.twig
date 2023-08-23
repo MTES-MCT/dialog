@@ -40,6 +40,7 @@
     <section class="fr-container fr-py-4w">
         <h2 class="fr-title--blue-france">{{ 'landing.digital.services.how_it_works.title'|trans }}</h2>
         <p class="fr-text--xl fr-m-0">{{ 'landing.digital.services.how_it_works.description'|trans }}</p>
+        {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: ['dialog','digital_services']} only %}
     </section>
 
     <section class="fr-container fr-py-4w">
@@ -71,6 +72,96 @@
             <button class="fr-btn">{{ 'landing.digital.services.qualitative_data.contact.cta'|trans }}
             </button>
         </div>
+    </section>
+
+    <section class="fr-container fr-py-4w">
+        <h2 class="fr-title--blue-france">{{ 'landing.digital.services.deployment.title'|trans }}</h2>
+        <p class="fr-text--xl">{{ 'landing.digital.services.deployment.description'|trans|raw }}</p>
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+            <div class="fr-col-12 fr-col-md-4">
+
+                <div class="fr-card">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                        <h3 class="fr-card__title">{{ 'landing.digital.services.deployment.test.title'|trans }}
+                        </h3>
+                        <div class="fr-card__desc">
+                            <ul>
+                                <li>{{ 'landing.digital.services.deployment.test.step1'|trans|raw }}</li>
+                                <li>{{ 'landing.digital.services.deployment.test.step2'|trans|raw }}</li>
+                                <li>{{ 'landing.digital.services.deployment.test.step3'|trans|raw }}</li>
+                            </ul>
+                        </div>
+                        <div class="fr-card__start">
+                            <p class="fr-icon-arrow-right-line">{{ 'landing.digital.services.deployment.test.start'|trans }}</p>
+                        </div>
+                        </div>
+                    </div>
+                <div class="fr-card__header">
+                <div class="fr-card__img fr-x-text--center">
+                    <img src="{{ asset('images/landing/construction.png') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}"/>
+                   
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fr-col-12 fr-col-md-4">
+
+        <div class="fr-card">
+            <div class="fr-card__body">
+                <div class="fr-card__content">
+                    <h3 class="fr-card__title">{{ 'landing.digital.services.deployment.france.title'|trans }}
+                    </h3>
+                    <div class="fr-card__desc">
+                        <ul>
+                            <li>{{ 'landing.digital.services.deployment.france.step1'|trans|raw }}</li>
+                            <li>{{ 'landing.digital.services.deployment.france.step2'|trans|raw }}</li>
+                        </ul>
+                        </div>
+                    <div class="fr-card__start">
+                        <p class="fr-icon-arrow-right-line">{{ 'landing.digital.services.deployment.france.start'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-card__header">
+                <div class="fr-card__img fr-x-text--center">
+                    <img class="fr-responsive-img" src="{{ asset('images/landing/map-73x73.png') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}"/>
+                   
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fr-col-12 fr-col-md-4">
+
+        <div class="fr-card">
+            <div class="fr-card__body">
+                <div class="fr-card__content">
+                    <h3 class="fr-card__title">{{ 'landing.digital.services.deployment.europe.title'|trans }}
+                    </h3>
+                    <div class="fr-card__desc">
+                        <ul>
+                            <li>{{ 'landing.digital.services.deployment.europe.step1'|trans|raw }}</li>
+                        </ul>
+                        </div>
+                    <div class="fr-card__start">
+                        <p class="fr-icon-arrow-right-line">{{ 'landing.digital.services.deployment.europe.start'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-card__header">
+                <div class="fr-card__img fr-x-text--center">
+                    <img class="fr-responsive-img" src="{{ asset('images/landing/success-73x73.png') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}"/>
+                   
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
     </section>
 
 {% endblock %}

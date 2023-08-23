@@ -837,6 +837,67 @@
                 <source>landing.digital.services.why-digitise.questions</source>
                 <target>Vous avez des questions complémentaires au sujet de DiaLog et de l’article 122 de la loi Climat et Résilience ?</target>
             </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.title">
+                <source>landing.digital.services.deployment.title</source>
+                <target>Un déploiement continu</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.description">
+                <source>landing.digital.services.deployment.description</source>
+                <target>Dialog se donne 3 ans pour devenir la solution de référence d’accès à la réglementation routière :</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.test.title">
+                <source>landing.digital.services.deployment.test.title</source>
+                <target>Expérimentation</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.test.start">
+                <source>landing.digital.services.deployment.test.start</source>
+                <target>Début en 2022</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.test.step1">
+                <source>landing.digital.services.deployment.test.step1</source>
+                <target><![CDATA[<strong>]]>Construction<![CDATA[</strong>]]> du produit</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.test.step2">
+                <source>landing.digital.services.deployment.test.step2</source>
+                <target><![CDATA[<strong>]]>Test<![CDATA[</strong>]]> avec des territoires pilotes</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.test.step3">
+                <source>landing.digital.services.deployment.test.step3</source>
+                <target><![CDATA[<strong>]]>Validation<![CDATA[</strong>]]> du fonctionnement de la plateforme</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.france.title">
+                <source>landing.digital.services.deployment.france.title</source>
+                <target>Déploiement en France</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.france.start">
+                <source>landing.digital.services.deployment.france.start</source>
+                <target>Courant 2023</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.france.step1">
+                <source>landing.digital.services.deployment.france.step1</source>
+                <target>Déploiement opérationnel sur les <![CDATA[<strong>]]>territoires concernés par les JO<![CDATA[</strong>]]> de 2024</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.france.step2">
+                <source>landing.digital.services.deployment.france.step2</source>
+                <target>
+                    Déploiement dans les <![CDATA[<strong>]]>10 plus grandes villes du territoire<![CDATA[</strong>]]> métropolitain</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.europe.title">
+                <source>landing.digital.services.deployment.europe.title</source>
+                <target>Déploiement en Europe</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.europe.start">
+                <source>landing.digital.services.deployment.europe.start</source>
+                <target>Courant 2024</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.europe.step1">
+                <source>landing.digital.services.deployment.europe.step1</source>
+                <target>Couverture au minimum du réseau transeuropéen global (RTE-T)</target>
+            </trans-unit>
+           <!--  <trans-unit id="landing.digital.services.jumbotron.description">
+                <source>landing.digital.services.jumbotron.description</source>
+                <target>DiaLog est la <![CDATA[<strong>]]>base de données nationale<![CDATA[</strong>]]> des réglementations de circulation et de stationnement. </target>
+            </trans-unit> -->
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>
