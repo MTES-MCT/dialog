@@ -803,7 +803,7 @@
             </trans-unit>
             <trans-unit id="landing.digital.services.qualitative_data.description3">
                 <source>landing.digital.services.qualitative_data.description3</source>
-                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://www.enable-javascript.com/fr/">]]>point d’accès national aux données de transport.<![CDATA[</a>]]> Dialog utilise le standard <![CDATA[<a href="https://www.datex2.eu/">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://www.enable-javascript.com/fr/" class="fr-link">]]>point d’accès national aux données de transport.<![CDATA[</a>]]> Dialog utilise le standard <![CDATA[<a class="fr-link" href="https://www.datex2.eu/">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
             </trans-unit>
             <trans-unit id="landing.digital.services.qualitative_data.contact">
                 <source>landing.digital.services.qualitative_data.contact</source>
@@ -819,7 +819,7 @@
             </trans-unit>
             <trans-unit id="landing.digital.services.why-digitise.description">
                 <source>landing.digital.services.why-digitise.description</source>
-                <target>La <![CDATA[<a href="https://www.ecologie.gouv.fr/loi-climat-resilience"> ]]>Loi Climat et Résilience <![CDATA[</a>]]> oblige les calculateurs d’itinéraire spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]> Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les itinéraires adaptés à leur véhicule afin de :</target>
+                <target>La <![CDATA[<a href="https://www.ecologie.gouv.fr/loi-climat-resilience" class="fr-link"> ]]>Loi Climat et Résilience <![CDATA[</a>]]> oblige les calculateurs d’itinéraire spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]> Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les itinéraires adaptés à leur véhicule afin de :</target>
             </trans-unit>
             <trans-unit id="landing.digital.services.why-digitise.argument1">
                 <source>landing.digital.services.why-digitise.argument1</source>
@@ -837,6 +837,10 @@
                 <source>landing.digital.services.why-digitise.questions</source>
                 <target>Vous avez des questions complémentaires au sujet de DiaLog et de l’article 122 de la loi Climat et Résilience ?</target>
             </trans-unit>
+            <trans-unit id="landing.digital.services.why-digitise.contact.cta">
+                <source>landing.digital.services.why-digitise.contact.cta</source>
+                <target>Contactez-nous</target>
+            </trans-unit>
             <trans-unit id="landing.digital.services.deployment.title">
                 <source>landing.digital.services.deployment.title</source>
                 <target>Un déploiement continu</target>
@@ -852,6 +856,10 @@
             <trans-unit id="landing.digital.services.deployment.test.start">
                 <source>landing.digital.services.deployment.test.start</source>
                 <target>Début en 2022</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.illustration-card1">
+                <source>landing.digital.services.deployment.illustration-card1</source>
+                <target>Illustration construction</target>
             </trans-unit>
             <trans-unit id="landing.digital.services.deployment.test.step1">
                 <source>landing.digital.services.deployment.test.step1</source>
@@ -872,6 +880,10 @@
             <trans-unit id="landing.digital.services.deployment.france.start">
                 <source>landing.digital.services.deployment.france.start</source>
                 <target>Courant 2023</target>
+            </trans-unit>
+            <trans-unit id="landing.digital.services.deployment.france.illustration-card2">
+                <source>landing.digital.services.deployment.france.illustration-card2</source>
+                <target>Illustration carte</target>
             </trans-unit>
             <trans-unit id="landing.digital.services.deployment.france.step1">
                 <source>landing.digital.services.deployment.france.step1</source>
@@ -894,10 +906,10 @@
                 <source>landing.digital.services.deployment.europe.step1</source>
                 <target>Couverture au minimum du réseau transeuropéen global (RTE-T)</target>
             </trans-unit>
-           <!--  <trans-unit id="landing.digital.services.jumbotron.description">
-                <source>landing.digital.services.jumbotron.description</source>
-                <target>DiaLog est la <![CDATA[<strong>]]>base de données nationale<![CDATA[</strong>]]> des réglementations de circulation et de stationnement. </target>
-            </trans-unit> -->
+            <trans-unit id="landing.digital.services.deployment.europe.illustration-card3">
+                <source>landing.digital.services.deployment.europe.illustration-card3</source>
+                <target>illustration succès </target>
+            </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>
