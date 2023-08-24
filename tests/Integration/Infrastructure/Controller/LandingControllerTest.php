@@ -14,6 +14,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
+        $this->assertSame('/collectivites', $crawler->selectLink('Pour les collectivités')->attr('href'));
         $joinLink = $crawler->selectLink("Participer à l'expérimentation");
         $this->assertSame('Participer à l\'expérimentation', $joinLink->text());
         $this->assertSame('/collectivites', $joinLink->attr('href'));
