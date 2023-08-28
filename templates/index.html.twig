@@ -4,6 +4,8 @@
     {{ 'landing.jumbotron.title'|trans }} - {{ parent() }}
 {% endblock %}
 
+{% block menu %}{% include '_landing.html.twig' %}{% endblock %}
+
 {% block body %}
     <section class="fr-container fr-py-4w header" aria-labelledby="jumbotron">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">

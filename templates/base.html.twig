@@ -27,6 +27,7 @@
   </head>
   <body>
     {% include 'common/header.html.twig' %}
+    {% block menu %}{% endblock %}
 
     <main id="contenu" class="{% block page_class %}{% endblock page_class %}">
         <noscript>

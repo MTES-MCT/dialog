@@ -4,6 +4,8 @@
     {{ 'landing.authorities.jumbotron.title'|trans }} - {{ parent() }}
 {% endblock %}
 
+{% block menu %}{% include '_landing.html.twig' %}{% endblock %}
+
 {% block body %}
     <div class="fr-container fr-pt-4w fr-pb-2w">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">

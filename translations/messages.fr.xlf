@@ -503,6 +503,22 @@
                 <source>pagination.page</source>
                 <target>Page %page%</target>
             </trans-unit>
+            <trans-unit id="landing.menu.button.home">
+                <source>landing.menu.button.home</source>
+                <target>Accueil</target>
+            </trans-unit>
+            <trans-unit id="landing.menu.button.authorities">
+                <source>landing.menu.button.authorities</source>
+                <target>Collectivités</target>
+            </trans-unit>
+            <trans-unit id="landing.menu.button.digital.services">
+                <source>landing.menu.button.digital.services</source>
+                <target>Services numériques</target>
+            </trans-unit>
+            <trans-unit id="landing.menu.button.road.users">
+                <source>landing.menu.button.road.users</source>
+                <target>Usagers de la route</target>
+            </trans-unit>
             <trans-unit id="landing.jumbotron.title">
                 <source>landing.jumbotron.title</source>
                 <target>Numériser la réglementation de circulation routière avec Dialog</target>
