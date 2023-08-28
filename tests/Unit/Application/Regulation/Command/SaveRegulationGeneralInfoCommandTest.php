@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -18,6 +19,7 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
         $command = SaveRegulationGeneralInfoCommand::create();
 
         $this->assertEmpty($command->identifier);
+        $this->assertSame(RegulationOrderRecordSourceEnum::DIALOG, $command->source);
         $this->assertEmpty($command->organization);
         $this->assertEmpty($command->description);
         $this->assertEmpty($command->startDate);
@@ -62,9 +64,15 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getSource')
+            ->willReturn('my_source');
+
         $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $this->assertSame($command->identifier, 'F02/2023');
+        $this->assertSame('my_source', $command->source);
         $this->assertSame($command->description, 'Description');
         $this->assertSame($command->startDate, $start);
         $this->assertSame($command->endDate, $end);

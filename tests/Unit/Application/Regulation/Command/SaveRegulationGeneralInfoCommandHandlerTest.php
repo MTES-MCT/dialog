@@ -8,6 +8,7 @@ use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -82,6 +83,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                 $this->equalTo(
                     new RegulationOrderRecord(
                         uuid: 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
+                        source: RegulationOrderRecordSourceEnum::DIALOG,
                         status: RegulationOrderRecordStatusEnum::DRAFT,
                         regulationOrder: $createdRegulationOrder,
                         createdAt: $now,

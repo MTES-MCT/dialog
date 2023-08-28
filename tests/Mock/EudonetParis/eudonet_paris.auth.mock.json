@@ -1,0 +1,28 @@
+{
+    "ResultInfos": {
+      "ApiMessage": "",
+      "ErrorMessage": "",
+      "ErrorNumber": 0,
+      "Success": true
+    },
+    "ResultData": {
+      "EudoFont": {
+        "Css": "http://localhost/xrm/themes/default/css/eudoFont.css",
+        "DateLastModified": "2020/02/18 11:51:55",
+        "Eot": "http://localhost/xrm/themes/fonts/eudoFonts.eot",
+        "Svg": "http://localhost/xrm/themes/fonts/eudoFonts.Svg",
+        "Ttf": "http://localhost/xrm/themes/fonts/eudoFonts.ttf",
+        "Woff": "http://localhost/xrm/themes/fonts/eudoFonts.woff",
+        "Woff2": "http://localhost/xrm/themes/fonts/eudoFonts.woff2"
+      },
+      "ExpirationDate": "REPLACE_ME",
+      "ServerDate": "2023/08/31 11:26:14",
+      "Token": "test_token",
+      "UserInfos": {
+        "GroupId": 205,
+        "UserAvatarUrl": "",
+        "UserDisplayName": "Utilisateur API DIALOG",
+        "UserId": 943
+      }
+    }
+  }

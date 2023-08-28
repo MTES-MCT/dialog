@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -19,6 +20,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
+    // TODO source argument?
     public function findRegulationsByOrganizations(
         array $organizationUuids,
         int $maxItemsPerPage,
@@ -26,8 +28,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         bool $isPermanent,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->where('roc.organization IN (:organizationUuids)')
+            ->where(
+                'roc.organization IN (:organizationUuids)',
+                // 'roc.source = :source',
+            )
             ->setParameter('organizationUuids', $organizationUuids)
+            // ->setParameter('source', RegulationOrderRecordSourceEnum::DIALOG)
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->leftJoin('ro.locations', 'loc')
@@ -138,5 +144,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getOneOrNullResult();
 
         return $row !== null;
+    }
+
+    public function findIdentifiersForSourceInOrganization(string $source, Organization $organization): array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('ro.identifier')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where('roc.source = :source')
+            ->setParameter('source', $source)
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 }

@@ -238,7 +238,7 @@ export class RegulationOrderPage {
     }
 
     async delete() {
-        await this.page.getByRole('button', { name: 'Supprimer'}).click();
+        await this.page.getByRole('complementary').getByRole('button', { name: 'Supprimer'}).click();
         await this.page.getByRole('dialog', { name: 'Supprimer cet arrêté ?' }).getByRole('button', { name: 'Supprimer', exact: true }).click();
     }
 }
