@@ -59,6 +59,12 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     // No 'overflow: hidden' (contrary to '.fr-container--fluid')
 }
 
+.fr-x-hidden-sm {
+    @media screen and (min-width: 36em) {
+        display: none !important;
+    }
+}
+
 .fr-x-revert-sm {
     @media screen and (min-width: 36em) {
         display: revert !important;
