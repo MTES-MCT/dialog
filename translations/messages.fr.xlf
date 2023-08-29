@@ -807,7 +807,7 @@
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.city.description.part2">
                 <source>landing.road_users.road_network.city.description.part2</source>
-                <target>Dans certains cas, cette responsabilité est confiée à une Métropole ou une communauté de communes, d'agglomération ou urbaine. On compte près de 700 000 km de ces routes sur l'ensemble du territoire, gérées par plus de 36 000 communes.</target>
+                <target>Dans certains cas, cette responsabilité est confiée à une Métropole ou une communauté de communes, d'agglomération ou urbaine. On compte près de 700 000 km de ces routes sur l'ensemble du territoire, gérées par plus de 36 000 communes.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.departement.title">
                 <source>landing.road_users.road_network.departement.title</source>
@@ -819,7 +819,7 @@
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.departement.description.part2">
                 <source>landing.road_users.road_network.departement.description.part2</source>
-                <target>On en dénombre environ 380 000 km en France, gérées par les 96 départements.</target>
+                <target>On en dénombre environ 380 000 km en France, gérées par les 96 départements.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.national.title">
                 <source>landing.road_users.road_network.national.title</source>
@@ -831,7 +831,7 @@
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.national.description.part2">
                 <source>landing.road_users.road_network.national.description.part2</source>
-                <target>Reconnaissables à leurs bornes kilométriques rouges, les routes du réseau national comptent environ 21 000 km de voies. Celles qui sont gérées par des sociétés concessionnaires sont soumises à péage, mais leur réglementation reste du ressort des services de l'Etat.</target>
+                <target>Reconnaissables à leurs bornes kilométriques rouges, les routes du réseau national comptent environ 21 000 km de voies. Celles qui sont gérées par des sociétés concessionnaires sont soumises à péage, mais leur réglementation reste du ressort des services de l'Etat.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.learn_more">
                 <source>landing.road_users.road_network.learn_more</source>
