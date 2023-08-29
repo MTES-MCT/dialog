@@ -14,7 +14,7 @@ final class LandingDigitalServicesController
     ) {
     }
 
-    #[Route('/digitalservices', name: 'app_landing_digital_services', methods: ['GET'])]
+    #[Route('/services-numeriques', name: 'app_landing_digital_services', methods: ['GET'])]
     public function __invoke(): Response
     {
         return new Response($this->twig->render('landing_digital_services.html.twig'));
