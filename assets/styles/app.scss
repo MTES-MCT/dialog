@@ -387,6 +387,7 @@ ul.app-landing-diagram > li {
     font-size: 1.25rem; // xl
     font-weight: bold;
     color: var(--text-title-blue-france);
+    white-space: nowrap;
 }
 
 ul.app-landing-diagram > li > img {
@@ -437,6 +438,10 @@ ul.app-landing-diagram > li > img {
         height: var(--diagram-height);
     }
 
+    ul.app-landing-diagram > li {
+        font-size: 1.125rem; // lg
+    }
+
     .app-landing-diagram__arrow {
         width: unset;
         min-height: unset;
@@ -469,5 +474,9 @@ ul.app-landing-diagram > li > img {
 @media screen and (min-width: 62em) {
     ul.app-landing-diagram {
         --item-padding: 1rem;
+    }
+
+    ul.app-landing-diagram > li {
+        font-size: 1.25rem; // xl
     }
 }

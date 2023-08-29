@@ -775,7 +775,7 @@
             </trans-unit>
             <trans-unit id="landing.road_users.how_it_works.quote.part2">
                 <source>landing.road_users.how_it_works.quote.part2</source>
-                <target>Tous les conducteurs ont pu rencontre un jour des blocages liés à ces règles sur leur chemin.</target>
+                <target>Tous les conducteurs ont pu rencontrer un jour des blocages liés à ces règles sur leur chemin.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.how_it_works.quote.author">
                 <source>landing.road_users.how_it_works.quote.author</source>
@@ -827,11 +827,11 @@
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.national.description.part1">
                 <source>landing.road_users.road_network.national.description.part1</source>
-                <target>Ce sont les routes de plus gros gabarit. Elles sont gérées directement par l'État et ses services. Leur accès est soumis à péage. Elles permettent de traverser l'ensemble du territoire métropolitain et d'outre-mer.</target>
+                <target>Ce sont les routes de plus gros gabarit. Elles sont gérées par l'État et ses services, ou par des sociétés concessionnaires. Elles permettent de traverser l'ensemble du territoire métropolitain et d'outre-mer.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.national.description.part2">
                 <source>landing.road_users.road_network.national.description.part2</source>
-                <target>Reconnaissables à leurs bornes kilométriques rouges, ce sont les routes dites « non concédées », soit par des sociétés concessionnaires. On compte au total environ 21 000 km de routes nationales.</target>
+                <target>Reconnaissables à leurs bornes kilométriques rouges, les routes du réseau national comptent environ 21 000 km de voies. Celles qui sont gérées par des sociétés concessionnaires sont soumises à péage, mais leur réglementation reste du ressort des services de l'Etat.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.learn_more">
                 <source>landing.road_users.road_network.learn_more</source>
