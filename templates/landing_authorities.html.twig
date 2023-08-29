@@ -8,10 +8,10 @@
     <div class="fr-container fr-pt-4w fr-pb-2w">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
             <div class="fr-col-12 fr-col-md-8">
-                <h1 class="fr-title--blue-france">{{ 'landing.authorities.jumbotron.title'|trans }}</h1>
+                <h1 class="fr-x-text--blue-france">{{ 'landing.authorities.jumbotron.title'|trans }}</h1>
                 <a class="fr-btn" href="mailto:dialog@beta.gouv.fr">{{ 'landing.authorities.jumbotron.cta'|trans }}</a>
             </div>
-            <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
+            <div class="fr-col-12 fr-col-md-4 fr-x-text--center">
                 <img src="{{ asset('images/landing/illustration-gps.webp') }}" aria-hidden="true" width="300" height="276"/>
             </div>
         </div>
@@ -31,21 +31,21 @@
         </div>
     </div>
 
-    <div class="fr-container fr-x-container--fluid fr-py-4w fr-background-alt--blue-france">
+    <div class="fr-container fr-x-container--fluid fr-py-4w fr-x-background-alt--blue-france">
         <div class="fr-container">
-            <h2 class="fr-title--blue-france">{{ 'landing.authorities.value_prop'|trans }}</h2>
+            <h2 class="fr-x-text--blue-france">{{ 'landing.authorities.value_prop'|trans }}</h2>
 
             <div class="fr-grid-row fr-grid-row--gutters fr-text--lg">
                 <div class="fr-col-12 fr-col-md-6 fr-pr-md-5w">
                     <h3>{{ 'landing.authorities.save_time'|trans }}</h3>
-                    <ul class="fr-text-mention--grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+                    <ul class="fr-x-text--mention-grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
                         <li>{{ 'landing.authorities.save_time.create_orders'|trans|raw }}</li>
                         <li>{{ 'landing.authorities.save_time.send_to_gps'|trans|raw }}</li>
                     </ul>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-pl-md-5w">
                     <h3>{{ 'landing.authorities.simpler_interactions'|trans }}</h3>
-                    <ul class="fr-text-mention--grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+                    <ul class="fr-x-text--mention-grey fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
                         <li>{{ 'landing.authorities.simpler_interactions.other_authorities'|trans|raw }}</li>
                         <li>{{ 'landing.authorities.simpler_interactions.other_services'|trans|raw }}</li>
                     </ul>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="fr-container fr-py-4w">
-        <h2 class="fr-title--blue-france">{{ 'landing.authorities.how_it_works'|trans }}</h2>
+        <h2 class="fr-x-text--blue-france">{{ 'landing.authorities.how_it_works'|trans }}</h2>
         <p class="fr-text--xl fr-m-0">{{ 'landing.authorities.how_it_works.description'|trans }}</p>
         {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: ['authorities', 'dialog']} only %}
     </div>
@@ -63,7 +63,7 @@
     <div class="fr-container fr-x-container--fluid fr-py-4w">
         <div class="fr-container fr-container--fluid">
             <div class="fr-grid-row fr-grid-row--middle">
-                <div class="fr-col-12 fr-col-md-8 fr-px-3w fr-py-4w fr-background-alt--blue-france">
+                <div class="fr-col-12 fr-col-md-8 fr-px-3w fr-py-4w fr-x-background-alt--blue-france">
                     <ol class="app-authorities__steplist">
                         <li>
                             <h3 class="fr-text--xl fr-my-0">

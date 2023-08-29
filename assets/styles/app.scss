@@ -82,26 +82,19 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     font-size: 1.5rem !important; // Override to have the same size as the DSFR. Don't work without !important
 }
 
-.landing-jumbotron__illustration {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.fr-text--default-grey {
+.fr-x-text--default-grey {
     color: var(--text-default-grey);
 }
 
-.fr-text-mention--grey {
+.fr-x-text--mention-grey {
     color: var(--text-mention-grey);
 }
 
-.fr-title--blue-france {
+.fr-x-text--blue-france {
     color: var(--blue-france-sun-113-625);
 }
 
-.fr-background-alt--blue-france {
+.fr-x-background-alt--blue-france {
     background-color: var(--blue-france-975-75);
 }
 
