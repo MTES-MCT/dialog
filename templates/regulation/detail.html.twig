@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'layouts/app.html.twig' %}
 
 {% set title = (regulationOrderRecord.endDate ? 'regulation.temporary' : 'regulation.permanent')|trans ~ ' ' ~ regulationOrderRecord.identifier  %}
 

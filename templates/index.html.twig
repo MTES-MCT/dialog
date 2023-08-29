@@ -1,10 +1,8 @@
-{% extends 'base.html.twig' %}
+{% extends 'layouts/public.html.twig' %}
 
 {% block title %}
     {{ 'landing.jumbotron.title'|trans }} - {{ parent() }}
 {% endblock %}
-
-{% block menu %}{% include '_landing.html.twig' %}{% endblock %}
 
 {% block body %}
     <section class="fr-container fr-py-4w header" aria-labelledby="jumbotron">

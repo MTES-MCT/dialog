@@ -1,0 +1,24 @@
+{% extends 'layouts/_base.html.twig' %}
+
+{% block header %}
+    {% embed 'common/header.html.twig' %}
+        {% block navigation %}
+            <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
+                <ul class="fr-nav__list">
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path ('app_landing') }}" target="_self" aria-current="page">{{ 'landing.menu.button.home'|trans }}</a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path ('app_landing_authorities') }}" target="_self">{{ 'landing.menu.button.authorities'|trans }}</a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path ('app_landing') }}" target="_self">{{ 'landing.menu.button.digital.services'|trans }}</a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path ('app_landing') }}" target="_self">{{ 'landing.menu.button.road.users'|trans }}</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endblock %}
+    {% endembed %}
+{% endblock header %}
