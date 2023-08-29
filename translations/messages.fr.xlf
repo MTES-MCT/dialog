@@ -787,7 +787,7 @@
             </trans-unit>
             <trans-unit id="landing.road_users.state_support.description">
                 <source>landing.road_users.state_support.description</source>
-                <target>DiaLog est un <![CDATA[<strong>]]>projet porté par le Ministère des Transports<![CDATA[</strong>]]>. Il a été initié en 2022 pour faciliter l'application de la <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat">]]>loi Climat et Résilience<![CDATA[</a>]]>. Ainsi, ce service permet de <![CDATA[<strong>]]>construire une base de données nationale de la réglementation de circulation<![CDATA[</strong>]]> pour <![CDATA[<strong>]]>tous les véhicules<![CDATA[</strong>]]>. Les applications numériques (type GPS) vont ainsi pouvoir se mettre en conformité avec leur <![CDATA[<strong>]]>obligation d'intégrer la réglementation relative aux poids lourds<![CDATA[</strong>]]>.</target>
+                <target>DiaLog est un <![CDATA[<strong>]]>projet porté par le Ministère des Transports<![CDATA[</strong>]]>. Il a été initié en 2022 pour faciliter l'application de la <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat" target="_blank" rel="noopener">]]>loi Climat et Résilience<![CDATA[</a>]]>. Ainsi, ce service permet de <![CDATA[<strong>]]>construire une base de données nationale de la réglementation de circulation<![CDATA[</strong>]]> pour <![CDATA[<strong>]]>tous les véhicules<![CDATA[</strong>]]>. Les applications numériques (type GPS) vont ainsi pouvoir se mettre en conformité avec leur <![CDATA[<strong>]]>obligation d'intégrer la réglementation relative aux poids lourds<![CDATA[</strong>]]>.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.learn_more.title">
                 <source>landing.road_users.learn_more.title</source>
@@ -835,7 +835,7 @@
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.learn_more">
                 <source>landing.road_users.road_network.learn_more</source>
-                <target>Pour aller plus loin, consulter la page des <![CDATA[<a href="https://www.ecologie.gouv.fr/acteurs-route-en-france">]]>acteurs routiers<![CDATA[</a>]]> sur le site du Ministère de l'Ecologie.</target>
+                <target>Pour aller plus loin, consulter la page des <![CDATA[<a href="https://www.ecologie.gouv.fr/acteurs-route-en-france" target="_blank" rel="noopener">]]>acteurs routiers<![CDATA[</a>]]> sur le site du Ministère de l'Ecologie.</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
