@@ -1,6 +1,6 @@
 {% set spotlight = spotlight|default([]) %}
 
-<ul class="{{ class }} app-landing-diagram" aria-hidden="true">
+<ul class="{{ class|default('') }} app-landing-diagram" aria-hidden="true">
     <li {% if 'authorities' in spotlight %}class="spotlight"{% endif %}>
         <img src="{{ asset('images/landing/city-hall.png') }}">
         <div>{{ 'landing.diagram.authorities'|trans }}</div>

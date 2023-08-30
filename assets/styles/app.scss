@@ -78,6 +78,16 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     }
 }
 
+.fr-x-text--italic {
+    font-style: italic;
+}
+
+.fr-x-text--regular {
+    // Higher priority than .fr-text--regular provided by DSFR, so it can work
+    // with DSFR classes declared after .fr-text--regular, such as .fr-h4.
+    font-weight: 400 !important;
+}
+
 .remixicons {
     font-size: 1.5rem !important; // Override to have the same size as the DSFR. Don't work without !important
 }
@@ -377,6 +387,7 @@ ul.app-landing-diagram > li {
     font-size: 1.25rem; // xl
     font-weight: bold;
     color: var(--text-title-blue-france);
+    white-space: nowrap;
 }
 
 ul.app-landing-diagram > li > img {
@@ -427,6 +438,10 @@ ul.app-landing-diagram > li > img {
         height: var(--diagram-height);
     }
 
+    ul.app-landing-diagram > li {
+        font-size: 1.125rem; // lg
+    }
+
     .app-landing-diagram__arrow {
         width: unset;
         min-height: unset;
@@ -459,5 +474,9 @@ ul.app-landing-diagram > li > img {
 @media screen and (min-width: 62em) {
     ul.app-landing-diagram {
         --item-padding: 1rem;
+    }
+
+    ul.app-landing-diagram > li {
+        font-size: 1.25rem; // xl
     }
 }
