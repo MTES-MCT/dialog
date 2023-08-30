@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'landing.digital_services.jumbotron.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-pt-4w fr-pb-2w">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-8">
+                <h1 class="fr-x-text--blue-france">{{ 'landing.digital_services.jumbotron.title'|trans }}</h1>
+                <p class="fr-text--lead">{{ 'landing.digital_services.jumbotron.description'|trans|raw }}
+                </p>
+                <a class="fr-btn" target="_blank" href="https://www.data.gouv.fr/fr/datasets/64947a4af5faf2f1f9eee299/">{{ 'landing.digital_services.jumbotron.cta'|trans }}</a>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 landing-jumbotron__illustration">
+                <img src="{{ asset('images/landing/illustration_gps_voiture.png') }}" aria-hidden="true" width="300" height="164"/>
+            </div>
+        </div>
+    </section>
+    <section class="fr-container fr-pt-4w fr-pb-2w">
+        <div class="fr-grid-row fr-x-text--center">
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/success-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.digital_services.quality.title'|trans }}</figcaption>
+                <p>{{ 'landing.digital_services.quality.description'|trans }}</p>
+            </figure>
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/france-localization.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.digital_services.up_to_date.title'|trans }}</figcaption>
+                <p>{{ 'landing.digital_services.up_to_date.description'|trans }}</p>
+            </figure>
+            <figure class="fr-col">
+                <img src="{{ asset('images/landing/map-73x73.png') }}" aria-hidden="true">
+                <figcaption class="fr-h4">{{ 'landing.digital_services.open_data.title'|trans }}</figcaption>
+                <p>{{ 'landing.digital_services.open_data.description'|trans }}</p>
+            </figure>
+        </div>
+
+    <section class="fr-container fr-py-4w">
+        <h2 class="fr-x-text--blue-france">{{ 'landing.digital_services.how_it_works.title'|trans }}</h2>
+        <p class="fr-text--xl fr-m-0">{{ 'landing.digital_services.how_it_works.description'|trans }}</p>
+        {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: ['dialog','digital_services']} only %}
+    </section>
+
+    <section class="fr-container fr-py-4w">
+        <h2 class="fr-x-text--blue-france">{{ 'landing.digital_services.qualitative_data.title'|trans }}</h2>
+        <ul class="fr-text--xl fr-m-0 fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+            <li>{{ 'landing.digital_services.qualitative_data.description1'|trans|raw }}</li>
+            <li>{{ 'landing.digital_services.qualitative_data.description2'|trans|raw }}</li>
+            <li>{{ 'landing.digital_services.qualitative_data.description3'|trans|raw }}</li>
+        </ul>
+        <div class="fr-callout fr-mt-2w">
+            <p class="fr-callout__text">{{ 'landing.digital_services.qualitative_data.contact'|trans }}
+            </p>
+            <a class="fr-btn" href="mailto:dialog@beta.gouv.fr">{{ 'landing.digital_services.qualitative_data.contact.cta'|trans }}
+            </a>
+        </div>
+    </section>
+
+    <section class="fr-container fr-py-4w">
+        <h2 class="fr-x-text--blue-france">{{ 'landing.digital_services.why-digitise.title'|trans }}</h2>
+        <p class="fr-text--xl">{{ 'landing.digital_services.why-digitise.description'|trans|raw }}</p>
+        <ul class="fr-text--xl fr-m-0 fr-x-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
+            <li>{{ 'landing.digital_services.why-digitise.argument1'|trans|raw }}</li>
+            <li>{{ 'landing.digital_services.why-digitise.argument2'|trans|raw }}</li>
+            <li>{{ 'landing.digital_services.why-digitise.argument3'|trans|raw }}</li>
+        </ul>
+        <div class="fr-callout fr-mt-2w">
+            <p class="fr-callout__text">{{ 'landing.digital_services.why-digitise.questions'|trans }}
+            </p>
+            <a class="fr-btn" href="mailto:dialog@beta.gouv.fr" >{{ 'landing.digital_services.why-digitise.contact.cta'|trans }}
+            </a>
+        </div>
+    </section>
+
+    <section class="fr-container fr-py-4w">
+        <h2 class="fr-x-text--blue-france">{{ 'landing.digital_services.deployment.title'|trans }}</h2>
+        <p class="fr-text--xl">{{ 'landing.digital_services.deployment.description'|trans|raw }}</p>
+        <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+            <div class="fr-col-12 fr-col-md-4">
+
+                <div class="fr-card">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">{{ 'landing.digital_services.deployment.test.title'|trans }}
+                            </h3>
+                            <div class="fr-card__desc">
+                                <ul>
+                                    <li>{{ 'landing.digital_services.deployment.test.step1'|trans|raw }}</li>
+                                    <li>{{ 'landing.digital_services.deployment.test.step2'|trans|raw }}</li>
+                                    <li>{{ 'landing.digital_services.deployment.test.step3'|trans|raw }}</li>
+                                </ul>
+                            </div>
+                            <div class="fr-card__start">
+                                <p class="fr-icon-arrow-right-line fr-icon--sm fr-text--xs fr-text-mention--grey">{{ 'landing.digital_services.deployment.test.start'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-card__header">
+                        <div class="fr-x-text--center fr-mt-2w">
+                            <img src="{{ asset('images/landing/construction.png') }}" alt=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-card">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">{{ 'landing.digital_services.deployment.france.title'|trans }}
+                            </h3>
+                            <div class="fr-card__desc">
+                                <ul>
+                                    <li>{{ 'landing.digital_services.deployment.france.step1'|trans|raw }}</li>
+                                    <li>{{ 'landing.digital_services.deployment.france.step2'|trans|raw }}</li>
+                                </ul>
+                                </div>
+                            <div class="fr-card__start">
+                                <p class="fr-icon-arrow-right-line fr-icon--sm fr-text--xs fr-text-mention--grey">{{ 'landing.digital_services.deployment.france.start'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-card__header">
+                        <div class="fr-x-text--center fr-mt-2w">
+                            <img src="{{ asset('images/landing/map-73x73.png') }}" alt=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-card">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">{{ 'landing.digital_services.deployment.europe.title'|trans }}
+                            </h3>
+                            <div class="fr-card__desc">
+                                <ul>
+                                    <li>{{ 'landing.digital_services.deployment.europe.step1'|trans|raw }}</li>
+                                </ul>
+                            </div>
+                            <div class="fr-card__start">
+                                <p class="fr-icon-arrow-right-line fr-icon--sm fr-text--xs fr-x-text--mention-grey">{{ 'landing.digital_services.deployment.europe.start'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fr-card__header">
+                        <div class="fr-x-text--center fr-mt-2w">
+                            <img src="{{ asset('images/landing/success-73x73.png') }}" alt=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+

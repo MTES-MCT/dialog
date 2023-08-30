@@ -741,6 +741,159 @@
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
             </trans-unit>
+            <trans-unit id="landing.digital_services.jumbotron.title">
+                <source>landing.digital_services.jumbotron.title</source>
+                <target>La réglementation de circulation accessible, à jour et standardisée</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.jumbotron.description">
+                <source>landing.digital_services.jumbotron.description</source>
+                <target>DiaLog est la <![CDATA[<strong>]]>base de données nationale<![CDATA[</strong>]]> des réglementations de circulation et de stationnement.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.jumbotron.cta">
+                <source>landing.digital_services.jumbotron.cta</source>
+                <target>Accéder aux données</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.quality.title">
+                <source>landing.digital_services.quality.title</source>
+                <target>Qualité</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.quality.description">
+                <source>landing.digital_services.quality.description</source>
+                <target>Données renseignées et validées directement par les collectivités</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.up_to_date.title">
+                <source>landing.digital_services.up_to_date.title</source>
+                <target>À jour</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.up_to_date.description">
+                <source>landing.digital_services.up_to_date.description</source>
+                <target>Restrictions permanentes et temporaires (travaux, événements...)</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.open_data.title">
+                <source>landing.digital_services.open_data.title</source>
+                <target>Open Data</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.open_data.description">
+                <source>landing.digital_services.open_data.description</source>
+                <target>Diffusion au format standardisé, sous licence libre</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.how_it_works.title">
+                <source>landing.digital_services.how_it_works.title</source>
+                <target>Comment ça marche ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.how_it_works.description">
+                <source>landing.digital_services.how_it_works.description</source>
+                <target>DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite publiées aux services numériques. Les données de circulations sont ainsi consultables et réutilisables facilement par tous.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.qualitative_data.title">
+                <source>landing.digital_services.qualitative_data.title</source>
+                <target>Des données qualitatives</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.qualitative_data.description1">
+                <source>landing.digital_services.qualitative_data.description1</source>
+                <target><![CDATA[<strong>]]>Récupérez la bonne information<![CDATA[</strong>]]> : les données sont renseignées directement par les gestionnaires d’infrastructure. Ces derniers s’assurent de la qualité et de la validation des informations.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.qualitative_data.description2">
+                <source>landing.digital_services.qualitative_data.description2</source>
+                <target><![CDATA[<strong>]]>À jour<![CDATA[</strong>]]> : DiaLog permet le recueil des restrictions de circulation permanentes et temporaires. Bénéficiez d’une visibilité sur les travaux et évènements à venir sur les réseaux couverts !</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.qualitative_data.description3">
+                <source>landing.digital_services.qualitative_data.description3</source>
+                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr" target="_blank" rel="noopener">]]>point d’accès national aux données de transport<![CDATA[</a>]]>. Dialog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.qualitative_data.contact">
+                <source>landing.digital_services.qualitative_data.contact</source>
+                <target>Vous voulez intégrer les données Dialog dans votre service numérique ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.qualitative_data.contact.cta">
+                <source>landing.digital_services.qualitative_data.contact.cta</source>
+                <target>Contactez-nous</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.title">
+                <source>landing.digital_services.why-digitise.title</source>
+                <target>Pourquoi numériser la réglementation ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.description">
+                <source>landing.digital_services.why-digitise.description</source>
+                <target>La <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat" target="_blank" rel="noopener"> ]]>Loi Climat et Résilience <![CDATA[</a>]]> oblige les calculateurs d’itinéraire spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]> Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les itinéraires adaptés à leur véhicule afin de :</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.argument1">
+                <source>landing.digital_services.why-digitise.argument1</source>
+                <target>Limiter les incidents</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.argument2">
+                <source>landing.digital_services.why-digitise.argument2</source>
+                <target>Assurer la sécurité des usagers de la route et des riverains</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.argument3">
+                <source>landing.digital_services.why-digitise.argument3</source>
+                <target>Pérenniser l’infrastructure routière.</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.questions">
+                <source>landing.digital_services.why-digitise.questions</source>
+                <target>Vous avez des questions complémentaires au sujet de DiaLog et de l’article 122 de la loi Climat et Résilience ?</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.why-digitise.contact.cta">
+                <source>landing.digital_services.why-digitise.contact.cta</source>
+                <target>Contactez-nous</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.title">
+                <source>landing.digital_services.deployment.title</source>
+                <target>Un déploiement continu</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.description">
+                <source>landing.digital_services.deployment.description</source>
+                <target>Dialog se donne 3 ans pour devenir la <![CDATA[<strong>]]>solution de référence d’accès à la réglementation routière<![CDATA[</strong>]]> :</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.test.title">
+                <source>landing.digital_services.deployment.test.title</source>
+                <target>Expérimentation</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.test.start">
+                <source>landing.digital_services.deployment.test.start</source>
+                <target>Début en 2022</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.test.step1">
+                <source>landing.digital_services.deployment.test.step1</source>
+                <target><![CDATA[<strong>]]>Construction<![CDATA[</strong>]]> du produit</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.test.step2">
+                <source>landing.digital_services.deployment.test.step2</source>
+                <target><![CDATA[<strong>]]>Test<![CDATA[</strong>]]> avec des territoires pilotes</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.test.step3">
+                <source>landing.digital_services.deployment.test.step3</source>
+                <target><![CDATA[<strong>]]>Validation<![CDATA[</strong>]]> du fonctionnement de la plateforme</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.france.title">
+                <source>landing.digital_services.deployment.france.title</source>
+                <target>Déploiement en France</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.france.start">
+                <source>landing.digital_services.deployment.france.start</source>
+                <target>Courant 2023</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.france.step1">
+                <source>landing.digital_services.deployment.france.step1</source>
+                <target>Déploiement opérationnel sur les <![CDATA[<strong>]]>territoires concernés par les JO<![CDATA[</strong>]]> de 2024</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.france.step2">
+                <source>landing.digital_services.deployment.france.step2</source>
+                <target>
+                    Déploiement dans les <![CDATA[<strong>]]>10 plus grandes villes du territoire<![CDATA[</strong>]]> métropolitain</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.europe.title">
+                <source>landing.digital_services.deployment.europe.title</source>
+                <target>Déploiement en Europe</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.europe.start">
+                <source>landing.digital_services.deployment.europe.start</source>
+                <target>Courant 2024</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.deployment.europe.step1">
+                <source>landing.digital_services.deployment.europe.step1</source>
+                <target>Couverture au minimum du réseau transeuropéen global (RTE-T)</target>
+            </trans-unit>
             <trans-unit id="landing.road_users.jumbotron.title">
                 <source>landing.road_users.jumbotron.title</source>
                 <target>Vous êtes sur la bonne voie !</target>
