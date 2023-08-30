@@ -765,17 +765,13 @@
                 <source>landing.digital_services.up_to_date.title</source>
                 <target>À jour</target>
             </trans-unit>
-            <trans-unit id="landing.digital_services.open_data.title">
-                <source>landing.digital_services.open_data.title</source>
-                <target>Open Data</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why_quality.description">
-                <source>landing.digital_services.why_quality.description</source>
-                <target>Données renseignées et validées directement par les collectivités</target>
-            </trans-unit>
             <trans-unit id="landing.digital_services.up_to_date.description">
                 <source>landing.digital_services.up_to_date.description</source>
                 <target>Restrictions permanentes et temporaires (travaux, événements...)</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.open_data.title">
+                <source>landing.digital_services.open_data.title</source>
+                <target>Open Data</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.open_data.description">
                 <source>landing.digital_services.open_data.description</source>
@@ -803,7 +799,7 @@
             </trans-unit>
             <trans-unit id="landing.digital_services.qualitative_data.description3">
                 <source>landing.digital_services.qualitative_data.description3</source>
-                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr/" class="fr-link">]]>point d’accès national aux données de transport.<![CDATA[</a>]]> Dialog utilise le standard <![CDATA[<a class="fr-link" href="https://www.datex2.eu/">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr" target="_blank" rel="noopener">]]>point d’accès national aux données de transport<![CDATA[</a>]]>. Dialog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.qualitative_data.contact">
                 <source>landing.digital_services.qualitative_data.contact</source>
@@ -819,7 +815,7 @@
             </trans-unit>
             <trans-unit id="landing.digital_services.why-digitise.description">
                 <source>landing.digital_services.why-digitise.description</source>
-                <target>La <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat" class="fr-link"> ]]>Loi Climat et Résilience <![CDATA[</a>]]> oblige les calculateurs d’itinéraire spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]> Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les itinéraires adaptés à leur véhicule afin de :</target>
+                <target>La <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat" target="_blank" rel="noopener"> ]]>Loi Climat et Résilience <![CDATA[</a>]]> oblige les calculateurs d’itinéraire spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]> Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les itinéraires adaptés à leur véhicule afin de :</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.why-digitise.argument1">
                 <source>landing.digital_services.why-digitise.argument1</source>
