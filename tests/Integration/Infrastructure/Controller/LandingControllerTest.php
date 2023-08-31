@@ -24,6 +24,13 @@ final class LandingControllerTest extends AbstractWebTestCase
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
         $this->assertSame('Nous contacter', $contactLink->text());
         $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+        ], $crawler);
     }
 
     public function testLandingWithLoggedUser(): void
