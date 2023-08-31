@@ -24,13 +24,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
         $this->assertSame('Nous contacter', $contactLink->text());
         $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
-
-        $this->assertNavStructure([
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-        ], $crawler);
     }
 
     public function testLandingWithLoggedUser(): void
@@ -58,5 +51,45 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertCount(3, $userLinks);
         $this->assertSame('Mathieu FERNANDEZ', $userLinks->eq(0)->text());
         $this->assertSame('Administration', $userLinks->eq(1)->text());
+    }
+
+    public function testNavigationLink(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => 'page']],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/collectivites');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => 'page']],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/services-numeriques');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/usagers');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
+        ], $crawler);
     }
 }
