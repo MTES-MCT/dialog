@@ -66,9 +66,9 @@
                             <ul class="fr-btns-group fr-btns-group--icon-left">
                                 {% if isDraft %}
                                     <li>
-                                        <turbo-frame id="block_publication">
+                                        <div id="block_publication">
                                             {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, regulationOrderRecord } only %}
-                                        </turbo-frame>
+                                        </div>
                                     </li>
                                 {% endif %}
                                 <li>
