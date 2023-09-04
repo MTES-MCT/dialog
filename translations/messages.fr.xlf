@@ -539,10 +539,6 @@
                 <source>landing.for-city.description</source>
                 <target>Gagnez du temps sur la rédaction de vos arrêtés et communiquez plus efficacement avec les usagers de la route.</target>
             </trans-unit>
-            <trans-unit id="landing.for-city.link">
-                <source>landing.for-city.link</source>
-                <target>Créer un compte pour ma commune</target>
-            </trans-unit>
             <trans-unit id="landing.for-gps.title">
                 <source>landing.for-gps.title</source>
                 <target>Pour les services numériques</target>
@@ -551,10 +547,6 @@
                 <source>landing.for-gps.description</source>
                 <target>Accédez à la réglementation de circulation et de stationnement des territoires partenaires, dans des formats adaptés à vos besoins.</target>
             </trans-unit>
-            <trans-unit id="landing.for-gps.link">
-                <source>landing.for-gps.link</source>
-                <target>Accéder aux données Open Data</target>
-            </trans-unit>
             <trans-unit id="landing.road-users.title">
                 <source>landing.road-users.title</source>
                 <target>Pour les usagers de la route</target>
@@ -562,10 +554,6 @@
             <trans-unit id="landing.road-users.description">
                 <source>landing.road-users.description</source>
                 <target>Soyez mieux informés des conditions de circulation.</target>
-            </trans-unit>
-            <trans-unit id="landing.road-users.link">
-                <source>landing.road-users.link</source>
-                <target>Comprendre nos missions</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.title">
                 <source>landing.how-it-works.title</source>
