@@ -10,8 +10,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EudonetParisClient
 {
-    private string|null $token;
-    private \DateTimeInterface|null $tokenExpiryDate;
+    private ?string $token;
+    private ?\DateTimeInterface $tokenExpiryDate;
 
     public function __construct(
         private HttpClientInterface $eudonetParisHttpClient,

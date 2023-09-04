@@ -13,7 +13,6 @@ use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\EudonetParis\EudonetParisLocationItem;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -79,7 +78,6 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $command = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationItem]);
 
         $this->assertEmpty($handler($command));
-        $this->assertEquals(RegulationOrderRecordSourceEnum::EUDONET_PARIS, $generalInfoCommand->source);
     }
 
     public function testImportWithJunction(): void
@@ -136,6 +134,5 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $command = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationItem]);
 
         $this->assertEmpty($handler($command));
-        $this->assertEquals(RegulationOrderRecordSourceEnum::EUDONET_PARIS, $generalInfoCommand->source);
     }
 }

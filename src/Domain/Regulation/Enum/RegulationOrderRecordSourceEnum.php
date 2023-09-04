@@ -6,6 +6,6 @@ namespace App\Domain\Regulation\Enum;
 
 enum RegulationOrderRecordSourceEnum: string
 {
-    public const DIALOG = 'dialog';
-    public const EUDONET_PARIS = 'eudonet_paris';
+    case DIALOG = 'dialog';
+    case EUDONET_PARIS = 'eudonet_paris';
 }

@@ -7,7 +7,6 @@ namespace App\Application\EudonetParis\Command;
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
-use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 
 final class ImportEudonetParisRegulationCommandHandler
@@ -19,8 +18,6 @@ final class ImportEudonetParisRegulationCommandHandler
 
     public function __invoke(ImportEudonetParisRegulationCommand $command): void
     {
-        $command->generalInfoCommand->source = RegulationOrderRecordSourceEnum::EUDONET_PARIS;
-
         /** @var RegulationOrderRecord */
         $regulationOrderRecord = $this->commandBus->handle($command->generalInfoCommand);
 

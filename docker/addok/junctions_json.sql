@@ -1,3 +1,5 @@
+-- Adapted from: https://gist.github.com/cquest/c0a84e6757d15e66e6ae429e91a74a9e
+-- See: run.sh
 SELECT row_to_json(p) FROM
 (
     SELECT j.*, c.nom as city, cc.code_postal as postcode

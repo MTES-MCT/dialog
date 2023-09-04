@@ -4,32 +4,36 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\EudonetParis;
 
+use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
+use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 
 final class EudonetParisExecutor
 {
     public function __construct(
         private EudonetParisExtractor $eudonetParisExtractor,
         private EudonetParisTransformer $eudonetParisTransformer,
-        private EudonetParisLoader $eudonetParisLoader,
+        private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
+        private string $eudonetParisOrgId,
     ) {
     }
 
     public function execute(\DateTimeInterface $laterThanUTC): EudonetParisExecutionReport
     {
-        // TODO make it configurable
-        $dialogOrgUuid = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66';
+        if (!$this->eudonetParisOrgId) {
+            throw new EudonetParisException('No target organization ID set. Please set APP_EUDONET_PARIS_ORG_ID in .env.local');
+        }
 
         $reportBuilder = new EudonetParisExecutionReportBuilder();
 
         try {
-            $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($dialogOrgUuid));
+            $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($this->eudonetParisOrgId));
         } catch (OrganizationNotFoundException $exc) {
             $reportBuilder->setError((string) $exc);
 
@@ -37,15 +41,15 @@ final class EudonetParisExecutor
         }
 
         $existingIdentifiers = $this->regulationOrderRecordRepository
-            ->findIdentifiersForSourceInOrganization(RegulationOrderRecordSourceEnum::EUDONET_PARIS, $organization);
+            ->findIdentifiersForSourceInOrganization(RegulationOrderRecordSourceEnum::EUDONET_PARIS->value, $organization);
 
         foreach ($this->eudonetParisExtractor->iterExtract($laterThanUTC, ignoreIDs: $existingIdentifiers) as $record) {
             $result = $this->eudonetParisTransformer->transform($record, $organization);
 
-            if (empty($result->obj)) {
+            if (empty($result->command)) {
                 $reportBuilder->addSkip($result->skipMessages);
             } else {
-                $this->eudonetParisLoader->load($result->obj);
+                $this->commandBus->handle($result->command);
                 $reportBuilder->addCreated();
             }
         }

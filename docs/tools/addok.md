@@ -13,8 +13,16 @@ Pour plus de contexte, voir [ADR-007](../adr/007_eudonet_paris_integration.md).
 
 Récupérez le bundle :
 
-1. Téléchargez [addok-dialog-bundle.zip](https://kdrive.infomaniak.com/app/share/184671/8d2a0002-cd8b-454f-869a-7dde22a5bce4) (1.8 Go).
+1. Téléchargez [addok-dialog-bundle.zip] (1.7 Go).
 2. Décompressez le contenu dans `docker/addok/addok-data`.
+
+    Depuis la racine du projet :
+
+    ```
+    unzip -d docker/addok/addok-data /path/to/addok-dialog-bundle.zip
+    ```
+
+[addok-dialog-bundle]: https://kdrive.infomaniak.com/app/share/184671/0193c893-8b54-48a4-aa4d-5cdf1fbe88a8
 
 Démarrez ensuite l'instance Addok avec :
 
@@ -71,6 +79,8 @@ Cette section explique comment recréer le fichier `addok-dialog-bundle.zip` con
     ```
 
 1. Déposez le nouveau bundle dans le dossier partagé DiaLog sur le kDrive (lien sur le pad général).
+
+1. Mettre à jour l'URL du lien [dialog-addok-bundle] dans la présente doc
 
 ## Mettre à jour les données sources
 

@@ -90,7 +90,9 @@ Chaque application peut être configurée avec les variables d'environnement sui
 
 | Variable d'environnement | Description | Valeur par défaut | Notes |
 |--------------------------|-------------|--------|-------|
-| `API_ADRESSE_BASE_URL` | Scalingo BetaGouv | _(Obligatoire)_ | Exemple : `https://api-adresse.data.gouv.fr` |
+| `API_ADRESSE_BASE_URL` | URL de l'instance API Adresse / Addok à utiliser | _(Obligatoire)_ | Exemple : `https://api-adresse.data.gouv.fr` |
+| `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet.apps.paris.fr | |
+| `APP_EUDONET_PARIS_ORG_ID` | Utilier l'UUID de l'organisation Ville de Paris | _Vide_ | |
 | `APP_SECRET` | Correspond au paramètre Symfony [`secret`](https://symfony.com/doc/current/reference/configuration/framework.html#secret) | _(Obligatoire)_ | Longueur recommandée : 32 caractères. Exemple : générer avec `python3 -c 'import secrets; print(secrets.token_hex(16))'` |
 | `DATABASE_URL` | URL vers le serveur PostgreSQL | _(Obligatoire)_ `$SCALINGO_POSTGRESQL_URL` | La variable `$SCALINGO_POSTGRESQL_URL` est configurée automatiquement par Scalingo |
 | `MATOMO_ENABLED` | `true` (ou autre valeur truthy) pour activer les [analytics](../tools/analytics.md), `false` pour ne pas les activer | `false` | |

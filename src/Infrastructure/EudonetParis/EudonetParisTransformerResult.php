@@ -9,7 +9,7 @@ use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 final class EudonetParisTransformerResult
 {
     public function __construct(
-        public readonly ?ImportEudonetParisRegulationCommand $obj,
+        public readonly ?ImportEudonetParisRegulationCommand $command,
         public readonly array $skipMessages,
     ) {
     }

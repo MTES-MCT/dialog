@@ -104,7 +104,7 @@ addok_bundle: ## Create Addok custom bundle file
 	make addok_stop
 	${_DOCKER_COMPOSE_ADDOK} rm -f
 	make addok_start
-	sleep 2s
+	sleep 5s
 
 	${_DOCKER_COMPOSE_ADDOK} exec -e NO_DOWNLOAD=${NO_DOWNLOAD} addok_builder_db /data/run.sh
 
@@ -139,16 +139,6 @@ assets: ## Build assets
 
 shell: ## Connect to the container
 	docker-compose exec php bash
-
-eudonet_paris_sql: addok_start ## Process Eudonet Paris data and dump it to SQL
-	make console CMD="doctrine:database:create --env=eudonet_paris --if-not-exists"
-	make dbmigrate ARGS="--env=eudonet_paris"
-
-	# make console CMD="app:eudonet_paris:import --env=eudonet_paris"
-
-	docker-compose exec database pg_dump --data-only -t "regulation_order_record|regulation_order|location|measure|period|vehicle_set postgresql://dialog:dialog@database:5432/dialog_eudonet_paris
-
-	make console CMD="doctrine:database:drop --env=eudonet_paris --force"
 
 ##
 ## ----------------

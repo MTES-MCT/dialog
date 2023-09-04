@@ -83,7 +83,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                 $this->equalTo(
                     new RegulationOrderRecord(
                         uuid: 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
-                        source: RegulationOrderRecordSourceEnum::DIALOG,
+                        source: RegulationOrderRecordSourceEnum::DIALOG->value,
                         status: RegulationOrderRecordStatusEnum::DRAFT,
                         regulationOrder: $createdRegulationOrder,
                         createdAt: $now,

@@ -19,7 +19,7 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
         $command = SaveRegulationGeneralInfoCommand::create();
 
         $this->assertEmpty($command->identifier);
-        $this->assertSame(RegulationOrderRecordSourceEnum::DIALOG, $command->source);
+        $this->assertSame(RegulationOrderRecordSourceEnum::DIALOG->value, $command->source);
         $this->assertEmpty($command->organization);
         $this->assertEmpty($command->description);
         $this->assertEmpty($command->startDate);

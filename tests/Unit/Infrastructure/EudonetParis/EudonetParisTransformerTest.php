@@ -222,7 +222,9 @@ final class EudonetParisTransformerTest extends TestCase
 
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
 
-        $this->assertEquals([$locationItem1, $locationItem2], $transformer->transform($record, $organization)->obj->locationItems);
+        $result = $transformer->transform($record, $organization);
+
+        $this->assertEquals([$locationItem1, $locationItem2], $result->command->locationItems);
     }
 
     public function testSkipNoLocations(): void

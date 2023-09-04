@@ -1,10 +1,6 @@
-FROM postgis/postgis:14-3.3
+FROM postgis/postgis:14-3.3-alpine
 
-# Install dependencies
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends gdal-bin wget unzip p7zip-full
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apk update
+RUN apk add gdal wget unzip p7zip
 
 COPY run.sh junctions_json.sql /data/

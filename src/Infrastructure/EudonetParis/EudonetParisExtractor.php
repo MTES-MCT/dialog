@@ -6,6 +6,9 @@ namespace App\Infrastructure\EudonetParis;
 
 final class EudonetParisExtractor
 {
+    // Eudonet Paris table fields
+    // Values come from Eudonet Paris' MetaInfos, see: https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/#!/MetaInfos/post_MetaInfos
+
     // ARRETE fields
     public const ARRETE_TAB_ID = 1100;
     public const ARRETE_ID = 1101;

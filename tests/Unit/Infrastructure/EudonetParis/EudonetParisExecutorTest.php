@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
+use App\Application\CommandBusInterface;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
@@ -12,24 +13,25 @@ use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Infrastructure\EudonetParis\EudonetParisExecutor;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
-use App\Infrastructure\EudonetParis\EudonetParisLoader;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\EudonetParis\EudonetParisTransformerResult;
+use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use PHPUnit\Framework\TestCase;
 
 final class EudonetParisExecutorTest extends TestCase
 {
     private $extractor;
     private $transformer;
-    private $loader;
+    private $commandBus;
     private $queryBus;
     private $regulationOrderRecordRepository;
+    private $orgId = '064f5eba-5eb2-7ffd-8000-77e8f8b7bb9b';
 
     protected function setUp(): void
     {
         $this->extractor = $this->createMock(EudonetParisExtractor::class);
         $this->transformer = $this->createMock(EudonetParisTransformer::class);
-        $this->loader = $this->createMock(EudonetParisLoader::class);
+        $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
     }
@@ -42,15 +44,16 @@ final class EudonetParisExecutorTest extends TestCase
         $executor = new EudonetParisExecutor(
             $this->extractor,
             $this->transformer,
-            $this->loader,
+            $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
+            $this->orgId,
         );
 
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetOrganizationByUuidQuery('e0d93630-acf7-4722-81e8-ff7d5fa64b66'))
+            ->with(new GetOrganizationByUuidQuery($this->orgId))
             ->willReturn($organization);
 
         $this->regulationOrderRecordRepository
@@ -87,11 +90,11 @@ final class EudonetParisExecutorTest extends TestCase
                 3 => $this->assertEquals($record3, $record) ?: $this->assertEquals($organization, $org) ?: $result3,
             });
 
-        $loadMatcher = self::exactly(2);
-        $this->loader
-            ->expects($loadMatcher)
-            ->method('load')
-            ->willReturnCallback(fn ($command) => match ($loadMatcher->getInvocationCount()) {
+        $handleMatcher = self::exactly(2);
+        $this->commandBus
+            ->expects($handleMatcher)
+            ->method('handle')
+            ->willReturnCallback(fn ($command) => match ($handleMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($importCommand1, $command),
                 2 => $this->assertEquals($importCommand3, $command),
             });
@@ -117,7 +120,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetOrganizationByUuidQuery('e0d93630-acf7-4722-81e8-ff7d5fa64b66'))
+            ->with(new GetOrganizationByUuidQuery($this->orgId))
             ->willReturn($organization);
 
         $this->regulationOrderRecordRepository
@@ -135,9 +138,10 @@ final class EudonetParisExecutorTest extends TestCase
         $executor = new EudonetParisExecutor(
             $this->extractor,
             $this->transformer,
-            $this->loader,
+            $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
+            $this->orgId,
         );
 
         $report = $executor->execute($now);
@@ -159,7 +163,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetOrganizationByUuidQuery('e0d93630-acf7-4722-81e8-ff7d5fa64b66'))
+            ->with(new GetOrganizationByUuidQuery($this->orgId))
             ->willThrowException(new OrganizationNotFoundException('my_message'));
 
         $this->regulationOrderRecordRepository
@@ -173,9 +177,10 @@ final class EudonetParisExecutorTest extends TestCase
         $executor = new EudonetParisExecutor(
             $this->extractor,
             $this->transformer,
-            $this->loader,
+            $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
+            $this->orgId,
         );
 
         $report = $executor->execute($now);
@@ -185,5 +190,36 @@ final class EudonetParisExecutorTest extends TestCase
         $this->assertStringStartsWith('ERROR: ', $line1);
         $this->assertStringContainsString('my_message', $line1);
         $this->assertSame('', $line2);
+    }
+
+    public function testExecuteOrgIdMissing(): void
+    {
+        $this->expectException(EudonetParisException::class);
+        $this->expectExceptionMessageMatches("/Please set APP_EUDONET_PARIS_ORG_ID in \.env\.local/");
+
+        $now = new \DateTimeImmutable('now');
+
+        $this->queryBus
+            ->expects(self::never())
+            ->method('handle');
+
+        $this->regulationOrderRecordRepository
+            ->expects(self::never())
+            ->method('findIdentifiersForSourceInOrganization');
+
+        $this->extractor
+            ->expects(self::never())
+            ->method('iterExtract');
+
+        $executor = new EudonetParisExecutor(
+            $this->extractor,
+            $this->transformer,
+            $this->commandBus,
+            $this->queryBus,
+            $this->regulationOrderRecordRepository,
+            '',
+        );
+
+        $executor->execute($now);
     }
 }
