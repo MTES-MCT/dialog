@@ -59,13 +59,18 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
-        $streams = $crawler->filter('turbo-stream');
-        $this->assertSame($streams->first()->attr('target'), 'location_f15ed802-fa9b-4d75-ab04-d62ea46597e9_delete_button');
-        $this->assertSame($streams->first()->attr('action'), 'replace');
 
-        $this->assertSame($streams->last()->attr('action'), 'replace');
-        $form = $streams->last()->selectButton('Ajouter une localisation');
-        $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $form->getUri());
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertEquals([
+            ['replace', 'location_f15ed802-fa9b-4d75-ab04-d62ea46597e9_delete_button'],
+            ['append', 'location_list'],
+            ['replace', 'block_location'],
+            ['replace', 'block_export'],
+            ['update', 'block_publication'],
+        ], $streams);
+
+        $addLocationBtn = $crawler->filter('turbo-stream[target=block_location]')->selectButton('Ajouter une localisation');
+        $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $addLocationBtn->form()->getUri());
     }
 
     public function testInvalidVehicleSetBlankRestrictedTypes(): void
