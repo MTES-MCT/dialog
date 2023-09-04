@@ -28,16 +28,16 @@
             <h2 id="how-it-works">{{ 'landing.for-who.title'|trans }}</h2>
             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
                 <div class="fr-col-12 fr-col-md-4">
-                    <div class="fr-card">
+                    <div class="fr-card fr-enlarge-link">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
-                                <h3 class="fr-card__title">{{ 'landing.for-city.title'|trans }}</h3>
+                                <h3 class="fr-card__title">
+                                    <a href="{{ path('app_landing_authorities') }}">
+                                        {{ 'landing.for-city.title'|trans }}
+                                    </a>
+                                </h3>
                                 <p class="fr-card__desc">
                                     {{ 'landing.for-city.description'|trans|raw }}
-                                    <br/>
-                                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
-                                        {{ 'landing.for-city.link'|trans }}
-                                    </a>
                                 </p>
                             </div>
                         </div>
@@ -47,16 +47,16 @@
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-4">
-                    <div class="fr-card">
+                    <div class="fr-card fr-enlarge-link">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
-                                <h3 class="fr-card__title">{{ 'landing.for-gps.title'|trans }}</h3>
+                                <h3 class="fr-card__title">
+                                    <a href="{{ path('app_landing_digital_services') }}">
+                                        {{ 'landing.for-gps.title'|trans }}
+                                    </a>
+                                </h3>
                                 <p class="fr-card__desc">
                                     {{ 'landing.for-gps.description'|trans|raw }}
-                                    <br/>
-                                    <a href="https://www.data.gouv.fr/fr/datasets/64947a4af5faf2f1f9eee299/" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
-                                        {{ 'landing.for-gps.link'|trans }}
-                                    </a>
                                 </p>
                             </div>
                         </div>
@@ -66,16 +66,16 @@
                     </div>
                 </div>
                 <div class="fr-col-12 fr-col-md-4">
-                    <div class="fr-card">
+                    <div class="fr-card fr-enlarge-link">
                         <div class="fr-card__body">
                             <div class="fr-card__content">
-                                <h3 class="fr-card__title">{{ 'landing.road-users.title'|trans }}</h3>
+                                <h3 class="fr-card__title">
+                                    <a href="{{ path('app_landing_road_users') }}">
+                                        {{ 'landing.road-users.title'|trans }}
+                                    </a>
+                                </h3>
                                 <p class="fr-card__desc">
                                     {{ 'landing.road-users.description'|trans|raw }}
-                                    <br/>
-                                    <a href="#" class="fr-btn fr-btn--sm fr-btn--secondary fr-mt-2w">
-                                        {{ 'landing.road-users.link'|trans }}
-                                    </a>
                                 </p>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                 <h2 class="fr-x-text--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
                 <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
                 <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>
-                <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w">
+                <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w fr-mb-2w">
                     {{ 'landing.who-are-we.experiment'|trans }}
                 </a>
                 <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary" data-testid="contact-link">
