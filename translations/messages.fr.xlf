@@ -511,12 +511,12 @@
                 <source>landing.menu.button.authorities</source>
                 <target>Collectivités</target>
             </trans-unit>
-            <trans-unit id="landing.menu.button.digital.services">
-                <source>landing.menu.button.digital.services</source>
+            <trans-unit id="landing.menu.button.digital_services">
+                <source>landing.menu.button.digital_services</source>
                 <target>Services numériques</target>
             </trans-unit>
-            <trans-unit id="landing.menu.button.road.users">
-                <source>landing.menu.button.road.users</source>
+            <trans-unit id="landing.menu.button.road_users">
+                <source>landing.menu.button.road_users</source>
                 <target>Usagers de la route</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.title">
