@@ -7,12 +7,14 @@ namespace App\Tests\Unit\Application\EudonetParis\Command;
 use App\Application\CommandBusInterface;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommandHandler;
+use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\EudonetParis\EudonetParisLocationItem;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -134,5 +136,31 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $command = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationItem]);
 
         $this->assertEmpty($handler($command));
+    }
+
+    public function testErrorCannotBePublished(): void
+    {
+        $this->expectException(ImportEudonetParisRegulationFailedException::class);
+
+        $generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+
+        $publishCommand = new PublishRegulationCommand($regulationOrderRecord);
+
+        $matcher = self::exactly(2);
+        $this->commandBus
+            ->expects($matcher)
+            ->method('handle')
+            ->willReturnCallback(
+                fn ($command) => match ($matcher->getInvocationCount()) {
+                    1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
+                    2 => $this->assertEquals($publishCommand, $command) ?: throw new RegulationOrderRecordCannotBePublishedException(),
+                },
+            );
+
+        $handler = new ImportEudonetParisRegulationCommandHandler($this->commandBus);
+        $command = new ImportEudonetParisRegulationCommand($generalInfoCommand, []);
+
+        $handler($command);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
 use App\Application\CommandBusInterface;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
+use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -109,10 +110,21 @@ final class EudonetParisExecutorTest extends TestCase
             ->method('debug')
             ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($message, 'started'),
-                2 => $this->assertEquals($message, 'CREATED'),
+                2 => $this->assertEquals($message, 'created'),
                 3 => $this->assertEquals($message, 'skipped'),
-                4 => $this->assertEquals($message, 'CREATED'),
-                5 => $this->assertEquals($message, 'done') ?: $this->assertEquals($context, ['numProcessed' => 3, 'numCreated' => 2, 'percentCreated' => 66.7, 'numSkipped' => 1, 'percentSkipped' => 33.3]),
+                4 => $this->assertEquals($message, 'created'),
+                5 => (
+                    $this->assertEquals($message, 'done')
+                    ?: $this->assertEquals($context, [
+                        'numProcessed' => 3,
+                        'numCreated' => 2,
+                        'percentCreated' => 66.7,
+                        'numSkipped' => 1,
+                        'percentSkipped' => 33.3,
+                        'numErrors' => 0,
+                        'percentErrors' => 0,
+                    ])
+                ),
             });
 
         $executor->execute($now);
@@ -157,7 +169,18 @@ final class EudonetParisExecutorTest extends TestCase
             ->method('debug')
             ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($message, 'started'),
-                2 => $this->assertEquals($message, 'done') ?: $this->assertEquals($context, ['numProcessed' => 0, 'numCreated' => 0, 'percentCreated' => 0, 'numSkipped' => 0, 'percentSkipped' => 0]),
+                2 => (
+                    $this->assertEquals($message, 'done')
+                    ?: $this->assertEquals($context, [
+                        'numProcessed' => 0,
+                        'numCreated' => 0,
+                        'percentCreated' => 0,
+                        'numSkipped' => 0,
+                        'percentSkipped' => 0,
+                        'numErrors' => 0,
+                        'percentErrors' => 0,
+                    ])
+                ),
             });
 
         $executor->execute($now);
@@ -196,6 +219,77 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
         );
+
+        $executor->execute($now);
+    }
+
+    public function testExecuteImportFailed(): void
+    {
+        $now = new \DateTimeImmutable('now');
+
+        $organization = $this->createMock(Organization::class);
+
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetOrganizationByUuidQuery($this->orgId))
+            ->willReturn($organization);
+
+        $executor = new EudonetParisExecutor(
+            $this->logger,
+            $this->extractor,
+            $this->transformer,
+            $this->commandBus,
+            $this->queryBus,
+            $this->regulationOrderRecordRepository,
+            $this->orgId,
+        );
+
+        $record1 = ['fields' => [1101 => '20210104']];
+        $importCommand1 = $this->createMock(ImportEudonetParisRegulationCommand::class);
+        $result1 = new EudonetParisTransformerResult($importCommand1, []);
+
+        $this->extractor
+            ->expects(self::once())
+            ->method('iterExtract')
+            ->with($now, [])
+            ->willReturn((fn () => yield from [$record1])());
+
+        $this->transformer
+            ->expects(self::once())
+            ->method('transform')
+            ->with($record1)
+            ->willReturn($result1);
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->willThrowException(new ImportEudonetParisRegulationFailedException('Failure'));
+
+        $logMatcher = self::exactly(2);
+        $this->logger
+            ->expects($logMatcher)
+            ->method('debug')
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+                1 => $this->assertEquals($message, 'started'),
+                2 => (
+                    $this->assertEquals($message, 'done')
+                    ?: $this->assertEquals($context, [
+                        'numProcessed' => 1,
+                        'numCreated' => 0,
+                        'percentCreated' => 0,
+                        'numSkipped' => 0,
+                        'percentSkipped' => 0,
+                        'numErrors' => 1,
+                        'percentErrors' => 100,
+                    ])
+                ),
+            });
+
+        $this->logger
+            ->expects(self::once())
+            ->method('error')
+            ->with('failed', self::anything());
 
         $executor->execute($now);
     }

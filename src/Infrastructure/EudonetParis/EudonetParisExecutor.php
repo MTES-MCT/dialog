@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EudonetParis;
 
 use App\Application\CommandBusInterface;
+use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
@@ -35,6 +36,7 @@ final class EudonetParisExecutor
         $numProcessed = 0;
         $numCreated = 0;
         $numSkipped = 0;
+        $numErrors = 0;
 
         $this->logger->debug('started');
 
@@ -57,9 +59,14 @@ final class EudonetParisExecutor
                     $this->logger->debug('skipped', $result->skipMessages);
                     ++$numSkipped;
                 } else {
-                    $this->commandBus->handle($result->command);
-                    $this->logger->debug('CREATED', ['command' => $result->command]);
-                    ++$numCreated;
+                    try {
+                        $this->commandBus->handle($result->command);
+                        $this->logger->debug('created', ['command' => $result->command]);
+                        ++$numCreated;
+                    } catch (ImportEudonetParisRegulationFailedException $exc) {
+                        $this->logger->error('failed', ['command' => $result->command, 'exc' => $exc]);
+                        ++$numErrors;
+                    }
                 }
             }
         } catch (\Exception $exc) {
@@ -73,6 +80,8 @@ final class EudonetParisExecutor
                 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
                 'numSkipped' => $numSkipped,
                 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
+                'numErrors' => $numErrors,
+                'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
             ]);
         }
     }
