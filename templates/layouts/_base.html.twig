@@ -26,7 +26,7 @@
     {% endblock %}
   </head>
   <body>
-    {% include 'common/header.html.twig' %}
+    {% block header %}{% endblock %}
 
     <main id="contenu" class="{% block page_class %}{% endblock page_class %}">
         <noscript>

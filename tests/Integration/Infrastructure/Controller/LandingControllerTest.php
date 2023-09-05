@@ -52,4 +52,44 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('Mathieu FERNANDEZ', $userLinks->eq(0)->text());
         $this->assertSame('Administration', $userLinks->eq(1)->text());
     }
+
+    public function testNavigationLink(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => 'page']],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/collectivites');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => 'page']],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/services-numeriques');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/usagers');
+
+        $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
+            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
+            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
+            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
+        ], $crawler);
+    }
 }
