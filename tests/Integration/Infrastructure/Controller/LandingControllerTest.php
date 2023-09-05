@@ -20,7 +20,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $joinLink = $crawler->selectLink("Participer à l'expérimentation");
         $this->assertSame('Participer à l\'expérimentation', $joinLink->text());
         $this->assertSame('/collectivites', $joinLink->attr('href'));
-        $this->assertMetaTitle('Numériser la réglementation de circulation routière avec Dialog - DiaLog', $crawler);
+        $this->assertMetaTitle('DiaLog', $crawler);
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
         $this->assertSame('Nous contacter', $contactLink->text());
         $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));

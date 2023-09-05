@@ -605,6 +605,10 @@
                 <source>landing.who-are-we.contact</source>
                 <target>Nous contacter</target>
             </trans-unit>
+            <trans-unit id="landing.authorities.metatitle">
+                <source>landing.authorities.metatitle</source>
+                <target>Collectivités</target>
+            </trans-unit>
             <trans-unit id="landing.authorities.jumbotron.title">
                 <source>landing.authorities.jumbotron.title</source>
                 <target>Numériser votre réglementation de circulation routière avec DiaLog</target>
@@ -744,6 +748,10 @@
             <trans-unit id="landing.authorities.pilots.saintrome.alt">
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
+            </trans-unit>
+            <trans-unit id="landing.digital_services.metatitle">
+                <source>landing.digital_services.metatitle</source>
+                <target>Services numériques</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.jumbotron.title">
                 <source>landing.digital_services.jumbotron.title</source>
@@ -897,6 +905,10 @@
             <trans-unit id="landing.digital_services.deployment.europe.step1">
                 <source>landing.digital_services.deployment.europe.step1</source>
                 <target>Couverture au minimum du réseau transeuropéen global (RTE-T)</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.metatitle">
+                <source>landing.road_users.metatitle</source>
+                <target>Usagers</target>
             </trans-unit>
             <trans-unit id="landing.road_users.jumbotron.title">
                 <source>landing.road_users.jumbotron.title</source>
