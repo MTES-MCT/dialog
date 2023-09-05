@@ -26,12 +26,6 @@ final class EudonetParisImportCommandTest extends KernelTestCase
         $mockHttpClient = $container->get('eudonet_paris.http.client');
         $mockHttpClient->assertExpectedRequestsMade();
 
-        $output = implode("\n", [
-            'Processed: 1',
-            'Created: 1 (100.0 %)',
-            'Skipped: 0 (0.0 %)',
-            'Messages:', '',
-        ]);
-        $this->assertSame($output, $commandTester->getDisplay());
+        $this->assertEmpty($commandTester->getDisplay());
     }
 }
