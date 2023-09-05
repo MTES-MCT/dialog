@@ -13,7 +13,7 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
+        $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $this->assertSame('/collectivites', $crawler->selectLink('Pour les collectivités')->attr('href'));
         $this->assertSame('/services-numeriques', $crawler->selectLink('Pour les services numériques')->attr('href'));
         $this->assertSame('/usagers', $crawler->selectLink('Pour les usagers de la route')->attr('href'));
@@ -32,7 +32,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Numériser la réglementation de circulation routière avec Dialog', $crawler->filter('h1')->text());
+        $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $userLinks = $crawler->filter('[data-testid="user-links"]')->filter('li');
         $this->assertCount(2, $userLinks);
         $this->assertSame('Mathieu MARCHOIS', $userLinks->eq(0)->text());
