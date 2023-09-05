@@ -53,10 +53,6 @@ services:
     App\Infrastructure\Adapter\CommandBus:
         $commandBus: '@messenger.bus.commands'
 
-    App\Infrastructure\EudonetParis\EudonetParisClient:
-        arguments:
-            $credentials: '%env(APP_EUDONET_PARIS_CREDENTIALS)%'
-
     command_handlers:
         namespace: App\Application\
         resource: '%kernel.project_dir%/src/Application/**/Command/**/*Handler.php'
@@ -76,6 +72,19 @@ services:
     # ------------
     DateTimeInterface:
         class: DateTimeImmutable
+
+    App\Infrastructure\EudonetParis\EudonetParisExecutor:
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger, channel: eudonet_paris_import }
+
+    # --------------
+    # Other services
+    # --------------
+
+    App\Infrastructure\EudonetParis\EudonetParisClient:
+        arguments:
+            $credentials: '%env(APP_EUDONET_PARIS_CREDENTIALS)%'
 
 when@test:
     services:

@@ -17,9 +17,11 @@ use App\Infrastructure\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\EudonetParis\EudonetParisTransformerResult;
 use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 final class EudonetParisExecutorTest extends TestCase
 {
+    private $logger;
     private $extractor;
     private $transformer;
     private $commandBus;
@@ -29,6 +31,7 @@ final class EudonetParisExecutorTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->extractor = $this->createMock(EudonetParisExtractor::class);
         $this->transformer = $this->createMock(EudonetParisTransformer::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
@@ -42,6 +45,7 @@ final class EudonetParisExecutorTest extends TestCase
         $organization = $this->createMock(Organization::class);
 
         $executor = new EudonetParisExecutor(
+            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
@@ -99,17 +103,19 @@ final class EudonetParisExecutorTest extends TestCase
                 2 => $this->assertEquals($importCommand3, $command),
             });
 
-        $report = $executor->execute($now);
+        $logMatcher = self::exactly(5);
+        $this->logger
+            ->expects($logMatcher)
+            ->method('debug')
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+                1 => $this->assertEquals($message, 'started'),
+                2 => $this->assertEquals($message, 'CREATED'),
+                3 => $this->assertEquals($message, 'skipped'),
+                4 => $this->assertEquals($message, 'CREATED'),
+                5 => $this->assertEquals($message, 'done') ?: $this->assertEquals($context, ['numProcessed' => 3, 'numCreated' => 2, 'percentCreated' => 66.7, 'numSkipped' => 1, 'percentSkipped' => 33.3]),
+            });
 
-        $this->assertFalse($report->hasError());
-        $this->assertSame([
-            'Processed: 3',
-            'Created: 2 (66.7 %)',
-            'Skipped: 1 (33.3 %)',
-            'Messages:',
-            'something was wrong with record 2',
-            '',
-        ], $report->getLines());
+        $executor->execute($now);
     }
 
     public function testExecuteEmpty(): void
@@ -136,6 +142,7 @@ final class EudonetParisExecutorTest extends TestCase
             ->willReturn(new \EmptyIterator());
 
         $executor = new EudonetParisExecutor(
+            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
@@ -144,20 +151,22 @@ final class EudonetParisExecutorTest extends TestCase
             $this->orgId,
         );
 
-        $report = $executor->execute($now);
+        $logMatcher = self::exactly(2);
+        $this->logger
+            ->expects($logMatcher)
+            ->method('debug')
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+                1 => $this->assertEquals($message, 'started'),
+                2 => $this->assertEquals($message, 'done') ?: $this->assertEquals($context, ['numProcessed' => 0, 'numCreated' => 0, 'percentCreated' => 0, 'numSkipped' => 0, 'percentSkipped' => 0]),
+            });
 
-        $this->assertFalse($report->hasError());
-        $this->assertSame([
-            'Processed: 0',
-            'Created: 0 (0.0 %)',
-            'Skipped: 0 (0.0 %)',
-            'Messages:',
-            '',
-        ], $report->getLines());
+        $executor->execute($now);
     }
 
     public function testExecuteOrganizationDoesNotExist(): void
     {
+        $this->expectException(EudonetParisException::class);
+
         $now = new \DateTimeImmutable('now');
 
         $this->queryBus
@@ -174,7 +183,12 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('iterExtract');
 
+        $this->logger
+            ->expects(self::exactly(1))
+            ->method('error');
+
         $executor = new EudonetParisExecutor(
+            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
@@ -183,13 +197,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->orgId,
         );
 
-        $report = $executor->execute($now);
-
-        $this->assertTrue($report->hasError());
-        [$line1, $line2] = $report->getLines();
-        $this->assertStringStartsWith('ERROR: ', $line1);
-        $this->assertStringContainsString('my_message', $line1);
-        $this->assertSame('', $line2);
+        $executor->execute($now);
     }
 
     public function testExecuteOrgIdMissing(): void
@@ -211,7 +219,12 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('iterExtract');
 
+        $this->logger
+            ->expects(self::never())
+            ->method('debug');
+
         $executor = new EudonetParisExecutor(
+            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,

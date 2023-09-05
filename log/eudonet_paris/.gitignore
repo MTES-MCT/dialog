@@ -1,2 +1,2 @@
-*.dev.log
-*.test.log
+import.dev-*.log
+import.test-*.log

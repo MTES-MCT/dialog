@@ -6,7 +6,7 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Infrastructure\EudonetParis\EudonetParisExecutor;
-use App\Infrastructure\EudonetParis\EudonetParisLogger;
+use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +21,6 @@ class EudonetParisImportCommand extends Command
 {
     public function __construct(
         private EudonetParisExecutor $eudonetParisExecutor,
-        private EudonetParisLogger $logger,
         private DateUtilsInterface $dateUtils,
     ) {
         parent::__construct();
@@ -31,15 +30,12 @@ class EudonetParisImportCommand extends Command
     {
         $nowUTC = $this->dateUtils->getNow();
 
-        $report = $this->eudonetParisExecutor->execute(
-            laterThanUTC: $nowUTC,
-        );
+        try {
+            $this->eudonetParisExecutor->execute(laterThanUTC: $nowUTC);
+        } catch (EudonetParisException) {
+            return Command::FAILURE;
+        }
 
-        $content = $report->getContent();
-
-        $this->logger->log($content, $nowUTC);
-        $output->write($content);
-
-        return $report->hasError() ? Command::FAILURE : Command::SUCCESS;
+        return Command::SUCCESS;
     }
 }
