@@ -99,7 +99,10 @@
                 </tr>
             {% else %}
                 <tr data-testid="empty-row">
-                    <td colspan="{% if displayOrganization %}6{% else %}5{% endif %}">
+                    <td class="fr-x-hidden-sm" colspan="3">
+                        <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
+                    </td>
+                    <td class="fr-hidden fr-x-revert-sm" colspan="{% if displayOrganization %}6{% else %}5{% endif %}">
                         <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                     </td>
                 </tr>
