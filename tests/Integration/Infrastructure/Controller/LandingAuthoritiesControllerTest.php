@@ -14,7 +14,7 @@ final class LandingAuthoritiesControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertMetaTitle('Numériser votre réglementation de circulation routière avec DiaLog - DiaLog', $crawler);
+        $this->assertMetaTitle('Collectivités - DiaLog', $crawler);
 
         $this->assertPageStructure([
             ['h1', 'Numériser votre réglementation de circulation routière avec DiaLog'],

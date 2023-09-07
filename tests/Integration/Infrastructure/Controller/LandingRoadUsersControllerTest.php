@@ -14,7 +14,7 @@ final class LandingRoadUsersControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertMetaTitle('Vous êtes sur la bonne voie ! - DiaLog', $crawler);
+        $this->assertMetaTitle('Usagers - DiaLog', $crawler);
 
         $this->assertPageStructure([
             ['h1', 'Vous êtes sur la bonne voie !'],
