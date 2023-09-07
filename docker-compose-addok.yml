@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  addok:
+    image: etalab/addok
+    ports:
+      - '7878:7878'
+    volumes:
+      - ./docker/addok/addok-data:/data
+      - ./docker/addok/addok-data/addok.conf:/etc/addok/addok.conf
+    environment:
+      WORKERS: 1
+      WORKER_TIMEOUT: 30
+      LOG_QUERIES: 1
+      LOG_NOT_FOUND: 1
+      SLOW_QUERIES: 200
+    links:
+      - addok_redis:redis
+
+  addok_redis:
+    image: etalab/addok-redis
+    volumes:
+      - ./docker/addok/addok-data:/data
+
+  addok_builder_db:
+    build:
+      context: ./docker/addok
+      dockerfile: ./builder_db.Dockerfile
+    environment:
+      POSTGRES_DB: builder
+      POSTGRES_USER: builder
+      POSTGRES_PASSWORD: builder
+      PGUSER: builder
+    volumes:
+      - ./docker/addok/addok-data:/data/addok-data
+      - ./docker/addok/download:/data/download
+    links:
+      - addok:addok
+      - addok_redis:redis

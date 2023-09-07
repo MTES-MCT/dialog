@@ -22,14 +22,14 @@ final class SaveRegulationLocationCommandHandler
     ) {
     }
 
-    public function __invoke(SaveRegulationLocationCommand $command): string
+    public function __invoke(SaveRegulationLocationCommand $command): Location
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
-            $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
+            $fromPoint = $command->fromPoint ?? ($command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null);
+            $toPoint = $command->toPoint ?? ($command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null);
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -49,7 +49,9 @@ final class SaveRegulationLocationCommandHandler
                 $location->addMeasure($measure);
             }
 
-            return $location->getUuid();
+            $regulationOrder->addLocation($location);
+
+            return $location;
         }
 
         [$fromPoint, $toPoint] = $this->computePoints($command);
@@ -82,7 +84,7 @@ final class SaveRegulationLocationCommandHandler
             toPoint: $toPoint,
         );
 
-        return $command->location->getUuid();
+        return $command->location;
     }
 
     private function computePoint(string $address, string $houseNumber): string

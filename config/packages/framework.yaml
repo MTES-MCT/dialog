@@ -23,6 +23,8 @@ framework:
         scoped_clients:
             api.adresse.client:
                 base_uri: '%env(API_ADRESSE_BASE_URL)%'
+            eudonet_paris.http.client:
+                base_uri: '%env(APP_EUDONET_PARIS_BASE_URL)%'
 
 when@test:
     framework:

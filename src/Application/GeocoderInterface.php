@@ -10,5 +10,7 @@ interface GeocoderInterface
 {
     public function computeCoordinates(string $address): Coordinates;
 
+    public function computeJunctionCoordinates(string $address, string $roadName): Coordinates;
+
     public function findAddresses(string $search): array;
 }

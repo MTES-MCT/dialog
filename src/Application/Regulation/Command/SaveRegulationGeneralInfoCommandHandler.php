@@ -57,6 +57,7 @@ final class SaveRegulationGeneralInfoCommandHandler
             $regulationOrderRecord = $this->regulationOrderRecordRepository->add(
                 new RegulationOrderRecord(
                     uuid: $this->idFactory->make(),
+                    source: $command->source,
                     status: RegulationOrderRecordStatusEnum::DRAFT,
                     regulationOrder: $regulationOrder,
                     createdAt: $this->now,

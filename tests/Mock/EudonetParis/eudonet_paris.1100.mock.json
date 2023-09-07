@@ -1,0 +1,184 @@
+{
+  "ResultInfos": {
+    "ApiMessage": "",
+    "ErrorMessage": "",
+    "ErrorNumber": 0,
+    "Success": true
+  },
+  "ResultData": {
+    "Rows": [
+      {
+        "DelAllowed": false,
+        "Fields": [
+          {
+            "DbValue": "2020T13239",
+            "DescId": 1101,
+            "UpdateAllowed": false,
+            "Value": "2020T13239",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "modifiant, à titre provisoire, la règle de stationnement et de circulation générale boulevard de l'Hôpital, à Paris 13ème",
+            "DescId": 1102,
+            "UpdateAllowed": false,
+            "Value": "modifiant, à titre provisoire, la règle de stationnement et de circulation générale boulevard de l'Hôpital, à Paris 13ème",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "8",
+            "DescId": 1108,
+            "UpdateAllowed": false,
+            "Value": "Temporaire",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "2020/10/01 00:00:00",
+            "DescId": 1109,
+            "UpdateAllowed": false,
+            "Value": "2020/10/01 00:00:00",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "2024/05/01 00:00:00",
+            "DescId": 1110,
+            "UpdateAllowed": false,
+            "Value": "2024/05/01 00:00:00",
+            "ViewAllowed": true
+          }
+        ],
+        "FileId": 43497,
+        "Tab": 1100,
+        "UpdateAllowed": false
+      }
+    ]
+  },
+  "ResultMetaData": {
+    "NumPage": 29,
+    "RowsByPage": 1,
+    "Tables": [
+      {
+        "AddAllowed": false,
+        "CalendarEnabled": false,
+        "DescId": 1100,
+        "EdnType": 0,
+        "Fields": [
+          {
+            "DescId": 1101,
+            "Disporder": 1,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Arrêtés",
+            "Length": 500,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 1102,
+            "Disporder": 2,
+            "EdnFormat": 9,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Compléments de titre",
+            "Length": 0,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": true,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 1108,
+            "Disporder": 6,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Type (s)",
+            "Length": 100,
+            "Mandatory": true,
+            "Multiple": false,
+            "PopupDescId": 1108,
+            "PopupType": 3,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": true,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 1109,
+            "Disporder": 7,
+            "EdnFormat": 2,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Date de début",
+            "Length": 0,
+            "Mandatory": true,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": true,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 1110,
+            "Disporder": 8,
+            "EdnFormat": 2,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Date de fin",
+            "Length": 0,
+            "Mandatory": true,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": true,
+            "ViewAllowed": true
+          }
+        ],
+        "Icon": "f196",
+        "IconDescription": {
+          "Address": "f0c5",
+          "Color": null,
+          "Css": "icon-files-o",
+          "Name": "Description"
+        },
+        "IconInfo": {
+          "Address": "f196",
+          "Color": "",
+          "Css": "icon-plus-square-o",
+          "Name": "Plus"
+        },
+        "IconNote": {
+          "Address": "f0c5",
+          "Color": null,
+          "Css": "icon-files-o",
+          "Name": "Notes"
+        },
+        "IconPj": {
+          "Address": "f0c6",
+          "Color": null,
+          "Css": "icon-paperclip",
+          "Name": "Annexes"
+        },
+        "Label": "Arrêtés",
+        "Links": [],
+        "LinksInfo": []
+      }
+    ],
+    "TotalPages": 1,
+    "TotalRows": 84
+  }
+}

@@ -139,4 +139,15 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         return $row !== null;
     }
+
+    public function findIdentifiersForSourceInOrganization(string $source, Organization $organization): array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('ro.identifier')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where('roc.source = :source')
+            ->setParameter('source', $source)
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
 }

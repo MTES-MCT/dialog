@@ -1,6 +1,15 @@
 monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - eudonet_paris_import
+
+    handlers:
+        eudonet_paris_import:
+            level: debug
+            type: rotating_file
+            path: "%kernel.project_dir%/log/eudonet_paris/import.%kernel.environment%.log"
+            formatter: monolog.formatter.json
+            channels: ["eudonet_paris_import"]
 
 when@dev:
     monolog:

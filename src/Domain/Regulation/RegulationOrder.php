@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 class RegulationOrder
 {
-    private iterable $locations = [];
+    private Collection $locations;
 
     public function __construct(
         private string $uuid,
@@ -17,6 +20,7 @@ class RegulationOrder
         private ?\DateTimeInterface $endDate = null,
         private ?string $otherCategoryText = null,
     ) {
+        $this->locations = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -57,6 +61,15 @@ class RegulationOrder
     public function getLocations(): iterable
     {
         return $this->locations;
+    }
+
+    public function addLocation(Location $location): void
+    {
+        if ($this->locations->contains($location)) {
+            return;
+        }
+
+        $this->locations->add($location);
     }
 
     public function update(
