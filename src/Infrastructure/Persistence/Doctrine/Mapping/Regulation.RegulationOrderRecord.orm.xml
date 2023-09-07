@@ -13,6 +13,11 @@
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>
     </field>
+    <field name="source" type="string" column="source" nullable="false" length="32">
+        <options>
+            <option name="default">dialog</option>
+        </options>
+    </field>
     <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" fetch="EAGER">
         <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>

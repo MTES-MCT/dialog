@@ -1,0 +1,340 @@
+{
+  "ResultInfos": {
+    "ApiMessage": "",
+    "ErrorMessage": "",
+    "ErrorNumber": 0,
+    "Success": true
+  },
+  "ResultData": {
+    "Rows": [
+      {
+        "DelAllowed": false,
+        "Fields": [
+          {
+            "DbValue": "",
+            "DescId": 2701,
+            "UpdateAllowed": false,
+            "Value": "17/09/2020",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "7049",
+            "DescId": 2705,
+            "UpdateAllowed": false,
+            "Value": "Une zone",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "7120",
+            "DescId": 2708,
+            "UpdateAllowed": false,
+            "Value": "13ème arrondissement",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "Boulevard de l'Hôpital",
+            "DescId": 2710,
+            "UpdateAllowed": false,
+            "Value": "Boulevard de l'Hôpital",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "",
+            "DescId": 2730,
+            "UpdateAllowed": false,
+            "Value": "",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "",
+            "DescId": 2740,
+            "UpdateAllowed": false,
+            "Value": "",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "40",
+            "DescId": 2720,
+            "UpdateAllowed": false,
+            "Value": "40",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "47",
+            "DescId": 2737,
+            "UpdateAllowed": false,
+            "Value": "47",
+            "ViewAllowed": true
+          }
+        ],
+        "FileId": 710247,
+        "Tab": 2700,
+        "UpdateAllowed": false
+      },
+      {
+        "DelAllowed": false,
+        "Fields": [
+          {
+            "DbValue": "",
+            "DescId": 2701,
+            "UpdateAllowed": false,
+            "Value": "17/09/2020",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "7049",
+            "DescId": 2705,
+            "UpdateAllowed": false,
+            "Value": "Une zone",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "7120",
+            "DescId": 2708,
+            "UpdateAllowed": false,
+            "Value": "13ème arrondissement",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "Boulevard de l'Hôpital",
+            "DescId": 2710,
+            "UpdateAllowed": false,
+            "Value": "Boulevard de l'Hôpital",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "",
+            "DescId": 2730,
+            "UpdateAllowed": false,
+            "Value": "",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "",
+            "DescId": 2740,
+            "UpdateAllowed": false,
+            "Value": "",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "47",
+            "DescId": 2720,
+            "UpdateAllowed": false,
+            "Value": "47",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "29",
+            "DescId": 2737,
+            "UpdateAllowed": false,
+            "Value": "29",
+            "ViewAllowed": true
+          }
+        ],
+        "FileId": 710248,
+        "Tab": 2700,
+        "UpdateAllowed": false
+      }
+    ]
+  },
+  "ResultMetaData": {
+    "NumPage": 1,
+    "RowsByPage": 50,
+    "Tables": [
+      {
+        "AddAllowed": false,
+        "CalendarEnabled": false,
+        "DescId": 2700,
+        "EdnType": 0,
+        "Fields": [
+          {
+            "DescId": 2701,
+            "Disporder": 1,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Lien fiche localisation",
+            "Length": 500,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2705,
+            "Disporder": 2,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Porte sur",
+            "Length": 100,
+            "Mandatory": true,
+            "Multiple": false,
+            "PopupDescId": 2705,
+            "PopupType": 3,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2708,
+            "Disporder": 6,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Arrondissement",
+            "Length": 0,
+            "Mandatory": false,
+            "Multiple": true,
+            "PopupDescId": 2708,
+            "PopupType": 3,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2710,
+            "Disporder": 3,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Libellé de voie",
+            "Length": 500,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2730,
+            "Disporder": 31,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Libellé voie début",
+            "Length": 500,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2740,
+            "Disporder": 46,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "Libellé voie fin",
+            "Length": 500,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2720,
+            "Disporder": 29,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "N° adresse Début",
+            "Length": 100,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          },
+          {
+            "DescId": 2737,
+            "Disporder": 44,
+            "EdnFormat": 1,
+            "IconInfo": null,
+            "ImgStorage": 1,
+            "IsLink": false,
+            "Label": "N° adresse Fin",
+            "Length": 100,
+            "Mandatory": false,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": true
+          }
+        ],
+        "Icon": "f005",
+        "IconDescription": {
+          "Address": "f0c5",
+          "Color": null,
+          "Css": "icon-files-o",
+          "Name": "Description"
+        },
+        "IconInfo": {
+          "Address": "f005",
+          "Color": "",
+          "Css": "icon-star",
+          "Name": "Etoile pleine"
+        },
+        "IconNote": {
+          "Address": "f0c5",
+          "Color": null,
+          "Css": "icon-files-o",
+          "Name": "Notes"
+        },
+        "IconPj": {
+          "Address": "f0c6",
+          "Color": null,
+          "Css": "icon-paperclip",
+          "Name": "Annexes"
+        },
+        "Label": "Localisation",
+        "Links": [
+          1200
+        ],
+        "LinksInfo": [
+          {
+            "DescId": 1200,
+            "Disporder": 0,
+            "EdnFormat": 0,
+            "IconInfo": null,
+            "ImgStorage": 0,
+            "IsLink": true,
+            "Label": "",
+            "Length": 0,
+            "Mandatory": true,
+            "Multiple": false,
+            "PopupDescId": 0,
+            "PopupType": 0,
+            "SocialNetworkRootUrl": null,
+            "UpdateAllowed": false,
+            "ViewAllowed": false
+          }
+        ]
+      }
+    ],
+    "TotalPages": 1,
+    "TotalRows": 2
+  }
+}

@@ -8,7 +8,6 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
-use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -56,8 +55,9 @@ final class AddLocationController extends AbstractRegulationController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $locationUuid = $this->commandBus->handle($command);
-                $location = $this->queryBus->handle(new GetLocationByUuidQuery($locationUuid));
+                $preExistingLocationUuids = $regulationOrderRecord->getLocationUuids();
+
+                $location = $this->commandBus->handle($command);
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
                 return new Response(
@@ -67,7 +67,7 @@ final class AddLocationController extends AbstractRegulationController
                             'location' => DetailLocationView::fromEntity($location),
                             'regulationOrderRecord' => $regulationOrderRecord,
                             'canDelete' => ($regulationOrderRecord->countLocations() + 1) > 1,
-                            'locationUuids' => $regulationOrderRecord->getLocationUuids(),
+                            'preExistingLocationUuids' => $preExistingLocationUuids,
                         ],
                     ),
                 );

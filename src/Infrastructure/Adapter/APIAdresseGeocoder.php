@@ -19,14 +19,14 @@ final class APIAdresseGeocoder implements GeocoderInterface
     ) {
     }
 
-    public function computeCoordinates(string $address): Coordinates
+    public function computeCoordinates(string $address, string $type = 'housenumber'): Coordinates
     {
         // See: https://adresse.data.gouv.fr/api-doc/adresse
 
         $query = [
             'q' => $address,
             'limit' => 1,
-            'type' => 'housenumber',
+            'type' => $type,
         ];
 
         $response = $this->apiAdresseClient->request('GET', '/search/', [
@@ -103,6 +103,11 @@ final class APIAdresseGeocoder implements GeocoderInterface
         return Coordinates::fromLonLat($lonLat[0], $lonLat[1]);
     }
 
+    public function computeJunctionCoordinates(string $address, string $roadName): Coordinates
+    {
+        return $this->computeCoordinates($roadName . ' / ' . $address, type: 'poi');
+    }
+
     public function findAddresses(string $search): array
     {
         $search = preg_replace(self::HOUSENUMBER_FILTER_REGEX, '', $search);
@@ -133,6 +138,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
                 $label = match ($type) {
                     'street', 'locality' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
                     'municipality' => sprintf('%s %s', $feature['properties']['postcode'], $feature['properties']['city']),
+                    'poi' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
                     default => null,
                 };
 

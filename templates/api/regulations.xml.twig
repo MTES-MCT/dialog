@@ -74,12 +74,12 @@
                                             </loc:roadName>
                                         </loc:linearElement>
 
-                                        {% if location.fromHouseNumber %}
+                                        {% if location.fromLatitude and location.fromLongitude %}
                                             <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                                 <loc:distanceAlong>0</loc:distanceAlong>
                                                 <loc:fromReferent>
                                                     <loc:referentIdentifier>start</loc:referentIdentifier>
-                                                    <loc:referentName>{{ location.fromHouseNumber }}</loc:referentName>
+                                                    <loc:referentName>{{ location.fromHouseNumber ?? 'start' }}</loc:referentName>
                                                     <loc:referentType>referenceMarker</loc:referentType>
                                                     <loc:pointCoordinates>
                                                         <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
@@ -93,12 +93,12 @@
                                             </loc:fromPoint>
                                         {% endif %}
 
-                                        {% if location.toHouseNumber %}
+                                        {% if location.toLatitude and location.toLongitude %}
                                             <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                                 <loc:distanceAlong>0</loc:distanceAlong>
                                                 <loc:fromReferent>
                                                     <loc:referentIdentifier>end</loc:referentIdentifier>
-                                                    <loc:referentName>{{ location.toHouseNumber }}</loc:referentName>
+                                                    <loc:referentName>{{ location.toHouseNumber ?? 'end' }}</loc:referentName>
                                                     <loc:referentType>referenceMarker</loc:referentType>
                                                     <loc:pointCoordinates>
                                                         <loc:latitude>{{ location.toLatitude }}</loc:latitude>

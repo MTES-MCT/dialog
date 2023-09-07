@@ -11,6 +11,7 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface, Re
 {
     public function __construct(
         private string $uuid,
+        private string $source,
         private string $status,
         private RegulationOrder $regulationOrder,
         private \DateTimeInterface $createdAt,
@@ -66,6 +67,11 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface, Re
     public function isDraft(): bool
     {
         return $this->status === 'draft';
+    }
+
+    public function getSource(): string
+    {
+        return $this->source;
     }
 
     public function countLocations(): int

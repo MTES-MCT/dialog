@@ -15,6 +15,7 @@ BIN_CONSOLE = ${_SYMFONY} console
 BIN_COMPOSER = ${_SYMFONY} composer
 BIN_NPM = ${_DOCKER_EXEC_PHP} npm
 BIN_NPX = ${_DOCKER_EXEC_PHP} npx
+_DOCKER_COMPOSE_ADDOK = docker-compose -f ./docker-compose-addok.yml
 
 # No TTY commands.
 _DOCKER_EXEC_PHP_NO_TTY = docker-compose exec -T php
@@ -89,6 +90,32 @@ dbfixtures: ## Load tests fixtures
 
 redisshell: ## Connect to the Redis container
 	docker-compose exec redis redis-cli
+
+addok_start: ## Start Addok containers
+	${_DOCKER_COMPOSE_ADDOK} up -d
+
+addok_stop: ## Stop Addok containers
+	${_DOCKER_COMPOSE_ADDOK} stop
+
+addok_ps: ## Display Addok containers
+	${_DOCKER_COMPOSE_ADDOK} ps
+
+addok_bundle: ## Create Addok custom bundle file
+	make addok_stop
+	${_DOCKER_COMPOSE_ADDOK} rm -f
+	make addok_start
+	sleep 5s
+
+	${_DOCKER_COMPOSE_ADDOK} exec -e NO_DOWNLOAD=${NO_DOWNLOAD} addok_builder_db /data/run.sh
+
+	${_DOCKER_COMPOSE_ADDOK} exec addok addok batch /data/junctions.json
+	${_DOCKER_COMPOSE_ADDOK} exec addok addok ngrams
+
+	${_DOCKER_COMPOSE_ADDOK} exec addok_redis redis-cli save
+	sudo chmod +r docker/addok/addok-data/dump.rdb # Allow zip to read it
+
+	cd docker/addok && zip -j addok-dialog-bundle.zip addok-data/addok.conf addok-data/addok.db addok-data/dump.rdb
+
 ##
 ## ----------------
 ## Executable

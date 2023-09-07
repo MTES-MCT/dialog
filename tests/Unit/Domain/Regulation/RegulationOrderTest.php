@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrder;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 final class RegulationOrderTest extends TestCase
@@ -39,6 +41,8 @@ final class RegulationOrderTest extends TestCase
         $start = new \DateTime('2023-03-13');
         $newStart = new \DateTime('2023-03-13');
         $end = new \DateTimeImmutable('2023-03-15');
+        $location1 = $this->createMock(Location::class);
+        $location2 = $this->createMock(Location::class);
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
@@ -64,5 +68,11 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame($newStart, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
         $this->assertSame('Trou en formation', $regulationOrder->getOtherCategoryText());
+
+        $regulationOrder->addLocation($location1);
+        $regulationOrder->addLocation($location1); // Test duplicate
+        $regulationOrder->addLocation($location2);
+
+        $this->assertEquals(new ArrayCollection([$location1, $location2]), $regulationOrder->getLocations());
     }
 }

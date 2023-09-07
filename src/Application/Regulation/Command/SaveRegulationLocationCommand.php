@@ -13,6 +13,8 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $address;
     public ?string $fromHouseNumber;
     public ?string $toHouseNumber;
+    public ?string $fromPoint;
+    public ?string $toPoint;
     public array $measures = [];
 
     public function __construct(
