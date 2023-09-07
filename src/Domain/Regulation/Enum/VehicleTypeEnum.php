@@ -13,16 +13,14 @@ enum VehicleTypeEnum: string
     case PEDESTRIANS = 'pedestrians'; // Pedestrians.
     case BICYCLE = 'bicycle'; // Bicycle.
     case AMBULANCE = 'ambulance'; // A motor vehicle of category M intended for the transport of sick or injured people and having special equipment for such purpose.
-    case CRITAIR_4 = 'critair4'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
-    case CRITAIR_5 = 'critair5'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
+    case CRITAIR = 'critair';
     case OTHER = 'other';
 
     public static function restrictedCases(): array
     {
         return [
             VehicleTypeEnum::HEAVY_GOODS_VEHICLE,
-            VehicleTypeEnum::CRITAIR_4,
-            VehicleTypeEnum::CRITAIR_5,
+            VehicleTypeEnum::CRITAIR,
             VehicleTypeEnum::OTHER,
         ];
     }

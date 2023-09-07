@@ -8,6 +8,8 @@ use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommandHandler;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Regulation\Enum\CritairEnum;
+use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\VehicleSetRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -41,10 +43,11 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                     new VehicleSet(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        restrictedTypes: ['critair5'],
+                        restrictedTypes: [VehicleTypeEnum::CRITAIR->value],
                         otherRestrictedTypeText: null,
                         exemptedTypes: ['ambulance'],
                         otherExemptedTypeText: null,
+                        critairTypes: [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value],
                     ),
                 ),
             )
@@ -58,8 +61,9 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command = new SaveVehicleSetCommand();
         $command->measure = $measure;
         $command->allVehicles = false;
-        $command->restrictedTypes = ['critair5'];
+        $command->restrictedTypes = [VehicleTypeEnum::CRITAIR->value];
         $command->exemptedTypes = ['ambulance'];
+        $command->critairTypes = [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value];
 
         $result = $handler($command);
 
@@ -81,6 +85,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                 'Matières dangereuses',
                 ['bus'],
                 null,
+                [],
             );
 
         $this->vehicleSetRepository
@@ -98,6 +103,47 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['bus'];
         $command->otherExemptedTypeText = null;
+        $command->critairTypes = [];
+
+        $result = $handler($command);
+
+        $this->assertSame($vehicleSet, $result);
+    }
+
+    public function testResetCritair(): void
+    {
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $vehicleSet = $this->createMock(VehicleSet::class);
+        $vehicleSet
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                ['heavyGoodsVehicle', 'other'],
+                'Matières dangereuses',
+                ['bus'],
+                null,
+                [],
+            );
+
+        $this->vehicleSetRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveVehicleSetCommandHandler(
+            $this->idFactory,
+            $this->vehicleSetRepository,
+        );
+
+        $command = new SaveVehicleSetCommand($vehicleSet);
+        $command->allVehicles = false;
+        $command->restrictedTypes = ['heavyGoodsVehicle', 'other'];
+        $command->otherRestrictedTypeText = 'Matières dangereuses';
+        $command->exemptedTypes = ['bus'];
+        $command->otherExemptedTypeText = null;
+        $command->critairTypes = [CritairEnum::CRITAIR_2];
 
         $result = $handler($command);
 

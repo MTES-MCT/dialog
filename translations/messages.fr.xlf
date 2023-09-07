@@ -594,7 +594,7 @@
             <trans-unit id="landing.who-are-we.description2">
                 <source>landing.who-are-we.description2</source>
                 <target>
-                    Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6 personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique est en cours de construction et d’amélioration continue. 
+                    Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6 personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique est en cours de construction et d’amélioration continue.
                 </target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.experiment">
@@ -1281,6 +1281,26 @@
             <trans-unit id="regulation.vehicle_set.type.heavyGoodsVehicle">
                 <source>regulation.vehicle_set.type.heavyGoodsVehicle</source>
                 <target>Poids lourds</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.critair">
+                <source>regulation.vehicle_set.critair</source>
+                <target>Catégorie Crit'Air</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.critair.help">
+                <source>regulation.vehicle_set.critair.help</source>
+                <target>Spécifier les catégories Crit'Air pour lesquelles la restriction s'applique :</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.critair">
+                <source>regulation.vehicle_set.type.critair</source>
+                <target>Crit'Air</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.critair2">
+                <source>regulation.vehicle_set.type.critair2</source>
+                <target>Crit'Air 2</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.critair3">
+                <source>regulation.vehicle_set.type.critair3</source>
+                <target>Crit'Air 3</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.critair4">
                 <source>regulation.vehicle_set.type.critair4</source>

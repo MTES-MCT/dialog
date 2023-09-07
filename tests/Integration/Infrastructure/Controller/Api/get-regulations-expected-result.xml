@@ -11,26 +11,26 @@
                     <com:value lang="fr">ARRETE TEMPORAIRE ACT2023STD - 619-MB</com:value>
                 </com:values>
             </description>
-        
+
             <issuingAuthority>
                 <com:values>
                     <com:value lang="fr">Mairie de Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
-        
+
             <regulationId>064ca240-2b58-73ea-8000-2d03faf5d44c</regulationId>
             <status>madeAndImplemented</status>
-        
+
             <trafficRegulation>
                 <status>active</status>
-        
+
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
-        
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-        
+
                     <conditions xsi:type="ValidityCondition">
                         <validityByOrder>
                             <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
@@ -40,7 +40,7 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
-        
+
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
                             <loc:linearWithinLinearElement>
@@ -51,7 +51,7 @@
                                         </com:values>
                                     </loc:roadName>
                                 </loc:linearElement>
-        
+
                                 <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
@@ -82,33 +82,33 @@
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
-        
+
         <trafficRegulationOrder id="064ca247-fb24-7cf8-8000-0cf1af53270c" version="1">
             <description>
                 <com:values>
                     <com:value lang="fr">ARRETE TEMPORAIRE ACT2023STD - 365 SM</com:value>
                 </com:values>
             </description>
-        
+
             <issuingAuthority>
                 <com:values>
                     <com:value lang="fr">Mairie de Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
-        
+
             <regulationId>064ca247-fb24-7cf8-8000-0cf1af53270c</regulationId>
             <status>madeAndImplemented</status>
-        
+
             <trafficRegulation>
                 <status>active</status>
-        
+
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
-        
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-        
+
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="ValidityCondition">
@@ -166,7 +166,7 @@
                             </validityByOrder>
                         </conditions>
                     </conditions>
-        
+
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="LocationCondition">
@@ -206,7 +206,7 @@
                                 </loc:linearWithinLinearElement>
                             </locationByOrder>
                         </conditions>
-        
+
                         <conditions xsi:type="LocationCondition">
                             <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
@@ -244,7 +244,7 @@
                                 </loc:linearWithinLinearElement>
                             </locationByOrder>
                         </conditions>
-        
+
                         <conditions xsi:type="LocationCondition">
                             <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
@@ -282,7 +282,7 @@
                                 </loc:linearWithinLinearElement>
                             </locationByOrder>
                         </conditions>
-        
+
                         <conditions xsi:type="LocationCondition">
                             <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
@@ -303,7 +303,7 @@
                             </locationByOrder>
                         </conditions>
                     </conditions>
-        
+
                     <conditions xsi:type="DriverCondition">
                         <negate>true</negate>
                         <driverCharacteristicsType>localResident</driverCharacteristicsType>
@@ -311,33 +311,27 @@
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
-        
+
         <trafficRegulationOrder id="064ca50b-428d-7810-8000-9b78885e357b" version="1">
             <description>
                 <com:values>
                     <com:value lang="fr">Arrêté portant dérogation temporaire des conditions de circulation et de stationnement des véhicules de toutes catégories, sur places existantes ou sur voie de circulation (route, piste cyclable, voie de bus ou trottoir), pour manifestation</com:value>
                 </com:values>
             </description>
-        
             <issuingAuthority>
                 <com:values>
                     <com:value lang="fr">Préfecture de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
-        
             <regulationId>064ca50b-428d-7810-8000-9b78885e357b</regulationId>
             <status>madeAndImplemented</status>
-        
             <trafficRegulation>
                 <status>active</status>
-        
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
-        
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-        
                     <conditions xsi:type="ValidityCondition">
                         <validityByOrder>
                             <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
@@ -347,7 +341,6 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
-        
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
                             <loc:supplementaryPositionalDescription>
@@ -358,7 +351,6 @@
                                     </loc:lane>
                                 </loc:carriageway>
                             </loc:supplementaryPositionalDescription>
-
                             <loc:linearWithinLinearElement>
                                 <loc:linearElement xsi:type="loc:LinearElement">
                                     <loc:roadName>
@@ -367,7 +359,6 @@
                                         </com:values>
                                     </loc:roadName>
                                 </loc:linearElement>
-        
                                 <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
@@ -398,7 +389,6 @@
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
-        
         <trafficRegulationOrder id="2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c" version="1">
             <description>
                 <com:values>
@@ -454,7 +444,6 @@
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:fromPoint>
-
                                 <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
@@ -474,6 +463,14 @@
                         <negate>false</negate>
                         <vehicleCharacteristics>
                             <com:vehicleType>heavyGoodsVehicle</com:vehicleType>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair4</com:emissionClassificationOther>
+                            </com:emissions>
                         </vehicleCharacteristics>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
@@ -560,12 +557,11 @@
                             </loc:linearWithinLinearElement>
                         </locationByOrder>
                     </conditions>
-
                     <conditions xsi:type="VehicleCondition">
                         <negate>false</negate>
                         <vehicleCharacteristics>
                             <com:emissions>
-                                <com:emissionClassificationOther>critair4</com:emissionClassificationOther>
+                                <com:emissionClassificationOther>critair3</com:emissionClassificationOther>
                             </com:emissions>
                         </vehicleCharacteristics>
                     </conditions>

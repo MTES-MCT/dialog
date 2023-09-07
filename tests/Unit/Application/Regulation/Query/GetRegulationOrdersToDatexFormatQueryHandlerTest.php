@@ -10,6 +10,8 @@ use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\Regulation\Enum\CritairEnum;
+use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -80,7 +82,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location1->toHouseNumber,
             'toLatitude' => $location1->toLatitude,
             'toLongitude' => $location1->toLongitude,
-            'restrictedVehicleTypes' => [],
+            'restrictedVehicleTypes' => [VehicleTypeEnum::CRITAIR->value],
+            'restrictedCritairTypes' => [CritairEnum::CRITAIR_3->value, CritairEnum::CRITAIR_4->value],
             'exemptedVehicleTypes' => null,
         ];
         $row1bis = [
@@ -98,6 +101,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toLongitude' => $location1bis->toLongitude,
             'restrictedVehicleTypes' => [],
             'exemptedVehicleTypes' => null,
+            'restrictedCritairTypes' => null,
         ];
         $row2 = [
             'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -114,6 +118,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toLongitude' => $location2->toLongitude,
             'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
             'exemptedVehicleTypes' => ['bus'],
+            'restrictedCritairTypes' => null,
         ];
 
         $regulationOrderRecordRepository
@@ -135,7 +140,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
                             location: $location1,
-                            vehicleConditions: [],
+                            vehicleConditions: [
+                                new DatexVehicleConditionView('critair3'),
+                                new DatexVehicleConditionView('critair4'),
+                            ],
                         ),
                         new DatexTrafficRegulationView(
                             location: $location1bis,
