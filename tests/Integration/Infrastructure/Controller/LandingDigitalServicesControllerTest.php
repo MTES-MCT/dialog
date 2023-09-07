@@ -14,7 +14,7 @@ final class LandingDigitalServicesControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertMetaTitle('La réglementation de circulation accessible, à jour et standardisée - DiaLog', $crawler);
+        $this->assertMetaTitle('Services numériques - DiaLog', $crawler);
 
         $this->assertPageStructure([
             ['h1', 'La réglementation de circulation accessible, à jour et standardisée'],

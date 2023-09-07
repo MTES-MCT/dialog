@@ -521,7 +521,7 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.title">
                 <source>landing.jumbotron.title</source>
-                <target>Numériser la réglementation de circulation routière avec Dialog</target>
+                <target>Numériser la réglementation de circulation routière avec DiaLog</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description1">
                 <source>landing.jumbotron.description1</source>
@@ -533,7 +533,7 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.description3">
                 <source>landing.jumbotron.description3</source>
-                <target><![CDATA[<b>]]>Promouvoir<![CDATA[</b>]]> les Zones à Faibles Emissions.</target>
+                <target><![CDATA[<b>]]>Mettre en oeuvre<![CDATA[</b>]]> les Zones à Faibles Emissions.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.illustration">
                 <source>landing.jumbotron.illustration</source>
@@ -578,7 +578,7 @@
             <trans-unit id="landing.how-it-works.description">
                 <source>landing.how-it-works.description</source>
                 <target>
-                   DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite publiées aux services numériques. Les données de circulations sont ainsi consultables et réutilisables facilement par tous.
+                   DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation et de stationnement. Ces données sont ensuite transmises aux services numériques. Les données de circulation sont ainsi consultables et réutilisables facilement par tous.
                 </target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.title">
@@ -604,6 +604,10 @@
             <trans-unit id="landing.who-are-we.contact">
                 <source>landing.who-are-we.contact</source>
                 <target>Nous contacter</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.metatitle">
+                <source>landing.authorities.metatitle</source>
+                <target>Collectivités</target>
             </trans-unit>
             <trans-unit id="landing.authorities.jumbotron.title">
                 <source>landing.authorities.jumbotron.title</source>
@@ -655,7 +659,7 @@
             </trans-unit>
             <trans-unit id="landing.authorities.save_time.create_orders">
                 <source>landing.authorities.save_time.create_orders</source>
-                <target><![CDATA[<strong>]]>Rédigez<![CDATA[</strong>]]> vos arrêtés via l'outil DiaLog ou <![CDATA[<strong>]]>connectez<![CDATA[</strong>]]> votre outil de gestion (Sogelink, outil interne...) pour éviter la double saisie</target>
+                <target><![CDATA[<strong>]]>Rédigez<![CDATA[</strong>]]> vos arrêtés via l'outil DiaLog ou <![CDATA[<strong>]]>connectez<![CDATA[</strong>]]> votre outil de gestion (outil interne...) pour éviter la double saisie</target>
             </trans-unit>
             <trans-unit id="landing.authorities.save_time.send_to_gps">
                 <source>landing.authorities.save_time.send_to_gps</source>
@@ -745,6 +749,10 @@
                 <source>landing.authorities.pilots.saintrome.alt</source>
                 <target>Maison typique de Saint-Rome</target>
             </trans-unit>
+            <trans-unit id="landing.digital_services.metatitle">
+                <source>landing.digital_services.metatitle</source>
+                <target>Services numériques</target>
+            </trans-unit>
             <trans-unit id="landing.digital_services.jumbotron.title">
                 <source>landing.digital_services.jumbotron.title</source>
                 <target>La réglementation de circulation accessible, à jour et standardisée</target>
@@ -803,11 +811,11 @@
             </trans-unit>
             <trans-unit id="landing.digital_services.qualitative_data.description3">
                 <source>landing.digital_services.qualitative_data.description3</source>
-                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr" target="_blank" rel="noopener">]]>point d’accès national aux données de transport<![CDATA[</a>]]>. Dialog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrables dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
+                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr" target="_blank" rel="noopener">]]>point d’accès national aux données de transport<![CDATA[</a>]]>. Dialog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]> afin d’être facilement intégrable dans votre solution numérique. D’autres formats sont en cours d’élaboration.</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.qualitative_data.contact">
                 <source>landing.digital_services.qualitative_data.contact</source>
-                <target>Vous voulez intégrer les données Dialog dans votre service numérique ?</target>
+                <target>Vous voulez intégrer les données DiaLog dans votre service numérique ?</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.qualitative_data.contact.cta">
                 <source>landing.digital_services.qualitative_data.contact.cta</source>
@@ -897,6 +905,10 @@
             <trans-unit id="landing.digital_services.deployment.europe.step1">
                 <source>landing.digital_services.deployment.europe.step1</source>
                 <target>Couverture au minimum du réseau transeuropéen global (RTE-T)</target>
+            </trans-unit>
+            <trans-unit id="landing.road_users.metatitle">
+                <source>landing.road_users.metatitle</source>
+                <target>Usagers</target>
             </trans-unit>
             <trans-unit id="landing.road_users.jumbotron.title">
                 <source>landing.road_users.jumbotron.title</source>
