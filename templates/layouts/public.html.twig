@@ -6,18 +6,24 @@
             <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
                 <ul class="fr-nav__list">
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="{{ path ('app_landing') }}" target="_self" {% if 'app_landing' == app.current_route %} aria-current="page" {% endif %}>{{ 'landing.menu.button.home'|trans }}
+                        <a class="fr-nav__link" href="{{ path('app_landing') }}" {% if 'app_landing' == app.current_route %}aria-current="page"{% endif %}>
+                            {{ 'landing.menu.button.home'|trans }}
                         </a>
                     </li>
                     <li>
-                        <a class="fr-nav__link" href="{{ path ('app_landing_authorities') }}" target="_self" {% if 'app_landing_authorities' == app.current_route %} aria-current="page" {% endif %}>{{ 'landing.menu.button.authorities'|trans }}
+                        <a class="fr-nav__link" href="{{ path('app_landing_authorities') }}" {% if 'app_landing_authorities' == app.current_route %}aria-current="page"{% endif %}>
+                            {{ 'landing.menu.button.authorities'|trans }}
                         </a>
                     </li>
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="{{ path ('app_landing_digital_services') }}" target="_self" {% if 'app_landing_digital_services' == app.current_route %} aria-current="page" {% endif %}>{{ 'landing.menu.button.digital_services'|trans }}</a>
+                        <a class="fr-nav__link" href="{{ path('app_landing_digital_services') }}" {% if 'app_landing_digital_services' == app.current_route %}aria-current="page"{% endif %}>
+                            {{ 'landing.menu.button.digital_services'|trans }}
+                        </a>
                     </li>
                     <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="{{ path ('app_landing_road_users') }}" target="_self" {% if 'app_landing_road_users' == app.current_route %} aria-current="page" {% endif %}>{{ 'landing.menu.button.road_users'|trans }}</a>
+                        <a class="fr-nav__link" href="{{ path('app_landing_road_users') }}" {% if 'app_landing_road_users' == app.current_route %}aria-current="page"{% endif %}>
+                            {{ 'landing.menu.button.road_users'|trans }}
+                        </a>
                     </li>
                 </ul>
             </nav>
