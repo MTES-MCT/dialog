@@ -9,7 +9,7 @@
         {{ form_start(form) }}
             {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
             {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
-            <div class="fr-fieldset" data-controller="visibility">
+            <div class="fr-fieldset" data-controller="form-reveal">
                 <div class="fr-fieldset__element">
                     {{ form_row(form.category, {
                         group_class: 'fr-select-group',
@@ -17,12 +17,12 @@
                         attr: {
                             'data-controller': 'condition',
                             'data-condition-equals-value': 'other',
-                            'data-action': 'change->condition#dispatchFromInputChange condition:yes->visibility#showTargets condition:no->visibility#hideTargets',
+                            'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
                         }
                     }) }}
                 </div>
-                <div id="otherCategoryText-output" class="fr-fieldset__element" data-visibility-target="hideable" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
-                    {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
+                    {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
                 </div>
             </div>
             {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
