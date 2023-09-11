@@ -26,10 +26,6 @@ final class Version20230907151215 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('CREATE SCHEMA topology');
-        $this->addSql('CREATE SCHEMA tiger');
-        $this->addSql('CREATE SCHEMA tiger_data');
         $this->addSql('ALTER TABLE measure DROP max_speed');
     }
 }

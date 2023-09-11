@@ -112,7 +112,9 @@
                     <div class="fr-container--fluid">
                         <div class="fr-grid-row fr-pl-3v" data-visibility-target="hideable" {% if form.type.vars.value != 'speedLimitation' %}hidden{% endif %}>
                             {{ form_row(form.maxSpeed, { group_class: 'fr-input-group', row_attr: {class: 'fr-col-7'}, attr: {class: 'fr-input'}}) }}
-                            <p class="fr-pt-6w fr-pl-3v">km/h</p>
+                            <p class="fr-pt-6w fr-pl-3v">
+                                {{ 'regulation.measure.type.speedLimitation.unit'|trans }}
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -27,6 +27,7 @@ final class MeasureTest extends TestCase
             location: $location,
             type: MeasureTypeEnum::NO_ENTRY->value,
             createdAt: $date,
+            maxSpeed: null,
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $measure->getUuid());
@@ -35,8 +36,8 @@ final class MeasureTest extends TestCase
         $this->assertSame($date, $measure->getCreatedAt());
         $this->assertEmpty($measure->getPeriods()); // Automatically set by Doctrine
 
-        $measure->update(MeasureTypeEnum::ALTERNATE_ROAD->value);
-        $this->assertSame(MeasureTypeEnum::ALTERNATE_ROAD->value, $measure->getType());
+        $measure->update(MeasureTypeEnum::SPEED_LIMITATION->value, 50);
+        $this->assertSame(MeasureTypeEnum::SPEED_LIMITATION->value, $measure->getType());
 
         $measure->addPeriod($period1);
         $measure->addPeriod($period1); // Test duplicate

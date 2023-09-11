@@ -82,8 +82,9 @@ class Measure
         $this->periods->removeElement($period);
     }
 
-    public function update(string $type): void
+    public function update(string $type, ?int $maxSpeed): void
     {
         $this->type = $type;
+        $this->maxSpeed = $maxSpeed;
     }
 }

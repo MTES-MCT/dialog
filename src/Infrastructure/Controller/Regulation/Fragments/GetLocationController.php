@@ -41,7 +41,6 @@ final class GetLocationController extends AbstractRegulationController
     public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
-
         $location = $this->queryBus->handle(new GetLocationByUuidQuery($uuid));
         if (!$location) {
             throw new NotFoundHttpException();

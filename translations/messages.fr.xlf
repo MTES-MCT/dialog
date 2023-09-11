@@ -1146,6 +1146,18 @@
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.speedLimitation.description">
+                <source>regulation.measure.type.speedLimitation.description</source>
+                <target>Vitesse Limitée à </target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.speedLimitation.title">
+                <source>regulation.measure.type.speedLimitation.title</source>
+                <target>Vitesse maximale autorisée *</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.type.speedLimitation.unit">
+                <source>regulation.measure.type.speedLimitation.unit</source>
+                <target> Km/h</target>
+            </trans-unit>
             <trans-unit id="regulation.period.days.monday">
                 <source>regulation.period.days.monday</source>
                 <target>Lundi</target>
