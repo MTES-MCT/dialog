@@ -62,6 +62,7 @@ final class SaveMeasureCommandHandler
                 location: $command->location,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
+                maxSpeed: $command->maxSpeed,
             ),
         );
 

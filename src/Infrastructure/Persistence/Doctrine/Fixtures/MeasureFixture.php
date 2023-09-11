@@ -19,6 +19,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('location3'),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-05-12'),
+            50,
         );
 
         $measure2 = new Measure(

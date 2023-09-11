@@ -96,8 +96,27 @@
         </div>
 
         <div class="app-card__content">
-            {{ form_row(form.type, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
-
+                <div class="fr-fieldset" data-controller="visibility">
+                    <div class="fr-fieldset__element">
+                        {{ form_row(form.type, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                            attr: {
+                                'data-controller': 'condition',
+                                'data-condition-equals-value': 'speedLimitation',
+                                'data-action': 
+                                'change->condition#dispatchFromInputChange condition:yes->visibility#showTargets condition:no->visibility#hideTargets',
+                            }
+                        }) }}
+                    </div>
+                    <div class="fr-container--fluid">
+                        <div class="fr-grid-row fr-pl-3v" data-visibility-target="hideable" {% if form.type.vars.value != 'speedLimitation' %}hidden{% endif %}>
+                            {{ form_row(form.maxSpeed, { group_class: 'fr-input-group', row_attr: {class: 'fr-col-7'}, attr: {class: 'fr-input'}}) }}
+                            <p class="fr-pt-6w fr-pl-3v">km/h</p>
+                        </div>
+                    </div>
+                </div>
+            
             {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index } only %}
 
             <fieldset
