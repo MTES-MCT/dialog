@@ -160,7 +160,9 @@ export class RegulationOrderPage {
 
         // Define exempted vehicles
         const exemptedVehiclesFieldset = measure.getByRole('group', { name: 'Sauf...' });
-        await exemptedVehiclesFieldset.getByRole('button', { name: 'Définir une exception' }).click();
+        const defineExceptionBtn = exemptedVehiclesFieldset.getByRole('button', { name: 'Définir une exception' })
+        await defineExceptionBtn.click();
+        await expect(defineExceptionBtn).not.toBeVisible();
         for (const vehicleType of exemptedVehicleTypes) {
             await exemptedVehiclesFieldset.getByText(vehicleType, { exact: true }).click();
         }

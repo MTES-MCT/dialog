@@ -1,8 +1,11 @@
+{% set restrictedDetailsOtherClass = 'restricted-details-other' ~ index %}
+{% set exemptedDetailsOtherClass = 'exempted-details-other' ~ index %}
+
 <fieldset
     class="fr-fieldset {% if form.allVehicles.vars.errors|length > 0 %}fr-fieldset--error{% endif %}"
     role="radiogroup"
     aria-labelledby="allVehicles-legend-{{ index }} {% if form.allVehicles.vars.errors|length > 0 %}{{ form.allVehicles.vars.id }}_error{% endif %}"
-    data-controller="visibility"
+    data-controller="form-reveal"
 >
     {{ form_label(form.allVehicles, null, { 
         element: 'legend',
@@ -16,7 +19,7 @@
                     attr: {
                         'data-controller': 'condition',
                         'data-condition-equals-value': 'no',
-                        'data-action': 'change->condition#dispatchFromInputChange condition:yes->visibility#showTargets condition:no->visibility#hideTargets',
+                        'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
                     },
                 }) }}
                 {{ form_label(option, null, { help: (option.vars.label ~ '.help')|trans }) }}
@@ -28,22 +31,17 @@
         </div>
     {% endfor %}
 
-    <div class="fr-fieldset__element fr-mt-n4v" data-visibility-target="hideable" {% if form.allVehicles.vars.value != 'no' %}hidden{% endif %}>
+    <div class="fr-fieldset__element fr-mt-n4v" data-form-reveal-target="section" {% if form.allVehicles.vars.value != 'no' %}hidden{% endif %}>
         <div class="app-card app-card--content-only app-someVehicles__form">
             <div class="app-card__content">
-                <fieldset class="fr-x-fieldset--raw" data-controller="visibility disable">
+                <fieldset class="fr-x-fieldset--raw" data-form-reveal-target="formControl">
                     <fieldset class="fr-fieldset" aria-labelledby="restrictedTypes-legend-{{ index }}">
                         {{ form_label(form.restrictedTypes, null, {
                             element: 'legend',
                             label_attr: { id: 'restrictedTypes-legend-' ~ index, class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
                         }) }}
 
-                        <ul
-                            class="fr-fieldset__item fr-tags-group"
-                            data-controller="condition"
-                            data-condition-checked-value="other"
-                            data-action="condition:yes->visibility#showTargets condition:yes->disable#enableTargets condition:no->visibility#hideTargets condition:no->disable#disableTargets"
-                        >
+                        <ul class="fr-fieldset__item fr-tags-group">
                             {% for vehicleType in form.restrictedTypes %}
                                 <li>
                                     {% set btnId = vehicleType.vars.id ~ '-btn' %}
@@ -61,12 +59,22 @@
                                             {{ vehicleType.vars.label|trans }}
                                         </button>
 
-                                        {{ form_widget(vehicleType, { attr: {
+                                        {% set widget_attr = {
                                             hidden: true,
                                             'data-chip-button-target': 'checkbox',
                                             'data-condition-target': 'checkbox',
-                                            'data-action': 'change->condition#dispatchFromCheckboxes',
-                                        } }) }}
+                                        } %}
+
+                                        {% if vehicleType.vars.value == 'other' %}
+                                            {% set widget_attr = widget_attr|merge({
+                                                'data-controller': 'condition form-reveal',
+                                                'data-form-reveal-section-outlet': '.' ~ restrictedDetailsOtherClass ~ '[data-controller~=section]',
+                                                'data-form-reveal-form-control-outlet': '.' ~ restrictedDetailsOtherClass ~ '[data-controller~=form-control]',
+                                                'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                                            }) %}
+                                        {% endif %}
+
+                                        {{ form_widget(vehicleType, { attr: widget_attr }) }}
                                     </label>
                                 </li>
                             {% endfor %}
@@ -75,11 +83,13 @@
 
                     {{ form_row(form.otherRestrictedTypeText, {
                         row_attr: {
-                            'data-visibility-target': 'hideable',
+                            'data-controller': 'section',
+                            'class': restrictedDetailsOtherClass,
                             hidden: 'other' not in form.restrictedTypes.vars.value,
                         },
                         attr: {
-                            'data-disable-target': 'switchable',
+                            'data-controller': 'form-control',
+                            'class': restrictedDetailsOtherClass,
                             disabled: 'other' not in form.restrictedTypes.vars.value,
                         },
                         group_class: 'fr-input-group',
@@ -98,7 +108,8 @@
 <fieldset
     class="fr-fieldset"
     aria-labelledby="exemptedVehicles-legend-{{ index }}"
-    data-controller="visibility"
+    data-controller="form-reveal"
+    data-form-reveal-is-permanent-button-value="false"
 >
     <legend id="exemptedVehicles-legend-{{ index }}" class="fr-fieldset__legend">
         {{ 'regulation.vehicle_set.exempted_vehicles'|trans }}
@@ -108,7 +119,8 @@
         type="button"
         id="defineExemptedVehiclesBtn-{{ index }}"
         class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line fr-x-btn--with-hint"
-        data-action="click->visibility#hideCurrentTarget click->visibility#showTargets"
+        data-form-reveal-target="button"
+        data-action="click->form-reveal#open"
         {% if form.exemptedTypes.vars.value|length > 0 %}hidden{% endif %}
     >
         {{ 'regulation.vehicle_set.exempted_vehicles.add'|trans }}
@@ -119,20 +131,15 @@
 
     <div
         class="fr-fieldset__element"
-        data-visibility-target="hideable"
+        data-form-reveal-target="section"
         {% if form.exemptedTypes.vars.value|length == 0 %}hidden{% endif %}
     >
-        <div class="app-card app-card--no-header" data-controller="disable">
-            <div
-                class="app-card__content"
-                data-controller="visibility condition disable"
-                data-condition-checked-value="other"
-                data-action="condition:yes->visibility#showTargets condition:yes->disable#enableTargets condition:no->visibility#hideTargets condition:no->disable#disableTargets"
-            >
+        <div class="app-card app-card--no-header">
+            <div class="app-card__content">
                 <fieldset
-                    id="exemptedVehicles-fieldset-{{ index }}"
                     class="fr-fieldset app-card__content"
                     aria-labelledby="exemptedTypes-legend-{{ index }}"
+                    data-form-reveal-target="formControl"
                 >
                     {{ form_label(form.exemptedTypes, null, {
                         element: 'legend',
@@ -155,12 +162,22 @@
                                     >
                                         {{ vehicleType.vars.label|trans }}
 
-                                        {{ form_widget(vehicleType, { attr: {
+                                        {% set widget_attr = {
                                             hidden: true,
                                             'data-chip-button-target': 'checkbox',
                                             'data-condition-target': 'checkbox',
-                                            'data-action': 'change->condition#dispatchFromCheckboxes',
-                                        } }) }}
+                                        } %}
+
+                                        {% if vehicleType.vars.value == 'other' %}
+                                            {% set widget_attr = widget_attr|merge({
+                                                    'data-controller': 'condition form-reveal',
+                                                    'data-form-reveal-section-outlet': '.' ~ exemptedDetailsOtherClass ~ '[data-controller~=section]',
+                                                    'data-form-reveal-form-control-outlet': '.' ~ exemptedDetailsOtherClass ~ ' [data-controller~=form-control]',
+                                                    'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                                            }) %}
+                                        {% endif %}
+
+                                        {{ form_widget(vehicleType, { attr: widget_attr }) }}
                                     </button>
                                 </label>
                             </li>
@@ -169,11 +186,12 @@
 
                     {{ form_row(form.otherExemptedTypeText, {
                         row_attr: {
-                            'data-visibility-target': 'hideable',
+                            'data-controller': 'section',
+                            'class': exemptedDetailsOtherClass,
                             hidden: 'other' not in form.exemptedTypes.vars.value
                         },
                         attr: {
-                            'data-disable-target': 'switchable',
+                            'data-controller': 'form-control',
                             disabled: 'other' not in form.exemptedTypes.vars.value,
                         },
                         group_class: 'fr-input-group',
@@ -188,9 +206,7 @@
                     class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line"
                     title="{{ 'regulation.measure.exempted_vehicles.delete'|trans }}"
                     aria-label="{{ 'regulation.measure.exempted_vehicles.delete'|trans }}"
-                    data-action="click->visibility#hideTargets click->visibility#showById click->disable#disableById"
-                    data-visibility-id-param="defineExemptedVehiclesBtn-{{ index }}"
-                    data-disable-id-param="exemptedVehicles-fieldset-{{ index }}"
+                    data-action="click->form-reveal#close"
                 ></button>
             </div>
         </div>
