@@ -12,6 +12,7 @@ use App\Domain\Regulation\Measure;
 final class SaveVehicleSetCommand implements CommandInterface
 {
     public ?bool $allVehicles;
+    public array $critairTypes;
     public array $restrictedTypes;
     public ?string $otherRestrictedTypeText;
     public array $exemptedTypes;
@@ -31,6 +32,7 @@ final class SaveVehicleSetCommand implements CommandInterface
         $this->otherRestrictedTypeText = $vehicleSet?->getOtherRestrictedTypeText();
         $this->exemptedTypes = $vehicleSet?->getExemptedTypes() ?? [];
         $this->otherExemptedTypeText = $vehicleSet?->getOtherExemptedTypeText();
+        $this->critairTypes = $vehicleSet?->getCritairTypes() ?? [];
 
         return $this;
     }
@@ -44,6 +46,10 @@ final class SaveVehicleSetCommand implements CommandInterface
 
         if (!\in_array(VehicleTypeEnum::OTHER->value, $this->restrictedTypes)) {
             $this->otherRestrictedTypeText = null;
+        }
+
+        if (!\in_array(VehicleTypeEnum::CRITAIR->value, $this->restrictedTypes)) {
+            $this->critairTypes = [];
         }
 
         if (!\in_array(VehicleTypeEnum::OTHER->value, $this->exemptedTypes)) {

@@ -131,6 +131,44 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
+    public function testBlankCritairTypes(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
+        $values['location_form']['measures'][0]['vehicleSet']['critairTypes'] = [];
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_critairTypes_error')->text());
+    }
+
+    public function testInvalidCritairTypes(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
+        $values['location_form']['measures'][0]['vehicleSet']['critairTypes'] = ['invalidCritair'];
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_vehicleSet_critairTypes_error')->text());
+    }
+
     public function testInvalidVehicleSetOtherTextsTooLong(): void
     {
         $client = $this->login();

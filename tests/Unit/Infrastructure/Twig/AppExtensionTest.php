@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Test\Unit\Infrastructure\Twig;
 
+use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Infrastructure\Adapter\StringUtils;
 use App\Infrastructure\Twig\AppExtension;
@@ -129,8 +130,7 @@ class AppExtensionTest extends TestCase
     public function testGetVehicleTypeIconName(): void
     {
         $this->assertSame('ambulance', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::AMBULANCE->value));
-        $this->assertSame('critair', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::CRITAIR_4->value));
-        $this->assertSame('critair', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::CRITAIR_5->value));
+        $this->assertSame('critair', $this->extension->getVehicleTypeIconName(CritairEnum::CRITAIR_4->value));
         $this->assertSame('', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::OTHER->value));
     }
 }

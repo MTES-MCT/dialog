@@ -1,4 +1,8 @@
-{% set restrictedDetailsOtherClass = 'restricted-details-other' ~ index %}
+{% set restrictedDetailsClass = {
+    heavyGoodsVehicle: 'restricted-details-heavyGoodsVehicle' ~ index,
+    critair: 'restricted-details-critair' ~ index,
+    other: 'restricted-details-other' ~ index,
+} %}
 {% set exemptedDetailsOtherClass = 'exempted-details-other' ~ index %}
 
 <fieldset
@@ -7,7 +11,7 @@
     aria-labelledby="allVehicles-legend-{{ index }} {% if form.allVehicles.vars.errors|length > 0 %}{{ form.allVehicles.vars.id }}_error{% endif %}"
     data-controller="form-reveal"
 >
-    {{ form_label(form.allVehicles, null, { 
+    {{ form_label(form.allVehicles, null, {
         element: 'legend',
         label_attr: { 'id': 'allVehicles-legend-' ~ index, 'class': 'fr-fieldset__legend' }
     }) }}
@@ -65,11 +69,11 @@
                                             'data-condition-target': 'checkbox',
                                         } %}
 
-                                        {% if vehicleType.vars.value == 'other' %}
+                                        {% if vehicleType.vars.value in restrictedDetailsClass|keys %}
                                             {% set widget_attr = widget_attr|merge({
                                                 'data-controller': 'condition form-reveal',
-                                                'data-form-reveal-section-outlet': '.' ~ restrictedDetailsOtherClass ~ '[data-controller~=section]',
-                                                'data-form-reveal-form-control-outlet': '.' ~ restrictedDetailsOtherClass ~ '[data-controller~=form-control]',
+                                                'data-form-reveal-section-outlet': '.' ~ restrictedDetailsClass[vehicleType.vars.value] ~ '[data-controller~=section]',
+                                                'data-form-reveal-form-control-outlet': '.' ~ restrictedDetailsClass[vehicleType.vars.value] ~ '[data-controller~=form-control]',
                                                 'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#open condition:no->form-reveal#close',
                                             }) %}
                                         {% endif %}
@@ -80,23 +84,36 @@
                             {% endfor %}
                         </ul>
                     </fieldset>
+                    <fieldset
+                        data-controller="section form-control"
+                        class="fr-fieldset {{ restrictedDetailsClass['critair'] }}"
+                        id="critairTypes"
+                        aria-labelledby="critairTypes-legend"
+                        {% if 'critair' not in form.restrictedTypes.vars.value %}hidden disabled{% endif %}
+                    >
+                        {{ form_label(form.critairTypes, null, {
+                            element: 'legend',
+                            label_attr: { id: 'critairTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
+                        }) }}
+                        {{ form_widget(form.critairTypes) }}
+                        {{ form_errors(form.critairTypes) }}
+                    </fieldset>
 
                     {{ form_row(form.otherRestrictedTypeText, {
                         row_attr: {
                             'data-controller': 'section',
-                            'class': restrictedDetailsOtherClass,
+                            'class': restrictedDetailsClass['other'],
                             hidden: 'other' not in form.restrictedTypes.vars.value,
                         },
                         attr: {
                             'data-controller': 'form-control',
-                            'class': restrictedDetailsOtherClass,
+                            'class': restrictedDetailsClass['other'],
                             disabled: 'other' not in form.restrictedTypes.vars.value,
                         },
                         group_class: 'fr-input-group',
                         widget_class: 'fr-input',
                     }) }}
                 </fieldset>
-
                 {{ form_errors(form.restrictedTypes) }}
             </div>
         </div>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -38,6 +39,11 @@ final class VehicleSetFormType extends AbstractType
                 options: $this->getRestrictedTypesOptions(),
             )
             ->add(
+                'critairTypes',
+                ChoiceType::class,
+                options: $this->getCritairTypesOptions(),
+            )
+            ->add(
                 'otherRestrictedTypeText',
                 TextType::class,
                 options: [
@@ -59,6 +65,14 @@ final class VehicleSetFormType extends AbstractType
                 ],
             )
         ;
+
+        $builder->get('critairTypes')
+            ->addModelTransformer(
+                new CallbackTransformer(
+                    transform: fn ($critairTypes) => $critairTypes ?? [CritairEnum::CRITAIR_4->value, CritairEnum::CRITAIR_5->value],
+                    reverseTransform: fn ($value) => $value,
+                ),
+            );
 
         $builder->get('allVehicles')
             ->addModelTransformer(
@@ -87,6 +101,24 @@ final class VehicleSetFormType extends AbstractType
             'help' => 'regulation.vehicle_set.restricted_types.help',
             'expanded' => true,
             'multiple' => true,
+        ];
+    }
+
+    private function getCritairTypesOptions(): array
+    {
+        $choices = [];
+
+        foreach (CritairEnum::critairCases() as $value => $case) {
+            $choices[$value] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.vehicle_set.critair',
+            'help' => 'regulation.vehicle_set.critair.help',
+            'expanded' => true,
+            'multiple' => true,
+            'required' => false,
         ];
     }
 

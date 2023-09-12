@@ -15,6 +15,7 @@ class VehicleSet
         private ?string $otherRestrictedTypeText = null,
         private array $exemptedTypes = [],
         private ?string $otherExemptedTypeText = null,
+        private ?array $critairTypes = [],
     ) {
     }
 
@@ -31,6 +32,11 @@ class VehicleSet
     public function getRestrictedTypes(): array
     {
         return $this->restrictedTypes;
+    }
+
+    public function getCritairTypes(): array
+    {
+        return $this->critairTypes ?? [];
     }
 
     public function getOtherRestrictedTypeText(): ?string
@@ -53,10 +59,12 @@ class VehicleSet
         string $otherRestrictedTypeText = null,
         array $exemptedTypes = null,
         string $otherExemptedTypeText = null,
+        array $critairTypes = null,
     ): void {
         $this->restrictedTypes = $restrictedTypes ?: [];
         $this->otherRestrictedTypeText = $otherRestrictedTypeText;
         $this->exemptedTypes = $exemptedTypes ?: [];
         $this->otherExemptedTypeText = $otherExemptedTypeText;
+        $this->critairTypes = $critairTypes ?? [];
     }
 }

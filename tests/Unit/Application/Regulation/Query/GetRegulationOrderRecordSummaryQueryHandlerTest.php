@@ -54,7 +54,11 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $vehicleSet
             ->expects(self::once())
             ->method('getRestrictedTypes')
-            ->willReturn(['heavyGoodsVehicle', 'other']);
+            ->willReturn(['heavyGoodsVehicle', 'critair', 'other']);
+        $vehicleSet
+            ->expects(self::once())
+            ->method('getCritairTypes')
+            ->willReturn(['critair2', 'critair3']);
         $vehicleSet
             ->expects(self::exactly(2))
             ->method('getOtherRestrictedTypeText')
@@ -221,6 +225,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                     [
                                         ['name' => 'heavyGoodsVehicle'],
                                         ['name' => 'Matières dangereuses', 'isOther' => true],
+                                        ['name' => 'critair2'],
+                                        ['name' => 'critair3'],
                                     ],
                                     [
                                         ['name' => 'bus'],

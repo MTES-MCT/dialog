@@ -8,6 +8,7 @@ use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
@@ -49,7 +50,15 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             $vehicleConditions = [];
 
             foreach ($row['restrictedVehicleTypes'] ?: [] as $restrictedVehicleType) {
+                if (VehicleTypeEnum::CRITAIR->value === $restrictedVehicleType) {
+                    continue;
+                }
+
                 $vehicleConditions[] = new DatexVehicleConditionView($restrictedVehicleType);
+            }
+
+            foreach ($row['restrictedCritairTypes'] ?: [] as $restrictedCritairTypes) {
+                $vehicleConditions[] = new DatexVehicleConditionView($restrictedCritairTypes);
             }
 
             foreach ($row['exemptedVehicleTypes'] ?: [] as $exemptedVehicleType) {

@@ -26,6 +26,7 @@ final class SaveVehicleSetCommandHandler
                 $command->otherRestrictedTypeText,
                 $command->exemptedTypes,
                 $command->otherExemptedTypeText,
+                $command->critairTypes,
             );
 
             return $command->vehicleSet;
@@ -39,6 +40,7 @@ final class SaveVehicleSetCommandHandler
                 $command->otherRestrictedTypeText,
                 $command->exemptedTypes,
                 $command->otherExemptedTypeText,
+                $command->critairTypes,
             ),
         );
     }
