@@ -41,7 +41,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         // Edit
-        $values['location_form']['measures'][0]['type'] = 'oneWayTraffic';
+        $values['location_form']['measures'][0]['type'] = 'speedLimitation';
+        $values['location_form']['measures'][0]['maxSpeed'] = 60;
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
         // Add
         $values['location_form']['measures'][1]['type'] = 'alternateRoad';
@@ -57,7 +58,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $this->assertSame('Circulation à sens unique tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Vitesse Limitée à 60 Km/h tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
         $this->assertSame('Circulation alternée le lundi de 08h00 à 16h00 pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
     }
 
@@ -72,18 +73,16 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-
         // Remove period
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $this->assertSame('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Vitesse Limitée à 50 Km/h tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
     }
 
     public function testRemoveMeasure(): void
