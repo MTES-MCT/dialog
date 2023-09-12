@@ -73,18 +73,30 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             null,
         );
 
+        $locationNoMeasures = new Location(
+            '06500383-ad31-7e57-8000-e080e2755bd4',
+            $this->getReference('regulationOrderNoMeasures'),
+            'Route du Grand Brossais 44260 Savenay',
+            '15',
+            'POINT(-1.935836 47.347024)',
+            '37bis',
+            'POINT(-1.930973 47.347917)',
+        );
+
         $manager->persist($location1);
         $manager->persist($location1Bis);
         $manager->persist($location1Ter);
         $manager->persist($location2);
         $manager->persist($location2Bis);
         $manager->persist($location3);
+        $manager->persist($locationNoMeasures);
         $manager->flush();
 
         $this->addReference('location1', $location1);
         $this->addReference('location2', $location2);
         $this->addReference('location2Bis', $location2Bis);
         $this->addReference('location3', $location3);
+        $this->addReference('locationNoMeasures', $locationNoMeasures);
     }
 
     public function getDependencies(): array

@@ -60,5 +60,27 @@
                 <option name="max">100</option>
             </constraint>
         </property>
+        <property name="heavyweightMaxWeight">
+            <constraint name="When">
+                <option name="expression">
+                    'heavyGoodsVehicle' in this.restrictedTypes
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">common.error.not_blank</option>
+                    </constraint>
+                </option>
+            </constraint>
+            <constraint name="PositiveOrZero"></constraint>
+        </property>
+        <property name="heavyweightMaxWidth">
+            <constraint name="PositiveOrZero"></constraint>
+        </property>
+        <property name="heavyweightMaxLength">
+            <constraint name="PositiveOrZero"></constraint>
+        </property>
+        <property name="heavyweightMaxHeight">
+            <constraint name="PositiveOrZero"></constraint>
+        </property>
     </class>
 </constraint-mapping>

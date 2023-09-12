@@ -62,6 +62,10 @@
                 <source>common.do_not_delete</source>
                 <target>Ne pas supprimer</target>
             </trans-unit>
+            <trans-unit id="common.or">
+                <source>common.or</source>
+                <target>ou</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>
@@ -173,6 +177,14 @@
             <trans-unit id="common.date.passed">
                 <source>common.date.passed</source>
                 <target>passé</target>
+            </trans-unit>
+            <trans-unit id="common.unit.tons">
+                <source>common.unit.tons</source>
+                <target>tonnes</target>
+            </trans-unit>
+            <trans-unit id="common.unit.meters">
+                <source>common.unit.meters</source>
+                <target>mètres</target>
             </trans-unit>
             <trans-unit id="accessibility.status">
                 <source>accessibility.status</source>
@@ -1242,6 +1254,26 @@
                 <source>regulation.vehicle_set.restricted_types.help</source>
                 <target>Spécifiez les véhicules pour lesquels la restriction s'applique :</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight">
+                <source>regulation.vehicle_set.heavyweightMaxWeight</source>
+                <target>Poids maximum</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight.help">
+                <source>regulation.vehicle_set.heavyweightMaxWeight.help</source>
+                <target>Spécifier le poids maximum autorisé</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.heavyweightMaxWidth">
+                <source>regulation.vehicle_set.heavyweightMaxWidth</source>
+                <target>Largeur maximum</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.heavyweightMaxLength">
+                <source>regulation.vehicle_set.heavyweightMaxLength</source>
+                <target>Longueur maximum</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.heavyweightMaxHeight">
+                <source>regulation.vehicle_set.heavyweightMaxHeight</source>
+                <target>Hauteur maximum</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.other_restricted_type_text">
                 <source>regulation.vehicle_set.other_restricted_type_text</source>
                 <target>Autres</target>
@@ -1345,6 +1377,22 @@
             <trans-unit id="regulation.vehicles.except">
                 <source>regulation.vehicles.except</source>
                 <target>sauf</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.prefix">
+                <source>regulation.vehicles.heavyweightCharacteristics.prefix</source>
+                <target>de plus de</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.suffix.width">
+                <source>regulation.vehicles.heavyweightCharacteristics.suffix.width</source>
+                <target>de large</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.suffix.length">
+                <source>regulation.vehicles.heavyweightCharacteristics.suffix.length</source>
+                <target>de long</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.suffix.height">
+                <source>regulation.vehicles.heavyweightCharacteristics.suffix.height</source>
+                <target>de haut</target>
             </trans-unit>
         </body>
     </file>

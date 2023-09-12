@@ -6,7 +6,7 @@ test.use({ storageState: 'playwright/.auth/mathieu.json' });
 test('Regulation list mobile adjustments', async ({ page }) => {
     await page.goto('/regulations');
 
-    const temporaryTabPanel = page.getByRole('tabpanel', { name: 'Temporaires (3)' });
+    const temporaryTabPanel = page.getByRole('tabpanel', { name: 'Temporaires' });
     const table = temporaryTabPanel.getByRole('table', { name: 'Arrêtés de circulation' });
 
     // "Période" and "Statut" columns and corresponding row cells are hidden

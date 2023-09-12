@@ -85,6 +85,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'restrictedVehicleTypes' => [VehicleTypeEnum::CRITAIR->value],
             'restrictedCritairTypes' => [CritairEnum::CRITAIR_3->value, CritairEnum::CRITAIR_4->value],
             'exemptedVehicleTypes' => null,
+            'heavyweightMaxWeight' => null,
+            'heavyweightMaxWidth' => null,
+            'heavyweightMaxLength' => null,
+            'heavyweightMaxHeight' => null,
         ];
         $row1bis = [
             'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
@@ -101,6 +105,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toLongitude' => $location1bis->toLongitude,
             'restrictedVehicleTypes' => [],
             'exemptedVehicleTypes' => null,
+            'heavyweightMaxWeight' => null,
+            'heavyweightMaxWidth' => null,
+            'heavyweightMaxLength' => null,
+            'heavyweightMaxHeight' => null,
             'restrictedCritairTypes' => null,
         ];
         $row2 = [
@@ -118,6 +126,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toLongitude' => $location2->toLongitude,
             'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
             'exemptedVehicleTypes' => ['bus'],
+            'heavyweightMaxWeight' => 3.5,
+            'heavyweightMaxWidth' => 2,
+            'heavyweightMaxLength' => 12,
+            'heavyweightMaxHeight' => 2.4,
             'restrictedCritairTypes' => null,
         ];
 
@@ -161,7 +173,13 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             location: $location2,
                             vehicleConditions: [
-                                new DatexVehicleConditionView('heavyGoodsVehicle'),
+                                new DatexVehicleConditionView(
+                                    'heavyGoodsVehicle',
+                                    maxWeight: 3.5,
+                                    maxWidth: 2,
+                                    maxLength: 12,
+                                    maxHeight: 2.4,
+                                ),
                                 new DatexVehicleConditionView('bus', isExempted: true),
                             ],
                         ),

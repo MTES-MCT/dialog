@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -37,6 +39,42 @@ final class VehicleSetFormType extends AbstractType
                 'restrictedTypes',
                 ChoiceType::class,
                 options: $this->getRestrictedTypesOptions(),
+            )
+            ->add(
+                'heavyweightMaxWeight',
+                NumberType::class,
+                options: [
+                    'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
+                    'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
+                    'required' => false,
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
+                ],
+            )
+            ->add(
+                'heavyweightMaxWidth',
+                NumberType::class,
+                options: [
+                    'label' => 'regulation.vehicle_set.heavyweightMaxWidth',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'heavyweightMaxLength',
+                NumberType::class,
+                options: [
+                    'label' => 'regulation.vehicle_set.heavyweightMaxLength',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'heavyweightMaxHeight',
+                NumberType::class,
+                options: [
+                    'label' => 'regulation.vehicle_set.heavyweightMaxHeight',
+                    'required' => false,
+                ],
             )
             ->add(
                 'critairTypes',
@@ -83,6 +121,15 @@ final class VehicleSetFormType extends AbstractType
                     reverseTransform: function (?string $property): ?bool {
                         return $property === null ? null : ($property === 'yes' ? true : false);
                     },
+                ),
+            );
+
+        $builder
+            ->get('heavyweightMaxWeight')
+            ->addModelTransformer(
+                new CallbackTransformer(
+                    transform: fn ($maxWeight) => $maxWeight ?? VehicleSet::DEFAULT_MAX_WEIGHT,
+                    reverseTransform: fn ($value) => $value,
                 ),
             );
     }
