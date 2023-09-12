@@ -20,7 +20,7 @@
                 </option>
             </constraint>
         </property>
-       <property name="otherRestrictedTypeText">
+        <property name="otherRestrictedTypeText">
             <constraint name="When">
                 <option name="expression">
                     'other' in this.restrictedTypes
@@ -35,7 +35,17 @@
                 <option name="max">100</option>
             </constraint>
         </property>
-       <property name="otherExemptedTypeText">
+        <property name="critairTypes">
+            <constraint name="When">
+                <option name="expression">
+                    'critair' in this.restrictedTypes
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                </option>
+            </constraint>
+        </property>
+        <property name="otherExemptedTypeText">
             <constraint name="When">
                 <option name="expression">
                     'other' in this.exemptedTypes

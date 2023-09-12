@@ -24,13 +24,17 @@ class VehicleSetView
         $restrictedTypes = [];
 
         foreach ($vehicleSet->getRestrictedTypes() as $vehicleType) {
-            if ($vehicleType !== VehicleTypeEnum::OTHER->value) {
+            if (!\in_array($vehicleType, [VehicleTypeEnum::OTHER->value, VehicleTypeEnum::CRITAIR->value])) {
                 $restrictedTypes[] = ['name' => $vehicleType];
             }
         }
 
         if ($vehicleSet->getOtherRestrictedTypeText()) {
             $restrictedTypes[] = ['name' => $vehicleSet->getOtherRestrictedTypeText(), 'isOther' => true];
+        }
+
+        foreach ($vehicleSet->getCritairTypes() as $critair) {
+            $restrictedTypes[] = ['name' => $critair];
         }
 
         $exemptedTypes = [];
