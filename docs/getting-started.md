@@ -21,8 +21,26 @@ Nous utilisons un processus de contribution classique basé sur git et des pull 
 Pour contribuer du code ou de la documentation :
 
 1. Créez une nouvelle branche dans votre dépôt git local
+
+    Par convention, le nom de branche devrait utiliser un préfixe :
+
+    * `feat/` : pour les nouvelles fonctionnalités
+    * `fix/` ou `bug/` : pour les correctifs
+    * `refactor/` : pour le refactoring (modifications du code qui améliore sa qualité sans modifier le comportement)
+    * `docs/` : pour la documentation
+    * `chore/` : pour la maintenance technique tel que la mise à jour des dépendances
+
 2. Faites vos modifications
-3. Ouvrez une PR.
+3. Créez un commit sur votre branche.
+    
+    Si la PR vise à résoudre une issue, incluez son numéro dans le message de commit.
+
+    Par exemple :
+
+    ```bash
+    git commit -m 'Improve docs for contributors' -m 'Closes #9081' 
+    ``` 
+4. Ouvrez une PR.
 
 La PR devra être relue et approuvée avant d'être mergée dans `main`.
 
@@ -30,13 +48,13 @@ Le déploiement se fait automatiquement après un merge dans `main`. Un déploie
 
 ## Prise en main des technologies utilisées
 
-Pour contribuer du code, vous allez probablement avoir besoin de vous familiariser avec les technologies utilisées dans ce dépôt. Voici quelques indications à cet effet.
+Pour contribuer au code, vous allez probablement avoir besoin de vous familiariser avec les technologies utilisées dans ce dépôt. Voici quelques indications à cet effet.
 
-**En bref** : DiaLog utilise le langage PHP avec le framework Symfony. Il n'y a pas de frontend JS séparé. À la place, DiaLog utilise des templates Twig (Twig est à PHP ce que Jinja2 est à Python) combinés aux outils de la suite Hotwire (Turbo, Stimulus) pour l'interactivité UI. Pour en savoir plus, consultez l'[ADR-003 - Environnement technique](./adr/003_technical_stack.md).
+**En bref** : DiaLog utilise le langage PHP avec le framework Symfony. Il n'y a pas de frontend JS séparé. À la place, DiaLog utilise des templates Twig combinés aux outils de la suite Hotwire (Turbo, Stimulus) pour l'interactivité UI. Pour en savoir plus, consultez l'[ADR-003 - Environnement technique](./adr/003_technical_stack.md).
 
 ### PHP et Symfony
 
-Pour démarrer avec Symfony, nous recommandons de parcourir à son rythme la [documentation Symfony](https://symfony.com/doc/current/index.html).
+Pour démarrer avec Symfony, nous recommandons de parcourir à son rythme la [documentation officielle](https://symfony.com/doc/current/index.html).
 
 Si vous avez déjà développé avec un framework "full-stack / MVC" comme Django, vous devriez vite trouver vos repères. N'hésitez pas à consulter des comparatifs, par exemple [Django vs Symfony, slant.co](https://www.slant.co/versus/1746/3758/~django_vs_symfony).
 

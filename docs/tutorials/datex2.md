@@ -12,9 +12,11 @@ DiaLog utilise ce schéma comme format d'échange de données avec les services 
 
 ## Démarrer avec le XML
 
+> Cette partie est une introduction à l'utilisation pratique de XML / XSD. Si vous êtes déjà à l'aise avec ça, vous pouvez passer directement à la partie [DATEX II](#datex-ii).
+
 On l'a dit, DATEX II est un format XML.
 
-Si, comme nous, vous aviez plutôt l'habitude d'échanger des données JSON, cela pourrait vous intimider : allez-vous devoir vous plonger dans le monde de SOAP, J2E, et autre bus MOM ? Restons calmes. Certes, DATEX II baigne dans cet environnement-là : la documentation [Developers' corner](https://docs.datex2.eu/developers/) ne mentionne que JAXB, l'outil Java pour lier son code à du XML. Mais pour nos besoins, vous n'aurez pas besoin de vous reconvertir au Java.
+Si, comme nous, vous aviez plutôt l'habitude d'échanger des données JSON, cela pourrait vous intimider : allez-vous devoir vous plonger dans le monde de SOAP, J2E, et autre bus MOM ? Certes, DATEX II baigne dans cet environnement-là : la documentation [Developers' corner](https://docs.datex2.eu/developers/) ne mentionne que JAXB, l'outil Java pour lier son code à du XML. Mais pour nos besoins, vous n'aurez pas besoin de vous reconvertir au Java.
 
 Il va en revanche vous falloir quelques **bases sur le XML**.
 
@@ -200,7 +202,7 @@ Si d'aventure vous deviez récupérer à nouveau ces schémas, voici comment pro
 * Ouvrir le [Webtool](https://webtool.datex2.eu/wizard/).
 * Dans "1. Source", choisir V3.3 DATEX II.
 * Cliquer sur "Next" jusqu'à arriver à l'écran "5. Sélection".
-* Dans "5. Selection", vérifier que seul TrafficRegulationPublication est coché, puis cliquer sur "Next".
+* Dans "5. Selection", vérifier que seul `TrafficRegulationPublication` est coché, puis cliquer sur "Next".
 * Dans "6. Options", s'assurer que XML est coché, puis cliquer sur "Next" pour télécharger le `.zip` avec les schémas XSD.
 
 ### Explorateur UML
@@ -224,21 +226,18 @@ Utiliser une réglementation `AccessRestriction` de type `noEntry`.
 
 #### Une circulation interdite dans un sens uniquement
 
-[À clarifier]
+Combiner `noEntry` à une location avec `directionOnLinearSection` :
 
-Deux possibilités pour définir un sens en particulier :
+```xml
+<implementedLocation xsi:type="SingleRoadLinearLocation">
+  <linearWithinLinearElement>
+    <!-- ... -->
+    <directionOnLinearSection>aligned</directionOnLinearSection>
+  </linearWithinLinearElement>
+</implementedLocation>
+```
 
-* SingleRoadLinearLocation (extends LinearLocation) > linearWithinLinearElement: LinearElementWithinLinear > directionOnLinearSection: DirectionEnum (aligned, opposite, bothWays, allDirections, ...) 
-* PointLocation (extends NetworkLocation) > pointAlongLinearElement: PointAlongLienarElement > directionAtPoint: DirectionEnum
-* OpenLrPointLocationReference > openlrOrientation: enum (withLineDirection, againstLineDirection, both, noOrientationOrUnknown)
-
-L'enum `DirectionEnum` ne permet de définir qu'un sens par rapport à un autre : "sens normal" ou "sens du _linearElement_"
-
-* Pour `directionOnLinearSection` et `directionAtPoint` :
-  * Par exemple, "_aligned_" signifie "_same direction as the normal direction of flow on the road network_".
-  * Mais quel est alors la "_normal direction of flow_" ?
-  * :point_right: DATEX II semble supposer une connaissance externe du réseau routier. Les GPS en disposent-ils ?
-* Pour les variantes `relative*` : "Direction of traffic flow relative to the direction in which the linear element is defined"
+Ici, "_aligned_" signifie "_same direction as the normal direction of flow on the road network_". On voit qu'il y a une ambigüité, car quel est le "sens normal de circulation" ? DATEX II semble supposer une connaissance externe du réseau routier. À voir si les GPS en disposent.
 
 #### Une circulation à sens unique
 
@@ -253,58 +252,13 @@ Utiliser une réglementation `DirectionRestriction` de type `aheadOnly`
 </trafficRegulation>
 ```
 
-#### Une circulation modifiée
-
-Le type de réglementation `AlternateRoadOrCarriagewayOrLaneLayout` définit "une réglementation où une route / voie a temporairement une autre disposition". Utile en cas de travaux par exemple.
-
-Schéma :
-
-```yaml
-trafficRegulation:
-  typeOfRegulation: # xsi:type="AlternateRoadOrCarriagewayOrLaneLayout"
-    ## This class describes a regulation where a road/carriageway/lane has temporarily another layout.
-    deviationToHardshoulder: bool # Traffic lanes move across to the right [...]
-    deviationToOtherCarrriageway: bool  # The road turns over the oncoming lane
-    mergedToOtherLane: bool # Closure of a traffic lane, two lanes to one.
-    roadOrCarriagewayOrLaneLayoutType: enum (road, lane, carriageway)
-    newLayout: LinearLocation
-```
-
 #### Des informations complémentaires sur la ou les voies concernées
 
-Dans DATEX II, les informations liées au réseau routier peuvent être spécifiées dans `PointLocation` ou `LinearLocation`
-
-```yaml
-# DATEII_3_LocationReferencing.xsd
-PointLocation | LinearLocation (extends NetworkLocation):
-  supplementaryPositionalDescription: # SupplementaryPositionalDescription
-    carriageway: # Carriageway
-      carriageway*: enum
-      originalNumberOfLanes: int?
-      lane: # Lane[]
-        - laneNumber: int?
-          laneUsage: enum? (allLanesCompleteCarriageway, leftLane, middleLane, rightLane, emergencyLane, ...)
-    roadInformation: # RoadInformation[]
-      - roadDestination: str? (ex: "Lille")
-        roadName: str? (ex: "Autoroute du Nord")
-        roadNumber: str? (ex: "A1")
-```
+Utiliser `supplementaryPositionalDescription` dans une `LinearLocation`, en particulier les champs `carriageway` et `roadInformation` et leurs sous-champs
 
 #### Une rue où s'applique une réglementation
 
 À partir d'un nom de rue, numéro de début, numéro de fin
-
-* Là où il faut définir une `LocationReference`, utiliser la variante `SingleRoadLinearLocation` avec `.linearWithinLinearElement` (extends SingleRoadLinearElement, extends LinearElement, extends NetworkLocation, extends Location)
-  * Indiquer le nom de la rue dans `.linearElement.roadName`
-  * Indiquer (le cas échéant) la direction concernée par rapport au sens défini par `.fromPoint -> .toPoint` dans `.directionRelativeOnLinearSection`
-  * Indiquer un début dans `.fromPoint`
-    * Utiliser le type `DistanceFromLinearElementReferent`
-    * Géocoder le numéro de début (obtenir ses coordonnées GPS lat-lon)
-    * Définir `.fromReferent` 
-      * Placer les coodonnées GPS dans `.pointCoordinates`
-    * Définir `.distanceAlong: 0` (0 mètres à partir du point ainsi défini, c'est-à-dire le point lui-même)
-  * Indiquer une fin dans `.toPoint`, même format que `fromPoint`
-* Ajouter d'éventuelles informations "humaines" (nom de rue, identifiant de rue (D123, N122, etc), numéros de début et de fin) dans `.supplementaryPositionalDescription.roadInformation[].roadName/Number`
 
 **Exemple**
 
@@ -315,7 +269,7 @@ PointLocation | LinearLocation (extends NetworkLocation):
     <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
       <loc:distanceAlong>0</loc:distanceAlong>
       <loc:fromReferent>
-        <!-- DATEX II exige un identifiant unique sur ce segment, on utilise 'lat,lon' -->
+        <!-- DATEX II exige un identifiant unique sur ce segment, on peut utiliser 'lat,lon' -->
         <loc:referentIdentifier>47.366334,-1.944703</loc:referentIdentifier>
         <loc:referentType>referenceMarker</loc:referentType>
         <loc:pointCoordinates>
@@ -341,7 +295,7 @@ PointLocation | LinearLocation (extends NetworkLocation):
 
 #### Une description humaine des lieux
 
-Par exemple, "Au coin de la pharmacie", ou "À partir du  parking à vélo"
+Par exemple, "Au coin de la pharmacie", ou "À partir du parking à vélo"
 
 C'est possible avec le champ `locationDescription (String)` de `SupplementaryPositionalDescription`.
 
