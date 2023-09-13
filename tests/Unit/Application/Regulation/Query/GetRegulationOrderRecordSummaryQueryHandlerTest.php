@@ -71,6 +71,22 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('getOtherExemptedTypeText')
             ->willReturn('Convois exceptionnels');
+        $vehicleSet
+            ->expects(self::exactly(2))
+            ->method('getHeavyweightMaxWeight')
+            ->willReturn(3.5);
+        $vehicleSet
+            ->expects(self::exactly(2))
+            ->method('getHeavyweightMaxWidth')
+            ->willReturn(2.0);
+        $vehicleSet
+            ->expects(self::exactly(1))
+            ->method('getHeavyweightMaxLength')
+            ->willReturn(null);
+        $vehicleSet
+            ->expects(self::exactly(2))
+            ->method('getHeavyweightMaxHeight')
+            ->willReturn(2.4);
 
         $period1 = $this->createMock(Period::class);
         $period1
@@ -232,6 +248,11 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                         ['name' => 'bus'],
                                         ['name' => 'pedestrians'],
                                         ['name' => 'Convois exceptionnels', 'isOther' => true],
+                                    ],
+                                    [
+                                        ['name' => 'weight', 'value' => 3.5, 'unit' => 'tons', 'suffix' => false],
+                                        ['name' => 'width', 'value' => 2, 'unit' => 'meters', 'suffix' => true],
+                                        ['name' => 'height', 'value' => 2.4, 'unit' => 'meters', 'suffix' => true],
                                     ],
                                 ),
                             ),

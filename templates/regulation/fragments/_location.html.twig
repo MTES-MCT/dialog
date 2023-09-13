@@ -25,7 +25,11 @@
                     <li>
                         {{ ('regulation.measure.type.' ~ measure.type)|trans }}
                         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
-                        {% include 'regulation/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
+                        {% include 'regulation/_vehicle_set.html.twig' with {
+                            restrictedTypes: measure.vehicleSet.restrictedTypes,
+                            exemptedTypes: measure.vehicleSet.exemptedTypes,
+                            heavyweightCharacteristics: measure.vehicleSet.heavyweightCharacteristics,
+                        } only %}
                     </li>
                 {% endfor %}
             </ul>

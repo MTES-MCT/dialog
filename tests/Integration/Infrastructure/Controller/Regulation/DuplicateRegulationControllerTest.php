@@ -29,7 +29,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Paris 18e Arrondissement', $location->filter('h3')->text());
         $this->assertSame('Paris 18e Arrondissement (75018)', $location->filter('li')->eq(0)->text());
         $this->assertSame('Circulation alternée tous les jours pour tous les véhicules', $location->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite le lundi de 08h00 à 22h00 pour tous les véhicules', $location->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation interdite le lundi de 08h00 à 22h00 pour les poids lourds de plus de 3.5 tonnes', $location->filter('li')->eq(2)->text());
     }
 
     public function testWithoutLocations(): void
@@ -45,15 +45,15 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
     }
 
-    public function testWithoutRestrictions(): void
+    public function testWithoutMeasures(): void
     {
         $client = $this->login();
-        $crawler = $client->request('POST', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/duplicate', [
+        $crawler = $client->request('POST', '/regulations/0650037d-3e90-7a99-8000-a2099e71ae4a/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $crawler = $client->followRedirect();
 
-        $this->assertSame('Arrêté temporaire FO2/2023 (copie)', $crawler->filter('h2')->text());
+        $this->assertSame('Arrêté temporaire FO14/2023 (copie)', $crawler->filter('h2')->text());
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
     }
 

@@ -9,6 +9,10 @@
     <field name="otherRestrictedTypeText" type="string" column="other_restricted_type_text" nullable="true" length="100"/>
     <field name="exemptedTypes" type="array" column="exempted_types" nullable="false" />
     <field name="otherExemptedTypeText" type="string" column="other_exempted_type_text" nullable="true" length="100"/>
+    <field name="heavyweightMaxWeight" type="float" column="heavyweight_max_weight" nullable="true" />
+    <field name="heavyweightMaxWidth" type="float" column="heavyweight_max_width" nullable="true" />
+    <field name="heavyweightMaxLength" type="float" column="heavyweight_max_length" nullable="true" />
+    <field name="heavyweightMaxHeight" type="float" column="heavyweight_max_height" nullable="true" />
     <one-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="vehicleSet">
       <join-column name="measure_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>

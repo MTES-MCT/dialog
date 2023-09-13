@@ -12,13 +12,14 @@ class VehicleSetView
     public function __construct(
         public readonly array $restrictedTypes,
         public readonly array $exemptedTypes,
+        public readonly array $heavyweightCharacteristics,
     ) {
     }
 
     public static function fromEntity(?VehicleSet $vehicleSet): self
     {
         if (!$vehicleSet) {
-            return new self([], []);
+            return new self([], [], []);
         }
 
         $restrictedTypes = [];
@@ -49,6 +50,48 @@ class VehicleSetView
             $exemptedTypes[] = ['name' => $vehicleSet->getOtherExemptedTypeText(), 'isOther' => true];
         }
 
-        return new self($restrictedTypes, $exemptedTypes);
+        $heavyweightCharacteristics = [];
+
+        if ($vehicleSet->getHeavyweightMaxWeight()) {
+            $heavyweightCharacteristics[] = [
+                'name' => 'weight',
+                'value' => $vehicleSet->getHeavyweightMaxWeight(),
+                'unit' => 'tons',
+                'suffix' => false,
+            ];
+        }
+
+        if ($vehicleSet->getHeavyweightMaxWidth()) {
+            $heavyweightCharacteristics[] = [
+                'name' => 'width',
+                'value' => $vehicleSet->getHeavyweightMaxWidth(),
+                'unit' => 'meters',
+                'suffix' => true,
+            ];
+        }
+
+        if ($vehicleSet->getHeavyweightMaxLength()) {
+            $heavyweightCharacteristics[] = [
+                'name' => 'length',
+                'value' => $vehicleSet->getHeavyweightMaxLength(),
+                'unit' => 'meters',
+                'suffix' => true,
+            ];
+        }
+
+        if ($vehicleSet->getHeavyweightMaxHeight()) {
+            $heavyweightCharacteristics[] = [
+                'name' => 'height',
+                'value' => $vehicleSet->getHeavyweightMaxHeight(),
+                'unit' => 'meters',
+                'suffix' => true,
+            ];
+        }
+
+        return new self(
+            $restrictedTypes,
+            $exemptedTypes,
+            $heavyweightCharacteristics,
+        );
     }
 }

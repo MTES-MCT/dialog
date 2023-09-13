@@ -17,6 +17,10 @@ final class DatexVehicleConditionView
 
     public function __construct(
         string $vehicleType,
+        public readonly ?float $maxWeight = null,
+        public readonly ?float $maxWidth = null,
+        public readonly ?float $maxLength = null,
+        public readonly ?float $maxHeight = null,
         public readonly bool $isExempted = false,
     ) {
         switch ($vehicleType) {
