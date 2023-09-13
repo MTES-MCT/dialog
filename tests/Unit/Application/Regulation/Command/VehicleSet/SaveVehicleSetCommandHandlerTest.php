@@ -43,10 +43,11 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                     new VehicleSet(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        restrictedTypes: [VehicleTypeEnum::CRITAIR->value],
+                        restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::CRITAIR->value],
                         otherRestrictedTypeText: null,
-                        exemptedTypes: ['ambulance'],
+                        exemptedTypes: [VehicleTypeEnum::AMBULANCE->value],
                         otherExemptedTypeText: null,
+                        heavyweightMaxWeight: 3.5,
                         critairTypes: [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value],
                     ),
                 ),
@@ -61,8 +62,9 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command = new SaveVehicleSetCommand();
         $command->measure = $measure;
         $command->allVehicles = false;
-        $command->restrictedTypes = [VehicleTypeEnum::CRITAIR->value];
-        $command->exemptedTypes = ['ambulance'];
+        $command->restrictedTypes = [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::CRITAIR->value];
+        $command->exemptedTypes = [VehicleTypeEnum::AMBULANCE->value];
+        $command->heavyweightMaxWeight = 3.5;
         $command->critairTypes = [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value];
 
         $result = $handler($command);
@@ -85,6 +87,10 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                 'Matières dangereuses',
                 ['bus'],
                 null,
+                3.5,
+                2,
+                12,
+                2.4,
                 [],
             );
 
@@ -103,7 +109,149 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['bus'];
         $command->otherExemptedTypeText = null;
+        $command->heavyweightMaxWeight = 3.5;
+        $command->heavyweightMaxWidth = 2;
+        $command->heavyweightMaxLength = 12;
+        $command->heavyweightMaxHeight = 2.4;
         $command->critairTypes = [];
+
+        $result = $handler($command);
+
+        $this->assertSame($vehicleSet, $result);
+    }
+
+    public function testResetRestrictionsAllVehicles(): void
+    {
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $vehicleSet = $this->createMock(VehicleSet::class);
+        $vehicleSet
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                [],
+                null,
+                ['other'],
+                'Other exempted',
+                null,
+                null,
+                null,
+                null,
+                [],
+            );
+
+        $this->vehicleSetRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveVehicleSetCommandHandler(
+            $this->idFactory,
+            $this->vehicleSetRepository,
+        );
+
+        $command = new SaveVehicleSetCommand($vehicleSet);
+        $command->allVehicles = true;
+        $command->restrictedTypes = [VehicleTypeEnum::OTHER->value];
+        $command->otherRestrictedTypeText = 'Other restriction';
+        $command->exemptedTypes = [VehicleTypeEnum::OTHER->value];
+        $command->otherExemptedTypeText = 'Other exempted';
+        $command->heavyweightMaxWeight = 3.5;
+        $command->heavyweightMaxWidth = 2;
+        $command->heavyweightMaxLength = 12;
+        $command->heavyweightMaxHeight = 2.4;
+
+        $result = $handler($command);
+
+        $this->assertSame($vehicleSet, $result);
+    }
+
+    public function testResetHeavyweightCharacteristicsHeavyGoodsVehicleNotRestricted(): void
+    {
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $vehicleSet = $this->createMock(VehicleSet::class);
+        $vehicleSet
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                ['other'],
+                'Matières dangereuses',
+                ['bus'],
+                null,
+                null,
+                null,
+                null,
+                null,
+                [],
+            );
+
+        $this->vehicleSetRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveVehicleSetCommandHandler(
+            $this->idFactory,
+            $this->vehicleSetRepository,
+        );
+
+        $command = new SaveVehicleSetCommand($vehicleSet);
+        $command->allVehicles = false;
+        $command->restrictedTypes = ['other']; // heavyGoodsVehicle not included
+        $command->otherRestrictedTypeText = 'Matières dangereuses';
+        $command->exemptedTypes = ['bus'];
+        $command->otherExemptedTypeText = null;
+        $command->heavyweightMaxWeight = 3.5;
+        $command->heavyweightMaxWidth = 2;
+        $command->heavyweightMaxLength = 12;
+        $command->heavyweightMaxHeight = 2.4;
+
+        $result = $handler($command);
+
+        $this->assertSame($vehicleSet, $result);
+    }
+
+    public function testResetHeavyweightCharacteristicsIfZero(): void
+    {
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $vehicleSet = $this->createMock(VehicleSet::class);
+        $vehicleSet
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                ['heavyGoodsVehicle'],
+                null,
+                [],
+                null,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                [],
+            );
+
+        $this->vehicleSetRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveVehicleSetCommandHandler(
+            $this->idFactory,
+            $this->vehicleSetRepository,
+        );
+
+        $command = new SaveVehicleSetCommand($vehicleSet);
+        $command->allVehicles = false;
+        $command->restrictedTypes = ['heavyGoodsVehicle'];
+        $command->heavyweightMaxWeight = 0;
+        $command->heavyweightMaxWidth = 0.0;
+        $command->heavyweightMaxLength = -0;
+        $command->heavyweightMaxHeight = -0.0;
 
         $result = $handler($command);
 
@@ -124,6 +272,10 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                 ['heavyGoodsVehicle', 'other'],
                 'Matières dangereuses',
                 ['bus'],
+                null,
+                null,
+                null,
+                null,
                 null,
                 [],
             );

@@ -138,6 +138,33 @@
                                                 </com:emissions>
                                             {% else %}
                                                 <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                                                {% if vehicle.type == 'heavyGoodsVehicle' %}
+                                                    {% if vehicle.maxWeight %}
+                                                        <com:grossWeightCharacteristic>
+                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                            <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
+                                                            <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                                                        </com:grossWeightCharacteristic>
+                                                    {% endif %}
+                                                    {% if vehicle.maxWidth %}
+                                                        <com:widthCharacteristic>
+                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                            <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
+                                                        </com:widthCharacteristic>
+                                                    {% endif %}
+                                                    {% if vehicle.maxLength %}
+                                                        <com:lengthCharacteristic>
+                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                            <com:vehicleLength>{{ vehicle.maxLength }}</com:vehicleLength>
+                                                        </com:lengthCharacteristic>
+                                                    {% endif %}
+                                                    {% if vehicle.maxHeight %}
+                                                        <com:heightCharacteristic>
+                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                            <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
+                                                        </com:heightCharacteristic>
+                                                    {% endif %}
+                                                {% endif %}
                                             {% endif %}
                                         </vehicleCharacteristics>
                                     </conditions>

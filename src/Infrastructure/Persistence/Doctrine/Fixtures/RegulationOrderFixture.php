@@ -59,11 +59,21 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2023-03-15'),
         );
 
+        $regulationOrderNoMeasures = new RegulationOrder(
+            uuid: '0650037e-8f8e-7f66-8000-c8ebe51493b9',
+            identifier: 'FO14/2023',
+            description: 'No measures',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            startDate: new \DateTimeImmutable('2023-01-13'),
+            endDate: new \DateTimeImmutable('2023-01-15'),
+        );
+
         $manager->persist($regulationOrder);
         $manager->persist($regulationOrder2);
         $manager->persist($regulationOrder3);
         $manager->persist($regulationOrder4);
         $manager->persist($regulationOrder5);
+        $manager->persist($regulationOrderNoMeasures);
         $manager->flush();
 
         $this->addReference('regulationOrder', $regulationOrder);
@@ -71,5 +81,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('regulationOrder3', $regulationOrder3);
         $this->addReference('regulationOrder4', $regulationOrder4);
         $this->addReference('regulationOrder5', $regulationOrder5);
+        $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
     }
 }

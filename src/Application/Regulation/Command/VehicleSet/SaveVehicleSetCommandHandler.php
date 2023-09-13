@@ -18,7 +18,7 @@ final class SaveVehicleSetCommandHandler
 
     public function __invoke(SaveVehicleSetCommand $command): VehicleSet
     {
-        $command->cleanTypes();
+        $command->clean();
 
         if ($command->vehicleSet) {
             $command->vehicleSet->update(
@@ -26,6 +26,10 @@ final class SaveVehicleSetCommandHandler
                 $command->otherRestrictedTypeText,
                 $command->exemptedTypes,
                 $command->otherExemptedTypeText,
+                $command->heavyweightMaxWeight,
+                $command->heavyweightMaxWidth,
+                $command->heavyweightMaxLength,
+                $command->heavyweightMaxHeight,
                 $command->critairTypes,
             );
 
@@ -40,6 +44,10 @@ final class SaveVehicleSetCommandHandler
                 $command->otherRestrictedTypeText,
                 $command->exemptedTypes,
                 $command->otherExemptedTypeText,
+                $command->heavyweightMaxWeight,
+                $command->heavyweightMaxWidth,
+                $command->heavyweightMaxLength,
+                $command->heavyweightMaxHeight,
                 $command->critairTypes,
             ),
         );

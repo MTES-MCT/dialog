@@ -99,8 +99,8 @@ export class RegulationOrderPage {
         await measure.getByText('Tous les véhicules', { exact: true }).check();
 
         // Advanced vehicles options are not shown
-        await expect(measure.getByLabel('Poids lourds', { exact: true })).not.toBeVisible(); // Restricted
-        await expect(measure.getByLabel('Bus', { exact: true })).not.toBeVisible(); // Exempted
+        await expect(measure.getByLabel('Types de véhicules concernés', { exact: true })).not.toBeVisible(); // Restricted
+        await expect(measure.getByLabel('Indiquez les exceptions à la restriction', { exact: true })).not.toBeVisible(); // Exempted
     }
 
     /**
@@ -148,15 +148,20 @@ export class RegulationOrderPage {
         const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
 
         // Define restricted vehicles
-        const restrictedVehiclesField = measure.getByRole('radiogroup', { name: 'Véhicules concernés' });
-        await restrictedVehiclesField.getByText('Certains véhicules', { exact: true }).click();
+        const restrictedVehiclesFieldset = measure.getByRole('radiogroup', { name: 'Véhicules concernés' });
+        await restrictedVehiclesFieldset.getByText('Certains véhicules', { exact: true }).click();
         for (const vehicleType of restrictedVehicleTypes) {
-            await restrictedVehiclesField.getByText(vehicleType, { exact: true }).click();
+            await restrictedVehiclesFieldset.getByLabel('Types de véhicules concernés').getByLabel(vehicleType, { exact: true }).click();
         }
-        const otherRestrictedVehicleTypeField = restrictedVehiclesField.getByRole('textbox', { name: 'Autres' });
+        const otherRestrictedVehicleTypeField = restrictedVehiclesFieldset.getByRole('textbox', { name: 'Autres' });
         await expect(otherRestrictedVehicleTypeField).not.toBeVisible();
-        await restrictedVehiclesField.getByLabel('Autres', { exact: true }).click();
+        await restrictedVehiclesFieldset.getByLabel('Autres', { exact: true }).click();
         await otherRestrictedVehicleTypeField.fill(otherRestrictedVehicleType);
+
+        if (restrictedVehicleTypes.includes('Poids lourds')) {
+            await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
+            await restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' }).fill('2,4');
+        }
 
         // Define exempted vehicles
         const exemptedVehiclesFieldset = measure.getByRole('group', { name: 'Sauf...' });
@@ -176,10 +181,16 @@ export class RegulationOrderPage {
         // Check changes were saved by inspecting the edit view
         await this._beginEditLocation(location);
         for (const vehicleType of restrictedVehicleTypes) {
-            expect(await restrictedVehiclesField.getByText(vehicleType, { exact: true }).getAttribute('aria-pressed')).toBe('true');
+            expect(await restrictedVehiclesFieldset.getByLabel('Types de véhicules concernés').getByText(vehicleType, { exact: true }).getAttribute('aria-pressed')).toBe('true');
         }
-        expect(await restrictedVehiclesField.getByLabel('Autres', { exact: true }).getAttribute('aria-pressed')).toBe('true');
-        await expect(restrictedVehiclesField.getByRole('textbox', { name: 'Autres' })).toHaveValue(otherRestrictedVehicleType);
+        expect(await restrictedVehiclesFieldset.getByLabel('Autres', { exact: true }).getAttribute('aria-pressed')).toBe('true');
+        await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Autres' })).toHaveValue(otherRestrictedVehicleType);
+
+        if (restrictedVehicleTypes.includes('Poids lourds')) {
+            await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
+            await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' })).toHaveValue('2,4');
+        }
+
         for (const vehicleType of exemptedVehicleTypes) {
             expect(await exemptedVehiclesFieldset.getByText(vehicleType, { exact: true }).getAttribute('aria-pressed')).toBe('true');
         }

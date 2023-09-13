@@ -7,15 +7,15 @@ test.describe('Regulation list', () => {
     test('Tabs', async ({ page }) => {
         await page.goto('/regulations');
 
-        const temporaryTab = page.getByRole('tab', { name: 'Temporaires (3)' })
+        const temporaryTab = page.getByRole('tab', { name: 'Temporaires' })
         await temporaryTab.waitFor();
         expect(temporaryTab).toHaveAttribute('aria-selected', 'true');
-        const permanentTab = page.getByRole('tab', { name: 'Permanents (1)' });
+        const permanentTab = page.getByRole('tab', { name: 'Permanents' });
         await permanentTab.waitFor();
         expect(permanentTab).toHaveAttribute('aria-selected', 'false');
 
-        const temporaryTabPanel = page.getByRole('tabpanel', { name: 'Temporaires (3)' });
-        const permanentTabPanel = page.getByRole('tabpanel', { name: 'Permanents (1)' });
+        const temporaryTabPanel = page.getByRole('tabpanel', { name: 'Temporaires' });
+        const permanentTabPanel = page.getByRole('tabpanel', { name: 'Permanents' });
         await expect(temporaryTabPanel).toBeVisible();
         await expect(permanentTabPanel).not.toBeVisible();
 

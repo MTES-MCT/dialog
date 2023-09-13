@@ -101,6 +101,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'v.restrictedTypes as restrictedVehicleTypes',
                 'v.critairTypes as restrictedCritairTypes',
                 'v.exemptedTypes as exemptedVehicleTypes',
+                'v.heavyweightMaxWeight',
+                'v.heavyweightMaxWidth',
+                'v.heavyweightMaxLength',
+                'v.heavyweightMaxHeight',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')

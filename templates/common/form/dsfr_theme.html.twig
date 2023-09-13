@@ -26,7 +26,16 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 
   <div {% with {attr: row_attr|merge({class: row_class} )} %} {{ block('attributes') }} {% endwith %}>
     {{- form_label(form) -}}
-    {{- form_widget(form, widget_attr) -}}
+
+    {%- if widget_suffix is defined -%}
+      <div class="app-widget--suffix">
+        {{- form_widget(form, widget_attr) -}}
+        {{- widget_suffix -}}
+      </div>
+    {%- else -%}
+        {{- form_widget(form, widget_attr) -}}
+    {%- endif -%}
+
     {{- form_errors(form) -}}
   </div>
 {% endblock form_row %}

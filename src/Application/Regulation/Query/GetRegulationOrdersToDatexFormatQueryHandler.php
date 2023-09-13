@@ -54,7 +54,13 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     continue;
                 }
 
-                $vehicleConditions[] = new DatexVehicleConditionView($restrictedVehicleType);
+                $vehicleConditions[] = new DatexVehicleConditionView(
+                    vehicleType: $restrictedVehicleType,
+                    maxWeight: $row['heavyweightMaxWeight'],
+                    maxWidth: $row['heavyweightMaxWidth'],
+                    maxLength: $row['heavyweightMaxLength'],
+                    maxHeight: $row['heavyweightMaxHeight'],
+                );
             }
 
             foreach ($row['restrictedCritairTypes'] ?: [] as $restrictedCritairTypes) {

@@ -181,6 +181,16 @@ ul.fr-x-list--checkmarks > li::marker {
     }
 }
 
+.fr-x-max-w-32w {
+    max-width: calc(32 * 0.5rem);
+}
+
+.app-widget--suffix {
+    display: flex;
+    align-items: flex-end;
+    column-gap: 0.5rem;
+}
+
 .app-regulation-table {
     // Take minimum amount of space on all screen sizes
     .app-regulation-table__identifier {

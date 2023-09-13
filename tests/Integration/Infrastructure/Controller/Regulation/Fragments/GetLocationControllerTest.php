@@ -34,7 +34,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertSame(
-            'Circulation interdite le jeudi de 08h00 à 22h00 pour les poids lourds, crit\'air 4 et crit\'air 5, sauf piétons, véhicules sanitaires et convois exceptionnels',
+            'Circulation interdite le jeudi de 08h00 à 22h00 pour les poids lourds de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules sanitaires et convois exceptionnels',
             $crawler->filter('li')->eq(2)->text(),
         );
     }
