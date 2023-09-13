@@ -18,7 +18,7 @@ Vous arrivez à accéder à un DiaLog local sur http://localhost:8000 ? Bravo !
 
 Nous utilisons un processus de contribution classique basé sur git et des pull requests (PR).
 
-Pour contribuer du code ou de la documentation :
+Pour contribuer au code ou à la documentation :
 
 1. Créez une nouvelle branche dans votre dépôt git local
 
