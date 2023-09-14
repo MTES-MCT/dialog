@@ -56,8 +56,6 @@ class VehicleSetView
             $heavyweightCharacteristics[] = [
                 'name' => 'weight',
                 'value' => $vehicleSet->getHeavyweightMaxWeight(),
-                'unit' => 'tons',
-                'suffix' => false,
             ];
         }
 
@@ -65,8 +63,6 @@ class VehicleSetView
             $heavyweightCharacteristics[] = [
                 'name' => 'width',
                 'value' => $vehicleSet->getHeavyweightMaxWidth(),
-                'unit' => 'meters',
-                'suffix' => true,
             ];
         }
 
@@ -74,8 +70,6 @@ class VehicleSetView
             $heavyweightCharacteristics[] = [
                 'name' => 'length',
                 'value' => $vehicleSet->getHeavyweightMaxLength(),
-                'unit' => 'meters',
-                'suffix' => true,
             ];
         }
 
@@ -83,8 +77,6 @@ class VehicleSetView
             $heavyweightCharacteristics[] = [
                 'name' => 'height',
                 'value' => $vehicleSet->getHeavyweightMaxHeight(),
-                'unit' => 'meters',
-                'suffix' => true,
             ];
         }
 

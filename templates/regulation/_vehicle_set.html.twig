@@ -8,8 +8,7 @@
             {%- if vehicleType.name == 'heavyGoodsVehicle' and heavyweightCharacteristics|length > 0 %}
                 {{ 'regulation.vehicles.heavyweightCharacteristics.prefix'|trans }}
                 {% for item in heavyweightCharacteristics %}
-                    {{ item.value }} {{ ('common.unit.' ~ item.unit)|trans -}}
-                    {%- if item.suffix %} {{ ('regulation.vehicles.heavyweightCharacteristics.suffix.' ~ item.name)|trans }}{% endif %}
+                    {{ ('regulation.vehicles.heavyweightCharacteristics.' ~ item.name)|trans({'%value%': item.value}) }}
                     {%- if loop.revindex0 == 1 %} {{ 'common.or'|trans }} {% elseif not loop.last %}, {% endif -%}
                 {% endfor -%}
             {% endif -%}
