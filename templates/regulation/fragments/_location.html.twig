@@ -23,9 +23,8 @@
                 {% endif %}
                 {% for measure in location.measures %}
                     <li>
-                        {% if measure.maxSpeed != null %}
-                            {{ 'regulation.measure.type.speedLimitation.description'|trans }}
-                            {{ measure.maxSpeed }} {{ 'regulation.measure.type.speedLimitation.unit'|trans }}
+                        {% if measure.type == 'speedLimitation' %}
+                            {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
                         {% else %}
                             {{ ('regulation.measure.type.' ~ measure.type)|trans }}
                         {% endif %}

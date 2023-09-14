@@ -31,9 +31,8 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $measure3 = new Measure(
             'e48cbfff-bb04-428e-9cb0-22456fd7aab6',
             $this->getReference('location1'),
-            MeasureTypeEnum::SPEED_LIMITATION->value,
+            MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-05-11'),
-            50,
         );
 
         $measure4 = new Measure(

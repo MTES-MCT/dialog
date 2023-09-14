@@ -95,29 +95,34 @@
             </button>
         </div>
 
-        <div class="app-card__content">
-                <div class="fr-fieldset" data-controller="form-reveal">
-                    <div class="fr-fieldset__element">
-                        {{ form_row(form.type, {
-                            group_class: 'fr-select-group',
-                            widget_class: 'fr-select',
-                            attr: {
-                                'data-controller': 'condition',
-                                'data-condition-equals-value': 'speedLimitation',
-                                'data-action': 
-                                'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
-                            }
-                        }) }}
-                    </div>
-                    <div class="fr-container--fluid">
-                        <div class="fr-grid-row fr-pl-3v" data-form-reveal-target="section" {% if form.type.vars.value != 'speedLimitation' %}hidden{% endif %}>
-                            {{ form_row(form.maxSpeed, { group_class: 'fr-input-group', row_attr: {class: 'fr-col-7'}, attr: {class: 'fr-input'}}) }}
-                            <p class="fr-pt-6w fr-pl-3v">
-                                {{ 'regulation.measure.type.speedLimitation.unit'|trans }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <div clss="app-card__content">
+            <div data-controller="form-reveal">
+                {{ form_row(form.type, {
+                    group_class: 'fr-select-group',
+                    widget_class: 'fr-select',
+                    row_attr: {
+                        'data-controller': 'condition',
+                        'data-condition-equals-value': 'speedLimitation',
+                        'data-action': 
+                        'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                    },
+                }) }}
+
+                {{ form_row(form.maxSpeed, { 
+                    group_class: 'fr-input-group',
+                    widget_class: 'fr-input',
+                    row_attr: {
+                        'data-form-reveal-target': 'section',
+                        hidden: form.type.vars.value != 'speedLimitation',
+                        'class': 'fr-pb-3w',
+                    },
+                    attr: {
+                        'class': 'fr-x-max-w-32w fr-mt-1w',
+                        'data-form-reveal-target': 'form-control',
+                    },
+                    widget_suffix: 'regulation.measure.maxSpeed.unit'|trans
+                }) }}
+            </div>
             
             {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index } only %}
 

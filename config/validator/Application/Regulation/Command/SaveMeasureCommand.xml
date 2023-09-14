@@ -12,6 +12,17 @@
                 <value>speedLimitation</value>
             </constraint>
         </property>
+        <property name="maxSpeed">
+            <constraint name="When">
+                <option name="expression">
+                    this.type == 'speedLimitation'
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
+            <constraint name="Positive"></constraint>
+        </property>
        <property name="vehicleSet">
             <constraint name="Valid"/>
         </property>

@@ -34,10 +34,12 @@ final class MeasureTest extends TestCase
         $this->assertSame($location, $measure->getLocation());
         $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $measure->getType());
         $this->assertSame($date, $measure->getCreatedAt());
+        $this->assertNull($measure->getMaxSpeed());
         $this->assertEmpty($measure->getPeriods()); // Automatically set by Doctrine
 
         $measure->update(MeasureTypeEnum::SPEED_LIMITATION->value, 50);
         $this->assertSame(MeasureTypeEnum::SPEED_LIMITATION->value, $measure->getType());
+        $this->assertSame(50, $measure->getMaxSpeed());
 
         $measure->addPeriod($period1);
         $measure->addPeriod($period1); // Test duplicate

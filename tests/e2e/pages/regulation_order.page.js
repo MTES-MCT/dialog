@@ -85,9 +85,9 @@ export class RegulationOrderPage {
 
     /**
      * @param {Locator} location
-     * @param {{expectedIndex: number, expectedPosition: number, restrictionType: string, isAlreadyEditing?: boolean}} options
+     * @param {{expectedIndex: number, expectedPosition: number, restrictionType: string, isAlreadyEditing?: boolean, maxSpeed?: string}} options
      */
-    async _doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, isAlreadyEditing = false }) {
+    async _doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed, isAlreadyEditing = false }) {
         await location.getByRole('button', { name: 'Ajouter une restriction' }).click();
 
         const measure = location.getByTestId('measure-list').getByRole('listitem').last();
@@ -96,6 +96,11 @@ export class RegulationOrderPage {
         const restrictionTypeField = measure.getByRole('combobox', { name: 'Type de restriction' });
         expect(await restrictionTypeField.getAttribute('name')).toBe(`location_form[measures][${expectedIndex}][type]`);
         await restrictionTypeField.selectOption({ label: restrictionType });
+        
+        if (maxSpeed) {
+            await measure.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
+        }
+
         await measure.getByText('Tous les véhicules', { exact: true }).check();
 
         // Advanced vehicles options are not shown
@@ -105,24 +110,24 @@ export class RegulationOrderPage {
 
     /**
      * @param {Locator} location
-     * @param {{ expectedIndex: number, expectedPosition: number, restrictionType: string }} options
+     * @param {{ expectedIndex: number, expectedPosition: number, restrictionType: string, maxSpeed?: string }} options
      */
-    async addMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType }) {
+    async addMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed }) {
         await this._beginEditLocation(location);
-        await this._doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType });
+        await this._doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed });
         await this.saveBtn.click();
         await this._waitForReadMode(location);
     }
 
     /**
      * @param {Locator} location
-    * @param {{ indexToRemove: number, expectedIndex: number, expectedPosition: number, restrictionType: string }} options
+    * @param {{ indexToRemove: number, expectedIndex: number, expectedPosition: number, restrictionType: string, maxSpeed?: string }} options
      */
-    async removeMeasureAndAddAnotherOne(location, { indexToRemove, expectedIndex, expectedPosition, restrictionType }) {
+    async removeMeasureAndAddAnotherOne(location, { indexToRemove, expectedIndex, expectedPosition, restrictionType, maxSpeed }) {
         await this._beginEditLocation(location);
         const measure = location.getByTestId('measure-list').getByRole('listitem').nth(indexToRemove);
         await measure.getByRole('button', { name: 'Supprimer' }).click();
-        await this._doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType });
+        await this._doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed });
         await this._endEditLocation(location);
     }
 

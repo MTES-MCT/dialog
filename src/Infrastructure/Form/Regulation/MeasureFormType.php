@@ -28,7 +28,10 @@ final class MeasureFormType extends AbstractType
                 NumberType::class,
                 options: [
                     'required' => false,
-                    'label' => 'regulation.measure.type.speedLimitation.title',
+                    'label' => 'regulation.measure.maxSpeed.title',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add('vehicleSet', VehicleSetFormType::class)
