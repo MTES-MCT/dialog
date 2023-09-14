@@ -62,7 +62,7 @@ export class RegulationOrderPage {
 
         await this.page.getByLabel('Voie ou ville').fill(address);
         await this.page.getByLabel('Type de restriction').selectOption({ label: restrictionType });
-        await this.page.getByText('Tous les véhicules', { exact: true }).check();
+        await this.page.getByText('Tous les véhicules', { exact: true }).check({ force: true });
         await this.saveBtn.click();
         this.addedLocationTitles.push(expectedTitle);
         return this.getLocationByTitle(expectedTitle);
