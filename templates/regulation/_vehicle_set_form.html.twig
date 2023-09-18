@@ -18,7 +18,7 @@
 
     {% for option in form.allVehicles %}
         <div class="fr-fieldset__element">
-            <div class="fr-radio-group fr-radio-rich {% if option.vars.value == 'no' %}app-someVehicles__radiogroup{% endif %}">
+            <div class="fr-radio-group fr-radio-rich {% if option.vars.value == 'no' %}app-someVehicles__radiogroup{% endif %}" data-testid="allVehicles-{{ index }}-{{ option.vars.value }}">
                 {{ form_widget(option, {
                     attr: {
                         'data-controller': 'condition',

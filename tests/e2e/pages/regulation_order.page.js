@@ -62,7 +62,7 @@ export class RegulationOrderPage {
 
         await this.page.getByLabel('Voie ou ville').fill(address);
         await this.page.getByLabel('Type de restriction').selectOption({ label: restrictionType });
-        await this.page.getByText('Tous les véhicules', { exact: true }).check({ force: true });
+        await this.page.getByTestId('allVehicles-0-yes').click();
         await this.saveBtn.click();
         this.addedLocationTitles.push(expectedTitle);
         return this.getLocationByTitle(expectedTitle);
@@ -101,7 +101,7 @@ export class RegulationOrderPage {
             await measure.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
         }
 
-        await measure.getByText('Tous les véhicules', { exact: true }).check();
+        await this.page.getByTestId(`allVehicles-${expectedIndex}-yes`).click();
 
         // Advanced vehicles options are not shown
         await expect(measure.getByLabel('Types de véhicules concernés', { exact: true })).not.toBeVisible(); // Restricted
@@ -154,7 +154,7 @@ export class RegulationOrderPage {
 
         // Define restricted vehicles
         const restrictedVehiclesFieldset = measure.getByRole('radiogroup', { name: 'Véhicules concernés' });
-        await restrictedVehiclesFieldset.getByText('Certains véhicules', { exact: true }).click();
+        await restrictedVehiclesFieldset.getByTestId(`allVehicles-${measureIndex}-no`).click();
         for (const vehicleType of restrictedVehicleTypes) {
             await restrictedVehiclesFieldset.getByLabel('Types de véhicules concernés').getByLabel(vehicleType, { exact: true }).click();
         }
