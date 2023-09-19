@@ -468,14 +468,14 @@
                                 <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
                                 <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
                             </com:grossWeightCharacteristic>
-                            <com:lengthCharacteristic>
-                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                <com:vehicleLength>12</com:vehicleLength>
-                            </com:lengthCharacteristic>
                             <com:heightCharacteristic>
                                 <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                 <com:vehicleHeight>2.4</com:vehicleHeight>
                             </com:heightCharacteristic>
+                            <com:lengthCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleLength>12</com:vehicleLength>
+                            </com:lengthCharacteristic>
                         </vehicleCharacteristics>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
