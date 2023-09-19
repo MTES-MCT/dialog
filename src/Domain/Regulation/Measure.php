@@ -19,6 +19,7 @@ class Measure
         private Location $location,
         private string $type,
         private \DateTimeInterface $createdAt,
+        private ?int $maxSpeed = null,
     ) {
         $this->periods = new ArrayCollection();
     }
@@ -31,6 +32,11 @@ class Measure
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function getMaxSpeed(): ?int
+    {
+        return $this->maxSpeed;
     }
 
     public function getLocation(): Location
@@ -76,8 +82,9 @@ class Measure
         $this->periods->removeElement($period);
     }
 
-    public function update(string $type): void
+    public function update(string $type, ?int $maxSpeed): void
     {
         $this->type = $type;
+        $this->maxSpeed = $maxSpeed;
     }
 }
