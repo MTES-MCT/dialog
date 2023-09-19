@@ -37,6 +37,7 @@ class DetailLocationView
                 $measure->getType(),
                 $periods,
                 VehicleSetView::fromEntity($measure->getVehicleSet()),
+                $measure->getMaxSpeed(),
             );
         }
 

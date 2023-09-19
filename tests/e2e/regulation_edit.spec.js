@@ -65,10 +65,12 @@ test('Remove a measure and add another one to location', async ({ regulationOrde
         expectedIndex: 2,
         expectedPosition: 2,
         restrictionType: 'Limitation de vitesse',
+        maxSpeed: '50',
     });
     await expect(location).toContainText('Circulation interdite tous les jours');
     await expect(location).not.toContainText('Circulation à sens unique tous les jours');
-    await expect(location).toContainText('Limitation de vitesse tous les jours');
+    await expect(location).toContainText('Vitesse limitée à 50 km/h tous les jours');
+
 });
 
 test('Set vehicles on a measure', async ({ regulationOrderPage }) => {

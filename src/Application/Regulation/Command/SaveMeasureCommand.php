@@ -13,6 +13,7 @@ use App\Domain\Regulation\Measure;
 final class SaveMeasureCommand implements CommandInterface
 {
     public ?string $type;
+    public ?int $maxSpeed = null;
     public ?Location $location;
     public array $periods = [];
     public ?\DateTimeInterface $createdAt = null;
@@ -24,6 +25,7 @@ final class SaveMeasureCommand implements CommandInterface
         $this->location = $measure?->getLocation();
         $this->type = $measure?->getType();
         $this->createdAt = $measure?->getCreatedAt();
+        $this->maxSpeed = $measure?->getMaxSpeed();
 
         if ($measure) {
             $vehicleSet = $measure->getVehicleSet();

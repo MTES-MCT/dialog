@@ -28,6 +28,42 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
+    public function testWithNegativeMaxSpeed(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[measures][0][type]'] = 'speedLimitation';
+        $form['location_form[measures][0][maxSpeed]'] = '-10';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#location_form_measures_0_maxSpeed_error')->text());
+    }
+
+    public function testWithoutMaxSpeed(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[measures][0][type]'] = 'speedLimitation';
+        $form['location_form[measures][0][maxSpeed]'] = '';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_maxSpeed_error')->text());
+    }
+
     public function testEditAndAddMeasure(): void
     {
         $client = $this->login();
@@ -41,7 +77,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         // Edit
-        $values['location_form']['measures'][0]['type'] = 'oneWayTraffic';
+        $values['location_form']['measures'][0]['type'] = 'speedLimitation';
+        $values['location_form']['measures'][0]['maxSpeed'] = 60;
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
         // Add
         $values['location_form']['measures'][1]['type'] = 'alternateRoad';
@@ -57,7 +94,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
-        $this->assertSame('Circulation à sens unique tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
         $this->assertSame('Circulation alternée le lundi de 08h00 à 16h00 pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
     }
 
@@ -72,14 +109,12 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-
         // Remove period
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => '51449b82-5032-43c8-a427-46b9ddb44762']);
