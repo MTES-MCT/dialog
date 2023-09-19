@@ -33,7 +33,8 @@
         "symfony/twig-bundle": "6.3.*",
         "symfony/uid": "6.3.*",
         "symfony/ux-turbo": "^2.7",
-        "symfony/validator": "6.3.*",
+        "symfony/validator": "< 6.3.2",
+        "symfony/var-exporter": "< 6.3.2",
         "symfony/webpack-encore-bundle": "^1.16",
         "symfony/yaml": "6.3.*",
         "twig/extra-bundle": "^3.6",
@@ -53,7 +54,7 @@
         "symfony/password-hasher": "6.3.*",
         "symfony/phpunit-bridge": "^6.3",
         "symfony/stopwatch": "6.3.*",
-        "symfony/var-dumper": "6.3.*",
+        "symfony/var-dumper": "< 6.3.2",
         "symfony/web-profiler-bundle": "6.3.*"
     },
     "config": {
