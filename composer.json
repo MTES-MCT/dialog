@@ -20,22 +20,20 @@
         "symfony/filesystem": "6.3.*",
         "symfony/flex": "^2",
         "symfony/form": "6.3.*",
-        "symfony/framework-bundle": "< 6.3.2",
+        "symfony/framework-bundle": "6.3.*",
         "symfony/http-client": "6.3.*",
         "symfony/lock": "6.3.*",
-        "symfony/messenger": "< 6.3.2",
+        "symfony/messenger": "6.3.*",
         "symfony/monolog-bundle": "^3.8",
-        "symfony/property-access": "< 6.3.2",
         "symfony/proxy-manager-bridge": "6.3.*",
         "symfony/rate-limiter": "6.3.*",
-        "symfony/runtime": "< 6.3.2",
+        "symfony/runtime": "6.3.*",
         "symfony/security-bundle": "6.3.*",
         "symfony/translation": "6.3.*",
         "symfony/twig-bundle": "6.3.*",
         "symfony/uid": "6.3.*",
         "symfony/ux-turbo": "^2.7",
-        "symfony/validator": "< 6.3.2",
-        "symfony/var-exporter": "< 6.3.2",
+        "symfony/validator": "6.3.*",
         "symfony/webpack-encore-bundle": "^1.16",
         "symfony/yaml": "6.3.*",
         "twig/extra-bundle": "^3.6",
@@ -55,7 +53,7 @@
         "symfony/password-hasher": "6.3.*",
         "symfony/phpunit-bridge": "^6.3",
         "symfony/stopwatch": "6.3.*",
-        "symfony/var-dumper": "< 6.3.2",
+        "symfony/var-dumper": "6.3.*",
         "symfony/web-profiler-bundle": "6.3.*"
     },
     "config": {
@@ -108,7 +106,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.3.*"
+            "require": "< 6.3.2"
         },
         "paas": {
             "php-config": [
