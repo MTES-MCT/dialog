@@ -69,7 +69,7 @@ jobs:
           sudo apt install symfony-cli
 
       - name: CI
-        run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx" PLAYWRIGHT_ARGS="-x --forbid-only --timeout=5000"
+        run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx" PLAYWRIGHT_ARGS="-x --forbid-only"
 
       - uses: codecov/codecov-action@v3
         with:
