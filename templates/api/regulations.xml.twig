@@ -146,11 +146,11 @@
                                                             <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
                                                         </com:grossWeightCharacteristic>
                                                     {% endif %}
-                                                    {% if vehicle.maxWidth %}
-                                                        <com:widthCharacteristic>
+                                                    {% if vehicle.maxHeight %}
+                                                        <com:heightCharacteristic>
                                                             <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
-                                                        </com:widthCharacteristic>
+                                                            <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
+                                                        </com:heightCharacteristic>
                                                     {% endif %}
                                                     {% if vehicle.maxLength %}
                                                         <com:lengthCharacteristic>
@@ -158,11 +158,11 @@
                                                             <com:vehicleLength>{{ vehicle.maxLength }}</com:vehicleLength>
                                                         </com:lengthCharacteristic>
                                                     {% endif %}
-                                                    {% if vehicle.maxHeight %}
-                                                        <com:heightCharacteristic>
+                                                    {% if vehicle.maxWidth %}
+                                                        <com:widthCharacteristic>
                                                             <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
-                                                        </com:heightCharacteristic>
+                                                            <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
+                                                        </com:widthCharacteristic>
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
