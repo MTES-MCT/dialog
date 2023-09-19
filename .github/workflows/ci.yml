@@ -69,7 +69,7 @@ jobs:
           sudo apt install symfony-cli
 
       - name: CI
-        run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx" PLAYWRIGHT_BASE_URL="http://localhost:8000"
+        run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx" PLAYWRIGHT_ARGS="-x --forbid-only --timeout=5000"
 
       - uses: codecov/codecov-action@v3
         with:
@@ -82,3 +82,10 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-logfile
+          path: var/log/test.log
+          retention-days: 7
