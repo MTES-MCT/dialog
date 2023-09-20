@@ -66,7 +66,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $vehicleSet
             ->expects(self::once())
             ->method('getExemptedTypes')
-            ->willReturn(['bus', 'pedestrians', 'other']);
+            ->willReturn(['commercial', 'pedestrians', 'other']);
         $vehicleSet
             ->expects(self::exactly(2))
             ->method('getOtherExemptedTypeText')
@@ -245,7 +245,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                         ['name' => 'critair3'],
                                     ],
                                     [
-                                        ['name' => 'bus'],
+                                        ['name' => 'commercial'],
                                         ['name' => 'pedestrians'],
                                         ['name' => 'Convois exceptionnels', 'isOther' => true],
                                     ],
