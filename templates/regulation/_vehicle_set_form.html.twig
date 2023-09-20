@@ -18,7 +18,7 @@
 
     {% for option in form.allVehicles %}
         <div class="fr-fieldset__element">
-            <div class="fr-radio-group fr-radio-rich {% if option.vars.value == 'no' %}app-someVehicles__radiogroup{% endif %}">
+            <div class="fr-radio-group fr-radio-rich {% if option.vars.value == 'no' %}app-someVehicles__radiogroup{% endif %}" data-testid="allVehicles-{{ index }}-{{ option.vars.value }}">
                 {{ form_widget(option, {
                     attr: {
                         'data-controller': 'condition',
@@ -27,9 +27,11 @@
                     },
                 }) }}
                 {{ form_label(option, null, { help: (option.vars.label ~ '.help')|trans }) }}
-                <div class="fr-radio-rich__img app-vehicle-image">
-                    <img src="{{ asset('images/restriction/all_vehicles.' ~ option.vars.value ~ '.svg') }}" alt=""  />
-                    <img class="app-vehicle-image__close" src="{{ asset('images/restriction/close.svg') }}" alt="" />
+                <div class="fr-radio-rich__pictogram app-vehicle-image">
+                    <svg class="fr-artwork" aria-hidden="true" viewBox="0 0 26 26" width="26px" height="26px">
+                        <use class="fr-artwork-major" xlink:href="{{ asset('images/restriction/all_vehicles.' ~ option.vars.value ~ '.svg') }}#artwork-major"></use>
+                    </svg>
+                    <img class="app-vehicle-image__close" aria-hidden="true" src="{{ asset('images/restriction/close.svg') }}" />
                 </div>
             </div>
         </div>

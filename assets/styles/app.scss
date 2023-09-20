@@ -111,7 +111,7 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
 }
 
 .fr-x-background-alt--blue-france {
-    background-color: var(--blue-france-975-75);
+    background-color: var(--background-alt-blue-france);
 }
 
 .fr-x-autocomplete-wrapper {
@@ -300,11 +300,9 @@ li.app-card + li.app-card {
 }
 
 .app-vehicle-image {
+    position: relative;
     display: grid !important;
     place-content: center;
-    /* Without a 'height', DSFR default image separator would not span entire height. This is a problem especially on mobile. */
-    /* We also account for the 2x0.25rem space that DSFR leaves between the image separator and the rich radio top and bottom borders. */
-    height: calc(100% - 0.5rem) !important;
 }
 
 .app-vehicle-image__close {
@@ -314,9 +312,25 @@ li.app-card + li.app-card {
 }
 
 .app-someVehicles__radiogroup > input[type="radio"]:checked + label {
-    box-shadow: none; // Drop the DSFR default, we'll place the borders ourselves.
-    border: 1px solid var(--border-action-high-blue-france);
+    // DSFR uses a background-image trick to place borders AND the custom checkbox.
+    // Copy DSFR default and tweak it to use a grey bottom border.
+    background-image:
+        linear-gradient(0deg, var(--background-action-high-blue-france), var(--background-action-high-blue-france)), // border-top
+        linear-gradient(0deg, var(--background-action-high-blue-france), var(--background-action-high-blue-france)), // border-right
+        linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey)), // border-bottom -> We make it grey
+        linear-gradient(0deg, var(--background-action-high-blue-france), var(--background-action-high-blue-france)), // border-left
+        radial-gradient(transparent 6px, var(--background-action-high-blue-france) 7px, transparent 8px), // Checkbox contour
+        radial-gradient(var(--background-action-high-blue-france) 3px, transparent 4px); // Checkbox dot
+}
+
+.app-someVehicles__radiogroup > input[type="radio"]:checked ~ .fr-radio-rich__pictogram {
+    // DSFR uses a background-image trick to place borders.
+    // We want to use grey left and bottom borders. Drop the default and place actual borders ourselves.
+    background-image: none;
+    border-top: 1px solid var(--border-action-high-blue-france);
+    border-right: 1px solid var(--border-action-high-blue-france);
     border-bottom: 1px solid var(--border-default-grey);
+    border-left: 1px solid var(--border-default-grey);
 }
 
 .app-someVehicles__form {
