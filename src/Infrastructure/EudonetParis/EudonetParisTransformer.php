@@ -36,6 +36,12 @@ final class EudonetParisTransformer
         $locationItems = [];
         $errors = [];
 
+        if (\count($row['measures']) === 0) {
+            $errors[] = sprintf('%s: skip: no measures found', $errorPrefix);
+
+            return new EudonetParisTransformerResult(null, $errors);
+        }
+
         foreach ($row['measures'] as $measureRow) {
             [$measureCommand, $error] = $this->buildMeasureCommand($measureRow);
 

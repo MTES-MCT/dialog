@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EudonetParis;
 
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
@@ -16,15 +17,19 @@ use Psr\Log\LoggerInterface;
 
 final class EudonetParisExecutor
 {
+    private LoggerInterface $logger;
+
     public function __construct(
-        private LoggerInterface $logger,
+        LoggerInterface $eudonetParisImportLogger,
         private EudonetParisExtractor $eudonetParisExtractor,
         private EudonetParisTransformer $eudonetParisTransformer,
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private string $eudonetParisOrgId,
+        private DateUtilsInterface $dateUtils,
     ) {
+        $this->logger = $eudonetParisImportLogger;
     }
 
     public function execute(\DateTimeInterface $laterThanUTC): void
@@ -37,6 +42,7 @@ final class EudonetParisExecutor
         $numCreated = 0;
         $numSkipped = 0;
         $numErrors = 0;
+        $startTime = $this->dateUtils->getMicroTime();
 
         $this->logger->debug('started');
 
@@ -74,6 +80,9 @@ final class EudonetParisExecutor
 
             throw new EudonetParisException($exc->getMessage());
         } finally {
+            $endTime = $this->dateUtils->getMicroTime();
+            $elapsedSeconds = $endTime - $startTime;
+
             $this->logger->debug('done', [
                 'numProcessed' => $numProcessed,
                 'numCreated' => $numCreated,
@@ -82,6 +91,7 @@ final class EudonetParisExecutor
                 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
                 'numErrors' => $numErrors,
                 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
+                'elapsedSeconds' => round($elapsedSeconds, 2),
             ]);
         }
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
@@ -29,6 +30,7 @@ final class EudonetParisExecutorTest extends TestCase
     private $queryBus;
     private $regulationOrderRecordRepository;
     private $orgId = '064f5eba-5eb2-7ffd-8000-77e8f8b7bb9b';
+    private $dateUtils;
 
     protected function setUp(): void
     {
@@ -38,6 +40,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
     public function testExecute(): void
@@ -53,6 +56,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->dateUtils,
         );
 
         $this->queryBus
@@ -104,6 +108,15 @@ final class EudonetParisExecutorTest extends TestCase
                 2 => $this->assertEquals($importCommand3, $command),
             });
 
+        $timeMatcher = self::exactly(2);
+        $this->dateUtils
+            ->expects($timeMatcher)
+            ->method('getMicroTime')
+            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+                1 => 1695218778.6387,
+                2 => 1695218796.3069,
+            });
+
         $logMatcher = self::exactly(5);
         $this->logger
             ->expects($logMatcher)
@@ -123,6 +136,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'percentSkipped' => 33.3,
                         'numErrors' => 0,
                         'percentErrors' => 0,
+                        'elapsedSeconds' => 17.67,
                     ])
                 ),
             });
@@ -161,7 +175,17 @@ final class EudonetParisExecutorTest extends TestCase
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->dateUtils,
         );
+
+        $timeMatcher = self::exactly(2);
+        $this->dateUtils
+            ->expects($timeMatcher)
+            ->method('getMicroTime')
+            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+                1 => 1695218778.6387,
+                2 => 1695218779.3069,
+            });
 
         $logMatcher = self::exactly(2);
         $this->logger
@@ -179,6 +203,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'percentSkipped' => 0,
                         'numErrors' => 0,
                         'percentErrors' => 0,
+                        'elapsedSeconds' => 0.67,
                     ])
                 ),
             });
@@ -210,6 +235,15 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::exactly(1))
             ->method('error');
 
+        $timeMatcher = self::exactly(2);
+        $this->dateUtils
+            ->expects($timeMatcher)
+            ->method('getMicroTime')
+            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+                1 => 1695218778.6387,
+                2 => 1695218796.3069,
+            });
+
         $executor = new EudonetParisExecutor(
             $this->logger,
             $this->extractor,
@@ -218,6 +252,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->dateUtils,
         );
 
         $executor->execute($now);
@@ -243,6 +278,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->dateUtils,
         );
 
         $record1 = ['fields' => [1101 => '20210104']];
@@ -266,6 +302,15 @@ final class EudonetParisExecutorTest extends TestCase
             ->method('handle')
             ->willThrowException(new ImportEudonetParisRegulationFailedException('Failure'));
 
+        $timeMatcher = self::exactly(2);
+        $this->dateUtils
+            ->expects($timeMatcher)
+            ->method('getMicroTime')
+            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+                1 => 1695218778.6387,
+                2 => 1695218796.3069,
+            });
+
         $logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
@@ -282,6 +327,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'percentSkipped' => 0,
                         'numErrors' => 1,
                         'percentErrors' => 100,
+                        'elapsedSeconds' => 17.67,
                     ])
                 ),
             });
@@ -317,6 +363,10 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('debug');
 
+        $this->dateUtils
+            ->expects(self::never())
+            ->method('getMicroTime');
+
         $executor = new EudonetParisExecutor(
             $this->logger,
             $this->extractor,
@@ -325,6 +375,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             '',
+            $this->dateUtils,
         );
 
         $executor->execute($now);

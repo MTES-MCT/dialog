@@ -9,4 +9,6 @@ interface DateUtilsInterface
     public function getTomorrow(): \DateTimeImmutable;
 
     public function getNow(): \DateTimeImmutable;
+
+    public function getMicroTime(): float;
 }

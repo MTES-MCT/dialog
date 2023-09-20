@@ -7,16 +7,19 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 use App\Application\DateUtilsInterface;
 use App\Infrastructure\EudonetParis\EudonetParisClient;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
 final class EudonetParisClientTest extends TestCase
 {
     private $dateUtils;
+    private $logger;
 
     protected function setUp(): void
     {
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testSearch(): void
@@ -107,7 +110,19 @@ final class EudonetParisClientTest extends TestCase
         ];
 
         $http = new MockHttpClient($expectedRequests, 'https://testserver');
-        $client = new EudonetParisClient($http, 'credentials...', $this->dateUtils);
+
+        $logMatcher = self::exactly(4);
+        $this->logger
+            ->expects($logMatcher)
+            ->method('debug')
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+                1 => $this->assertEquals($message, 'request'),
+                2 => $this->assertEquals($message, 'response'),
+                3 => $this->assertEquals($message, 'request'),
+                4 => $this->assertEquals($message, 'response'),
+            });
+
+        $client = new EudonetParisClient($http, 'credentials...', $this->dateUtils, $this->logger);
 
         // Simulate getting fields 1101 and 1102 of all regulation orders
         $rows = $client->search(1100, [1101, 1102], []);

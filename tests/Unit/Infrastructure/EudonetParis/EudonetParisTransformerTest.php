@@ -227,7 +227,7 @@ final class EudonetParisTransformerTest extends TestCase
         $this->assertEquals([$locationItem1, $locationItem2], $result->command->locationItems);
     }
 
-    public function testSkipNoLocations(): void
+    public function testSkipNoMeasures(): void
     {
         $organization = $this->createMock(Organization::class);
 
@@ -242,7 +242,7 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => [],
         ];
 
-        $result = new EudonetParisTransformerResult(null, ['at regulation_order 20230514-1: skip: no locations were gathered']);
+        $result = new EudonetParisTransformerResult(null, ['at regulation_order 20230514-1: skip: no measures found']);
 
         $this->geocoder
             ->expects(self::never())
