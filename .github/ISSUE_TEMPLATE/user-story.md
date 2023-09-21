@@ -30,6 +30,7 @@ Distinguer les critères "Must have" et "Nice to have". Un critère "Must have" 
 
 <!-- Pour mémoire, ces zones de l'application peuvent avoir besoin de modifications (non exhaustif) :
 
+- [ ] Migration de données
 - [ ] Interface d'édition
 - [ ] Affichage dans l'interface
 - [ ] Export DATEX II
