@@ -22,6 +22,7 @@ services:
       context: ./docker/php
     ports:
       - '9000:9000'
+      - '8080:8080'
       - '9323:9323' # Playwright report server
     volumes:
       - ./:/var/www/dialog

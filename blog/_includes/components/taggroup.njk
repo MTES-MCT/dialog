@@ -1,0 +1,8 @@
+<ul class="fr-tags-group" data-pagefind-ignore>
+  {% for tag in tags | filterTagList %}
+    {% set tagUrl %}{{ (tagsUrl or "/tags/") | locale_url }}{{ tag | slugify }}/{% endset %}
+    <li>
+      <a href="{{ tagUrl }}" class="fr-tag">{{ tag }}</a>
+    </li>
+  {% endfor %}
+</ul>

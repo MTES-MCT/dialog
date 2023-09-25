@@ -63,6 +63,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/collectivites');
@@ -72,6 +73,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => 'page']],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/services-numeriques');
@@ -81,6 +83,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/usagers');
@@ -90,6 +93,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
+            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
     }
 }
