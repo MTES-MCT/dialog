@@ -476,6 +476,7 @@
                                 <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                 <com:vehicleLength>12</com:vehicleLength>
                             </com:lengthCharacteristic>
+                            <com:speedLimit></com:speedLimit>
                         </vehicleCharacteristics>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
