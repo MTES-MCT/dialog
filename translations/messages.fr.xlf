@@ -1380,7 +1380,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.taxi">
                 <source>regulation.vehicle_set.type.taxi</source>
-                <target>Taxis et VTC</target>
+                <target>Taxis / VTC</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.carSharing">
                 <source>regulation.vehicle_set.type.carSharing</source>
