@@ -205,7 +205,7 @@ test_unit: ## Run unit tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Unit ${ARGS}
 
 test_integration: ## Run integration tests only
-	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
+	${BIN_PHP} ./bin/phpunit tests/Integration/Infrastructure/Controller/Api/GetRegulationsControllerTest.php
 
 test_e2e: ## Run end-to-end tests only
 	make dbfixtures

@@ -9,6 +9,7 @@ final class DatexTrafficRegulationView
     public function __construct(
         public readonly DatexLocationView $location,
         public readonly array $vehicleConditions,
+        public readonly DatexMeasureView $speedLimit,
     ) {
     }
 }

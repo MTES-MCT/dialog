@@ -42,11 +42,19 @@
                 {% for trafficRegulation in regulationOrder.trafficRegulations %}
                     {% set location = trafficRegulation.location %}
                     {% set vehicleConditions = trafficRegulation.vehicleConditions %}
+                    {% set speed = trafficRegulation.speedLimit.maxSpeed %}
                     <trafficRegulation>
                         <status>active</status>
                         <typeOfRegulation xsi:type="AccessRestriction">
                             <accessRestrictionType>noEntry</accessRestrictionType>
                         </typeOfRegulation>
+                        <typeOfRegulation xsi:type="SpeedLimit">
+                            <maxValue>
+                                <numericValue>{{ speed }}</numericValue>
+                                <unitOfMeasure>kilometresPerHour</unitOfMeasure>
+                            </maxValue>
+                        </typeOfRegulation>
+                        
                         <condition xsi:type="ConditionSet">
                             <operator>and</operator>
                             <conditions xsi:type="ValidityCondition">

@@ -28,6 +28,13 @@
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
 
+                <typeOfRegulation xsi:type="SpeedLimit">
+                    <maxValue>
+                        <numericValue>50</numericValue>
+                        <unitOfMeasure>kilometresPerHour</unitOfMeasure>
+                    </maxValue>
+                </typeOfRegulation>
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
 
@@ -476,7 +483,6 @@
                                 <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                 <com:vehicleLength>12</com:vehicleLength>
                             </com:lengthCharacteristic>
-                            <com:speedLimit></com:speedLimit>
                         </vehicleCharacteristics>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">

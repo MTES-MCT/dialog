@@ -1146,6 +1146,10 @@
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.maxSpeed1">
+                <source>regulation.measure.maxSpeed1</source>
+                <target>Vitesse limitée à </target>
+            </trans-unit>
             <trans-unit id="regulation.measure.maxSpeed">
                 <source>regulation.measure.maxSpeed</source>
                 <target>Vitesse limitée à %maxSpeed% km/h</target>
