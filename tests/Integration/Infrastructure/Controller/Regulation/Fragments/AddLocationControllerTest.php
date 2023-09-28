@@ -50,7 +50,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'other'];
         $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = 'Matières dangereuses';
-        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['bus', 'other'];
+        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['commercial', 'other'];
         $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = 'Déchets industriels';
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = 3.5;
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWidth'] = 0.0; // Zero OK

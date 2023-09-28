@@ -77,7 +77,7 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     margin: 0;
 }
 
-@each $extraIcon in ('bus', 'ambulance', 'bicycle', 'pedestrians', 'critair', 'heavy-goods-vehicle') {
+@each $extraIcon in ('commercial', 'emergency-services', 'bicycle', 'pedestrians', 'critair', 'heavy-goods-vehicle','taxi', 'hazardous-materials', 'car-sharing') {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../public/images/icons/#{$extraIcon}.svg');
         -webkit-mask-image: url('../../public/images/icons/#{$extraIcon}.svg');

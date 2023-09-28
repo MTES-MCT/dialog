@@ -501,13 +501,7 @@
                     <conditions xsi:type="VehicleCondition">
                         <negate>true</negate>
                         <vehicleCharacteristics>
-                            <com:_vehicleCharacteristicsExtension>
-                                <com:vehicleCharacteristicsExtended>
-                                    <comx:regulatedCharacteristics>
-                                        <comx:euSpecialPurposeVehicle>ambulance</comx:euSpecialPurposeVehicle>
-                                    </comx:regulatedCharacteristics>
-                                </com:vehicleCharacteristicsExtended>
-                            </com:_vehicleCharacteristicsExtension>
+                            <com:vehicleUsage>emergencyServices</com:vehicleUsage>
                         </vehicleCharacteristics>
                     </conditions>
                 </condition>

@@ -124,14 +124,8 @@
                                     <conditions xsi:type="VehicleCondition">
                                         <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
                                         <vehicleCharacteristics>
-                                            {% if vehicle.euSpecialPurposeVehicle %}
-                                                <com:_vehicleCharacteristicsExtension>
-                                                    <com:vehicleCharacteristicsExtended>
-                                                        <comx:regulatedCharacteristics>
-                                                            <comx:euSpecialPurposeVehicle>{{ vehicle.euSpecialPurposeVehicle }}</comx:euSpecialPurposeVehicle>
-                                                        </comx:regulatedCharacteristics>
-                                                    </com:vehicleCharacteristicsExtended>
-                                                </com:_vehicleCharacteristicsExtension>
+                                            {% if vehicle.vehicleUsage %}
+                                                <com:vehicleUsage>{{ vehicle.vehicleUsage }}</com:vehicleUsage>
                                             {% elseif vehicle.emissionClassificationOther %}
                                                 <com:emissions>
                                                     <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>

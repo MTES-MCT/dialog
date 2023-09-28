@@ -45,7 +45,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                         measure: $measure,
                         restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::CRITAIR->value],
                         otherRestrictedTypeText: null,
-                        exemptedTypes: [VehicleTypeEnum::AMBULANCE->value],
+                        exemptedTypes: [VehicleTypeEnum::EMERGENCY_SERVICES->value],
                         otherExemptedTypeText: null,
                         heavyweightMaxWeight: 3.5,
                         critairTypes: [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value],
@@ -63,7 +63,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->measure = $measure;
         $command->allVehicles = false;
         $command->restrictedTypes = [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::CRITAIR->value];
-        $command->exemptedTypes = [VehicleTypeEnum::AMBULANCE->value];
+        $command->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value];
         $command->heavyweightMaxWeight = 3.5;
         $command->critairTypes = [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value];
 
@@ -85,7 +85,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->with(
                 ['heavyGoodsVehicle', 'other'],
                 'Matières dangereuses',
-                ['bus'],
+                ['commercial'],
                 null,
                 3.5,
                 2,
@@ -107,7 +107,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->allVehicles = false;
         $command->restrictedTypes = ['heavyGoodsVehicle', 'other'];
         $command->otherRestrictedTypeText = 'Matières dangereuses';
-        $command->exemptedTypes = ['bus'];
+        $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->heavyweightMaxWeight = 3.5;
         $command->heavyweightMaxWidth = 2;
@@ -180,7 +180,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->with(
                 ['other'],
                 'Matières dangereuses',
-                ['bus'],
+                ['commercial'],
                 null,
                 null,
                 null,
@@ -202,7 +202,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->allVehicles = false;
         $command->restrictedTypes = ['other']; // heavyGoodsVehicle not included
         $command->otherRestrictedTypeText = 'Matières dangereuses';
-        $command->exemptedTypes = ['bus'];
+        $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->heavyweightMaxWeight = 3.5;
         $command->heavyweightMaxWidth = 2;
@@ -271,7 +271,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->with(
                 ['heavyGoodsVehicle', 'other'],
                 'Matières dangereuses',
-                ['bus'],
+                ['commercial'],
                 null,
                 null,
                 null,
@@ -293,7 +293,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->allVehicles = false;
         $command->restrictedTypes = ['heavyGoodsVehicle', 'other'];
         $command->otherRestrictedTypeText = 'Matières dangereuses';
-        $command->exemptedTypes = ['bus'];
+        $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->critairTypes = [CritairEnum::CRITAIR_2];
 

@@ -11,8 +11,9 @@ final class DatexVehicleConditionView
 {
     public ?string $type = null;
     public ?string $nonVehicularRoadUser = null;
-    public ?string $euSpecialPurposeVehicle = null;
     public ?string $emissionClassificationOther = null;
+    public ?string $vehicleUsage = null;
+    public bool $isDangerousSubstances = false;
     public bool $isOther = false;
 
     public function __construct(
@@ -27,8 +28,8 @@ final class DatexVehicleConditionView
             case VehicleTypeEnum::PEDESTRIANS->value:
                 $this->nonVehicularRoadUser = $vehicleType;
                 break;
-            case VehicleTypeEnum::AMBULANCE->value:
-                $this->euSpecialPurposeVehicle = $vehicleType;
+            case VehicleTypeEnum::EMERGENCY_SERVICES->value:
+                $this->vehicleUsage = $vehicleType;
                 break;
             case CritairEnum::CRITAIR_2->value:
             case CritairEnum::CRITAIR_3->value:
@@ -38,6 +39,9 @@ final class DatexVehicleConditionView
                 break;
             case VehicleTypeEnum::OTHER->value:
                 $this->isOther = true;
+                break;
+            case VehicleTypeEnum::HAZARDOUS_MATERIALS->value:
+                $this->isDangerousSubstances = true;
                 break;
             default:
                 $this->type = $vehicleType;

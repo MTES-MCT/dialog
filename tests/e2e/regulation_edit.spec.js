@@ -83,7 +83,7 @@ test('Set vehicles on a measure', async ({ regulationOrderPage }) => {
         measureIndex: 0,
         restrictedVehicleTypes: ['Poids lourds'],
         otherRestrictedVehicleType: 'Matières dangereuses',
-        exemptedVehicleTypes: ['Bus'],
+        exemptedVehicleTypes: ['Transports en commun'],
         otherExemptedVehicleType: 'Déchets industriels',
     });
 });
