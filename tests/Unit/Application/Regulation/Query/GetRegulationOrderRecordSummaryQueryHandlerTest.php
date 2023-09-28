@@ -250,9 +250,9 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                         ['name' => 'Convois exceptionnels', 'isOther' => true],
                                     ],
                                     [
-                                        ['name' => 'weight', 'value' => 3.5, 'unit' => 'tons', 'suffix' => false],
-                                        ['name' => 'width', 'value' => 2, 'unit' => 'meters', 'suffix' => true],
-                                        ['name' => 'height', 'value' => 2.4, 'unit' => 'meters', 'suffix' => true],
+                                        ['name' => 'weight', 'value' => 3.5],
+                                        ['name' => 'width', 'value' => 2],
+                                        ['name' => 'height', 'value' => 2.4],
                                     ],
                                 ),
                             ),
