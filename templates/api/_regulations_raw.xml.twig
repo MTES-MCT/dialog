@@ -76,6 +76,87 @@
     </trafficRegulation>
 </trafficRegulationOrder>
 
+<trafficRegulationOrder id="8da9879c-39f1-4090-9a2e-ea2641886b42" version="1">
+    <description>
+        <com:values>
+            <com:value lang="fr">ARRETE TEMPORAIRE ACT2023STD - 619-MB</com:value>
+        </com:values>
+    </description>
+
+    <issuingAuthority>
+        <com:values>
+            <com:value lang="fr">Mairie de Sartrouville</com:value>
+        </com:values>
+    </issuingAuthority>
+
+    <regulationId>8da9879c-39f1-4090-9a2e-ea2641886b42</regulationId>
+    <status>madeAndImplemented</status>
+
+    <trafficRegulation>
+        <status>active</status>
+
+        <typeOfRegulation xsi:type="SpeedLimit">
+                    <maxValue>
+                        <numericValue>50</numericValue>
+                        <unitOfMeasure>kilometresPerHour</unitOfMeasure>
+                    </maxValue>
+                </typeOfRegulation>
+
+        <condition xsi:type="ConditionSet">
+            <operator>and</operator>
+
+            <conditions xsi:type="ValidityCondition">
+                <validityByOrder>
+                    <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                    <com:validityTimeSpecification>
+                        <com:overallStartTime>2023-08-11T18:00:00+02:00</com:overallStartTime>
+                        <com:overallEndTime>2023-08-15T06:00:00+02:00</com:overallEndTime>
+                    </com:validityTimeSpecification>
+                </validityByOrder>
+            </conditions>
+
+            <conditions xsi:type="LocationCondition">
+                <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                    <loc:linearWithinLinearElement>
+                        <loc:linearElement xsi:type="loc:LinearElement">
+                            <loc:roadName>
+                                <com:values>
+                                    <com:value lang="fr">2 Rue Buffon, 78500 Sartrouville</com:value>
+                                </com:values>
+                            </loc:roadName>
+                        </loc:linearElement>
+
+                        <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                            <loc:distanceAlong>0</loc:distanceAlong>
+                            <loc:fromReferent>
+                                <loc:referentIdentifier>start</loc:referentIdentifier>
+                                <loc:referentName>Avenue Jean Jaurès</loc:referentName>
+                                <loc:referentType>intersection</loc:referentType>
+                                <loc:pointCoordinates>
+                                    <loc:latitude>48.94019317626953</loc:latitude>
+                                    <loc:longitude>2.1597378253936768</loc:longitude>
+                                </loc:pointCoordinates>
+                            </loc:fromReferent>
+                        </loc:fromPoint>
+                        <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                            <loc:distanceAlong>0</loc:distanceAlong>
+                            <loc:fromReferent>
+                                <loc:referentIdentifier>end</loc:referentIdentifier>
+                                <loc:referentName>Rue Lamartine</loc:referentName>
+                                <loc:referentType>intersection</loc:referentType>
+                                <loc:pointCoordinates>
+                                    <loc:latitude>48.9342129</loc:latitude>
+                                    <loc:longitude>2.1641209</loc:longitude>
+                                </loc:pointCoordinates>
+                            </loc:fromReferent>
+                        </loc:toPoint>
+                    </loc:linearWithinLinearElement>
+                </locationByOrder>
+            </conditions>
+        </condition>
+    </trafficRegulation>
+</trafficRegulationOrder>
+
 <trafficRegulationOrder id="064ca247-fb24-7cf8-8000-0cf1af53270c" version="1">
     <description>
         <com:values>
