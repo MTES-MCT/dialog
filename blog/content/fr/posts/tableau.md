@@ -1,7 +1,7 @@
 ---
 title: Tableau
 description: Comment intégrer un tableau dans une page du site ?
-date: git Last Modified
+date: 2023-09-10
 tags:
   - DSFR
   - composant
