@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DatexLocationView;
-use App\Application\Regulation\View\DatexMeasureView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
@@ -50,10 +49,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
             $vehicleConditions = [];
 
-            $speedLimit = new DatexMeasureView(
-                maxSpeed: $row['maxSpeed'],
-            );
-
             foreach ($row['restrictedVehicleTypes'] ?: [] as $restrictedVehicleType) {
                 if (VehicleTypeEnum::CRITAIR->value === $restrictedVehicleType) {
                     continue;
@@ -87,9 +82,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             );
 
             $trafficRegulations[] = new DatexTrafficRegulationView(
+                $row['type'],
                 $location,
                 $vehicleConditions,
-                $speedLimit,
+                $row['maxSpeed'],
             );
         }
 

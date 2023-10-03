@@ -42,10 +42,10 @@
                 {% for trafficRegulation in regulationOrder.trafficRegulations %}
                     {% set location = trafficRegulation.location %}
                     {% set vehicleConditions = trafficRegulation.vehicleConditions %}
-                    {% set speed = trafficRegulation.speedLimit.maxSpeed %}
+                    {% set speed = trafficRegulation.maxSpeed %}
                     <trafficRegulation>
                         <status>active</status>
-                        {% if speed %}
+                        {% if trafficRegulation.type == 'speedLimitation' %}
                             <typeOfRegulation xsi:type="SpeedLimit">
                                 <maxValue>
                                     <numericValue>{{ speed }}</numericValue>
