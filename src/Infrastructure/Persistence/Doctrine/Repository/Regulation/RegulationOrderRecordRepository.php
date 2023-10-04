@@ -98,6 +98,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.toHouseNumber',
                 'ST_X(loc.toPoint) as toLongitude',
                 'ST_Y(loc.toPoint) as toLatitude',
+                'm.maxSpeed',
+                'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
                 'v.critairTypes as restrictedCritairTypes',
                 'v.exemptedTypes as exemptedVehicleTypes',

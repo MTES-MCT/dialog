@@ -82,8 +82,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             );
 
             $trafficRegulations[] = new DatexTrafficRegulationView(
+                $row['type'],
                 $location,
                 $vehicleConditions,
+                $row['maxSpeed'],
             );
         }
 
