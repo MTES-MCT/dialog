@@ -14,7 +14,7 @@ Numériser la réglementation d'usage de notre voirie, c'est beaucoup plus qu'un
 
 Je suis consultante en économie urbaine. Dans le cadre de ma structure [Ibicity](https://www.ibicity.fr/), je réalise des missions opérationnelles, du montage de projets d’aménagement ainsi que l’étude des dimensions stratégiques et des sujets de recherche par exemple sur la question de la gratuité. J’interviens également au sein de l’École Urbaine à Sciences-Po.
 
-{% image "./img/P1_Trottoirs.jpg", "L'ouvrage *Trottoirs!* d'Isabelle Baraud Serfaty aux éditions Apogée" %}
+{% image "./img/P1_Trottoirs.jpg", "L'ouvrage *Trottoirs!* d'Isabelle Baraud Serfaty aux éditions Apogée" width=50% %}
 
 Pourquoi me suis-je intéressée au trottoir ? C’est sans doute lié à ma définition de l’économie. L’économie gère la rareté : qui regarde le gateau, et qui tient le couteau ? Je m’intéresse beaucoup à comprendre qui sont les opérateurs et comment ils agissent. De mes formations en école de commerce et en urbanisme, je retiens que l’économie et l’urbanisme ont en commun cette question du partage.
 
