@@ -12,7 +12,6 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -55,10 +54,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn([]);
 
         $period = $this->createMock(Period::class);
-        $period
-            ->expects(self::once())
-            ->method('getApplicableDays')
-            ->willReturn([ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value]);
+
         $period
             ->expects(self::once())
             ->method('getStartTime')
@@ -67,10 +63,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getEndTime')
             ->willReturn($endTime);
-        $period
-            ->expects(self::once())
-            ->method('isIncludeHolidays')
-            ->willReturn(true);
 
         $measure1 = $this->createMock(Measure::class);
         $measure1
@@ -211,10 +203,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $vehicleSetCommand->allVehicles = true;
 
         $periodCommand1 = new SavePeriodCommand();
-        $periodCommand1->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
         $periodCommand1->startTime = $startTime;
         $periodCommand1->endTime = $endTime;
-        $periodCommand1->includeHolidays = true;
 
         $measureCommand1 = new SaveMeasureCommand();
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;

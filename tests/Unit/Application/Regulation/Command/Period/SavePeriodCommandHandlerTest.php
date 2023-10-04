@@ -45,8 +45,6 @@ final class SavePeriodCommandHandlerTest extends TestCase
                     new Period(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        includeHolidays: true,
-                        applicableDays: [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::WEDNESDAY->value],
                         startTime: $start,
                         endTime: $end,
                     ),
@@ -63,8 +61,6 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->measure = $measure;
         $command->startTime = $start;
         $command->endTime = $end;
-        $command->applicableDays = [ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::WEDNESDAY->value];
-        $command->includeHolidays = true;
 
         $result = $handler($command);
 
@@ -98,8 +94,6 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command = new SavePeriodCommand($period);
         $command->startTime = $start;
         $command->endTime = $end;
-        $command->applicableDays = [ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::WEDNESDAY->value];
-        $command->includeHolidays = true;
 
         $result = $handler($command);
 

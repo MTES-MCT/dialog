@@ -18,12 +18,8 @@ final class SavePeriodCommandHandler
 
     public function __invoke(SavePeriodCommand $command): Period
     {
-        $command->sortApplicableDays();
-
         if ($command->period) {
             $command->period->update(
-                includeHolidays: $command->includeHolidays,
-                applicableDays: $command->applicableDays,
                 startTime: $command->startTime,
                 endTime: $command->endTime,
             );
@@ -35,8 +31,6 @@ final class SavePeriodCommandHandler
             new Period(
                 uuid: $this->idFactory->make(),
                 measure: $command->measure,
-                includeHolidays: $command->includeHolidays,
-                applicableDays: $command->applicableDays,
                 startTime: $command->startTime,
                 endTime: $command->endTime,
             ),

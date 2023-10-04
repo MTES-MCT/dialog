@@ -1198,10 +1198,6 @@
                 <source>regulation.period.days.help</source>
                 <target>Spécifiez les jours et horaires spécifiques sur lesquels la restriction s'applique</target>
             </trans-unit>
-            <trans-unit id="regulation.period.includeHolidays">
-                <source>regulation.period.includeHolidays</source>
-                <target>Jours fériés</target>
-            </trans-unit>
             <trans-unit id="regulation.period.startTime">
                 <source>regulation.period.startTime</source>
                 <target>Heure de début</target>
