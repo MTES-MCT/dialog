@@ -1,9 +1,22 @@
-<d2:payload xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:d2="http://datex2.eu/schema/3/d2Payload" xmlns:com="http://datex2.eu/schema/3/common" xmlns:comx="http://datex2.eu/schema/3/commonExtension" xmlns:loc="http://datex2.eu/schema/3/locationReferencing" xmlns="http://datex2.eu/schema/3/trafficRegulation" modelBaseVersion="3" lang="FR" xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd" xsi:type="TrafficRegulationPublication" id="910928b3-58a1-4462-881b-53dec84602f9">
+<d2:payload
+    modelBaseVersion="3"
+    lang="FR"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:d2="http://datex2.eu/schema/3/d2Payload"
+    xmlns:com="http://datex2.eu/schema/3/common"
+    xmlns:comx="http://datex2.eu/schema/3/commonExtension"
+    xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+    xmlns="http://datex2.eu/schema/3/trafficRegulation"
+    xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
+    xsi:type="TrafficRegulationPublication"
+    id="910928b3-58a1-4462-881b-53dec84602f9"
+>
     <com:publicationTime>2022-11-10T15:11:00.000Z</com:publicationTime>
     <com:publicationCreator>
         <com:country>fr</com:country>
         <com:nationalIdentifier>DiaLog</com:nationalIdentifier>
     </com:publicationCreator>
+
     <trafficRegulationsFromCompetentAuthorities>
         <trafficRegulationOrder id="064ca240-2b58-73ea-8000-2d03faf5d44c" version="1">
             <description>
@@ -293,7 +306,8 @@
                                             </com:values>
                                         </loc:roadName>
                                     </loc:linearElement>
-                                    <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:fromPoint
+                                        xsi:type="loc:PercentageDistanceAlongLinearElement">
                                         <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
                                     </loc:fromPoint>
                                     <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
@@ -318,20 +332,26 @@
                     <com:value lang="fr">Arrêté portant dérogation temporaire des conditions de circulation et de stationnement des véhicules de toutes catégories, sur places existantes ou sur voie de circulation (route, piste cyclable, voie de bus ou trottoir), pour manifestation</com:value>
                 </com:values>
             </description>
+
             <issuingAuthority>
                 <com:values>
                     <com:value lang="fr">Préfecture de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
+
             <regulationId>064ca50b-428d-7810-8000-9b78885e357b</regulationId>
             <status>madeAndImplemented</status>
+
             <trafficRegulation>
                 <status>active</status>
+
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
+
                     <conditions xsi:type="ValidityCondition">
                         <validityByOrder>
                             <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
@@ -341,6 +361,7 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
+
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
                             <loc:supplementaryPositionalDescription>
@@ -351,6 +372,7 @@
                                     </loc:lane>
                                 </loc:carriageway>
                             </loc:supplementaryPositionalDescription>
+
                             <loc:linearWithinLinearElement>
                                 <loc:linearElement xsi:type="loc:LinearElement">
                                     <loc:roadName>
@@ -359,6 +381,7 @@
                                         </com:values>
                                     </loc:roadName>
                                 </loc:linearElement>
+
                                 <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
@@ -402,11 +425,13 @@
             </issuingAuthority>
             <regulationId>2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c</regulationId>
             <status>madeAndImplemented</status>
+
             <trafficRegulation>
                 <status>active</status>
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
                     <conditions xsi:type="ValidityCondition">
@@ -444,6 +469,7 @@
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:fromPoint>
+
                                 <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
@@ -501,13 +527,7 @@
                     <conditions xsi:type="VehicleCondition">
                         <negate>true</negate>
                         <vehicleCharacteristics>
-                            <com:_vehicleCharacteristicsExtension>
-                                <com:vehicleCharacteristicsExtended>
-                                    <comx:regulatedCharacteristics>
-                                        <comx:euSpecialPurposeVehicle>ambulance</comx:euSpecialPurposeVehicle>
-                                    </comx:regulatedCharacteristics>
-                                </com:vehicleCharacteristicsExtended>
-                            </com:_vehicleCharacteristicsExtension>
+                            <com:vehicleUsage>emergencyServices</com:vehicleUsage>
                         </vehicleCharacteristics>
                     </conditions>
                 </condition>
@@ -517,6 +537,7 @@
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
                     <conditions xsi:type="ValidityCondition">
@@ -585,6 +606,71 @@
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
+
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                            <com:validityTimeSpecification>
+                                <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                                <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                            </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                            <loc:linearWithinLinearElement>
+                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
+                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
+                                <loc:linearElement xsi:type="loc:LinearElement">
+                                    <loc:roadName>
+                                        <com:values>
+                                            <com:value lang="fr">Rue de l'Hôtel de Ville 82000 Montauban</com:value>
+                                        </com:values>
+                                    </loc:roadName>
+                                </loc:linearElement>
+
+                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:distanceAlong>0</loc:distanceAlong>
+                                    <loc:fromReferent>
+                                        <loc:referentIdentifier>start</loc:referentIdentifier>
+                                        <loc:referentName>30</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.016833</loc:latitude>
+                                            <loc:longitude>1.352126</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:fromReferent>
+                                </loc:fromPoint>
+
+                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:distanceAlong>0</loc:distanceAlong>
+                                    <loc:fromReferent>
+                                        <loc:referentIdentifier>end</loc:referentIdentifier>
+                                        <loc:referentName>12</loc:referentName>
+                                        <loc:referentType>referenceMarker</loc:referentType>
+                                        <loc:pointCoordinates>
+                                            <loc:latitude>44.016402</loc:latitude>
+                                            <loc:longitude>1.353016</loc:longitude>
+                                        </loc:pointCoordinates>
+                                    </loc:fromReferent>
+                                </loc:toPoint>
+                            </loc:linearWithinLinearElement>
+                        </locationByOrder>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="SpeedLimit">
+                    <maxValue>
+                        <numericValue>50</numericValue>
+                        <unitOfMeasure>kilometresPerHour</unitOfMeasure>
+                    </maxValue>
+                </typeOfRegulation>
+
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
                     <conditions xsi:type="ValidityCondition">

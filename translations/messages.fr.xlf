@@ -1330,6 +1330,10 @@
                 <source>regulation.vehicle_set.type.heavyGoodsVehicle</source>
                 <target>Poids lourds</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.hazardousmaterials">
+                <source>regulation.vehicle_set.type.hazardousmaterials</source>
+                <target>Matières dangeureuses</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.critair">
                 <source>regulation.vehicle_set.critair</source>
                 <target>Catégorie Crit'Air</target>
@@ -1358,25 +1362,37 @@
                 <source>regulation.vehicle_set.type.critair5</source>
                 <target>Crit'Air 5</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.hazardousMaterials">
+                <source>regulation.vehicle_set.type.hazardousMaterials</source>
+                <target>Matières dangeureuses</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.pedestrians">
                 <source>regulation.vehicle_set.type.pedestrians</source>
                 <target>Piétons</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.type.bus">
-                <source>regulation.vehicle_set.type.bus</source>
-                <target>Bus</target>
+            <trans-unit id="regulation.vehicle_set.type.commercial">
+                <source>regulation.vehicle_set.type.commercial</source>
+                <target>Transports en commun</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.bicycle">
                 <source>regulation.vehicle_set.type.bicycle</source>
                 <target>Vélos</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.type.ambulance">
-                <source>regulation.vehicle_set.type.ambulance</source>
-                <target>Véhicules sanitaires</target>
+            <trans-unit id="regulation.vehicle_set.type.emergencyServices">
+                <source>regulation.vehicle_set.type.emergencyServices</source>
+                <target>Véhicules d'urgence</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.other">
                 <source>regulation.vehicle_set.type.other</source>
                 <target>Autres</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.taxi">
+                <source>regulation.vehicle_set.type.taxi</source>
+                <target>Taxis / VTC</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.carSharing">
+                <source>regulation.vehicle_set.type.carSharing</source>
+                <target>Covoiturage</target>
             </trans-unit>
             <trans-unit id="regulation.vehicles.all">
                 <source>regulation.vehicles.all</source>
@@ -1398,17 +1414,21 @@
                 <source>regulation.vehicles.heavyweightCharacteristics.prefix</source>
                 <target>de plus de</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.suffix.width">
-                <source>regulation.vehicles.heavyweightCharacteristics.suffix.width</source>
-                <target>de large</target>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.weight">
+                <source>regulation.vehicles.heavyweightCharacteristics.weight</source>
+                <target>%value% tonnes</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.suffix.length">
-                <source>regulation.vehicles.heavyweightCharacteristics.suffix.length</source>
-                <target>de long</target>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.width">
+                <source>regulation.vehicles.heavyweightCharacteristics.width</source>
+                <target>%value% mètres de large</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.suffix.height">
-                <source>regulation.vehicles.heavyweightCharacteristics.suffix.height</source>
-                <target>de haut</target>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.length">
+                <source>regulation.vehicles.heavyweightCharacteristics.length</source>
+                <target>%value% mètres de long</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.height">
+                <source>regulation.vehicles.heavyweightCharacteristics.height</source>
+                <target>%value% mètres de haut</target>
             </trans-unit>
         </body>
     </file>

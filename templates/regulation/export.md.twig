@@ -68,6 +68,7 @@ Arrête
     –
     {%- for measure in location.measures %}
         {{ ('regulation.measure.type.' ~ measure.type)|trans|lower }}
+        {{ 'regulation.measure.maxSpeed'|trans({'%maxSpeed%': measure.maxSpeed }) }}
         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
         {% include 'regulation/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
     {%- endfor %}

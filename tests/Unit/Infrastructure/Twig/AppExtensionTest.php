@@ -129,7 +129,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetVehicleTypeIconName(): void
     {
-        $this->assertSame('ambulance', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::AMBULANCE->value));
+        $this->assertSame('emergency-services', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::EMERGENCY_SERVICES->value));
         $this->assertSame('critair', $this->extension->getVehicleTypeIconName(CritairEnum::CRITAIR_4->value));
         $this->assertSame('', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::OTHER->value));
     }

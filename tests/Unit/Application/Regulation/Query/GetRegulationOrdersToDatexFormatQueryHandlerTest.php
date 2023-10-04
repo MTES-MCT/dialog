@@ -11,6 +11,7 @@ use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Enum\CritairEnum;
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -64,9 +65,21 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             toLongitude : '-1.930973',
         );
 
+        $location3 = new DatexLocationView(
+            address: '19 Rue Gabriel Péri, 78800 Houilles',
+            fromHouseNumber : '16',
+            fromLatitude : '49.347054',
+            fromLongitude : '-1.935836',
+            toHouseNumber : '37bis',
+            toLatitude : '47.347917',
+            toLongitude : '-1.930973',
+        );
+
         $startDate1 = new \DateTime('2022-12-07');
         $endDate1 = new \DateTime('2022-12-17');
         $startDate2 = new \DateTime('2022-12-10');
+        $startDate3 = new \DateTime('2023-12-12');
+        $endDate3 = new \DateTime('2023-12-17');
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $row1 = [
@@ -82,6 +95,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location1->toHouseNumber,
             'toLatitude' => $location1->toLatitude,
             'toLongitude' => $location1->toLongitude,
+            'maxSpeed' => null,
+            'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => [VehicleTypeEnum::CRITAIR->value],
             'restrictedCritairTypes' => [CritairEnum::CRITAIR_3->value, CritairEnum::CRITAIR_4->value],
             'exemptedVehicleTypes' => null,
@@ -103,6 +118,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location1bis->toHouseNumber,
             'toLatitude' => $location1bis->toLatitude,
             'toLongitude' => $location1bis->toLongitude,
+            'maxSpeed' => null,
+            'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => [],
             'exemptedVehicleTypes' => null,
             'heavyweightMaxWeight' => null,
@@ -124,22 +141,49 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'toHouseNumber' => $location2->toHouseNumber,
             'toLatitude' => $location2->toLatitude,
             'toLongitude' => $location2->toLongitude,
+            'maxSpeed' => null,
+            'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
-            'exemptedVehicleTypes' => ['bus'],
+            'exemptedVehicleTypes' => ['commercial'],
             'heavyweightMaxWeight' => 3.5,
             'heavyweightMaxWidth' => 2,
             'heavyweightMaxLength' => 12,
             'heavyweightMaxHeight' => 2.4,
             'restrictedCritairTypes' => null,
         ];
+        $row3 = [
+            'uuid' => '12410fb8-a2b9-4449-a7d5-a4f409807f99',
+            'organizationName' => 'Autorité 3',
+            'description' => 'Description 3',
+            'startDate' => $startDate3,
+            'endDate' => $endDate3,
+            'address' => $location3->address,
+            'fromHouseNumber' => $location3->fromHouseNumber,
+            'fromLatitude' => $location3->fromLatitude,
+            'fromLongitude' => $location3->fromLongitude,
+            'toHouseNumber' => $location3->toHouseNumber,
+            'toLatitude' => $location3->toLatitude,
+            'toLongitude' => $location3->toLongitude,
+            'maxSpeed' => 50,
+            'type' => MeasureTypeEnum::SPEED_LIMITATION->value,
+            'restrictedVehicleTypes' => [VehicleTypeEnum::HAZARDOUS_MATERIALS->value],
+            'exemptedVehicleTypes' => null,
+            'heavyweightMaxWeight' => null,
+            'heavyweightMaxWidth' => null,
+            'heavyweightMaxLength' => null,
+            'heavyweightMaxHeight' => null,
+            'restrictedCritairTypes' => null,
+        ];
 
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForDatexFormat')
-            ->willReturn([$row1, $row1bis, $row2]);
+            ->willReturn([$row1, $row1bis, $row2, $row3]);
 
         $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
+        $hazardousMaterials = new DatexVehicleConditionView('hazardousMaterials');
+        $hazardousMaterials->isDangerousSubstances = true;
 
         $this->assertEquals(
             [
@@ -151,6 +195,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     endDate: $endDate1,
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
+                            type: 'noEntry',
                             location: $location1,
                             vehicleConditions: [
                                 new DatexVehicleConditionView('critair3'),
@@ -158,6 +203,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                             ],
                         ),
                         new DatexTrafficRegulationView(
+                            type: 'noEntry',
                             location: $location1bis,
                             vehicleConditions: [],
                         ),
@@ -171,6 +217,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     endDate: null,
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
+                            type: 'noEntry',
                             location: $location2,
                             vehicleConditions: [
                                 new DatexVehicleConditionView(
@@ -180,8 +227,25 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                     maxLength: 12,
                                     maxHeight: 2.4,
                                 ),
-                                new DatexVehicleConditionView('bus', isExempted: true),
+                                new DatexVehicleConditionView('commercial', isExempted: true),
                             ],
+                        ),
+                    ],
+                ),
+                new RegulationOrderDatexListItemView(
+                    uuid: '12410fb8-a2b9-4449-a7d5-a4f409807f99',
+                    organization: 'Autorité 3',
+                    description: 'Description 3',
+                    startDate: $startDate3,
+                    endDate: $endDate3,
+                    trafficRegulations: [
+                        new DatexTrafficRegulationView(
+                            type: 'speedLimitation',
+                            location: $location3,
+                            vehicleConditions: [
+                                $hazardousMaterials,
+                            ],
+                            maxSpeed: 50,
                         ),
                     ],
                 ),

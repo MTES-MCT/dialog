@@ -20,7 +20,7 @@ final class VehicleSetTest extends TestCase
             $measure,
             restrictedTypes: ['heavyGoodsVehicle'],
             otherRestrictedTypeText: null,
-            exemptedTypes: ['bus', 'other'],
+            exemptedTypes: ['commercial', 'other'],
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
             heavyweightMaxLength: 12,
@@ -30,7 +30,7 @@ final class VehicleSetTest extends TestCase
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $vehicleSet->getUuid());
         $this->assertSame(['heavyGoodsVehicle'], $vehicleSet->getRestrictedTypes());
         $this->assertNull($vehicleSet->getOtherRestrictedTypeText());
-        $this->assertSame(['bus', 'other'], $vehicleSet->getExemptedTypes());
+        $this->assertSame(['commercial', 'other'], $vehicleSet->getExemptedTypes());
         $this->assertSame('Convois exceptionnels', $vehicleSet->getOtherExemptedTypeText());
         $this->assertSame($measure, $vehicleSet->getMeasure());
         $this->assertSame(3.5, $vehicleSet->getHeavyweightMaxWeight());
@@ -49,7 +49,7 @@ final class VehicleSetTest extends TestCase
             $measure,
             restrictedTypes: ['heavyGoodsVehicle'],
             otherRestrictedTypeText: null,
-            exemptedTypes: ['bus', 'other'],
+            exemptedTypes: ['commercial', 'other'],
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
             heavyweightMaxLength: 12,
