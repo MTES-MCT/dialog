@@ -12,7 +12,7 @@ module.exports = {
     mastodon_url: "",
     twitter_url: "",
     instagram_url: "",
-    linkedin_url: "",
+    linkedin_url: "https://www.linkedin.com/company/dialog.beta.gouv/?originalSubdomain=fr",
     youtube_url: "",
     peertube_url: "",
     github_url: "https://github.com/MTES-MCT/dialog",
