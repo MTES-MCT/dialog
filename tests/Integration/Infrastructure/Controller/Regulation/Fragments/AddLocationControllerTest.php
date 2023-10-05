@@ -56,9 +56,10 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWidth'] = 0.0; // Zero OK
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxLength'] = -0; // Zero OK
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxHeight'] = '2.50';
+        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = ['monday', 'sunday'];
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '08:00';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '16:00';
-
+        $values['location_form']['measures'][0]['periods'][0]['includeHolidays'] = true;
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
 

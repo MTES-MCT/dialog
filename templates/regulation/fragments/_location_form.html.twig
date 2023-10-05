@@ -12,7 +12,43 @@
         data-form-collection-target="collectionItem"
     >
         <div class="app-card__content">
-            
+            <fieldset class="fr-fieldset app-card__content" aria-labelledby="applicableDays-{{ index }}-legend">
+                {{ form_label(form.applicableDays, null, {
+                    element: 'legend',
+                    label_attr: {
+                        id: form.applicableDays.vars.name ~ '-legend',
+                        class: 'fr-fieldset__legend fr-fieldset__legend--regular',
+                    }
+                }) }}
+                <div class="fr-fieldset__item">
+                    {% for day in form.applicableDays %}
+                        {% set dayBtnId = day.vars.id ~ '-btn' %}
+                        {% set isChecked = day.vars.value in form.applicableDays.vars.value ? "true" : "false" %}
+                        <label for="{{ dayBtnId }}" data-controller="chip-button">
+                            <button
+                                id="{{ dayBtnId }}"
+                                type="button"
+                                class="fr-tag fr-mb-1w"
+                                aria-pressed="{{ isChecked }}"
+                                data-chip-button-target="button"
+                            >
+                                {{ ('regulation.period.days.' ~ day.vars.value)|trans }}
+                                {{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
+                            </button>
+                        </label>
+                    {% endfor %}
+                    {{ form_errors(form.applicableDays) }}
+                </div>
+            </fieldset>
+            <div class="fr-toggle">
+                {{ form_widget(form.includeHolidays, { attr: {class: 'fr-toggle__input'}}) }}
+                {{ form_label(form.includeHolidays, null, { label_attr: {
+                    'class': 'fr-toggle__label',
+                    'data-fr-checked-label': 'common.enabled'|trans,
+                    'data-fr-unchecked-label': 'common.disabled'|trans
+                }}) }}
+                {{ form_errors(form.includeHolidays) }}
+            </div>
             <div class="fr-container--fluid">
                 <div class="fr-grid-row fr-grid-row--gutters ">
                     {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
