@@ -29,6 +29,15 @@ layout: layouts/base.njk
 
       {{ content | safe }}
 
+      {% if callout %}
+        {% from "components/component.njk" import component with context %}
+        {{ component("callout", {
+            title: callout.title,
+            description: callout.description,
+            link: callout.link
+        }) }}
+      {% endif %}
+
       {% if collections.posts %}
         {% set previousPost = collections.posts | filterCollectionLang | getPreviousCollectionItem %}
         {% set nextPost = collections.posts | filterCollectionLang | getNextCollectionItem %}
