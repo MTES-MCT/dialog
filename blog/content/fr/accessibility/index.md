@@ -1,106 +1,60 @@
 ---
-title: Exemple de déclaration d’accessibilité
+title: Accessibilité
 layout: layouts/post.njk
-description: Déclaration d’accessibilité à compléter
+description: Déclaration d’accessibilité
 slugOverride: accessibilite
 showBreadcrumb: true
 ---
-# Accessibilité
 
-<span class="aModifier">[Nom de l’entité]</span> s’engage à rendre ses sites internet, intranet, extranet et ses progiciels accessibles (et ses applications mobiles et mobilier urbain numérique) conformément à l’article 47 de la loi n°2005-102 du 11 février 2005.
+## Qu'est-ce que l'accessibilité numérique ?
+Un site web accessible suit un ensemble de règles et de bonnes pratiques pour s'assurer qu'il puisse être utilisé sans difficulté par les personnes en situation de handicap.
 
-À cette fin, <span class="aModifier">[Nom de l’entité]</span> met en œuvre la stratégie et les actions suivantes :
+### Démarche d'accessibilité
+Le site DiaLog n'a pas fait l'objet d'un audit RGAA 4.1. Il est donc impossible en l'état d'en évaluer la conformité avec le référentiel. Par défaut, le site est donc considéré comme non conforme.
 
-- Schéma pluriannuel de mise en accessibilité 2022-2024 <span class="aModifier">[url]</span> ;
-- Actions réalisées en 2020-2021 <span class="aModifier">[url]</span> ;
-- Plan d’actions 2022-2024 <span class="aModifier">[url]</span>.
+Il a cependant été conçu pour être accessible au plus grand nombre. Pour cela, nous avons veillé à :
 
-Cette déclaration d’accessibilité s’applique à <span class="aModifier">[www.nomdusite.gouv.fr]</span>.
+* produire un code source HTML valide ;
+* structurer chaque page avec titres et sémantique ;
+* faire en sorte que la navigation au clavier soit fonctionnelle et visible ;
+* respecter les règles de contraste pour que le site soit lisibile.
 
-## État de conformité
+Vous devriez donc pouvoir, par exemple :
 
-<span class="aModifier">[Nom du site (url du site)]</span> est <strong class="aModifier">non/partiellement/totalement</strong> conforme avec le référentiel général d’amélioration de l’accessibilité (RGAA), version 4 en raison des non-conformités et des dérogations énumérées ci-dessous.
+* Changer les couleurs, les niveaux de contraste et les polices de caractères via le navigateur ou le système d'exploitation ;
+* Naviguer sur le site site sans utiliser la souris, par exemple avec le clavier ou via un écran tactile.
 
-### Résultats des tests
+### Défauts d'accessibilité
 
-L’audit de conformité réalisé par <span class="aModifier">[nom de l’entité qui a réalisé l’audit]</span> révèle que :
+Nous ne pouvons pas garantir l'accessibilité des pages ou portions de pages suivantes :
 
-- <span class="aModifier">[nn]</span>% des critères du RGAA version 4 sont respectés ;
-- (Facultatif) Le taux moyen de conformité du site s’élève à <span class="aModifier">[nn]</span>% ;
-- (Facultatif) Accès à la grille d’audit RGAA <span class="aModifier">[url]</span> pour télécharger la grille d’audit.
+* Liste des arrêtés avec lecteur d'écran.
 
-## Contenus non accessibles
+## Déclaration de conformité RGAA
 
-### Non-conformités
+Établie le 24 avril 2023.
 
-Exemples :
+Le Ministère de la Transition écologique et de la Cohésion des territoires s'engage à rendre son service accessible, conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.
 
-- La vidéo de présentation de la demande d’aide n’a pas de transcription. Pour toute question sur cette démarche, vous pouvez contacter le NN NN NN NN NN. La version 2020 respectera les critères du RGAA sur les alternatives texte pour les documents multimédias.
-- Le bouton d’envoi du formulaire de déclaration contient un intitulé « Retour » au lieu de « Envoi ». Cette erreur sera corrigée avant le 31 mars 2020
-- La connexion au compte personnel contient une vérification que vous n’êtes pas un robot avec un captcha visuel. Il est possible d’effectuer sa démarche par téléphone ou au guichet pour les personnes empêchées d’accéder à leur compte...
+Cette déclaration d'accessibilité s'applique à DiaLog (https://dialog.beta.gouv.fr).
 
-### Dérogations pour charge disproportionnée
+### État de conformité
+DiaLog est non conforme avec le RGAA. Le site n'a encore pas été audité.
 
-Exemple :
-Les archives des comptes rendus des séances du conseil municipal jusqu’en 2010 sont au format PDF image. Il est cependant possible d’en demander un exemplaire texte par courriel
+### Amélioration et contact
+Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter le responsable de DiaLog pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.
 
-### Contenus non soumis à l’obligation d’accessibilité
+E-mail : dialog@beta.gouv.fr
 
-Exemples :
+### Voie de recours
+Cette procédure est à utiliser dans le cas suivant : vous avez signalé au responsable du site internet un défaut d'accessibilité qui vous empêche d'accéder à un contenu ou à un des services du portail et vous n'avez pas obtenu de réponse satisfaisante.
 
-- Cartes de l’Institut géographique national associées à l’annuaire
-- Reproduction du manuscrit du Moyen-Âge...
+Vous pouvez :
 
-## Établissement de cette déclaration d’accessibilité
+* Écrire un message au Défenseur des droits
+* Contacter le délégué du Défenseur des droits dans votre région
+* Envoyer un courrier par la poste (gratuit, ne pas mettre de timbre) :
+Défenseur des droits
+Libre réponse 71120 75342 Paris CEDEX 07
 
-Cette déclaration a été établie le <span class="aModifier">[JJ/MM/AAAA]</span>.
-Elle a été mise à jour le <span class="aModifier">[JJ/MM/AAAA]</span>.
-
-### Technologies utilisées pour la réalisation du site
-
-- HTML5
-- CSS
-- ...
-
-### Environnement de test
-
-Les vérifications de restitution de contenus ont été réalisées sur la base de la combinaison fournie par la base de référence du RGAA, avec les versions suivantes :
-
-- Firefox et NVDA
-- Safari et VoiceOver
-- ...
-
-### Outils pour évaluer l’accessibilité
-
-- color contrast analyzer
-- inspecteur de code
-- ...
-
-### Pages du site ayant fait l’objet de la vérification de conformité
-
-- page d’accueil <span class="aModifier">[url]</span>
-- page mentions légales <span class="aModifier">[url]</span>
-- page accessibilité <span class="aModifier">[url]</span>
-- page plan du site <span class="aModifier">[url]</span>
-- page d’aide <span class="aModifier">[url]</span>
-- ...
-
-## Retour d’information et contact
-
-Si vous n’arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter le responsable de <span class="aModifier">[nom du site]</span> pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.
-
-- Envoyer un message <span class="aModifier">[url du formulaire en ligne]</span> ;
-- Contacter <span class="aModifier">[Nom de l’entité responsable du service en ligne et coordonnées]</span>.
-
-## Voies de recours
-
-Si vous constatez un défaut d’accessibilité vous empêchant d’accéder à un contenu ou une fonctionnalité du site, que vous nous le signalez et que vous ne parvenez pas à obtenir une réponse de notre part, vous êtes en droit de faire parvenir vos doléances ou une demande de saisine au Défenseur des droits.
-
-Plusieurs moyens sont à votre disposition :
-
-- Écrire un message au Défenseur des droits
-- Contacter le délégué du Défenseur des droits dans votre région
-- Envoyer un courrier par la poste (gratuit, ne pas mettre de timbre)
-  Défenseur des droits
-  Libre réponse 71120
-  75342 Paris CEDEX 07
+Cette déclaration d'accessibilité a été créé le 24 avril 2023 grâce au Générateur de Déclaration d'Accessibilité de BetaGouv.

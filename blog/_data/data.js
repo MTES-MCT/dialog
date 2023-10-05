@@ -1,3 +1,3 @@
 module.exports = {
-    footer_content_description: `Lorem [...] elit ut.`
+    footer_content_description: `Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistique.`
 }
