@@ -3,11 +3,11 @@ title: Interview d'Isabelle Barraud Serfaty
 description: Isabelle Barraud Serfaty est l'autrice de Trottoirs! Une approche économique, historique et flâneuse aux éditions Apogée.
 date: git Last Modified
 callout:
-    title: Titre callout
-    description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Contactez-nous par mail à l’adresse suivante : dialog@beta.gouv.fr afin que nous puissions en parler !"
+    title: Devenez utilisateur DiaLog !
+    description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Envoyez-nous un mail et nous vous recontacterons au plus vite.
     link:
-        title: test
-        url: https://dialog.beta.gouv.fr
+        title: Contacter l'équipe
+        url: mailto:dialog@beta.gouv.fr
 tags:
   - Interview
 ---
