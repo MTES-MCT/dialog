@@ -12,6 +12,7 @@ tags:
   - Interview
 ---
 
+<div style="margin-left: 50px; margin-right: 50px;">
 :::callout
 Numériser la réglementation d'usage de notre voirie, c'est beaucoup plus qu'une approche technique ou juridique. C'est donner des moyens de connaissance et d'action aux acteurs de la ville. Pour anticiper l'impact de ces changements, il est nécessaire d'élargir son champ de vision et de prendre du recul. Nous avons choisi d'aller à la rencontre de celles et ceux qui portent un regard différent sur l'espace public. Dans son ouvrage *Trottoirs !*, Isabelle Barraud Serfaty propose de changer de perspective sur cet objet du quotidien, qu'on a souvent tendance à fouler aux pieds.
 :::
@@ -70,3 +71,4 @@ Il faut savoir que juridiquement le trottoir n’existe pas. Le CNSR ([Conseil N
 Le trottoir n’est pas un objet de réglementation en tant que tel : c’est l’objet de plein de réglementations différentes. Et chacune le regarde à sa manière : le piéton, l’automobiliste, le livreur. La sécurité, l’urbanisme, les réseaux, les pompiers,...
 
 Si une solution comme DiaLog permet à la fois d’apporter les avantages de la numérisation du trottoir et de la diffusion de sa réglementation tout en garantissant la compétence des collectivités, c’est un projet intéressant à suivre !
+</div>
