@@ -3,7 +3,7 @@ title: Interview d'Isabelle Barraud Serfaty
 description: Isabelle Barraud Serfaty est l'autrice de Trottoirs! Une approche économique, historique et flâneuse aux éditions Apogée.
 date: git Last Modified
 callout:
-    title: Devenez utilisateur DiaLog !
+    title: Devenez utilisateur DiaLog
     description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Envoyez-nous un mail et nous vous recontacterons au plus vite.
     link:
         title: Contacter l'équipe
