@@ -4,7 +4,7 @@ description: Isabelle Barraud Serfaty est l'autrice de Trottoirs! Une approche �
 date: git Last Modified
 callout:
     title: Devenez utilisateur DiaLog
-    description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Envoyez-nous un mail et nous vous recontacterons au plus vite.
+    description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Envoyez-nous un mail et nous vous recontacterons au plus vite."
     link:
         title: Contacter l'équipe
         url: mailto:dialog@beta.gouv.fr
