@@ -23,7 +23,7 @@ Numériser la réglementation d'usage de notre voirie, c'est beaucoup plus qu'un
 
 Je suis consultante en économie urbaine. Dans le cadre de ma structure [Ibicity](https://www.ibicity.fr/), je réalise des missions opérationnelles, du montage de projets d’aménagement ainsi que l’étude des dimensions stratégiques et des sujets de recherche par exemple sur la question de la gratuité. J’interviens également au sein de l’École Urbaine à Sciences-Po.
 
-<img src="blog/content/fr/posts/img/P1_Trottoirs.jpg" alt="L'ouvrage Trottoirs! d'Isabelle Baraud Serfaty aux éditions Apogée" width="50%"/>
+<img src="{{ '/blog/content/fr/posts/img/P1_Trottoirs.jpg' | url }}" alt="L'ouvrage Trottoirs! d'Isabelle Baraud Serfaty aux éditions Apogée" width="50%"/>
 
 Pourquoi me suis-je intéressée au trottoir ? C’est sans doute lié à ma définition de l’économie. L’économie gère la rareté : qui regarde le gateau, et qui tient le couteau ? Je m’intéresse beaucoup à comprendre qui sont les opérateurs et comment ils agissent. De mes formations en école de commerce et en urbanisme, je retiens que l’économie et l’urbanisme ont en commun cette question du partage.
 
@@ -52,7 +52,7 @@ La physionomie des trottoirs français est très hétérogène. En France il n�
 
 C’est un de mes étonnements de la phase d’écriture de mon livre : la place du riverain dans l’histoire du trottoir. C’est largement le rapport aux riverains et aux activités riveraines qui structure le trottoir. Celui-ci est étroitement lié au commerce notamment, avec une forte dimension marchande. Mais il n’y a pas de normes, on est dans l’empirique. Certaines périodes critiques comme la sortie du confinement ont permis de mettre en évidence par exemple l’étroitesse de certains trottoirs quand s’est posée la question de la “distanciation physique” liée à la pandémie. [La carte de Vraiment Vraiment](https://autrementautrement.com/2020/04/21/demain-maintenant-lespace-public/) sur les rues de Paris à partir des données de l’APUR est évocatrice.
 
-<img src="blog/content/fr/posts/img/P1_vraimentvraiment.png" alt="Carte des rues de Paris réalisée à partir des données de l'APUR, en rouge sont représentées celles dont les trottoirs ne permettaient pas de respecter la distanciation sociale (2,5m)" width="50%"/>
+<img src="{{ '/blog/content/fr/posts/img/P1_vraimentvraiment.png' | url }}" alt="Carte des rues de Paris réalisée à partir des données de l'APUR, en rouge sont représentées celles dont les trottoirs ne permettaient pas de respecter la distanciation sociale (2,5m)" width="50%"/>
 
 **Penses-tu que comme le web l’espace public devrait être numérisé ?**
 
