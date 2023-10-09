@@ -12,6 +12,7 @@ tags:
   - Interview
 ---
 
+<base href="/blog/content/fr/posts/" />
     
 :::callout
 Numériser la réglementation d'usage de notre voirie, c'est beaucoup plus qu'une approche technique ou juridique. C'est donner des moyens de connaissance et d'action aux acteurs de la ville. Pour anticiper l'impact de ces changements, il est nécessaire d'élargir son champ de vision et de prendre du recul. Nous avons choisi d'aller à la rencontre de celles et ceux qui portent un regard différent sur l'espace public. Dans son ouvrage *Trottoirs !*, Isabelle Barraud Serfaty propose de changer de perspective sur cet objet du quotidien, qu'on a souvent tendance à fouler aux pieds.
