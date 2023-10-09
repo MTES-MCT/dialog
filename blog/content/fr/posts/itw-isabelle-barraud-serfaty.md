@@ -22,7 +22,7 @@ Numériser la réglementation d'usage de notre voirie, c'est beaucoup plus qu'un
 
 Je suis consultante en économie urbaine. Dans le cadre de ma structure [Ibicity](https://www.ibicity.fr/), je réalise des missions opérationnelles, du montage de projets d’aménagement ainsi que l’étude des dimensions stratégiques et des sujets de recherche par exemple sur la question de la gratuité. J’interviens également au sein de l’École Urbaine à Sciences-Po.
 
-{% image "./img/P1_Trottoirs.jpg", alt="L'ouvrage Trottoirs! d'Isabelle Baraud Serfaty aux éditions Apogée", caption="L'ouvrage Trottoirs! d'Isabelle Baraud Serfaty aux éditions Apogée" %}
+{% image "./img/P1_Trottoirs.jpg", "L'ouvrage Trottoirs! d'Isabelle Baraud Serfaty aux éditions Apogée", "60%" %}
 
 Pourquoi me suis-je intéressée au trottoir ? C’est sans doute lié à ma définition de l’économie. L’économie gère la rareté : qui regarde le gateau, et qui tient le couteau ? Je m’intéresse beaucoup à comprendre qui sont les opérateurs et comment ils agissent. De mes formations en école de commerce et en urbanisme, je retiens que l’économie et l’urbanisme ont en commun cette question du partage.
 
@@ -53,7 +53,7 @@ C’est un de mes étonnements de la phase d’écriture de mon livre : la place
 
 <img src="./img/P1_vraimentvraiment.png" alt="Carte des rues de Paris réalisée à partir des données de l'APUR, en rouge sont représentées celles dont les trottoirs ne permettaient pas de respecter la distanciation sociale (2,5m)" width="50%"/>
 
-{% image "./img/P1_vraimentvraiment.png", alt="Carte des rues de Paris réalisée à partir des données de l'APUR", caption="Carte des rues de Paris réalisée à partir des données de l'APUR, en rouge sont représentées celles dont les trottoirs ne permettaient pas de respecter la distanciation sociale (2,5m)" %}
+{% image "./img/P1_vraimentvraiment.png", "Carte des rues de Paris réalisée à partir des données de l'APUR, en rouge sont représentées celles dont les trottoirs ne permettaient pas de respecter la distanciation sociale (2,5m)", "60%" %}
 
 **Penses-tu que comme le web l’espace public devrait être numérisé ?**
 
