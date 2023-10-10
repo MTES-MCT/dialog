@@ -28,6 +28,15 @@ Distinguer les critères "Must have" et "Nice to have". Un critère "Must have" 
 
 <!-- Utiliser cette section librement pour l'implémentation (la tech). Par exemple, lister les pistes d'implémentation, lister les sous-tickets permettant d'implémenter cette user story étape par étape, etc. -->
 
+<!-- Pour mémoire, ces zones de l'application peuvent avoir besoin de modifications (non exhaustif) :
+
+- [ ] Migration de données
+- [ ] Interface d'édition
+- [ ] Affichage dans l'interface
+- [ ] Export DATEX II
+- [ ] Export Word
+-->
+
 ## Contexte supplémentaire
 
 <!-- Si besoin, ajouter des éléments de contexte permettant de comprendre les tenants et aboutissants de cette user story -->
