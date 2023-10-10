@@ -177,7 +177,7 @@ div.fr-callout__text p {
 .image-article {
     max-width: 80%;
     display: block;
-    margin: 0 auto;
+    margin: 10px auto 10px;
 }
 
 /** Classe spécifique au contenu des articles **/
@@ -185,4 +185,10 @@ div.fr-callout__text p {
     text-align: justify;
     margin-left: 200px; 
     margin-right: 200px;
+}
+
+@media (max-width: 767px) {
+    .contenu-article {
+        margin: 0;
+    }
 }
