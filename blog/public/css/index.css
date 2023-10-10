@@ -181,7 +181,7 @@ div.fr-callout__text p {
 }
 
 /* Appliquer l'italique et la couleur grise aux légendes des images */
-img + em::after {
+picture + em::after {
     content: attr(title); /* Utilisez le texte de l'attribut "title" comme contenu de la légende */
     font-style: italic;
     font-size: smaller;
