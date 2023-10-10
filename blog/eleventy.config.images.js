@@ -35,6 +35,11 @@ module.exports = eleventyConfig => {
         options["outputDir"] = path.join(eleventyConfig.dir.output, "img"); // Advanced usage note: `eleventyConfig.dir` works here because we’re using addPlugin.
         let metadata = await eleventyImage(file, options);
 
+        // Ajout d'une classe CSS pour limiter la taille des images à 80% de la largeur du conteneur parent
+        const imageClass = `${cls} max-width-80`; // max-width-80 est une classe CSS qui définira max-width: 80%;
+
+        // TODO loading=eager and fetchpriority=high
+
         // TODO loading=eager and fetchpriority=high
         return eleventyImage.generateHTML(metadata, getImageAttributes(cls, alt, sizes));
     });
