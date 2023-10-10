@@ -1,7 +1,7 @@
 ---
 title: Interview de Juliette Berthon
 description: Juliette Berthon, directrice de la Responsabilité Sociale des Entreprises (RSE) et de l'Innovation chez Sogaris, nous parle d'innovation, de réglementation routière et de logistique.
-date: Last Modified
+date: "2023-06-19"
 callout:
     title: Devenez utilisateur DiaLog
     description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Envoyez-nous un mail et nous vous recontacterons au plus vite."
