@@ -9,6 +9,7 @@ BIN_COMPOSER = ${_SYMFONY} composer
 BIN_NPM = ${_DOCKER_EXEC_PHP} npm
 BIN_NPX = ${_DOCKER_EXEC_PHP} npx
 _DOCKER_COMPOSE_ADDOK = docker-compose -f ./docker-compose-addok.yml
+_DOCKER_COMPOSE_BAC_IDF = docker-compose -f ./docker-compose-bac-idf.yml
 
 # No TTY commands.
 _DOCKER_EXEC_PHP_NO_TTY = docker-compose exec -T php
@@ -110,6 +111,18 @@ addok_bundle: ## Create Addok custom bundle file
 	sudo chmod +r docker/addok/addok-data/dump.rdb # Allow zip to read it
 
 	cd docker/addok && zip -j addok-dialog-bundle.zip addok-data/addok.conf addok-data/addok.db addok-data/dump.rdb
+
+bac_idf_start: ## Start BAC-IDF containers
+	${_DOCKER_COMPOSE_BAC_IDF} up -d
+
+bac_idf_stop: ## Stop BAC-IDF containers
+	${_DOCKER_COMPOSE_BAC_IDF} stop
+
+bac_idf_shell: ## Enter BAC-IDF Mongo shell
+	${_DOCKER_COMPOSE_BAC_IDF} exec mongo bash
+
+bac_idf_ps: ## Display BAC-IDF containers
+	${_DOCKER_COMPOSE_BAC_IDF} ps
 
 data_install: data_init ## Load data into database
 	make console CMD="app:data:fr_city ${ARGS}"
