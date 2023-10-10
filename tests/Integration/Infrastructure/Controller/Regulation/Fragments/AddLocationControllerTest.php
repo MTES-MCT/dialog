@@ -60,6 +60,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '08:00';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '16:00';
         $values['location_form']['measures'][0]['periods'][0]['includeHolidays'] = true;
+
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
 
@@ -148,6 +149,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['location_form']['measures'][0]['vehicleSet']['critairTypes'] = [];
+
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_critairTypes_error')->text());
@@ -167,6 +169,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['location_form']['measures'][0]['vehicleSet']['critairTypes'] = ['invalidCritair'];
+
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_vehicleSet_critairTypes_error')->text());

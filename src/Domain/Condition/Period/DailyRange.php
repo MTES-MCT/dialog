@@ -14,6 +14,7 @@ class DailyRange
     public function __construct(
         private string $uuid,
         private array $applicableDays,
+        private Period $period,
     ) {
         $this->timeSlots = new ArrayCollection();
     }
@@ -31,5 +32,10 @@ class DailyRange
     public function getTimeSlots(): iterable
     {
         return $this->timeSlots;
+    }
+
+    public function getPediod(): Period
+    {
+        return $this->period;
     }
 }
