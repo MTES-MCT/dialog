@@ -173,13 +173,16 @@ div.fr-callout__text p {
 
 /** Classes CSS personnalisées **/
 
-/** Limitation de la largeur d'une image à 80% du conteneur parent **/
-.max-width-80 {
-  max-width: 80%;
+/** Classe spécifique aux images contenues dans les articles **/
+.image-article {
+    max-width: 80%;
+    display: block;
+    margin: 0 auto;
 }
 
-/** Marges sur les bords des articles afin de limiter la largeur du texte **/
+/** Classe spécifique au contenu des articles **/
 .contenu-article {
+    text-align: justify;
     margin-left: 200px; 
     margin-right: 200px;
 }
