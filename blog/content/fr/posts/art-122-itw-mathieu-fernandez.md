@@ -21,7 +21,7 @@ Comment les GPS peuvent-ils contribuer efficacement à la lutte contre le déré
 
 **Commençons par le texte en question :**
 
-:::quote
+<div style="font-style: italic; color: gray;">
 Après l'article L. 1115-8 du code des transports, il est inséré un article L. 1115-8-1 ainsi rédigé :
 Selon des modalités définies par décret, les services numériques d'assistance au déplacement sont tenus d'informer de façon complète les utilisateurs des impacts environnementaux de leurs déplacements. En particulier, ces services :
 
@@ -34,7 +34,7 @@ Selon des modalités définies par décret, les services numériques d'assistanc
 4° Informent les utilisateurs des mesures de restriction de circulation visant les poids lourds prises par les autorités de police de la circulation en application de l'article L. 2213-1 du même code ou de l'article L. 411-8 du code de la route et concernant les itinéraires proposés, dans le cas des services numériques d'assistance au déplacement spécifiques aux véhicules lourds.
 
 Les services numériques mentionnés au premier alinéa du présent article sont ceux qui visent à faciliter les déplacements monomodaux ou multimodaux au moyen de services de transport, de véhicules, de cycles, d'engins personnels de déplacement ou à pied.
-:::
+</div>
 
 **Mathieu Fernandez, vous êtes intrapreneur au sein du Ministère de la Transition Écologique, en charge du développement de la startup d’État DiaLog. Avant de nous parler de DiaLog, pouvez-vous nous raconter pourquoi l’État a souhaité encourager les solutions de navigation à mieux favoriser les déplacements les moins carbonés ?**
 
