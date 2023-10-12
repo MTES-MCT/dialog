@@ -56,6 +56,6 @@ En résumé, la logistique urbaine présente de nombreux défis liés à la coor
 L’accessibilité en matière de logistique doit s’analyser non seulement sous l’angle spatial mais également en matière de réglementation. Il ne suffit pas de mailler le territoire avec des sites logistiques, il faut que les transporteurs puissent y aller.
 Sogaris s'engage à développer des solutions innovantes et à collaborer avec les autorités locales et les transporteurs pour améliorer la performance environnementale et l'accessibilité des infrastructures logistiques, tout en soutenant les besoins spécifiques des différents secteurs d'activité.
 
-Un outil comme DiaLog peut contribuer à faciliter l’analyse et lea développement de meilleures synergies entre les enjeux des villes, des chargeurs et des transporteurs.
+Un outil comme DiaLog peut contribuer à faciliter l’analyse et le développement de meilleures synergies entre les enjeux des villes, des chargeurs et des transporteurs.
 
 </div>
