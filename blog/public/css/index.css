@@ -186,7 +186,8 @@ div.fr-callout__text p {
     font-size: smaller;
     color: gray;
     display: block; /* Afficher la légende sur une nouvelle ligne */
-    text-align: center; 
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 /** Classe spécifique au contenu des articles **/
