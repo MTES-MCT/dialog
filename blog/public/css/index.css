@@ -181,7 +181,7 @@ div.fr-callout__text p {
 }
 
 /* Appliquer l'italique et la couleur grise aux légendes des images */
-picture + em::after {
+.legende-article {
     font-style: italic;
     font-size: smaller;
     color: gray;
