@@ -24,6 +24,8 @@ Juliette Berthon, directrice de la Responsabilité Sociale des Entreprises (RSE)
 
 {% image "./img/Hotel-Chapelle.jpg", "Hôtel logistique urbain de Chapelle International à Paris © Arnaud Bouissou / Terra ", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 
+<div class="legende-article">Hôtel logistique urbain de Chapelle International à Paris © Arnaud Bouissou / Terra</div>
+
 **Comment mesurez-vous votre performance et quels sont vos leviers d'action ?**
 
 Chaque année, Sogaris effectue un bilan carbone en utilisant un outil et une méthodologie développés sur-mesure, en prenant en compte les émissions liées au transport de marchandises ([fret Scope 3 élargi](https://www.ecologie.gouv.fr/sites/default/files/methodo_BEGES_decli_07.pdf)). Les véhicules de transport représentent 95% des émissions de carbone de l'entreprise. Bien que Sogaris dispose de peu de leviers d'action directs dans ce domaine, de nombreux leviers indirects sont utilisés.
@@ -41,6 +43,8 @@ Plus généralement, on constate une difficulté à faire coller les process et 
 La Chaire Logistique Urbaine a réalisé une analyse comparative des zones à faibles émissions (ZFE) et des zones zéro émission (ZZE) en Europe, soulignant les lacunes du modèle français qui ne prend pas suffisamment en compte cette granularité. Certaines initiatives, [comme le dispositif PLOC à Paris](https://www.apur.org/fr/nos-travaux/espaces-logistique-urbaine-integres-projets-immobiliers) sont utiles, mais il est difficile de coordonner l'urbanisme avec les besoins des transporteurs. La Poste a mené une campagne active auprès des métropoles pour éclairer sur les enjeux de leurs sites localsiés en zones périurbaines vis-à-vis des périmètres des zones à faibles émissions (ZFE), pour ne pas fragiliser, dans certains cas, des modèles d’organisation vertueux déjà à l’oeuvre permettant de regrouper les flux.
 
 {% image "./img/Panneau-ZFE.jpg", "Panneaux de signalisation de zones à faibles émissions © Arnaud Bouissou / Terra ", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+
+<div class="legende-article">Panneaux de signalisation de zones à faibles émissions © Arnaud Bouissou / Terra </div>
 
 **Penses-tu que la data, et en particulier la numérisation de la réglementation de circulation, permettrait de trouver plus facilement des solutions ?**
 
