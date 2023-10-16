@@ -157,4 +157,44 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getQuery()
             ->getSingleColumnResult();
     }
+
+    public function countTotalRegulationOrderRecords(): int
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countPublishedRegulationOrderRecords(): int
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->where('roc.status = :status')
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countPermanentRegulationOrderRecords(): int
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->where('roc.status = :status')
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countTemporaryRegulationOrderRecords(): int
+    {
+        return $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->where('roc.status = :status')
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NOT NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

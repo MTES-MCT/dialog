@@ -27,4 +27,12 @@ interface RegulationOrderRecordRepositoryInterface
     public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 
     public function findIdentifiersForSourceInORganization(string $source, Organization $organization): array;
+
+    public function countTotalRegulationOrderRecords(): int;
+
+    public function countPublishedRegulationOrderRecords(): int;
+
+    public function countPermanentRegulationOrderRecords(): int;
+
+    public function countTemporaryRegulationOrderRecords(): int;
 }
