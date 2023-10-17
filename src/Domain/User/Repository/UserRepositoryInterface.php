@@ -9,6 +9,4 @@ use App\Domain\User\User;
 interface UserRepositoryInterface
 {
     public function findOneByEmail(string $email): ?User;
-
-    public function countUsers(): int;
 }

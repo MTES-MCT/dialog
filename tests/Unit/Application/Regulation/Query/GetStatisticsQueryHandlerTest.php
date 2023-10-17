@@ -8,26 +8,14 @@ use App\Application\Regulation\Query\GetStatisticsQuery;
 use App\Application\Regulation\Query\GetStatisticsQueryHandler;
 use App\Application\Regulation\View\StatisticsView;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\User\Repository\OrganizationRepositoryInterface;
-use App\Domain\User\Repository\UserRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetStatisticsQueryHandlerTest extends TestCase
 {
     public function testStatistics(): void
     {
-        $userRepository = $this->createMock(UserRepositoryInterface::class);
-        $organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
-        $userRepository
-            ->expects(self::once())
-            ->method('countUsers')
-            ->willReturn(10);
-        $organizationRepository
-            ->expects(self::once())
-            ->method('countOrganizations')
-            ->willReturn(3);
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('countTotalRegulationOrderRecords')
@@ -45,12 +33,10 @@ final class GetStatisticsQueryHandlerTest extends TestCase
             ->method('countTemporaryRegulationOrderRecords')
             ->willReturn(8);
 
-        $handler = new GetStatisticsQueryHandler($userRepository, $organizationRepository, $regulationOrderRecordRepository);
+        $handler = new GetStatisticsQueryHandler($regulationOrderRecordRepository);
         $stats = $handler(new GetStatisticsQuery());
 
         $result = new StatisticsView(
-            users: 10,
-            organizations: 3,
             totalRegulationOrderRecords: 20,
             publishedRegulationOrderRecords: 10,
             permanentRegulationOrderRecords: 2,
