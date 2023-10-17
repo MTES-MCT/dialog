@@ -17,7 +17,7 @@ final class StatisticsController
     ) {
     }
 
-    #[Route('/statistics', name: 'app_stats', methods: ['GET'])]
+    #[Route('/stats', name: 'app_stats', methods: ['GET'])]
     public function __invoke(): Response
     {
         $statistics = $this->queryBus->handle(new GetStatisticsQuery());
