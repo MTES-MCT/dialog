@@ -1430,6 +1430,34 @@
                 <source>regulation.vehicles.heavyweightCharacteristics.height</source>
                 <target>%value% mètres de haut</target>
             </trans-unit>
+            <trans-unit id="statistics.title">
+                <source>statistics.title</source>
+                <target>Statistiques</target>
+            </trans-unit>
+            <trans-unit id="statistics.users">
+                <source>statistics.users</source>
+                <target>Nombre total d'utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="statistics.organizations">
+                <source>statistics.organizations</source>
+                <target>Nombre total d'organisations</target>
+            </trans-unit>
+            <trans-unit id="statistics.totalRegulationOrderRecords">
+                <source>statistics.totalRegulationOrderRecords</source>
+                <target>Nombre total d'arrếtés</target>
+            </trans-unit>
+            <trans-unit id="statistics.publishedRegulationOrderRecords">
+                <source>statistics.publishedRegulationOrderRecords</source>
+                <target>Nombre total d'arrếtés publiés</target>
+            </trans-unit>
+            <trans-unit id="statistics.permanentRegulationOrderRecords">
+                <source>statistics.permanentRegulationOrderRecords</source>
+                <target>Nombre total d'arrếtés permanents</target>
+            </trans-unit>
+            <trans-unit id="statistics.temporaryRegulationOrderRecords">
+                <source>statistics.temporaryRegulationOrderRecords</source>
+                <target>Nombre total d'arrếtés temporaires</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

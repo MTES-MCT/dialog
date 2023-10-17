@@ -9,4 +9,6 @@ use App\Domain\User\Organization;
 interface OrganizationRepositoryInterface
 {
     public function findOneByUuid(string $uuid): ?Organization;
+
+    public function countOrganizations(): int;
 }

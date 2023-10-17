@@ -26,4 +26,13 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             ->getOneOrNullResult()
         ;
     }
+
+    public function countOrganizations(): int
+    {
+        return $this->createQueryBuilder('o')
+            ->select('count(o.uuid)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
 }
