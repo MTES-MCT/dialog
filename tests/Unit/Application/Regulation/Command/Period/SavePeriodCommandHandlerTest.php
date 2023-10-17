@@ -65,7 +65,6 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->endTime = $end;
         $command->applicableDays = [ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::WEDNESDAY->value];
         $command->includeHolidays = true;
-
         $result = $handler($command);
 
         $this->assertSame($createdPeriod, $result);

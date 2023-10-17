@@ -71,7 +71,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('isIncludeHolidays')
             ->willReturn(true);
-
         $measure1 = $this->createMock(Measure::class);
         $measure1
             ->expects(self::once())

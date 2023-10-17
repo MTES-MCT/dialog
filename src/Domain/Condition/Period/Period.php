@@ -16,6 +16,7 @@ class Period
         private array $applicableDays,
         private \DateTimeInterface $startTime,
         private \DateTimeInterface $endTime,
+        private ?DailyRange $dailyRange = null,
     ) {
     }
 
@@ -75,6 +76,11 @@ class Period
         }
 
         return $daysRanges;
+    }
+
+    public function getDailyRange(): ?DailyRange
+    {
+        return $this->dailyRange;
     }
 
     public function update(

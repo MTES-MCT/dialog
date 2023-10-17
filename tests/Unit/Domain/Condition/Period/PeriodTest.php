@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Condition\Period;
 
+use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Measure;
@@ -13,6 +14,7 @@ final class PeriodTest extends TestCase
 {
     public function testGetters(): void
     {
+        $dailyRange = $this->createMock(DailyRange::class);
         $measure = $this->createMock(Measure::class);
         $start = new \DateTimeImmutable('2022-12-20 09:00:00');
         $end = new \DateTimeImmutable('2022-12-20 18:00:00');
@@ -22,7 +24,6 @@ final class PeriodTest extends TestCase
             ApplicableDayEnum::WEDNESDAY->value,
             ApplicableDayEnum::FRIDAY->value,
         ];
-
         $period = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
@@ -30,6 +31,7 @@ final class PeriodTest extends TestCase
             $days,
             $start,
             $end,
+            $dailyRange,
         );
 
         $daysRange = [
@@ -49,6 +51,8 @@ final class PeriodTest extends TestCase
         $this->assertSame($start, $period->getStartTime());
         $this->assertSame($end, $period->getEndTime());
         $this->assertSame($measure, $period->getMeasure());
+        $this->assertSame($dailyRange, $period->getDailyRange());
+
         $this->assertTrue($period->isIncludeHolidays());
 
         $newStart = new \DateTimeImmutable('2022-12-20 09:00:00');
@@ -64,8 +68,10 @@ final class PeriodTest extends TestCase
         $period->update(false, [ApplicableDayEnum::WEDNESDAY->value], $newStart, $newEnd);
         $this->assertSame([ApplicableDayEnum::WEDNESDAY->value], $period->getApplicableDays());
         $this->assertSame($updatedDaysRange, $period->getDaysRanges());
+
         $this->assertSame($newStart, $period->getStartTime());
         $this->assertSame($newEnd, $period->getEndTime());
+
         $this->assertFalse($period->isIncludeHolidays());
     }
 
