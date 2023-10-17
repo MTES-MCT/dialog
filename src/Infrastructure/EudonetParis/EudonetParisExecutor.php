@@ -17,10 +17,8 @@ use Psr\Log\LoggerInterface;
 
 final class EudonetParisExecutor
 {
-    private LoggerInterface $logger;
-
     public function __construct(
-        LoggerInterface $eudonetParisImportLogger,
+        private LoggerInterface $logger,
         private EudonetParisExtractor $eudonetParisExtractor,
         private EudonetParisTransformer $eudonetParisTransformer,
         private CommandBusInterface $commandBus,
@@ -29,7 +27,6 @@ final class EudonetParisExecutor
         private string $eudonetParisOrgId,
         private DateUtilsInterface $dateUtils,
     ) {
-        $this->logger = $eudonetParisImportLogger;
     }
 
     public function execute(\DateTimeInterface $laterThanUTC): void
@@ -41,10 +38,11 @@ final class EudonetParisExecutor
         $numProcessed = 0;
         $numCreated = 0;
         $numSkipped = 0;
+        $numSkippedNoLocationsGathered = 0;
         $numErrors = 0;
         $startTime = $this->dateUtils->getMicroTime();
 
-        $this->logger->debug('started');
+        $this->logger->info('started');
 
         try {
             try {
@@ -62,12 +60,20 @@ final class EudonetParisExecutor
                 ++$numProcessed;
 
                 if (empty($result->command)) {
-                    $this->logger->debug('skipped', $result->skipMessages);
+                    $this->logger->info('skipped', $result->errors);
+
                     ++$numSkipped;
+
+                    foreach ($result->errors as $error) {
+                        if ($error['reason'] == 'no_locations_gathered') {
+                            ++$numSkippedNoLocationsGathered;
+                            break;
+                        }
+                    }
                 } else {
                     try {
                         $this->commandBus->handle($result->command);
-                        $this->logger->debug('created', ['command' => $result->command]);
+                        $this->logger->info('created', ['command' => $result->command]);
                         ++$numCreated;
                     } catch (ImportEudonetParisRegulationFailedException $exc) {
                         $this->logger->error('failed', ['command' => $result->command, 'exc' => $exc]);
@@ -83,11 +89,12 @@ final class EudonetParisExecutor
             $endTime = $this->dateUtils->getMicroTime();
             $elapsedSeconds = $endTime - $startTime;
 
-            $this->logger->debug('done', [
+            $this->logger->info('done', [
                 'numProcessed' => $numProcessed,
                 'numCreated' => $numCreated,
                 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
                 'numSkipped' => $numSkipped,
+                'numSkippedNoLocationsGathered' => $numSkippedNoLocationsGathered,
                 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
                 'numErrors' => $numErrors,
                 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),

@@ -75,7 +75,7 @@ final class EudonetParisExecutorTest extends TestCase
         $result1 = new EudonetParisTransformerResult($importCommand1, []);
 
         $record2 = ['fields' => [1101 => '20210305']];
-        $result2 = new EudonetParisTransformerResult(null, ['something was wrong with record 2']);
+        $result2 = new EudonetParisTransformerResult(null, [['reason' => 'no_locations_gathered']]);
 
         $record3 = ['fields' => [1101 => '20210415']];
         $importCommand3 = $this->createMock(ImportEudonetParisRegulationCommand::class);
@@ -120,7 +120,7 @@ final class EudonetParisExecutorTest extends TestCase
         $logMatcher = self::exactly(5);
         $this->logger
             ->expects($logMatcher)
-            ->method('debug')
+            ->method('info')
             ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => $this->assertEquals($message, 'created'),
@@ -133,6 +133,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'numCreated' => 2,
                         'percentCreated' => 66.7,
                         'numSkipped' => 1,
+                        'numSkippedNoLocationsGathered' => 1,
                         'percentSkipped' => 33.3,
                         'numErrors' => 0,
                         'percentErrors' => 0,
@@ -190,7 +191,7 @@ final class EudonetParisExecutorTest extends TestCase
         $logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
-            ->method('debug')
+            ->method('info')
             ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => (
@@ -200,6 +201,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'numCreated' => 0,
                         'percentCreated' => 0,
                         'numSkipped' => 0,
+                        'numSkippedNoLocationsGathered' => 0,
                         'percentSkipped' => 0,
                         'numErrors' => 0,
                         'percentErrors' => 0,
@@ -314,7 +316,7 @@ final class EudonetParisExecutorTest extends TestCase
         $logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
-            ->method('debug')
+            ->method('info')
             ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => (
@@ -324,6 +326,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'numCreated' => 0,
                         'percentCreated' => 0,
                         'numSkipped' => 0,
+                        'numSkippedNoLocationsGathered' => 0,
                         'percentSkipped' => 0,
                         'numErrors' => 1,
                         'percentErrors' => 100,

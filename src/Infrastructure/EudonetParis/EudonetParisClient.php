@@ -52,10 +52,11 @@ class EudonetParisClient
         $this->eudonetParisImportLogger->debug('request', ['method' => $method, 'url' => $url, 'body' => json_decode($options['body'])]);
         $response = $this->eudonetParisHttpClient->request($method, $url, $options);
 
+        $body = $response->getContent(throw: false);
+
         try {
-            $body = json_decode($response->getContent());
+            $body = json_decode($body, associative: true, flags: \JSON_THROW_ON_ERROR);
         } catch (\JsonException) {
-            $body = $response->getContent();
         }
 
         $this->eudonetParisImportLogger->debug('response', ['body' => $body]);
