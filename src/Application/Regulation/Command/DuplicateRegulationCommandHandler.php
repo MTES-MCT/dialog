@@ -67,9 +67,8 @@ final class DuplicateRegulationCommandHandler
                     foreach ($measure->getPeriods() as $period) {
                         $cmd = new SavePeriodCommand();
                         $cmd->applicableDays = $period->getApplicableDays();
-                        $cmd->startTime = $period->getStartTime();
-                        $cmd->endTime = $period->getEndTime();
-                        $cmd->includeHolidays = $period->isIncludeHolidays();
+                        $cmd->startDate = $period->getStartDate();
+                        $cmd->endDate = $period->getEndDate();
                         $periodCommands[] = $cmd;
                     }
 

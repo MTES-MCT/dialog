@@ -12,10 +12,11 @@ class Period
     public function __construct(
         private string $uuid,
         private Measure $measure,
-        private bool $includeHolidays,
         private array $applicableDays,
+        private \DateTimeInterface $startDate,
+        private \DateTimeInterface $endDate,
         private \DateTimeInterface $startTime,
-        private \DateTimeInterface $endTime,
+        private ?\DateTimeInterface $endTime,
         private ?DailyRange $dailyRange = null,
     ) {
     }
@@ -30,9 +31,14 @@ class Period
         return $this->applicableDays;
     }
 
-    public function isIncludeHolidays(): bool
+    public function getStartDate(): ?\DateTimeInterface
     {
-        return $this->includeHolidays;
+        return $this->startDate;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
     }
 
     public function getStartTime(): ?\DateTimeInterface
@@ -84,14 +90,16 @@ class Period
     }
 
     public function update(
-        bool $includeHolidays,
         array $applicableDays,
         \DateTimeInterface $startTime,
         \DateTimeInterface $endTime,
+        \DateTimeInterface $startDate,
+        \DateTimeInterface $endDate,
     ): void {
-        $this->includeHolidays = $includeHolidays;
         $this->applicableDays = $applicableDays;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
     }
 }

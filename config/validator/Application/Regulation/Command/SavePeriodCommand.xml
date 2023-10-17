@@ -6,28 +6,42 @@
         <property name="applicableDays">
             <constraint name="NotBlank" />
         </property>
-        <property name="includeHolidays">
-            <constraint name="Type">
-                <option name="type">boolean</option>
-            </constraint>
-        </property>
-        <property name="startTime">
+        <property name="startDate">
             <constraint name="NotBlank"/>
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
             </constraint>
-       </property>
-        <property name="endTime">
+        </property>
+        <property name="startHour">
+            <constraint name="NotBlank"/>
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
+        </property>
+        <property name="endDate">
             <constraint name="NotBlank"/>
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
             </constraint>
             <constraint name="Expression">
                 <option name="expression">
-                    this.endTime > this.startTime
+                    this.endDate > this.startDate
+                </option>
+                <option name="message">regulation.period.error.end_date</option>
+            </constraint>
+        </property>
+        <property name="endHour">
+            <constraint name="NotBlank"/>
+            <constraint name="Type">
+                <option name="type">\DateTimeInterface</option>
+            </constraint>
+            <constraint name="Expression">
+                <option name="expression">
+                    this.endHour > this.startHour
                 </option>
                 <option name="message">regulation.period.error.end_time</option>
             </constraint>
-       </property>
+        </property>
+
     </class>
 </constraint-mapping>

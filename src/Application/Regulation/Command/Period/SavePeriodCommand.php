@@ -12,18 +12,20 @@ use App\Domain\Regulation\Measure;
 final class SavePeriodCommand implements CommandInterface
 {
     public ?array $applicableDays;
-    public ?\DateTimeInterface $startTime;
-    public ?\DateTimeInterface $endTime;
-    public ?bool $includeHolidays;
+    public ?\DateTimeInterface $startDate;
+    public ?\DateTimeInterface $startHour;
+    public ?\DateTimeInterface $endDate;
+    public ?\DateTimeInterface $endHour;
     public ?Measure $measure;
 
     public function __construct(
         public readonly ?Period $period = null,
     ) {
         $this->applicableDays = $period?->getApplicableDays();
-        $this->startTime = $period?->getStartTime();
-        $this->endTime = $period?->getEndTime();
-        $this->includeHolidays = $period?->isIncludeHolidays();
+        $this->startDate = $period?->getStartDate();
+        $this->startHour = $period?->getStartDate();
+        $this->endDate = $period?->getEndDate();
+        $this->endHour = $period?->getEndDate();
     }
 
     public function sortApplicableDays(): void
