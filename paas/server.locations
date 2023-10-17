@@ -5,3 +5,7 @@ location ~* \.(css|js|jpg|jpeg|png|svg|webp|ico|woff2|woff|eot|ttf) {
     # See: https://symfony.com/doc/current/frontend/encore/versioning.html
     add_header Cache-Control "public, max-age=31536000";
 }
+
+location /blog {
+    try_files $uri $uri.html $uri/index.html =404;
+}

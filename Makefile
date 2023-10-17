@@ -34,7 +34,7 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start install_deps dbinstall assets ## Bootstrap project
+install: build start install_deps dbinstall assets blog_install ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
@@ -218,6 +218,20 @@ report_e2e: ## Open the Playwright HTML report
 
 ##
 ## ----------------
+## Blog
+## ----------------
+##
+
+blog_install: blog_install_deps blog_build ## Bootstrap blog
+
+blog_install_deps: ## Install blog dependencies
+	${BIN_NPM} run blog_install
+
+blog_build: ## Build blog
+	${BIN_NPM} run blog_build
+
+##
+## ----------------
 ## CI
 ## ----------------
 ##
@@ -227,5 +241,6 @@ ci: ## Run CI steps
 	make assets
 	make dbinstall
 	make dbfixtures
+	make blog_install
 	make check
 	make test_cov

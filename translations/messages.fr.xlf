@@ -10,6 +10,10 @@
                 <source>common.results</source>
                 <target>Résultats</target>
             </trans-unit>
+            <trans-unit id="common.blog">
+                <source>common.blog</source>
+                <target>Blog</target>
+            </trans-unit>
             <trans-unit id="common.enabled">
                 <source>common.enabled</source>
                 <target>Activé</target>

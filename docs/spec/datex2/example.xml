@@ -46,9 +46,15 @@
           <accessRestrictionType>noEntry</accessRestrictionType>
         </typeOfRegulation>
 
+        <typeOfRegulation xsi:type="SpeedLimit">
+            <maxValue>
+                <numericValue>50</numericValue>
+                <unitOfMeasure>kilometresPerHour</unitOfMeasure>
+            </maxValue>
+        </typeOfRegulation>
+
         <condition xsi:type="ConditionSet">
           <operator>and</operator>
-
           <conditions xsi:type="ValidityCondition">
             <negate>false</negate>
             <validityByOrder>
@@ -70,6 +76,7 @@
                 </com:exceptionPeriod>
               </com:validityTimeSpecification>
             </validityByOrder>
+
           </conditions>
 
           <conditions xsi:type="LocationCondition">

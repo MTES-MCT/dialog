@@ -1,0 +1,30 @@
+---js
+{
+  title: "Blog",
+  pagination: {
+    data: "collections.posts",
+    size: 6,
+    reverse: true,
+    before: function(paginationData, fullData) {
+      return this.filterCollectionLang(paginationData, fullData.lang);
+    }
+  },
+  layout: "layouts/page.njk",
+  permalink: "/{{ lang }}/{% if pagination.pageNumber %}{{ pagePrefix }}{{ pagination.pageNumber + 1 }}/{% endif %}",
+  eleventyNavigation: {
+    key: "Blog",
+    order: 2
+  }
+}
+---
+<h1>{{ title }}</h1>
+<div class="fr-container">
+  <p class="fr-text--heavy fr-mb-3v">{{ "filter_by_tag" | i18n }}</p>
+  <div class="fr-mb-3w">
+    {% set tags = collections.posts | filterCollectionLang | getAllTags %}
+    {% include "components/taggroup.njk" %}
+  </div>
+  {% set postslist = pagination.items %}
+  {% include "postslist.njk" %}
+  {% include "templates/pagination.njk" %}
+</div>
