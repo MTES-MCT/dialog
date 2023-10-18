@@ -9,6 +9,7 @@ use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommandHandler;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Regulation\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\PeriodRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -45,10 +46,12 @@ final class SavePeriodCommandHandlerTest extends TestCase
                     new Period(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        includeHolidays: true,
                         applicableDays: [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::WEDNESDAY->value],
+                        startDate:,
+                        endDate:,
                         startTime: $start,
                         endTime: $end,
+                        recurrenceType:PeriodRecurrenceTypeEnum::EVERY_DAYS->value,
                     ),
                 ),
             )

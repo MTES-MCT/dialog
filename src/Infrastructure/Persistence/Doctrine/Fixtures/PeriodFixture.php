@@ -21,6 +21,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
             startDate: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endDate: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            recurrenceType: 'everyDays',
         );
 
         $period2 = new Period(
@@ -31,6 +32,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
             startDate: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endDate: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            recurrenceType: 'someDays',
         );
 
         $period3 = new Period(
@@ -41,6 +43,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
             startDate: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endDate: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            recurrenceType: 'someDays',
         );
 
         $period4 = new Period(
@@ -51,6 +54,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
             startDate: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endDate: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            recurrenceType: 'weekend',
         );
 
         $manager->persist($period1);

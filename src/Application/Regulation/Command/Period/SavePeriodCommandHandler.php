@@ -31,6 +31,7 @@ final class SavePeriodCommandHandler
                 endTime: $command->endDate, // todo : to remove
                 startDate: $command->startDate,
                 endDate: $command->endDate,
+                recurrenceType: $command->recurrenceType,
             );
 
             return $command->period;
@@ -45,6 +46,7 @@ final class SavePeriodCommandHandler
                 endDate: $command->endDate,
                 startTime: $command->startDate, // todo : to remove
                 endTime: $command->endDate, // todo : to remove
+                recurrenceType: $command->recurrenceType,
             ),
         );
     }

@@ -16,6 +16,7 @@ final class SavePeriodCommand implements CommandInterface
     public ?\DateTimeInterface $startHour;
     public ?\DateTimeInterface $endDate;
     public ?\DateTimeInterface $endHour;
+    public ?string $recurrenceType;
     public ?Measure $measure;
 
     public function __construct(
@@ -26,6 +27,7 @@ final class SavePeriodCommand implements CommandInterface
         $this->startHour = $period?->getStartDate();
         $this->endDate = $period?->getEndDate();
         $this->endHour = $period?->getEndDate();
+        $this->recurrenceType = $period?->getRecurrenceType();
     }
 
     public function sortApplicableDays(): void

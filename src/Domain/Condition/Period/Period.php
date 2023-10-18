@@ -13,10 +13,11 @@ class Period
         private string $uuid,
         private Measure $measure,
         private array $applicableDays,
-        private \DateTimeInterface $startDate,
-        private \DateTimeInterface $endDate,
+        private ?\DateTimeInterface $startDate,
+        private ?\DateTimeInterface $endDate,
         private \DateTimeInterface $startTime,
         private ?\DateTimeInterface $endTime,
+        private ?string $recurrenceType,
         private ?DailyRange $dailyRange = null,
     ) {
     }
@@ -49,6 +50,11 @@ class Period
     public function getEndTime(): ?\DateTimeInterface
     {
         return $this->endTime;
+    }
+
+    public function getRecurrenceType(): ?string
+    {
+        return $this->recurrenceType;
     }
 
     public function getMeasure(): Measure
@@ -95,11 +101,13 @@ class Period
         \DateTimeInterface $endTime,
         \DateTimeInterface $startDate,
         \DateTimeInterface $endDate,
+        string $recurrenceType,
     ): void {
         $this->applicableDays = $applicableDays;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->recurrenceType = $recurrenceType;
     }
 }

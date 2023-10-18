@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Regulation\Enum\PeriodRecurrenceTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -32,6 +33,20 @@ final class PeriodFormType extends AbstractType
                 'label' => 'regulation.period.endTime',
                 'widget' => 'single_text',
             ])
+            ->add('recurrenceType', ChoiceType::class,
+                options: $this->getRecurrenceTypeOptions(),
+                /* ,[
+                    'label' => 'regulation.period.recurrenceType',
+                    'choices' => [
+                        'Tous les jours' => 'Tous les jours',
+                        'La semaine' => 'La semaine',
+                        'Le weekend' => 'Le weekend',
+                        'Certains jours' => 'Certains jours',
+                        'Une partie de la semaine' => 'Une partie de la semaine',
+                    ],
+
+                ]) */
+            )
             ->add('applicableDays', ChoiceType::class, $this->getDaysOptions())
         ;
     }
@@ -50,6 +65,20 @@ final class PeriodFormType extends AbstractType
             'multiple' => true,
             'label' => 'regulation.period.days',
             'help' => 'regulation.period.days.help',
+        ];
+    }
+
+    private function getRecurrenceTypeOptions(): array
+    {
+        $choices = [];
+
+        foreach (PeriodRecurrenceTypeEnum::cases() as $case) {
+            $choices[sprintf('regulation.period.recurrenceType.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.period.recurrenceType',
         ];
     }
 

@@ -14,18 +14,41 @@
         <div class="app-card__content">
             <fieldset class="fr-fieldset app-card__content" aria-labelledby="applicableDays-{{ index }}-legend">
                 {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
+            
                 {{ form_row(form.startHour, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
 
                 {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
                 {{ form_row(form.endHour, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
 
-                {{ form_label(form.applicableDays, null, {
-                    element: 'legend',
-                    label_attr: {
-                        id: form.applicableDays.vars.name ~ '-legend',
+                <div data-controller="form-reveal">
+                    {{ form_row(form.recurrenceType, {
+                        group_class: 'fr-select-group',
+                        widget_class: 'fr-select',
+                        row_attr: {
+                            'data-controller': 'condition',
+                            'data-condition-equals-value': 'everyDays',
+                            'data-action':
+                            'change->condition#dispatchFromInputChange condition:no->form-reveal#open condition:yes->form-reveal#close',
+                        },
+                    }) }}
+                    
+                    {{ form_label(form.applicableDays, null, {
+                        element: 'legend',
+                        label_attr: {
+                            id: form.applicableDays.vars.name ~ '-legend',
+                            class: 'fr-fieldset__legend fr-fieldset__legend--regular',
+                        },
+                        row_attr: {
+                        'data-form-reveal-target': 'section',
+                        hidden: form.recurrenceType.vars.value == 'everyDays',
                         class: 'fr-fieldset__legend fr-fieldset__legend--regular',
-                    }
-                }) }}
+                    },
+                    attr: {
+                        'data-form-reveal-target': 'form-control',
+                    },
+                    }) }}
+                </div>
+
                 <div class="fr-fieldset__item">
                     {% for day in form.applicableDays %}
                         {% set dayBtnId = day.vars.id ~ '-btn' %}

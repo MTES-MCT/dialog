@@ -1226,6 +1226,30 @@
                 <source>regulation.period.endTime</source>
                 <target>Heure de fin</target>
             </trans-unit>
+            <trans-unit id="regulation.period.recurrenceType">
+                <source>regulation.period.recurrenceType</source>
+                <target>Quels jours sont concernés ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.recurrenceType.everyDays">
+                <source>regulation.period.recurrenceType.everyDays</source>
+                <target>Tous les jours</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.recurrenceType.week">
+                <source>regulation.period.recurrenceType.week</source>
+                <target>La semaine</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.recurrenceType.weekend">
+                <source>regulation.period.recurrenceType.weekend</source>
+                <target>Le weekend</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.recurrenceType.someDays">
+                <source>regulation.period.recurrenceType.someDays</source>
+                <target>Certains jours</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.recurrenceType.partOfTheWeek">
+                <source>regulation.period.recurrenceType.partOfTheWeek</source>
+                <target>Une partie de la semaine</target>
+            </trans-unit>
             <trans-unit id="regulation.period_list">
                 <source>regulation.period_list</source>
                 <target>Créneaux horaires</target>
