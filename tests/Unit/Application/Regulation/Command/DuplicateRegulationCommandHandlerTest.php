@@ -13,6 +13,7 @@ use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -59,18 +60,27 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getApplicableDays')
             ->willReturn([ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value]);
-        $period
+            $period
             ->expects(self::once())
             ->method('getStartTime')
             ->willReturn($startTime);
-        $period
+            $period
             ->expects(self::once())
             ->method('getEndTime')
             ->willReturn($endTime);
+            $period
+            ->expects(self::once())
+            ->method('getRecurrenceType')
+            ->willReturn(PeriodRecurrenceTypeEnum::SOME_DAYS->value);
         $period
             ->expects(self::once())
-            ->method('isIncludeHolidays')
-            ->willReturn(true);
+            ->method('getStartDate')
+            ->willReturn($startTime);
+        $period
+            ->expects(self::once())
+            ->method('getEndDate')
+            ->willReturn($endTime);
+    
         $measure1 = $this->createMock(Measure::class);
         $measure1
             ->expects(self::once())
@@ -211,9 +221,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $periodCommand1 = new SavePeriodCommand();
         $periodCommand1->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
-        $periodCommand1->startTime = $startTime;
-        $periodCommand1->endTime = $endTime;
-        $periodCommand1->includeHolidays = true;
+        $periodCommand1->startHour = $startTime;
+        $periodCommand1->endHour = $endTime;
+        $periodCommand1->startDate = $startTime;
+        $periodCommand1->endDate = $endTime;
+        $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::SOME_DAYS->value;
 
         $measureCommand1 = new SaveMeasureCommand();
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;

@@ -68,7 +68,10 @@ final class DuplicateRegulationCommandHandler
                         $cmd = new SavePeriodCommand();
                         $cmd->applicableDays = $period->getApplicableDays();
                         $cmd->startDate = $period->getStartDate();
+                        $cmd->startHour = $period->getStartTime();
                         $cmd->endDate = $period->getEndDate();
+                        $cmd->endHour = $period->getEndTime();
+                        $cmd->recurrenceType = $period->getRecurrenceType();
                         $periodCommands[] = $cmd;
                     }
 
