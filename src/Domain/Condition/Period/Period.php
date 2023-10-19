@@ -15,8 +15,8 @@ class Period
         private array $applicableDays,
         private ?\DateTimeInterface $startDate,
         private ?\DateTimeInterface $endDate,
-        private \DateTimeInterface $startTime,
-        private ?\DateTimeInterface $endTime,
+        private \DateTimeInterface $startTime, // todo : remove
+        private ?\DateTimeInterface $endTime, // todo : remove
         private ?string $recurrenceType,
         private ?DailyRange $dailyRange = null,
     ) {

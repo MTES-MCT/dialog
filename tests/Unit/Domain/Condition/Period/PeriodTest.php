@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Domain\Condition\Period;
 
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
@@ -27,10 +28,12 @@ final class PeriodTest extends TestCase
         $period = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             $days,
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
             $dailyRange,
         );
 
@@ -50,10 +53,11 @@ final class PeriodTest extends TestCase
         $this->assertSame($daysRange, $period->getDaysRanges());
         $this->assertSame($start, $period->getStartTime());
         $this->assertSame($end, $period->getEndTime());
+        $this->assertSame($daysRange, $period->getDaysRanges());
+        $this->assertSame($start, $period->getStartDate());
+        $this->assertSame($end, $period->getEndDate());
         $this->assertSame($measure, $period->getMeasure());
         $this->assertSame($dailyRange, $period->getDailyRange());
-
-        $this->assertTrue($period->isIncludeHolidays());
 
         $newStart = new \DateTimeImmutable('2022-12-20 09:00:00');
         $newEnd = new \DateTimeImmutable('2022-12-20 18:00:00');
@@ -65,14 +69,22 @@ final class PeriodTest extends TestCase
             ],
         ];
 
-        $period->update(false, [ApplicableDayEnum::WEDNESDAY->value], $newStart, $newEnd);
+        $period->update(
+            [ApplicableDayEnum::WEDNESDAY->value],
+            $newStart,
+            $newEnd,
+            $newStart,
+            $newEnd,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
+        );
         $this->assertSame([ApplicableDayEnum::WEDNESDAY->value], $period->getApplicableDays());
         $this->assertSame($updatedDaysRange, $period->getDaysRanges());
 
         $this->assertSame($newStart, $period->getStartTime());
         $this->assertSame($newEnd, $period->getEndTime());
 
-        $this->assertFalse($period->isIncludeHolidays());
+        $this->assertSame($newStart, $period->getStartDate());
+        $this->assertSame($newEnd, $period->getEndDate());
     }
 
     public function testDaysRanges(): void
@@ -85,10 +97,12 @@ final class PeriodTest extends TestCase
         $oneDay = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [ApplicableDayEnum::MONDAY->value],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::MONDAY->value],
@@ -98,10 +112,12 @@ final class PeriodTest extends TestCase
         $twoConsecutiveDays = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::TUESDAY->value],
@@ -111,10 +127,12 @@ final class PeriodTest extends TestCase
         $threeConsecutiveDays = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value, ApplicableDayEnum::WEDNESDAY->value],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::WEDNESDAY->value],
@@ -124,10 +142,12 @@ final class PeriodTest extends TestCase
         $oneDayWithTwoConsecutiveDays = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::THURSDAY->value, ApplicableDayEnum::FRIDAY->value],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::MONDAY->value],
@@ -138,10 +158,12 @@ final class PeriodTest extends TestCase
         $oneDayWithOneOtherAndTwoConsecutiveDays = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::WEDNESDAY->value, ApplicableDayEnum::FRIDAY->value, ApplicableDayEnum::SATURDAY->value],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::MONDAY->value],
@@ -153,10 +175,12 @@ final class PeriodTest extends TestCase
         $mondayAndSunday = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::MONDAY->value],
@@ -167,7 +191,6 @@ final class PeriodTest extends TestCase
         $allDays = new Period(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $measure,
-            true,
             [
                 ApplicableDayEnum::MONDAY->value,
                 ApplicableDayEnum::TUESDAY->value,
@@ -179,6 +202,9 @@ final class PeriodTest extends TestCase
             ],
             $start,
             $end,
+            $start,
+            $end,
+            PeriodRecurrenceTypeEnum::SOME_DAYS->value,
         );
         $this->assertSame([
             ['firstDay' => ApplicableDayEnum::MONDAY->value, 'lastDay' => ApplicableDayEnum::SUNDAY->value],

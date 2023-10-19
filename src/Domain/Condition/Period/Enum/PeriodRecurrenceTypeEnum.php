@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Regulation\Enum;
+namespace App\Domain\Condition\Period\Enum;
 
 enum PeriodRecurrenceTypeEnum: string
 {

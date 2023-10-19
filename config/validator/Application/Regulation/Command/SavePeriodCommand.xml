@@ -25,7 +25,7 @@
             </constraint>
             <constraint name="Expression">
                 <option name="expression">
-                    this.endDate > this.startDate
+                    this.endDate >= this.startDate
                 </option>
                 <option name="message">regulation.period.error.end_date</option>
             </constraint>
@@ -34,12 +34,6 @@
             <constraint name="NotBlank"/>
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
-            </constraint>
-            <constraint name="Expression">
-                <option name="expression">
-                    this.endHour > this.startHour
-                </option>
-                <option name="message">regulation.period.error.end_time</option>
             </constraint>
         </property>
 

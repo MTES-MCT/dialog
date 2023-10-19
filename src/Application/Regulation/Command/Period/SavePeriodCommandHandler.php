@@ -21,6 +21,7 @@ final class SavePeriodCommandHandler
     public function __invoke(SavePeriodCommand $command): Period
     {
         $command->sortApplicableDays();
+        $command->clear();
         $command->startDate = $this->dateUtils->mergeDateAndTimeOfTwoDates($command->startDate, $command->startHour);
         $command->endDate = $this->dateUtils->mergeDateAndTimeOfTwoDates($command->endDate, $command->endHour);
 
