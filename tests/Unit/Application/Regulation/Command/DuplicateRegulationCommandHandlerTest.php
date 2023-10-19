@@ -60,18 +60,18 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getApplicableDays')
             ->willReturn([ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value]);
-            $period
-            ->expects(self::once())
-            ->method('getStartTime')
-            ->willReturn($startTime);
-            $period
-            ->expects(self::once())
-            ->method('getEndTime')
-            ->willReturn($endTime);
-            $period
-            ->expects(self::once())
-            ->method('getRecurrenceType')
-            ->willReturn(PeriodRecurrenceTypeEnum::SOME_DAYS->value);
+        $period
+        ->expects(self::once())
+        ->method('getStartTime')
+        ->willReturn($startTime);
+        $period
+        ->expects(self::once())
+        ->method('getEndTime')
+        ->willReturn($endTime);
+        $period
+        ->expects(self::once())
+        ->method('getRecurrenceType')
+        ->willReturn(PeriodRecurrenceTypeEnum::SOME_DAYS->value);
         $period
             ->expects(self::once())
             ->method('getStartDate')
@@ -80,7 +80,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getEndDate')
             ->willReturn($endTime);
-    
+
         $measure1 = $this->createMock(Measure::class);
         $measure1
             ->expects(self::once())
