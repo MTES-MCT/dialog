@@ -26,6 +26,10 @@ class EudonetParisImportCommandTest extends TestCase
             ->method('getNow')
             ->willReturn($now);
 
+        $dateUtils
+            ->expects(self::never())
+            ->method('getMicroTime');
+
         $executor
             ->expects(self::once())
             ->method('execute')
@@ -52,6 +56,10 @@ class EudonetParisImportCommandTest extends TestCase
             ->expects(self::once())
             ->method('getNow')
             ->willReturn($now);
+
+        $dateUtils
+            ->expects(self::never())
+            ->method('getMicroTime');
 
         $executor
             ->expects(self::once())

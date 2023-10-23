@@ -69,6 +69,7 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => [
                 [
                     'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
                     ],
                     'locations' => [
@@ -157,6 +158,7 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => [
                 [
                     'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
                     ],
                     'locations' => [
@@ -227,7 +229,7 @@ final class EudonetParisTransformerTest extends TestCase
         $this->assertEquals([$locationItem1, $locationItem2], $result->command->locationItems);
     }
 
-    public function testSkipNoLocations(): void
+    public function testSkipNoMeasures(): void
     {
         $organization = $this->createMock(Organization::class);
 
@@ -242,7 +244,13 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => [],
         ];
 
-        $result = new EudonetParisTransformerResult(null, ['at regulation_order 20230514-1: skip: no locations were gathered']);
+        $result = new EudonetParisTransformerResult(null, [
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'reason' => 'no_measures_found',
+                'impact' => 'skip_regulation',
+            ],
+        ]);
 
         $this->geocoder
             ->expects(self::never())
@@ -276,8 +284,18 @@ final class EudonetParisTransformerTest extends TestCase
         ];
 
         $result = new EudonetParisTransformerResult(null, [
-            'at regulation_order 20230514-1: skip measure: at measure mesure1: unsupported measure type: interdiction de stationner',
-            'at regulation_order 20230514-1: skip: no locations were gathered',
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'measure_id' => 'mesure1', 'fieldname' => 'NOM'],
+                'impact' => 'skip_measure',
+                'reason' => 'value_not_in_enum',
+                'value' => 'interdiction de stationner',
+                'enum' => ['circulation interdite'],
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'impact' => 'skip_regulation',
+                'reason' => 'no_locations_gathered',
+            ],
         ]);
 
         $this->geocoder
@@ -294,19 +312,15 @@ final class EudonetParisTransformerTest extends TestCase
         return [
             [
                 'arrondissement' => '',
-                'skipMessage' => 'at regulation_order 20230514-1: skip location: at location localisation1: ARRONDISSEMENT "" did not have expected format "/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i"',
             ],
             [
                 'arrondissement' => 'whatever',
-                'skipMessage' => 'at regulation_order 20230514-1: skip location: at location localisation1: ARRONDISSEMENT "whatever" did not have expected format "/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i"',
             ],
             [
                 'arrondissement' => '18ème arr',
-                'skipMessage' => 'at regulation_order 20230514-1: skip location: at location localisation1: ARRONDISSEMENT "18ème arr" did not have expected format "/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i"',
             ],
             [
                 'arrondissement' => '18 arrondissement',
-                'skipMessage' => 'at regulation_order 20230514-1: skip location: at location localisation1: ARRONDISSEMENT "18 arrondissement" did not have expected format "/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i"',
             ],
         ];
     }
@@ -314,7 +328,7 @@ final class EudonetParisTransformerTest extends TestCase
     /**
      * @dataProvider provideSkipBadArrondissement
      */
-    public function testSkipBadArrondissement(string $arrondissement, string $skipMessage): void
+    public function testSkipBadArrondissement(string $arrondissement): void
     {
         $organization = $this->createMock(Organization::class);
 
@@ -345,8 +359,18 @@ final class EudonetParisTransformerTest extends TestCase
         ];
 
         $result = new EudonetParisTransformerResult(null, [
-            $skipMessage,
-            'at regulation_order 20230514-1: skip: no locations were gathered',
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1', 'fieldname' => 'ARRONDISSEMENT'],
+                'impact' => 'skip_location',
+                'reason' => 'value_does_not_match_pattern',
+                'value' => $arrondissement,
+                'pattern' => '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'impact' => 'skip_regulation',
+                'reason' => 'no_locations_gathered',
+            ],
         ]);
 
         $this->geocoder
@@ -395,8 +419,17 @@ final class EudonetParisTransformerTest extends TestCase
         ];
 
         $result = new EudonetParisTransformerResult(null, [
-            'at regulation_order 20230514-1: skip location: at location localisation1: could not extract supported location info: {"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Autre chose","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
-            'at regulation_order 20230514-1: skip: no locations were gathered',
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
+                'impact' => 'skip_location',
+                'reason' => 'unsupported_location_fieldset',
+                'location_raw' => '{"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Autre chose","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'impact' => 'skip_regulation',
+                'reason' => 'no_locations_gathered',
+            ],
         ]);
 
         $this->geocoder
@@ -481,11 +514,35 @@ final class EudonetParisTransformerTest extends TestCase
         ];
 
         $result = new EudonetParisTransformerResult(null, [
-            'at regulation_order 20230514-1: skip location: at location localisation1: could not extract supported location info: {"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
-            'at regulation_order 20230514-1: skip location: at location localisation1: could not extract supported location info: {"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
-            'at regulation_order 20230514-1: skip location: at location localisation1: could not extract supported location info: {"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
-            'at regulation_order 20230514-1: skip location: at location localisation1: could not extract supported location info: {"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
-            'at regulation_order 20230514-1: skip: no locations were gathered',
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
+                'impact' => 'skip_location',
+                'reason' => 'unsupported_location_fieldset',
+                'location_raw' => '{"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
+                'impact' => 'skip_location',
+                'reason' => 'unsupported_location_fieldset',
+                'location_raw' => '{"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
+                'impact' => 'skip_location',
+                'reason' => 'unsupported_location_fieldset',
+                'location_raw' => '{"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
+                'impact' => 'skip_location',
+                'reason' => 'unsupported_location_fieldset',
+                'location_raw' => '{"fields":{"2701":"localisation1","2708":"18\u00e8me arrondissement","2705":"Une section","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'impact' => 'skip_regulation',
+                'reason' => 'no_locations_gathered',
+            ],
         ]);
 
         $this->geocoder

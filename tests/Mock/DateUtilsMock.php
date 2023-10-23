@@ -17,4 +17,9 @@ final class DateUtilsMock implements DateUtilsInterface
     {
         return new \DateTimeImmutable('2023-06-09');
     }
+
+    public function getMicroTime(): float
+    {
+        return 1695218778.6387;
+    }
 }

@@ -29,18 +29,24 @@ final class EudonetParisTransformer
     public function transform(array $row, Organization $organization): EudonetParisTransformerResult
     {
         $errors = [];
-        $errorPrefix = sprintf('at regulation_order %s', $row['fields'][EudonetParisExtractor::ARRETE_ID]);
+        $loc = ['regulation_identifier' => $row['fields'][EudonetParisExtractor::ARRETE_ID]];
 
         $generalInfoCommand = $this->buildGeneralInfoCommand($row, $organization);
 
         $locationItems = [];
         $errors = [];
 
+        if (\count($row['measures']) === 0) {
+            $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_measures_found'];
+
+            return new EudonetParisTransformerResult(null, $errors);
+        }
+
         foreach ($row['measures'] as $measureRow) {
             [$measureCommand, $error] = $this->buildMeasureCommand($measureRow);
 
             if (empty($measureCommand)) {
-                $errors[] = sprintf('%s: skip measure: %s', $errorPrefix, $error);
+                $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_measure'];
                 continue;
             }
 
@@ -52,7 +58,7 @@ final class EudonetParisTransformer
                 [$locationItem, $error] = $this->buildLocationItem($locationRow, $measureCommand);
 
                 if (empty($locationItem)) {
-                    $errors[] = sprintf('%s: skip location: %s', $errorPrefix, $error);
+                    $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_location'];
                     continue;
                 }
 
@@ -61,7 +67,7 @@ final class EudonetParisTransformer
         }
 
         if (\count($locationItems) === 0) {
-            $errors[] = sprintf('%s: skip: no locations were gathered', $errorPrefix);
+            $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_locations_gathered'];
 
             return new EudonetParisTransformerResult(null, $errors);
         }
@@ -106,12 +112,14 @@ final class EudonetParisTransformer
 
     private function buildMeasureCommand(array $row): array
     {
+        $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
+
         $name = $row['fields'][EudonetParisExtractor::MESURE_NOM];
 
         if (strtolower($name) !== 'circulation interdite') {
-            $id = $row['fields'][EudonetParisExtractor::MESURE_ID];
+            $error = ['loc' => [...$loc, 'fieldname' => 'NOM'], 'reason' => 'value_not_in_enum', 'value' => $name, 'enum' => ['circulation interdite']];
 
-            return [null, sprintf('at measure %s: unsupported measure type: %s', $id, $name)];
+            return [null, $error];
         }
 
         $command = new SaveMeasureCommand();
@@ -129,18 +137,19 @@ final class EudonetParisTransformer
 
     private function buildLocationItem(array $row, SaveMeasureCommand $measureCommand): array
     {
-        $errorPrefix = sprintf('at location %s', $row['fields'][EudonetParisExtractor::LOCALISATION_ID]);
+        $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
 
         $locationItem = new EudonetParisLocationItem();
 
         $arrondissement = $row['fields'][EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT];
 
         if (!preg_match(self::ARRONDISSEMENT_REGEX, $arrondissement, $matches)) {
-            $error = sprintf(
-                '%s: ARRONDISSEMENT "%s" did not have expected format "%s"',
-                $errorPrefix,
-                $arrondissement, self::ARRONDISSEMENT_REGEX,
-            );
+            $error = [
+                'loc' => [...$loc, 'fieldname' => 'ARRONDISSEMENT'],
+                'reason' => 'value_does_not_match_pattern',
+                'value' => $arrondissement,
+                'pattern' => self::ARRONDISSEMENT_REGEX,
+            ];
 
             return [null, $error];
         }
@@ -172,7 +181,13 @@ final class EudonetParisTransformer
             $fromRoadName = $libelleVoieDebut;
             $toRoadName = $libelleVoieFin;
         } else {
-            return [null, sprintf('%s: could not extract supported location info: %s', $errorPrefix, json_encode($row))];
+            $error = [
+                'loc' => $loc,
+                'reason' => 'unsupported_location_fieldset',
+                'location_raw' => json_encode($row),
+            ];
+
+            return [null, $error];
         }
 
         $locationItem->address = (string) new LocationAddress(
