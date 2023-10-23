@@ -176,7 +176,7 @@ final class EudonetParisClientTest extends TestCase
             ->method('debug')
             ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($message, 'request'),
-                2 => $this->assertEquals($message, 'response'),
+                2 => $this->assertEquals($message, 'response') ?: $this->assertSame('Syntax error', $context['json_decode_error']),
             });
 
         $client = new EudonetParisClient($http, 'credentials...', $this->dateUtils, $this->logger);
