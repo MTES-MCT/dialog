@@ -9,6 +9,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,7 @@ final class PeriodFormType extends AbstractType
     {
         $builder
             ->add('startDate', DateType::class, [
+                'label' => 'regulation.period.startDate',
                 'widget' => 'single_text',
             ])
             ->add('startHour', TimeType::class, [
@@ -27,6 +29,7 @@ final class PeriodFormType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('endDate', DateType::class, [
+                'label' => 'regulation.period.endDate',
                 'widget' => 'single_text',
             ])
             ->add('endHour', TimeType::class, [
@@ -36,7 +39,18 @@ final class PeriodFormType extends AbstractType
             ->add('recurrenceType', ChoiceType::class,
                 options: $this->getRecurrenceTypeOptions(),
             )
-            ->add('applicableDays', ChoiceType::class, $this->getDaysOptions())
+            ->add('applicableDays', ChoiceType::class, $this->getDaysOptions(),
+            )
+            ->add('timeSlots', CollectionType::class, [
+                'entry_type' => TimeSlotFormType::class,
+                'entry_options' => ['label' => false],
+                'prototype_name' => '__timeSlot_name__',
+                'label' => 'regulation.timeSlot_list',
+                'help' => 'regulation.timeSlot_list.help',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'error_bubbling' => false,
+            ])
         ;
     }
 

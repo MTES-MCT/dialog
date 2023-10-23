@@ -11,6 +11,7 @@
         data-remove-target="this"
         data-form-collection-target="collectionItem"
     >
+
         <div class="app-card__content">
             <fieldset class="fr-fieldset app-card__content" aria-labelledby="applicableDays-{{ index }}-legend">
                 {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
@@ -60,6 +61,40 @@
                         </div>
                     </div>
                     {{ form_errors(form.applicableDays) }}
+
+                    <fieldset
+                class="fr-fieldset"
+                aria-labelledby="timeSlots-legend-{{ index }}"
+                data-controller="form-collection"
+                data-form-collection-prototype-key-value="timeSlot"
+                data-form-collection-next-index-value="{{ form.timeSlots|length > 0 ? form.timeSlots|last.vars.name + 1 : 0 }}"
+                data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
+                
+                {{ form_label(form.timeSlots, null, { element: 'legend', required: false,label_attr: { id: 'timeSlots-legend-' ~ index, class: 'fr-fieldset__legend' } }) }}
+            >
+                <ul
+                    id="timeSlot-list"
+                    class="fr-raw-list fr-mb-2w"
+                    data-testid="timeSlot-list"
+                    data-form-collection-target="collectionContainer"
+                    aria-label="{{ form.timeSlots.vars.label|trans }}"
+                >
+                    {% for item in form.timeSlots %}
+                        {{ _self.timeSlots_list_item(item, loop.index) }}
+                    {% else %}
+                        {% do form.timeSlots.setRendered %}
+                    {% endfor %}
+                </ul>
+
+                <button
+                    type="button"
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
+                    data-action="form-collection#addCollectionElement"
+                    aria-controls="timeSlot-list"
+                >
+                    {{ 'regulation.timeSlot.add'|trans }}
+                </button>
+            </fieldset>
                 </div>
             </fieldset>
         </div>
@@ -71,6 +106,24 @@
                 data-action="remove#removeElement"
             />
         </div>
+
+    </li>
+{% endmacro %}
+
+{% macro timeSlots_list_item(form, index) %}
+
+    <li 
+    class="app-card app-card--no-header"
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+    >
+            <ul>
+               
+                {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}
+                {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-6 fr-col-lg-4'}, attr: {class: 'fr-input'}}) }}              
+            </ul>         
+       
     </li>
 {% endmacro %}
 

@@ -1206,6 +1206,14 @@
                 <source>regulation.period.days.help</source>
                 <target>Spécifiez les jours et horaires spécifiques sur lesquels la restriction s'applique</target>
             </trans-unit>
+            <trans-unit id="regulation.period.startDate">
+                <source>regulation.period.startDate</source>
+                <target>Date de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.endDate">
+                <source>regulation.period.endDate</source>
+                <target>Date de fin</target>
+            </trans-unit>
             <trans-unit id="regulation.period.startTime">
                 <source>regulation.period.startTime</source>
                 <target>Heure de début</target>
@@ -1261,6 +1269,26 @@
             <trans-unit id="regulation.period.add">
                 <source>regulation.period.add</source>
                 <target>Ajouter un créneau horaire</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlot.add">
+                <source>regulation.timeSlot.add</source>
+                <target>Définir des horaires</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlot.startTime">
+                <source>regulation.timeSlot.startTime</source>
+                <target>Heure de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlot.endTime">
+                <source>regulation.timeSlot.endTime</source>
+                <target>Heure de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlot_list">
+                <source>regulation.timeSlot_list</source>
+                <target>Définir des horaires</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlot_list.help">
+                <source>regulation.timeSlot_list.help</source>
+                <target>Par exemple de 9h00 à 12h00 et de 14h00 à 18h00</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.all_vehicles">
                 <source>regulation.vehicle_set.all_vehicles</source>

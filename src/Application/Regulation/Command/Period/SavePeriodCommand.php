@@ -18,6 +18,7 @@ final class SavePeriodCommand implements CommandInterface
     public ?\DateTimeInterface $endDate;
     public ?\DateTimeInterface $endHour;
     public ?string $recurrenceType;
+
     public ?Measure $measure;
 
     public function __construct(
