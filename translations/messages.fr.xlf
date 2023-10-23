@@ -1102,6 +1102,10 @@
                 <source>error.403.title</source>
                 <target>Vous n'avez pas les droits requis pour accéder à cette page</target>
             </trans-unit>
+            <trans-unit id="error.contact">
+                <source>error.contact</source>
+                <target>Contactez-nous</target>
+            </trans-unit>
             <trans-unit id="login.meta.title">
                 <source>login.meta.title</source>
                 <target>Connexion</target>
