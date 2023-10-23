@@ -68,10 +68,22 @@ final class EudonetParisExtractorTest extends TestCase
                     1200,
                     [1201, 1202],
                     [
-                        'Criteria' => [
-                            'Field' => 1100,
-                            'Operator' => 0,
-                            'Value' => 'arrete1',
+                        'WhereCustoms' => [
+                            [
+                                'Criteria' => [
+                                    'Field' => 1100,
+                                    'Operator' => 0,
+                                    'Value' => 'arrete1',
+                                ],
+                            ],
+                            [
+                                'Criteria' => [
+                                    'Field' => 1202,
+                                    'Operator' => 0,
+                                    'Value' => '103',
+                                ],
+                                'InterOperator' => 1,
+                            ],
                         ],
                     ],
                 ], [$tabId, $listCols, $whereCustom]) ?: $regulationOrder1MeasureRows,
@@ -92,10 +104,22 @@ final class EudonetParisExtractorTest extends TestCase
                     1200,
                     [1201, 1202],
                     [
-                        'Criteria' => [
-                            'Field' => 1100,
-                            'Operator' => 0,
-                            'Value' => 'arrete2',
+                        'WhereCustoms' => [
+                            [
+                                'Criteria' => [
+                                    'Field' => 1100,
+                                    'Operator' => 0,
+                                    'Value' => 'arrete2',
+                                ],
+                            ],
+                            [
+                                'Criteria' => [
+                                    'Field' => 1202,
+                                    'Operator' => 0,
+                                    'Value' => '103',
+                                ],
+                                'InterOperator' => 1,
+                            ],
                         ],
                     ],
                 ], [$tabId, $listCols, $whereCustom]) ?: $regulationOrder2MeasureRows,

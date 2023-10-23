@@ -22,4 +22,11 @@ final class DateUtilsTest extends TestCase
 
         $this->assertEquals((new \DateTimeImmutable('now'))->format('Y-m-d'), $dateUtils->getNow()->format('Y-m-d'));
     }
+
+    public function testGetMicroTime(): void
+    {
+        $dateUtils = new DateUtils('Europe/Paris');
+
+        $this->assertEqualsWithDelta(microtime(true), $dateUtils->getMicroTime(), 0.1);
+    }
 }
