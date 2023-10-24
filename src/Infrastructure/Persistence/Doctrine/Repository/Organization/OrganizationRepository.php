@@ -31,6 +31,7 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
     {
         return $this->createQueryBuilder('o')
             ->select('count(o.uuid)')
+            ->where('o.uuid <> \'e0d93630-acf7-4722-81e8-ff7d5fa64b66\'') // DiaLog
             ->getQuery()
             ->getSingleScalarResult()
         ;

@@ -11,8 +11,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class UserRepository extends ServiceEntityRepository implements UserRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private string $dialogOrgId,
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -32,6 +34,9 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
     {
         return $this->createQueryBuilder('u')
             ->select('count(u.uuid)')
+            ->innerJoin('u.organizations', 'o')
+            ->where('o.uuid <> :uuid')
+            ->setParameter('uuid', $this->dialogOrgId)
             ->getQuery()
             ->getSingleScalarResult()
         ;

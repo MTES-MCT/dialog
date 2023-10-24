@@ -18,6 +18,8 @@ services:
             $projectDir: '%kernel.project_dir%'
             $adminEmail: '%admin_email%'
             $eudonetParisOrgId: '%env(APP_EUDONET_PARIS_ORG_ID)%'
+            $dialogOrgId: '%env(DIALOG_ORG_ID)%'
+
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
