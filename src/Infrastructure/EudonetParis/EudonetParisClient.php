@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\EudonetParis;
 
 use App\Application\DateUtilsInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -17,6 +18,7 @@ class EudonetParisClient
         private HttpClientInterface $eudonetParisHttpClient,
         private string $credentials,
         private DateUtilsInterface $dateUtils,
+        private LoggerInterface $eudonetParisImportLogger,
     ) {
         $this->token = null;
         $this->tokenExpiryDate = null;
@@ -47,7 +49,27 @@ class EudonetParisClient
         $headers = array_merge($options['headers'], ["X-Auth: $this->token"]);
         $options = array_merge($options, ['headers' => $headers]);
 
-        return $this->eudonetParisHttpClient->request($method, $url, $options);
+        $this->eudonetParisImportLogger->debug('request', ['method' => $method, 'url' => $url, 'body' => json_decode($options['body'])]);
+        $response = $this->eudonetParisHttpClient->request($method, $url, $options);
+
+        $body = $response->getContent(throw: false);
+        $jsonDecodeError = null;
+
+        try {
+            $body = json_decode($body, associative: true, flags: \JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exc) {
+            $jsonDecodeError = $exc->getMessage();
+        }
+
+        $context = ['body' => $body];
+
+        if ($jsonDecodeError) {
+            $context['json_decode_error'] = $jsonDecodeError;
+        }
+
+        $this->eudonetParisImportLogger->debug('response', $context);
+
+        return $response;
     }
 
     public function search(int $tabId, array $listCols, array $whereCustom = []): array

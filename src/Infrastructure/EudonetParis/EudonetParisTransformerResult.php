@@ -10,7 +10,7 @@ final class EudonetParisTransformerResult
 {
     public function __construct(
         public readonly ?ImportEudonetParisRegulationCommand $command,
-        public readonly array $skipMessages,
+        public readonly array $errors,
     ) {
     }
 }

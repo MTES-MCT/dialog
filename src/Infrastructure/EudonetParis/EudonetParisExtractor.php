@@ -21,6 +21,7 @@ final class EudonetParisExtractor
     public const MESURE_TAB_ID = 1200;
     public const MESURE_ID = 1201;
     public const MESURE_NOM = 1202;
+    public const MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE = '103';
 
     // LOCALISATION fields
     public const LOCALISATION_TAB_ID = 2700;
@@ -44,7 +45,7 @@ final class EudonetParisExtractor
     public const TEMPORAIRE = 8;
 
     public function __construct(
-        private EudonetParisClient $eudnetParisClient,
+        private EudonetParisClient $eudonetParisClient,
     ) {
     }
 
@@ -79,7 +80,7 @@ final class EudonetParisExtractor
             ];
         }
 
-        $regulationOrderRows = $this->eudnetParisClient->search(
+        $regulationOrderRows = $this->eudonetParisClient->search(
             tabId: $this::ARRETE_TAB_ID,
             listCols: [
                 self::ARRETE_ID,
@@ -94,17 +95,29 @@ final class EudonetParisExtractor
         foreach ($regulationOrderRows as $regulationOrderRow) {
             $row = ['fileId' => $regulationOrderRow['fileId'], 'fields' => $regulationOrderRow['fields'], 'measures' => []];
 
-            $mesureRows = $this->eudnetParisClient->search(
+            $mesureRows = $this->eudonetParisClient->search(
                 tabId: $this::MESURE_TAB_ID,
                 listCols: [
                     $this::MESURE_ID,
                     $this::MESURE_NOM,
                 ],
                 whereCustom: [
-                    'Criteria' => [
-                        'Field' => $this::ARRETE_TAB_ID,
-                        'Operator' => $this::EQUALS,
-                        'Value' => $regulationOrderRow['fileId'],
+                    'WhereCustoms' => [
+                        [
+                            'Criteria' => [
+                                'Field' => $this::ARRETE_TAB_ID,
+                                'Operator' => $this::EQUALS,
+                                'Value' => $regulationOrderRow['fileId'],
+                            ],
+                        ],
+                        [
+                            'Criteria' => [
+                                'Field' => $this::MESURE_NOM,
+                                'Operator' => $this::EQUALS,
+                                'Value' => $this::MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE,
+                            ],
+                            'InterOperator' => $this::AND,
+                        ],
                     ],
                 ],
             );
@@ -112,7 +125,7 @@ final class EudonetParisExtractor
             foreach ($mesureRows as $mesureRow) {
                 $measureRow = ['fileId' => $mesureRow['fileId'], 'fields' => $mesureRow['fields'], 'locations' => []];
 
-                $locationRows = $this->eudnetParisClient->search(
+                $locationRows = $this->eudonetParisClient->search(
                     tabId: $this::LOCALISATION_TAB_ID,
                     listCols: [
                         $this::LOCALISATION_ID,

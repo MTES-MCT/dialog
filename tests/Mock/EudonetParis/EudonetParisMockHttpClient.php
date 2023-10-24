@@ -90,10 +90,22 @@ final class EudonetParisMockHttpClient extends MockHttpClient
         Assert::assertSame($this->baseUri . '/EudoAPI/Search/1200', $this->requests[2]['url']);
         Assert::assertEquals(
             [
-                'Criteria' => [
-                    'Field' => 1100,
-                    'Operator' => 0,
-                    'Value' => 43497,
+                'WhereCustoms' => [
+                    [
+                        'Criteria' => [
+                            'Field' => 1100,
+                            'Operator' => 0,
+                            'Value' => 43497,
+                        ],
+                    ],
+                    [
+                        'Criteria' => [
+                            'Field' => 1202,
+                            'Operator' => 0,
+                            'Value' => '103',
+                        ],
+                        'InterOperator' => 1,
+                    ],
                 ],
             ],
             json_decode($this->requests[2]['options']['body'], true)['WhereCustom'],

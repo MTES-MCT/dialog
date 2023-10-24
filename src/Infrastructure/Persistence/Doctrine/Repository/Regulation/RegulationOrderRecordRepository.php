@@ -118,7 +118,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->orderBy('roc.uuid')
-            ->setMaxResults(20)
             ->getQuery()
             ->getResult()
         ;

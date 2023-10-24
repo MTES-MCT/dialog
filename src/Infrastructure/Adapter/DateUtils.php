@@ -29,4 +29,9 @@ final class DateUtils implements DateUtilsInterface
             new \DateTime('tomorrow'),
         )->setTimeZone($this->clientTimezone);
     }
+
+    public function getMicroTime(): float
+    {
+        return microtime(true);
+    }
 }
