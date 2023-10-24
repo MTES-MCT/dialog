@@ -14,8 +14,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class RegulationOrderRecordRepository extends ServiceEntityRepository implements RegulationOrderRecordRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private string $dialogOrgId,
+    ) {
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
@@ -161,6 +163,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
+            ->where('o.uuid <> :uuid')
+            ->setParameter('uuid', $this->dialogOrgId)
+            ->innerJoin('roc.organization', 'o')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -170,6 +175,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
             ->where('roc.status = :status')
+            ->andWhere('o.uuid <> :uuid')
+            ->setParameter('uuid', $this->dialogOrgId)
+            ->innerJoin('roc.organization', 'o')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->getQuery()
             ->getSingleScalarResult();
@@ -179,8 +187,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
-            ->where('roc.status = :status')
-            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->where('o.uuid <> :uuid')
+            ->setParameter('uuid', $this->dialogOrgId)
+            ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NULL')
             ->getQuery()
             ->getSingleScalarResult();
@@ -190,9 +199,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
-            ->where('roc.status = :status')
-            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->where('o.uuid <> :uuid')
+            ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NOT NULL')
+            ->innerJoin('roc.organization', 'o')
             ->getQuery()
             ->getSingleScalarResult();
     }
