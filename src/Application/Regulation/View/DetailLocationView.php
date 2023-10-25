@@ -26,10 +26,26 @@ class DetailLocationView
             $periods = [];
 
             foreach ($measure->getPeriods() as $period) {
+                $dailyRange = $period->getDailyRange();
+                $dailyRangeView = null;
+
+                if ($dailyRange) {
+                    $timeSlotsViews = [];
+
+                    foreach ($dailyRange->getTimeSlots() as $timeSlot) {
+                        $timeSlotsViews[] = new TimeSlotView(
+                            $timeSlot->getStartTime(),
+                            $timeSlot->getEndTime(),
+                        );
+                    }
+                    $dailyRangeView = new DailyRangeView($dailyRange->getDaysRanges(), $timeSlotsViews);
+                }
+
                 $periods[] = new PeriodView(
-                    $period->getDaysRanges(),
-                    $period->getStartTime(),
-                    $period->getEndTime(),
+                    $period->getRecurrenceType(),
+                    $period->getStartDateTime(),
+                    $period->getEndDateTime(),
+                    $dailyRangeView,
                 );
             }
 

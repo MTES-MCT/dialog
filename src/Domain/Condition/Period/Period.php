@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition\Period;
 
-use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Regulation\Measure;
 
 class Period
@@ -12,11 +11,8 @@ class Period
     public function __construct(
         private string $uuid,
         private Measure $measure,
-        private array $applicableDays,
-        private ?\DateTimeInterface $startDate,
-        private ?\DateTimeInterface $endDate,
-        private \DateTimeInterface $startTime, // todo : remove
-        private ?\DateTimeInterface $endTime, // todo : remove
+        private ?\DateTimeInterface $startDateTime,
+        private ?\DateTimeInterface $endDateTime,
         private ?string $recurrenceType,
         private ?DailyRange $dailyRange = null,
     ) {
@@ -27,29 +23,14 @@ class Period
         return $this->uuid;
     }
 
-    public function getApplicableDays(): array
+    public function getStartDateTime(): ?\DateTimeInterface
     {
-        return $this->applicableDays;
+        return $this->startDateTime;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getEndDateTime(): ?\DateTimeInterface
     {
-        return $this->startDate;
-    }
-
-    public function getEndDate(): ?\DateTimeInterface
-    {
-        return $this->endDate;
-    }
-
-    public function getStartTime(): ?\DateTimeInterface
-    {
-        return $this->startTime;
-    }
-
-    public function getEndTime(): ?\DateTimeInterface
-    {
-        return $this->endTime;
+        return $this->endDateTime;
     }
 
     public function getRecurrenceType(): ?string
@@ -62,52 +43,23 @@ class Period
         return $this->measure;
     }
 
-    public function getDaysRanges(): array
-    {
-        $daysRanges = [];
-        $days = ApplicableDayEnum::getValues();
-        $i = 0;
-
-        foreach ($this->applicableDays as $currentDay) {
-            $daysRanges[$i] = ['firstDay' => $currentDay, 'lastDay' => $currentDay];
-
-            if ($i > 0) {
-                $previousDay = $daysRanges[$i - 1]['lastDay'];
-                $previousDayKey = array_search($previousDay, $days);
-                $currentDayKey = array_search($currentDay, $days);
-
-                if (($currentDayKey - 1) === $previousDayKey) {
-                    unset($daysRanges[$i]);
-                    $daysRanges[$i - 1]['lastDay'] = $currentDay;
-
-                    continue;
-                }
-            }
-
-            ++$i;
-        }
-
-        return $daysRanges;
-    }
-
     public function getDailyRange(): ?DailyRange
     {
         return $this->dailyRange;
     }
 
+    public function setDailyRange(?DailyRange $dailyRange): void
+    {
+        $this->dailyRange = $dailyRange;
+    }
+
     public function update(
-        array $applicableDays,
-        \DateTimeInterface $startTime,
-        \DateTimeInterface $endTime,
-        \DateTimeInterface $startDate,
-        \DateTimeInterface $endDate,
+        \DateTimeInterface $startDateTime,
+        \DateTimeInterface $endDateTime,
         string $recurrenceType,
     ): void {
-        $this->applicableDays = $applicableDays;
-        $this->startTime = $startTime;
-        $this->endTime = $endTime;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->startDateTime = $startDateTime;
+        $this->endDateTime = $endDateTime;
         $this->recurrenceType = $recurrenceType;
     }
 }

@@ -35,7 +35,7 @@ final class DateUtils implements DateUtilsInterface
         return microtime(true);
     }
 
-    public function mergeDateAndTimeOfTwoDates(\DateTimeInterface $date1, \DateTimeInterface $date2): \DateTimeInterface
+    public function mergeDateAndTime(\DateTimeInterface $date1, \DateTimeInterface $date2): \DateTimeInterface
     {
         $hour = (int) $date2->format('H');
         $min = (int) $date2->format('i');

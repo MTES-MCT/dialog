@@ -6,9 +6,11 @@ namespace App\Domain\Condition\Period\Enum;
 
 enum PeriodRecurrenceTypeEnum: string
 {
-    case EVERY_DAYS = 'everyDays';
-    case WEEK = 'week';
-    case WEEKEND = 'weekend';
-    case SOME_DAYS = 'someDays';
-    case PART_OF_THE_WEEK = 'partOfTheWeek';
+    case EVERY_DAY = 'everyDay';
+    case CERTAIN_DAYS = 'certainDays';
+
+    // Not activated options
+    // case WEEK = 'week';
+    // case WEEKEND = 'weekend';
+    // case PART_OF_THE_WEEK = 'partOfTheWeek';
 }

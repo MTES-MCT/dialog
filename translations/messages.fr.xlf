@@ -1202,10 +1202,6 @@
                 <source>regulation.period.time</source>
                 <target>Créneau horaire</target>
             </trans-unit>
-            <trans-unit id="regulation.period.days.help">
-                <source>regulation.period.days.help</source>
-                <target>Spécifiez les jours et horaires spécifiques sur lesquels la restriction s'applique</target>
-            </trans-unit>
             <trans-unit id="regulation.period.startDate">
                 <source>regulation.period.startDate</source>
                 <target>Date de début</target>
@@ -1220,11 +1216,11 @@
             </trans-unit>
             <trans-unit id="regulation.period.many_days">
                 <source>regulation.period.many_days</source>
-                <target>du %firstDay% au %lastDay% de %startTime% à %endTime%</target>
+                <target>du %firstDay% au %lastDay%</target>
             </trans-unit>
             <trans-unit id="regulation.period.one_day">
                 <source>regulation.period.one_day</source>
-                <target>le %firstDay% de %startTime% à %endTime%</target>
+                <target>le %firstDay%</target>
             </trans-unit>
             <trans-unit id="regulation.period.all_days">
                 <source>regulation.period.all_days</source>
@@ -1238,8 +1234,8 @@
                 <source>regulation.period.recurrenceType</source>
                 <target>Quels jours sont concernés ?</target>
             </trans-unit>
-            <trans-unit id="regulation.period.recurrenceType.everyDays">
-                <source>regulation.period.recurrenceType.everyDays</source>
+            <trans-unit id="regulation.period.recurrenceType.everyDay">
+                <source>regulation.period.recurrenceType.everyDay</source>
                 <target>Tous les jours</target>
             </trans-unit>
             <trans-unit id="regulation.period.recurrenceType.week">
@@ -1250,8 +1246,8 @@
                 <source>regulation.period.recurrenceType.weekend</source>
                 <target>Le weekend</target>
             </trans-unit>
-            <trans-unit id="regulation.period.recurrenceType.someDays">
-                <source>regulation.period.recurrenceType.someDays</source>
+            <trans-unit id="regulation.period.recurrenceType.certainDays">
+                <source>regulation.period.recurrenceType.certainDays</source>
                 <target>Certains jours</target>
             </trans-unit>
             <trans-unit id="regulation.period.recurrenceType.partOfTheWeek">
@@ -1260,15 +1256,15 @@
             </trans-unit>
             <trans-unit id="regulation.period_list">
                 <source>regulation.period_list</source>
-                <target>Créneaux horaires</target>
+                <target>Jours et horaires</target>
             </trans-unit>
             <trans-unit id="regulation.period_list.help">
                 <source>regulation.period_list.help</source>
-                <target>Par défaut, la restriction s'applique tous les jours sur la période de validité</target>
+                <target>Vous pouvez spécifier des jours et créneaux applicables. Par défaut, la restriction s’applique tous les jours sur la période de validité.</target>
             </trans-unit>
             <trans-unit id="regulation.period.add">
                 <source>regulation.period.add</source>
-                <target>Ajouter un créneau horaire</target>
+                <target>Ajouter une plage</target>
             </trans-unit>
             <trans-unit id="regulation.timeSlot.add">
                 <source>regulation.timeSlot.add</source>
@@ -1282,12 +1278,12 @@
                 <source>regulation.timeSlot.endTime</source>
                 <target>Heure de fin</target>
             </trans-unit>
-            <trans-unit id="regulation.timeSlot_list">
-                <source>regulation.timeSlot_list</source>
+            <trans-unit id="regulation.timeSlots">
+                <source>regulation.timeSlots</source>
                 <target>Définir des horaires</target>
             </trans-unit>
-            <trans-unit id="regulation.timeSlot_list.help">
-                <source>regulation.timeSlot_list.help</source>
+            <trans-unit id="regulation.timeSlots.help">
+                <source>regulation.timeSlots.help</source>
                 <target>Par exemple de 9h00 à 12h00 et de 14h00 à 18h00</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.all_vehicles">

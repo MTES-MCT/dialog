@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
-use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,7 +22,7 @@ final class PeriodFormType extends AbstractType
                 'label' => 'regulation.period.startDate',
                 'widget' => 'single_text',
             ])
-            ->add('startHour', TimeType::class, [
+            ->add('startTime', TimeType::class, [
                 'label' => 'regulation.period.startTime',
                 'widget' => 'single_text',
             ])
@@ -32,43 +30,15 @@ final class PeriodFormType extends AbstractType
                 'label' => 'regulation.period.endDate',
                 'widget' => 'single_text',
             ])
-            ->add('endHour', TimeType::class, [
+            ->add('endTime', TimeType::class, [
                 'label' => 'regulation.period.endTime',
                 'widget' => 'single_text',
             ])
             ->add('recurrenceType', ChoiceType::class,
                 options: $this->getRecurrenceTypeOptions(),
             )
-            ->add('applicableDays', ChoiceType::class, $this->getDaysOptions(),
-            )
-            ->add('timeSlots', CollectionType::class, [
-                'entry_type' => TimeSlotFormType::class,
-                'entry_options' => ['label' => false],
-                'prototype_name' => '__timeSlot_name__',
-                'label' => 'regulation.timeSlot_list',
-                'help' => 'regulation.timeSlot_list.help',
-                'allow_add' => true,
-                'allow_delete' => true,
-                'error_bubbling' => false,
-            ])
+            ->add('dailyRange', DailyRangeFormType::class)
         ;
-    }
-
-    private function getDaysOptions(): array
-    {
-        $choices = [];
-
-        foreach (ApplicableDayEnum::cases() as $case) {
-            $choices[sprintf('regulation.period.days.%s', $case->value)] = $case->value;
-        }
-
-        return [
-            'choices' => $choices,
-            'expanded' => true,
-            'multiple' => true,
-            'label' => 'regulation.period.days',
-            'help' => 'regulation.period.days.help',
-        ];
     }
 
     private function getRecurrenceTypeOptions(): array

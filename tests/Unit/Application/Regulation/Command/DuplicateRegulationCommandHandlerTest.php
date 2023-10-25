@@ -7,14 +7,18 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
+use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
@@ -49,37 +53,52 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $startTime = new \DateTimeImmutable('2023-03-13 08:00:00');
         $endTime = new \DateTimeImmutable('2023-03-13 20:00:00');
 
+        $timeSlotStartTime = new \DateTimeImmutable('2023-03-13 08:00:00');
+        $timeSlotEndTime = new \DateTimeImmutable('2023-03-13 20:00:00');
+
+        $timeSlot = $this->createMock(TimeSlot::class);
+        $timeSlot
+            ->expects(self::exactly(2))
+            ->method('getStartTime')
+            ->willReturn($timeSlotStartTime);
+        $timeSlot
+            ->expects(self::exactly(2))
+            ->method('getEndTime')
+            ->willReturn($timeSlotEndTime);
+
         $vehicleSet = $this->createMock(VehicleSet::class);
         $vehicleSet
             ->expects(self::exactly(2))
             ->method('getRestrictedTypes')
             ->willReturn([]);
 
-        $period = $this->createMock(Period::class);
-        $period
+        $dailyRange = $this->createMock(DailyRange::class);
+        $dailyRange
             ->expects(self::once())
             ->method('getApplicableDays')
             ->willReturn([ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value]);
-        $period
-        ->expects(self::once())
-        ->method('getStartTime')
-        ->willReturn($startTime);
-        $period
-        ->expects(self::once())
-        ->method('getEndTime')
-        ->willReturn($endTime);
-        $period
-        ->expects(self::once())
-        ->method('getRecurrenceType')
-        ->willReturn(PeriodRecurrenceTypeEnum::SOME_DAYS->value);
+        $dailyRange
+            ->expects(self::exactly(2))
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot]);
+
+        $period = $this->createMock(Period::class);
         $period
             ->expects(self::once())
-            ->method('getStartDate')
+            ->method('getRecurrenceType')
+            ->willReturn(PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value);
+        $period
+            ->expects(self::exactly(2))
+            ->method('getStartDateTime')
             ->willReturn($startTime);
         $period
-            ->expects(self::once())
-            ->method('getEndDate')
+            ->expects(self::exactly(2))
+            ->method('getEndDateTime')
             ->willReturn($endTime);
+        $period
+            ->expects(self::once())
+            ->method('getDailyRange')
+            ->willReturn($dailyRange);
 
         $measure1 = $this->createMock(Measure::class);
         $measure1
@@ -219,13 +238,23 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = true;
 
+        $timeSlotCommand = new SaveTimeSlotCommand();
+        $timeSlotCommand->startTime = $timeSlotStartTime;
+        $timeSlotCommand->endTime = $timeSlotEndTime;
+
+        $dailyRangeCommand = new SaveDailyRangeCommand();
+        $dailyRangeCommand->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
+        $dailyRangeCommand->timeSlots = [
+            $timeSlotCommand,
+        ];
+
         $periodCommand1 = new SavePeriodCommand();
-        $periodCommand1->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
-        $periodCommand1->startHour = $startTime;
-        $periodCommand1->endHour = $endTime;
+        $periodCommand1->startTime = $startTime;
+        $periodCommand1->endTime = $endTime;
         $periodCommand1->startDate = $startTime;
         $periodCommand1->endDate = $endTime;
-        $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::SOME_DAYS->value;
+        $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
+        $periodCommand1->dailyRange = $dailyRangeCommand;
 
         $measureCommand1 = new SaveMeasureCommand();
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;

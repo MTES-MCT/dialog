@@ -56,12 +56,16 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWidth'] = 0.0; // Zero OK
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxLength'] = -0; // Zero OK
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxHeight'] = '2.50';
-        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = ['monday', 'sunday'];
+        $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['location_form']['measures'][0]['periods'][0]['startDate'] = '2023-10-30';
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][0]['periods'][0]['endDate'] = '2023-10-30';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '16:00';
-        $values['location_form']['measures'][0]['periods'][0]['includeHolidays'] = true;
-
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['endTime'] = '20:00';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
         $this->assertResponseStatusCodeSame(200);
 
         $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
@@ -286,17 +290,21 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
-        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = '';
+        $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = '';
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '';
+        $values['location_form']['measures'][0]['periods'][0]['startDate'] = '';
+        $values['location_form']['measures'][0]['periods'][0]['endDate'] = '';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_startTime_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide. L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_startDate_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_endDate_error')->text());
     }
 
     public function testInvalidPeriod(): void
@@ -315,26 +323,38 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
+        $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['location_form']['measures'][0]['periods'][0]['startDate'] = '2023-10-30';
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = '10:00';
+        $values['location_form']['measures'][0]['periods'][0]['endDate'] = '2023-10-29';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '08:00';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
-        $this->assertSame('L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+        $this->assertSame('La date de fin doit être supérieure à la date de début.', $crawler->filter('#location_form_measures_0_periods_0_endDate_error')->text());
 
         // Bad values
-        $values['location_form']['measures'][0]['periods'][0]['applicableDays'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['startDate'] = 'test';
         $values['location_form']['measures'][0]['periods'][0]['startTime'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['endDate'] = 'test';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['applicableDays'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['startTime'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['endTime'] = 'test';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_applicableDays_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_applicableDays_error')->text());
+        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_timeSlots_0_startTime_error')->text());
+        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_timeSlots_0_endTime_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_recurrenceType_error')->text());
         $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_startTime_error')->text());
         $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());
+        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#location_form_measures_0_periods_0_endDate_error')->text());
+        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#location_form_measures_0_periods_0_startDate_error')->text());
     }
 
     public function testGeocodingFailure(): void

@@ -5,44 +5,40 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Period;
 
 use App\Application\CommandInterface;
-use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Measure;
 
 final class SavePeriodCommand implements CommandInterface
 {
-    public ?array $applicableDays;
     public ?\DateTimeInterface $startDate;
-    public ?\DateTimeInterface $startHour;
+    public ?\DateTimeInterface $startTime;
     public ?\DateTimeInterface $endDate;
-    public ?\DateTimeInterface $endHour;
+    public ?\DateTimeInterface $endTime;
     public ?string $recurrenceType;
-
     public ?Measure $measure;
+    public ?SaveDailyRangeCommand $dailyRange = null;
 
     public function __construct(
         public readonly ?Period $period = null,
     ) {
-        $this->applicableDays = $period?->getApplicableDays();
-        $this->startDate = $period?->getStartDate();
-        $this->startHour = $period?->getStartDate();
-        $this->endDate = $period?->getEndDate();
-        $this->endHour = $period?->getEndDate();
+        // Store date and time into separate variables for easier
+        // rendering as separate form fields.
+        $this->startDate = $period?->getStartDateTime();
+        $this->startTime = $period?->getStartDateTime();
+        $this->endDate = $period?->getEndDateTime();
+        $this->endTime = $period?->getEndDateTime();
         $this->recurrenceType = $period?->getRecurrenceType();
+
+        if ($period?->getDailyRange()) {
+            $this->dailyRange = new SaveDailyRangeCommand($period->getDailyRange());
+        }
     }
 
-    public function sortApplicableDays(): void
+    public function clean(): void
     {
-        usort($this->applicableDays, function (string $d1, string $d2) {
-            return ApplicableDayEnum::getDayIndex($d1) <=> ApplicableDayEnum::getDayIndex($d2);
-        });
-    }
-
-    public function clear(): void
-    {
-        if ($this->recurrenceType !== PeriodRecurrenceTypeEnum::SOME_DAYS->value) {
-            $this->applicableDays = [];
+        if ($this->recurrenceType !== PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value) {
+            $this->dailyRange = null;
         }
     }
 }
