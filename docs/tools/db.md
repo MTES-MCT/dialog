@@ -40,3 +40,32 @@ Une configuration est nécéssaire à la première connection pour relier pgAdmi
     - **Password** : dialog
 
 Et c'est tout ! Vous aurez maintenant accès à l'interface graphique pour gérer la base de données.
+
+## Utiliser une DB Scalingo en local
+
+Vous pouvez utiliser en local une base de données hébergée sur Scalingo (staging, PR...) à l'aide d'un utilitaire.
+
+**Prérequis**
+
+* La commande `scalingo` (Scalingo CLI) doit être disponible. Vérifiez avec : `$ which scalingo`. Pour l'installer, voir [Command Line Interface (CLI)](https://doc.scalingo.com/platform/cli/start) dans la doc Scalingo.
+* Vous devez avoir configuré un accès SSH à Scalingo. Vérifiez avec : `$ scalingo keys` -- votre clé SSH doit apparaître dans la liste. Pour configurer l'accès, voir [SSH Key Setup](https://doc.scalingo.com/platform/getting-started/first-steps#ssh-key-setup) dans la doc Scalingo.
+* La commande `sshd` doit être disponible. Vérifiez avec : `$ which sshd`. Pour l'installer sous Linux : `sudo apt install openssh-server`.
+* Enregistrez votre clé SSH auprès du serveur SSH local : `$ ssh-copy-id $(whoami)@localhost`.
+
+**Utilisation**
+
+Lancez la commande suivante :
+
+```
+./tools/scalingodbtunnel APP
+```
+
+Remplacez `APP` par l'application Scalingo cible.
+
+Cette commande démarre un tunnel SSH vers la base de données, et le relaie à Docker pour que le conteneur PHP/Doctrine puisse y accéder.
+
+La commande affiche ensuite une ligne `DATABASE_URL=...`. **Reportez cette ligne** dans `.env.local` pour utiliser la base de données distante. Accédez à http://localhost:8000 comme d'habitude.
+
+Laissez la commande tourner pour garder le tunnel ouvert.
+
+Pour arrêter le tunnel, utilisez <kbd>Ctrl+C</kbd>.

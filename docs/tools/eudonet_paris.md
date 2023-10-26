@@ -39,11 +39,12 @@ Notes :
 
 ### Pour un import sur staging ou en production
 
-* Dans `.env.prod.local` (créez ce fichier si besoin) :
-  * Définissez `DATABASE_URL` avec l'URL de la base de données cible (peut être récupéré sur Scalingo)
+1. [Démarrez un tunnel SSH vers la base de données cible](./db.md#utiliser-une-db-scalingo-en-local).
+2. Dans `.env.prod.local` :
+  * Reportez la ligne `DATABASE_URL` affichée après avoir démarré le tunnel SSH.
   * Définissez `APP_EUDONET_PARIS_ORG_ID` avec l'ID de l'organisation "Ville de Paris" en prod (peut être récupéré auprès de l'admin)
   * Ajoutez aussi `APP_EUDONET_PARIS_CREDENTIALS` et `API_ADRESSE_BASE_URL` (voir [Préparration](#préparation)).
-* Avant de lancer l'exécution :
+3. Avant de lancer l'exécution :
   * Vérifiez la prise en compte des variables d'environnement :
 
     ```bash
@@ -52,12 +53,12 @@ Notes :
     make console CMD="debug:dotenv --env=prod API_ADRESSE_"
     ```
 
-* Lancez l'exécution avec :
+4. Lancez l'exécution avec :
 
   ```bash
   make console CMD="--env prod app:eudonet_paris:import"
   ```
 
-* Après l'exécution :
+5. Après l'exécution :
   * Vérifiez l'exécution en inspectant le fichier `import.prod-*.log` alimenté pendant l'import.
   * Commentez les variables dans `.env.prod.local` pour éviter de les réutiliser par mégarde jusqu'au prochain import.
