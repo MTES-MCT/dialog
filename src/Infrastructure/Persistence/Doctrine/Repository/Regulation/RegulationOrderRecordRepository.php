@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -117,6 +118,43 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->orderBy('roc.uuid')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findRegulationOrdersForCifsIncidentFormat(): array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(
+                'ro.uuid',
+                'roc.createdAt',
+                'ro.description',
+                'ro.startDate',
+                'ro.endDate',
+                'loc.address',
+                'ST_X(loc.fromPoint) as fromLongitude',
+                'ST_Y(loc.fromPoint) as fromLatitude',
+                'ST_X(loc.toPoint) as toLongitude',
+                'ST_Y(loc.toPoint) as toLatitude',
+                'm.uuid as measureId',
+                'm.type as measureType',
+            )
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->innerJoin('roc.organization', 'o')
+            ->innerJoin('ro.locations', 'loc')
+            ->innerJoin('loc.measures', 'm')
+            ->leftJoin('m.vehicleSet', 'v')
+            ->where(
+                'roc.status = :status',
+                'ro.endDate IS NOT NULL',
+                'loc.fromPoint IS NOT NULL',
+                'loc.toPoint IS NOT NULL',
+                'm.type = :measureType',
+            )
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)
             ->orderBy('roc.uuid')
             ->getQuery()
             ->getResult()

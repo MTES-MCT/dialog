@@ -1462,6 +1462,10 @@
                 <source>statistics.temporaryRegulationOrderRecords</source>
                 <target>Nombre total d'arrếtés temporaires</target>
             </trans-unit>
+            <trans-unit id="api.cifs.incident.description">
+                <source>api.cifs.incident.description</source>
+                <target>%street% : circulation interdite tous les jours pour tous les véhicles</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
