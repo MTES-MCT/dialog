@@ -43,7 +43,7 @@ Notes :
 2. Dans `.env.prod.local` :
   * Reportez la ligne `DATABASE_URL` affichée après avoir démarré le tunnel SSH.
   * Définissez `APP_EUDONET_PARIS_ORG_ID` avec l'ID de l'organisation "Ville de Paris" en prod (peut être récupéré auprès de l'admin)
-  * Ajoutez aussi `APP_EUDONET_PARIS_CREDENTIALS` et `API_ADRESSE_BASE_URL` (voir [Préparration](#préparation)).
+  * Ajoutez aussi `APP_EUDONET_PARIS_CREDENTIALS` et `API_ADRESSE_BASE_URL` (voir [Préparation](#préparation)).
 3. Avant de lancer l'exécution :
   * Vérifiez la prise en compte des variables d'environnement :
 
