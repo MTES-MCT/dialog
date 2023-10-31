@@ -105,6 +105,27 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getVehicleSet')
             ->willReturn(null);
+        $measure3 = $this->createMock(Measure::class);
+        $measure3
+            ->expects(self::once())
+            ->method('getType')
+            ->willReturn(MeasureTypeEnum::SPEED_LIMITATION->value);
+        $measure3
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn($startDate);
+        $measure3
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([]);
+        $measure3
+            ->expects(self::once())
+            ->method('getVehicleSet')
+            ->willReturn(null);
+        $measure3
+            ->expects(self::exactly(2))
+            ->method('getMaxSpeed')
+            ->willReturn(50);
 
         $this->originalRegulationOrderRecord
             ->expects(self::once())
@@ -133,7 +154,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $location1
             ->expects(self::exactly(2))
             ->method('getMeasures')
-            ->willReturn([$measure1, $measure2]);
+            ->willReturn([$measure1, $measure2, $measure3]);
 
         $location2 = $this->createMock(Location::class);
         $location2
@@ -227,6 +248,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $measureCommand2->createdAt = $startDate;
 
+        $measureCommand3 = new SaveMeasureCommand();
+        $measureCommand3->type = MeasureTypeEnum::SPEED_LIMITATION->value;
+        $measureCommand3->createdAt = $startDate;
+        $measureCommand3->maxSpeed = 50;
+
         $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
         $locationCommand1->address = 'Route du Lac 44260 Savenay';
         $locationCommand1->fromHouseNumber = '11';
@@ -234,6 +260,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1->measures = [
             $measureCommand1,
             $measureCommand2,
+            $measureCommand3,
         ];
 
         $locationCommand2 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
