@@ -23,7 +23,6 @@ final class DailyRangeFormType extends AbstractType
                 'entry_options' => ['label' => false],
                 'prototype_name' => '__timeSlot_name__',
                 'label' => 'regulation.timeSlots',
-                'help' => 'regulation.timeSlots.help',
                 'allow_add' => true,
                 'allow_delete' => true,
                 'error_bubbling' => false,

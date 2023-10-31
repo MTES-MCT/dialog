@@ -1262,6 +1262,10 @@
                 <source>regulation.period_list.help</source>
                 <target>Vous pouvez spécifier des jours et créneaux applicables. Par défaut, la restriction s’applique tous les jours sur la période de validité.</target>
             </trans-unit>
+            <trans-unit id="regulation.period.title">
+                <source>regulation.period.title</source>
+                <target>Quelle est la date ou période d’application ?</target>
+            </trans-unit>
             <trans-unit id="regulation.period.add">
                 <source>regulation.period.add</source>
                 <target>Ajouter une plage</target>
@@ -1269,6 +1273,10 @@
             <trans-unit id="regulation.timeSlot.add">
                 <source>regulation.timeSlot.add</source>
                 <target>Définir des horaires</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlot.add.help">
+                <source>regulation.timeSlot.add.help</source>
+                <target>Par exemple de 9h00 à 12h00 et de 14h00 à 18h00</target>
             </trans-unit>
             <trans-unit id="regulation.timeSlot.startTime">
                 <source>regulation.timeSlot.startTime</source>
