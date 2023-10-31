@@ -123,7 +123,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getVehicleSet')
             ->willReturn(null);
         $measure3
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getMaxSpeed')
             ->willReturn(50);
 

@@ -82,11 +82,7 @@ final class DuplicateRegulationCommandHandler
                     $measureCommand->createdAt = $measure->getCreatedAt();
                     $measureCommand->vehicleSet = $vehicleSetCommand;
                     $measureCommand->periods = $periodCommands;
-
-                    if ($measure->getMaxSpeed()) {
-                        $measureCommand->maxSpeed = $measure->getMaxSpeed();
-                    }
-
+                    $measureCommand->maxSpeed = $measure->getMaxSpeed();
                     $locationCommand->measures[] = $measureCommand;
                 }
             }
