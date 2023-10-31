@@ -131,6 +131,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.uuid',
                 'roc.createdAt',
                 'ro.description',
+                'ro.category',
                 'ro.startDate',
                 'ro.endDate',
                 'loc.address',
@@ -140,22 +141,24 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ST_Y(loc.toPoint) as toLatitude',
                 'm.uuid as measureId',
                 'm.type as measureType',
+                'p.uuid as periodId',
+                'p.applicableDays',
+                'p.startTime',
+                'p.endTime',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->innerJoin('loc.measures', 'm')
-            ->leftJoin('m.vehicleSet', 'v')
+            ->leftJoin('m.periods', 'p')
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
-                'loc.fromPoint IS NOT NULL',
-                'loc.toPoint IS NOT NULL',
                 'm.type = :measureType',
             )
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)
-            ->orderBy('roc.uuid')
+            ->orderBy('m.uuid')
             ->getQuery()
             ->getResult()
         ;

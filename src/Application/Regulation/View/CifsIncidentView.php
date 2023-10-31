@@ -17,6 +17,8 @@ final readonly class CifsIncidentView
         public string $endTime,
         public string $sourceReference,
         public string $sourceName,
+        public ?string $subType = null,
+        public ?array $schedule = [],
     ) {
     }
 }

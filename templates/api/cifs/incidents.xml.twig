@@ -17,6 +17,13 @@
                 <name>{{ incident.sourceName }}</name>
                 <url>{{ url('api_cifs_incidents', {_format: 'xml'}) }}</url>
             </source>
+            {% if incident.schedule %}
+                <schedule>
+                    {% for day, dayTimes in incident.schedule %}
+                        <{{ day }}>{% for times in dayTimes %}{{ times.startTime|date('H:i') }}-{{ times.endTime|date('H:i') }}{% if not loop.last %},{% endif %}{% endfor %}</{{ day }}>
+                    {% endfor %}
+                </schedule>
+            {% endif %}
         </incident>
     {% endfor %}
 </incidents>
