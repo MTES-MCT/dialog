@@ -43,16 +43,15 @@ final class Version20231031100605 extends AbstractMigration
             AND p.end_time <> NULL
         ');
 
-        $this->addSql('ALTER TABLE period DROP applicable_days');
-        $this->addSql('ALTER TABLE period DROP start_time');
-        $this->addSql('ALTER TABLE period DROP end_time');
+        $this->addSql('ALTER TABLE period ALTER applicable_days DROP NOT NULL');
+        $this->addSql('ALTER TABLE period ALTER start_time DROP NOT NULL');
+        $this->addSql('ALTER TABLE period ALTER end_time DROP NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE period ADD applicable_days TEXT NOT NULL');
-        $this->addSql('ALTER TABLE period ADD start_time TIME(0) WITHOUT TIME ZONE NOT NULL');
-        $this->addSql('ALTER TABLE period ADD end_time TIME(0) WITHOUT TIME ZONE NOT NULL');
-        $this->addSql('COMMENT ON COLUMN period.applicable_days IS \'(DC2Type:array)\'');
+        $this->addSql('ALTER TABLE period ALTER start_time SET NOT NULL');
+        $this->addSql('ALTER TABLE period ALTER end_time SET NOT NULL');
+        $this->addSql('ALTER TABLE period ALTER applicable_days SET NOT NULL');
     }
 }

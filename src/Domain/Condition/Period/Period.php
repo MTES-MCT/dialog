@@ -8,6 +8,11 @@ use App\Domain\Regulation\Measure;
 
 class Period
 {
+    // Deprecated
+    private $startTime;
+    private $endTime;
+    private $applicableDays;
+
     public function __construct(
         private string $uuid,
         private Measure $measure,
@@ -61,5 +66,36 @@ class Period
         $this->startDateTime = $startDateTime;
         $this->endDateTime = $endDateTime;
         $this->recurrenceType = $recurrenceType;
+    }
+
+    // Deprecated
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    public function getApplicableDays()
+    {
+        return $this->applicableDays;
+    }
+
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+    }
+
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+    }
+
+    public function setApplicableDays($applicableDays)
+    {
+        $this->applicableDays = $applicableDays;
     }
 }

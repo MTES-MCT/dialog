@@ -17,16 +17,16 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $period1 = new Period(
             uuid: '76680fcb-0d80-491b-b245-0c326eaef37b',
             measure: $this->getReference('measure3'),
-            startDateTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
-            endDateTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'everyDay',
         );
 
         $period2 = new Period(
             uuid: 'c01b254c-b7db-4761-9490-b8fea7d42312',
             measure: $this->getReference('measure1'),
-            startDateTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
-            endDateTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'certainDays',
         );
 
@@ -39,8 +39,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $period3 = new Period(
             uuid: '064ca7ce-ee4d-7bdb-8000-46856a6d9fa6',
             measure: $this->getReference('measure4'),
-            startDateTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
-            endDateTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'certainDays',
         );
 
@@ -53,8 +53,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $period4 = new Period(
             uuid: '064ca7cf-43a0-7d0f-8000-b608ba0d2344',
             measure: $this->getReference('measure5'),
-            startDateTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
-            endDateTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
+            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'weekend',
         );
 

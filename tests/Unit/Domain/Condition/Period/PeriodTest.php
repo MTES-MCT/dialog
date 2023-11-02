@@ -45,5 +45,13 @@ final class PeriodTest extends TestCase
         $this->assertSame($newStart, $period->getStartDateTime());
         $this->assertSame($newEnd, $period->getEndDateTime());
         $this->assertSame(PeriodRecurrenceTypeEnum::EVERY_DAY->value, $period->getRecurrenceType());
+
+        // Deprecated
+        $period->setStartTime(null);
+        $period->setEndTime(null);
+        $period->setApplicableDays(null);
+        $this->assertNull($period->getStartTime());
+        $this->assertNull($period->getEndTime());
+        $this->assertNull($period->getApplicableDays());
     }
 }
