@@ -20,7 +20,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $tabs = $crawler->filter('.fr-tabs__list')->eq(0);
         $this->assertSame('tablist', $tabs->attr('role'));
-        $this->assertSame('Temporaires (4) Permanents (1)', $tabs->text());
+        $this->assertSame('Temporaires (5) Permanents (1)', $tabs->text());
 
         $client->clickLink('Ajouter un arrêté');
         $this->assertRouteSame('app_regulation_add');
@@ -113,7 +113,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testPaginationRendering(): void
     {
         $client = $this->login();
-        $pageOne = $client->request('GET', '/regulations?pageSize=1&tab=permanent&page=1');
+        $pageOne = $client->request('GET', '/regulations?pageSize=2&tab=permanent&page=1');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -123,9 +123,8 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('1', $navLi->eq(2)->filter('a')->text());
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
-        $this->assertSame('4', $navLi->eq(5)->filter('a')->text());
-        $this->assertSame('Page suivante', $navLi->eq(6)->filter('a')->text());
-        $this->assertSame('Dernière page', $navLi->eq(7)->filter('a')->text());
+        $this->assertSame('Page suivante', $navLi->eq(5)->filter('a')->text());
+        $this->assertSame('Dernière page', $navLi->eq(6)->filter('a')->text());
     }
 
     public function testListWithOtherOrganization(): void

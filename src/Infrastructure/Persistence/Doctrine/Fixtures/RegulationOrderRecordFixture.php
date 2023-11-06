@@ -69,12 +69,22 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('organization1'),
         );
 
+        $regulationOrderRecordCifs = new RegulationOrderRecord(
+            '0654905d-6771-75d8-8000-d523184d0b55',
+            RegulationOrderRecordSourceEnum::DIALOG->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED,
+            $this->getReference('regulationOrderCifs'),
+            new \DateTime('2021-11-02'),
+            $this->getReference('organization1'),
+        );
+
         $manager->persist($regulationOrderRecord);
         $manager->persist($regulationOrderRecord2);
         $manager->persist($regulationOrderRecord3);
         $manager->persist($regulationOrderRecord4);
         $manager->persist($regulationOrderRecord5);
         $manager->persist($regulationOrderRecordNoMeasures);
+        $manager->persist($regulationOrderRecordCifs);
         $manager->flush();
     }
 

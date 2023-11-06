@@ -68,12 +68,22 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2023-01-15'),
         );
 
+        $regulationOrderCifs = new RegulationOrder(
+            uuid: '06549047-db9d-74bb-8000-754a6f2ff4c3',
+            identifier: 'F/CIFS/2021',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Arrêté exporté vers CIFS',
+            startDate: new \DateTimeImmutable('2021-11-02'),
+            endDate: new \DateTimeImmutable('2021-11-06'),
+        );
+
         $manager->persist($regulationOrder);
         $manager->persist($regulationOrder2);
         $manager->persist($regulationOrder3);
         $manager->persist($regulationOrder4);
         $manager->persist($regulationOrder5);
         $manager->persist($regulationOrderNoMeasures);
+        $manager->persist($regulationOrderCifs);
         $manager->flush();
 
         $this->addReference('regulationOrder', $regulationOrder);
@@ -82,5 +92,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('regulationOrder4', $regulationOrder4);
         $this->addReference('regulationOrder5', $regulationOrder5);
         $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
+        $this->addReference('regulationOrderCifs', $regulationOrderCifs);
     }
 }

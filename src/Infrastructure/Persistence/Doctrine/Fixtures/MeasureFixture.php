@@ -63,6 +63,14 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2023-06-01'),
             maxSpeed: 50,
         );
+
+        $measureCifs = new Measure(
+            '06548f88-56a9-70e2-8000-a06baed6a93d',
+            $this->getReference('locationCifs'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2021-11-02'),
+        );
+
         $manager->persist($measure1);
         $manager->persist($measure2);
         $manager->persist($measure3);
@@ -70,6 +78,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($measure5);
         $manager->persist($measure6);
         $manager->persist($measure7);
+        $manager->persist($measureCifs);
 
         $this->addReference('measure1', $measure1);
         $this->addReference('measure3', $measure3);
@@ -77,6 +86,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('measure5', $measure5);
         $this->addReference('measure6', $measure6);
         $this->addReference('measure7', $measure7);
+        $this->addReference('measureCifs', $measureCifs);
 
         $manager->flush();
     }
