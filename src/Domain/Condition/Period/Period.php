@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\Condition\Period;
 
-use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Regulation\Measure;
 
 class Period
 {
+    // Deprecated
+    private $startTime;
+    private $endTime;
+    private $applicableDays;
+
     public function __construct(
         private string $uuid,
         private Measure $measure,
-        private bool $includeHolidays,
-        private array $applicableDays,
-        private \DateTimeInterface $startTime,
-        private \DateTimeInterface $endTime,
+        private ?\DateTimeInterface $startDateTime,
+        private ?\DateTimeInterface $endDateTime,
+        private ?string $recurrenceType,
         private ?DailyRange $dailyRange = null,
     ) {
     }
@@ -25,24 +28,19 @@ class Period
         return $this->uuid;
     }
 
-    public function getApplicableDays(): array
+    public function getStartDateTime(): ?\DateTimeInterface
     {
-        return $this->applicableDays;
+        return $this->startDateTime;
     }
 
-    public function isIncludeHolidays(): bool
+    public function getEndDateTime(): ?\DateTimeInterface
     {
-        return $this->includeHolidays;
+        return $this->endDateTime;
     }
 
-    public function getStartTime(): ?\DateTimeInterface
+    public function getRecurrenceType(): ?string
     {
-        return $this->startTime;
-    }
-
-    public function getEndTime(): ?\DateTimeInterface
-    {
-        return $this->endTime;
+        return $this->recurrenceType;
     }
 
     public function getMeasure(): Measure
@@ -50,48 +48,54 @@ class Period
         return $this->measure;
     }
 
-    public function getDaysRanges(): array
-    {
-        $daysRanges = [];
-        $days = ApplicableDayEnum::getValues();
-        $i = 0;
-
-        foreach ($this->applicableDays as $currentDay) {
-            $daysRanges[$i] = ['firstDay' => $currentDay, 'lastDay' => $currentDay];
-
-            if ($i > 0) {
-                $previousDay = $daysRanges[$i - 1]['lastDay'];
-                $previousDayKey = array_search($previousDay, $days);
-                $currentDayKey = array_search($currentDay, $days);
-
-                if (($currentDayKey - 1) === $previousDayKey) {
-                    unset($daysRanges[$i]);
-                    $daysRanges[$i - 1]['lastDay'] = $currentDay;
-
-                    continue;
-                }
-            }
-
-            ++$i;
-        }
-
-        return $daysRanges;
-    }
-
     public function getDailyRange(): ?DailyRange
     {
         return $this->dailyRange;
     }
 
+    public function setDailyRange(?DailyRange $dailyRange): void
+    {
+        $this->dailyRange = $dailyRange;
+    }
+
     public function update(
-        bool $includeHolidays,
-        array $applicableDays,
-        \DateTimeInterface $startTime,
-        \DateTimeInterface $endTime,
+        \DateTimeInterface $startDateTime,
+        \DateTimeInterface $endDateTime,
+        string $recurrenceType,
     ): void {
-        $this->includeHolidays = $includeHolidays;
-        $this->applicableDays = $applicableDays;
+        $this->startDateTime = $startDateTime;
+        $this->endDateTime = $endDateTime;
+        $this->recurrenceType = $recurrenceType;
+    }
+
+    // Deprecated
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    public function getApplicableDays()
+    {
+        return $this->applicableDays;
+    }
+
+    public function setStartTime($startTime)
+    {
         $this->startTime = $startTime;
+    }
+
+    public function setEndTime($endTime)
+    {
         $this->endTime = $endTime;
+    }
+
+    public function setApplicableDays($applicableDays)
+    {
+        $this->applicableDays = $applicableDays;
     }
 }

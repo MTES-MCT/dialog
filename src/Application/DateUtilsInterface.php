@@ -11,4 +11,6 @@ interface DateUtilsInterface
     public function getNow(): \DateTimeImmutable;
 
     public function getMicroTime(): float;
+
+    public function mergeDateAndTime(\DateTimeInterface $date1, \DateTimeInterface $date2): \DateTimeInterface;
 }

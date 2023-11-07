@@ -6,13 +6,17 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
+use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\MeasureView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
+use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Location;
@@ -88,33 +92,67 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->method('getHeavyweightMaxHeight')
             ->willReturn(2.4);
 
-        $period1 = $this->createMock(Period::class);
-        $period1
-            ->expects(self::once())
-            ->method('getDaysRanges')
-            ->willReturn($daysRange1);
-        $period1
+        $timeSlot1 = $this->createMock(TimeSlot::class);
+        $timeSlot1
             ->expects(self::once())
             ->method('getStartTime')
             ->willReturn($startTime);
-        $period1
+        $timeSlot1
             ->expects(self::once())
             ->method('getEndTime')
             ->willReturn($endTime);
 
-        $period2 = $this->createMock(Period::class);
-        $period2
+        $dailyRange1 = $this->createMock(DailyRange::class);
+        $dailyRange1
+            ->expects(self::once())
+            ->method('getDaysRanges')
+            ->willReturn($daysRange1);
+        $dailyRange1
+            ->expects(self::once())
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot1]);
+
+        $dailyRange2 = $this->createMock(DailyRange::class);
+        $dailyRange2
             ->expects(self::once())
             ->method('getDaysRanges')
             ->willReturn($daysRange2);
+
+        $period1 = $this->createMock(Period::class);
+        $period1
+            ->expects(self::once())
+            ->method('getDailyRange')
+            ->willReturn($dailyRange1);
+        $period1
+            ->expects(self::once())
+            ->method('getStartDateTime')
+            ->willReturn($startTime);
+        $period1
+            ->expects(self::once())
+            ->method('getEndDateTime')
+            ->willReturn($endTime);
+        $period1
+            ->expects(self::once())
+            ->method('getRecurrenceType')
+            ->willReturn('certainDays');
+
+        $period2 = $this->createMock(Period::class);
         $period2
             ->expects(self::once())
-            ->method('getStartTime')
+            ->method('getDailyRange')
+            ->willReturn($dailyRange2);
+        $period2
+            ->expects(self::once())
+            ->method('getStartDateTime')
             ->willReturn($startTime);
         $period2
             ->expects(self::once())
-            ->method('getEndTime')
+            ->method('getEndDateTime')
             ->willReturn($endTime);
+        $period2
+            ->expects(self::once())
+            ->method('getRecurrenceType')
+            ->willReturn('certainDays');
 
         $measure = $this->createMock(Measure::class);
         $measure
@@ -234,8 +272,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                             new MeasureView(
                                 'noEntry',
                                 [
-                                    new PeriodView($daysRange1, $startTime, $endTime),
-                                    new PeriodView($daysRange2, $startTime, $endTime),
+                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange1, [new TimeSlotView($startTime, $endTime)])),
+                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange2, [])),
                                 ],
                                 new VehicleSetView(
                                     [

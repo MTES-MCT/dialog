@@ -33,4 +33,10 @@ class TimeSlot
     {
         return $this->endTime;
     }
+
+    public function update(\DateTimeInterface $startTime, \DateTimeInterface $endTime): void
+    {
+        $this->startTime = $startTime;
+        $this->endTime = $endTime;
+    }
 }

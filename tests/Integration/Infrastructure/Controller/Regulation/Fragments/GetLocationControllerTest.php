@@ -19,7 +19,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Route du Grand Brossais', $crawler->filter('h3')->text());
         $this->assertSame('Savenay (44260)', $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis', $crawler->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite du lundi au mardi de 08h00 à 22h00 pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation interdite du 31/10/2023 - 08h00 au 31/10/2023 - 22h00 pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form', $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());
@@ -34,7 +34,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertSame(
-            'Circulation interdite le jeudi de 08h00 à 22h00 pour les poids lourds de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
+            'Circulation interdite du 31/10/2023 - 08h00 au 31/10/2023 - 22h00, le jeudi pour les poids lourds de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
             $crawler->filter('li')->eq(2)->text(),
         );
     }

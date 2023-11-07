@@ -29,4 +29,13 @@ final class DateUtilsTest extends TestCase
 
         $this->assertEqualsWithDelta(microtime(true), $dateUtils->getMicroTime(), 0.1);
     }
+
+    public function testMergeDateAndTime(): void
+    {
+        $dateUtils = new DateUtils('Europe/Paris');
+        $date1 = new \DateTime('2023-10-10');
+        $date2 = new \DateTime('2023-10-10 08:00:00');
+
+        $this->assertEquals(new \DateTime('2023-10-10 08:00:00'), $dateUtils->mergeDateAndTime($date1, $date2));
+    }
 }

@@ -2,29 +2,11 @@
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
-    <class name="App\Application\Regulation\Command\Period\SavePeriodCommand">
-        <property name="startDate">
-            <constraint name="NotBlank"/>
-            <constraint name="Type">
-                <option name="type">\DateTimeInterface</option>
-            </constraint>
-        </property>
+    <class name="App\Application\Regulation\Command\Period\SaveTimeSlotCommand">
         <property name="startTime">
             <constraint name="NotBlank"/>
             <constraint name="Type">
                 <option name="type">\DateTimeInterface</option>
-            </constraint>
-        </property>
-        <property name="endDate">
-            <constraint name="NotBlank"/>
-            <constraint name="Type">
-                <option name="type">\DateTimeInterface</option>
-            </constraint>
-            <constraint name="Expression">
-                <option name="expression">
-                    this.endDate >= this.startDate
-                </option>
-                <option name="message">regulation.period.error.end_date</option>
             </constraint>
         </property>
         <property name="endTime">

@@ -27,5 +27,11 @@ final class TimeSlotTest extends TestCase
         $this->assertSame($dailyRange, $timeSlot->getDailyRange());
         $this->assertSame($start, $timeSlot->getStartTime());
         $this->assertSame($end, $timeSlot->getEndTime());
+
+        $start2 = new \DateTimeImmutable('2022-12-20 09:30:00');
+        $end2 = new \DateTimeImmutable('2022-12-20 18:30:00');
+        $timeSlot->update($start2, $end2);
+        $this->assertSame($start2, $timeSlot->getStartTime());
+        $this->assertSame($end2, $timeSlot->getEndTime());
     }
 }
