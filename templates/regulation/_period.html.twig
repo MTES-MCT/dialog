@@ -22,7 +22,7 @@
                 (
                 {%- for timeSlot in period.dailyRange.timeSlots -%}
                     {{ timeSlot.startTime|date('H\\hi' ) }}-{{ timeSlot.endTime|date('H\\hi' ) }}
-                    {% if not loop.last %}et {% endif %}
+                    {%- if not loop.last -%}et {%- endif -%}
                 {%- endfor -%}
                 )
             {% endif %}
