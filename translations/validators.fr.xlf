@@ -42,9 +42,9 @@
                 <source>regulation.vehicle_set.restricted_types.error.not_blank</source>
                 <target>Veuillez spécifier un ou plusieurs véhicules concernés.</target>
             </trans-unit>
-            <trans-unit id="regulation.period.error.end_time">
-                <source>regulation.period.error.end_time</source>
-                <target>L'heure de fin doit être supérieure à l'heure de début.</target>
+            <trans-unit id="regulation.period.error.end_date">
+                <source>regulation.period.error.end_date</source>
+                <target>La date de fin doit être supérieure à la date de début.</target>
             </trans-unit>
         </body>
     </file>

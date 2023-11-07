@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
-use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,36 +18,40 @@ final class PeriodFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('applicableDays', ChoiceType::class, $this->getDaysOptions())
+            ->add('startDate', DateType::class, [
+                'label' => 'regulation.period.startDate',
+                'widget' => 'single_text',
+            ])
             ->add('startTime', TimeType::class, [
                 'label' => 'regulation.period.startTime',
+                'widget' => 'single_text',
+            ])
+            ->add('endDate', DateType::class, [
+                'label' => 'regulation.period.endDate',
                 'widget' => 'single_text',
             ])
             ->add('endTime', TimeType::class, [
                 'label' => 'regulation.period.endTime',
                 'widget' => 'single_text',
             ])
-            ->add('includeHolidays', CheckboxType::class, [
-                'label' => 'regulation.period.includeHolidays',
-                'required' => false,
-            ])
+            ->add('recurrenceType', ChoiceType::class,
+                options: $this->getRecurrenceTypeOptions(),
+            )
+            ->add('dailyRange', DailyRangeFormType::class)
         ;
     }
 
-    private function getDaysOptions(): array
+    private function getRecurrenceTypeOptions(): array
     {
         $choices = [];
 
-        foreach (ApplicableDayEnum::cases() as $case) {
-            $choices[sprintf('regulation.period.days.%s', $case->value)] = $case->value;
+        foreach (PeriodRecurrenceTypeEnum::cases() as $case) {
+            $choices[sprintf('regulation.period.recurrenceType.%s', $case->value)] = $case->value;
         }
 
         return [
             'choices' => $choices,
-            'expanded' => true,
-            'multiple' => true,
-            'label' => 'regulation.period.days',
-            'help' => 'regulation.period.days.help',
+            'label' => 'regulation.period.recurrenceType',
         ];
     }
 

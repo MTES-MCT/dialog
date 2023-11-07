@@ -70,7 +70,6 @@ test('Remove a measure and add another one to location', async ({ regulationOrde
     await expect(location).toContainText('Circulation interdite tous les jours');
     await expect(location).not.toContainText('Circulation à sens unique tous les jours');
     await expect(location).toContainText('Vitesse limitée à 50 km/h tous les jours');
-
 });
 
 test('Set vehicles on a measure', async ({ regulationOrderPage }) => {
@@ -95,13 +94,17 @@ test('Add a period to a measure', async ({ regulationOrderPage }) => {
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
     const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await expect(location).toContainText('Circulation interdite tous les jours');
+
     await page.addPeriodToMeasure(location, {
         measureIndex: 0,
         days: ['Lundi', 'Mardi'],
+        dayOption: 'Certains jours',
+        startDate: '2023-10-10',
         startTime: '08:00',
+        endDate: '2023-10-10',
         endTime: '08:30',
     });
-    await expect(location).toContainText('Circulation interdite du lundi au mardi de 08h00 à 08h30');
+    await expect(location).toContainText('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, du lundi au mardi pour tous les véhicules');
 });
 
 test('Delete a period from a measure', async ({ regulationOrderPage }) => {
@@ -113,10 +116,13 @@ test('Delete a period from a measure', async ({ regulationOrderPage }) => {
     await page.addPeriodToMeasure(location, {
         measureIndex: 0,
         days: ['Lundi'],
+        dayOption: 'Certains jours',
+        startDate: '2023-10-10',
         startTime: '08:00',
+        endDate: '2023-10-10',
         endTime: '16:00',
     });
-    await expect(location).toContainText('Circulation interdite le lundi de 08h00 à 16h00');
+    await expect(location).toContainText('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules');
     await page.removePeriodFromMeasure(location, { measureIndex: 0, periodIndex: 0 });
     await expect(location).toContainText('Circulation interdite tous les jours');
 });

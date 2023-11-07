@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -66,10 +68,25 @@ final class DuplicateRegulationCommandHandler
 
                     foreach ($measure->getPeriods() as $period) {
                         $cmd = new SavePeriodCommand();
-                        $cmd->applicableDays = $period->getApplicableDays();
-                        $cmd->startTime = $period->getStartTime();
-                        $cmd->endTime = $period->getEndTime();
-                        $cmd->includeHolidays = $period->isIncludeHolidays();
+                        $cmd->startDate = $period->getStartDateTime();
+                        $cmd->startTime = $period->getStartDateTime();
+                        $cmd->endDate = $period->getEndDateTime();
+                        $cmd->endTime = $period->getEndDateTime();
+                        $cmd->recurrenceType = $period->getRecurrenceType();
+
+                        $dailyRange = $period->getDailyRange();
+                        if ($dailyRange) {
+                            $dailyRangeCommand = (new SaveDailyRangeCommand())->initFromEntity($dailyRange);
+
+                            $timeSlotCommands = [];
+                            foreach ($dailyRange->getTimeSlots() as $timeSlot) {
+                                $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
+                            }
+
+                            $dailyRangeCommand->timeSlots = $timeSlotCommands;
+                            $cmd->dailyRange = $dailyRangeCommand;
+                        }
+
                         $periodCommands[] = $cmd;
                     }
 
@@ -80,6 +97,7 @@ final class DuplicateRegulationCommandHandler
                     $measureCommand = new SaveMeasureCommand();
                     $measureCommand->type = $measure->getType();
                     $measureCommand->createdAt = $measure->getCreatedAt();
+                    $measureCommand->maxSpeed = $measure->getMaxSpeed();
                     $measureCommand->vehicleSet = $vehicleSetCommand;
                     $measureCommand->periods = $periodCommands;
                     $locationCommand->measures[] = $measureCommand;
