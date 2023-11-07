@@ -1278,6 +1278,14 @@
                 <source>regulation.timeSlot.add.help</source>
                 <target>Par exemple de 9h00 à 12h00 et de 14h00 à 18h00</target>
             </trans-unit>
+            <trans-unit id="regulation.timeSlots.add">
+                <source>regulation.timeSlots.add</source>
+                <target>Ajouter un nouvel horaire</target>
+            </trans-unit>
+            <trans-unit id="regulation.timeSlots.remove">
+                <source>regulation.timeSlots.remove</source>
+                <target>Supprimer un créneau horaire</target>
+            </trans-unit>
             <trans-unit id="regulation.timeSlot.startTime">
                 <source>regulation.timeSlot.startTime</source>
                 <target>Heure de début</target>

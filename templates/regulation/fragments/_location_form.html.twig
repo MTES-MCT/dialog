@@ -54,8 +54,7 @@
                 </div>
 
                 <div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %}hidden{% endif %}>
-                    
-
+        
                     <div class="fr-fieldset__element fr-my-2w" >
                         {% for day in form.dailyRange.applicableDays %}
                             {% set dayBtnId = day.vars.id ~ '-btn' %}
@@ -77,7 +76,6 @@
                     {{ form_errors(form.dailyRange.applicableDays) }}
 
                     <div
-                        aria-labelledby="timeSlots-legend-{{ index }}"
                         data-controller="form-collection"
                         data-form-collection-prototype-key-value="timeSlot"
                         data-form-collection-next-index-value="{{ form.dailyRange.timeSlots|length > 0 ? form.dailyRange.timeSlots|last.vars.name + 1 : 0 }}"
@@ -129,6 +127,7 @@
                         type="button"
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line fr-mt-5w"
                         data-action="remove#removeElement"
+                        aria-label="{{ 'regulation.timeSlots.remove'|trans }}"
                     >
                     </button>
                     <button
@@ -136,6 +135,7 @@
                         class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line fr-mt-5w"
                         data-action="form-collection#addCollectionElement"
                         aria-controls="period-list"
+                        aria-label="{{ 'regulation.timeSlots.add'|trans }}"
                     >
                     </button>
                 </div>
