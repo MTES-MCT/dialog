@@ -11,7 +11,6 @@
         data-remove-target="this"
         data-form-collection-target="collectionItem"
     >
-    
         <div class="app-card__content">
             <fieldset class="fr-fieldset app-card__content" aria-labelledby="applicableDays-{{ index }}-legend">
             <legend class ="fr-fieldset__legend">{{ 'regulation.period.title'|trans }}</legend>
@@ -25,12 +24,12 @@
                         {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
                     </div>
                 </div>
-                
+
                 <div data-controller="form-reveal">
                 <hr/>
                 <div class="fr-container--fluid">
                     <div class="fr-grid-row fr-grid-row--gutters">
-                
+
                     {{ form_row(form.recurrenceType, {
                         group_class: 'fr-select-group',
                         widget_class: 'fr-select',
@@ -44,7 +43,7 @@
                     </div>
                     </div>
                     <div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %}hidden{% endif %}>
-                        
+
 
                         <div class="fr-fieldset__item fr-my-2w" >
                             {% for day in form.dailyRange.applicableDays %}
@@ -73,7 +72,7 @@
                             data-form-collection-next-index-value="{{ form.dailyRange.timeSlots|length > 0 ? form.dailyRange.timeSlots|last.vars.name + 1 : 0 }}"
                             data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.dailyRange.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
                         >
-                            
+
                             <ul
                                 id="timeSlot-list"
                                 class="fr-raw-list fr-mb-2w"
@@ -97,7 +96,7 @@
                                 {{ 'regulation.timeSlot.add'|trans }}
 
                                 <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
-                                
+
                             </button>
                         </div>
                     </div>

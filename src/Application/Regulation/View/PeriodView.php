@@ -9,7 +9,7 @@ readonly class PeriodView
     public function __construct(
         public string $recurrenceType,
         public \DateTimeInterface $startDateTime,
-        public \DateTimeInterface $endDateTime,
+        public ?\DateTimeInterface $endDateTime,
         public ?DailyRangeView $dailyRange,
     ) {
     }

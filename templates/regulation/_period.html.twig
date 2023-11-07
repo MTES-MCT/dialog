@@ -1,6 +1,10 @@
 {%- for period in periods -%}
     <br/>
-    du {{ period.startDateTime|date('d/m/Y - H\\hi' ) }} au {{ period.endDateTime|date('d/m/Y - H\\hi' ) }}
+    {%- if period.endDateTime -%}
+        du {{ period.startDateTime|date('d/m/Y - H\\hi' ) }} au {{ period.endDateTime|date('d/m/Y - H\\hi' ) }}
+    {%- else -%}
+        {{ period.startDateTime|date('d/m/Y - H\\hi' ) }}
+    {%- endif -%}
     {%- if period.dailyRange -%}
         ,&nbsp;
         {%- for dayRange in period.dailyRange.dayRanges -%}
