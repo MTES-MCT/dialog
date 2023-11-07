@@ -70,7 +70,6 @@ test('Remove a measure and add another one to location', async ({ regulationOrde
     await expect(location).toContainText('Circulation interdite tous les jours');
     await expect(location).not.toContainText('Circulation à sens unique tous les jours');
     await expect(location).toContainText('Vitesse limitée à 50 km/h tous les jours');
-
 });
 
 test('Set vehicles on a measure', async ({ regulationOrderPage }) => {

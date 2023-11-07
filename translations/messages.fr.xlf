@@ -1260,7 +1260,7 @@
             </trans-unit>
             <trans-unit id="regulation.period_list.help">
                 <source>regulation.period_list.help</source>
-                <target>Vous pouvez spécifier des jours et créneaux applicables. Par défaut, la restriction s’applique tous les jours sur la période de validité.</target>
+                <target>Pour cette restriction seulement, vous pouvez spécifier les jours et créneaux applicables. Par défaut la restriction s'applique tous les jours sur la période de validité de l'arrêté.</target>
             </trans-unit>
             <trans-unit id="regulation.period.title">
                 <source>regulation.period.title</source>

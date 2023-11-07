@@ -34,27 +34,29 @@
                     {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
                 </div>
             </div>
-            
+
             <div data-controller="form-reveal">
                 <hr/>
                 <div class="fr-container--fluid">
                     <div class="fr-grid-row fr-grid-row--gutters">
-
-                        {{ form_row(form.recurrenceType, {
-                            group_class: 'fr-select-group',
-                            widget_class: 'fr-select',
-                            row_attr: {class: 'fr-col-12'},
-                            attr: {
-                                'data-controller': 'condition',
-                                'data-condition-equals-value': 'certainDays',
-                                'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open   condition:no->form-reveal#close',
-                            }
-                        }) }}
+                        <div class="fr-select-group fr-col-12">
+                            {{ form_label(form.recurrenceType, null, { label_attr: { class: 'fr-label required fr-text--heavy' } }) }}
+                            {{ form_widget(form.recurrenceType, {
+                                group_class: 'fr-select-group',
+                                widget_class: 'fr-select',
+                                row_attr: {class: 'fr-col-12'},
+                                attr: {
+                                    'data-controller': 'condition',
+                                    'data-condition-equals-value': 'certainDays',
+                                    'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open   condition:no->form-reveal#close',
+                                }
+                            }) }}
+                            {{ form_errors(form.recurrenceType) }}
+                        </div>
                     </div>
                 </div>
 
                 <div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %}hidden{% endif %}>
-        
                     <div class="fr-fieldset__element fr-my-2w" >
                         {% for day in form.dailyRange.applicableDays %}
                             {% set dayBtnId = day.vars.id ~ '-btn' %}
@@ -81,7 +83,6 @@
                         data-form-collection-next-index-value="{{ form.dailyRange.timeSlots|length > 0 ? form.dailyRange.timeSlots|last.vars.name + 1 : 0 }}"
                         data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.dailyRange.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
                     >
-                        
                         <ul
                             class="app-timeslot-list fr-raw-list fr-mb-2w"
                             data-testid="timeSlot-list"
@@ -103,7 +104,7 @@
                             {{ 'regulation.timeSlot.add'|trans }}
 
                             <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
-                            
+
                         </button>
                     </div>
                 </div>
