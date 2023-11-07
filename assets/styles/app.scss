@@ -510,3 +510,11 @@ ul.app-landing-diagram > li > img {
         font-size: 1.25rem; // xl
     }
 }
+
+ul.app-timeslot-list > li:not(:last-child) .app-timeslot-list-add {
+    display: none;
+}
+
+ul.app-timeslot-list:not(:empty) + button.app-timeslot-define {
+    display: none;
+}

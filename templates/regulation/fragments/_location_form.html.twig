@@ -6,111 +6,110 @@
 
 {% macro periods_list_item(form, index) %}
     <li
-        class="app-card app-card--no-header"
+        class="app-card"
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
     >
-        <div class="app-card__content">
-            <fieldset class="fr-fieldset app-card__content" aria-labelledby="applicableDays-{{ index }}-legend">
-            <legend class ="fr-fieldset__legend">{{ 'regulation.period.title'|trans }}</legend>
-                 <div class="fr-container--fluid">
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                        {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
-                    </div>
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                        {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
-                    </div>
-                </div>
-
-                <div data-controller="form-reveal">
-                <hr/>
-                <div class="fr-container--fluid">
-                    <div class="fr-grid-row fr-grid-row--gutters">
-
-                    {{ form_row(form.recurrenceType, {
-                        group_class: 'fr-select-group',
-                        widget_class: 'fr-select',
-                        row_attr: {class: 'fr-col-12'},
-                        attr: {
-                            'data-controller': 'condition',
-                            'data-condition-equals-value': 'certainDays',
-                            'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
-                        }
-                    }) }}
-                    </div>
-                    </div>
-                    <div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %}hidden{% endif %}>
-
-
-                        <div class="fr-fieldset__item fr-my-2w" >
-                            {% for day in form.dailyRange.applicableDays %}
-                                {% set dayBtnId = day.vars.id ~ '-btn' %}
-                                {% set isChecked = day.vars.value in form.dailyRange.applicableDays.vars.value ? "true" : "false" %}
-                                <label for="{{ dayBtnId }}" data-controller="chip-button">
-                                    <button
-                                        id="{{ dayBtnId }}"
-                                        type="button"
-                                        class="fr-tag fr-mb-1w"
-                                        aria-pressed="{{ isChecked }}"
-                                        data-chip-button-target="button"
-                                    >
-                                        {{ ('regulation.period.days.' ~ day.vars.value)|trans }}
-                                        {{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
-                                    </button>
-                                </label>
-                            {% endfor %}
-                        </div>
-                        {{ form_errors(form.dailyRange.applicableDays) }}
-
-                        <div
-                            aria-labelledby="timeSlots-legend-{{ index }}"
-                            data-controller="form-collection"
-                            data-form-collection-prototype-key-value="timeSlot"
-                            data-form-collection-next-index-value="{{ form.dailyRange.timeSlots|length > 0 ? form.dailyRange.timeSlots|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.dailyRange.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
-                        >
-
-                            <ul
-                                id="timeSlot-list"
-                                class="fr-raw-list fr-mb-2w"
-                                data-testid="timeSlot-list"
-                                data-form-collection-target="collectionContainer"
-                                aria-label="{{ form.dailyRange.timeSlots.vars.label|trans }}"
-                            >
-                                {% for item in form.dailyRange.timeSlots %}
-                                    {{ _self.timeSlots_list_item(item, loop.index) }}
-                                {% else %}
-                                    {% do form.dailyRange.timeSlots.setRendered %}
-                                {% endfor %}
-                            </ul>
-
-                            <button
-                                type="button"
-                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-time-line fr-x-btn--with-hint"
-                                data-action="form-collection#addCollectionElement"
-                                aria-controls="timeSlot-list"
-                            >
-                                {{ 'regulation.timeSlot.add'|trans }}
-
-                                <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
-
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-            <hr/>
-        </div>
-        <div class="app-card__actions">
+        <div class ="app-card__header">
+            <div class="app-card__title fr-text--heavy">
+                {{ 'regulation.period.title'|trans }}
+            </div>
             <button
                 type="button"
                 aria-label="{{ 'common.delete'|trans }}"
                 class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
                 data-action="remove#removeElement"
-            />
+            >
+            </button>
+        </div>
+        <div class="app-card__content">
+            <div class="fr-container--fluid">
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
+                </div>
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
+                </div>
+            </div>
+            
+            <div data-controller="form-reveal">
+                <hr/>
+                <div class="fr-container--fluid">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+
+                        {{ form_row(form.recurrenceType, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                            row_attr: {class: 'fr-col-12'},
+                            attr: {
+                                'data-controller': 'condition',
+                                'data-condition-equals-value': 'certainDays',
+                                'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open   condition:no->form-reveal#close',
+                            }
+                        }) }}
+                    </div>
+                </div>
+
+                <div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %}hidden{% endif %}>
+                    
+
+                    <div class="fr-fieldset__element fr-my-2w" >
+                        {% for day in form.dailyRange.applicableDays %}
+                            {% set dayBtnId = day.vars.id ~ '-btn' %}
+                            {% set isChecked = day.vars.value in form.dailyRange.applicableDays.vars.value ? "true" : "false" %}
+                            <label for="{{ dayBtnId }}" data-controller="chip-button">
+                                <button
+                                    id="{{ dayBtnId }}"
+                                    type="button"
+                                    class="fr-tag fr-mb-1w"
+                                    aria-pressed="{{ isChecked }}"
+                                    data-chip-button-target="button"
+                                >
+                                    {{ ('regulation.period.days.' ~ day.vars.value)|trans }}
+                                    {{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
+                                </button>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.dailyRange.applicableDays) }}
+
+                    <div
+                        aria-labelledby="timeSlots-legend-{{ index }}"
+                        data-controller="form-collection"
+                        data-form-collection-prototype-key-value="timeSlot"
+                        data-form-collection-next-index-value="{{ form.dailyRange.timeSlots|length > 0 ? form.dailyRange.timeSlots|last.vars.name + 1 : 0 }}"
+                        data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.dailyRange.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
+                    >
+                        
+                        <ul
+                            class="app-timeslot-list fr-raw-list fr-mb-2w"
+                            data-testid="timeSlot-list"
+                            data-form-collection-target="collectionContainer"
+                            aria-label="{{ form.dailyRange.timeSlots.vars.label|trans }}"
+                        >
+                            {%- for item in form.dailyRange.timeSlots -%}
+                                {{ _self.timeSlots_list_item(item, loop.index) }}
+                            {%- else -%}
+                                {%- do form.dailyRange.timeSlots.setRendered -%}
+                            {%- endfor -%}
+                        </ul>
+
+                        <button
+                            type="button"
+                            class="app-timeslot-define fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-time-line fr-x-btn--with-hint"
+                            data-action="form-collection#addCollectionElement"
+                        >
+                            {{ 'regulation.timeSlot.add'|trans }}
+
+                            <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
+                            
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </li>
 {% endmacro %}
@@ -123,9 +122,9 @@
     >
         <div class="fr-container--fluid">
             <div class="fr-grid-row fr-grid-row--gutters">
-                {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-5'}, attr: {class: 'fr-input'}}) }}
-                {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-5'}, attr: {class: 'fr-input'}}) }}
-                <div class="fr-col-2">
+                {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
+                {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
+                <div class="fr-col-12 fr-col-sm-4">
                     <button
                         type="button"
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line fr-mt-5w"
@@ -134,7 +133,7 @@
                     </button>
                     <button
                         type="button"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line fr-mt-5w"
+                        class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line fr-mt-5w"
                         data-action="form-collection#addCollectionElement"
                         aria-controls="period-list"
                     >
