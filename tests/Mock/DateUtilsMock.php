@@ -22,4 +22,9 @@ final class DateUtilsMock implements DateUtilsInterface
     {
         return 1695218778.6387;
     }
+
+    public function mergeDateAndTime(\DateTimeInterface $date1, \DateTimeInterface $date2): \DateTimeInterface
+    {
+        return new \DateTimeImmutable('2023-06-09 09:00:00');
+    }
 }

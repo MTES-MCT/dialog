@@ -96,7 +96,7 @@ export class RegulationOrderPage {
         const restrictionTypeField = measure.getByRole('combobox', { name: 'Type de restriction' });
         expect(await restrictionTypeField.getAttribute('name')).toBe(`location_form[measures][${expectedIndex}][type]`);
         await restrictionTypeField.selectOption({ label: restrictionType });
-        
+
         if (maxSpeed) {
             await measure.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
         }
@@ -206,20 +206,27 @@ export class RegulationOrderPage {
 
     /**
      * @param {Locator} location
-     * @param {{ measureIndex: number, days: string[], startTime: string, endTime: string }} options
+     * @param {{ measureIndex: number, days: string[], startDate: string, startTime: string, endDate: string, endTime: string, dayOption: string }} options
      */
-    async addPeriodToMeasure(location, { measureIndex, days, startTime, endTime }) {
+    async addPeriodToMeasure(location, { measureIndex, days, startDate, startTime, endDate, endTime, dayOption }) {
         await this._beginEditLocation(location);
 
         const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
-        await measure.getByRole('button', { name: 'Ajouter un créneau horaire' }).click();
+        await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
 
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
-        for (const day of days) {
-            await period.getByText(day).click();
-        }
+
+        await period.getByLabel('Date de début').fill(startDate);
         await period.getByLabel('Heure de début').fill(startTime);
+        await period.getByLabel('Date de fin').fill(endDate);
         await period.getByLabel('Heure de fin').fill(endTime);
+        await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
+
+        if (dayOption == 'Certains jours') {
+            for (const day of days) {
+                await period.getByText(day).click();
+            }
+        }
 
         await this._endEditLocation(location);
     }
