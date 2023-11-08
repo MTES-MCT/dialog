@@ -25,20 +25,17 @@ final class GetIncidentsQueryHandler
             return [];
         }
 
-        // There are N rows per measure, where N is the number of periods for the measure.
-        // If there are no periods, then there is only 1 row for the measure. Fields related to periods will be null.
-        // Rows are sorted by measure UUID.
-        // So we iterate over rows and push a new view when the measure UUID changes.
+        // Rows are sorted by measureId.
+        // This means the data about a measure will come as a series of rows with the same measureId.
+        // We build up the measure's <schedule> and push an incident whenever we encounter a new measureId.
         $incidentViews = [];
         $currentMeasure = $rows[0];
         $schedule = [];
 
         foreach ($rows as $row) {
             if ($row['measureId'] !== $currentMeasure['measureId']) {
-                if (self::hasRequiredCifsData($currentMeasure)) {
-                    $address = LocationAddress::fromString($currentMeasure['address']);
-                    $incidentViews[] = self::makeIncidentView($currentMeasure, $address, $schedule);
-                }
+                $address = LocationAddress::fromString($currentMeasure['address']);
+                $incidentViews[] = self::makeIncidentView($currentMeasure, $address, $schedule);
 
                 $currentMeasure = $row;
                 $schedule = [];
@@ -47,7 +44,7 @@ final class GetIncidentsQueryHandler
             $applicableDays = $row['applicableDays'];
 
             if (!empty($applicableDays)) {
-                if ($applicableDays === ApplicableDayEnum::getValues()) {
+                if (ApplicableDayEnum::hasAllValues($applicableDays)) {
                     $applicableDays = ['everyday'];
                 }
 
@@ -56,33 +53,16 @@ final class GetIncidentsQueryHandler
                         $schedule[$day] = [];
                     }
 
-                    $schedule[$day][] = ['startTime' => $row['startTime'], 'endTime' => $row['endTime']];
+                    $schedule[$day][] = ['startTime' => $row['startTime'] ?? '00:00', 'endTime' => $row['endTime'] ?? '23:59'];
                 }
             }
         }
 
         // Flush the last pending view.
-        if (self::hasRequiredCifsData($currentMeasure)) {
-            $address = LocationAddress::fromString($currentMeasure['address']);
-            $incidentViews[] = self::makeIncidentView($currentMeasure, $address, $schedule);
-        }
+        $address = LocationAddress::fromString($currentMeasure['address']);
+        $incidentViews[] = self::makeIncidentView($currentMeasure, $address, $schedule);
 
         return $incidentViews;
-    }
-
-    private static function hasRequiredCifsData(array $row): bool
-    {
-        if ($row['fromLongitude'] === null || $row['toLongitude'] === null) {
-            return false;
-        }
-
-        $address = LocationAddress::fromString($row['address']);
-
-        if ($address->getRoadName() === null) {
-            return false;
-        }
-
-        return true;
     }
 
     private static function makeIncidentView(array $row, LocationAddress $address, array $schedule): CifsIncidentView
@@ -111,8 +91,8 @@ final class GetIncidentsQueryHandler
             street: $address->getRoadName(),
             direction: 'BOTH_DIRECTIONS',
             polyline: sprintf('%f %f %f %f', $row['fromLatitude'], $row['fromLongitude'], $row['toLatitude'], $row['toLongitude']),
-            startTime: $row['startDate']->format('Y-m-d\TH:i:sP'),
-            endTime: $row['endDate']->format('Y-m-d\TH:i:sP'),
+            startTime: ($row['periodStartDateTime'] ?? $row['regulationOrderStartDate'])->format('Y-m-d\TH:i:sP'),
+            endTime: ($row['periodEndDateTime'] ?? $row['regulationOrderEndDate'])->format('Y-m-d\TH:i:sP'),
             // TODO: need a source organization ID provided by Waze.
             sourceReference: 'TODO',
             sourceName: 'DiaLog',

@@ -60,28 +60,31 @@ final class GetIncidentsQueryHandlerTest extends TestCase
             sourceName: 'DiaLog',
             schedule: [
                 'everyday' => [['startTime' => '14:00', 'endTime' => '16:00']],
-                'monday' => [['startTime' => '03:00', 'endTime' => '06:00'], ['startTime' => '08:00', 'endTime' => '22:00']],
+                'monday' => [['startTime' => '03:00', 'endTime' => '06:00'], ['startTime' => '08:00', 'endTime' => '10:00'], ['startTime' => '19:00', 'endTime' => '21:00']],
                 'thursday' => [['startTime' => '03:00', 'endTime' => '06:00']],
-                'friday' => [['startTime' => '08:00', 'endTime' => '22:00']],
+                'friday' => [['startTime' => '08:00', 'endTime' => '10:00'], ['startTime' => '19:00', 'endTime' => '21:00']],
+                'sunday' => [['startTime' => '00:00', 'endTime' => '23:59']],
             ],
         );
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
-        $row1 = [
+        $measure1 = [
             'measureId' => '065490cc-45ad-71ad-8000-9196b66c1ba2',
             'description' => 'Description 1',
             'category' => RegulationOrderCategoryEnum::INCIDENT->value,
             'createdAt' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-01 00:00:00'),
             'type' => MeasureTypeEnum::NO_ENTRY->value,
-            'startDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
-            'endDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
+            'regulationOrderStartDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
+            'regulationOrderEndDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
             'address' => 'Rue des Arts, 82000 Montauban',
             'fromLatitude' => '44.028996',
             'fromLongitude' => '1.362275',
             'toLatitude' => '44.025665',
             'toLongitude' => '1.35931',
-            'applicableDays' => [],
+            'applicableDays' => null,
+            'startTime' => null,
+            'endTime' => null,
         ];
 
         $measure2Fields = [
@@ -90,8 +93,8 @@ final class GetIncidentsQueryHandlerTest extends TestCase
             'category' => RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             'createdAt' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-01 00:00:00'),
             'type' => MeasureTypeEnum::NO_ENTRY->value,
-            'startDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
-            'endDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
+            'regulationOrderStartDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
+            'regulationOrderEndDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
             'address' => 'Avenue de Fonneuve, 82000 Montauban',
             'fromLatitude' => '44.028996',
             'fromLongitude' => '1.362275',
@@ -99,63 +102,53 @@ final class GetIncidentsQueryHandlerTest extends TestCase
             'toLongitude' => '1.35931',
         ];
 
-        $row2 = [
+        $measure2Period1TimeSlot1 = [
             ...$measure2Fields,
             'applicableDays' => ['monday', 'friday'],
             'startTime' => '08:00',
-            'endTime' => '22:00',
+            'endTime' => '10:00',
         ];
 
-        $row3 = [
+        $measure2Period1TimeSlot2 = [
+            ...$measure2Fields,
+            'applicableDays' => ['monday', 'friday'],
+            'startTime' => '19:00',
+            'endTime' => '21:00',
+        ];
+
+        $measure2Period2 = [
             ...$measure2Fields,
             'applicableDays' => ['monday', 'thursday'],
             'startTime' => '03:00',
             'endTime' => '06:00',
         ];
 
-        $row4 = [
+        $measure2Period3 = [
+            ...$measure2Fields,
+            'applicableDays' => ['sunday'],
+            // No time slots = whole day
+            'startTime' => null,
+            'endTime' => null,
+        ];
+
+        $measure2Period4 = [
             ...$measure2Fields,
             'applicableDays' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
             'startTime' => '14:00',
             'endTime' => '16:00',
         ];
 
-        $row5 = [
-            'measureId' => '06549108-6543-7332-8000-0149b3b7af86',
-            'description' => 'Full street -- ignored',
-            'category' => RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-            'createdAt' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-01 00:00:00'),
-            'type' => MeasureTypeEnum::NO_ENTRY->value,
-            'startDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
-            'endDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
-            'address' => 'Avenue de Fonneuve, 82000 Montauban',
-            'fromLatitude' => null,
-            'fromLongitude' => null,
-            'toLatitude' => null,
-            'toLongitude' => null,
-            'applicableDays' => null,
-        ];
-
-        $row6 = [
-            'measureId' => '06549110-4aac-7379-8000-54b37bad8956',
-            'description' => 'Full city -- ignored',
-            'category' => RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-            'createdAt' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-01 00:00:00'),
-            'type' => MeasureTypeEnum::NO_ENTRY->value,
-            'startDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
-            'endDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
-            'address' => '82000 Montauban',
-            'fromLatitude' => '44.028996',
-            'fromLongitude' => '1.362275',
-            'toLatitude' => '44.025665',
-            'toLongitude' => '1.35931',
-            'applicableDays' => null,
-        ];
-
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
-            ->willReturn([$row1, $row2, $row3, $row4, $row5, $row6]);
+            ->willReturn([
+                $measure1,
+                $measure2Period1TimeSlot1,
+                $measure2Period1TimeSlot2,
+                $measure2Period2,
+                $measure2Period3,
+                $measure2Period4,
+            ]);
 
         $handler = new GetIncidentsQueryHandler($regulationOrderRecordRepository);
         $incidents = $handler(new GetIncidentsQuery());

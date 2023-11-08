@@ -8,16 +8,16 @@
         <street>Avenue de Fonneuve</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>44.028996 1.362275 44.025665 1.359310</polyline>
-        <starttime>2023-03-10T00:00:00+00:00</starttime>
-        <endtime>2023-03-20T00:00:00+00:00</endtime>
+        <starttime>2023-03-10T08:00:00+00:00</starttime>
+        <endtime>2023-03-20T22:00:00+00:00</endtime>
         <source>
             <reference>TODO</reference>
             <name>DiaLog</name>
             <url>http://localhost/api/cifs/incidents.xml</url>
         </source>
         <schedule>
-            <tuesday>08:00-22:00</tuesday>
-            <wednesday>08:00-22:00</wednesday>
+            <tuesday>00:00-23:59</tuesday>
+            <wednesday>00:00-23:59</wednesday>
         </schedule>
     </incident>
     <incident id="064ca781-da33-7e29-8000-29380bad748e">
@@ -51,7 +51,7 @@
         </source>
         <schedule>
             <everyday>18:00-22:00</everyday>
-            <tuesday>08:00-10:00,12:00-14:00</tuesday>
+            <tuesday>08:00-10:00,12:00-14:00,19:00-21:00</tuesday>
             <thursday>08:00-10:00</thursday>
         </schedule>
     </incident>
@@ -62,15 +62,15 @@
         <street>Avenue de Fonneuve</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>44.028996 1.362275 44.025665 1.359310</polyline>
-        <starttime>2023-03-10T00:00:00+00:00</starttime>
-        <endtime>2023-03-20T00:00:00+00:00</endtime>
+        <starttime>2023-03-10T08:00:00+00:00</starttime>
+        <endtime>2023-03-20T22:00:00+00:00</endtime>
         <source>
             <reference>TODO</reference>
             <name>DiaLog</name>
             <url>http://localhost/api/cifs/incidents.xml</url>
         </source>
         <schedule>
-            <thursday>08:00-22:00</thursday>
+            <thursday>00:00-23:59</thursday>
         </schedule>
     </incident>
 </incidents>

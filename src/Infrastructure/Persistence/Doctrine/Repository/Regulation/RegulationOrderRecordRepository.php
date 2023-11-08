@@ -128,12 +128,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select(
-                'ro.uuid',
                 'roc.createdAt',
                 'ro.description',
                 'ro.category',
-                'ro.startDate',
-                'ro.endDate',
+                'ro.startDate as regulationOrderStartDate',
+                'ro.endDate as regulationOrderEndDate',
                 'loc.address',
                 'ST_X(loc.fromPoint) as fromLongitude',
                 'ST_Y(loc.fromPoint) as fromLatitude',
@@ -141,20 +140,25 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ST_Y(loc.toPoint) as toLatitude',
                 'm.uuid as measureId',
                 'm.type as measureType',
-                'p.uuid as periodId',
-                'p.applicableDays',
-                'p.startTime',
-                'p.endTime',
+                'p.startDateTime as periodStartDateTime',
+                'p.endDateTime as periodEndDateTime',
+                'd.applicableDays',
+                't.startTime',
+                't.endTime',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->innerJoin('loc.measures', 'm')
             ->leftJoin('m.periods', 'p')
+            ->leftJoin('p.dailyRange', 'd')
+            ->leftJoin('d.timeSlots', 't')
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
                 'm.type = :measureType',
+                'loc.fromPoint IS NOT NULL',
+                'loc.toPoint IS NOT NULL',
             )
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)

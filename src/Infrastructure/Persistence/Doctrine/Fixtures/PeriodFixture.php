@@ -19,16 +19,16 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $period1 = new Period(
             uuid: '76680fcb-0d80-491b-b245-0c326eaef37b',
             measure: $this->getReference('measure3'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
+            startDateTime: new \DateTimeImmutable('2023-03-13 00:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-03-15 23:59:00'),
             recurrenceType: 'everyDay',
         );
 
         $period2 = new Period(
             uuid: 'c01b254c-b7db-4761-9490-b8fea7d42312',
             measure: $this->getReference('measure1'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
+            startDateTime: new \DateTimeImmutable('2023-03-11 00:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-04-01 23:59:00'),
             recurrenceType: 'certainDays',
         );
 
@@ -41,8 +41,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $period3 = new Period(
             uuid: '064ca7ce-ee4d-7bdb-8000-46856a6d9fa6',
             measure: $this->getReference('measure4'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
+            startDateTime: new \DateTimeImmutable('2023-03-10 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-03-20 22:00:00'),
             recurrenceType: 'certainDays',
         );
 
@@ -55,8 +55,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $period4 = new Period(
             uuid: '064ca7cf-43a0-7d0f-8000-b608ba0d2344',
             measure: $this->getReference('measure5'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
+            startDateTime: new \DateTimeImmutable('2023-03-10 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-03-20 22:00:00'),
             recurrenceType: 'weekend',
         );
 
@@ -97,11 +97,17 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             applicableDays: ['tuesday'],
             period: $periodCifs2,
         );
-        $timeSlotCifs2 = new TimeSlot(
+        $timeSlot1DailyRangeCifs2 = new TimeSlot(
             uuid: '0654b63a-49fd-76fd-8000-6befe7bc91bb',
             dailyRange: $dailyRangeCifs2,
             startTime: \DateTimeImmutable::createFromFormat('H:i', '12:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '14:00'),
+        );
+        $timeSlot2DailyRangeCifs2 = new TimeSlot(
+            uuid: '0654bb14-049c-7516-8000-916303927b43',
+            dailyRange: $dailyRangeCifs2,
+            startTime: \DateTimeImmutable::createFromFormat('H:i', '19:00'),
+            endTime: \DateTimeImmutable::createFromFormat('H:i', '21:00'),
         );
 
         $periodCifs3 = new Period(
@@ -137,7 +143,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($dailyRangeCifs2);
         $manager->persist($dailyRangeCifs3);
         $manager->persist($timeSlotCifs1);
-        $manager->persist($timeSlotCifs2);
+        $manager->persist($timeSlot1DailyRangeCifs2);
+        $manager->persist($timeSlot2DailyRangeCifs2);
         $manager->persist($timeSlotCifs3);
 
         $manager->flush();
