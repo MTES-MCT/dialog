@@ -519,6 +519,21 @@
                 <source>pagination.page</source>
                 <target>Page %page%</target>
             </trans-unit>
+            <trans-unit id="feedback.content.label">
+                <source>feedback.content.label</source>
+                <target>Message</target>
+            </trans-unit>
+            <trans-unit id="feedback.consenttobecontacted.label">
+                <source>feedback.consenttobecontacted.label</source>
+                <target>Souhaitez-vous être contacté ?</target>
+            </trans-unit>
+            <trans-unit id="feedback.send.success">
+                <source>feedback.send.success</source>
+                <target>
+                    <![CDATA[<h3 class="fr-alert__title">]]>Votre message a été envoyé avec succès ! Merci ! <![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>Nous avons bien reçu votre demande.<![CDATA[</p>]]>
+                </target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>
                 <target>Accueil</target>
