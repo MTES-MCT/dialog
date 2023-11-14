@@ -16,9 +16,8 @@ class Location
         private RegulationOrder $regulationOrder,
         private string $address,
         private ?string $fromHouseNumber,
-        private ?string $fromPoint,
         private ?string $toHouseNumber,
-        private ?string $toPoint,
+        private ?string $geometry,
     ) {
         $this->measures = new ArrayCollection();
     }
