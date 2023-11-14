@@ -18,16 +18,14 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('regulationOrder'),
             'Route du Grand Brossais 44260 Savenay',
             '15',
-            'POINT(-1.935836 47.347024)',
             '37bis',
-            'POINT(-1.930973 47.347917)',
+            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
         );
 
         $location1Bis = new Location(
             '34247125-38f4-4e69-b5d7-5516a577d149',
             $this->getReference('regulationOrder'),
             'Rue Victor Hugo 44260 Savenay',
-            null,
             null,
             null,
             null,
@@ -40,7 +38,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             null,
             null,
             null,
-            null,
         );
 
         $location2 = new Location(
@@ -48,9 +45,8 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('regulationOrder2'),
             'Avenue de Fonneuve 82000 Montauban',
             '695',
-            'POINT(1.362275 44.028996)',
             '253',
-            'POINT(1.35931 44.025665)',
+            'LINESTRING(1.362275 44.028996, 1.35931 44.025665)',
         );
 
         $location2Bis = new Location(
@@ -58,16 +54,14 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('regulationOrder2'),
             "Rue de l'Hôtel de Ville 82000 Montauban",
             '30',
-            'POINT(1.352126 44.016833)',
             '12',
-            'POINT(1.353016 44.016402)',
+            'LINESTRING(1.352126 44.016833, 1.353016 44.016402)',
         );
 
         $location3 = new Location(
             'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
             $this->getReference('regulationOrder3'),
             '75018 Paris 18e Arrondissement',
-            null,
             null,
             null,
             null,
@@ -78,9 +72,8 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('regulationOrderNoMeasures'),
             'Route du Grand Brossais 44260 Savenay',
             '15',
-            'POINT(-1.935836 47.347024)',
             '37bis',
-            'POINT(-1.930973 47.347917)',
+            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
         );
 
         $manager->persist($location1);
