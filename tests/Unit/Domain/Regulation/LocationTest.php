@@ -23,18 +23,16 @@ final class LocationTest extends TestCase
             $regulationOrder,
             'Route du Grand Brossais 44260 Savenay',
             '15',
-            'POINT(-1.935836 47.347024)',
             '37bis',
-            'POINT(-1.930973 47.347917)',
+            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
         $this->assertSame($regulationOrder, $location->getRegulationOrder());
         $this->assertSame('Route du Grand Brossais 44260 Savenay', $location->getAddress());
         $this->assertSame('15', $location->getFromHouseNumber());
-        $this->assertSame('POINT(-1.935836 47.347024)', $location->getFromPoint());
         $this->assertSame('37bis', $location->getToHouseNumber());
-        $this->assertSame('POINT(-1.930973 47.347917)', $location->getToPoint());
+        $this->assertSame('LINESTRING(-1.935836 47.347024, -1.930973 47.347917)', $location->getGeometry());
         $this->assertEmpty($location->getMeasures());
 
         $location->addMeasure($measure1);
@@ -58,30 +56,26 @@ final class LocationTest extends TestCase
             $regulationOrder,
             'Route du Grand Brossais 44260 Savenay',
             '15',
-            'POINT(-1.935836 47.347024)',
             '37bis',
-            'POINT(-1.930973 47.347917)',
+            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
         );
 
         $newAddress = 'La Forge Hervé 44750 Campbon';
         $newFromHouseNumber = '1';
-        $newFromPoint = 'POINT(-1.938727 47.358454)';
         $newToHouseNumber = '4';
-        $newToPoint = 'POINT(-1.940304 47.388473)';
+        $newGeometry = 'LINESTRING(-1.938727 47.358454, -1.940304 47.388473)';
 
         $location->update(
             $newAddress,
             $newFromHouseNumber,
-            $newFromPoint,
             $newToHouseNumber,
-            $newToPoint,
+            $newGeometry,
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
         $this->assertSame($newAddress, $location->getAddress());
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
-        $this->assertSame($newFromPoint, $location->getFromPoint());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
-        $this->assertSame($newToPoint, $location->getToPoint());
+        $this->assertSame($newGeometry, $location->getGeometry());
     }
 }

@@ -38,17 +38,14 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     {
         $this->address = 'Route du Grand Brossais 44260 Savenay';
         $this->fromHouseNumber = '15';
-        // $this->fromPoint = 'POINT(-1.935836 47.347024)';
         $this->toHouseNumber = '37bis';
-        // $this->toPoint = 'POINT(-1.930973 47.347917)';
         $this->geometry = 'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)';
-
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->geocoder = $this->createMock(GeocoderInterface::class);
-        $this->$geometryFormatter = new GeometryFormatter();
+        $this->geometryFormatter = new GeometryFormatter();
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -138,7 +135,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
                 $this->geometry,
-                
             );
 
         $this->idFactory

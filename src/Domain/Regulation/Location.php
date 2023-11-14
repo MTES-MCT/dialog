@@ -78,12 +78,12 @@ class Location
     public function update(
         string $address,
         ?string $fromHouseNumber,
-        ?string $geometry,
         ?string $toHouseNumber,
+        ?string $geometry,
     ): void {
         $this->address = $address;
         $this->fromHouseNumber = $fromHouseNumber;
-        $this->geometry = $geometry;
         $this->toHouseNumber = $toHouseNumber;
+        $this->geometry = $geometry;
     }
 }

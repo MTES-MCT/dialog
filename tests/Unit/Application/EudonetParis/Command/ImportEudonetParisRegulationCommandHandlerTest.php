@@ -58,8 +58,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $locationCommand->address = 'Rue Eugène Berthoud, 75018 Paris';
         $locationCommand->fromHouseNumber = '15';
         $locationCommand->toHouseNumber = '26';
-        $locationCommand->fromPoint = null;
-        $locationCommand->toPoint = null;
+        $locationCommand->geometry = null;
         $locationCommand->measures = [$measureCommand];
 
         $publishCommand = new PublishRegulationCommand($regulationOrderRecord);
@@ -92,8 +91,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
 
         $locationItem = new EudonetParisLocationItem();
         $locationItem->address = 'Rue Eugène Berthoud, 75018 Paris';
-        $locationItem->fromPoint = 'POINT(48.9062362 2.3453101)'; // Rue Jean Perrin
-        $locationItem->toPoint = 'POINT(48.9045598 2.34944)'; // Rue Adrien Lesesne
+        $locationItem->geometry = 'LINESTRING(2.3453101 48.9062362, 2.34944 48.9045598)'; // Rue Jean Perrin -> Rue Adrien Lesesne
         $locationItem->measures = [$measureCommand];
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -114,8 +112,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $locationCommand->address = 'Rue Eugène Berthoud, 75018 Paris';
         $locationCommand->fromHouseNumber = null;
         $locationCommand->toHouseNumber = null;
-        $locationCommand->fromPoint = 'POINT(48.9062362 2.3453101)'; // Rue Jean Perrin
-        $locationCommand->toPoint = 'POINT(48.9045598 2.34944)'; // Rue Adrien Lesesne
+        $locationCommand->geometry = 'LINESTRING(2.3453101 48.9062362, 2.34944 48.9045598)'; // Rue Jean Perrin -> Rue Adrien Lesesne
         $locationCommand->measures = [$measureCommand];
 
         $publishCommand = new PublishRegulationCommand($regulationOrderRecord);

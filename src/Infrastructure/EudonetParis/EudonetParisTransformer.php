@@ -188,38 +188,50 @@ final class EudonetParisTransformer
             city: 'Paris',
             roadName: $roadName,
         );
-
-        if ($fromHouseNumber) {
-            $fromAddress = sprintf('%s %s', $fromHouseNumber, $locationItem->address);
-            $fromPoint = $this->geocoder->computeCoordinates($fromAddress);
-        } elseif ($fromRoadName) {
-            $fromPoint = $this->geocoder->computeJunctionCoordinates($locationItem->address, $fromRoadName);
-        } else {
-            $fromPoint = null;
-        }
-
-        if ($fromPoint) {
-            if ($toHouseNumber) {
-                $toAddress = sprintf('%s %s', $toHouseNumber, $locationItem->address);
-                $toPoint = $this->geocoder->computeCoordinates($toAddress);
-            } elseif ($toRoadName) {
-                $toPoint = $this->geocoder->computeJunctionCoordinates($locationItem->address, $toRoadName);
-            } else {
-                $toPoint = null;
-            }
-
-            if ($toPoint) {
-                $locationItem->geometry = $this->geometryFormatter->formatLine(
-                    $fromPoint->latitude,
-                    $fromPoint->longitude,
-                    $toPoint->latitude,
-                    $toPoint->longitude,
-                );
-            }
-        }
+        $locationItem->fromHouseNumber = $fromHouseNumber;
+        $locationItem->toHouseNumber = $toHouseNumber;
+        $locationItem->geometry = $this->makeLocationGeometry($locationItem->address, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
 
         $locationItem->measures[] = $measureCommand;
 
         return [$locationItem, null];
+    }
+
+    private function makeLocationGeometry(
+        string $address,
+        ?string $fromHouseNumber,
+        ?string $fromRoadName,
+        ?string $toHouseNumber,
+        ?string $toRoadName,
+    ): ?string {
+        $hasBothEnds = (
+            ($fromHouseNumber || $fromRoadName)
+            && ($toHouseNumber || $toRoadName)
+        );
+
+        if (!$hasBothEnds) {
+            return null;
+        }
+
+        if ($fromHouseNumber) {
+            $fromAddress = sprintf('%s %s', $fromHouseNumber, $address);
+            $fromPoint = $this->geocoder->computeCoordinates($fromAddress);
+        } else {
+            $fromPoint = $this->geocoder->computeJunctionCoordinates($address, $fromRoadName);
+        }
+
+        if ($toHouseNumber) {
+            $toAddress = sprintf('%s %s', $toHouseNumber, $address);
+            $toPoint = $this->geocoder->computeCoordinates($toAddress);
+        } else {
+            $toPoint = $this->geocoder->computeJunctionCoordinates($address, $toRoadName);
+        }
+
+        return $this->geometryFormatter->formatLine(
+            $fromPoint->longitude,
+            $fromPoint->latitude,
+            $toPoint->longitude,
+            $toPoint->latitude,
+        );
     }
 }

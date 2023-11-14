@@ -108,9 +108,8 @@ final class EudonetParisTransformerTest extends TestCase
         $locationItem = new EudonetParisLocationItem();
         $locationItem->address = $address;
         $locationItem->fromHouseNumber = null;
-        $locationItem->fromPoint = null;
         $locationItem->toHouseNumber = null;
-        $locationItem->toPoint = null;
+        $locationItem->geometry = null;
         $locationItem->measures = [$measureCommand];
 
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationItem]);
@@ -200,17 +199,15 @@ final class EudonetParisTransformerTest extends TestCase
         $locationItem1 = new EudonetParisLocationItem();
         $locationItem1->address = 'Rue Eugène Berthoud, 75018 Paris';
         $locationItem1->fromHouseNumber = null;
-        $locationItem1->fromPoint = 'POINT(48.906236 2.345310)';
         $locationItem1->toHouseNumber = '26';
-        $locationItem1->toPoint = null;
+        $locationItem1->geometry = 'LINESTRING(2.345310 48.906236, 2.345343 48.906262)';
         $locationItem1->measures = [$measureCommand];
 
         $locationItem2 = new EudonetParisLocationItem();
         $locationItem2->address = 'Rue Eugène Berthoud, 75018 Paris';
         $locationItem2->fromHouseNumber = '15';
-        $locationItem2->fromPoint = null;
         $locationItem2->toHouseNumber = null;
-        $locationItem2->toPoint = 'POINT(48.904560 2.349440)';
+        $locationItem2->geometry = 'LINESTRING(2.345341 48.906261, 2.349440 48.904560)';
         $locationItem2->measures = [$measureCommand];
 
         $matcher = self::exactly(2);
@@ -218,8 +215,17 @@ final class EudonetParisTransformerTest extends TestCase
             ->expects($matcher)
             ->method('computeJunctionCoordinates')
             ->willReturnCallback(fn ($address, $roadName) => match ($matcher->getInvocationCount()) {
-                1 => $this->assertEquals(['Rue Eugène Berthoud, 75018 Paris', 'Rue Jean Perrin'], [$address, $roadName]) ?: Coordinates::fromLonLat(48.9062362, 2.3453101),
-                2 => $this->assertEquals(['Rue Eugène Berthoud, 75018 Paris', 'Rue Adrien Lesesne'], [$address, $roadName]) ?: Coordinates::fromLonLat(48.9045598, 2.34944),
+                1 => $this->assertEquals(['Rue Eugène Berthoud, 75018 Paris', 'Rue Jean Perrin'], [$address, $roadName]) ?: Coordinates::fromLonLat(2.3453101, 48.9062362),
+                2 => $this->assertEquals(['Rue Eugène Berthoud, 75018 Paris', 'Rue Adrien Lesesne'], [$address, $roadName]) ?: Coordinates::fromLonLat(2.34944, 48.9045598),
+            });
+
+        $matcher = self::exactly(2);
+        $this->geocoder
+            ->expects($matcher)
+            ->method('computeCoordinates')
+            ->willReturnCallback(fn ($address) => match ($matcher->getInvocationCount()) {
+                1 => $this->assertEquals('26 Rue Eugène Berthoud, 75018 Paris', $address) ?: Coordinates::fromLonLat(2.3453431, 48.9062625),
+                2 => $this->assertEquals('15 Rue Eugène Berthoud, 75018 Paris', $address) ?: Coordinates::fromLonLat(2.3453412, 48.9062610),
             });
 
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
@@ -255,6 +261,10 @@ final class EudonetParisTransformerTest extends TestCase
         $this->geocoder
             ->expects(self::never())
             ->method('computeJunctionCoordinates');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
 
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
 
@@ -301,6 +311,10 @@ final class EudonetParisTransformerTest extends TestCase
         $this->geocoder
             ->expects(self::never())
             ->method('computeJunctionCoordinates');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
 
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
 
@@ -377,6 +391,10 @@ final class EudonetParisTransformerTest extends TestCase
             ->expects(self::never())
             ->method('computeJunctionCoordinates');
 
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
@@ -435,6 +453,10 @@ final class EudonetParisTransformerTest extends TestCase
         $this->geocoder
             ->expects(self::never())
             ->method('computeJunctionCoordinates');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
 
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
 
@@ -548,6 +570,10 @@ final class EudonetParisTransformerTest extends TestCase
         $this->geocoder
             ->expects(self::never())
             ->method('computeJunctionCoordinates');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
 
         $transformer = new EudonetParisTransformer($this->geocoder, new GeometryFormatter());
 

@@ -28,7 +28,7 @@ final class SaveRegulationLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            if ($command->geometry) {
+            if (!empty($command->geometry)) {
                 $geometry = $command->geometry;
             } elseif ($command->fromHouseNumber && $command->toHouseNumber) {
                 $geometry = $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber);
@@ -99,10 +99,10 @@ final class SaveRegulationLocationCommandHandler
         $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
 
         return $this->geometryFormatter->formatLine(
-            $fromCoords->latitude,
             $fromCoords->longitude,
-            $toCoords->latitude,
+            $fromCoords->latitude,
             $toCoords->longitude,
+            $toCoords->latitude,
         );
     }
 
