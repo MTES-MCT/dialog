@@ -2,7 +2,7 @@
 
 * Date : 2023-08-29
 * Personnes impliquées : Florimond Manca (auteur principal), Mathieu Marchois et Léa Lefoulon (relecture technique), équipe DiaLog (relecture et commentaires)
-* Statut : BROUILLON <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
+* Statut : ACCEPTÉ <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
 
 ## Contexte
 
