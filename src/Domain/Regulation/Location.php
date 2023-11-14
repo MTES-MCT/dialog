@@ -42,19 +42,14 @@ class Location
         return $this->fromHouseNumber;
     }
 
-    public function getFromPoint(): ?string
+    public function getGeometry(): ?string
     {
-        return $this->fromPoint;
+        return $this->geometry;
     }
 
     public function getToHouseNumber(): ?string
     {
         return $this->toHouseNumber;
-    }
-
-    public function getToPoint(): ?string
-    {
-        return $this->toPoint;
     }
 
     public function getMeasures(): iterable
@@ -83,14 +78,12 @@ class Location
     public function update(
         string $address,
         ?string $fromHouseNumber,
-        ?string $fromPoint,
+        ?string $geometry,
         ?string $toHouseNumber,
-        ?string $toPoint,
     ): void {
         $this->address = $address;
         $this->fromHouseNumber = $fromHouseNumber;
-        $this->fromPoint = $fromPoint;
+        $this->geometry = $geometry;
         $this->toHouseNumber = $toHouseNumber;
-        $this->toPoint = $toPoint;
     }
 }

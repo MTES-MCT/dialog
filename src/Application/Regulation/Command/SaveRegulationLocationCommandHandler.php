@@ -28,7 +28,7 @@ final class SaveRegulationLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $fromPoint = $command->fromPoint ?? ($command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null);
+            $geometry = $command->geometry ?? ($command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null);
             $toPoint = $command->toPoint ?? ($command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null);
 
             $location = $this->locationRepository->add(
