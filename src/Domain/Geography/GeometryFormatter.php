@@ -24,4 +24,9 @@ class GeometryFormatter
 
         return sprintf('POINT(%.6f %.6f)', $longitude, $latitude);
     }
+
+    public function formatLine(float $fromLatitude, float $fromLongitude, float $toLatitude, float $toLongitude): string
+    {
+        return sprintf('LINESTRING(%.6f %.6f, %.6f %.6f)', $fromLatitude, $fromLongitude, $toLatitude, $toLongitude);
+    }
 }

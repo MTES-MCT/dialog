@@ -28,8 +28,13 @@ final class SaveRegulationLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $geometry = $command->geometry ?? ($command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null);
-            $toPoint = $command->toPoint ?? ($command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null);
+            if ($command->geometry) {
+                $geometry = $command->geometry;
+            } elseif ($command->fromHouseNumber && $command->toHouseNumber) {
+                $geometry = $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber);
+            } else {
+                $geometry = null;
+            }
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -37,9 +42,8 @@ final class SaveRegulationLocationCommandHandler
                     regulationOrder: $regulationOrder,
                     address: $command->address,
                     fromHouseNumber: $command->fromHouseNumber,
-                    fromPoint: $fromPoint,
                     toHouseNumber: $command->toHouseNumber,
-                    toPoint: $toPoint,
+                    geometry: $geometry,
                 ),
             );
 
@@ -54,7 +58,7 @@ final class SaveRegulationLocationCommandHandler
             return $location;
         }
 
-        [$fromPoint, $toPoint] = $this->computePoints($command);
+        $geometry = $this->computeGeometry($command);
 
         $measuresStillPresentUuids = [];
 
@@ -79,44 +83,43 @@ final class SaveRegulationLocationCommandHandler
         $command->location->update(
             address: $command->address,
             fromHouseNumber: $command->fromHouseNumber,
-            fromPoint: $fromPoint,
             toHouseNumber: $command->toHouseNumber,
-            toPoint: $toPoint,
+            geometry: $geometry,
         );
 
         return $command->location;
     }
 
-    private function computePoint(string $address, string $houseNumber): string
+    private function computeLine(string $address, string $fromHouseNumber, string $toHouseNumber): string
     {
-        $houseAddress = sprintf('%s %s', $houseNumber, $address);
-        $coords = $this->geocoder->computeCoordinates($houseAddress);
+        $fromHouseAddress = sprintf('%s %s', $fromHouseNumber, $address);
+        $toHouseAddress = sprintf('%s %s', $toHouseNumber, $address);
 
-        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
+        $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
+        $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
+
+        return $this->geometryFormatter->formatLine(
+            $fromCoords->latitude,
+            $fromCoords->longitude,
+            $toCoords->latitude,
+            $toCoords->longitude,
+        );
     }
 
-    private function computePoints(SaveRegulationLocationCommand $command): array
+    private function computeGeometry(SaveRegulationLocationCommand $command): ?string
     {
-        $hasRoadChanged = $command->address !== $command->location->getAddress();
-        $fromPointNeedsUpdating = $hasRoadChanged || ($command->fromHouseNumber !== $command->location->getFromHouseNumber());
+        $geometryNeedsUpdating = $command->address !== $command->location->getAddress()
+            || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
+            || ($command->toHouseNumber !== $command->location->getToHouseNumber());
 
-        if ($fromPointNeedsUpdating) {
-            $fromPoint = $command->fromHouseNumber ? $this->computePoint($command->address, $command->fromHouseNumber) : null;
+        if ($geometryNeedsUpdating) {
+            $geometry = ($command->fromHouseNumber && $command->toHouseNumber)
+                ? $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber)
+                : null;
         } else {
-            $fromPoint = $command->location->getFromPoint();
+            $geometry = $command->location->getGeometry();
         }
 
-        $toPointNeedsUpdating = $hasRoadChanged || ($command->toHouseNumber !== $command->location->getToHouseNumber());
-
-        if ($toPointNeedsUpdating) {
-            $toPoint = $command->toHouseNumber ? $this->computePoint($command->address, $command->toHouseNumber) : null;
-        } else {
-            $toPoint = $command->location->getToPoint();
-        }
-
-        return [
-            $fromPoint,
-            $toPoint,
-        ];
+        return $geometry;
     }
 }

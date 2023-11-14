@@ -128,13 +128,6 @@ final class EudonetParisTransformer
         return [$command, null];
     }
 
-    private function computeJunctionPoint(string $address, string $roadName): string
-    {
-        $coords = $this->geocoder->computeJunctionCoordinates($address, $roadName);
-
-        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
-    }
-
     private function buildLocationItem(array $row, SaveMeasureCommand $measureCommand): array
     {
         $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
@@ -197,15 +190,32 @@ final class EudonetParisTransformer
         );
 
         if ($fromHouseNumber) {
-            $locationItem->fromHouseNumber = $fromHouseNumber;
+            $fromAddress = sprintf('%s %s', $fromHouseNumber, $locationItem->address);
+            $fromPoint = $this->geocoder->computeCoordinates($fromAddress);
         } elseif ($fromRoadName) {
-            $locationItem->fromPoint = $this->computeJunctionPoint($locationItem->address, $fromRoadName);
+            $fromPoint = $this->geocoder->computeJunctionCoordinates($locationItem->address, $fromRoadName);
+        } else {
+            $fromPoint = null;
         }
 
-        if ($toHouseNumber) {
-            $locationItem->toHouseNumber = $toHouseNumber;
-        } elseif ($toRoadName) {
-            $locationItem->toPoint = $this->computeJunctionPoint($locationItem->address, $toRoadName);
+        if ($fromPoint) {
+            if ($toHouseNumber) {
+                $toAddress = sprintf('%s %s', $toHouseNumber, $locationItem->address);
+                $toPoint = $this->geocoder->computeCoordinates($toAddress);
+            } elseif ($toRoadName) {
+                $toPoint = $this->geocoder->computeJunctionCoordinates($locationItem->address, $toRoadName);
+            } else {
+                $toPoint = null;
+            }
+
+            if ($toPoint) {
+                $locationItem->geometry = $this->geometryFormatter->formatLine(
+                    $fromPoint->latitude,
+                    $fromPoint->longitude,
+                    $toPoint->latitude,
+                    $toPoint->longitude,
+                );
+            }
         }
 
         $locationItem->measures[] = $measureCommand;
