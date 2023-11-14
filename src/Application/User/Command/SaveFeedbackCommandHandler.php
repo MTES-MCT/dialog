@@ -18,7 +18,7 @@ final class SaveFeedbackCommandHandler
 
     public function __invoke(SaveFeedbackCommand $command): void
     {
-        $feedback = $this->feedbackRepository->add(
+        $this->feedbackRepository->add(
             new Feedback(
                 uuid: $this->idFactory->make(),
                 content: $command->content,

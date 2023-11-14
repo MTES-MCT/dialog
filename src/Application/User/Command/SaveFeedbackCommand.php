@@ -9,8 +9,8 @@ use App\Domain\User\User;
 
 final class SaveFeedbackCommand implements CommandInterface
 {
-    public ?string $content;
-    public ?bool $consentToBeContacted;
+    public ?string $content = null;
+    public ?bool $consentToBeContacted = false;
 
     public function __construct(
         public User $user,
