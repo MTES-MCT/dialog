@@ -37,7 +37,6 @@ final class FeedbackController
     public function __invoke(Request $request): Response
     {
         $user = $this->authenticatedUser->getUser();
-
         $command = new SaveFeedbackCommand($user);
         $form = $this->formFactory->create(FeedbackFormType::class, $command);
         $form->handleRequest($request);
