@@ -5,9 +5,6 @@
     <class name="App\Application\User\Command\SaveFeedbackCommand">
         <property name="content">
             <constraint name="NotBlank"/>
-            <constraint name="Length">
-                <option name="max">255</option>
-            </constraint>
         </property>
     </class>
 </constraint-mapping>

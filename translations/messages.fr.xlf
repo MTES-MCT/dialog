@@ -523,13 +523,25 @@
                 <source>pagination.page</source>
                 <target>Page %page%</target>
             </trans-unit>
+            <trans-unit id="feedback.meta.title">
+                <source>feedback.meta.title</source>
+                <target>Votre avis</target>
+            </trans-unit>
             <trans-unit id="feedback.content.label">
                 <source>feedback.content.label</source>
                 <target>Message</target>
             </trans-unit>
+            <trans-unit id="feedback.content.help">
+            <source>feedback.content.help</source>
+                <target>Votre avis compte ! Nous avons besoin de vos retours et de vos suggestions pour continuer de faire évoluer DiaLog.</target>
+            </trans-unit>
             <trans-unit id="feedback.consenttobecontacted.label">
                 <source>feedback.consenttobecontacted.label</source>
                 <target>Souhaitez-vous être contacté ?</target>
+            </trans-unit>
+            <trans-unit id="feedback.consenttobecontacted.help">
+                <source>feedback.consenttobecontacted.help</source>
+                <target>Si vous acceptez, nous reviendrons vers vous afin de planifier un court échange.</target>
             </trans-unit>
             <trans-unit id="feedback.send.success">
                 <source>feedback.send.success</source>

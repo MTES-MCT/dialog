@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Form\Regulation;
+namespace App\Infrastructure\Form\User;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,12 +20,14 @@ final class FeedbackFormType extends AbstractType
                 TextareaType::class,
                 options: [
                     'label' => 'feedback.content.label',
+                    'help' => 'feedback.content.help',
                 ],
             )
             ->add(
                 'consentToBeContacted',
                 CheckboxType::class, [
                     'label' => 'feedback.consenttobecontacted.label',
+                    'help' => 'feedback.consenttobecontacted.help',
                     'required' => false,
                 ],
             )

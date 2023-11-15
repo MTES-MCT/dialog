@@ -14,7 +14,7 @@ final class FeedbackControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Votre Avis', $crawler->filter('h1')->text());
-        $this->assertMetaTitle('DiaLog', $crawler);
+        $this->assertMetaTitle('Votre avis - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Envoyer');
         $form = $saveButton->form();

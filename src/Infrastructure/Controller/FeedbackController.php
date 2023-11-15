@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller;
 
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\SaveFeedbackCommand;
-use App\Infrastructure\Form\Regulation\FeedbackFormType;
+use App\Infrastructure\Form\User\FeedbackFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
