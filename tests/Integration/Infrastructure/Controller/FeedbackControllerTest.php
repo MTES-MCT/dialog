@@ -23,7 +23,8 @@ final class FeedbackControllerTest extends AbstractWebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
-        $client->followRedirect();
+        $crawler = $client->followRedirect();
+        $this->assertSame('Votre message a été envoyé avec succès ! Merci ! Nous avons bien reçu votre demande.', $crawler->filter('div.fr-alert--success')->text());
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_feedback');
     }
@@ -40,5 +41,12 @@ final class FeedbackControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#feedback_form_content_error')->text());
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/feedback');
+        $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

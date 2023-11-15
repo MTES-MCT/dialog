@@ -9,6 +9,4 @@ use App\Domain\User\Feedback;
 interface FeedbackRepositoryInterface
 {
     public function add(Feedback $feedback): Feedback;
-
-    public function delete(Feedback $feedback): void;
 }

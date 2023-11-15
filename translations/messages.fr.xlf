@@ -30,6 +30,10 @@
                 <source>common.site_name</source>
                 <target>DiaLog</target>
             </trans-unit>
+            <trans-unit id="common.feedback">
+                <source>common.feedback</source>
+                <target>Votre avis</target>
+            </trans-unit>
             <trans-unit id="common.login">
                 <source>common.login</source>
                 <target>Se connecter</target>

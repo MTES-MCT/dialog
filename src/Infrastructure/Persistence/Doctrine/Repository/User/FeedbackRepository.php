@@ -22,9 +22,4 @@ final class FeedbackRepository extends ServiceEntityRepository implements Feedba
 
         return $feedback;
     }
-
-    public function delete(Feedback $feedback): void
-    {
-        $this->getEntityManager()->remove($feedback);
-    }
 }
