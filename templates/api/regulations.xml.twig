@@ -77,12 +77,15 @@
                                     <loc:linearWithinLinearElement>
                                         <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
                                         <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                        <loc:linearElement xsi:type="loc:LinearElement">
+                                        <loc:linearElement xsi:type="loc:LinearElementByLineString">
                                             <loc:roadName>
                                                 <com:values>
                                                     <com:value lang="fr">{{ location.address }}</com:value>
                                                 </com:values>
                                             </loc:roadName>
+                                            <loc:gmlLineString>
+                                                <loc:posList></loc:posList>
+                                            </loc:gmlLineString>
                                         </loc:linearElement>
 
                                         {% if location.fromLatitude and location.fromLongitude %}
