@@ -106,6 +106,10 @@
                 <source>common.update</source>
                 <target>Modifier</target>
             </trans-unit>
+            <trans-unit id="common.send">
+                <source>common.send</source>
+                <target>Envoyer</target>
+            </trans-unit>
             <trans-unit id="common.cancel">
                 <source>common.cancel</source>
                 <target>Annuler</target>
@@ -537,11 +541,7 @@
             </trans-unit>
             <trans-unit id="feedback.consenttobecontacted.label">
                 <source>feedback.consenttobecontacted.label</source>
-                <target>Souhaitez-vous être contacté ?</target>
-            </trans-unit>
-            <trans-unit id="feedback.consenttobecontacted.help">
-                <source>feedback.consenttobecontacted.help</source>
-                <target>Si vous acceptez, nous reviendrons vers vous afin de planifier un court échange.</target>
+                <target>J'accepte d'être recontacté·e par un membre de l'équipe DiaLog</target>
             </trans-unit>
             <trans-unit id="feedback.send.success">
                 <source>feedback.send.success</source>

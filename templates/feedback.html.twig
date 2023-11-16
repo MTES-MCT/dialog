@@ -11,18 +11,21 @@
                 <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
                     <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
                         <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
-                            <h1>Votre Avis</h1>
+                            <h1>{{ 'feedback.meta.title'|trans }}</h1>
                             {{ form_start(form) }}
-
-                                {{ form_row(form.content, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
-                                {{ form_row(form.consentToBeContacted, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-                                {{ form_row(form.save, {group_class: 'fr-btns-group'}) }}
-
+                            {{ form_row(form.content, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            <div class="fr-fieldset__element">
+                                <div class="fr-checkbox-group">
+                                    {{ form_widget(form.consentToBeContacted) }}
+                                    {{ form_label(form.consentToBeContacted) }}
+                                </div>
+                            </div>
+                            {{ form_row(form.save, {group_class: 'fr-btns-group'}) }}
                             {{ form_end(form) }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>   
+    </div>
 {% endblock %}

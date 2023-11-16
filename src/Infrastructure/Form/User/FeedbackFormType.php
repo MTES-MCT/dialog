@@ -27,14 +27,13 @@ final class FeedbackFormType extends AbstractType
                 'consentToBeContacted',
                 CheckboxType::class, [
                     'label' => 'feedback.consenttobecontacted.label',
-                    'help' => 'feedback.consenttobecontacted.help',
                     'required' => false,
                 ],
             )
             ->add('save', SubmitType::class,
                 options: [
-                'label' => 'Envoyer',
-                'attr' => ['class' => 'fr-btn'],
+                    'label' => 'common.send',
+                    'attr' => ['class' => 'fr-btn'],
                 ],
             )
         ;
