@@ -29,12 +29,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->where('roc.organization IN (:organizationUuids)')
-            ->setParameter('organizationUuids', $organizationUuids)
+            ->andWhere($isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
             ->addGroupBy('ro, roc')
+            ->setParameter('organizationUuids', $organizationUuids)
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
             ->getQuery();
@@ -137,7 +138,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $row = $this->createQueryBuilder('roc')
             ->select('roc.uuid')
             ->where('roc.organization = :organization')
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
+            ->andWhere('ro.identifier = :identifier')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->setParameters([
                 'identifier' => $identifier,
                 'organization' => $organization,
@@ -188,9 +190,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
             ->where('o.uuid <> :uuid')
+            ->andWhere('ro.endDate IS NULL')
             ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -200,8 +203,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select('count(roc.uuid)')
             ->where('o.uuid <> :uuid')
+            ->andWhere('ro.endDate IS NOT NULL')
             ->setParameter('uuid', $this->dialogOrgId)
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NOT NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->getQuery()
             ->getSingleScalarResult();
