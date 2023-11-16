@@ -30,6 +30,10 @@
                 <source>common.site_name</source>
                 <target>DiaLog</target>
             </trans-unit>
+            <trans-unit id="common.feedback">
+                <source>common.feedback</source>
+                <target>Votre avis</target>
+            </trans-unit>
             <trans-unit id="common.login">
                 <source>common.login</source>
                 <target>Se connecter</target>
@@ -101,6 +105,10 @@
             <trans-unit id="common.update">
                 <source>common.update</source>
                 <target>Modifier</target>
+            </trans-unit>
+            <trans-unit id="common.send">
+                <source>common.send</source>
+                <target>Envoyer</target>
             </trans-unit>
             <trans-unit id="common.cancel">
                 <source>common.cancel</source>
@@ -518,6 +526,29 @@
             <trans-unit id="pagination.page">
                 <source>pagination.page</source>
                 <target>Page %page%</target>
+            </trans-unit>
+            <trans-unit id="feedback.meta.title">
+                <source>feedback.meta.title</source>
+                <target>Votre avis</target>
+            </trans-unit>
+            <trans-unit id="feedback.content.label">
+                <source>feedback.content.label</source>
+                <target>Message</target>
+            </trans-unit>
+            <trans-unit id="feedback.content.help">
+            <source>feedback.content.help</source>
+                <target>Votre avis compte ! Nous avons besoin de vos retours et de vos suggestions pour continuer de faire évoluer DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="feedback.consenttobecontacted.label">
+                <source>feedback.consenttobecontacted.label</source>
+                <target>J'accepte d'être recontacté·e par un membre de l'équipe DiaLog</target>
+            </trans-unit>
+            <trans-unit id="feedback.send.success">
+                <source>feedback.send.success</source>
+                <target>
+                    <![CDATA[<h3 class="fr-alert__title">]]>Votre message a été envoyé avec succès ! Merci ! <![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>Nous avons bien reçu votre demande.<![CDATA[</p>]]>
+                </target>
             </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>
