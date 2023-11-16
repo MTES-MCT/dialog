@@ -86,7 +86,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     public function findRegulationOrdersForDatexFormat(): array
     {
-        return $this->createQueryBuilder('roc')
+        $rows = $this->createQueryBuilder('roc')
             ->select(
                 'ro.uuid',
                 'o.name as organizationName',
@@ -96,7 +96,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.address',
                 'loc.fromHouseNumber',
                 'loc.toHouseNumber',
-                'ST_AsGML(loc.geometry) as gmlGeometry',
+                'ST_AsGML(3, loc.geometry) as gmlGeometry',
                 'm.maxSpeed',
                 'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
@@ -114,10 +114,35 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
             ->getQuery()
             ->getResult()
         ;
+
+        foreach ($rows as $index => $row) {
+            $rows[$index]['gmlPosList'] = $this->extractDatexPosListFromGml($row['gmlGeometry']);
+        }
+
+        return $rows;
+    }
+
+    private function extractDatexPosListFromGml(string $gml): string
+    {
+        // See: https://postgis.net/docs/manual-3.4/ST_AsGML.html
+        //
+        // Example:
+        // <gml:LineString srsName="EPSG:2154">
+        //   <gml:coordinates>
+        //     <!-- WE WANT THIS ----------------->
+        //     50.65218,3.066784 50.652048,3.066595
+        //   </gml:coordinates>
+        // </gml:LineString>
+        //
+        $xml = new \DOMDocument();
+        $xml->loadXML(sprintf('<root xmlns:gml="http://www.opengis.net/gml">%s</root>', $gml), \LIBXML_NOBLANKS);
+
+        return $xml->firstChild->firstChild->firstChild->nodeValue;
     }
 
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
