@@ -34,7 +34,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $userLinks = $crawler->filter('[data-testid="user-links"]')->filter('li');
-        $this->assertCount(2, $userLinks);
+        $this->assertCount(3, $userLinks);
         $this->assertSame('Mathieu MARCHOIS', $userLinks->eq(0)->text());
 
         $enterLink = $crawler->selectLink("Participer à l'expérimentation");
@@ -48,9 +48,10 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $userLinks = $crawler->filter('[data-testid="user-links"]')->filter('li');
-        $this->assertCount(3, $userLinks);
+        $this->assertCount(4, $userLinks);
         $this->assertSame('Mathieu FERNANDEZ', $userLinks->eq(0)->text());
-        $this->assertSame('Administration', $userLinks->eq(1)->text());
+        $this->assertSame('Votre avis', $userLinks->eq(1)->text());
+        $this->assertSame('Administration', $userLinks->eq(2)->text());
     }
 
     public function testNavigationLink(): void

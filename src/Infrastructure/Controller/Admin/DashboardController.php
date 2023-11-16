@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Admin;
 
+use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
 use App\Domain\User\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -33,6 +34,7 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
+        yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
 
         yield MenuItem::section('Application');
         yield MenuItem::linkToRoute('DiaLog', 'fa fa-globe', 'app_regulations_list');
