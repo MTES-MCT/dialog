@@ -73,8 +73,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
             $location = new DatexLocationView(
                 address: $row['address'],
-                fromHouseNumber: $row['fromHouseNumber'],
-                toHouseNumber: $row['toHouseNumber'],
                 gmlPosList: $row['gmlPosList'],
             );
 

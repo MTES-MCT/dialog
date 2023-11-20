@@ -37,29 +37,21 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
     {
         $location1 = new DatexLocationView(
             address: 'Avenue de Fonneuve 82000 Montauban',
-            fromHouseNumber: '695',
-            toHouseNumber: '253',
             gmlPosList: '1.362275,44.028996 1.35931,44.025665',
         );
 
         $location1bis = new DatexLocationView(
             address: "Rue de l'Hôtel de Ville 82000 Montauban",
-            fromHouseNumber: '30',
-            toHouseNumber: '12',
             gmlPosList: '1.352126,44.016833 1.353016,44.016402',
         );
 
         $location2 = new DatexLocationView(
             address: 'Route du Grand Brossais 44260 Savenay',
-            fromHouseNumber : '15',
-            toHouseNumber : '37bis',
             gmlPosList: '-1.935836,47.347024 -1.930973,47.347917',
         );
 
         $location3 = new DatexLocationView(
             address: '19 Rue Gabriel Péri, 78800 Houilles',
-            fromHouseNumber : '16',
-            toHouseNumber : '37bis',
             gmlPosList: '-1.935836,49.347054 -1.930973,47.347917',
         );
 
@@ -77,8 +69,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => $endDate1,
             'address' => $location1->address,
-            'fromHouseNumber' => $location1->fromHouseNumber,
-            'toHouseNumber' => $location1->toHouseNumber,
             'gmlPosList' => $location1->gmlPosList,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
@@ -97,8 +87,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => $endDate1,
             'address' => $location1bis->address,
-            'fromHouseNumber' => $location1bis->fromHouseNumber,
-            'toHouseNumber' => $location1bis->toHouseNumber,
             'gmlPosList' => $location1bis->gmlPosList,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
@@ -117,8 +105,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate2,
             'endDate' => null,
             'address' => $location2->address,
-            'fromHouseNumber' => $location2->fromHouseNumber,
-            'toHouseNumber' => $location2->toHouseNumber,
             'gmlPosList' => $location2->gmlPosList,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
@@ -137,8 +123,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate3,
             'endDate' => $endDate3,
             'address' => $location3->address,
-            'fromHouseNumber' => $location3->fromHouseNumber,
-            'toHouseNumber' => $location3->toHouseNumber,
             'gmlPosList' => $location3->gmlPosList,
             'maxSpeed' => 50,
             'type' => MeasureTypeEnum::SPEED_LIMITATION->value,

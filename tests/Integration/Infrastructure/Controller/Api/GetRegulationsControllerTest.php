@@ -8,7 +8,6 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class GetRegulationsControllerTest extends AbstractWebTestCase
 {
-    /** @group only */
     public function testGetRegulationsToDatexFormat(): void
     {
         $client = static::createClient();

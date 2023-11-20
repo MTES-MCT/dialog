@@ -94,8 +94,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.startDate',
                 'ro.endDate',
                 'loc.address',
-                'loc.fromHouseNumber',
-                'loc.toHouseNumber',
                 'ST_AsGML(3, loc.geometry) as gmlGeometry',
                 'm.maxSpeed',
                 'm.type',
