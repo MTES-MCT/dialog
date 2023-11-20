@@ -18,7 +18,7 @@ final class LandingAuthoritiesControllerTest extends AbstractWebTestCase
 
         $this->assertPageStructure([
             ['h1', 'Numériser votre réglementation de circulation routière avec DiaLog'],
-            ['a', 'Créer un compte pour ma commune', ['href' => 'mailto:dialog@beta.gouv.fr']],
+            ['a', 'Créer un compte pour ma commune', ['href' => '/access-request']],
             ['h2', 'Facilitez la vie de votre service voirie'],
             ['h3', 'Gagnez du temps'],
             ['h3', 'Simplifiez vos échanges'],

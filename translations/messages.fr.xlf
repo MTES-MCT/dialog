@@ -6,9 +6,17 @@
                 <source>common.javascript_required</source>
                 <target>Pour accéder à toutes les fonctionnalités de DiaLog, vous devez activer JavaScript. Voici les <![CDATA[<a href="https://www.enable-javascript.com/fr/" target="_blank" rel="noreferrer">]]>instructions pour activer JavaScript dans votre navigateur<![CDATA[</a>]]>.</target>
             </trans-unit>
+            <trans-unit id="common.here">
+                <source>common.here</source>
+                <target>içi</target>
+            </trans-unit>
             <trans-unit id="common.results">
                 <source>common.results</source>
                 <target>Résultats</target>
+            </trans-unit>
+            <trans-unit id="common.accessRequest">
+                <source>common.accessRequest</source>
+                <target>Créer un compte</target>
             </trans-unit>
             <trans-unit id="common.blog">
                 <source>common.blog</source>
@@ -1091,7 +1099,7 @@
             </trans-unit>
             <trans-unit id="login.no_account.instructions">
                 <source>login.no_account.instructions</source>
-                <target>Vous pouvez nous contacter à l'adresse email suivante : <![CDATA[<a href="mailto:dialog@beta.gouv.fr">]]>dialog@beta.gouv.fr<![CDATA[</a>]]>.</target>
+                <target>Vous pouvez effectuer une demande de création de compte en cliquant</target>
             </trans-unit>
             <trans-unit id="login.legend">
                 <source>login.legend</source>
@@ -1560,6 +1568,46 @@
             <trans-unit id="common.form.time.minute">
                 <source>common.form.time.minute</source>
                 <target>Minutes</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.fullName">
+                <source>accessRequest.fullName</source>
+                <target>Nom / Prénom</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.email">
+                <source>accessRequest.email</source>
+                <target>Adresse e-mail</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.organization">
+                <source>accessRequest.organization</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.comment">
+                <source>accessRequest.comment</source>
+                <target>Message</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.siret">
+                <source>accessRequest.siret</source>
+                <target>Siret de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.password">
+                <source>accessRequest.password</source>
+                <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.consentToBeContacted">
+                <source>accessRequest.consentToBeContacted</source>
+                <target>J'accepte d'être recontacté·e par un membre de l'équipe DiaLog</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.send.success">
+                <source>accessRequest.send.success</source>
+                <target>Votre demande de création de compte a bien été prise en compte, nous reviendrons vers vous dans les plus bref délais.</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.send.error">
+                <source>accessRequest.send.error</source>
+                <target>Une demande de création de compte a déjà été créée avec cette adresse e-mail.</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.meta.title">
+                <source>accessRequest.meta.title</source>
+                <target>Demande de création de compte</target>
             </trans-unit>
         </body>
     </file>
