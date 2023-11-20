@@ -74,16 +74,14 @@
                             </conditions>
                             <conditions xsi:type="LocationCondition">
                                 <locationByOrder xsi:type="loc:LinearLocation">
-                                        <loc:supplementaryPositionalDescription>
-                                            <loc:roadInformation>
-                                                <loc:roadName>
-                                                    {{ location.address }}
-                                                </loc:roadName>
-                                            </loc:roadInformation>
-                                        </loc:supplementaryPositionalDescription>
-                                        <loc:gmlLineString>
-                                            <loc:posList>{{ location.gmlPosList }}</loc:posList>
-                                        </loc:gmlLineString>
+                                    <loc:supplementaryPositionalDescription>
+                                        <loc:roadInformation>
+                                            <loc:roadName>{{ location.address }}</loc:roadName>
+                                        </loc:roadInformation>
+                                    </loc:supplementaryPositionalDescription>
+                                    <loc:gmlLineString>
+                                        <loc:posList>{{ location.gmlPosList }}</loc:posList>
+                                    </loc:gmlLineString>
                                 </locationByOrder>
                             </conditions>
                             {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}

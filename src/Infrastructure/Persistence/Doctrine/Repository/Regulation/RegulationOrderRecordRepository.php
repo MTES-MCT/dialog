@@ -133,16 +133,22 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         //
         // Example:
         // <gml:LineString srsName="EPSG:2154">
-        //   <gml:coordinates>
-        //     <!-- WE WANT THIS ----------------->
-        //     50.65218,3.066784 50.652048,3.066595
-        //   </gml:coordinates>
-        // </gml:LineString>
+        // <gml:Curve srsName="EPSG:2154">
+        //   <gml:segments>
+        //     <gml:LineStringSegment>
+        //       <gml:posList srsDimension="2">
+        //         <!-- WE WANT THIS ----------------->
+        //         50.65218 3.066784 50.652048 3.066595
+        //       </gml:posList>
+        //     </gml:LineStringSegment>
+        //   </gml:segments>
+        // </gml:Curve>
         //
         $xml = new \DOMDocument();
         $xml->loadXML(sprintf('<root xmlns:gml="http://www.opengis.net/gml">%s</root>', $gml), \LIBXML_NOBLANKS);
 
-        return $xml->firstChild->firstChild->firstChild->nodeValue;
+        // TODO: can we do $xml->getByTagName('posList')???
+        return $xml->firstChild->firstChild->firstChild->firstChild->firstChild->nodeValue;
     }
 
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
