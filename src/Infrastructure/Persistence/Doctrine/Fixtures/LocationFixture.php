@@ -58,6 +58,16 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'LINESTRING(1.352126 44.016833, 1.353016 44.016402)',
         );
 
+        $location2Ter = new Location(
+            '0655b3f6-124a-7f8d-8000-7c747883d40d',
+            $this->getReference('regulationOrder2'),
+            // Full road, should not appear in DATEX export.
+            'Rue Gamot, 82000 Montauban',
+            null,
+            null,
+            null,
+        );
+
         $location3 = new Location(
             'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
             $this->getReference('regulationOrder3'),
@@ -81,6 +91,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($location1Ter);
         $manager->persist($location2);
         $manager->persist($location2Bis);
+        $manager->persist($location2Ter);
         $manager->persist($location3);
         $manager->persist($locationNoMeasures);
         $manager->flush();
@@ -88,6 +99,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('location1', $location1);
         $this->addReference('location2', $location2);
         $this->addReference('location2Bis', $location2Bis);
+        $this->addReference('location2Ter', $location2Ter);
         $this->addReference('location3', $location3);
         $this->addReference('locationNoMeasures', $locationNoMeasures);
     }

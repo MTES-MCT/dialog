@@ -575,6 +575,7 @@
                     </conditions>
                 </condition>
             </trafficRegulation>
+
             <trafficRegulation>
                 <status>active</status>
                 <typeOfRegulation xsi:type="SpeedLimit">
