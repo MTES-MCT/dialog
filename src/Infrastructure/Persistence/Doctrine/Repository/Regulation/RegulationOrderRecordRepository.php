@@ -144,8 +144,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $xml = new \DOMDocument();
         $xml->loadXML(sprintf('<root xmlns:gml="http://www.opengis.net/gml">%s</root>', $gml), \LIBXML_NOBLANKS);
 
-        // TODO: can we do $xml->getByTagName('posList')???
-        return $xml->firstChild->firstChild->firstChild->firstChild->firstChild->nodeValue;
+        return $xml->getElementsByTagName('posList')->item(0)->nodeValue;
     }
 
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
