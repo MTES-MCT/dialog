@@ -188,7 +188,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function countTotalRegulationOrderRecords(): int
     {
         return $this->createQueryBuilder('roc')
-            ->select('count(roc.uuid)')
+            ->select('count(DISTINCT(roc.uuid))')
             ->where('o.uuid <> :uuid')
             ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.organization', 'o')
@@ -199,7 +199,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function countPublishedRegulationOrderRecords(): int
     {
         return $this->createQueryBuilder('roc')
-            ->select('count(roc.uuid)')
+            ->select('count(DISTINCT(roc.uuid))')
             ->where('roc.status = :status')
             ->andWhere('o.uuid <> :uuid')
             ->setParameter('uuid', $this->dialogOrgId)
@@ -212,7 +212,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function countPermanentRegulationOrderRecords(): int
     {
         return $this->createQueryBuilder('roc')
-            ->select('count(roc.uuid)')
+            ->select('count(DISTINCT(roc.uuid))')
             ->where('o.uuid <> :uuid')
             ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.organization', 'o')
@@ -224,7 +224,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function countTemporaryRegulationOrderRecords(): int
     {
         return $this->createQueryBuilder('roc')
-            ->select('count(roc.uuid)')
+            ->select('count(DISTINCT(roc.uuid))')
             ->where('o.uuid <> :uuid')
             ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NOT NULL')
