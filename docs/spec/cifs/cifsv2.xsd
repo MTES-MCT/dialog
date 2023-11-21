@@ -3,7 +3,8 @@
   <xs:annotation>
     <xs:documentation>
     History:
-    2022-11-13 Ido Lackrif. Add lane_impact and lanes definitions
+    2023-11-07 Ido Lackrif. Fix schedule patterns.
+    2022-11-13 Ido Lackrif. Add lane_impact and lanes definitions.
     2022-04-25 Gil Garibi. Clean slate schema for the CIFSv2 standard. Overriding the deprecated and erronoeus incidents_feed.xsd schema in the same folder.
     </xs:documentation>
   </xs:annotation>
@@ -340,56 +341,56 @@
                     <xs:element name="everyday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="monday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="tuesday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="wednesday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="thursday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="friday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="saturday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
                     <xs:element name="sunday" minOccurs="0">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                          <xs:pattern value="(\d{1,2}\:\d{2}\-\d{1,2}\:\d{2}\,?)+"/>
                         </xs:restriction>
                       </xs:simpleType>
                     </xs:element>
