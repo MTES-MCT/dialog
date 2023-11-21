@@ -37,22 +37,22 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
     {
         $location1 = new DatexLocationView(
             address: 'Avenue de Fonneuve 82000 Montauban',
-            gmlPosList: '1.362275,44.028996 1.35931,44.025665',
+            gmlPosList: '1.362275 44.028996 1.35931 44.025665',
         );
 
         $location1bis = new DatexLocationView(
             address: "Rue de l'Hôtel de Ville 82000 Montauban",
-            gmlPosList: '1.352126,44.016833 1.353016,44.016402',
+            gmlPosList: '1.352126 44.016833 1.353016 44.016402',
         );
 
         $location2 = new DatexLocationView(
             address: 'Route du Grand Brossais 44260 Savenay',
-            gmlPosList: '-1.935836,47.347024 -1.930973,47.347917',
+            gmlPosList: '-1.935836 47.347024 -1.930973 47.347917',
         );
 
         $location3 = new DatexLocationView(
             address: '19 Rue Gabriel Péri, 78800 Houilles',
-            gmlPosList: '-1.935836,49.347054 -1.930973,47.347917',
+            gmlPosList: '-1.935836 49.347054 -1.930973 47.347917',
         );
 
         $startDate1 = new \DateTime('2022-12-07');
