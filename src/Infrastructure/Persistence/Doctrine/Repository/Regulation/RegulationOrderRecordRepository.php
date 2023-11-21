@@ -130,7 +130,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         // See: https://postgis.net/docs/manual-3.4/ST_AsGML.html
         //
         // Example:
-        // <gml:LineString srsName="EPSG:2154">
         // <gml:Curve srsName="EPSG:2154">
         //   <gml:segments>
         //     <gml:LineStringSegment>

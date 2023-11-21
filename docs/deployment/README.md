@@ -14,7 +14,7 @@ URL : https://dialog.beta.gouv.fr
 
 L'environnement de production est automatiquement déployé lors d'un _push_ sur la branche `main`.
 
-Accédez au détail du _build_ sur le [dashboard Scalingo](https://dashboard.scalingo.com/appmas/osc-fr1/dialog/) ou accédez à https://dialog.beta.gouv.fr pour vérifier que le déploiement s'est bien déroulé.
+Accédez au détail du _build_ sur le [dashboard Scalingo](https://dashboard.scalingo.com/apps/osc-fr1/dialog/) ou accédez à https://dialog.beta.gouv.fr pour vérifier que le déploiement s'est bien déroulé.
 
 ## 🛠️ Staging
 
