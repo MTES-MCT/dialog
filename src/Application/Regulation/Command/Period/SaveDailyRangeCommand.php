@@ -12,7 +12,6 @@ use App\Domain\Condition\Period\Period;
 final class SaveDailyRangeCommand implements CommandInterface
 {
     public ?array $applicableDays;
-    public ?array $timeSlots;
     public ?Period $period;
 
     public function __construct(
@@ -24,12 +23,6 @@ final class SaveDailyRangeCommand implements CommandInterface
     public function initFromEntity(?DailyRange $dailyRange): self
     {
         $this->applicableDays = $dailyRange?->getApplicableDays();
-
-        if ($dailyRange) {
-            foreach ($dailyRange->getTimeSlots() as $timeSlot) {
-                $this->timeSlots[] = new SaveTimeSlotCommand($timeSlot);
-            }
-        }
 
         return $this;
     }

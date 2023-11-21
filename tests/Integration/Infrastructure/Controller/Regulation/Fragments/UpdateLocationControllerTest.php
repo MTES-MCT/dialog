@@ -142,8 +142,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
         $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
         $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['timeSlots'][0]['startTime'] = '08:00';
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['timeSlots'][0]['endTime'] = '18:00';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime'] = '18:00';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
@@ -158,7 +158,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00 pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00 (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
     }
 
     public function testRemoveTimeSlots(): void
@@ -178,8 +178,8 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
         $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
         $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['timeSlots'][0]['startTime'] = '08:00';
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['timeSlots'][0]['endTime'] = '18:00';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime'] = '18:00';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
@@ -189,7 +189,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['timeSlots'] = [];
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'] = [];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
