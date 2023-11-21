@@ -33,7 +33,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
     public function countUsers(): int
     {
         return $this->createQueryBuilder('u')
-            ->select('count(u.uuid)')
+            ->select('count(DISTINCT(u.uuid))')
             ->innerJoin('u.organizations', 'o')
             ->where('o.uuid <> :uuid')
             ->setParameter('uuid', $this->dialogOrgId)
