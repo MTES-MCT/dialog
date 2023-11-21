@@ -3,12 +3,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Domain\User\Organization">
-        <property name="name">
-            <constraint name="NotBlank"/>
-            <constraint name="Length">
-                <option name="max">255</option>
-            </constraint>
-        </property>
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
             <option name="fields">siret</option>
         </constraint>
@@ -17,6 +11,12 @@
             <constraint name="Length">
                 <option name="max">14</option>
                 <option name="min">14</option>
+            </constraint>
+        </property>
+        <property name="name">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="max">255</option>
             </constraint>
         </property>
     </class>
