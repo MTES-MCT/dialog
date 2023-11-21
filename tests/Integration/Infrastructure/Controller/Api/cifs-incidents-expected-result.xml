@@ -1,25 +1,6 @@
 <?xml version="1.0"?>
 <incidents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://www.gstatic.com/road-incidents/cifsv2.xsd">
-    <incident id="064ca781-8f36-712a-8000-62bf928382bf">
-        <creationtime>2022-01-10T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Avenue de Fonneuve : circulation interdite tous les jours pour tous les véhicles</description>
-        <street>Avenue de Fonneuve</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>44.028996 1.362275 44.025665 1.359310</polyline>
-        <starttime>2023-03-10T08:00:00+00:00</starttime>
-        <endtime>2023-03-20T22:00:00+00:00</endtime>
-        <source>
-            <reference>TODO</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs.xml</url>
-        </source>
-        <schedule>
-            <tuesday>00:00-23:59</tuesday>
-            <wednesday>00:00-23:59</wednesday>
-        </schedule>
-    </incident>
     <incident id="064ca781-da33-7e29-8000-29380bad748e">
         <creationtime>2022-01-10T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
@@ -38,10 +19,10 @@
     <incident id="06548f88-56a9-70e2-8000-a06baed6a93d">
         <creationtime>2021-11-02T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
-        <description>Rue de l'Hôtel de Ville : circulation interdite tous les jours pour tous les véhicles</description>
-        <street>Rue de l'Hôtel de Ville</street>
+        <description>Rue de la République : circulation interdite tous les jours pour tous les véhicles</description>
+        <street>Rue de la République</street>
         <direction>BOTH_DIRECTIONS</direction>
-        <polyline>44.016833 1.352126 44.016402 1.353016</polyline>
+        <polyline>44.016300 1.355000 44.016650 1.354190</polyline>
         <starttime>2021-11-02T00:00:00+00:00</starttime>
         <endtime>2021-11-06T00:00:00+00:00</endtime>
         <source>
@@ -53,24 +34,6 @@
             <everyday>18:00-22:00</everyday>
             <tuesday>08:00-10:00,12:00-14:00,19:00-21:00</tuesday>
             <thursday>08:00-10:00</thursday>
-        </schedule>
-    </incident>
-    <incident id="59143d8d-d201-4950-be76-f367e39be522">
-        <creationtime>2022-01-10T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Avenue de Fonneuve : circulation interdite tous les jours pour tous les véhicles</description>
-        <street>Avenue de Fonneuve</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>44.028996 1.362275 44.025665 1.359310</polyline>
-        <starttime>2023-03-10T08:00:00+00:00</starttime>
-        <endtime>2023-03-20T22:00:00+00:00</endtime>
-        <source>
-            <reference>TODO</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs.xml</url>
-        </source>
-        <schedule>
-            <thursday>00:00-23:59</thursday>
         </schedule>
     </incident>
 </incidents>

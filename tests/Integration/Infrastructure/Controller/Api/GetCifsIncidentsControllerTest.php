@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
+/** @group only */
 final class GetCifsIncidentsControllerTest extends AbstractWebTestCase
 {
     public function testGet(): void

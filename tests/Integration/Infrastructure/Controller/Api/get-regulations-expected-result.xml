@@ -452,7 +452,7 @@
                                 <loc:linearElement xsi:type="loc:LinearElement">
                                     <loc:roadName>
                                         <com:values>
-                                            <com:value lang="fr">Rue de l'Hôtel de Ville 82000 Montauban</com:value>
+                                            <com:value lang="fr">Rue de la République 82000 Montauban</com:value>
                                         </com:values>
                                     </loc:roadName>
                                 </loc:linearElement>
@@ -461,11 +461,11 @@
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
                                         <loc:referentIdentifier>start</loc:referentIdentifier>
-                                        <loc:referentName>30</loc:referentName>
+                                        <loc:referentName>21</loc:referentName>
                                         <loc:referentType>referenceMarker</loc:referentType>
                                         <loc:pointCoordinates>
-                                            <loc:latitude>44.016833</loc:latitude>
-                                            <loc:longitude>1.352126</loc:longitude>
+                                            <loc:latitude>44.0163</loc:latitude>
+                                            <loc:longitude>1.355</loc:longitude>
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:fromPoint>
@@ -474,11 +474,11 @@
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
                                         <loc:referentIdentifier>end</loc:referentIdentifier>
-                                        <loc:referentName>12</loc:referentName>
+                                        <loc:referentName>33</loc:referentName>
                                         <loc:referentType>referenceMarker</loc:referentType>
                                         <loc:pointCoordinates>
-                                            <loc:latitude>44.016402</loc:latitude>
-                                            <loc:longitude>1.353016</loc:longitude>
+                                            <loc:latitude>44.01665</loc:latitude>
+                                            <loc:longitude>1.35419</loc:longitude>
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:toPoint>

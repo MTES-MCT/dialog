@@ -150,15 +150,17 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->innerJoin('loc.measures', 'm')
+            ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
             ->leftJoin('d.timeSlots', 't')
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
-                'm.type = :measureType',
                 'loc.fromPoint IS NOT NULL',
                 'loc.toPoint IS NOT NULL',
+                'm.type = :measureType',
+                'v.uuid IS NULL',
             )
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)

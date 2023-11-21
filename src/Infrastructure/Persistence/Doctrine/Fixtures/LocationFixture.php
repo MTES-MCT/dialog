@@ -86,11 +86,11 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $locationCifs = new Location(
             '06548f85-d545-7b45-8000-8a23c45850b3',
             $this->getReference('regulationOrderCifs'),
-            "Rue de l'Hôtel de Ville 82000 Montauban",
-            '30',
-            'POINT(1.352126 44.016833)',
-            '12',
-            'POINT(1.353016 44.016402)',
+            'Rue de la République 82000 Montauban',
+            '21',
+            'POINT(1.35500 44.01630)',
+            '33',
+            'POINT(1.35419 44.01665)',
         );
 
         $manager->persist($location1);
