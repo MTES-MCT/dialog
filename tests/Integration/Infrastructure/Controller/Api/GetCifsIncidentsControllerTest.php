@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Controller\Api\Cifs;
+namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class GetIncidentsControllerTest extends AbstractWebTestCase
+final class GetCifsIncidentsControllerTest extends AbstractWebTestCase
 {
     public function testGet(): void
     {
@@ -21,7 +21,7 @@ final class GetIncidentsControllerTest extends AbstractWebTestCase
         $xml = new \DOMDocument();
         $xml->loadXML($response->getContent(), \LIBXML_NOBLANKS);
         $this->assertXmlStringEqualsXmlFile(
-            __DIR__ . '/incidents-expected-result.xml',
+            __DIR__ . '/cifs-incidents-expected-result.xml',
             $response->getContent(),
         );
         $this->assertTrue($xml->schemaValidate(self::$kernel->getProjectDir() . '/docs/spec/cifs/cifsv2.xsd'));

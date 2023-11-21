@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Cifs\Query;
+namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
@@ -10,14 +10,14 @@ use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
-final class GetIncidentsQueryHandler
+final class GetCifsIncidentsQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
     ) {
     }
 
-    public function __invoke(GetIncidentsQuery $query): array
+    public function __invoke(GetCifsIncidentsQuery $query): array
     {
         $rows = $this->repository->findRegulationOrdersForCifsIncidentFormat();
 

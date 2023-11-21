@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Cifs\Query;
+namespace App\Tests\Unit\Application\Regulation\Query;
 
-use App\Application\Cifs\Query\GetIncidentsQuery;
-use App\Application\Cifs\Query\GetIncidentsQueryHandler;
+use App\Application\Regulation\Query\GetCifsIncidentsQuery;
+use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
-final class GetIncidentsQueryHandlerTest extends TestCase
+final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
     public function testGetAllEmpty(): void
     {
@@ -23,8 +23,8 @@ final class GetIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetIncidentsQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetIncidentsQuery());
+        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository);
+        $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
     }
@@ -150,8 +150,8 @@ final class GetIncidentsQueryHandlerTest extends TestCase
                 $measure2Period4,
             ]);
 
-        $handler = new GetIncidentsQueryHandler($regulationOrderRecordRepository);
-        $incidents = $handler(new GetIncidentsQuery());
+        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository);
+        $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
             [$incident1, $incident2],

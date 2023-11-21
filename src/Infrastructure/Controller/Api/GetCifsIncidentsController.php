@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Api\Cifs;
+namespace App\Infrastructure\Controller\Api;
 
-use App\Application\Cifs\Query\GetIncidentsQuery;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetIncidentsController
+final class GetCifsIncidentsController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -25,7 +25,7 @@ final class GetIncidentsController
     )]
     public function __invoke(): Response
     {
-        $incidents = $this->queryBus->handle(new GetIncidentsQuery());
+        $incidents = $this->queryBus->handle(new GetCifsIncidentsQuery());
 
         return new Response(
             $this->twig->render('api/regulations/cifs.xml.twig', [
