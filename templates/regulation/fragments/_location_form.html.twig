@@ -76,37 +76,36 @@
                         {% endfor %}
                     </div>
                     {{ form_errors(form.dailyRange.applicableDays) }}
-
-                    <div
-                        data-controller="form-collection"
-                        data-form-collection-prototype-key-value="timeSlot"
-                        data-form-collection-next-index-value="{{ form.dailyRange.timeSlots|length > 0 ? form.dailyRange.timeSlots|last.vars.name + 1 : 0 }}"
-                        data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.dailyRange.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
+                </div>
+                <div
+                    data-controller="form-collection"
+                    data-form-collection-prototype-key-value="timeSlot"
+                    data-form-collection-next-index-value="{{ form.timeSlots|length > 0 ? form.timeSlots|last.vars.name + 1 : 0 }}"
+                    data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
+                >
+                    <ul
+                        class="app-timeslot-list fr-raw-list fr-mb-2w"
+                        data-testid="timeSlot-list"
+                        data-form-collection-target="collectionContainer"
+                        aria-label="{{ form.timeSlots.vars.label|trans }}"
                     >
-                        <ul
-                            class="app-timeslot-list fr-raw-list fr-mb-2w"
-                            data-testid="timeSlot-list"
-                            data-form-collection-target="collectionContainer"
-                            aria-label="{{ form.dailyRange.timeSlots.vars.label|trans }}"
-                        >
-                            {%- for item in form.dailyRange.timeSlots -%}
-                                {{ _self.timeSlots_list_item(item, loop.index) }}
-                            {%- else -%}
-                                {%- do form.dailyRange.timeSlots.setRendered -%}
-                            {%- endfor -%}
-                        </ul>
+                        {%- for item in form.timeSlots -%}
+                            {{ _self.timeSlots_list_item(item, loop.index) }}
+                        {%- else -%}
+                            {%- do form.timeSlots.setRendered -%}
+                        {%- endfor -%}
+                    </ul>
 
-                        <button
-                            type="button"
-                            class="app-timeslot-define fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-time-line fr-x-btn--with-hint"
-                            data-action="form-collection#addCollectionElement"
-                        >
-                            {{ 'regulation.timeSlot.add'|trans }}
+                    <button
+                        type="button"
+                        class="app-timeslot-define fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-time-line fr-x-btn--with-hint"
+                        data-action="form-collection#addCollectionElement"
+                    >
+                        {{ 'regulation.timeSlot.add'|trans }}
 
-                            <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
+                        <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
 
-                        </button>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>

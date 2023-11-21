@@ -77,16 +77,17 @@ final class DuplicateRegulationCommandHandler
                         $dailyRange = $period->getDailyRange();
                         if ($dailyRange) {
                             $dailyRangeCommand = (new SaveDailyRangeCommand())->initFromEntity($dailyRange);
-
-                            $timeSlotCommands = [];
-                            foreach ($dailyRange->getTimeSlots() as $timeSlot) {
-                                $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
-                            }
-
-                            $dailyRangeCommand->timeSlots = $timeSlotCommands;
                             $cmd->dailyRange = $dailyRangeCommand;
                         }
 
+                        $timeSlotCommands = [];
+                        if ($period->getTimeSlots()) {
+                            foreach ($period->getTimeSlots() as $timeSlot) {
+                                $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
+                            }
+                        }
+
+                        $cmd->timeSlots = $timeSlotCommands;
                         $periodCommands[] = $cmd;
                     }
 

@@ -8,7 +8,6 @@ use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,15 +17,6 @@ final class DailyRangeFormType extends AbstractType
     {
         $builder
             ->add('applicableDays', ChoiceType::class, $this->getDaysOptions())
-            ->add('timeSlots', CollectionType::class, [
-                'entry_type' => TimeSlotFormType::class,
-                'entry_options' => ['label' => false],
-                'prototype_name' => '__timeSlot_name__',
-                'label' => 'regulation.timeSlots',
-                'allow_add' => true,
-                'allow_delete' => true,
-                'error_bubbling' => false,
-            ])
         ;
     }
 

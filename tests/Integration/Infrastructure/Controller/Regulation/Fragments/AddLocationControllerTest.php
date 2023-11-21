@@ -62,8 +62,8 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'][0]['endDate'] = '2023-10-30';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = '16:00';
         $values['location_form']['measures'][0]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['startTime'] = '08:00';
-        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['endTime'] = '20:00';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime'] = '20:00';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(200);
@@ -341,15 +341,15 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'][0]['endDate'] = 'test';
         $values['location_form']['measures'][0]['periods'][0]['endTime'] = 'test';
         $values['location_form']['measures'][0]['periods'][0]['dailyRange']['applicableDays'] = 'test';
-        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['startTime'] = 'test';
-        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['timeSlots'][0]['endTime'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['startTime'] = 'test';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime'] = 'test';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_applicableDays_error')->text());
-        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_timeSlots_0_startTime_error')->text());
-        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_timeSlots_0_endTime_error')->text());
+        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_timeSlots_0_startTime_error')->text());
+        $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_timeSlots_0_endTime_error')->text());
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#location_form_measures_0_periods_0_recurrenceType_error')->text());
         $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_startTime_error')->text());
         $this->assertSame('Veuillez saisir une heure valide.', $crawler->filter('#location_form_measures_0_periods_0_endTime_error')->text());

@@ -18,16 +18,16 @@
                     '%lastDay%': ('regulation.period.days.' ~ dayRange.lastDay)|trans,
                 })|lower }}
             {%- endif -%}
-            {% if period.dailyRange.timeSlots|length %}
-                (
-                {%- for timeSlot in period.dailyRange.timeSlots -%}
-                    {{ timeSlot.startTime|date('H\\hi' ) }}-{{ timeSlot.endTime|date('H\\hi' ) }}
-                    {%- if not loop.last -%}et {%- endif -%}
-                {%- endfor -%}
-                )
-            {% endif %}
         {%- endfor -%}
     {%- endif -%}
+    {% if period.timeSlots|length %}
+        (
+        {%- for timeSlot in period.timeSlots -%}
+            {{ timeSlot.startTime|date('H\\hi' ) }}-{{ timeSlot.endTime|date('H\\hi' ) }}
+            {%- if not loop.last -%}&nbsp;et&nbsp;{% endif %}
+        {%- endfor -%}
+        )
+    {% endif %}
 {% else %}
     {{ 'regulation.period.all_days'|trans }}
 {% endfor %}

@@ -32,7 +32,7 @@ final class SaveTimeSlotCommandHandler
                 uuid: $this->idFactory->make(),
                 startTime: $command->startTime,
                 endTime: $command->endTime,
-                dailyRange: $command->dailyRange,
+                period: $command->period,
             ),
         );
     }

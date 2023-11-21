@@ -8,7 +8,7 @@ class TimeSlot
 {
     public function __construct(
         private string $uuid,
-        private DailyRange $dailyRange,
+        private Period $period,
         private \DateTimeInterface $startTime,
         private \DateTimeInterface $endTime,
     ) {
@@ -19,9 +19,9 @@ class TimeSlot
         return $this->uuid;
     }
 
-    public function getDailyRange(): DailyRange
+    public function getPeriod(): Period
     {
-        return $this->dailyRange;
+        return $this->period;
     }
 
     public function getStartTime(): ?\DateTimeInterface

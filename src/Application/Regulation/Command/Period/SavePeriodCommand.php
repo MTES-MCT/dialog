@@ -18,6 +18,7 @@ final class SavePeriodCommand implements CommandInterface
     public ?string $recurrenceType;
     public ?Measure $measure;
     public ?SaveDailyRangeCommand $dailyRange = null;
+    public ?array $timeSlots;
 
     public function __construct(
         public readonly ?Period $period = null,
@@ -32,6 +33,12 @@ final class SavePeriodCommand implements CommandInterface
 
         if ($period?->getDailyRange()) {
             $this->dailyRange = new SaveDailyRangeCommand($period->getDailyRange());
+        }
+
+        if ($period?->getTimeSlots()) {
+            foreach ($period->getTimeSlots() as $timeSlot) {
+                $this->timeSlots[] = new SaveTimeSlotCommand($timeSlot);
+            }
         }
     }
 

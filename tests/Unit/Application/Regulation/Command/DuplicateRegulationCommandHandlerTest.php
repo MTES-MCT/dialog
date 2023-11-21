@@ -58,11 +58,11 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $timeSlot = $this->createMock(TimeSlot::class);
         $timeSlot
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getStartTime')
             ->willReturn($timeSlotStartTime);
         $timeSlot
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getEndTime')
             ->willReturn($timeSlotEndTime);
 
@@ -77,10 +77,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getApplicableDays')
             ->willReturn([ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value]);
-        $dailyRange
-            ->expects(self::exactly(2))
-            ->method('getTimeSlots')
-            ->willReturn([$timeSlot]);
 
         $period = $this->createMock(Period::class);
         $period
@@ -99,6 +95,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDailyRange')
             ->willReturn($dailyRange);
+        $period
+            ->expects(self::exactly(2))
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot]);
 
         $measure1 = $this->createMock(Measure::class);
         $measure1
@@ -244,9 +244,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $dailyRangeCommand = new SaveDailyRangeCommand();
         $dailyRangeCommand->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::SUNDAY->value];
-        $dailyRangeCommand->timeSlots = [
-            $timeSlotCommand,
-        ];
 
         $periodCommand1 = new SavePeriodCommand();
         $periodCommand1->startTime = $startTime;
@@ -255,6 +252,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $periodCommand1->endDate = $endTime;
         $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $periodCommand1->dailyRange = $dailyRangeCommand;
+        $periodCommand1->timeSlots = [
+            $timeSlotCommand,
+        ];
 
         $measureCommand1 = new SaveMeasureCommand();
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;

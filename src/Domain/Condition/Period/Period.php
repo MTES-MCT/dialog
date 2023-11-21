@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Domain\Condition\Period;
 
 use App\Domain\Regulation\Measure;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class Period
 {
-    // Deprecated
-    private $startTime;
-    private $endTime;
-    private $applicableDays;
+    private Collection $timeSlots;
 
     public function __construct(
         private string $uuid,
@@ -21,6 +20,7 @@ class Period
         private ?string $recurrenceType,
         private ?DailyRange $dailyRange = null,
     ) {
+        $this->timeSlots = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -53,9 +53,32 @@ class Period
         return $this->dailyRange;
     }
 
+    public function getTimeSlots(): iterable
+    {
+        return $this->timeSlots;
+    }
+
     public function setDailyRange(?DailyRange $dailyRange): void
     {
         $this->dailyRange = $dailyRange;
+    }
+
+    public function addTimeSlot(TimeSlot $timeSlot): void
+    {
+        if ($this->timeSlots->contains($timeSlot)) {
+            return;
+        }
+
+        $this->timeSlots[] = $timeSlot;
+    }
+
+    public function removeTimeSlot(TimeSlot $timeSlot): void
+    {
+        if (!$this->timeSlots->contains($timeSlot)) {
+            return;
+        }
+
+        $this->timeSlots->removeElement($timeSlot);
     }
 
     public function update(
@@ -66,36 +89,5 @@ class Period
         $this->startDateTime = $startDateTime;
         $this->endDateTime = $endDateTime;
         $this->recurrenceType = $recurrenceType;
-    }
-
-    // Deprecated
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    public function getEndTime()
-    {
-        return $this->endTime;
-    }
-
-    public function getApplicableDays()
-    {
-        return $this->applicableDays;
-    }
-
-    public function setStartTime($startTime)
-    {
-        $this->startTime = $startTime;
-    }
-
-    public function setEndTime($endTime)
-    {
-        $this->endTime = $endTime;
-    }
-
-    public function setApplicableDays($applicableDays)
-    {
-        $this->applicableDays = $applicableDays;
     }
 }

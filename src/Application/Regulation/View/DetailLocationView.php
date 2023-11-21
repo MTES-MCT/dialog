@@ -27,18 +27,14 @@ class DetailLocationView
 
             foreach ($measure->getPeriods() as $period) {
                 $dailyRange = $period->getDailyRange();
-                $dailyRangeView = null;
+                $dailyRangeView = $dailyRange ? new DailyRangeView($dailyRange->getDaysRanges()) : null;
+                $timeSlotsViews = [];
 
-                if ($dailyRange) {
-                    $timeSlotsViews = [];
-
-                    foreach ($dailyRange->getTimeSlots() as $timeSlot) {
-                        $timeSlotsViews[] = new TimeSlotView(
-                            $timeSlot->getStartTime(),
-                            $timeSlot->getEndTime(),
-                        );
-                    }
-                    $dailyRangeView = new DailyRangeView($dailyRange->getDaysRanges(), $timeSlotsViews);
+                foreach ($period->getTimeSlots() as $timeSlot) {
+                    $timeSlotsViews[] = new TimeSlotView(
+                        $timeSlot->getStartTime(),
+                        $timeSlot->getEndTime(),
+                    );
                 }
 
                 $periods[] = new PeriodView(
@@ -46,6 +42,7 @@ class DetailLocationView
                     $period->getStartDateTime(),
                     $period->getEndDateTime(),
                     $dailyRangeView,
+                    $timeSlotsViews,
                 );
             }
 

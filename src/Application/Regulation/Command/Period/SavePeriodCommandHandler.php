@@ -39,6 +39,26 @@ final class SavePeriodCommandHandler
                 $command->period->setDailyRange(null);
             }
 
+            $timeSlotsStillPresentUuids = [];
+
+            // TimeSlots provided with the command get created or updated...
+            foreach ($command->timeSlots as $timeSlotCommand) {
+                if ($timeSlotCommand->timeSlot) {
+                    $timeSlotsStillPresentUuids[] = $timeSlotCommand->timeSlot->getUuid();
+                }
+
+                $timeSlotCommand->period = $command->period;
+                $this->commandBus->handle($timeSlotCommand);
+            }
+
+            // TimeSlots that were not present in the command get deleted.
+            foreach ($command->period->getTimeSlots() as $timeSlot) {
+                if (!\in_array($timeSlot->getUuid(), $timeSlotsStillPresentUuids)) {
+                    $this->commandBus->handle(new DeleteTimeSlotCommand($timeSlot));
+                    $command->period->removeTimeSlot($timeSlot);
+                }
+            }
+
             $command->period->update(
                 startDateTime: $command->startDate,
                 endDateTime: $command->endDate,
@@ -57,6 +77,12 @@ final class SavePeriodCommandHandler
                 recurrenceType: $command->recurrenceType,
             ),
         );
+
+        foreach ($command->timeSlots as $timeSlotCommand) {
+            $timeSlotCommand->period = $period;
+            $timeSlot = $this->commandBus->handle($timeSlotCommand);
+            $period->addTimeSlot($timeSlot);
+        }
 
         if ($command->dailyRange) {
             $command->dailyRange->period = $period;
