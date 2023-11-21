@@ -9,10 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 final class GeometryFormatterTest extends TestCase
 {
-    public function testFormatPoint(): void
+    public function testFormatLine(): void
     {
         $formatter = new GeometryFormatter();
-        $point = $formatter->formatPoint(43.6, -1.9);
-        $this->assertSame('POINT(-1.900000 43.600000)', $point);
+        $result = $formatter->formatLine(-1.9, 43.6, 0.4, 42.3);
+        $this->assertSame('LINESTRING(-1.900000 43.600000, 0.400000 42.300000)', $result);
     }
 }
