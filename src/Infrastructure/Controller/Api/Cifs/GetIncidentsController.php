@@ -18,9 +18,9 @@ final class GetIncidentsController
     }
 
     #[Route(
-        '/api/cifs/incidents.{_format}',
+        '/api/regulations/cifs.{_format}',
         methods: 'GET',
-        name: 'api_cifs_incidents',
+        name: 'api_regulations_cifs',
         requirements: ['_format' => 'xml'],
     )]
     public function __invoke(): Response
@@ -28,7 +28,7 @@ final class GetIncidentsController
         $incidents = $this->queryBus->handle(new GetIncidentsQuery());
 
         return new Response(
-            $this->twig->render('api/cifs/incidents.xml.twig', [
+            $this->twig->render('api/regulations/cifs.xml.twig', [
                 'incidents' => $incidents,
             ]),
         );

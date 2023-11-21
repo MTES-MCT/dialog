@@ -11,7 +11,7 @@ final class GetIncidentsControllerTest extends AbstractWebTestCase
     public function testGet(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/api/cifs/incidents.xml');
+        $client->request('GET', '/api/regulations/cifs.xml');
         $response = $client->getResponse();
 
         $this->assertResponseStatusCodeSame(200);

@@ -53,7 +53,10 @@ final class GetIncidentsQueryHandler
                         $schedule[$day] = [];
                     }
 
-                    $schedule[$day][] = ['startTime' => $row['startTime'] ?? '00:00', 'endTime' => $row['endTime'] ?? '23:59'];
+                    $schedule[$day][] = [
+                        'startTime' => $row['startTime'] ?? '00:00',
+                        'endTime' => $row['endTime'] ?? '23:59',
+                    ];
                 }
             }
         }
@@ -75,7 +78,7 @@ final class GetIncidentsQueryHandler
         };
 
         // Adhere to XML schedule key order
-        $dayOrder = ['everyday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
         uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
 
         // Sort time spans by start time

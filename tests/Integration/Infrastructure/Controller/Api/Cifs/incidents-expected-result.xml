@@ -13,7 +13,7 @@
         <source>
             <reference>TODO</reference>
             <name>DiaLog</name>
-            <url>http://localhost/api/cifs/incidents.xml</url>
+            <url>http://localhost/api/regulations/cifs.xml</url>
         </source>
         <schedule>
             <tuesday>00:00-23:59</tuesday>
@@ -32,7 +32,7 @@
         <source>
             <reference>TODO</reference>
             <name>DiaLog</name>
-            <url>http://localhost/api/cifs/incidents.xml</url>
+            <url>http://localhost/api/regulations/cifs.xml</url>
         </source>
     </incident>
     <incident id="06548f88-56a9-70e2-8000-a06baed6a93d">
@@ -47,7 +47,7 @@
         <source>
             <reference>TODO</reference>
             <name>DiaLog</name>
-            <url>http://localhost/api/cifs/incidents.xml</url>
+            <url>http://localhost/api/regulations/cifs.xml</url>
         </source>
         <schedule>
             <everyday>18:00-22:00</everyday>
@@ -67,7 +67,7 @@
         <source>
             <reference>TODO</reference>
             <name>DiaLog</name>
-            <url>http://localhost/api/cifs/incidents.xml</url>
+            <url>http://localhost/api/regulations/cifs.xml</url>
         </source>
         <schedule>
             <thursday>00:00-23:59</thursday>
