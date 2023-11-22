@@ -8,6 +8,5 @@
   <one-to-one field="period" target-entity="App\Domain\Condition\Period\Period" inversed-by="dailyRange">
     <join-column name="period_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
   </one-to-one>
-  <one-to-many field="timeSlots" target-entity="App\Domain\Condition\Period\TimeSlot" mapped-by="dailyRange"/>
   </entity>
 </doctrine-mapping>
