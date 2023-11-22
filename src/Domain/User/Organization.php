@@ -11,6 +11,7 @@ class Organization
 {
     private Collection $users;
     private string $name;
+    private ?string $siret;
 
     public function __construct(
         private string $uuid,
@@ -31,6 +32,18 @@ class Organization
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSiret(): ?string
+    {
+        return $this->siret;
+    }
+
+    public function setSiret(string $siret): self
+    {
+        $this->siret = $siret;
 
         return $this;
     }

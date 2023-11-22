@@ -29,6 +29,7 @@ final class OrganizationCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name')->setLabel('Nom de l\'organisation'),
+            TextField::new('siret')->setLabel('Siret'),
         ];
     }
 

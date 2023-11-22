@@ -5,8 +5,9 @@
     table="organization">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" column="name" nullable="false"/>
+    <field name="siret" type="string" length="14" nullable="true"/>
     <unique-constraints>
-        <unique-constraint columns="name" name="organization_name" />
+        <unique-constraint columns="siret" name="organization_siret" />
     </unique-constraints>
     <many-to-many field="users" inversed-by="organizations" target-entity="App\Domain\User\User">
         <join-table name="organizations_users">
