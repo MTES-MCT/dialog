@@ -1,7 +1,7 @@
 ---
 title: L'article 122 de la loi "Climat et Résilience", interview de Mathieu Fernandez
-description: L’article 122 de la Loi Climat et Résilience créé une série d’obligations nouvelles pour les “services numériques d’assistance au déplacement (les solutions d’aide à la navigation routière comme TomTom, Here, Waze…) dans le but de les faire mieux contribuer à la réduction de l’empreinte carbone des déplacements de voyageurs et de marchandises.
-date: "2023-06-27"
+description: L’article 122 de la Loi Climat et Résilience a créé une série d’obligations nouvelles pour les “services numériques d’assistance au déplacement (les solutions d’aide à la navigation routière comme TomTom, Here, Waze…) dans le but de les faire mieux contribuer à la réduction de l’empreinte carbone des déplacements de voyageurs et de marchandises.
+date: "2023-11-30"
 callout:
     title: Devenez utilisateur DiaLog
     description: "Vous travaillez pour une collectivité et souhaitez expérimenter DiaLog ? Vous souhaitez pouvoir utiliser les données DiaLog pour vos besoins opérationnels ou dans un service numérique tiers ? Envoyez-nous un mail et nous vous recontacterons au plus vite."

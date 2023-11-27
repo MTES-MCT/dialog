@@ -107,10 +107,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDaysRanges')
             ->willReturn($daysRange1);
-        $dailyRange1
-            ->expects(self::once())
-            ->method('getTimeSlots')
-            ->willReturn([$timeSlot1]);
 
         $dailyRange2 = $this->createMock(DailyRange::class);
         $dailyRange2
@@ -119,6 +115,10 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->willReturn($daysRange2);
 
         $period1 = $this->createMock(Period::class);
+        $period1
+            ->expects(self::once())
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot1]);
         $period1
             ->expects(self::once())
             ->method('getDailyRange')
@@ -272,8 +272,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                             new MeasureView(
                                 'noEntry',
                                 [
-                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange1, [new TimeSlotView($startTime, $endTime)])),
-                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange2, [])),
+                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange1), [new TimeSlotView($startTime, $endTime)]),
+                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange2), []),
                                 ],
                                 new VehicleSetView(
                                     [

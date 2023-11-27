@@ -7,17 +7,12 @@ namespace App\Tests\Unit\Domain\Condition\Period;
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
-use App\Domain\Condition\Period\TimeSlot;
-use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
 final class DailyRangeTest extends TestCase
 {
     public function testGetters(): void
     {
-        $timeSlot1 = $this->createMock(TimeSlot::class);
-        $timeSlot2 = $this->createMock(TimeSlot::class);
-        $timeSlot3 = $this->createMock(TimeSlot::class);
         $period = $this->createMock(Period::class);
         $days = [
             ApplicableDayEnum::MONDAY->value,
@@ -45,17 +40,6 @@ final class DailyRangeTest extends TestCase
         $this->assertSame($days, $dailyRange->getApplicableDays());
         $this->assertSame($daysRange, $dailyRange->getDaysRanges());
         $this->assertSame($period, $dailyRange->getPediod());
-        $this->assertEmpty($dailyRange->getTimeSlots());
-
-        $dailyRange->addTimeSlot($timeSlot1);
-        $dailyRange->addTimeSlot($timeSlot1); // Test dupliucate
-        $dailyRange->addTimeSlot($timeSlot2);
-
-        $this->assertEquals($dailyRange->getTimeSlots(), new ArrayCollection([$timeSlot1, $timeSlot2]));
-
-        $dailyRange->removeTimeSlot($timeSlot1);
-        $dailyRange->removeTimeSlot($timeSlot3); // Timeslot that does not belong to the dailyRange
-        $this->assertEquals($dailyRange->getTimeSlots(), new ArrayCollection([1 => $timeSlot2]));
 
         $updatedDaysRange = [
             [

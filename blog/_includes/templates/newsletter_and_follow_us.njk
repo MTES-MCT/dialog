@@ -1,19 +1,6 @@
 <div class="fr-follow">
   <div class="fr-container">
     <div class="fr-grid-row fr-grid-row--top">
-      <div class="fr-col-12 fr-col-md-8">
-        <div class="fr-follow__newsletter">
-          <div>
-            <p class="fr-h5">{{ metadata.newsletter.title or "subscribe_newsletter" | i18n }}</p>
-            <p class="fr-text--sm">{{ metadata.newsletter.description }}</p>
-          </div>
-          <div>
-            <a class="fr-btn" title="{{ "subscribe" | i18n }}" href="{{ metadata.newsletter.url }}" target="_blank">
-              {{ "subscribe" | i18n }}
-            </a>
-          </div>
-        </div>
-      </div>
       <div class="fr-col-12 fr-col-md-4">
         <div class="fr-follow__social">
           <p class="fr-h5">{{ "follow_us_description" | i18n | safe }} </p>
@@ -60,8 +47,6 @@
                      href="{{ metadata.peertube_url }}" target="_blank">
                   peertube </a></li>
             {% endif %}
-          </ul>
-          <ul class="fr-links-group">
             {% if metadata.github_url %}
               <li><a class="fr-link--github fr-link"
                      title="GitHub - {{ "new_window" | i18n }}"
@@ -74,7 +59,7 @@
                      href="{{ metadata.sourcehut_url }}" target="_blank">
                   sourcehut </a></li>
             {% endif %}
-          </ul>
+            </ul>
         </div>
       </div>
     </div>
