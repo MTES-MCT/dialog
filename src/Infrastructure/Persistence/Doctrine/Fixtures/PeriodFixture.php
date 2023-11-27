@@ -80,7 +80,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         );
         $timeSlotCifs1 = new TimeSlot(
             uuid: '0654b639-6bea-7657-8000-1b27c6339db4',
-            dailyRange: $dailyRangeCifs1,
+            period: $periodCifs1,
             startTime: \DateTimeImmutable::createFromFormat('H:i', '18:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
         );
@@ -99,13 +99,13 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         );
         $timeSlot1DailyRangeCifs2 = new TimeSlot(
             uuid: '0654b63a-49fd-76fd-8000-6befe7bc91bb',
-            dailyRange: $dailyRangeCifs2,
+            period: $periodCifs2,
             startTime: \DateTimeImmutable::createFromFormat('H:i', '12:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '14:00'),
         );
         $timeSlot2DailyRangeCifs2 = new TimeSlot(
             uuid: '0654bb14-049c-7516-8000-916303927b43',
-            dailyRange: $dailyRangeCifs2,
+            period: $periodCifs2,
             startTime: \DateTimeImmutable::createFromFormat('H:i', '19:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '21:00'),
         );
@@ -124,7 +124,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         );
         $timeSlotCifs3 = new TimeSlot(
             uuid: '0654b63b-0890-7177-8000-8ef011ad20ba',
-            dailyRange: $dailyRangeCifs3,
+            period: $periodCifs3,
             startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
             endTime: \DateTimeImmutable::createFromFormat('H:i', '10:00'),
         );

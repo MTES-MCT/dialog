@@ -153,7 +153,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
-            ->leftJoin('d.timeSlots', 't')
+            ->leftJoin('p.timeSlots', 't')
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
