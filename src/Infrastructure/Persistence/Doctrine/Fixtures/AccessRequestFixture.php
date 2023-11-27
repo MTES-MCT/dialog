@@ -17,9 +17,9 @@ final class AccessRequestFixture extends Fixture
             'Mathieu Marchois',
             'mathieu@fairness.coop',
             'Fairness',
-            '82050375300015',
             'password1',
             true,
+            '82050375300015',
             'Cette application m\'interesse',
         );
 

@@ -1571,7 +1571,7 @@
             </trans-unit>
             <trans-unit id="accessRequest.fullName">
                 <source>accessRequest.fullName</source>
-                <target>Nom / Prénom</target>
+                <target>Nom complet</target>
             </trans-unit>
             <trans-unit id="accessRequest.email">
                 <source>accessRequest.email</source>

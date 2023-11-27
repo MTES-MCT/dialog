@@ -33,4 +33,13 @@ final class AccessRequestCrudControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(403);
     }
+
+    public function testConvertWithAnUnknownOrganization(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client->request('GET', '/admin?crudAction=convertAccessRequest&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5CAccessRequestCrudController&entityId=970f851a-566c-4d7c-89bb-f114efdc5f5e');
+        $crawler = $client->followRedirect();
+
+        $this->assertSame($crawler->filter('div.alert-success')->text(), 'Le compte utilisateur a bien été créé.');
+    }
 }

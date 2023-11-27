@@ -23,11 +23,27 @@ final class AccessRequestRepository extends ServiceEntityRepository implements A
         return $accessRequest;
     }
 
+    public function remove(AccessRequest $accessRequest): void
+    {
+        $this->getEntityManager()->remove($accessRequest);
+    }
+
     public function findOneByEmail(string $email): ?AccessRequest
     {
         return $this->createQueryBuilder('a')
             ->where('a.email = :email')
             ->setParameter('email', trim(strtolower($email)))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findOneByUuid(string $uuid): ?AccessRequest
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

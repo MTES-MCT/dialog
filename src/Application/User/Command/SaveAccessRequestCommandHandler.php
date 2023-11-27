@@ -15,7 +15,7 @@ final class SaveAccessRequestCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
-        private AccessRequestRepositoryInterface $feedbackRepository,
+        private AccessRequestRepositoryInterface $accessRequestRepository,
         private IsAccessAlreadyRequested $isAccessAlreadyRequested,
         private PasswordHasherInterface $passwordHasher,
     ) {
@@ -29,15 +29,15 @@ final class SaveAccessRequestCommandHandler
             throw new AccessAlreadyRequestedException();
         }
 
-        $this->feedbackRepository->add(
+        $this->accessRequestRepository->add(
             new AccessRequest(
                 uuid: $this->idFactory->make(),
                 fullName: $command->fullName,
                 email: $email,
                 password: $this->passwordHasher->hash($command->password),
                 organization: $command->organization,
-                siret: $command->siret,
                 comment: $command->comment,
+                siret: $command->siret,
                 consentToBeContacted: $command->consentToBeContacted,
             ),
         );

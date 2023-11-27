@@ -8,7 +8,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
 {
     public function testAdd(): void
     {
-        $client = $this->login();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/access-request');
 
         $this->assertResponseStatusCodeSame(200);
@@ -34,9 +34,31 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_access_request');
     }
 
+    public function testAddWithoutSiret(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/access-request');
+
+        $saveButton = $crawler->selectButton('Envoyer');
+        $form = $saveButton->form();
+        $form['access_request_form[fullName]'] = 'Hélène Maitre-Marchois';
+        $form['access_request_form[organization]'] = 'Fairness';
+        $form['access_request_form[password]'] = 'password12345';
+        $form['access_request_form[email]'] = 'helene@fairness.coop';
+        $form['access_request_form[comment]'] = 'Ceci est un test';
+        $form['access_request_form[consentToBeContacted]'] = '1';
+        $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+
+        $crawler = $client->followRedirect();
+        $this->assertSame('Votre demande de création de compte a bien été prise en compte, nous reviendrons vers vous dans les plus bref délais.', $crawler->filter('div.fr-alert--success')->text());
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_access_request');
+    }
+
     public function testAccessAlreadyRequested(): void
     {
-        $client = $this->login();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/access-request');
 
         $saveButton = $crawler->selectButton('Envoyer');
@@ -59,7 +81,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
 
     public function testEmptyData(): void
     {
-        $client = $this->login();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/access-request');
 
         $saveButton = $crawler->selectButton('Envoyer');

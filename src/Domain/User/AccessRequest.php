@@ -11,9 +11,9 @@ class AccessRequest
         private string $fullName,
         private string $email,
         private string $organization,
-        private string $siret,
         private string $password,
         private bool $consentToBeContacted,
+        private ?string $siret = null,
         private ?string $comment = null,
     ) {
     }
@@ -28,7 +28,7 @@ class AccessRequest
         return $this->fullName;
     }
 
-    public function getSiret(): string
+    public function getSiret(): ?string
     {
         return $this->siret;
     }

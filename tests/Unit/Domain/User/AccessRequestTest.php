@@ -16,9 +16,9 @@ final class AccessRequestTest extends TestCase
             'Mathieu Marchois',
             'mathieu@fairness.coop',
             'Fairness',
-            '82050375300015',
             'password',
             true,
+            '82050375300015',
             'Je souhaite créer un compte',
         );
 
@@ -39,9 +39,9 @@ final class AccessRequestTest extends TestCase
             'Mathieu Marchois',
             'mathieu@fairness.coop',
             'Fairness',
-            '82050375300015',
             'password',
             true,
+            '82050375300015',
             'Je souhaite créer un compte',
         );
 

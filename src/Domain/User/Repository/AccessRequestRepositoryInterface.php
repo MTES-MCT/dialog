@@ -11,4 +11,8 @@ interface AccessRequestRepositoryInterface
     public function add(AccessRequest $accessrequest): AccessRequest;
 
     public function findOneByEmail(string $email): ?AccessRequest;
+
+    public function findOneByUuid(string $uuid): ?AccessRequest;
+
+    public function remove(AccessRequest $accessrequest): void;
 }
