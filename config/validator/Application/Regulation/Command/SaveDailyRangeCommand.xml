@@ -6,8 +6,5 @@
         <property name="applicableDays">
             <constraint name="NotBlank"/>
         </property>
-        <property name="timeSlots">
-            <constraint name="Valid"/>
-       </property>
     </class>
 </constraint-mapping>

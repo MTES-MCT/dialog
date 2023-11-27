@@ -11,6 +11,7 @@ readonly class PeriodView
         public \DateTimeInterface $startDateTime,
         public ?\DateTimeInterface $endDateTime,
         public ?DailyRangeView $dailyRange,
+        public ?array $timeSlots,
     ) {
     }
 }

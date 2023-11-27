@@ -7,12 +7,15 @@ namespace App\Tests\Unit\Application\Regulation\Command\Period;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\Period\DeleteTimeSlotCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommandHandler;
+use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\DailyRangeRepositoryInterface;
 use App\Domain\Regulation\Repository\PeriodRepositoryInterface;
@@ -59,6 +62,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
 
         $createdPeriod = $this->createMock(Period::class);
         $createdDailyRange = $this->createMock(DailyRange::class);
+        $createdTimeSlot = $this->createMock(TimeSlot::class);
         $measure = $this->createMock(Measure::class);
 
         $this->dailyRangeRepository
@@ -86,14 +90,13 @@ final class SavePeriodCommandHandlerTest extends TestCase
             ->method('setDailyRange')
             ->with($createdDailyRange);
 
+        $createdPeriod
+            ->expects(self::once())
+            ->method('addTimeSlot')
+            ->with($createdTimeSlot);
+
         $dailyRangeCommand = new SaveDailyRangeCommand();
         $dailyRangeCommand->period = $createdPeriod;
-
-        $this->commandBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with($dailyRangeCommand)
-            ->willReturn($createdDailyRange);
 
         $handler = new SavePeriodCommandHandler(
             $this->idFactory,
@@ -103,6 +106,15 @@ final class SavePeriodCommandHandlerTest extends TestCase
             $this->commandBus,
         );
 
+        $timeSlotCommand = new SaveTimeSlotCommand();
+        $timeSlotCommand->period = $createdPeriod;
+
+        $this->commandBus
+            ->expects(self::exactly(2))
+            ->method('handle')
+            ->withConsecutive([$this->equalTo($timeSlotCommand)], [$this->equalTo($dailyRangeCommand)])
+            ->willReturnOnConsecutiveCalls($createdTimeSlot, $createdDailyRange);
+
         $command = new SavePeriodCommand();
         $command->measure = $measure;
         $command->startDate = $startDateTime;
@@ -111,6 +123,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->endTime = $endTime;
         $command->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $command->dailyRange = $dailyRangeCommand;
+        $command->timeSlots = [$timeSlotCommand];
         $result = $handler($command);
 
         $this->assertSame($createdPeriod, $result);
@@ -144,19 +157,50 @@ final class SavePeriodCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('delete');
 
+        $timeSlot1 = $this->createMock(TimeSlot::class);
+        $timeSlot1
+            ->expects(self::exactly(2))
+            ->method('getUuid')
+            ->willReturn('e7ceb504-e6d2-43b7-9e1f-43f4baa17907');
+
+        $timeSlot2 = $this->createMock(TimeSlot::class);
+        $timeSlot2
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('28accfd6-d896-4ed9-96a3-1754f288f511');
+
         $period = $this->createMock(Period::class);
         $period
             ->expects(self::once())
             ->method('update')
             ->with($mergedStartDateTime, $mergedEndDateTime, PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value);
 
+        $period
+            ->expects(self::exactly(3))
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot1, $timeSlot2]);
+        $period
+            ->expects(self::once())
+            ->method('removeTimeSlot')
+            ->with($timeSlot2);
+
+        $timeSlotCommand1 = new SaveTimeSlotCommand($timeSlot1);
+        $timeSlotCommand1->period = $period;
+
+        $timeSlotCommand2 = new SaveTimeSlotCommand($timeSlot2);
+        $timeSlotCommand2->period = $period;
+
         $dailyRangeCommand = new SaveDailyRangeCommand();
         $dailyRangeCommand->period = $period;
 
         $this->commandBus
-            ->expects(self::once())
+            ->expects(self::exactly(3))
             ->method('handle')
-            ->with($dailyRangeCommand);
+            ->withConsecutive(
+                [$this->equalTo($dailyRangeCommand)],
+                [$this->equalTo($timeSlotCommand1)],
+                [$this->equalTo(new DeleteTimeSlotCommand($timeSlot2))],
+            );
 
         $handler = new SavePeriodCommandHandler(
             $this->idFactory,
@@ -173,6 +217,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->endTime = $endTime;
         $command->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $command->dailyRange = $dailyRangeCommand;
+        $command->timeSlots = [$timeSlotCommand1];
 
         $result = $handler($command);
 
@@ -241,6 +286,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->startTime = $startTime;
         $command->endTime = $endTime;
         $command->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $command->timeSlots = [];
 
         $result = $handler($command);
 
