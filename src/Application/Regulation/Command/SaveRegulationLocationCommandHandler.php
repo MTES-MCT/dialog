@@ -7,8 +7,10 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
+use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeometryFormatter;
 use App\Domain\Regulation\Location;
+use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
 final class SaveRegulationLocationCommandHandler
@@ -94,18 +96,30 @@ final class SaveRegulationLocationCommandHandler
         $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
         $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
 
-        return $this->geometryFormatter->formatLine(
-            $fromCoords->longitude,
-            $fromCoords->latitude,
-            $toCoords->longitude,
-            $toCoords->latitude,
-        );
+        return $this->geometryFormatter->formatLine([$fromCoords, $toCoords]);
+    }
+
+    private function computeRoadLine(string $roadName, string $inseeCode): string
+    {
+        // Appeler l'API IGN
+
+        $points = [Coordinates::fromLonLat(2.5634, 43.141), Coordinates::fromLonLat(2.14534, 43.265)];
+
+        return $this->geometryFormatter->formatLine($points);
     }
 
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
     {
         if ($command->fromHouseNumber && $command->toHouseNumber) {
             return $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber);
+        }
+
+        $address = LocationAddress::fromString($command->address);
+
+        if (!$command->fromHouseNumber && !$command->toHouseNumber && $address->getRoadName()) {
+            $inseeCode = '78396'; // obtenir à partir de postCode et city
+
+            return $this->computeRoadLine($address->getRoadName(), $inseeCode);
         }
 
         return null;

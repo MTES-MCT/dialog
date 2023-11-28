@@ -6,8 +6,17 @@ namespace App\Domain\Geography;
 
 class GeometryFormatter
 {
-    public function formatLine(float $fromLongitude, float $fromLatitude, float $toLongitude, float $toLatitude): string
+    /**
+     * @param Coordinates[] $points
+     */
+    public function formatLine(array $points): string
     {
-        return sprintf('LINESTRING(%.6f %.6f, %.6f %.6f)', $fromLongitude, $fromLatitude, $toLongitude, $toLatitude);
+        $coords = [];
+
+        foreach ($points as $point) {
+            $coords[] = sprintf('%.6f %.6f', $point->longitude, $point->latitude);
+        }
+
+        return sprintf('LINESTRING(%s)', implode(',', $coords));
     }
 }
