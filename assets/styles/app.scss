@@ -515,6 +515,6 @@ ul.app-timeslot-list > li:not(:last-child) .app-timeslot-list-add {
     display: none;
 }
 
-ul.app-timeslot-list:not(:empty) + button.app-timeslot-define {
+ul.app-timeslot-list:not([data-empty]) + button.app-timeslot-define {
     display: none;
 }
