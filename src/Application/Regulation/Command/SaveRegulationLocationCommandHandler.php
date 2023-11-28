@@ -7,7 +7,7 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
-use App\Domain\Geography\Coordinates;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\GeometryFormatter;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationAddress;
@@ -20,6 +20,7 @@ final class SaveRegulationLocationCommandHandler
         private CommandBusInterface $commandBus,
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
+        private RoadGeocoderInterface $roadGeocoder,
         private GeometryFormatter $geometryFormatter,
     ) {
     }
@@ -96,16 +97,12 @@ final class SaveRegulationLocationCommandHandler
         $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
         $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
 
-        return $this->geometryFormatter->formatLine([$fromCoords, $toCoords]);
-    }
-
-    private function computeRoadLine(string $roadName, string $inseeCode): string
-    {
-        // Appeler l'API IGN
-
-        $points = [Coordinates::fromLonLat(2.5634, 43.141), Coordinates::fromLonLat(2.14534, 43.265)];
-
-        return $this->geometryFormatter->formatLine($points);
+        return $this->geometryFormatter->formatLine(
+            $fromCoords->longitude,
+            $fromCoords->latitude,
+            $toCoords->longitude,
+            $toCoords->latitude,
+        );
     }
 
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
@@ -117,9 +114,9 @@ final class SaveRegulationLocationCommandHandler
         $address = LocationAddress::fromString($command->address);
 
         if (!$command->fromHouseNumber && !$command->toHouseNumber && $address->getRoadName()) {
-            $inseeCode = '78396'; // obtenir à partir de postCode et city
+            $inseeCode = '78396'; // TODO: obtenir à partir de postCode et city
 
-            return $this->computeRoadLine($address->getRoadName(), $inseeCode);
+            return $this->roadGeocoder->computeRoadLine($address->getRoadName(), $inseeCode);
         }
 
         return null;
