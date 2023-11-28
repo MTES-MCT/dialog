@@ -28,13 +28,7 @@ final class SaveRegulationLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            if (!empty($command->geometry)) {
-                $geometry = $command->geometry;
-            } elseif ($command->fromHouseNumber && $command->toHouseNumber) {
-                $geometry = $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber);
-            } else {
-                $geometry = null;
-            }
+            $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -58,7 +52,9 @@ final class SaveRegulationLocationCommandHandler
             return $location;
         }
 
-        $geometry = $this->computeGeometry($command);
+        $geometry = $this->shouldRecomputeGeometry($command)
+            ? $this->computeGeometry($command)
+            : $command->location->getGeometry();
 
         $measuresStillPresentUuids = [];
 
@@ -108,18 +104,17 @@ final class SaveRegulationLocationCommandHandler
 
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
     {
-        $geometryNeedsUpdating = $command->address !== $command->location->getAddress()
-            || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
-            || ($command->toHouseNumber !== $command->location->getToHouseNumber());
-
-        if ($geometryNeedsUpdating) {
-            $geometry = ($command->fromHouseNumber && $command->toHouseNumber)
-                ? $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber)
-                : null;
-        } else {
-            $geometry = $command->location->getGeometry();
+        if ($command->fromHouseNumber && $command->toHouseNumber) {
+            return $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber);
         }
 
-        return $geometry;
+        return null;
+    }
+
+    private function shouldRecomputeGeometry(SaveRegulationLocationCommand $command): bool
+    {
+        return $command->address !== $command->location->getAddress()
+            || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
+            || ($command->toHouseNumber !== $command->location->getToHouseNumber());
     }
 }
