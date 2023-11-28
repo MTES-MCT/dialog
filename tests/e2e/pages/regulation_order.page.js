@@ -248,6 +248,34 @@ export class RegulationOrderPage {
 
     /**
      * @param {Locator} location
+     * @param {{ measureIndex: number }} options
+     */
+    async manipulateTimeSlots(location, { measureIndex }) {
+        await this._beginEditLocation(location);
+
+        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
+        await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
+
+        const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
+        const timeSlots = period.getByTestId('timeslot-list').getByRole('listitem');
+        const addTimeSlotBtn = period.getByRole('button', { name: 'Définir des horaires' });
+
+        await expect(timeSlots).toHaveCount(0);
+        await expect(addTimeSlotBtn).toBeVisible();
+        
+        await addTimeSlotBtn.click();
+        await expect(timeSlots).toHaveCount(1);
+        await expect(addTimeSlotBtn).not.toBeVisible();
+
+        await timeSlots.nth(0).getByRole('button', {name: 'Supprimer'}).click();
+        await expect(timeSlots).toHaveCount(0);
+        await expect(addTimeSlotBtn).toBeVisible();
+
+        await this.cancelLocation(location);
+    }
+
+    /**
+     * @param {Locator} location
      */
     async _waitForReadMode(location) {
         await location.getByRole('button', { name: 'Modifier' }).waitFor();

@@ -129,3 +129,13 @@ test('Delete a period from a measure', async ({ regulationOrderPage }) => {
     await page.removePeriodFromMeasure(location, { measureIndex: 0, periodIndex: 0 });
     await expect(location).toContainText('Circulation interdite tous les jours');
 });
+
+test('Manipulate time slots', async ({ regulationOrderPage }) => {
+    /** @type {RegulationOrderPage} */
+    let page = regulationOrderPage;
+
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+    const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
+
+    await page.manipulateTimeSlots(location, { measureIndex: 0 });
+});
