@@ -85,8 +85,9 @@
                 >
                     <ul
                         class="app-timeslot-list fr-raw-list fr-mb-2w"
-                        data-testid="timeSlot-list"
+                        data-testid="timeslot-list"
                         data-form-collection-target="collectionContainer"
+                        {% if form.timeSlots|length == 0 %}data-empty{% endif %}
                         aria-label="{{ form.timeSlots.vars.label|trans }}"
                     >
                         {%- for item in form.timeSlots -%}
