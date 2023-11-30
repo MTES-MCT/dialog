@@ -35,9 +35,9 @@ final class SaveAccessRequestCommandHandler
                 fullName: $command->fullName,
                 email: $email,
                 password: $this->passwordHasher->hash($command->password),
-                organization: $command->organization,
+                organization: $command->organizationName,
                 comment: $command->comment,
-                siret: $command->siret,
+                siret: $command->organizationSiret,
                 consentToBeContacted: $command->consentToBeContacted,
             ),
         );

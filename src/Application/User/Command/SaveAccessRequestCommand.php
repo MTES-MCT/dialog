@@ -10,9 +10,9 @@ final class SaveAccessRequestCommand implements CommandInterface
 {
     public ?string $fullName;
     public ?string $email;
-    public ?string $organization;
+    public ?string $organizationName;
     public ?string $password;
     public ?string $comment = null;
-    public ?string $siret = null;
+    public ?string $organizationSiret = null;
     public ?bool $consentToBeContacted = false;
 }

@@ -24,12 +24,12 @@ final class LandingAuthoritiesControllerTest extends AbstractWebTestCase
             ['h3', 'Simplifiez vos échanges'],
             ['h2', 'Comment ça marche ?'],
             ['h3', 'Créer un compte DiaLog'],
-            ['a', 'Créer un compte', ['href' => 'mailto:dialog@beta.gouv.fr']],
+            ['a', 'Créer un compte', ['href' => '/access-request']],
             ['h3', 'Renseigner mes arrêtés'],
             ['h3', 'Diffuser mes données'],
             ['h2', 'Rejoignez les communes pilotes'],
             ['h3', "Participez à l'expérimentation"],
-            ['a', 'Créer un compte', ['href' => 'mailto:dialog@beta.gouv.fr']],
+            ['a', 'Créer un compte', ['href' => '/access-request']],
         ], $crawler);
     }
 }

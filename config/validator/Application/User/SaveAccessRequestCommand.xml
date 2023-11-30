@@ -22,13 +22,13 @@
                 <option name="min">10</option>
             </constraint>
         </property>
-        <property name="organization">
+        <property name="organizationName">
             <constraint name="NotBlank"/>
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>
         </property>
-        <property name="siret">
+        <property name="organizationSiret">
             <constraint name="Length">
                 <option name="max">14</option>
                 <option name="min">14</option>

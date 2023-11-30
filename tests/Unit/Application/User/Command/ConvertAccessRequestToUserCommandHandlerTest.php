@@ -36,7 +36,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
         $this->accessRequest = $this->createMock(AccessRequest::class);
     }
 
-    public function testConvertWithOrganizationThanksToSiret(): void
+    public function testConvertWithSiretLinkedToExistingOrganization(): void
     {
         $organization = $this->createMock(Organization::class);
 

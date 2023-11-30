@@ -18,11 +18,11 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Envoyer');
         $form = $saveButton->form();
-        $form['access_request_form[fullName]'] = 'Hélène Maitre-Marchois';
-        $form['access_request_form[organization]'] = 'Fairness';
-        $form['access_request_form[siret]'] = '82050375300015';
+        $form['access_request_form[fullName]'] = 'Lucie Dutest';
+        $form['access_request_form[organizationName]'] = 'Fairness';
+        $form['access_request_form[organizationSiret]'] = '52435841300143';
         $form['access_request_form[password]'] = 'password12345';
-        $form['access_request_form[email]'] = 'helene@fairness.coop';
+        $form['access_request_form[email]'] = 'lucie@example.com';
         $form['access_request_form[comment]'] = 'Ceci est un test';
         $form['access_request_form[consentToBeContacted]'] = '1';
         $client->submit($form);
@@ -42,7 +42,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Envoyer');
         $form = $saveButton->form();
         $form['access_request_form[fullName]'] = 'Hélène Maitre-Marchois';
-        $form['access_request_form[organization]'] = 'Fairness';
+        $form['access_request_form[organizationName]'] = 'Fairness';
         $form['access_request_form[password]'] = 'password12345';
         $form['access_request_form[email]'] = 'helene@fairness.coop';
         $form['access_request_form[comment]'] = 'Ceci est un test';
@@ -64,8 +64,8 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Envoyer');
         $form = $saveButton->form();
         $form['access_request_form[fullName]'] = 'Mathieu Marchois';
-        $form['access_request_form[organization]'] = 'Fairness';
-        $form['access_request_form[siret]'] = '82050375300015';
+        $form['access_request_form[organizationName]'] = 'Fairness';
+        $form['access_request_form[organizationSiret]'] = '82050375300015';
         $form['access_request_form[password]'] = 'password12345';
         $form['access_request_form[email]'] = 'mathieu@fairness.coop';
         $form['access_request_form[comment]'] = 'Ceci est un test';
@@ -91,7 +91,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#access_request_form_fullName_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#access_request_form_email_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#access_request_form_organization_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#access_request_form_organizationName_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#access_request_form_password_error')->text());
     }
 
@@ -104,14 +104,14 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $form['access_request_form[fullName]'] = str_repeat('a', 256);
         $form['access_request_form[email]'] = 'helene';
-        $form['access_request_form[organization]'] = str_repeat('a', 256);
-        $form['access_request_form[siret]'] = 'aaaa';
+        $form['access_request_form[organizationName]'] = str_repeat('a', 256);
+        $form['access_request_form[organizationSiret]'] = 'aaaa';
         $form['access_request_form[password]'] = 'aaaa';
 
         $crawler = $client->submit($form);
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 14 caractères.', $crawler->filter('#access_request_form_siret_error')->text());
+        $this->assertSame('Cette chaîne doit avoir exactement 14 caractères.', $crawler->filter('#access_request_form_organizationSiret_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#access_request_form_fullName_error')->text());
         $this->assertSame('Cette chaîne est trop courte. Elle doit avoir au minimum 10 caractères.', $crawler->filter('#access_request_form_password_error')->text());
         $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#access_request_form_email_error')->text());

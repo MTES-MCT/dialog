@@ -33,17 +33,17 @@ final class AccessRequestFormType extends AbstractType
                 ],
             )
             ->add(
-                'organization',
+                'organizationName',
                 TextType::class,
                 options: [
-                    'label' => 'accessRequest.organization',
+                    'label' => 'accessRequest.organizationName',
                 ],
             )
             ->add(
-                'siret',
+                'organizationSiret',
                 TextType::class,
                 options: [
-                    'label' => 'accessRequest.siret',
+                    'label' => 'accessRequest.organizationSiret',
                     'required' => false,
                 ],
             )

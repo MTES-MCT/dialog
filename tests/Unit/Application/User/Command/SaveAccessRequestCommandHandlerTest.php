@@ -68,9 +68,9 @@ final class SaveAccessRequestCommandHandlerTest extends TestCase
         $command->comment = 'Test comment';
         $command->consentToBeContacted = $consentContact;
         $command->fullName = 'Mathieu Marchois';
-        $command->email = '  mathiEu@fairness.cOop  ';
-        $command->organization = 'Fairness';
-        $command->siret = '82050375300015';
+        $command->email = '  mathiEu@fairness.cOop  '; // Will be normalized
+        $command->organizationName = 'Fairness';
+        $command->organizationSiret = '82050375300015';
         $command->password = 'password';
 
         $handler($command);
@@ -114,8 +114,8 @@ final class SaveAccessRequestCommandHandlerTest extends TestCase
         $command->consentToBeContacted = true;
         $command->fullName = 'Mathieu Marchois';
         $command->email = '  mathiEu@fairness.cOop  ';
-        $command->organization = 'Fairness';
-        $command->siret = '82050375300015';
+        $command->organizationName = 'Fairness';
+        $command->organizationSiret = '82050375300015';
         $command->password = 'password';
 
         $handler($command);

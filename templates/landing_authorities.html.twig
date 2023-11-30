@@ -70,7 +70,7 @@
                                 {{ 'landing.authorities.steps.register'|trans }}
                             </h3>
                             <p class="fr-text--sm fr-my-0">
-                                <a href="mailto:dialog@beta.gouv.fr" class="fr-link fr-icon-arrow-right-line fr-link--icon-right">
+                                <a href="{{ path('app_access_request') }}" class="fr-link fr-icon-arrow-right-line fr-link--icon-right">
                                     {{ 'landing.authorities.steps.register.cta'|trans }}
                                 </a>
                             </p>
@@ -109,7 +109,7 @@
                     {{ 'landing.authorities.pilots.join'|trans }}
                 </h3>
                 <p>{{ 'landing.authorities.pilots.join.description'|trans }}</p>
-                <a class="fr-btn" href="mailto:dialog@beta.gouv.fr">
+                <a class="fr-btn" href="{{ path('app_access_request') }}">
                     {{ 'landing.authorities.pilots.join.cta'|trans }}
                 </a>
             </div>
