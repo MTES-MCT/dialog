@@ -10,6 +10,8 @@ use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -37,22 +39,34 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
     {
         $location1 = new DatexLocationView(
             address: 'Avenue de Fonneuve 82000 Montauban',
-            gmlPosList: '1.362275 44.028996 1.35931 44.025665',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.362275, 44.028996),
+                Coordinates::fromLonLat(1.35931, 44.025665),
+            ]),
         );
 
         $location1bis = new DatexLocationView(
             address: "Rue de l'Hôtel de Ville 82000 Montauban",
-            gmlPosList: '1.352126 44.016833 1.353016 44.016402',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.352126, 44.016833),
+                Coordinates::fromLonLat(1.353016, 44.016402),
+            ]),
         );
 
         $location2 = new DatexLocationView(
             address: 'Route du Grand Brossais 44260 Savenay',
-            gmlPosList: '-1.935836 47.347024 -1.930973 47.347917',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $location3 = new DatexLocationView(
             address: '19 Rue Gabriel Péri, 78800 Houilles',
-            gmlPosList: '-1.935836 49.347054 -1.930973 47.347917',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 49.347054),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $startDate1 = new \DateTime('2022-12-07');
@@ -69,7 +83,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => $endDate1,
             'address' => $location1->address,
-            'gmlPosList' => $location1->gmlPosList,
+            'geometry' => $location1->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => [VehicleTypeEnum::CRITAIR->value],
@@ -87,7 +101,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => $endDate1,
             'address' => $location1bis->address,
-            'gmlPosList' => $location1bis->gmlPosList,
+            'geometry' => $location1bis->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => [],
@@ -105,7 +119,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate2,
             'endDate' => null,
             'address' => $location2->address,
-            'gmlPosList' => $location2->gmlPosList,
+            'geometry' => $location2->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
@@ -123,7 +137,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate3,
             'endDate' => $endDate3,
             'address' => $location3->address,
-            'gmlPosList' => $location3->gmlPosList,
+            'geometry' => $location3->geometry,
             'maxSpeed' => 50,
             'type' => MeasureTypeEnum::SPEED_LIMITATION->value,
             'restrictedVehicleTypes' => [VehicleTypeEnum::HAZARDOUS_MATERIALS->value],

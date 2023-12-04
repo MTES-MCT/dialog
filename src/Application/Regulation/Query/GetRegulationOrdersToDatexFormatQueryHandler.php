@@ -73,7 +73,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
             $location = new DatexLocationView(
                 address: $row['address'],
-                gmlPosList: $row['gmlPosList'],
+                geometry: $row['geometry'],
             );
 
             $trafficRegulations[] = new DatexTrafficRegulationView(

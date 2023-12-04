@@ -86,7 +86,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     public function findRegulationOrdersForDatexFormat(): array
     {
-        $rows = $this->createQueryBuilder('roc')
+        return $this->createQueryBuilder('roc')
             ->select(
                 'ro.uuid',
                 'o.name as organizationName',
@@ -94,7 +94,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.startDate',
                 'ro.endDate',
                 'loc.address',
-                'ST_AsGML(3, loc.geometry) as gmlGeometry',
+                'ST_AsGeoJSON(loc.geometry) as geometry',
                 'm.maxSpeed',
                 'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
@@ -117,34 +117,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getQuery()
             ->getResult()
         ;
-
-        foreach ($rows as $index => $row) {
-            $rows[$index]['gmlPosList'] = $this->extractDatexPosListFromGml($row['gmlGeometry']);
-        }
-
-        return $rows;
-    }
-
-    private function extractDatexPosListFromGml(string $gml): string
-    {
-        // See: https://postgis.net/docs/manual-3.4/ST_AsGML.html
-        //
-        // Example:
-        // <gml:Curve srsName="EPSG:2154">
-        //   <gml:segments>
-        //     <gml:LineStringSegment>
-        //       <gml:posList srsDimension="2">
-        //         <!-- WE WANT THIS ----------------->
-        //         50.65218 3.066784 50.652048 3.066595
-        //       </gml:posList>
-        //     </gml:LineStringSegment>
-        //   </gml:segments>
-        // </gml:Curve>
-        //
-        $xml = new \DOMDocument();
-        $xml->loadXML(sprintf('<root xmlns:gml="http://www.opengis.net/gml">%s</root>', $gml), \LIBXML_NOBLANKS);
-
-        return $xml->getElementsByTagName('posList')->item(0)->nodeValue;
     }
 
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord

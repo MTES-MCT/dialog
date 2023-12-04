@@ -10,7 +10,7 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\EudonetParis\EudonetParisLocationItem;
-use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\LocationAddress;
@@ -22,7 +22,6 @@ final class EudonetParisTransformer
 
     public function __construct(
         private GeocoderInterface $geocoder,
-        private GeometryFormatter $geometryFormatter,
     ) {
     }
 
@@ -227,11 +226,6 @@ final class EudonetParisTransformer
             $toPoint = $this->geocoder->computeJunctionCoordinates($address, $toRoadName);
         }
 
-        return $this->geometryFormatter->formatLine(
-            $fromPoint->longitude,
-            $fromPoint->latitude,
-            $toPoint->longitude,
-            $toPoint->latitude,
-        );
+        return GeoJSON::toLineString([$fromPoint, $toPoint]);
     }
 }

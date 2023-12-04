@@ -7,7 +7,7 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
-use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
@@ -18,7 +18,6 @@ final class SaveRegulationLocationCommandHandler
         private CommandBusInterface $commandBus,
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
-        private GeometryFormatter $geometryFormatter,
     ) {
     }
 
@@ -86,26 +85,16 @@ final class SaveRegulationLocationCommandHandler
         return $command->location;
     }
 
-    private function computeLine(string $address, string $fromHouseNumber, string $toHouseNumber): string
-    {
-        $fromHouseAddress = sprintf('%s %s', $fromHouseNumber, $address);
-        $toHouseAddress = sprintf('%s %s', $toHouseNumber, $address);
-
-        $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
-        $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
-
-        return $this->geometryFormatter->formatLine(
-            $fromCoords->longitude,
-            $fromCoords->latitude,
-            $toCoords->longitude,
-            $toCoords->latitude,
-        );
-    }
-
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
     {
         if ($command->fromHouseNumber && $command->toHouseNumber) {
-            return $this->computeLine($command->address, $command->fromHouseNumber, $command->toHouseNumber);
+            $fromHouseAddress = sprintf('%s %s', $command->fromHouseNumber, $command->address);
+            $toHouseAddress = sprintf('%s %s', $command->toHouseNumber, $command->address);
+
+            $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
+            $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
+
+            return GeoJSON::toLineString([$fromCoords, $toCoords]);
         }
 
         return null;
