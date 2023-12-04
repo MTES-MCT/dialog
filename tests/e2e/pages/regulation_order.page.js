@@ -206,21 +206,25 @@ export class RegulationOrderPage {
 
     /**
      * @param {Locator} location
-     * @param {{ measureIndex: number, days: string[], startDate: string, startTime: string, endDate: string, endTime: string, dayOption: string }} options
+     * @param {{ measureIndex: number, days: string[], startDate: string, startTime: string[], endDate: string, endTime: string[], dayOption: string }} options
      */
     async addPeriodToMeasure(location, { measureIndex, days, startDate, startTime, endDate, endTime, dayOption }) {
         await this._beginEditLocation(location);
 
         const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
         await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
-
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
+        await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
+
+        await period.getByTestId('start').nth(0).selectOption({ label: startTime[0]});
+        await period.getByTestId('start').nth(1).selectOption({ label: startTime[1]});
+
+        await period.getByTestId('end').nth(0).selectOption({ label: endTime[0]});
+        await period.getByTestId('end').nth(1).selectOption({ label: endTime[1]});
 
         await period.getByLabel('Date de début').fill(startDate);
-        await period.getByLabel('Heure de début').fill(startTime);
         await period.getByLabel('Date de fin').fill(endDate);
-        await period.getByLabel('Heure de fin').fill(endTime);
-        await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
+
 
         if (dayOption == 'Certains jours') {
             for (const day of days) {
@@ -262,7 +266,7 @@ export class RegulationOrderPage {
 
         await expect(timeSlots).toHaveCount(0);
         await expect(addTimeSlotBtn).toBeVisible();
-        
+
         await addTimeSlotBtn.click();
         await expect(timeSlots).toHaveCount(1);
         await expect(addTimeSlotBtn).not.toBeVisible();

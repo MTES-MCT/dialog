@@ -1553,6 +1553,14 @@
                 <source>statistics.temporaryRegulationOrderRecords</source>
                 <target>Nombre total d'arrếtés temporaires</target>
             </trans-unit>
+            <trans-unit id="common.form.time.hour">
+                <source>common.form.time.hour</source>
+                <target>Heures</target>
+            </trans-unit>
+            <trans-unit id="common.form.time.minute">
+                <source>common.form.time.minute</source>
+                <target>Minutes</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

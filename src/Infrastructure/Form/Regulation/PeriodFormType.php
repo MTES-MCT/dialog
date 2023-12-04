@@ -25,7 +25,7 @@ final class PeriodFormType extends AbstractType
             ])
             ->add('startTime', TimeType::class, [
                 'label' => 'regulation.period.startTime',
-                'widget' => 'single_text',
+                'widget' => 'choice',
             ])
             ->add('endDate', DateType::class, [
                 'label' => 'regulation.period.endDate',
@@ -33,7 +33,7 @@ final class PeriodFormType extends AbstractType
             ])
             ->add('endTime', TimeType::class, [
                 'label' => 'regulation.period.endTime',
-                'widget' => 'single_text',
+                'widget' => 'choice',
             ])
             ->add('recurrenceType', ChoiceType::class,
                 options: $this->getRecurrenceTypeOptions(),
