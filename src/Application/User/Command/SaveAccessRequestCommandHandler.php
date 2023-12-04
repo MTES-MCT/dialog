@@ -6,6 +6,7 @@ namespace App\Application\User\Command;
 
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
+use App\Application\StringUtilsInterface;
 use App\Domain\User\AccessRequest;
 use App\Domain\User\Exception\AccessAlreadyRequestedException;
 use App\Domain\User\Repository\AccessRequestRepositoryInterface;
@@ -18,12 +19,13 @@ final class SaveAccessRequestCommandHandler
         private AccessRequestRepositoryInterface $accessRequestRepository,
         private IsAccessAlreadyRequested $isAccessAlreadyRequested,
         private PasswordHasherInterface $passwordHasher,
+        private StringUtilsInterface $stringUtils,
     ) {
     }
 
     public function __invoke(SaveAccessRequestCommand $command): void
     {
-        $email = trim(strtolower($command->email));
+        $email = $this->stringUtils->normalizeEmail($command->email);
 
         if (true === $this->isAccessAlreadyRequested->isSatisfiedBy($email)) {
             throw new AccessAlreadyRequestedException();
