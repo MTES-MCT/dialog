@@ -24,21 +24,50 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
   {% endif %}
   {%- set row_class = (group_class|default('') ~ ' ' ~ row_attr.class|default(''))|trim -%}
 
-  <div {% with {attr: row_attr|merge({class: row_class} )} %} {{ block('attributes') }} {% endwith %}>
-    {{- form_label(form) -}}
+  {% if widget is defined and widget == 'choice' %}
+    {% set row_class = row_class ~ ' fr-x-container--fluid' %}
+    <fieldset {% with {attr: row_attr|merge({class: row_class, 'aria-labelledby': id ~ '-legend'} )} %} {{ block('attributes') }} {% endwith %}>
+      {{ form_label(form, null, {
+        element: 'legend',
+        label_attr: { id: id ~ '-legend', class: 'fr-grid-row' },
+      }) }}
+      {{ form_widget(form, widget_attr) }}
+    </fieldset>
+  {% else %}
+    <div {% with {attr: row_attr|merge({class: row_class} )} %} {{ block('attributes') }} {% endwith %}>
+      {{- form_label(form) -}}
 
-    {%- if widget_suffix is defined -%}
-      <div class="app-widget--suffix">
-        {{- form_widget(form, widget_attr) -}}
-        {{- widget_suffix -}}
-      </div>
-    {%- else -%}
-        {{- form_widget(form, widget_attr) -}}
-    {%- endif -%}
+      {%- if widget_suffix is defined -%}
+        <div class="app-widget--suffix">
+          {{- form_widget(form, widget_attr) -}}
+          {{- widget_suffix -}}
+        </div>
+      {%- else -%}
+          {{- form_widget(form, widget_attr) -}}
+      {%- endif -%}
 
-    {{- form_errors(form) -}}
-  </div>
+      {{- form_errors(form) -}}
+    </div>
+  {% endif %}
 {% endblock form_row %}
+
+{% block time_widget %}
+  {% if widget == 'choice' %}
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <span class="fr-col">
+        <label class="app-sr-only" for="{{ form.hour.vars.id }}">{{ 'common.form.time.hour'|trans }}</label>
+        {{ form_widget(form.hour, { attr: {class: 'fr-select', 'data-testid': 'start'} }) }}
+      </span>
+      <span class="fr-col">
+        <label class="app-sr-only" for="{{ form.minute.vars.id }}">{{ 'common.form.time.minute'|trans }}</label>
+        {{ form_widget(form.minute, { attr: {class: 'fr-select', 'data-testid': 'end'} }) }}
+      </span>
+      {{ form_errors(form) }}
+    </div>
+  {% else %}
+    {{ parent() }}
+  {% endif %}
+{% endblock time_widget %}
 
 {% block form_label %}
   {% if element|default('label') == 'label' %}

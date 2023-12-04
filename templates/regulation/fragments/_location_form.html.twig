@@ -24,37 +24,14 @@
             </button>
         </div>
         <div class="app-card__content">
-            <div class="fr-container--fluid">
+            <div class="fr-x-container--fluid">
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-
-                    <div class="fr-col-12 fr-col-sm-5">
-                        {{ form_label(form.startTime) }}
-                        <div class="fr-grid-row fr-mt-1w">
-                            <div class="fr-col-sm-6">
-                                {{ form_widget(form.startTime.hour, {group_class: 'fr-select-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-select', 'data-testid': 'start-hour'} }) }}
-                            </div>
-                            <div class="fr-col-sm-6">
-                                {{ form_widget(form.startTime.minute, {group_class: 'fr-select-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-select', 'data-testid': 'start-minute'}}) }}
-                            </div>
-                        </div>
-                        {{ form_errors(form.startTime) }}
-                    </div>
+                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                    <div class="fr-col-12 fr-col-sm-5">
-                        {{ form_label(form.endTime) }}
-                        <div class="fr-grid-row fr-mt-1w">
-                            <div class="fr-col-sm-6">
-                                {{ form_widget(form.endTime.hour, {group_class: 'fr-select-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-select', 'data-testid': 'end-hour'}}) }}
-                            </div>
-                            <div class="fr-col-sm-6">
-                                {{ form_widget(form.endTime.minute, {group_class: 'fr-select-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-select', 'data-testid': 'end-minute'}}) }}
-                            </div>
-                        </div>
-                        {{ form_errors(form.endTime) }}
-                    </div>
+                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
             </div>
 

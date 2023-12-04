@@ -216,11 +216,11 @@ export class RegulationOrderPage {
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
         await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
 
-        await period.getByTestId('start-hour').selectOption({ label: startTime[0]});
-        await period.getByTestId('start-minute').selectOption({ label: startTime[1]});
+        await period.getByTestId('start').nth(0).selectOption({ label: startTime[0]});
+        await period.getByTestId('start').nth(1).selectOption({ label: startTime[1]});
 
-        await period.getByTestId('end-hour').selectOption({ label: endTime[0]});
-        await period.getByTestId('end-minute').selectOption({ label: endTime[1]});
+        await period.getByTestId('end').nth(0).selectOption({ label: endTime[0]});
+        await period.getByTestId('end').nth(1).selectOption({ label: endTime[1]});
 
         await period.getByLabel('Date de début').fill(startDate);
         await period.getByLabel('Date de fin').fill(endDate);
