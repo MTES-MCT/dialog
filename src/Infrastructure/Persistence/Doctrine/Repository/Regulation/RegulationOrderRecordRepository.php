@@ -94,12 +94,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.startDate',
                 'ro.endDate',
                 'loc.address',
-                'loc.fromHouseNumber',
-                'ST_X(loc.fromPoint) as fromLongitude',
-                'ST_Y(loc.fromPoint) as fromLatitude',
-                'loc.toHouseNumber',
-                'ST_X(loc.toPoint) as toLongitude',
-                'ST_Y(loc.toPoint) as toLatitude',
+                'ST_AsGeoJSON(loc.geometry) as geometry',
                 'm.maxSpeed',
                 'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
@@ -117,6 +112,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
             ->getQuery()
             ->getResult()

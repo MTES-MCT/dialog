@@ -11,7 +11,7 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommandHandler;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
@@ -24,31 +24,29 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 {
     private $address;
     private $fromHouseNumber;
-    private $fromPoint;
     private $toHouseNumber;
-    private $toPoint;
     private $regulationOrder;
     private $regulationOrderRecord;
     private $commandBus;
     private $idFactory;
     private $locationRepository;
     private $geocoder;
-    private $geometryFormatter;
+    private $geometry;
 
     protected function setUp(): void
     {
         $this->address = 'Route du Grand Brossais 44260 Savenay';
         $this->fromHouseNumber = '15';
-        $this->fromPoint = 'POINT(-1.935836 47.347024)';
         $this->toHouseNumber = '37bis';
-        $this->toPoint = 'POINT(-1.930973 47.347917)';
-
+        $this->geometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.935836, 47.347024),
+            Coordinates::fromLonLat(-1.930973, 47.347917),
+        ]);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->geocoder = $this->createMock(GeocoderInterface::class);
-        $this->geometryFormatter = $this->createMock(GeometryFormatter::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -71,22 +69,13 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             );
 
-        $this->geometryFormatter
-            ->expects(self::exactly(2))
-            ->method('formatPoint')
-            ->willReturnOnConsecutiveCalls(
-                'POINT(-1.935836 47.347024)',
-                'POINT(-1.930973 47.347917)',
-            );
-
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
             address: $this->address,
             fromHouseNumber: $this->fromHouseNumber,
-            fromPoint: $this->fromPoint,
+            geometry: $this->geometry,
             toHouseNumber: $this->toHouseNumber,
-            toPoint: $this->toPoint,
         );
 
         $createdMeasure = $this->createMock(Measure::class);
@@ -116,7 +105,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
@@ -145,9 +133,8 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->with(
                 $this->address,
                 $this->fromHouseNumber,
-                $this->fromPoint,
                 $this->toHouseNumber,
-                $this->toPoint,
+                $this->geometry,
             );
 
         $this->idFactory
@@ -160,14 +147,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->willReturnOnConsecutiveCalls(
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
-            );
-
-        $this->geometryFormatter
-            ->expects(self::exactly(2))
-            ->method('formatPoint')
-            ->willReturnOnConsecutiveCalls(
-                'POINT(-1.935836 47.347024)',
-                'POINT(-1.930973 47.347917)',
             );
 
         $this->locationRepository
@@ -192,7 +171,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -224,10 +202,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $this->geometryFormatter
-            ->expects(self::never())
-            ->method('formatPoint');
-
         $this->locationRepository
             ->expects(self::never())
             ->method('add');
@@ -237,7 +211,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -261,16 +234,12 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->willReturn($this->fromHouseNumber);
         $location
             ->expects(self::once())
-            ->method('getFromPoint')
-            ->willReturn($this->fromPoint);
+            ->method('getGeometry')
+            ->willReturn($this->geometry);
         $location
             ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn($this->toHouseNumber);
-        $location
-            ->expects(self::once())
-            ->method('getToPoint')
-            ->willReturn($this->toPoint);
 
         $location
             ->expects(self::once())
@@ -278,9 +247,8 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->with(
                 $this->address,
                 $this->fromHouseNumber,
-                $this->fromPoint,
                 $this->toHouseNumber,
-                $this->toPoint,
+                $this->geometry,
             );
 
         $this->idFactory
@@ -291,10 +259,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $this->geometryFormatter
-            ->expects(self::never())
-            ->method('formatPoint');
-
         $this->locationRepository
             ->expects(self::never())
             ->method('add');
@@ -304,7 +268,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);

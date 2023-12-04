@@ -73,56 +73,15 @@
                                 </validityByOrder>
                             </conditions>
                             <conditions xsi:type="LocationCondition">
-                                <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                                    <loc:linearWithinLinearElement>
-                                        <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                        <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                        <loc:linearElement xsi:type="loc:LinearElement">
-                                            <loc:roadName>
-                                                <com:values>
-                                                    <com:value lang="fr">{{ location.address }}</com:value>
-                                                </com:values>
-                                            </loc:roadName>
-                                        </loc:linearElement>
-
-                                        {% if location.fromLatitude and location.fromLongitude %}
-                                            <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                                <loc:distanceAlong>0</loc:distanceAlong>
-                                                <loc:fromReferent>
-                                                    <loc:referentIdentifier>start</loc:referentIdentifier>
-                                                    <loc:referentName>{{ location.fromHouseNumber ?? 'start' }}</loc:referentName>
-                                                    <loc:referentType>referenceMarker</loc:referentType>
-                                                    <loc:pointCoordinates>
-                                                        <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
-                                                        <loc:longitude>{{ location.fromLongitude }}</loc:longitude>
-                                                    </loc:pointCoordinates>
-                                                </loc:fromReferent>
-                                            </loc:fromPoint>
-                                        {% else %}
-                                            <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
-                                                <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
-                                            </loc:fromPoint>
-                                        {% endif %}
-
-                                        {% if location.toLatitude and location.toLongitude %}
-                                            <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                                <loc:distanceAlong>0</loc:distanceAlong>
-                                                <loc:fromReferent>
-                                                    <loc:referentIdentifier>end</loc:referentIdentifier>
-                                                    <loc:referentName>{{ location.toHouseNumber ?? 'end' }}</loc:referentName>
-                                                    <loc:referentType>referenceMarker</loc:referentType>
-                                                    <loc:pointCoordinates>
-                                                        <loc:latitude>{{ location.toLatitude }}</loc:latitude>
-                                                        <loc:longitude>{{ location.toLongitude }}</loc:longitude>
-                                                    </loc:pointCoordinates>
-                                                </loc:fromReferent>
-                                            </loc:toPoint>
-                                        {% else %}
-                                            <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
-                                                <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
-                                            </loc:toPoint>
-                                        {% endif %}
-                                    </loc:linearWithinLinearElement>
+                                <locationByOrder xsi:type="loc:LinearLocation">
+                                    <loc:supplementaryPositionalDescription>
+                                        <loc:roadInformation>
+                                            <loc:roadName>{{ location.address }}</loc:roadName>
+                                        </loc:roadInformation>
+                                    </loc:supplementaryPositionalDescription>
+                                    <loc:gmlLineString>
+                                        <loc:posList>{{ location.gmlPosList }}</loc:posList>
+                                    </loc:gmlLineString>
                                 </locationByOrder>
                             </conditions>
                             {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}

@@ -29,8 +29,7 @@ final class ImportEudonetParisRegulationCommandHandler
             $locationCommand->address = $locationItem->address;
             $locationCommand->fromHouseNumber = $locationItem->fromHouseNumber;
             $locationCommand->toHouseNumber = $locationItem->toHouseNumber;
-            $locationCommand->fromPoint = $locationItem->fromPoint;
-            $locationCommand->toPoint = $locationItem->toPoint;
+            $locationCommand->geometry = $locationItem->geometry;
             $locationCommand->measures = $locationItem->measures;
 
             $location = $this->commandBus->handle($locationCommand);

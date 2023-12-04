@@ -13,6 +13,8 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\EudonetParis\EudonetParisLocationItem;
+use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Location;
@@ -58,8 +60,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $locationCommand->address = 'Rue Eugène Berthoud, 75018 Paris';
         $locationCommand->fromHouseNumber = '15';
         $locationCommand->toHouseNumber = '26';
-        $locationCommand->fromPoint = null;
-        $locationCommand->toPoint = null;
+        $locationCommand->geometry = null;
         $locationCommand->measures = [$measureCommand];
 
         $publishCommand = new PublishRegulationCommand($regulationOrderRecord);
@@ -84,6 +85,12 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
 
     public function testImportWithJunction(): void
     {
+        $junctionGeometry = GeoJSON::toLineString([
+            // Rue Jean Perrin -> Rue Adrien Lesesne
+            Coordinates::fromLonLat(2.3453101, 48.9062362),
+            Coordinates::fromLonLat(2.34944, 48.9045598),
+        ]);
+
         $generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
         $measureCommand = $this->createMock(SaveMeasureCommand::class);
 
@@ -92,8 +99,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
 
         $locationItem = new EudonetParisLocationItem();
         $locationItem->address = 'Rue Eugène Berthoud, 75018 Paris';
-        $locationItem->fromPoint = 'POINT(48.9062362 2.3453101)'; // Rue Jean Perrin
-        $locationItem->toPoint = 'POINT(48.9045598 2.34944)'; // Rue Adrien Lesesne
+        $locationItem->geometry = $junctionGeometry;
         $locationItem->measures = [$measureCommand];
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -114,8 +120,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $locationCommand->address = 'Rue Eugène Berthoud, 75018 Paris';
         $locationCommand->fromHouseNumber = null;
         $locationCommand->toHouseNumber = null;
-        $locationCommand->fromPoint = 'POINT(48.9062362 2.3453101)'; // Rue Jean Perrin
-        $locationCommand->toPoint = 'POINT(48.9045598 2.34944)'; // Rue Adrien Lesesne
+        $locationCommand->geometry = $junctionGeometry;
         $locationCommand->measures = [$measureCommand];
 
         $publishCommand = new PublishRegulationCommand($regulationOrderRecord);

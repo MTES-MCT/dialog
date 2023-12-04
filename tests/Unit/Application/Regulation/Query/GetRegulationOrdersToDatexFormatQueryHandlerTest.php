@@ -10,6 +10,8 @@ use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -37,42 +39,34 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
     {
         $location1 = new DatexLocationView(
             address: 'Avenue de Fonneuve 82000 Montauban',
-            fromHouseNumber: '695',
-            fromLongitude: '1.362275',
-            fromLatitude: '44.028996',
-            toHouseNumber: '253',
-            toLongitude: '1.35931',
-            toLatitude: '44.025665',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.362275, 44.028996),
+                Coordinates::fromLonLat(1.35931, 44.025665),
+            ]),
         );
 
         $location1bis = new DatexLocationView(
             address: "Rue de l'Hôtel de Ville 82000 Montauban",
-            fromHouseNumber: '30',
-            fromLongitude: '1.352126',
-            fromLatitude: '44.016833',
-            toHouseNumber: '12',
-            toLongitude: '1.353016',
-            toLatitude: '44.016402',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.352126, 44.016833),
+                Coordinates::fromLonLat(1.353016, 44.016402),
+            ]),
         );
 
         $location2 = new DatexLocationView(
             address: 'Route du Grand Brossais 44260 Savenay',
-            fromHouseNumber : '15',
-            fromLatitude : '47.347024',
-            fromLongitude : '-1.935836',
-            toHouseNumber : '37bis',
-            toLatitude : '47.347917',
-            toLongitude : '-1.930973',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $location3 = new DatexLocationView(
             address: '19 Rue Gabriel Péri, 78800 Houilles',
-            fromHouseNumber : '16',
-            fromLatitude : '49.347054',
-            fromLongitude : '-1.935836',
-            toHouseNumber : '37bis',
-            toLatitude : '47.347917',
-            toLongitude : '-1.930973',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 49.347054),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $startDate1 = new \DateTime('2022-12-07');
@@ -89,12 +83,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => $endDate1,
             'address' => $location1->address,
-            'fromHouseNumber' => $location1->fromHouseNumber,
-            'fromLatitude' => $location1->fromLatitude,
-            'fromLongitude' => $location1->fromLongitude,
-            'toHouseNumber' => $location1->toHouseNumber,
-            'toLatitude' => $location1->toLatitude,
-            'toLongitude' => $location1->toLongitude,
+            'geometry' => $location1->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => [VehicleTypeEnum::CRITAIR->value],
@@ -112,12 +101,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate1,
             'endDate' => $endDate1,
             'address' => $location1bis->address,
-            'fromHouseNumber' => $location1bis->fromHouseNumber,
-            'fromLatitude' => $location1bis->fromLatitude,
-            'fromLongitude' => $location1bis->fromLongitude,
-            'toHouseNumber' => $location1bis->toHouseNumber,
-            'toLatitude' => $location1bis->toLatitude,
-            'toLongitude' => $location1bis->toLongitude,
+            'geometry' => $location1bis->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => [],
@@ -135,12 +119,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate2,
             'endDate' => null,
             'address' => $location2->address,
-            'fromHouseNumber' => $location2->fromHouseNumber,
-            'fromLatitude' => $location2->fromLatitude,
-            'fromLongitude' => $location2->fromLongitude,
-            'toHouseNumber' => $location2->toHouseNumber,
-            'toLatitude' => $location2->toLatitude,
-            'toLongitude' => $location2->toLongitude,
+            'geometry' => $location2->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
@@ -158,12 +137,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'startDate' => $startDate3,
             'endDate' => $endDate3,
             'address' => $location3->address,
-            'fromHouseNumber' => $location3->fromHouseNumber,
-            'fromLatitude' => $location3->fromLatitude,
-            'fromLongitude' => $location3->fromLongitude,
-            'toHouseNumber' => $location3->toHouseNumber,
-            'toLatitude' => $location3->toLatitude,
-            'toLongitude' => $location3->toLongitude,
+            'geometry' => $location3->geometry,
             'maxSpeed' => 50,
             'type' => MeasureTypeEnum::SPEED_LIMITATION->value,
             'restrictedVehicleTypes' => [VehicleTypeEnum::HAZARDOUS_MATERIALS->value],

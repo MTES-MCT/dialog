@@ -14,7 +14,3 @@ doctrine:
         dql:
             string_functions:
                 ST_AsGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_AsGeoJSON'
-                ST_GeomFromGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON'
-            numeric_functions:
-                ST_X: 'Jsor\Doctrine\PostGIS\Functions\ST_X'
-                ST_Y: 'Jsor\Doctrine\PostGIS\Functions\ST_Y'

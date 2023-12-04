@@ -16,9 +16,11 @@ class Location
         private RegulationOrder $regulationOrder,
         private string $address,
         private ?string $fromHouseNumber,
-        private ?string $fromPoint,
         private ?string $toHouseNumber,
-        private ?string $toPoint,
+        private ?string $geometry,
+        // Deprecated
+        private ?string $fromPoint = null,
+        private ?string $toPoint = null,
     ) {
         $this->measures = new ArrayCollection();
     }
@@ -43,19 +45,14 @@ class Location
         return $this->fromHouseNumber;
     }
 
-    public function getFromPoint(): ?string
+    public function getGeometry(): ?string
     {
-        return $this->fromPoint;
+        return $this->geometry;
     }
 
     public function getToHouseNumber(): ?string
     {
         return $this->toHouseNumber;
-    }
-
-    public function getToPoint(): ?string
-    {
-        return $this->toPoint;
     }
 
     public function getMeasures(): iterable
@@ -84,14 +81,24 @@ class Location
     public function update(
         string $address,
         ?string $fromHouseNumber,
-        ?string $fromPoint,
         ?string $toHouseNumber,
-        ?string $toPoint,
+        ?string $geometry,
     ): void {
         $this->address = $address;
         $this->fromHouseNumber = $fromHouseNumber;
-        $this->fromPoint = $fromPoint;
         $this->toHouseNumber = $toHouseNumber;
-        $this->toPoint = $toPoint;
+        $this->geometry = $geometry;
+    }
+
+    // Deprecated
+
+    public function getFromPoint(): ?string
+    {
+        return $this->fromPoint;
+    }
+
+    public function getToPoint(): ?string
+    {
+        return $this->toPoint;
     }
 }

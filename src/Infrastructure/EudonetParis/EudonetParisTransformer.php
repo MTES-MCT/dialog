@@ -10,7 +10,7 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\EudonetParis\EudonetParisLocationItem;
-use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\LocationAddress;
@@ -22,7 +22,6 @@ final class EudonetParisTransformer
 
     public function __construct(
         private GeocoderInterface $geocoder,
-        private GeometryFormatter $geometryFormatter,
     ) {
     }
 
@@ -128,13 +127,6 @@ final class EudonetParisTransformer
         return [$command, null];
     }
 
-    private function computeJunctionPoint(string $address, string $roadName): string
-    {
-        $coords = $this->geocoder->computeJunctionCoordinates($address, $roadName);
-
-        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
-    }
-
     private function buildLocationItem(array $row, SaveMeasureCommand $measureCommand): array
     {
         $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
@@ -195,21 +187,45 @@ final class EudonetParisTransformer
             city: 'Paris',
             roadName: $roadName,
         );
-
-        if ($fromHouseNumber) {
-            $locationItem->fromHouseNumber = $fromHouseNumber;
-        } elseif ($fromRoadName) {
-            $locationItem->fromPoint = $this->computeJunctionPoint($locationItem->address, $fromRoadName);
-        }
-
-        if ($toHouseNumber) {
-            $locationItem->toHouseNumber = $toHouseNumber;
-        } elseif ($toRoadName) {
-            $locationItem->toPoint = $this->computeJunctionPoint($locationItem->address, $toRoadName);
-        }
+        $locationItem->fromHouseNumber = $fromHouseNumber;
+        $locationItem->toHouseNumber = $toHouseNumber;
+        $locationItem->geometry = $this->makeLocationGeometry($locationItem->address, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
 
         $locationItem->measures[] = $measureCommand;
 
         return [$locationItem, null];
+    }
+
+    private function makeLocationGeometry(
+        string $address,
+        ?string $fromHouseNumber,
+        ?string $fromRoadName,
+        ?string $toHouseNumber,
+        ?string $toRoadName,
+    ): ?string {
+        $hasBothEnds = (
+            ($fromHouseNumber || $fromRoadName)
+            && ($toHouseNumber || $toRoadName)
+        );
+
+        if (!$hasBothEnds) {
+            return null;
+        }
+
+        if ($fromHouseNumber) {
+            $fromAddress = sprintf('%s %s', $fromHouseNumber, $address);
+            $fromPoint = $this->geocoder->computeCoordinates($fromAddress);
+        } else {
+            $fromPoint = $this->geocoder->computeJunctionCoordinates($address, $fromRoadName);
+        }
+
+        if ($toHouseNumber) {
+            $toAddress = sprintf('%s %s', $toHouseNumber, $address);
+            $toPoint = $this->geocoder->computeCoordinates($toAddress);
+        } else {
+            $toPoint = $this->geocoder->computeJunctionCoordinates($address, $toRoadName);
+        }
+
+        return GeoJSON::toLineString([$fromPoint, $toPoint]);
     }
 }

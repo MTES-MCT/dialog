@@ -9,8 +9,7 @@ final class EudonetParisLocationItem
     public string $address;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
-    public ?string $fromPoint = null;
-    public ?string $toPoint = null;
+    public ?string $geometry = null;
     /** @var \App\Application\Regulation\Command\SaveMeasureCommand[] */
     public array $measures = [];
 }
