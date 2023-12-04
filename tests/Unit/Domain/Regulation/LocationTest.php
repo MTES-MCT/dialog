@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation;
 
+use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
@@ -14,6 +16,11 @@ final class LocationTest extends TestCase
 {
     public function testGetters(): void
     {
+        $geometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.935836, 47.347024),
+            Coordinates::fromLonLat(-1.930973, 47.347917),
+        ]);
+
         $measure1 = $this->createMock(Measure::class);
         $measure2 = $this->createMock(Measure::class);
         $measure3 = $this->createMock(Measure::class);
@@ -24,7 +31,7 @@ final class LocationTest extends TestCase
             'Route du Grand Brossais 44260 Savenay',
             '15',
             '37bis',
-            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
+            $geometry,
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
@@ -32,7 +39,7 @@ final class LocationTest extends TestCase
         $this->assertSame('Route du Grand Brossais 44260 Savenay', $location->getAddress());
         $this->assertSame('15', $location->getFromHouseNumber());
         $this->assertSame('37bis', $location->getToHouseNumber());
-        $this->assertSame('LINESTRING(-1.935836 47.347024, -1.930973 47.347917)', $location->getGeometry());
+        $this->assertSame($geometry, $location->getGeometry());
         $this->assertEmpty($location->getMeasures());
 
         $location->addMeasure($measure1);
@@ -45,6 +52,10 @@ final class LocationTest extends TestCase
         $location->removeMeasure($measure2);
 
         $this->assertEquals(new ArrayCollection([$measure1]), $location->getMeasures());
+
+        // Deprecated
+        $this->assertNull($location->getFromPoint());
+        $this->assertNull($location->getToPoint());
     }
 
     public function testUpdate(): void
@@ -57,13 +68,19 @@ final class LocationTest extends TestCase
             'Route du Grand Brossais 44260 Savenay',
             '15',
             '37bis',
-            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
+            GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $newAddress = 'La Forge Hervé 44750 Campbon';
         $newFromHouseNumber = '1';
         $newToHouseNumber = '4';
-        $newGeometry = 'LINESTRING(-1.938727 47.358454, -1.940304 47.388473)';
+        $newGeometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.938727, 47.358454),
+            Coordinates::fromLonLat(-1.940304, 47.388473),
+        ]);
 
         $location->update(
             $newAddress,

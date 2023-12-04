@@ -6,7 +6,6 @@ namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
@@ -14,7 +13,6 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
     public function __construct(
         private string $ignWfsUrl,
         private HttpClientInterface $httpClient,
-        private LoggerInterface $logger,
     ) {
     }
 

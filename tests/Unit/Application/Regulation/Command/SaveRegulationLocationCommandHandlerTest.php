@@ -11,7 +11,7 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommandHandler;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
@@ -31,7 +31,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     private $idFactory;
     private $locationRepository;
     private $geocoder;
-    private $geometryFormatter;
     private $geometry;
 
     protected function setUp(): void
@@ -39,13 +38,15 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $this->address = 'Route du Grand Brossais 44260 Savenay';
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
-        $this->geometry = 'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)';
+        $this->geometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.935836, 47.347024),
+            Coordinates::fromLonLat(-1.930973, 47.347917),
+        ]);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->geocoder = $this->createMock(GeocoderInterface::class);
-        $this->geometryFormatter = new GeometryFormatter();
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -104,7 +105,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
@@ -171,7 +171,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -212,7 +211,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -270,7 +268,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->commandBus,
             $this->locationRepository,
             $this->geocoder,
-            $this->geometryFormatter,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);

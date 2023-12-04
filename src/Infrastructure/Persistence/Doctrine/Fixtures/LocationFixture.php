@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
+use App\Domain\Geography\Coordinates;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -19,7 +21,10 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'Route du Grand Brossais 44260 Savenay',
             '15',
             '37bis',
-            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
+            GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $location1Bis = new Location(
@@ -46,7 +51,10 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'Avenue de Fonneuve 82000 Montauban',
             '695',
             '253',
-            'LINESTRING(1.362275 44.028996, 1.35931 44.025665)',
+            GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.362275, 44.028996),
+                Coordinates::fromLonLat(1.35931, 44.025665),
+            ]),
         );
 
         $location2Bis = new Location(
@@ -55,7 +63,10 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             "Rue de l'Hôtel de Ville 82000 Montauban",
             '30',
             '12',
-            'LINESTRING(1.352126 44.016833, 1.353016 44.016402)',
+            GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.352126, 44.016833),
+                Coordinates::fromLonLat(1.353016, 44.016402),
+            ]),
         );
 
         $location2Ter = new Location(
@@ -83,7 +94,10 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             'Route du Grand Brossais 44260 Savenay',
             '15',
             '37bis',
-            'LINESTRING(-1.935836 47.347024, -1.930973 47.347917)',
+            GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
         );
 
         $manager->persist($location1);

@@ -18,6 +18,9 @@ class Location
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
         private ?string $geometry,
+        // Deprecated
+        private ?string $fromPoint = null,
+        private ?string $toPoint = null,
     ) {
         $this->measures = new ArrayCollection();
     }
@@ -85,5 +88,17 @@ class Location
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
         $this->geometry = $geometry;
+    }
+
+    // Deprecated
+
+    public function getFromPoint(): ?string
+    {
+        return $this->fromPoint;
+    }
+
+    public function getToPoint(): ?string
+    {
+        return $this->toPoint;
     }
 }
