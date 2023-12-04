@@ -103,9 +103,9 @@ test('Add a period to a measure', async ({ regulationOrderPage }) => {
         days: ['Lundi', 'Mardi'],
         dayOption: 'Certains jours',
         startDate: '2023-10-10',
-        startTime: '08:00',
+        startTime: ['08', '00'],
         endDate: '2023-10-10',
-        endTime: '08:30',
+        endTime: ['08', '30'],
     });
     await expect(location).toContainText('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, du lundi au mardi pour tous les véhicules');
 });
@@ -121,9 +121,9 @@ test('Delete a period from a measure', async ({ regulationOrderPage }) => {
         days: ['Lundi'],
         dayOption: 'Certains jours',
         startDate: '2023-10-10',
-        startTime: '08:00',
+        startTime: ['08', '00'],
         endDate: '2023-10-10',
-        endTime: '16:00',
+        endTime: ['16', '00'],
     });
     await expect(location).toContainText('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules');
     await page.removePeriodFromMeasure(location, { measureIndex: 0, periodIndex: 0 });

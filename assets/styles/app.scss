@@ -28,6 +28,11 @@ label.required > .fr-x-label-content::after, legend.required > .fr-x-label-conte
     display: none !important;
 }
 
+fieldset {
+    padding: 0;
+    border: none;
+}
+
 :root {
     --x-icon-decorative-blue-france: #CACAFB;
 }
@@ -380,7 +385,7 @@ ol.app-authorities__steplist {
 
     figure {
         margin: 0;
-    
+
         img {
             inline-size: 100%;
         }
@@ -517,4 +522,16 @@ ul.app-timeslot-list > li:not(:last-child) .app-timeslot-list-add {
 
 ul.app-timeslot-list:not([data-empty]) + button.app-timeslot-define {
     display: none;
+}
+
+/* Make content available only to screen readers */
+/* Credit: https://css-tricks.com/inclusively-hidden/ */
+.app-sr-only:not(:focus):not(:active) {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
 }
