@@ -52,6 +52,10 @@ final class LocationTest extends TestCase
         $location->removeMeasure($measure2);
 
         $this->assertEquals(new ArrayCollection([$measure1]), $location->getMeasures());
+
+        // Deprecated
+        $this->assertNull($location->getFromPoint());
+        $this->assertNull($location->getToPoint());
     }
 
     public function testUpdate(): void
