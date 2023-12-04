@@ -6,13 +6,14 @@ namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
 {
     public function __construct(
         private string $ignWfsUrl,
-        private HttpClientInterface $httpClient,
+        private HttpClientInterface $ignWfsClient,
     ) {
     }
 
@@ -28,14 +29,19 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             'PropertyName' => 'geometrie',
         ];
 
-        $response = $this->httpClient->request('GET', $this->ignWfsUrl, [
+        $response = $this->ignWfsClient->request('GET', $this->ignWfsUrl, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
             'query' => $query,
         ]);
 
-        $body = $response->getContent(throw: false);
+        try {
+            $body = $response->getContent(throw: true);
+        } catch (HttpExceptionInterface $exc) {
+            $message = sprintf('invalid response: %s', $exc->getMessage());
+            throw new GeocodingFailureException($message);
+        }
 
         try {
             $data = json_decode($body, associative: true, flags: \JSON_THROW_ON_ERROR);
@@ -44,6 +50,16 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             throw new GeocodingFailureException($message);
         }
 
-        return json_encode($data['features'][0]['geometry']);
+        // We could have try-catch'd $data['features'][0]['geometry'] (better ask for forgiveness than for permission)
+        // but PHP does not raise a proper exception upon key errors.
+        // So we have to be defensive with this ugly line of code...
+        $geometry = \array_key_exists('features', $data) ? (\array_key_exists(0, $data['features']) ? ($data['features'][0]['geometry'] ?? null) : null) : null;
+
+        if (!\is_null($geometry)) {
+            return json_encode($geometry);
+        }
+
+        $message = sprintf('could not retrieve geometry: %s', $body);
+        throw new GeocodingFailureException($message);
     }
 }

@@ -218,7 +218,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertNotContains('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
     }
 
-    public function testGeocodingFailure(): void
+    public function testGeocodingFailureHouseNumber(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
@@ -229,10 +229,39 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
+    }
+
+    public function testGeocodingFailureFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Rue du Parc 59368 La Madeleine';
+        $form['location_form[fromHouseNumber]'] = '';
+        $form['location_form[toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#location_form_error')->text());
+    }
+
+    public function testUpdateAddressFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['location_form[address]'] = 'Rue Saint-Victor 59368 La Madeleine';
+        $form['location_form[fromHouseNumber]'] = '';
+        $form['location_form[toHouseNumber]'] = '';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
     }
 
     public function testRegulationOrderRecordNotFound(): void

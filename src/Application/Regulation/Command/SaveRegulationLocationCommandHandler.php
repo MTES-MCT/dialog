@@ -103,7 +103,7 @@ final class SaveRegulationLocationCommandHandler
         $address = LocationAddress::fromString($command->address);
 
         if (!$command->fromHouseNumber && !$command->toHouseNumber && $address->getRoadName()) {
-            $inseeCode = '78396'; // TODO: obtenir à partir de postCode et city
+            $inseeCode = '59368'; // TODO: obtenir à partir de postCode et city
 
             return $this->roadGeocoder->computeRoadLine($address->getRoadName(), $inseeCode);
         }
