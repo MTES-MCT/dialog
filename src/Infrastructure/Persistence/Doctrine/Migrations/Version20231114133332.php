@@ -18,14 +18,11 @@ final class Version20231114133332 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE location ADD geometry geometry(GEOMETRY, 2154) DEFAULT NULL');
         $this->addSql('UPDATE location SET geometry = ST_MakeLine(from_point, to_point);');
-        $this->addSql('ALTER TABLE location DROP from_point');
-        $this->addSql('ALTER TABLE location DROP to_point');
+        // from_point and to_point will be dropped later
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE location ADD from_point geometry(POINT, 2154) DEFAULT NULL');
-        $this->addSql('ALTER TABLE location ADD to_point geometry(POINT, 2154) DEFAULT NULL');
         $this->addSql('ALTER TABLE location DROP geometry');
     }
 }
