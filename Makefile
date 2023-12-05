@@ -34,7 +34,7 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start install_deps dbinstall assets data_install blog_install ## Bootstrap project
+install: build start install_deps dbinstall assets blog_install ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
@@ -72,8 +72,10 @@ rm: ## Remove containers
 
 dbinstall: ## Setup databases
 	make dbmigrate
+	make data_install
 	make console CMD="doctrine:database:create --env=test --if-not-exists"
 	make dbmigrate ARGS="--env=test"
+	make data_install ARGS="--env=test"
 	make dbfixtures
 
 dbmigration: ## Generate new db migration
@@ -117,16 +119,16 @@ addok_bundle: ## Create Addok custom bundle file
 	cd docker/addok && zip -j addok-dialog-bundle.zip addok-data/addok.conf addok-data/addok.db addok-data/dump.rdb
 
 data_install: data_init ## Load data into database
-	make console CMD="app:exec_sql data/communes.sql"
+	make console CMD="app:data:fr_city ${ARGS}"
 
-data_init: data/communes.sql ## Initialize data sources
+data_init: data/fr_city.sql ## Initialize data sources
 
 data_update: ## Update data sources
-	rm -f data/communes.sql data/communes.json
+	rm -f data/fr_city.sql data/communes.json
 	make data_init
 
-data/communes.sql: data/communes.json
-	./tools/mkcommunessql ./data/communes.json ./data/communes.sql
+data/fr_city.sql: data/communes.json
+	./tools/mkfrcitysql ./data/communes.json ./data/fr_city.sql
 
 data/communes.json:
 	curl -L https://unpkg.com/@etalab/decoupage-administratif/data/communes.json > data/communes.json

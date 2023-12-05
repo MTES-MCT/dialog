@@ -4,9 +4,12 @@
 
 DiaLog utilise la liste des communes publiée au format JSON par [etalab/decoupage-administratif](https://github.com/etalab/decoupage-administratif).
 
-Le fichier JSON est traité pour produire un fichier SQL qui peut ensuite être importé dans la base de données à l'aide d'une commande Symfony personnalisée.
+Le fichier JSON est traité pour produire un fichier SQL est ensuite importé dans la base de données à l'aide d'une commande Symfony personnalisée.
 
-Pour importer les données, utiliser :
+* Lors du dev, l'import est fait automatiquement lors de `make install`.
+* En production, l'import étant suffisamment rapide (moins d'une seconde), il est fait à chaque déploiement.
+
+Pour importer les données manuellement, utiliser :
 
 ```bash
 make data_install

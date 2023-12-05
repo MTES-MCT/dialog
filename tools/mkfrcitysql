@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+"""
+Turn French city JSON data obtained from https://github.com/etalab/decoupage-administratif
+into an SQL file for quick and efficient import.
+"""
+import argparse
+import json
+from pathlib import Path
+
+TABLE_NAME = "fr_city"
+
+
+def _pg_escape(value: str) -> str:
+    return value.replace("'", "\\'")
+
+
+def _ensure_pk_unique(rows):
+    result = []
+
+    for row in rows:
+        if row["type"] in ("commune-deleguee", "commune-associee"):
+            continue
+
+        result.append(row)
+
+    return result
+
+
+def main(input_path: Path, output_path: Path):
+    rows = json.loads(input_path.read_text())
+    rows = _ensure_pk_unique(rows)
+
+    pg_values = []
+
+    for row in rows:
+        insee_code = row["code"]
+        name = _pg_escape(row["nom"])
+        departement = row["departement"]
+
+        pg_values.append(f"('{insee_code}', E'{name}', '{departement}')")
+
+    statements = []
+    statements.append(f"DELETE FROM {TABLE_NAME}")
+    statements.append(
+        "\n".join(
+            [
+                f"INSERT INTO {TABLE_NAME}",
+                "(insee_code, name, departement)",
+                "VALUES",
+                ",\n".join(pg_values),
+            ]
+        )
+    )
+    sql = ";\n".join(statements) + ";\n"
+
+    output_path.write_text(sql)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input_path", type=Path)
+    parser.add_argument("output_path", type=Path)
+    args = parser.parse_args()
+
+    main(args.input_path, args.output_path)
