@@ -10,5 +10,9 @@ interface OrganizationRepositoryInterface
 {
     public function findOneByUuid(string $uuid): ?Organization;
 
+    public function findOneBySiret(string $siret): ?Organization;
+
     public function countOrganizations(): int;
+
+    public function add(Organization $organization): void;
 }

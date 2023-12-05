@@ -16,11 +16,27 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         parent::__construct($registry, Organization::class);
     }
 
+    public function add(Organization $organization): void
+    {
+        $this->getEntityManager()->persist($organization);
+    }
+
     public function findOneByUuid(string $uuid): ?Organization
     {
         return $this->createQueryBuilder('o')
             ->where('o.uuid = :uuid')
             ->setParameter('uuid', $uuid)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findOneBySiret(string $siret): ?Organization
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.siret = :siret')
+            ->setParameter('siret', $siret)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

@@ -12,4 +12,9 @@ final class StringUtils implements StringUtilsInterface
     {
         return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $value));
     }
+
+    public function normalizeEmail(string $email): string
+    {
+        return trim(strtolower($email));
+    }
 }

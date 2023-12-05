@@ -11,4 +11,6 @@ interface UserRepositoryInterface
     public function findOneByEmail(string $email): ?User;
 
     public function countUsers(): int;
+
+    public function add(User $user): void;
 }

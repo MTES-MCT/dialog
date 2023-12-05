@@ -7,4 +7,6 @@ namespace App\Application;
 interface StringUtilsInterface
 {
     public function toKebabCase(string $value): string;
+
+    public function normalizeEmail(string $email): string;
 }
