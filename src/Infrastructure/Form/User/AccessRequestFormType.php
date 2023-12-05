@@ -30,6 +30,7 @@ final class AccessRequestFormType extends AbstractType
                 EmailType::class,
                 options: [
                     'label' => 'accessRequest.email',
+                    'help' => 'accessRequest.email.help',
                 ],
             )
             ->add(
@@ -44,6 +45,7 @@ final class AccessRequestFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'accessRequest.organizationSiret',
+                    'help' => 'accessRequest.organizationSiret.help',
                     'required' => false,
                 ],
             )
@@ -52,6 +54,7 @@ final class AccessRequestFormType extends AbstractType
                 PasswordType::class,
                 options: [
                     'label' => 'accessRequest.password',
+                    'help' => 'accessRequest.password.help',
                 ],
             )
             ->add(

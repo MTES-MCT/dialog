@@ -45,13 +45,12 @@ final class AccessRequestController
 
             try {
                 $this->commandBus->handle($command);
-                $session->getFlashBag()->add('success', $this->translator->trans('accessRequest.send.success'));
             } catch (AccessAlreadyRequestedException) {
                 $session->getFlashBag()->add('error', $this->translator->trans('accessRequest.send.error'));
             }
 
             return new RedirectResponse(
-                url: $this->router->generate('app_access_request'),
+                url: $this->router->generate('app_access_request', ['success' => 1]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

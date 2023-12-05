@@ -13,7 +13,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Demande de création de compte', $crawler->filter('h1')->text());
+        $this->assertSame('Demande de création de compte', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Demande de création de compte - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Envoyer');
@@ -29,7 +29,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
-        $this->assertSame('Votre demande de création de compte a bien été prise en compte, nous reviendrons vers vous dans les plus bref délais.', $crawler->filter('div.fr-alert--success')->text());
+        $this->assertSame('Votre demande de création de compte a bien été prise en compte. Nous reviendrons vers vous dans les plus brefs délais.', $crawler->filter('div.fr-alert--success')->text());
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_access_request');
     }
@@ -51,7 +51,7 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
-        $this->assertSame('Votre demande de création de compte a bien été prise en compte, nous reviendrons vers vous dans les plus bref délais.', $crawler->filter('div.fr-alert--success')->text());
+        $this->assertSame('Votre demande de création de compte a bien été prise en compte. Nous reviendrons vers vous dans les plus brefs délais.', $crawler->filter('div.fr-alert--success')->text());
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_access_request');
     }

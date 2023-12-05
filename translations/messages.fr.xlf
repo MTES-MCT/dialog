@@ -1573,6 +1573,10 @@
                 <source>accessRequest.email</source>
                 <target>Adresse e-mail</target>
             </trans-unit>
+            <trans-unit id="accessRequest.email.help">
+                <source>accessRequest.email.help</source>
+                <target>Format attendu : nom@domaine.fr</target>
+            </trans-unit>
             <trans-unit id="accessRequest.organizationName">
                 <source>accessRequest.organizationName</source>
                 <target>Nom de l'organisation</target>
@@ -1583,11 +1587,19 @@
             </trans-unit>
             <trans-unit id="accessRequest.organizationSiret">
                 <source>accessRequest.organizationSiret</source>
-                <target>Siret de l'organisation</target>
+                <target>Numéro SIRET de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.organizationSiret.help">
+                <source>accessRequest.organizationSiret.help</source>
+                <target>Format attendu : 14 chiffres</target>
             </trans-unit>
             <trans-unit id="accessRequest.password">
                 <source>accessRequest.password</source>
                 <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.password.help">
+                <source>accessRequest.password.help</source>
+                <target>Format attendu : 10 caractères minimum</target>
             </trans-unit>
             <trans-unit id="accessRequest.consentToBeContacted">
                 <source>accessRequest.consentToBeContacted</source>
@@ -1595,7 +1607,11 @@
             </trans-unit>
             <trans-unit id="accessRequest.send.success">
                 <source>accessRequest.send.success</source>
-                <target>Votre demande de création de compte a bien été prise en compte, nous reviendrons vers vous dans les plus bref délais.</target>
+                <target>Votre demande de création de compte a bien été prise en compte. Nous reviendrons vers vous dans les plus brefs délais.</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.send.success.help">
+                <source>accessRequest.send.success.help</source>
+                <target>La validation du compte n’est pas faite automatiquement, cela peut prendre quelques heures.</target>
             </trans-unit>
             <trans-unit id="accessRequest.send.error">
                 <source>accessRequest.send.error</source>
@@ -1604,6 +1620,10 @@
             <trans-unit id="accessRequest.meta.title">
                 <source>accessRequest.meta.title</source>
                 <target>Demande de création de compte</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.meta.subtitle">
+                <source>accessRequest.meta.subtitle</source>
+                <target>Vous pouvez demander la création d’un compte pour votre commune ou collectivité.</target>
             </trans-unit>
         </body>
     </file>
