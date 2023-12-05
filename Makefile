@@ -34,7 +34,7 @@ all: help
 help: ## Display this message
 	@grep -E '(^[a-zA-Z0-9_\-\.]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m## /[33m/'
 
-install: build start install_deps dbinstall assets blog_install ## Bootstrap project
+install: build start install_deps dbinstall assets data_install blog_install ## Bootstrap project
 
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
@@ -115,6 +115,21 @@ addok_bundle: ## Create Addok custom bundle file
 	sudo chmod +r docker/addok/addok-data/dump.rdb # Allow zip to read it
 
 	cd docker/addok && zip -j addok-dialog-bundle.zip addok-data/addok.conf addok-data/addok.db addok-data/dump.rdb
+
+data_install: data_init ## Load data into database
+	make console CMD="app:exec_sql data/communes.sql"
+
+data_init: data/communes.sql ## Initialize data sources
+
+data_update: ## Update data sources
+	rm -f data/communes.sql data/communes.json
+	make data_init
+
+data/communes.sql: data/communes.json
+	./tools/mkcommunessql ./data/communes.json ./data/communes.sql
+
+data/communes.json:
+	curl -L https://unpkg.com/@etalab/decoupage-administratif/data/communes.json > data/communes.json
 
 ##
 ## ----------------
