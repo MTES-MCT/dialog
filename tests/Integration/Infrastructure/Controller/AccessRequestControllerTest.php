@@ -111,9 +111,9 @@ final class AccessRequestControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 14 caractères.', $crawler->filter('#access_request_form_organizationSiret_error')->text());
+        $this->assertSame('Les caractères doivent être des chiffres. Cette chaîne doit avoir exactement 14 caractères.', $crawler->filter('#access_request_form_organizationSiret_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#access_request_form_fullName_error')->text());
-        $this->assertSame('Cette chaîne est trop courte. Elle doit avoir au minimum 10 caractères.', $crawler->filter('#access_request_form_password_error')->text());
+        $this->assertSame('Cette chaîne est trop courte. Elle doit avoir au minimum 12 caractères.', $crawler->filter('#access_request_form_password_error')->text());
         $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#access_request_form_email_error')->text());
 
         // Email too long

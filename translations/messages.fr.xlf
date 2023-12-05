@@ -1569,9 +1569,13 @@
                 <source>common.form.time.minute</source>
                 <target>Minutes</target>
             </trans-unit>
+            <trans-unit id="accessRequest.displayPassword">
+                <source>accessRequest.displayPassword</source>
+                <target>Afficher</target>
+            </trans-unit>
             <trans-unit id="accessRequest.fullName">
                 <source>accessRequest.fullName</source>
-                <target>Nom complet</target>
+                <target>Nom et prénom</target>
             </trans-unit>
             <trans-unit id="accessRequest.email">
                 <source>accessRequest.email</source>
@@ -1603,11 +1607,11 @@
             </trans-unit>
             <trans-unit id="accessRequest.password.help">
                 <source>accessRequest.password.help</source>
-                <target>Format attendu : 10 caractères minimum</target>
+                <target>Format attendu : 12 caractères minimum</target>
             </trans-unit>
             <trans-unit id="accessRequest.consentToBeContacted">
                 <source>accessRequest.consentToBeContacted</source>
-                <target>J'accepte d'être recontacté·e par un membre de l'équipe DiaLog</target>
+                <target>J’accepte que l’équipe DiaLog me recontacte afin d’améliorer la plateforme</target>
             </trans-unit>
             <trans-unit id="accessRequest.send.success">
                 <source>accessRequest.send.success</source>

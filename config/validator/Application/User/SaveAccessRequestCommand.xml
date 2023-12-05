@@ -19,7 +19,7 @@
         <property name="password">
             <constraint name="NotBlank"/>
             <constraint name="Length">
-                <option name="min">10</option>
+                <option name="min">12</option>
             </constraint>
         </property>
         <property name="organizationName">
@@ -29,6 +29,10 @@
             </constraint>
         </property>
         <property name="organizationSiret">
+            <constraint name="Type">
+                <option name="type">digit</option>
+                <option name="message">Les caractères doivent être des chiffres.</option>
+            </constraint>
             <constraint name="Length">
                 <option name="max">14</option>
                 <option name="min">14</option>
