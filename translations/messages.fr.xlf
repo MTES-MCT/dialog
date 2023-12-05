@@ -18,6 +18,10 @@
                 <source>common.blog</source>
                 <target>Blog</target>
             </trans-unit>
+            <trans-unit id="common.and">
+                <source>common.and</source>
+                <target>et</target>
+            </trans-unit>
             <trans-unit id="common.enabled">
                 <source>common.enabled</source>
                 <target>Activé</target>

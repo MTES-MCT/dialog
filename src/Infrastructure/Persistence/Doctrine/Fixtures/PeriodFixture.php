@@ -46,7 +46,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 
         $dailyRange3 = new DailyRange(
             uuid: '2d11558e-a2d5-4f44-b688-672aa3c0e9b8',
-            applicableDays: ['thursday'],
+            applicableDays: ['monday', 'thursday'],
             period: $period3,
         );
 
