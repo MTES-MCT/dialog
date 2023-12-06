@@ -38,7 +38,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
     public function testGetAll(): void
     {
         $location1 = new DatexLocationView(
-            address: 'Avenue de Fonneuve 82000 Montauban',
+            roadName: 'Avenue de Fonneuve',
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(1.362275, 44.028996),
                 Coordinates::fromLonLat(1.35931, 44.025665),
@@ -46,7 +46,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location1bis = new DatexLocationView(
-            address: "Rue de l'Hôtel de Ville 82000 Montauban",
+            roadName: "Rue de l'Hôtel de Ville",
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(1.352126, 44.016833),
                 Coordinates::fromLonLat(1.353016, 44.016402),
@@ -54,7 +54,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location2 = new DatexLocationView(
-            address: 'Route du Grand Brossais 44260 Savenay',
+            roadName: 'Route du Grand Brossais',
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
@@ -62,7 +62,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location3 = new DatexLocationView(
-            address: '19 Rue Gabriel Péri, 78800 Houilles',
+            roadName: 'Rue Gabriel Péri',
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 49.347054),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
@@ -82,7 +82,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startDate' => $startDate1,
             'endDate' => $endDate1,
-            'address' => $location1->address,
+            'roadName' => $location1->roadName,
             'geometry' => $location1->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
@@ -100,7 +100,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'description' => 'Description 1',
             'startDate' => $startDate1,
             'endDate' => $endDate1,
-            'address' => $location1bis->address,
+            'roadName' => $location1bis->roadName,
             'geometry' => $location1bis->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
@@ -118,7 +118,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'description' => 'Description 2',
             'startDate' => $startDate2,
             'endDate' => null,
-            'address' => $location2->address,
+            'roadName' => $location2->roadName,
             'geometry' => $location2->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
@@ -136,7 +136,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'description' => 'Description 3',
             'startDate' => $startDate3,
             'endDate' => $endDate3,
-            'address' => $location3->address,
+            'roadName' => $location3->roadName,
             'geometry' => $location3->geometry,
             'maxSpeed' => 50,
             'type' => MeasureTypeEnum::SPEED_LIMITATION->value,

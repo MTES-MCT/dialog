@@ -269,7 +269,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand2->createdAt = $startDate;
 
         $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
-        $locationCommand1->address = 'Route du Lac 44260 Savenay';
+        $locationCommand1->roadName = 'Route du Lac 44260 Savenay';
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
         $locationCommand1->measures = [
@@ -278,7 +278,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         ];
 
         $locationCommand2 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
-        $locationCommand2->address = 'Route du Grand Brossais 44260 Savenay';
+        $locationCommand2->roadName = 'Route du Grand Brossais 44260 Savenay';
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
 

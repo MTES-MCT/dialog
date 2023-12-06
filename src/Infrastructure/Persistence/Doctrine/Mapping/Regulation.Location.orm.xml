@@ -4,7 +4,9 @@
     name="App\Domain\Regulation\Location"
     table="location">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="address" type="string" column="address" nullable="false" />
+    <field name="cityCode" type="string" column="city_code" nullable="false" length="5" />
+    <field name="cityLabel" type="string" column="city_label" nullable="false" />
+    <field name="roadName" type="string" column="road_name" nullable="false" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />
     <field name="toHouseNumber" type="string" column="to_house_number" nullable="true" length="8" />
     <field name="geometry" type="geometry" column="geometry" nullable="true">
@@ -34,5 +36,6 @@
         <option name="srid">2154</option>
       </options>
     </field>
+    <field name="address" type="string" column="address" nullable="true" />
   </entity>
 </doctrine-mapping>

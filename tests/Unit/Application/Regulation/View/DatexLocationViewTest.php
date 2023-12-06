@@ -19,11 +19,11 @@ final class DatexLocationViewTest extends TestCase
         ]);
 
         $view = new DatexLocationView(
-            'Route du Grand Brossais 44260 Savenay',
+            'Route du Grand Brossais',
             $geometry,
         );
 
-        $this->assertSame($view->address, 'Route du Grand Brossais 44260 Savenay');
+        $this->assertSame($view->roadName, 'Route du Grand Brossais');
         $this->assertSame($view->geometry, $geometry);
         $this->assertSame($view->gmlPosList, '-1.935836 47.347024 -1.930973 47.347917');
     }

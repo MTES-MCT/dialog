@@ -20,7 +20,6 @@ use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Location;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -174,9 +173,16 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->method('getUuid')
             ->willReturn('2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea');
         $location
+            ->expects(self::never())
+            ->method('getCityCode');
+        $location
             ->expects(self::once())
-            ->method('getAddress')
-            ->willReturn('Avenue de Fonneuve 82000 Montauban');
+            ->method('getCityLabel')
+            ->willReturn('Montauban');
+        $location
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn('Avenue de Fonneuve');
         $location
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -265,7 +271,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 locations: [
                     new DetailLocationView(
                         uuid: '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
-                        address: new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
+                        cityLabel: 'Montauban',
+                        roadName: 'Avenue de Fonneuve',
                         fromHouseNumber: '95',
                         toHouseNumber: '253',
                         measures: [

@@ -37,7 +37,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $measureCommand = $this->createMock(SaveMeasureCommand::class);
 
         $locationItem = new EudonetParisLocationItem();
-        $locationItem->address = 'Rue Eugène Berthoud, 75018 Paris';
+        $locationItem->roadName = 'Rue Eugène Berthoud';
         $locationItem->fromHouseNumber = '15';
         $locationItem->toHouseNumber = '26';
         $locationItem->measures = [$measureCommand];
@@ -57,7 +57,9 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
             ->with($location);
 
         $locationCommand = new SaveRegulationLocationCommand($regulationOrderRecord);
-        $locationCommand->address = 'Rue Eugène Berthoud, 75018 Paris';
+        $locationCommand->cityCode = '75056';
+        $locationCommand->cityLabel = 'Paris';
+        $locationCommand->roadName = 'Rue Eugène Berthoud';
         $locationCommand->fromHouseNumber = '15';
         $locationCommand->toHouseNumber = '26';
         $locationCommand->geometry = null;
@@ -98,7 +100,7 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
 
         $locationItem = new EudonetParisLocationItem();
-        $locationItem->address = 'Rue Eugène Berthoud, 75018 Paris';
+        $locationItem->roadName = 'Rue Eugène Berthoud';
         $locationItem->geometry = $junctionGeometry;
         $locationItem->measures = [$measureCommand];
 
@@ -117,7 +119,9 @@ final class ImportEudonetParisRegulationCommandHandlerTest extends TestCase
             ->with($location);
 
         $locationCommand = new SaveRegulationLocationCommand($regulationOrderRecord);
-        $locationCommand->address = 'Rue Eugène Berthoud, 75018 Paris';
+        $locationCommand->cityCode = '75056';
+        $locationCommand->cityLabel = 'Paris';
+        $locationCommand->roadName = 'Rue Eugène Berthoud';
         $locationCommand->fromHouseNumber = null;
         $locationCommand->toHouseNumber = null;
         $locationCommand->geometry = $junctionGeometry;

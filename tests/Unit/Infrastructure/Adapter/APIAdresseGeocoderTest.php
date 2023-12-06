@@ -12,7 +12,8 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 final class APIAdresseGeocoderTest extends TestCase
 {
-    private string $address = '15 Route du Grand Brossais 44260 Savenay';
+    private string $address = '15 Route du Grand Brossais';
+    private string $cityCode = '44195';
 
     public function testComputeCoordinates(): void
     {
@@ -22,14 +23,14 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $geocoder = new APIAdresseGeocoder($http);
 
-        $coords = $geocoder->computeCoordinates($this->address);
+        $coords = $geocoder->computeCoordinates($this->address, $this->cityCode);
 
         $this->assertSame(44.3, $coords->latitude);
         $this->assertSame(0.5, $coords->longitude);
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=housenumber',
+            'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais&limit=1&type=housenumber&citycode=44195',
             $response->getRequestUrl(),
         );
     }
@@ -61,7 +62,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $geocoder->computeCoordinates($this->address);
+        $geocoder->computeCoordinates($this->address, $this->cityCode);
     }
 
     private function provideDecodeErrorData(): array
@@ -88,10 +89,10 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $geocoder->computeCoordinates($this->address);
+        $geocoder->computeCoordinates($this->address, $this->cityCode);
     }
 
-    public function testFindAddresses(): void
+    public function testFindRoadNames(): void
     {
         $expectedRequests = [
             function ($method, $url, $options) {
@@ -106,10 +107,19 @@ final class APIAdresseGeocoderTest extends TestCase
                 $this->assertSame('Rue Eugene', $options['query']['q']);
                 $this->assertSame('1', $options['query']['autocomplete']);
                 $this->assertSame(7, $options['query']['limit']);
+                $this->assertSame('street', $options['query']['type']);
+                $this->assertSame($this->cityCode, $options['query']['citycode']);
 
                 return new MockResponse(
                     json_encode([
-                        'features' => [['properties' => ['name' => 'Rue Eugene Berthoud', 'postcode' => '75018', 'city' => 'Paris', 'type' => 'street']]],
+                        'features' => [
+                            [
+                                'properties' => [
+                                    'name' => 'Rue Eugene Berthoud',
+                                    'label' => 'Rue Eugene Berthoud 75018 Paris',
+                                ],
+                            ],
+                        ],
                     ]),
                     ['http_code' => 200],
                 );
@@ -119,98 +129,65 @@ final class APIAdresseGeocoderTest extends TestCase
         $http = new MockHttpClient($expectedRequests, 'http://testserver');
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Rue Eugene');
-        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
+        $addresses = $geocoder->findRoadNames('Rue Eugene', $this->cityCode);
+        $this->assertEquals([['value' => 'Rue Eugene Berthoud', 'label' => 'Rue Eugene Berthoud 75018 Paris']], $addresses);
     }
 
-    private function provideFindAddressesLeadingHouseNumberIsRemoved(): array
-    {
-        return [
-            ['search' => '3 Rue Eugene'],
-            ['search' => '3bis Rue Eugene'],
-            ['search' => '3b Rue Eugene'],
-            ['search' => '3ter Rue Eugene'],
-            ['search' => '3t Rue Eugene'],
-            ['search' => '3quater Rue Eugene'],
-            ['search' => '3q Rue Eugene'],
-            ['search' => '12 bis Rue Eugene'],
-            ['search' => '12 quater Rue Eugene'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideFindAddressesLeadingHouseNumberIsRemoved
-     */
-    public function testFindAddressesLeadingHouseNumberIsRemoved(string $search): void
-    {
-        $expectedRequests = [
-            function ($method, $url, $options) {
-                $this->assertSame('Rue Eugene', $options['query']['q']);
-
-                return new MockResponse(
-                    json_encode([
-                        'features' => [['properties' => ['name' => 'Rue Eugene Berthoud', 'postcode' => 75018, 'city' => 'Paris', 'type' => 'street']]],
-                    ]),
-                    ['http_code' => 200],
-                );
-            },
-        ];
-
-        $http = new MockHttpClient($expectedRequests);
-
-        $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses($search);
-        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
-    }
-
-    public function testFindAddressesIncompleteFeature(): void
+    public function testfindRoadNamesIncompleteFeature(): void
     {
         $body = json_encode(['features' => [[]]]);
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test');
+        $addresses = $geocoder->findRoadNames('Test', $this->cityCode);
         $this->assertEquals([], $addresses);
     }
 
-    public function testFindAddressesAPIFailure(): void
+    public function testfindRoadNamesAPIFailure(): void
     {
         $response = new MockResponse('...', ['http_code' => 500]);
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test');
+        $addresses = $geocoder->findRoadNames('Test', $this->cityCode);
         $this->assertEquals([], $addresses);
     }
 
-    public function testFindAddressesInvalidJSON(): void
+    public function testfindRoadNamesInvalidJSON(): void
     {
         $response = new MockResponse('{"blah', ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
         $geocoder = new APIAdresseGeocoder($http);
-        $addresses = $geocoder->findAddresses('Test');
+        $addresses = $geocoder->findRoadNames('Test', $this->cityCode);
         $this->assertEquals([], $addresses);
     }
 
-    public function testFindAddressesSearchTooShort(): void
+    public function testfindRoadNamesSearchTooShort(): void
     {
         $response = new MockResponse(
             json_encode([
-                'features' => [['properties' => ['name' => 'Rue Eugene Berthoud', 'postcode' => '75018', 'city' => 'Paris', 'type' => 'street']]],
+                'features' => [
+                    [
+                        'properties' => [
+                            'name' => 'Rue Eugene Berthoud',
+                            'label' => 'Rue Eugene Berthoud 75018 Paris',
+                        ],
+                    ],
+                ],
             ]),
             ['http_code' => 200],
         );
         $http = new MockHttpClient([$response]);
         $geocoder = new APIAdresseGeocoder($http);
 
-        $addresses = $geocoder->findAddresses('aa');
+        $addresses = $geocoder->findRoadNames('aa', $this->cityCode);
         $this->assertEquals([], $addresses);
         $this->assertEquals(0, $http->getRequestsCount());
 
-        $addresses = $geocoder->findAddresses('aaa');
-        $this->assertEquals(['Rue Eugene Berthoud, 75018 Paris'], $addresses);
+        $addresses = $geocoder->findRoadNames('aaa', $this->cityCode);
+        $this->assertEquals([['value' => 'Rue Eugene Berthoud', 'label' => 'Rue Eugene Berthoud 75018 Paris']], $addresses);
         $this->assertEquals(1, $http->getRequestsCount());
     }
 
@@ -222,14 +199,14 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $geocoder = new APIAdresseGeocoder($http);
 
-        $coords = $geocoder->computeJunctionCoordinates($this->address, 'Boulevard de Clignancourt');
+        $coords = $geocoder->computeJunctionCoordinates($this->address, 'Boulevard de Clignancourt', $this->cityCode);
 
         $this->assertSame(44.3, $coords->latitude);
         $this->assertSame(0.5, $coords->longitude);
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://testserver/search/?q=Boulevard%20de%20Clignancourt%20/%2015%20Route%20du%20Grand%20Brossais%2044260%20Savenay&limit=1&type=poi',
+            'https://testserver/search/?q=Boulevard%20de%20Clignancourt%20/%2015%20Route%20du%20Grand%20Brossais&limit=1&type=poi&citycode=44195',
             $response->getRequestUrl(),
         );
     }

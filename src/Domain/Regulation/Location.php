@@ -14,13 +14,16 @@ class Location
     public function __construct(
         private string $uuid,
         private RegulationOrder $regulationOrder,
-        private string $address,
+        private string $cityCode,
+        private string $cityLabel,
+        private string $roadName,
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
         private ?string $geometry,
         // Deprecated
         private ?string $fromPoint = null,
         private ?string $toPoint = null,
+        private ?string $address = null,
     ) {
         $this->measures = new ArrayCollection();
     }
@@ -35,9 +38,19 @@ class Location
         return $this->regulationOrder;
     }
 
-    public function getAddress(): string
+    public function getCityCode(): string
     {
-        return $this->address;
+        return $this->cityCode;
+    }
+
+    public function getCityLabel(): string
+    {
+        return $this->cityLabel;
+    }
+
+    public function getRoadName(): string
+    {
+        return $this->roadName;
     }
 
     public function getFromHouseNumber(): ?string
@@ -79,12 +92,16 @@ class Location
     }
 
     public function update(
-        string $address,
+        string $cityCode,
+        string $cityLabel,
+        string $roadName,
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
         ?string $geometry,
     ): void {
-        $this->address = $address;
+        $this->cityCode = $cityCode;
+        $this->cityLabel = $cityLabel;
+        $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
         $this->geometry = $geometry;
@@ -100,5 +117,10 @@ class Location
     public function getToPoint(): ?string
     {
         return $this->toPoint;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
     }
 }
