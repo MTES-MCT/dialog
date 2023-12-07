@@ -1,6 +1,6 @@
 DELETE FROM fr_city;
-INSERT INTO fr_city
-(insee_code, name, departement)
+
+INSERT INTO fr_city (insee_code, name, departement)
 VALUES
 ('01001', E'L\'Abergement-Clémenciat', '01'),
 ('01002', E'L\'Abergement-de-Varey', '01'),

@@ -6,52 +6,36 @@ into an SQL file for quick and efficient import.
 import argparse
 import json
 from pathlib import Path
+import textwrap
 
 TABLE_NAME = "fr_city"
 
+SQL_TEMPLATE = textwrap.dedent(
+    """\
+    DELETE FROM fr_city;
 
-def _pg_escape(value: str) -> str:
-    return value.replace("'", "\\'")
+    INSERT INTO fr_city (insee_code, name, departement)
+    VALUES
+    {values};
+    """
+)
 
 
-def _ensure_pk_unique(rows):
-    result = []
+def main(input_path: Path, output_path: Path):
+    rows = json.loads(input_path.read_text())
+
+    values_list = []
 
     for row in rows:
         if row["type"] in ("commune-deleguee", "commune-associee"):
             continue
 
-        result.append(row)
-
-    return result
-
-
-def main(input_path: Path, output_path: Path):
-    rows = json.loads(input_path.read_text())
-    rows = _ensure_pk_unique(rows)
-
-    pg_values = []
-
-    for row in rows:
         insee_code = row["code"]
-        name = _pg_escape(row["nom"])
+        name = row["nom"].replace("'", "\\'")
         departement = row["departement"]
+        values_list.append(f"('{insee_code}', E'{name}', '{departement}')")
 
-        pg_values.append(f"('{insee_code}', E'{name}', '{departement}')")
-
-    statements = []
-    statements.append(f"DELETE FROM {TABLE_NAME}")
-    statements.append(
-        "\n".join(
-            [
-                f"INSERT INTO {TABLE_NAME}",
-                "(insee_code, name, departement)",
-                "VALUES",
-                ",\n".join(pg_values),
-            ]
-        )
-    )
-    sql = ";\n".join(statements) + ";\n"
+    sql = SQL_TEMPLATE.format(values=",\n".join(values_list))
 
     output_path.write_text(sql)
 
