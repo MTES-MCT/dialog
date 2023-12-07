@@ -1,6 +1,8 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
+        platform_service: App\Infrastructure\Persistence\Doctrine\DBAL\Platform\CustomPostgreSQLPlatformService
+        schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
@@ -12,6 +14,7 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Domain'
                 alias: 'App\Domain'
+
 
 when@test:
     doctrine:
