@@ -17,11 +17,11 @@ final class TimeSlotFormType extends AbstractType
         $builder
             ->add('startTime', TimeType::class, [
                 'label' => 'regulation.timeSlot.startTime',
-                'widget' => 'single_text',
+                'widget' => 'choice',
             ])
             ->add('endTime', TimeType::class, [
                 'label' => 'regulation.timeSlot.endTime',
-                'widget' => 'single_text',
+                'widget' => 'choice',
             ])
         ;
     }
