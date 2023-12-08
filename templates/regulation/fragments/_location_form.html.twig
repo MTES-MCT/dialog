@@ -24,14 +24,14 @@
             </button>
         </div>
         <div class="app-card__content">
-            <div class="fr-container--fluid">
+            <div class="fr-x-container--fluid">
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
             </div>
 
@@ -85,8 +85,9 @@
                 >
                     <ul
                         class="app-timeslot-list fr-raw-list fr-mb-2w"
-                        data-testid="timeSlot-list"
+                        data-testid="timeslot-list"
                         data-form-collection-target="collectionContainer"
+                        {% if form.timeSlots|length == 0 %}data-empty{% endif %}
                         aria-label="{{ form.timeSlots.vars.label|trans }}"
                     >
                         {%- for item in form.timeSlots -%}

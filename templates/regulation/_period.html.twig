@@ -18,6 +18,7 @@
                     '%lastDay%': ('regulation.period.days.' ~ dayRange.lastDay)|trans,
                 })|lower }}
             {%- endif -%}
+            {% if loop.revindex0 == 1 %}&nbsp;{{ 'common.and'|trans }}&nbsp;{% elseif not loop.last%},&nbsp;{% endif %}
         {%- endfor -%}
     {%- endif -%}
     {% if period.timeSlots|length %}

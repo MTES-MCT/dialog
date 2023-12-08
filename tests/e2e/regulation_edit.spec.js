@@ -103,9 +103,9 @@ test('Add a period to a measure', async ({ regulationOrderPage }) => {
         days: ['Lundi', 'Mardi'],
         dayOption: 'Certains jours',
         startDate: '2023-10-10',
-        startTime: '08:00',
+        startTime: ['08', '00'],
         endDate: '2023-10-10',
-        endTime: '08:30',
+        endTime: ['08', '30'],
     });
     await expect(location).toContainText('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, du lundi au mardi pour tous les véhicules');
 });
@@ -121,11 +121,21 @@ test('Delete a period from a measure', async ({ regulationOrderPage }) => {
         days: ['Lundi'],
         dayOption: 'Certains jours',
         startDate: '2023-10-10',
-        startTime: '08:00',
+        startTime: ['08', '00'],
         endDate: '2023-10-10',
-        endTime: '16:00',
+        endTime: ['16', '00'],
     });
     await expect(location).toContainText('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules');
     await page.removePeriodFromMeasure(location, { measureIndex: 0, periodIndex: 0 });
     await expect(location).toContainText('Circulation interdite tous les jours');
+});
+
+test('Manipulate time slots', async ({ regulationOrderPage }) => {
+    /** @type {RegulationOrderPage} */
+    let page = regulationOrderPage;
+
+    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+    const location = await page.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
+
+    await page.manipulateTimeSlots(location, { measureIndex: 0 });
 });

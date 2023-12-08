@@ -6,16 +6,10 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="address" type="string" column="address" nullable="false" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />
-    <field name="fromPoint" type="geometry" column="from_point" nullable="true">
-      <options>
-        <option name="geometry_type">POINT</option>
-        <option name="srid">2154</option>
-      </options>
-    </field>
     <field name="toHouseNumber" type="string" column="to_house_number" nullable="true" length="8" />
-    <field name="toPoint" type="geometry" column="to_point" nullable="true">
+    <field name="geometry" type="geometry" column="geometry" nullable="true">
       <options>
-        <option name="geometry_type">POINT</option>
+        <option name="geometry_type">GEOMETRY</option>
         <option name="srid">2154</option>
       </options>
     </field>
@@ -27,5 +21,18 @@
             <order-by-field name="createdAt" direction="ASC" />
         </order-by>
     </one-to-many>
+    <!-- Deprecated -->
+    <field name="fromPoint" type="geometry" column="from_point" nullable="true">
+      <options>
+        <option name="geometry_type">POINT</option>
+        <option name="srid">2154</option>
+      </options>
+    </field>
+    <field name="toPoint" type="geometry" column="to_point" nullable="true">
+      <options>
+        <option name="geometry_type">POINT</option>
+        <option name="srid">2154</option>
+      </options>
+    </field>
   </entity>
 </doctrine-mapping>

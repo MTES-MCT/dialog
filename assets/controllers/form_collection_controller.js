@@ -24,6 +24,14 @@ export default class extends Controller {
         this.collectionContainerTarget.appendChild(el.children[0]);
         this.nextIndexValue++;
         this._nextPosition++;
+
+        this.collectionContainerTarget.removeAttribute('data-empty');
+    }
+
+    collectionItemTargetDisconnected(_element) {
+        if (this.collectionItemTargets.length === 0) {
+            this.collectionContainerTarget.setAttribute('data-empty', 'data-empty');
+        }
     }
 
     syncPositions(_event) {
