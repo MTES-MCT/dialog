@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\France\Repository;
+namespace App\Domain\Country\France\Repository;
 
-use App\Domain\France\City;
+use App\Domain\Country\France\City;
 
 interface CityRepositoryInterface
 {

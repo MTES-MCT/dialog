@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\France;
+namespace App\Tests\Unit\Domain\Country\France;
 
-use App\Domain\France\City;
+use App\Domain\Country\France\City;
 use PHPUnit\Framework\TestCase;
 
 final class CityTest extends TestCase
