@@ -72,8 +72,10 @@ rm: ## Remove containers
 
 dbinstall: ## Setup databases
 	make dbmigrate
+	make data_install
 	make console CMD="doctrine:database:create --env=test --if-not-exists"
 	make dbmigrate ARGS="--env=test"
+	make data_install ARGS="--env=test"
 	make dbfixtures
 
 dbmigration: ## Generate new db migration
@@ -115,6 +117,21 @@ addok_bundle: ## Create Addok custom bundle file
 	sudo chmod +r docker/addok/addok-data/dump.rdb # Allow zip to read it
 
 	cd docker/addok && zip -j addok-dialog-bundle.zip addok-data/addok.conf addok-data/addok.db addok-data/dump.rdb
+
+data_install: data_init ## Load data into database
+	make console CMD="app:data:fr_city ${ARGS}"
+
+data_init: data/fr_city.sql ## Initialize data sources
+
+data_update: ## Update data sources
+	rm -f data/fr_city.sql data/communes.json
+	make data_init
+
+data/fr_city.sql: data/communes.json
+	./tools/mkfrcitysql ./data/communes.json ./data/fr_city.sql
+
+data/communes.json:
+	curl -L https://unpkg.com/@etalab/decoupage-administratif/data/communes.json > data/communes.json
 
 ##
 ## ----------------
