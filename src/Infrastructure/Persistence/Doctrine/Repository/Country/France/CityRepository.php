@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Doctrine\Repository\France;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\Country\France;
 
-use App\Domain\France\City;
-use App\Domain\France\Repository\CityRepositoryInterface;
+use App\Domain\Country\France\City;
+use App\Domain\Country\France\Repository\CityRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,8 +20,10 @@ final class CityRepository extends ServiceEntityRepository implements CityReposi
     {
         return $this->createQueryBuilder('c')
            ->where('c.name = :name and c.departement = :departement')
-           ->setParameter('name', $name)
-           ->setParameter('departement', $departement)
+           ->setParameters([
+            'name' => $name,
+            'departement' => $departement,
+            ])
            ->setMaxResults(1)
            ->getQuery()
            ->getOneOrNullResult()

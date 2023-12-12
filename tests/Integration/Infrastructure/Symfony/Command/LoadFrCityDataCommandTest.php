@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Symfony\Command;
 
-use App\Domain\France\Repository\CityRepositoryInterface;
+use App\Domain\Country\France\Repository\CityRepositoryInterface;
 use App\Infrastructure\Symfony\Command\LoadFrCityDataCommand;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;

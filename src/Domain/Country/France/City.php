@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\France;
+namespace App\Domain\Country\France;
 
 class City
 {
