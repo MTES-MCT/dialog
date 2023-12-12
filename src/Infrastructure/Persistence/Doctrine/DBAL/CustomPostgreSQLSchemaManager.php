@@ -6,8 +6,6 @@ namespace App\Infrastructure\Persistence\Doctrine\DBAL;
 
 use Doctrine\DBAL\Schema\PostgreSQLSchemaManager;
 
-// Credit: https://medium.com/yousign-engineering-product/ignore-custom-indexes-on-doctrine-dbal-b5131dd22071
-
 class CustomPostgreSQLSchemaManager extends PostgreSQLSchemaManager
 {
     private const INDEXES_TO_IGNORE = [
