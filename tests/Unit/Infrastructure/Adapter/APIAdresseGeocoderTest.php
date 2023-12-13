@@ -191,6 +191,106 @@ final class APIAdresseGeocoderTest extends TestCase
         $this->assertEquals(1, $http->getRequestsCount());
     }
 
+    public function testFindCities(): void
+    {
+        $expectedRequests = [
+            function ($method, $url, $options) {
+                $this->assertSame('GET', $method);
+                $this->assertEmpty(
+                    array_diff(
+                        ['scheme' => 'http', 'host' => 'testserver', 'path' => '/search/'],
+                        parse_url($url),
+                    ),
+                );
+                $this->assertContains('Accept: application/json', $options['headers']);
+                $this->assertSame('Mesnil', $options['query']['q']);
+                $this->assertSame('1', $options['query']['autocomplete']);
+                $this->assertSame(7, $options['query']['limit']);
+                $this->assertSame('municipality', $options['query']['type']);
+
+                return new MockResponse(
+                    json_encode([
+                        'features' => [
+                            [
+                                'properties' => [
+                                    'city' => 'Blanc Mesnil',
+                                    'postcode' => '93150',
+                                    'citycode' => '93007',
+                                ],
+                            ],
+                        ],
+                    ]),
+                    ['http_code' => 200],
+                );
+            },
+        ];
+
+        $http = new MockHttpClient($expectedRequests, 'http://testserver');
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $cities = $geocoder->findCities('Mesnil');
+        $this->assertEquals([['code' => '93007', 'label' => 'Blanc Mesnil (93150)']], $cities);
+    }
+
+    public function testfindCitiesIncompleteFeature(): void
+    {
+        $body = json_encode(['features' => [[]]]);
+        $response = new MockResponse($body, ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $addresses = $geocoder->findCities('Test');
+        $this->assertEquals([], $addresses);
+    }
+
+    public function testfindCitiesAPIFailure(): void
+    {
+        $response = new MockResponse('...', ['http_code' => 500]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $cities = $geocoder->findCities('Test');
+        $this->assertEquals([], $cities);
+    }
+
+    public function testfindCitiesInvalidJSON(): void
+    {
+        $response = new MockResponse('{"blah', ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $cities = $geocoder->findCities('Test');
+        $this->assertEquals([], $cities);
+    }
+
+    public function testfindCitiesSearchTooShort(): void
+    {
+        $response = new MockResponse(
+            json_encode([
+                'features' => [
+                    [
+                        'properties' => [
+                            'city' => 'Blanc Mesnil',
+                            'postcode' => '93150',
+                            'citycode' => '93007',
+                        ],
+                    ],
+                ],
+            ]),
+            ['http_code' => 200],
+        );
+        $http = new MockHttpClient([$response]);
+        $geocoder = new APIAdresseGeocoder($http);
+
+        $cities = $geocoder->findCities('aa');
+        $this->assertEquals([], $cities);
+        $this->assertEquals(0, $http->getRequestsCount());
+
+        $cities = $geocoder->findCities('aaa');
+        $this->assertEquals([['code' => '93007', 'label' => 'Blanc Mesnil (93150)']], $cities);
+        $this->assertEquals(1, $http->getRequestsCount());
+    }
+
     public function testComputeJunctionCoordinates(): void
     {
         $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
