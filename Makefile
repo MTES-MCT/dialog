@@ -274,7 +274,7 @@ scalingo-node-postbuild:
 
 scalingo-postdeploy:
 	@echo 'Executing migrations...'
-	${BIN_CONSOLE} doctrine:migrations:migrate --no-interaction
+	${BIN_CONSOLE} doctrine:migrations:migrate --env=prod --no-interaction
 
 	@echo 'Installing data...'
-	make data_install
+	make data_install ARGS="--env=prod"
