@@ -21,13 +21,17 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = '';
+        $values['location_form']['cityCode'] = '';
+        $values['location_form']['cityLabel'] = '';
+        $values['location_form']['roadName'] = '';
         $values['location_form']['measures'][0]['type'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_roadName_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
@@ -43,7 +47,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['cityCode'] = '44195';
+        $values['location_form']['cityLabel'] = 'Savenay (44260)';
+        $values['location_form']['roadName'] = 'Route du Grand Brossais';
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
@@ -153,7 +159,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['cityCode'] = '44195';
+        $values['location_form']['cityLabel'] = 'Savenay (44260)';
+        $values['location_form']['roadName'] = 'Route du Grand Brossais';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['location_form']['measures'][0]['vehicleSet']['critairTypes'] = [];
@@ -173,7 +181,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['cityCode'] = '44195';
+        $values['location_form']['cityLabel'] = 'Savenay (44260)';
+        $values['location_form']['roadName'] = 'Route du Grand Brossais';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['location_form']['measures'][0]['vehicleSet']['critairTypes'] = ['invalidCritair'];
@@ -292,7 +302,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['cityCode'] = '44195';
+        $values['location_form']['cityLabel'] = 'Savenay (44260)';
+        $values['location_form']['roadName'] = 'Route du Grand Brossais';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
@@ -326,7 +338,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Bad period
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du Grand Brossais 44260 Savenay';
+        $values['location_form']['cityCode'] = '44195';
+        $values['location_form']['cityLabel'] = 'Savenay (44260)';
+        $values['location_form']['roadName'] = 'Route du Grand Brossais';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'everyDay';
@@ -379,7 +393,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['address'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
+        $values['location_form']['cityCode'] = '44195';
+        $values['location_form']['cityLabel'] = 'Savenay (44260)';
+        $values['location_form']['roadName'] = 'Route du GEOCODING_FAILURE';
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
@@ -427,13 +443,17 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
-        $form['location_form[address]'] = str_repeat('a', 256);
+        $form['location_form[cityCode]'] = str_repeat('a', 6);
+        $form['location_form[cityLabel]'] = str_repeat('a', 256);
+        $form['location_form[roadName]'] = str_repeat('a', 256);
         $form['location_form[fromHouseNumber]'] = str_repeat('a', 9);
         $form['location_form[toHouseNumber]'] = str_repeat('a', 9);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères. Veuillez saisir une adresse valide. Ex : Rue Saint-Léonard, 49000 Angers.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères.', $crawler->filter('#location_form_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#location_form_cityLabel_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#location_form_roadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#location_form_fromHouseNumber_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#location_form_toHouseNumber_error')->text());
     }

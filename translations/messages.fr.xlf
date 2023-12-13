@@ -396,7 +396,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.roadName.help">
                 <source>regulation.location.roadName.help</source>
-                <target>Indiquez la voie concernée, par exemple Rue de la république.</target>
+                <target>Indiquez la voie concernée, par exemple Rue de la République.</target>
             </trans-unit>
             <trans-unit id="regulation.location.roadName.results_label">
                 <source>regulation.location.roadName.results_label</source>

@@ -174,7 +174,7 @@ final class EudonetParisTransformer
     }
 
     private function makeLocationGeometry(
-        string $address,
+        string $roadName,
         ?string $fromHouseNumber,
         ?string $fromRoadName,
         ?string $toHouseNumber,
@@ -190,17 +190,17 @@ final class EudonetParisTransformer
         }
 
         if ($fromHouseNumber) {
-            $fromAddress = sprintf('%s %s', $fromHouseNumber, $address);
+            $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
             $fromPoint = $this->geocoder->computeCoordinates($fromAddress, ImportEudonetParisRegulationCommand::CITY_CODE);
         } else {
-            $fromPoint = $this->geocoder->computeJunctionCoordinates($address, $fromRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
+            $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
         }
 
         if ($toHouseNumber) {
-            $toAddress = sprintf('%s %s', $toHouseNumber, $address);
+            $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
             $toPoint = $this->geocoder->computeCoordinates($toAddress, ImportEudonetParisRegulationCommand::CITY_CODE);
         } else {
-            $toPoint = $this->geocoder->computeJunctionCoordinates($address, $toRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
+            $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
         }
 
         return GeoJSON::toLineString([$fromPoint, $toPoint]);
