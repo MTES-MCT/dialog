@@ -27,7 +27,7 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "scalingo-postbuild": "npm run build && npm run blog_install && npm run blog_build",
+        "scalingo-postbuild": "npm run build && npm run blog_install && npm run blog_build && make data_install",
         "prepare": "husky install",
         "blog_install": "cd blog && npm install",
         "blog_build": "cd blog && npm run build && npm run postbuild"
