@@ -1,10 +1,3 @@
-# Allow referring to environment variables defined in .env.
-# See: https://lithic.tech/blog/2020-05/makefile-dot-env
-ifneq (,$(wildcard ./.env))
-	include .env
-	export
-endif
-
 .PHONY: assets
 
 # Allow non-Docker overrides for CI.
@@ -85,7 +78,7 @@ dbmigrate: ## Run db migration
 	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing ${ARGS}
 
 dbshell: ## Connect to the database
-	docker-compose exec database psql ${DATABASE_URL}
+	docker-compose exec database psql postgresql://dialog:dialog@database:5432/dialog
 
 dbfixtures: ## Load tests fixtures
 	make console CMD="doctrine:fixtures:load --env=test -n --purge-with-truncate"
@@ -274,7 +267,7 @@ scalingo-node-postbuild:
 
 scalingo-postdeploy:
 	@echo 'Executing migrations...'
-	${BIN_CONSOLE} doctrine:migrations:migrate --env=prod --no-interaction
+	${BIN_CONSOLE} doctrine:migrations:migrate --no-interaction
 
 	@echo 'Installing data...'
-	make data_install ARGS="--env=prod"
+	make data_install
