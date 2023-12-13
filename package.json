@@ -27,7 +27,7 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress",
-        "scalingo-postbuild": "make scalingo-postbuild BIN_PHP='php' BIN_CONSOLE='php bin/console' BIN_NPM='npm'",
+        "scalingo-postbuild": "make scalingo-node-postbuild BIN_NPM=npm",
         "prepare": "husky install",
         "blog_install": "cd blog && npm install",
         "blog_build": "cd blog && npm run build && npm run postbuild"

@@ -128,7 +128,7 @@ data_update: ## Update data sources
 	make data_init
 
 data/fr_city.sql: data/communes.json
-	./tools/mkfrcitysql ./data/communes.json ./data/fr_city.sql
+	${BIN_PHP} tools/mkfrcitysql.php ./data/communes.json ./data/fr_city.sql
 
 data/communes.json:
 	curl -L https://unpkg.com/@etalab/decoupage-administratif/data/communes.json > data/communes.json
@@ -263,12 +263,14 @@ ci: ## Run CI steps
 	make test_cov
 
 ##
-## ---------
+## ----------------
 ## Prod
-## ---------
+## ----------------
 ##
 
-scalingo-postbuild:
+scalingo-php-compile:
+	make data_install
+
+scalingo-node-postbuild:
 	make assets
 	make blog_install
-	make data_install

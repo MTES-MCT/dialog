@@ -114,6 +114,9 @@
             ],
             "nginx-includes": [
                 "paas/server.locations"
+            ],
+            "compile": [
+                "make scalingo-php-compile BIN_PHP='php' BIN_CONSOLE='php bin/console'"
             ]
         }
     }
