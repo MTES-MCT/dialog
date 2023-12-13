@@ -47,6 +47,18 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                 ],
             ];
+        } elseif ($type === 'municipality' && $query === 'Dijon') {
+            $body = [
+                'features' => [
+                    [
+                        'properties' => [
+                            'city' => 'Dijon',
+                            'postcode' => '21000',
+                            'citycode' => '21231',
+                        ],
+                    ],
+                ],
+            ];
         } elseif ($type === 'municipality' && $query === 'Mesnil') {
             $body = [
                 'features' => [
