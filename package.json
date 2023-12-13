@@ -35,5 +35,8 @@
     "dependencies": {
         "@gouvfr/dsfr": "^1.7.2",
         "remixicon": "^2.5.0"
+    },
+    "engines": {
+        "node": "18"
     }
 }
