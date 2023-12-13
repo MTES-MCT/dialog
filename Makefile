@@ -261,3 +261,14 @@ ci: ## Run CI steps
 	make blog_install
 	make check
 	make test_cov
+
+##
+## ---------
+## Prod
+## ---------
+##
+
+scalingo-postbuild:
+	make assets
+	make blog_install
+	make data_install
