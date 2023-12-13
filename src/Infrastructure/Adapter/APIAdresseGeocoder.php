@@ -167,12 +167,13 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
         try {
             $data = $response->toArray(throw: true);
-            $features = $this->disambiguateHomonymCities($data['features']);
             $cities = [];
 
-            foreach ($features as $feature) {
+            foreach ($data['features'] as $feature) {
+                $label = sprintf('%s (%s)', $feature['properties']['city'], $feature['properties']['postcode']);
+
                 $cities[] = [
-                    'label' => $feature['properties']['label'],
+                    'label' => $label,
                     'code' => $feature['properties']['citycode'],
                 ];
             }
@@ -183,31 +184,5 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
             return [];
         }
-    }
-
-    private function disambiguateHomonymCities(array $features): array
-    {
-        $newFeatures = [];
-
-        $homonyms = [];
-        $_cities = [];
-
-        foreach ($features as $feature) {
-            $city = $feature['properties']['city'];
-            if (\in_array($city, $_cities) && !\in_array($city, $homonyms)) {
-                $homonyms[] = $city;
-            }
-            $_cities[] = $city;
-        }
-
-        foreach ($features as $feature) {
-            if (\in_array($feature['properties']['city'], $homonyms)) {
-                $feature['properties']['label'] = sprintf('%s (%s)', $feature['properties']['city'], $feature['properties']['postcode']);
-            }
-
-            $newFeatures[] = $feature;
-        }
-
-        return $newFeatures;
     }
 }
