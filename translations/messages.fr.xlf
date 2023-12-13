@@ -384,7 +384,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.city">
                 <source>regulation.location.city</source>
-                <target>Commune</target>
+                <target>Ville ou commune (obligatoire)</target>
             </trans-unit>
             <trans-unit id="regulation.location.city.results_label">
                 <source>regulation.location.city.results_label</source>
@@ -392,11 +392,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.roadName">
                 <source>regulation.location.roadName</source>
-                <target>Nom de la voie</target>
+                <target>Voie</target>
             </trans-unit>
             <trans-unit id="regulation.location.roadName.help">
                 <source>regulation.location.roadName.help</source>
-                <target>Indiquez la voie concernée.</target>
+                <target>Indiquez la voie concernée, par exemple Rue de la république.</target>
             </trans-unit>
             <trans-unit id="regulation.location.roadName.results_label">
                 <source>regulation.location.roadName.results_label</source>
