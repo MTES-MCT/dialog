@@ -1,2 +1,2 @@
 web: bin/run
-postdeploy: ./scripts/postdeploy.sh
+postdeploy: make scalingo-postdeploy BIN_PHP=php BIN_CONSOLE="php bin/console"
