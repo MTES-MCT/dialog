@@ -1,0 +1,18 @@
+.remixicons {
+    font-size: 1.5rem !important; // Override to have the same size as the DSFR. Does not work without !important
+}
+
+.fr-x-icon-decorative--blue-france::before {
+    background-color: var(--x-icon-decorative-blue-france);
+}
+
+.fr-x-icon--xl::before {
+    --icon-size: 2.75rem;
+}
+
+@each $extraIcon in ('commercial', 'emergency-services', 'bicycle', 'pedestrians', 'critair', 'heavy-goods-vehicle','taxi', 'hazardous-materials', 'car-sharing') {
+    .fr-icon-x-#{$extraIcon}::before {
+        mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
+        -webkit-mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
+    }
+}
