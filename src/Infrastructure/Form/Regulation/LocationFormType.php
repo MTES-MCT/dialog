@@ -34,6 +34,7 @@ final class LocationFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.roadName',
                     'help' => 'regulation.location.roadName.help',
+                    'required' => false,
                 ],
             )
             ->add(

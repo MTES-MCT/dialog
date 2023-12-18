@@ -9,7 +9,7 @@ final class LocationView
     public function __construct(
         public readonly string $cityCode,
         public readonly string $cityLabel,
-        public readonly string $roadName,
+        public readonly ?string $roadName,
     ) {
     }
 }

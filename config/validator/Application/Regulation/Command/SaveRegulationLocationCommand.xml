@@ -17,7 +17,6 @@
             </constraint>
         </property>
         <property name="roadName">
-            <constraint name="NotBlank" />
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>

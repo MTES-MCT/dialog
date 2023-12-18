@@ -16,7 +16,7 @@ class Location
         private RegulationOrder $regulationOrder,
         private string $cityCode,
         private string $cityLabel,
-        private string $roadName,
+        private ?string $roadName,
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
         private ?string $geometry,
@@ -48,7 +48,7 @@ class Location
         return $this->cityLabel;
     }
 
-    public function getRoadName(): string
+    public function getRoadName(): ?string
     {
         return $this->roadName;
     }
@@ -94,7 +94,7 @@ class Location
     public function update(
         string $cityCode,
         string $cityLabel,
-        string $roadName,
+        ?string $roadName,
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
         ?string $geometry,

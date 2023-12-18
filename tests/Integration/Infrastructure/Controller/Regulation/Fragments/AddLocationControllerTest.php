@@ -23,7 +23,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['location_form']['cityCode'] = '';
         $values['location_form']['cityLabel'] = '';
-        $values['location_form']['roadName'] = '';
         $values['location_form']['measures'][0]['type'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
@@ -31,7 +30,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_roadName_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
