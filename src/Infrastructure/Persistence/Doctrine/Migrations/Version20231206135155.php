@@ -48,7 +48,6 @@ final class Version20231206135155 extends AbstractMigration
 
         $this->addSql('ALTER TABLE location ALTER COLUMN city_code SET NOT NULL');
         $this->addSql('ALTER TABLE location ALTER COLUMN city_label SET NOT NULL');
-        $this->addSql('ALTER TABLE location ALTER COLUMN road_name SET NOT NULL');
     }
 
     public function down(Schema $schema): void
