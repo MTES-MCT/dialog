@@ -1,0 +1,29 @@
+.fr-x-text--right {
+    text-align: right;
+}
+
+.fr-x-text--center {
+  text-align: center;
+}
+
+.fr-x-text--italic {
+    font-style: italic;
+}
+
+.fr-x-text--regular {
+    /* Higher priority than .fr-text--regular provided by DSFR, so it can work */
+    /* with DSFR classes declared after .fr-text--regular, such as .fr-h4. */
+    font-weight: 400 !important;
+}
+
+.fr-x-text--default-grey {
+    color: var(--text-default-grey);
+}
+
+.fr-x-text--mention-grey {
+    color: var(--text-mention-grey);
+}
+
+.fr-x-text--blue-france {
+    color: var(--blue-france-sun-113-625);
+}

@@ -1,0 +1,22 @@
+/* .required is set by Symfony for form types with 'required => true' */
+label.required > .fr-x-label-content::after,
+legend.required > .fr-x-label-content::after {
+  content: " *";
+}
+
+@supports not selector(::-webkit-calendar-picker-indicator) {
+  /* Partial FIX for: https://github.com/GouvernementFR/dsfr/issues/411 */
+  /* Hide duplicate calendar icon and restore padding when DSFR fails to hide the native calendar icon */
+  .fr-input-wrap.fr-fi-calendar-line::before {
+    display: none;
+  }
+  .fr-input-wrap .fr-input[type="date"] {
+    padding-right: 1rem;
+  }
+}
+
+.app-widget--suffix {
+    display: flex;
+    align-items: flex-end;
+    column-gap: 0.5rem;
+}

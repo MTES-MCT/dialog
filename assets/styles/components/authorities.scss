@@ -1,0 +1,54 @@
+ol.app-authorities__steplist {
+    counter-reset: li-steps;
+    padding: 0;
+    padding-inline-start: 5rem;
+
+    & > li {
+        position: relative;
+
+        & + li {
+            margin-block-start: 2rem;
+        }
+    }
+
+    & > li::marker {
+        content: none;
+    }
+
+    & > li::before {
+        counter-increment: li-steps;
+        content: counter(li-steps) '.';
+        position: absolute;
+        top: calc(50% - 1rem);
+        right: calc(100% + 1rem);
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--artwork-minor-blue-france);
+    }
+}
+
+.app-authorities__pilotgrid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    & > * {
+        // Estimated to be just below 1/4th of the row width on desktop.
+        width: 30ch;
+    }
+
+    figure {
+        margin: 0;
+
+        img {
+            inline-size: 100%;
+        }
+
+        figcaption {
+            text-align: right;
+            font-size: 0.875rem;
+            color: var(--text-mention-grey);
+        }
+    }
+}

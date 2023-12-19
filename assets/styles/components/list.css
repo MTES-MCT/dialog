@@ -1,0 +1,8 @@
+ul.app-list--checkmarks > li {
+    padding-inline-start: var(--ul-start);
+}
+
+ul.app-list--checkmarks > li::marker {
+    content: url('../../../public/images/icons/checkmark.svg');
+    color: var(--blue-france-sun-113-625);
+}

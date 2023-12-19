@@ -1,0 +1,14 @@
+/* DSFR provides most of the reset, but we do provide some additional reset. */
+
+[hidden] {
+    /*
+      Ensure elements with a non-block or non-inline 'display' (such as DSFR buttons with become, or an element with display: grid)
+      effectively become hidden when the 'hidden' HTML attribute is set.
+    */
+    display: none !important;
+}
+
+fieldset {
+    padding: 0;
+    border: none;
+}

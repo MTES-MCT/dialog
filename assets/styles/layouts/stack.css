@@ -1,0 +1,5 @@
+@media screen and (min-width: 48em) {
+    .fr-x-md-stack > * + * {
+        padding-block-start: var(--stack-spacing, 1.5rem);
+    }
+}
