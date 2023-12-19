@@ -12,7 +12,7 @@ final class DatexLocationView
     public readonly string $gmlPosList;
 
     public function __construct(
-        public readonly string $address,
+        public readonly string $roadName,
         public readonly string $geometry,
     ) {
         $this->gmlPosList = GMLv3::toPosList(GeoJSON::parseLineString($geometry));

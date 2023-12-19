@@ -63,7 +63,7 @@ Arrête
 
 {% for location in regulationOrderRecord.locations -%}
     [
-    {{ location.address }}
+    {{ location.roadName }} à {{ location.cityLabel }}
     {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
     –
     {%- for measure in location.measures %}

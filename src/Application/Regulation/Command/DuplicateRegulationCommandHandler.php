@@ -58,7 +58,9 @@ final class DuplicateRegulationCommandHandler
     ): void {
         foreach ($originalRegulationOrder->getLocations() as $location) {
             $locationCommand = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
-            $locationCommand->address = $location->getAddress();
+            $locationCommand->cityCode = $location->getCityCode();
+            $locationCommand->cityLabel = $location->getCityLabel();
+            $locationCommand->roadName = $location->getRoadNAme();
             $locationCommand->fromHouseNumber = $location->getFromHouseNumber();
             $locationCommand->toHouseNumber = $location->getToHouseNumber();
 

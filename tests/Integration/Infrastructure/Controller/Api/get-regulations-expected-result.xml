@@ -448,7 +448,7 @@
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Avenue de Fonneuve 82000 Montauban</loc:roadName>
+                                    <loc:roadName>Avenue de Fonneuve</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:gmlLineString>
@@ -525,7 +525,7 @@
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Avenue de Fonneuve 82000 Montauban</loc:roadName>
+                                    <loc:roadName>Avenue de Fonneuve</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:gmlLineString>
@@ -565,7 +565,7 @@
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Rue de l'Hôtel de Ville 82000 Montauban</loc:roadName>
+                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:gmlLineString>
@@ -601,7 +601,7 @@
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Rue de l'Hôtel de Ville 82000 Montauban</loc:roadName>
+                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:gmlLineString>

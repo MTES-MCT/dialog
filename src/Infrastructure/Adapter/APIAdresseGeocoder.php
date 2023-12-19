@@ -12,14 +12,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class APIAdresseGeocoder implements GeocoderInterface
 {
-    private const HOUSENUMBER_FILTER_REGEX = '/^(\d+\s?(bis|b|ter|t|quater|q)?)\s/i';
-
     public function __construct(
         private HttpClientInterface $apiAdresseClient,
     ) {
     }
 
-    public function computeCoordinates(string $address, string $type = 'housenumber'): Coordinates
+    public function computeCoordinates(string $address, string $cityCode, string $type = 'housenumber'): Coordinates
     {
         // See: https://adresse.data.gouv.fr/api-doc/adresse
 
@@ -27,6 +25,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             'q' => $address,
             'limit' => 1,
             'type' => $type,
+            'citycode' => $cityCode,
         ];
 
         $response = $this->apiAdresseClient->request('GET', '/search/', [
@@ -103,15 +102,13 @@ final class APIAdresseGeocoder implements GeocoderInterface
         return Coordinates::fromLonLat($lonLat[0], $lonLat[1]);
     }
 
-    public function computeJunctionCoordinates(string $address, string $roadName): Coordinates
+    public function computeJunctionCoordinates(string $address, string $roadName, string $cityCode): Coordinates
     {
-        return $this->computeCoordinates($roadName . ' / ' . $address, type: 'poi');
+        return $this->computeCoordinates($roadName . ' / ' . $address, $cityCode, type: 'poi');
     }
 
-    public function findAddresses(string $search): array
+    public function findRoadNames(string $search, string $cityCode): array
     {
-        $search = preg_replace(self::HOUSENUMBER_FILTER_REGEX, '', $search);
-
         if (\strlen($search) < 3) {
             // APIAdresse returns error if search string has length strictly less than 3.
             return [];
@@ -125,29 +122,63 @@ final class APIAdresseGeocoder implements GeocoderInterface
                 'q' => $search,
                 'autocomplete' => '1',
                 'limit' => 7,
+                'type' => 'street',
+                'citycode' => $cityCode,
             ],
         ]);
 
         try {
             $data = $response->toArray(throw: true);
-            $addresses = [];
+            $roadNames = [];
 
             foreach ($data['features'] as $feature) {
-                $type = $feature['properties']['type'];
-
-                $label = match ($type) {
-                    'street', 'locality' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
-                    'municipality' => sprintf('%s %s', $feature['properties']['postcode'], $feature['properties']['city']),
-                    'poi' => sprintf('%s, %s %s', $feature['properties']['name'], $feature['properties']['postcode'], $feature['properties']['city']),
-                    default => null,
-                };
-
-                if (!empty($label)) {
-                    $addresses[] = $label;
-                }
+                $roadNames[] = [
+                    'value' => $feature['properties']['name'],
+                    'label' => $feature['properties']['label'],
+                ];
             }
 
-            return $addresses;
+            return $roadNames;
+        } catch (\Exception $exc) {
+            \Sentry\captureException($exc);
+
+            return [];
+        }
+    }
+
+    public function findCities(string $search): array
+    {
+        if (\strlen($search) < 3) {
+            // APIAdresse returns error if search string has length strictly less than 3.
+            return [];
+        }
+
+        $response = $this->apiAdresseClient->request('GET', '/search/', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'query' => [
+                'q' => $search,
+                'autocomplete' => '1',
+                'limit' => 7,
+                'type' => 'municipality',
+            ],
+        ]);
+
+        try {
+            $data = $response->toArray(throw: true);
+            $cities = [];
+
+            foreach ($data['features'] as $feature) {
+                $label = sprintf('%s (%s)', $feature['properties']['city'], $feature['properties']['postcode']);
+
+                $cities[] = [
+                    'label' => $label,
+                    'code' => $feature['properties']['citycode'],
+                ];
+            }
+
+            return $cities;
         } catch (\Exception $exc) {
             \Sentry\captureException($exc);
 
