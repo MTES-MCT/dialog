@@ -1,0 +1,23 @@
+.fr-x-btn-sm--icon-left {
+    @media screen and (min-width: 36em) {
+        max-width: initial !important;
+    }
+}
+
+.fr-x-btn--with-hint {
+    display: grid;
+    grid-template-areas: "icon label" "icon help";
+    text-align: left;
+}
+
+.fr-x-btn--with-hint::before {
+    grid-area: icon;
+}
+
+.fr-x-btn--with-hint:nth-child(0) {
+    grid-area: label;
+}
+
+.fr-x-btn--with-hint:nth-child(1) {
+    grid-area: help;
+}
