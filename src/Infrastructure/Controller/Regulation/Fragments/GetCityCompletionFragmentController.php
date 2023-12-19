@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetAddressCompletionFragmentController
+final class GetCityCompletionFragmentController
 {
     public function __construct(
         private GeocoderInterface $geocoder,
@@ -19,26 +19,25 @@ final class GetAddressCompletionFragmentController
     }
 
     #[Route(
-        '/_fragment/address-completions',
+        '/_fragment/city-completions',
         methods: 'GET',
-        name: 'fragment_roadName_completion',
+        name: 'fragment_city_completion',
     )]
     public function __invoke(Request $request): Response
     {
         $search = $request->query->get('search');
-        $cityCode = $request->query->get('cityCode');
 
-        if (!$search || !$cityCode) {
+        if (!$search) {
             throw new BadRequestHttpException();
         }
 
-        $roadNames = $this->geocoder->findRoadNames($search, $cityCode);
+        $cities = $this->geocoder->findCities($search);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_road_name_completions.html.twig',
+                name: 'regulation/fragments/_city_completions.html.twig',
                 context: [
-                    'roadNames' => $roadNames,
+                    'cities' => $cities,
                 ],
             ),
         );

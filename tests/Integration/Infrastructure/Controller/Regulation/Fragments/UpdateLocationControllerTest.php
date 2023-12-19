@@ -18,12 +18,15 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = ''; // reset
+        $form['location_form[cityCode]'] = ''; // reset
+        $form['location_form[cityLabel]'] = ''; // reset
+        $form['location_form[roadName]'] = ''; // reset
         $form['location_form[measures][0][type]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_type_error')->text());
         $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
@@ -37,7 +40,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[cityCode]'] = '44195';
+        $form['location_form[cityLabel]'] = 'Savenay (44260)';
+        $form['location_form[roadName]'] = 'Route du Grand Brossais';
         $form['location_form[measures][0][type]'] = 'speedLimitation';
         $form['location_form[measures][0][maxSpeed]'] = '-10';
 
@@ -55,7 +60,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[cityCode]'] = '44195';
+        $form['location_form[cityLabel]'] = 'Savenay (44260)';
+        $form['location_form[roadName]'] = 'Route du Grand Brossais';
         $form['location_form[measures][0][type]'] = 'speedLimitation';
         $form['location_form[measures][0][maxSpeed]'] = '';
 
@@ -236,7 +243,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
+        $form['location_form[cityCode]'] = '44195';
+        $form['location_form[cityLabel]'] = 'Savenay (44260)';
+        $form['location_form[roadName]'] = 'Route du GEOCODING_FAILURE';
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
 

@@ -13,13 +13,10 @@ use App\Domain\EudonetParis\EudonetParisLocationItem;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\User\Organization;
 
 final class EudonetParisTransformer
 {
-    private const ARRONDISSEMENT_REGEX = '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i';
-
     public function __construct(
         private GeocoderInterface $geocoder,
     ) {
@@ -133,22 +130,6 @@ final class EudonetParisTransformer
 
         $locationItem = new EudonetParisLocationItem();
 
-        $arrondissement = $row['fields'][EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT];
-
-        if (!preg_match(self::ARRONDISSEMENT_REGEX, $arrondissement, $matches)) {
-            $error = [
-                'loc' => [...$loc, 'fieldname' => 'ARRONDISSEMENT'],
-                'reason' => 'value_does_not_match_pattern',
-                'value' => $arrondissement,
-                'pattern' => self::ARRONDISSEMENT_REGEX,
-            ];
-
-            return [null, $error];
-        }
-
-        $arrondissement = (int) $matches['arrondissement'];
-        $postCode = sprintf('750%s', str_pad((string) $arrondissement, 2, '0', STR_PAD_LEFT));
-
         $porteSur = $row['fields'][EudonetParisExtractor::LOCALISATION_PORTE_SUR];
         $libelleVoie = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE];
         $libelleVoieDebut = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT];
@@ -182,14 +163,10 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $locationItem->address = (string) new LocationAddress(
-            postCode: $postCode,
-            city: 'Paris',
-            roadName: $roadName,
-        );
+        $locationItem->roadName = $roadName;
         $locationItem->fromHouseNumber = $fromHouseNumber;
         $locationItem->toHouseNumber = $toHouseNumber;
-        $locationItem->geometry = $this->makeLocationGeometry($locationItem->address, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
+        $locationItem->geometry = $this->makeLocationGeometry($locationItem->roadName, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
 
         $locationItem->measures[] = $measureCommand;
 
@@ -197,7 +174,7 @@ final class EudonetParisTransformer
     }
 
     private function makeLocationGeometry(
-        string $address,
+        string $roadName,
         ?string $fromHouseNumber,
         ?string $fromRoadName,
         ?string $toHouseNumber,
@@ -213,17 +190,17 @@ final class EudonetParisTransformer
         }
 
         if ($fromHouseNumber) {
-            $fromAddress = sprintf('%s %s', $fromHouseNumber, $address);
-            $fromPoint = $this->geocoder->computeCoordinates($fromAddress);
+            $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
+            $fromPoint = $this->geocoder->computeCoordinates($fromAddress, ImportEudonetParisRegulationCommand::CITY_CODE);
         } else {
-            $fromPoint = $this->geocoder->computeJunctionCoordinates($address, $fromRoadName);
+            $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
         }
 
         if ($toHouseNumber) {
-            $toAddress = sprintf('%s %s', $toHouseNumber, $address);
-            $toPoint = $this->geocoder->computeCoordinates($toAddress);
+            $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
+            $toPoint = $this->geocoder->computeCoordinates($toAddress, ImportEudonetParisRegulationCommand::CITY_CODE);
         } else {
-            $toPoint = $this->geocoder->computeJunctionCoordinates($address, $toRoadName);
+            $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
         }
 
         return GeoJSON::toLineString([$fromPoint, $toPoint]);

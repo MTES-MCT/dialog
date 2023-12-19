@@ -6,18 +6,16 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ location.address.roadName|default(location.address.city) }}
+                {{ location.roadName|default(location.cityLabel) }}
             </h3>
         </div>
 
         <div class="app-card__content">
             <ul class="fr-ml-1w fr-my-0 fr-list">
-                <li>{{ location.address.city }}
-				    ({{ location.address.postCode }})
-                </li>
-                {% if location.address.roadName %}
+                <li>{{ location.cityLabel }}</li>
+                {% if location.roadName %}
                     <li>
-                        {{ location.address.roadName }}
+                        {{ location.roadName }}
                         {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                     </li>
                 {% endif %}

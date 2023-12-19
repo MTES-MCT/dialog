@@ -33,7 +33,9 @@ final class SaveRegulationLocationCommandHandler
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
-                    address: $command->address,
+                    cityLabel: $command->cityLabel,
+                    cityCode: $command->cityCode,
+                    roadName: $command->roadName,
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
                     geometry: $geometry,
@@ -76,7 +78,9 @@ final class SaveRegulationLocationCommandHandler
         }
 
         $command->location->update(
-            address: $command->address,
+            cityCode: $command->cityCode,
+            cityLabel: $command->cityLabel,
+            roadName: $command->roadName,
             fromHouseNumber: $command->fromHouseNumber,
             toHouseNumber: $command->toHouseNumber,
             geometry: $geometry,
@@ -88,11 +92,11 @@ final class SaveRegulationLocationCommandHandler
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
     {
         if ($command->fromHouseNumber && $command->toHouseNumber) {
-            $fromHouseAddress = sprintf('%s %s', $command->fromHouseNumber, $command->address);
-            $toHouseAddress = sprintf('%s %s', $command->toHouseNumber, $command->address);
+            $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
+            $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
 
-            $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
-            $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
+            $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
+            $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
 
             return GeoJSON::toLineString([$fromCoords, $toCoords]);
         }
@@ -102,7 +106,8 @@ final class SaveRegulationLocationCommandHandler
 
     private function shouldRecomputeGeometry(SaveRegulationLocationCommand $command): bool
     {
-        return $command->address !== $command->location->getAddress()
+        return $command->cityCode !== $command->location->getCityCode()
+            || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
     }

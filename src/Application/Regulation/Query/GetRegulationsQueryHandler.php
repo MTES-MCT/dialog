@@ -7,7 +7,6 @@ namespace App\Application\Regulation\Query;
 use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationsQueryHandler
@@ -39,7 +38,9 @@ final class GetRegulationsQueryHandler
                 numLocations: $nbLocations,
                 organizationName: $regulationOrderRecord->getOrganization()->getName(),
                 location: $nbLocations ? new LocationView(
-                    LocationAddress::fromString($locations->first()->getAddress()),
+                    $locations->first()->getCityCode(),
+                    $locations->first()->getCityLabel(),
+                    $locations->first()->getRoadName(),
                 ) : null,
                 startDate: $regulationOrder->getStartDate(),
                 endDate: $regulationOrder->getEndDate(),

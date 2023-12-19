@@ -50,17 +50,19 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {{address: string, restrictionType: string, expectedTitle: string}} args
+     * @param {{cityLabel: string, roadName: string, restrictionType: string, expectedTitle: string}} args
      * @param {{doBegin: boolean}} options
      *
      * @returns Locator
      */
-    async addLocation({ address, restrictionType, expectedTitle }, { doBegin } = { doBegin: true }) {
+    async addLocation({ cityLabel, roadName, restrictionType, expectedTitle }, { doBegin } = { doBegin: true }) {
         if (doBegin) {
             await this.beginNewLocation();
         }
 
-        await this.page.getByLabel('Voie ou ville').fill(address);
+        await this.page.getByLabel('Ville ou commune').fill(cityLabel);
+        await this.page.getByRole('listbox', {name: 'Noms de communes suggérés'}).getByRole('option').first().click();
+        await this.page.getByRole('textbox', {name: 'Voie'}).fill(roadName);
         await this.page.getByLabel('Type de restriction').selectOption({ label: restrictionType });
         await this.page.getByTestId('allVehicles-0-yes').click();
         await this.saveBtn.click();

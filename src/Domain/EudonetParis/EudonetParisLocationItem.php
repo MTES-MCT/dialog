@@ -6,7 +6,7 @@ namespace App\Domain\EudonetParis;
 
 final class EudonetParisLocationItem
 {
-    public string $address;
+    public string $roadName;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
     public ?string $geometry = null;

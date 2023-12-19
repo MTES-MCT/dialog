@@ -11,6 +11,9 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 
 final class ImportEudonetParisRegulationCommand implements CommandInterface
 {
+    public const CITY_CODE = '75056';
+    public const CITY_LABEL = 'Paris';
+
     public function __construct(
         public readonly SaveRegulationGeneralInfoCommand $generalInfoCommand,
         /** @var EudonetParisLocationItem[] */

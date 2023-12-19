@@ -11,30 +11,14 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
     public function testStreetAutoComplete(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/address-completions?search=Rue Eugène Berthoud');
+        $crawler = $client->request('GET', '/_fragment/address-completions?search=Rue Eugène Berthoud&cityCode=93070');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $li = $crawler->filter('li');
-        $this->assertSame(2, $li->count());
+        $this->assertSame(1, $li->count());
         $this->assertSame('Rue Eugène Berthoud, 93400 Saint-Ouen-sur-Seine', $li->eq(0)->text());
-        $this->assertSame('Impasse Eugène Berthou, 29480 Le Relecq-Kerhuon', $li->eq(1)->text());
-    }
-
-    public function testMunicipalityAutoComplete(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/address-completions?search=Le Mesnil');
-
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $li = $crawler->filter('li');
-        $this->assertSame(3, $li->count());
-        $this->assertSame('50580 Le Mesnil', $li->eq(0)->text());
-        $this->assertSame('76240 Le Mesnil-Esnard', $li->eq(1)->text());
-        $this->assertSame('78600 Le Mesnil-le-Roi', $li->eq(2)->text());
     }
 
     public function testBadRequest(): void

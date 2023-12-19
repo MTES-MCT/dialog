@@ -55,8 +55,9 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Paris 18e Arrondissement', $crawler->filter('h3')->text());
+        $this->assertSame('Rue du Simplon', $crawler->filter('h3')->text());
         $this->assertSame('Paris 18e Arrondissement (75018)', $crawler->filter('li')->eq(0)->text());
+        $this->assertSame('Rue du Simplon', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testIfPublishedThenCannotEdit(): void

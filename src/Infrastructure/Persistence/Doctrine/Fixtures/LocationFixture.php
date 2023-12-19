@@ -18,10 +18,12 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $location1 = new Location(
             '51449b82-5032-43c8-a427-46b9ddb44762',
             $this->getReference('regulationOrder'),
-            'Route du Grand Brossais 44260 Savenay',
-            '15',
-            '37bis',
-            GeoJSON::toLineString([
+            cityCode: '44195',
+            cityLabel: 'Savenay (44260)',
+            roadName: 'Route du Grand Brossais',
+            fromHouseNumber: '15',
+            toHouseNumber: '37bis',
+            geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             ]),
@@ -30,28 +32,34 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $location1Bis = new Location(
             '34247125-38f4-4e69-b5d7-5516a577d149',
             $this->getReference('regulationOrder'),
-            'Rue Victor Hugo 44260 Savenay',
-            null,
-            null,
-            null,
+            cityCode: '44195',
+            cityLabel: 'Savenay (44260)',
+            roadName: 'Rue Victor Hugo',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: null,
         );
 
         $location1Ter = new Location(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
             $this->getReference('regulationOrder'),
-            'Route du Lac 44260 Savenay',
-            null,
-            null,
-            null,
+            cityCode: '44195',
+            cityLabel: 'Savenay (44260)',
+            roadName: 'Route du Lac',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: null,
         );
 
         $location2 = new Location(
             '2d79e1ff-c991-4767-b8c0-36b644038d0f',
             $this->getReference('regulationOrder2'),
-            'Avenue de Fonneuve 82000 Montauban',
-            '695',
-            '253',
-            GeoJSON::toLineString([
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Avenue de Fonneuve',
+            fromHouseNumber: '695',
+            toHouseNumber: '253',
+            geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(1.362275, 44.028996),
                 Coordinates::fromLonLat(1.35931, 44.025665),
             ]),
@@ -60,10 +68,12 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $location2Bis = new Location(
             '064ca782-771c-783f-8000-e67473eabea6',
             $this->getReference('regulationOrder2'),
-            "Rue de l'Hôtel de Ville 82000 Montauban",
-            '30',
-            '12',
-            GeoJSON::toLineString([
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: "Rue de l'Hôtel de Ville",
+            fromHouseNumber: '30',
+            toHouseNumber: '12',
+            geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(1.352126, 44.016833),
                 Coordinates::fromLonLat(1.353016, 44.016402),
             ]),
@@ -73,28 +83,34 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
             $this->getReference('regulationOrder2'),
             // Full road, should not appear in DATEX export.
-            'Rue Gamot, 82000 Montauban',
-            null,
-            null,
-            null,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Rue Gamot',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: null,
         );
 
         $location3 = new Location(
             'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
             $this->getReference('regulationOrder3'),
-            '75018 Paris 18e Arrondissement',
-            null,
-            null,
-            null,
+            cityCode: '75118',
+            cityLabel: 'Paris 18e Arrondissement (75018)',
+            roadName: 'Rue du Simplon',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: null,
         );
 
         $locationNoMeasures = new Location(
             '06500383-ad31-7e57-8000-e080e2755bd4',
             $this->getReference('regulationOrderNoMeasures'),
-            'Route du Grand Brossais 44260 Savenay',
-            '15',
-            '37bis',
-            GeoJSON::toLineString([
+            cityCode: '44195',
+            cityLabel: 'Savenay (44260)',
+            roadName: 'Route du Grand Brossais',
+            fromHouseNumber: '15',
+            toHouseNumber: '37bis',
+            geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             ]),

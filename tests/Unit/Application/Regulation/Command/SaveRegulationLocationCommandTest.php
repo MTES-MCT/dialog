@@ -17,22 +17,34 @@ final class SaveRegulationLocationCommandTest extends TestCase
         $command = SaveRegulationLocationCommand::create($regulationOrderRecord);
 
         $this->assertEmpty($command->location);
-        $this->assertEmpty($command->address);
+        $this->assertEmpty($command->cityCode);
+        $this->assertEmpty($command->cityLabel);
+        $this->assertEmpty($command->roadName);
         $this->assertEmpty($command->fromHouseNumber);
         $this->assertEmpty($command->toHouseNumber);
     }
 
     public function testWithLocation(): void
     {
-        $address = 'Route du Lac 44260 Savenay';
+        $cityCode = '44195';
+        $cityLabel = 'Savenay';
+        $roadName = 'Route du Lac';
         $fromHouseNumber = '11';
         $toHouseNumber = '15';
 
         $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())
-            ->method('getAddress')
-            ->willReturn($address);
+            ->method('getCityCode')
+            ->willReturn($cityCode);
+        $location
+            ->expects(self::once())
+            ->method('getCityLabel')
+            ->willReturn($cityLabel);
+        $location
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn($roadName);
         $location
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -46,7 +58,9 @@ final class SaveRegulationLocationCommandTest extends TestCase
         $command = SaveRegulationLocationCommand::create($regulationOrderRecord, $location);
 
         $this->assertSame($command->location, $location);
-        $this->assertSame($command->address, $address);
+        $this->assertSame($command->cityCode, $cityCode);
+        $this->assertSame($command->cityLabel, $cityLabel);
+        $this->assertSame($command->roadName, $roadName);
         $this->assertSame($command->fromHouseNumber, $fromHouseNumber);
         $this->assertSame($command->toHouseNumber, $toHouseNumber);
     }
