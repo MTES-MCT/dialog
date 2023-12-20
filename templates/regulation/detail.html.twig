@@ -31,6 +31,15 @@
                         <h3 id="locations-title" class="fr-h5 fr-x-text--default-grey fr-mt-5w">
                             {{ 'regulation.locations'|trans }}
                         </h3>
+                        
+                        <d-map
+                            class="fr-py-2w"
+                            data-height="480px"
+                            data-geometries="{{ mapGeometries|json_encode }}"
+                            data-pos="[2.725, 47.16]"
+                            data-zoom="5"
+                            aria-hidden="true"
+                        ></d-map>
 
                         <ul id="location_list" class="fr-raw-list">
                             {% for location in regulationOrderRecord.locations %}

@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
@@ -20,6 +21,7 @@ final class RegulationDetailController extends AbstractRegulationController
     public function __construct(
         private \Twig\Environment $twig,
         protected QueryBusInterface $queryBus,
+        private LocationRepositoryInterface $locationRepository,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
         private CanDeleteLocations $canDeleteLocations,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -41,11 +43,14 @@ final class RegulationDetailController extends AbstractRegulationController
             return $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
         });
 
+        $mapGeometries = $this->locationRepository->findGeoJsonGeometriesByRegulationOrderUuid($regulationOrderRecord->regulationOrderUuid);
+
         return new Response(
             $this->twig->render(
                 name: 'regulation/detail.html.twig',
                 context: [
                     'regulationOrderRecord' => $regulationOrderRecord,
+                    'mapGeometries' => $mapGeometries,
                     'isDraft' => $regulationOrderRecord->isDraft(),
                     'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
                     'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),

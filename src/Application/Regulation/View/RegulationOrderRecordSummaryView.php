@@ -11,6 +11,7 @@ class RegulationOrderRecordSummaryView implements OrganizationRegulationAccessIn
 {
     public function __construct(
         public readonly string $uuid,
+        public readonly string $regulationOrderUuid,
         public readonly string $identifier,
         public readonly string $organizationUuid,
         public readonly string $organizationName,
