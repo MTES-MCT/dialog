@@ -8,9 +8,9 @@ use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Domain\Country\France\Repository\CityRepositoryInterface;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
 final class SaveRegulationLocationCommandHandler
@@ -21,6 +21,7 @@ final class SaveRegulationLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
+        private CityRepositoryInterface $cityRepository,
     ) {
     }
 
@@ -36,7 +37,9 @@ final class SaveRegulationLocationCommandHandler
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
-                    address: $command->address,
+                    cityLabel: $command->cityLabel,
+                    cityCode: $command->cityCode,
+                    roadName: $command->roadName,
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
                     geometry: $geometry,
@@ -79,7 +82,9 @@ final class SaveRegulationLocationCommandHandler
         }
 
         $command->location->update(
-            address: $command->address,
+            cityCode: $command->cityCode,
+            cityLabel: $command->cityLabel,
+            roadName: $command->roadName,
             fromHouseNumber: $command->fromHouseNumber,
             toHouseNumber: $command->toHouseNumber,
             geometry: $geometry,
@@ -91,21 +96,29 @@ final class SaveRegulationLocationCommandHandler
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
     {
         if ($command->fromHouseNumber && $command->toHouseNumber) {
-            $fromHouseAddress = sprintf('%s %s', $command->fromHouseNumber, $command->address);
-            $toHouseAddress = sprintf('%s %s', $command->toHouseNumber, $command->address);
+            $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
+            $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
 
-            $fromCoords = $this->geocoder->computeCoordinates($fromHouseAddress);
-            $toCoords = $this->geocoder->computeCoordinates($toHouseAddress);
+            $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
+            $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
 
             return GeoJSON::toLineString([$fromCoords, $toCoords]);
         }
 
-        $address = LocationAddress::fromString($command->address);
+        $roadName = $command->roadName;
 
-        if (!$command->fromHouseNumber && !$command->toHouseNumber && $address->getRoadName()) {
-            $inseeCode = '59368'; // TODO: obtenir à partir de postCode et city
+        $cityCode = $command->cityCode;
+        $dptmt = substr($cityCode, 0, 2);
 
-            return $this->roadGeocoder->computeRoadLine($address->getRoadName(), $inseeCode);
+        $name = $command->cityLabel;
+        $nameWithoutPostCode = explode(' ', $name);
+        unset($nameWithoutPostCode[1]);
+        $nameWithoutPostCode = implode(' ', $nameWithoutPostCode);
+
+        if (!$command->fromHouseNumber && !$command->toHouseNumber && $roadName) {
+            $city = $this->cityRepository->findOneByNameAndDepartement($nameWithoutPostCode, $dptmt);
+
+            return $this->roadGeocoder->computeRoadLine($roadName, $city->getInseeCode());
         }
 
         return null;
@@ -113,7 +126,8 @@ final class SaveRegulationLocationCommandHandler
 
     private function shouldRecomputeGeometry(SaveRegulationLocationCommand $command): bool
     {
-        return $command->address !== $command->location->getAddress()
+        return $command->cityCode !== $command->location->getCityCode()
+            || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
     }

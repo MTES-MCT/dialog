@@ -24,14 +24,14 @@
             </button>
         </div>
         <div class="app-card__content">
-            <div class="fr-container--fluid">
+            <div class="fr-x-container--fluid">
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-7'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-sm-5'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
             </div>
 
@@ -245,23 +245,67 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ location ? location.address.roadName : 'regulation.location'|trans }}
+                {{ location ? location.roadName : 'regulation.location'|trans }}
             </h3>
         </div>
         <div class="app-card__content">
             {{ form_start(form, {attr: {id: 'location-form'}}) }}
                 {{ form_errors(form) }}
-                {{ form_row(form.address, {
-                    group_class: 'fr-input-group',
-                    widget_class: 'fr-input',
-                    autocomplete: true,
-                    autocomplete_controller_options: {
-                        'data-autocomplete-url-value': path('fragment_address_completion'),
-                        'data-autocomplete-min-length-value': 3,
-                        'data-autocomplete-delay-value': 500,
-                    },
-                    autocomplete_results_label: 'regulation.location.address.results_label'|trans,
-                }) }}
+
+                <div
+                    class="fr-x-autocomplete-wrapper"
+                    data-controller="autocomplete"
+                    data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
+                    data-autocomplete-query-param-value="search"
+                    data-autocomplete-min-length-value="3"
+                    data-autocomplete-delay-value="500"
+                >
+                    {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+    
+                    {{ form_row(form.cityLabel, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-autocomplete-target': 'input',
+                        },
+                    }) }}
+
+                    <ul
+                        id="{{ form.cityLabel.vars.id }}-results"
+                        role="listbox"
+                        aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                        class="fr-x-autocomplete"
+                        data-autocomplete-target="results"
+                    ></ul>
+                </div>
+
+                <div
+                    class="fr-x-autocomplete-wrapper"
+                    data-controller="autocomplete"
+                    data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
+                    data-autocomplete-query-param-value="search"
+                    data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
+                    data-autocomplete-min-length-value="3"
+                    data-autocomplete-delay-value="500"
+                >
+                    {{ form_row(form.roadName, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-autocomplete-target': 'input',
+                        },
+                    }) }}
+
+                    <ul
+                        id="{{ form.roadName.vars.id }}-results"
+                        role="listbox"
+                        aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
+                        class="fr-x-autocomplete"
+                        data-autocomplete-target="results"
+                    ></ul>
+                </div>
+
+
                 <div class="fr-container--fluid">
                     <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
                         {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}

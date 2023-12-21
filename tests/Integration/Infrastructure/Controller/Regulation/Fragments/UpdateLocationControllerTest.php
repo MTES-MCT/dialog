@@ -18,12 +18,15 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = ''; // reset
+        $form['location_form[cityCode]'] = ''; // reset
+        $form['location_form[cityLabel]'] = ''; // reset
+        $form['location_form[roadName]'] = ''; // reset
         $form['location_form[measures][0][type]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_address_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_type_error')->text());
         $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
@@ -37,7 +40,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[cityCode]'] = '44195';
+        $form['location_form[cityLabel]'] = 'Savenay (44260)';
+        $form['location_form[roadName]'] = 'Route du Grand Brossais';
         $form['location_form[measures][0][type]'] = 'speedLimitation';
         $form['location_form[measures][0][maxSpeed]'] = '-10';
 
@@ -55,7 +60,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du Grand Brossais 44260 Savenay';
+        $form['location_form[cityCode]'] = '44195';
+        $form['location_form[cityLabel]'] = 'Savenay (44260)';
+        $form['location_form[roadName]'] = 'Route du Grand Brossais';
         $form['location_form[measures][0][type]'] = 'speedLimitation';
         $form['location_form[measures][0][maxSpeed]'] = '';
 
@@ -86,9 +93,11 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'certainDays';
         $values['location_form']['measures'][1]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][1]['periods'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][1]['periods'][0]['startTime']['minute'] = '0';
         $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
+        $values['location_form']['measures'][1]['periods'][0]['endTime']['hour'] = '16';
+        $values['location_form']['measures'][1]['periods'][0]['endTime']['minute'] = '0';
         $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
@@ -138,12 +147,16 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'certainDays';
         $values['location_form']['measures'][1]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][1]['periods'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][1]['periods'][0]['startTime']['minute'] = '0';
         $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
+        $values['location_form']['measures'][1]['periods'][0]['endTime']['hour'] = '16';
+        $values['location_form']['measures'][1]['periods'][0]['endTime']['minute'] = '0';
         $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime'] = '08:00';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime'] = '18:00';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
@@ -174,12 +187,16 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
         $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'certainDays';
         $values['location_form']['measures'][1]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['startTime'] = '08:00';
+        $values['location_form']['measures'][1]['periods'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][1]['periods'][0]['startTime']['minute'] = '0';
         $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['endTime'] = '16:00';
+        $values['location_form']['measures'][1]['periods'][0]['endTime']['hour'] = '16';
+        $values['location_form']['measures'][1]['periods'][0]['endTime']['minute'] = '0';
         $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime'] = '08:00';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime'] = '18:00';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
+        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
@@ -226,7 +243,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Route du GEOCODING_FAILURE 44260 Savenay';
+        $form['location_form[cityCode]'] = '44195';
+        $form['location_form[cityLabel]'] = 'Savenay (44260)';
+        $form['location_form[roadName]'] = 'Route du GEOCODING_FAILURE';
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
     }

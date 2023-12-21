@@ -10,9 +10,17 @@
                 <source>common.results</source>
                 <target>Résultats</target>
             </trans-unit>
+            <trans-unit id="common.accessRequest">
+                <source>common.accessRequest</source>
+                <target>Créer un compte</target>
+            </trans-unit>
             <trans-unit id="common.blog">
                 <source>common.blog</source>
                 <target>Blog</target>
+            </trans-unit>
+            <trans-unit id="common.and">
+                <source>common.and</source>
+                <target>et</target>
             </trans-unit>
             <trans-unit id="common.enabled">
                 <source>common.enabled</source>
@@ -374,17 +382,25 @@
                 <source>regulation.general_info.end_date.help</source>
                 <target>Laisser vide si l'arrêté est permanent.</target>
             </trans-unit>
-            <trans-unit id="regulation.location.address.results_label">
-                <source>regulation.location.address.results_label</source>
-                <target>Adresses suggérées</target>
+            <trans-unit id="regulation.location.city">
+                <source>regulation.location.city</source>
+                <target>Ville ou commune</target>
             </trans-unit>
-            <trans-unit id="regulation.location.address">
-                <source>regulation.location.address</source>
-                <target>Voie ou ville</target>
+            <trans-unit id="regulation.location.city.results_label">
+                <source>regulation.location.city.results_label</source>
+                <target>Noms de communes suggérés</target>
             </trans-unit>
-            <trans-unit id="regulation.location.address.help">
-                <source>regulation.location.address.help</source>
-                <target>Indiquez la voie concernée et la ville. Si la restriction s'applique à toute la ville, indiquez la ville uniquement.</target>
+            <trans-unit id="regulation.location.roadName">
+                <source>regulation.location.roadName</source>
+                <target>Voie</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.roadName.help">
+                <source>regulation.location.roadName.help</source>
+                <target>Indiquez la voie concernée, par exemple Rue de la République.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.roadName.results_label">
+                <source>regulation.location.roadName.results_label</source>
+                <target>Noms de voies suggérés</target>
             </trans-unit>
             <trans-unit id="regulation.location.from_house_number">
                 <source>regulation.location.from_house_number</source>
@@ -1089,9 +1105,9 @@
                 <source>login.no_account.title</source>
                 <target>Vous n'avez pas de compte ?</target>
             </trans-unit>
-            <trans-unit id="login.no_account.instructions">
-                <source>login.no_account.instructions</source>
-                <target>Vous pouvez nous contacter à l'adresse email suivante : <![CDATA[<a href="mailto:dialog@beta.gouv.fr">]]>dialog@beta.gouv.fr<![CDATA[</a>]]>.</target>
+            <trans-unit id="login.no_account.access_request">
+                <source>login.no_account.access_request</source>
+                <target>Demander la création d'un compte</target>
             </trans-unit>
             <trans-unit id="login.legend">
                 <source>login.legend</source>
@@ -1552,6 +1568,78 @@
             <trans-unit id="statistics.temporaryRegulationOrderRecords">
                 <source>statistics.temporaryRegulationOrderRecords</source>
                 <target>Nombre total d'arrếtés temporaires</target>
+            </trans-unit>
+            <trans-unit id="common.form.time.hour">
+                <source>common.form.time.hour</source>
+                <target>Heures</target>
+            </trans-unit>
+            <trans-unit id="common.form.time.minute">
+                <source>common.form.time.minute</source>
+                <target>Minutes</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.displayPassword">
+                <source>accessRequest.displayPassword</source>
+                <target>Afficher</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.fullName">
+                <source>accessRequest.fullName</source>
+                <target>Nom et prénom</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.email">
+                <source>accessRequest.email</source>
+                <target>Adresse e-mail</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.email.help">
+                <source>accessRequest.email.help</source>
+                <target>Format attendu : nom@domaine.fr</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.organizationName">
+                <source>accessRequest.organizationName</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.comment">
+                <source>accessRequest.comment</source>
+                <target>Message</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.organizationSiret">
+                <source>accessRequest.organizationSiret</source>
+                <target>Numéro SIRET de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.organizationSiret.help">
+                <source>accessRequest.organizationSiret.help</source>
+                <target>Format attendu : 14 chiffres</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.password">
+                <source>accessRequest.password</source>
+                <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.password.help">
+                <source>accessRequest.password.help</source>
+                <target>Format attendu : 12 caractères minimum</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.consentToBeContacted">
+                <source>accessRequest.consentToBeContacted</source>
+                <target>J’accepte que l’équipe DiaLog me recontacte afin d’améliorer la plateforme</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.send.success">
+                <source>accessRequest.send.success</source>
+                <target>Votre demande de création de compte a bien été prise en compte. Nous reviendrons vers vous dans les plus brefs délais.</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.send.success.help">
+                <source>accessRequest.send.success.help</source>
+                <target>La validation du compte n’est pas faite automatiquement, cela peut prendre quelques heures.</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.send.error">
+                <source>accessRequest.send.error</source>
+                <target>Une demande de création de compte a déjà été créée avec cette adresse e-mail.</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.meta.title">
+                <source>accessRequest.meta.title</source>
+                <target>Demande de création de compte</target>
+            </trans-unit>
+            <trans-unit id="accessRequest.meta.subtitle">
+                <source>accessRequest.meta.subtitle</source>
+                <target>Vous pouvez demander la création d’un compte pour votre commune ou collectivité.</target>
             </trans-unit>
         </body>
     </file>

@@ -10,7 +10,6 @@ use App\Application\Regulation\View\LocationView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Location;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -28,8 +27,16 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())
-            ->method('getAddress')
-            ->willReturn('Avenue de Fonneuve, 82000 Montauban');
+            ->method('getCityCode')
+            ->willReturn('82121');
+        $location
+            ->expects(self::once())
+            ->method('getCityLabel')
+            ->willReturn('Montauban');
+        $location
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn('Avenue de Fonneuve');
 
         $locations1 = $this->createMock(Collection::class);
         $locations1
@@ -37,7 +44,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->method('count')
             ->willReturn(2);
         $locations1
-            ->expects(self::once())
+            ->expects(self::exactly(3))
             ->method('first')
             ->willReturn($location);
 
@@ -158,7 +165,9 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     2,
                     'DiaLog',
                     new LocationView(
-                        address: new LocationAddress('82000', 'Montauban', 'Avenue de Fonneuve'),
+                        cityCode: '82121',
+                        cityLabel: 'Montauban',
+                        roadName: 'Avenue de Fonneuve',
                     ),
                     $startDate1,
                     null,

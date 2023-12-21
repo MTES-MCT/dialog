@@ -93,7 +93,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
-                'loc.address',
+                'loc.roadName',
                 'ST_AsGeoJSON(loc.geometry) as geometry',
                 'm.maxSpeed',
                 'm.type',

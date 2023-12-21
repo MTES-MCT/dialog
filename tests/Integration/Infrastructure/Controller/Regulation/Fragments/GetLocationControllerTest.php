@@ -34,7 +34,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertSame(
-            'Circulation interdite du 31/10/2023 - 08h00 au 31/10/2023 - 22h00, le jeudi pour les poids lourds de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
+            'Circulation interdite du 31/10/2023 - 08h00 au 31/10/2023 - 22h00, le lundi et le jeudi pour les poids lourds de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
             $crawler->filter('li')->eq(2)->text(),
         );
     }
@@ -55,8 +55,9 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Paris 18e Arrondissement', $crawler->filter('h3')->text());
+        $this->assertSame('Rue du Simplon', $crawler->filter('h3')->text());
         $this->assertSame('Paris 18e Arrondissement (75018)', $crawler->filter('li')->eq(0)->text());
+        $this->assertSame('Rue du Simplon', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testIfPublishedThenCannotEdit(): void

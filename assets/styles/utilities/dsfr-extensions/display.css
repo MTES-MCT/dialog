@@ -1,0 +1,11 @@
+.fr-x-hidden-sm {
+    @media screen and (min-width: 36em) {
+        display: none !important;
+    }
+}
+
+.fr-x-revert-sm {
+    @media screen and (min-width: 36em) {
+        display: revert !important;
+    }
+}

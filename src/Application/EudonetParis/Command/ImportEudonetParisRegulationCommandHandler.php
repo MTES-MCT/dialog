@@ -26,7 +26,9 @@ final class ImportEudonetParisRegulationCommandHandler
         foreach ($command->locationItems as $locationItem) {
             $locationCommand = new SaveRegulationLocationCommand($regulationOrderRecord);
 
-            $locationCommand->address = $locationItem->address;
+            $locationCommand->cityCode = $command::CITY_CODE;
+            $locationCommand->cityLabel = $command::CITY_LABEL;
+            $locationCommand->roadName = $locationItem->roadName;
             $locationCommand->fromHouseNumber = $locationItem->fromHouseNumber;
             $locationCommand->toHouseNumber = $locationItem->toHouseNumber;
             $locationCommand->geometry = $locationItem->geometry;
