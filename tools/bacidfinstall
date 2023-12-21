@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+
+docker-compose -f docker-compose-bac-idf.yml up -d
+sleep 1 # Wait for Mongo to be up
+
+# Import decrees.bson into Mongo
+docker-compose -f docker-compose-bac-idf.yml exec mongo mongorestore -d bac_idf -c decrees /etc/bac_idf/data/decrees.bson -u dialog -p dialog --authenticationDatabase admin
+# Export decrees collection to decrees.jsonl
+docker-compose -f docker-compose-bac-idf.yml exec mongo mongoexport -d bac_idf -c decrees -o /etc/bac_idf/data/decrees.jsonl mongodb://localhost:27017 -u dialog -p dialog --authenticationDatabase admin
+
+docker-compose -f docker-compose-bac-idf.yml stop
+docker-compose -f docker-compose-bac-idf.yml rm -f mongo
+
+# Convert decrees.jsonl to decrees.json containing array
+# Credit: https://stackoverflow.com/a/60641566
+cat docker/bac_idf/data/decrees.jsonl | awk 'BEGIN {print "[";} NF==0{next;} n=="" {print;n++;next;} {print ","; print;} END {print "]"}' > data/decrees.json

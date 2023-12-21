@@ -7,13 +7,13 @@ namespace App\Infrastructure\BacIdf;
 final class BacIdfExtractor
 {
     public function __construct(
-        private readonly string $bacIdfDataDir,
+        private readonly string $bacIdfDecreesFile,
     ) {
     }
 
     public function iterExtract(array $ignoreIDs): \Iterator
     {
-        $decreesJsonRaw = file_get_contents($this->bacIdfDataDir . '/decrees.json');
+        $decreesJsonRaw = file_get_contents($this->bacIdfDecreesFile);
         $decreesJson = json_decode($decreesJsonRaw, associative: true);
 
         foreach ($decreesJson as $row) {
