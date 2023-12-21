@@ -8,7 +8,6 @@ use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
-use App\Domain\Country\France\Repository\CityRepositoryInterface;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -21,7 +20,6 @@ final class SaveRegulationLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
-        private CityRepositoryInterface $cityRepository,
     ) {
     }
 
@@ -106,19 +104,10 @@ final class SaveRegulationLocationCommandHandler
         }
 
         $roadName = $command->roadName;
-
         $cityCode = $command->cityCode;
-        $dptmt = substr($cityCode, 0, 2);
-
-        $name = $command->cityLabel;
-        $nameWithoutPostCode = explode(' ', $name);
-        unset($nameWithoutPostCode[1]);
-        $nameWithoutPostCode = implode(' ', $nameWithoutPostCode);
 
         if (!$command->fromHouseNumber && !$command->toHouseNumber && $roadName) {
-            $city = $this->cityRepository->findOneByNameAndDepartement($nameWithoutPostCode, $dptmt);
-
-            return $this->roadGeocoder->computeRoadLine($roadName, $city->getInseeCode());
+            return $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
         }
 
         return null;
