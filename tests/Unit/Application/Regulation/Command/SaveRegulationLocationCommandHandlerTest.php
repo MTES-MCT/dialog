@@ -144,7 +144,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
-            ->with('Route du Grand Brossais', '59368')
+            ->with('Route du Grand Brossais', '44195')
             ->willReturn(
                 json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
             );
@@ -152,7 +152,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
-            address: $this->address,
+            cityLabel: $this->cityLabel,
+            cityCode: $this->cityCode,
+            roadName: $this->roadName,
             fromHouseNumber: null,
             toHouseNumber: null,
             geometry: json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
@@ -189,7 +191,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
-        $command->address = $this->address;
+        $command->cityLabel = $this->cityLabel;
+        $command->cityCode = $this->cityCode;
+        $command->roadName = $this->roadName;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
         $command->measures = [

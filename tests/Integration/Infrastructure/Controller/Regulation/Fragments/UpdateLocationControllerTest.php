@@ -258,13 +258,15 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Rue du Parc 59368 La Madeleine';
+        $form['location_form[cityCode]'] = '59368';
+        $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
+        $form['location_form[roadName]'] = 'Rue des Poilus';
         $form['location_form[fromHouseNumber]'] = '';
         $form['location_form[toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#location_form_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#location_form_error')->text());
     }
 
     public function testUpdateAddressFullRoad(): void
@@ -275,7 +277,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[address]'] = 'Rue Saint-Victor 59368 La Madeleine';
+        $form['location_form[cityCode]'] = '59368';
+        $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
+        $form['location_form[roadName]'] = 'Rue Saint-Victor';
         $form['location_form[fromHouseNumber]'] = '';
         $form['location_form[toHouseNumber]'] = '';
 
