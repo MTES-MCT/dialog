@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
@@ -63,7 +64,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     public function testCannotDeleteBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', [
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -81,7 +82,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     public function testInvalidCsrfToken(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(400);
     }
 

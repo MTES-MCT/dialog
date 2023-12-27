@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -47,7 +48,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $links = $pageOneTemporaryRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, $links->eq(0)->link()->getUri());
 
         // Second item
         $pageTwo = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=2');
@@ -66,7 +67,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $links = $pageOneTemporaryRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, $links->eq(0)->link()->getUri());
     }
 
     public function testPublishedRegulationRendering(): void
@@ -151,7 +152,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $links = $pageOnePermanentRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_OTHER_ORG, $links->eq(0)->link()->getUri());
     }
 
     public function testInvalidPageSize(): void

@@ -13,7 +13,7 @@ final class RegulationOrderFixture extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $regulationOrder = new RegulationOrder(
+        $typicalRegulationOrder = new RegulationOrder(
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
             identifier: 'FO1/2023',
             category: RegulationOrderCategoryEnum::EVENT->value,
@@ -40,7 +40,7 @@ final class RegulationOrderFixture extends Fixture
             endDate: null,
         );
 
-        $regulationOrder4 = new RegulationOrder(
+        $otherOrgRegulationOrder = new RegulationOrder(
             uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
             identifier: 'FO4/2023',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
@@ -68,18 +68,18 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2023-01-15'),
         );
 
-        $manager->persist($regulationOrder);
+        $manager->persist($typicalRegulationOrder);
         $manager->persist($regulationOrder2);
         $manager->persist($regulationOrder3);
-        $manager->persist($regulationOrder4);
+        $manager->persist($otherOrgRegulationOrder);
         $manager->persist($regulationOrder5);
         $manager->persist($regulationOrderNoMeasures);
         $manager->flush();
 
-        $this->addReference('regulationOrder', $regulationOrder);
+        $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
         $this->addReference('regulationOrder2', $regulationOrder2);
         $this->addReference('regulationOrder3', $regulationOrder3);
-        $this->addReference('regulationOrder4', $regulationOrder4);
+        $this->addReference('otherOrgRegulationOrder', $otherOrgRegulationOrder);
         $this->addReference('regulationOrder5', $regulationOrder5);
         $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
     }

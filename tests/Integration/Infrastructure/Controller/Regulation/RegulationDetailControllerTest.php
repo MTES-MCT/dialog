@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -13,7 +15,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testDraftRegulationDetail(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
@@ -31,7 +33,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Description 1', $generalInfo->filter('li')->eq(2)->text());
         $this->assertSame('Du 13/03/2023 au 15/03/2023', $generalInfo->filter('li')->eq(3)->text());
         $editGeneralInfoForm = $generalInfo->selectButton('Modifier')->form();
-        $this->assertSame('http://localhost/_fragment/regulations/general_info/form/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $editGeneralInfoForm->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL, $editGeneralInfoForm->getUri());
         $this->assertSame('GET', $editGeneralInfoForm->getMethod());
 
         // Location
@@ -40,21 +42,24 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis', $location->filter('li')->eq(1)->text());
         $this->assertSame('Circulation interdite du 31/10/2023 - 08h00 au 31/10/2023 - 22h00 pour tous les véhicules', $location->filter('li')->eq(2)->text());
         $editLocationForm = $location->selectButton('Modifier')->form();
-        $this->assertSame('http://localhost/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form', $editLocationForm->getUri());
+        $this->assertSame(
+            'http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form',
+            $editLocationForm->getUri(),
+        );
         $this->assertSame('GET', $editLocationForm->getMethod());
 
         // Actions
         $duplicateForm = $crawler->selectButton('Dupliquer')->form();
-        $this->assertSame($duplicateForm->getUri(), 'http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate');
+        $this->assertSame($duplicateForm->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate');
         $this->assertSame($duplicateForm->getMethod(), 'POST');
 
         $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
-        $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertSame($formDelete->getMethod(), 'DELETE');
 
         $publishBtn = $crawler->selectButton('Publier');
         $this->assertSame(0, $crawler->selectButton('Valider')->count()); // Location form
-        $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', $publishBtn->form()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', $publishBtn->form()->getUri());
         $this->assertSame('POST', $publishBtn->form()->getMethod());
         $this->assertCount(1, $publishBtn->siblings()->filter('input[name="token"]'));
 
@@ -130,7 +135,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
         $this->assertResponseStatusCodeSame(403);
     }

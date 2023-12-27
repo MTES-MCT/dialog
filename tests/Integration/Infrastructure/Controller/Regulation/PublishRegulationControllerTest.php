@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
@@ -15,13 +16,13 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     public function testPublish(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
             'token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
         $client->followRedirect();
-        $this->assertRouteSame('app_regulation_detail', ['uuid' => 'e413a47e-5928-4353-a8b2-8b7dda27f9a5']);
+        $this->assertRouteSame('app_regulation_detail', ['uuid' => RegulationOrderRecordFixture::UUID_TYPICAL]);
     }
 
     public function testCannotBePublished(): void
@@ -45,7 +46,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     public function testCannotPublishBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
             'token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -54,7 +55,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     public function testInvalidCsrfToken(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish');
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish');
         $this->assertResponseStatusCodeSame(400);
     }
 

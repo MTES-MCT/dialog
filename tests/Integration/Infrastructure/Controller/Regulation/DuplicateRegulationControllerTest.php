@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
@@ -61,7 +62,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testDuplicateAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
@@ -83,9 +84,9 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
     public function testRegulationCannotBeDuplicated(): void
     {
-        // TODO
+        // TODO why not?
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 

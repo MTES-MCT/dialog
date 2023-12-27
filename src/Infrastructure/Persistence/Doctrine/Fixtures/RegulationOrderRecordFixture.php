@@ -13,13 +13,17 @@ use Doctrine\Persistence\ObjectManager;
 
 final class RegulationOrderRecordFixture extends Fixture implements DependentFixtureInterface
 {
+    public const UUID_TYPICAL = 'e413a47e-5928-4353-a8b2-8b7dda27f9a5';
+    public const UUID_SINGLE_LOCATION = '0658c487-1428-7a81-8000-870edc6c69d7';
+    public const UUID_OTHER_ORG = '867d2be6-0d80-41b5-b1ff-8452b30a95f5';
+
     public function load(ObjectManager $manager): void
     {
-        $regulationOrderRecord = new RegulationOrderRecord(
-            'e413a47e-5928-4353-a8b2-8b7dda27f9a5',
+        $typicalRegulationOrderRecord = new RegulationOrderRecord(
+            self::UUID_TYPICAL,
             RegulationOrderRecordSourceEnum::DIALOG->value,
             RegulationOrderRecordStatusEnum::DRAFT,
-            $this->getReference('regulationOrder'),
+            $this->getReference('typicalRegulationOrder'),
             new \DateTime('2022-01-10'),
             $this->getReference('mainOrg'),
         );
@@ -42,11 +46,11 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('mainOrg'),
         );
 
-        $regulationOrderRecord4 = new RegulationOrderRecord(
-            '867d2be6-0d80-41b5-b1ff-8452b30a95f5',
+        $otherOrgRegulationOrderRecord = new RegulationOrderRecord(
+            self::UUID_OTHER_ORG,
             RegulationOrderRecordSourceEnum::DIALOG->value,
             RegulationOrderRecordStatusEnum::DRAFT,
-            $this->getReference('regulationOrder4'),
+            $this->getReference('otherOrgRegulationOrder'),
             new \DateTime('2022-01-11'),
             $this->getReference('otherOrg'),
         );
@@ -69,10 +73,10 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('mainOrg'),
         );
 
-        $manager->persist($regulationOrderRecord);
+        $manager->persist($typicalRegulationOrderRecord);
         $manager->persist($regulationOrderRecord2);
         $manager->persist($regulationOrderRecord3);
-        $manager->persist($regulationOrderRecord4);
+        $manager->persist($otherOrgRegulationOrderRecord);
         $manager->persist($regulationOrderRecord5);
         $manager->persist($regulationOrderRecordNoMeasures);
         $manager->flush();

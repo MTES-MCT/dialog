@@ -31,6 +31,7 @@ final class AddLocationLinkFragmentControllerTest extends AbstractWebTestCase
 
     public function testWithoutAuthenticatedUser(): void
     {
+        // TODO user standard regulation order record
         $client = static::createClient();
         $client->request('GET', '/_fragment/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/location/add-link');
         $this->assertResponseRedirects('http://localhost/login', 302);

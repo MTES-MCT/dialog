@@ -13,11 +13,14 @@ use Doctrine\Persistence\ObjectManager;
 
 final class LocationFixture extends Fixture implements DependentFixtureInterface
 {
+    public const UUID_TYPICAL = '51449b82-5032-43c8-a427-46b9ddb44762';
+    public const UUID_SINGLE = '0658c48e-2481-727c-8000-d3ad9cefb5c3';
+
     public function load(ObjectManager $manager): void
     {
-        $location1 = new Location(
-            '51449b82-5032-43c8-a427-46b9ddb44762',
-            $this->getReference('regulationOrder'),
+        $typicalRegulationOrderLocation1 = new Location(
+            self::UUID_TYPICAL,
+            $this->getReference('typicalRegulationOrder'),
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Grand Brossais',
@@ -29,23 +32,23 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             ]),
         );
 
-        $location1Bis = new Location(
+        $typicalRegulationOrderLocation2 = new Location(
             '34247125-38f4-4e69-b5d7-5516a577d149',
-            $this->getReference('regulationOrder'),
+            $this->getReference('typicalRegulationOrder'),
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
-            roadName: 'Rue Victor Hugo',
+            roadName: 'Route du Lac',
             fromHouseNumber: null,
             toHouseNumber: null,
             geometry: null,
         );
 
-        $location1Ter = new Location(
+        $typicalRegulationOrderLocation3 = new Location(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
-            $this->getReference('regulationOrder'),
+            $this->getReference('typicalRegulationOrder'),
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
-            roadName: 'Route du Lac',
+            roadName: 'Route du Grand Brossais',
             fromHouseNumber: null,
             toHouseNumber: null,
             geometry: null,
@@ -116,9 +119,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             ]),
         );
 
-        $manager->persist($location1);
-        $manager->persist($location1Bis);
-        $manager->persist($location1Ter);
+        $manager->persist($typicalRegulationOrderLocation1);
+        $manager->persist($typicalRegulationOrderLocation2);
+        $manager->persist($typicalRegulationOrderLocation3);
         $manager->persist($location2);
         $manager->persist($location2Bis);
         $manager->persist($location2Ter);
@@ -126,7 +129,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($locationNoMeasures);
         $manager->flush();
 
-        $this->addReference('location1', $location1);
+        $this->addReference('typicalLocation', $typicalRegulationOrderLocation1);
         $this->addReference('location2', $location2);
         $this->addReference('location2Bis', $location2Bis);
         $this->addReference('location2Ter', $location2Ter);
