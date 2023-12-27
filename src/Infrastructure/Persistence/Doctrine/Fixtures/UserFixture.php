@@ -12,6 +12,7 @@ final class UserFixture extends Fixture
 {
     public const MAIN_ORG_USER_EMAIL = 'mathieu.marchois@beta.gouv.fr';
     public const PASSWORD = 'password';
+    private const PASSWORD_HASH = '$2y$13$dW.50KfdEYLYcTm3/y.Im.Xpq0ifXCOsDxWAPo76i27Mpniaa02ti';
     public const MAIN_ORG_ADMIN_EMAIL = 'mathieu.fernandez@beta.gouv.fr';
     public const OTHER_ORG_USER_EMAIL = 'florimond.manca@beta.gouv.fr';
 
@@ -20,17 +21,17 @@ final class UserFixture extends Fixture
         $mainOrgUser = (new User('0b507871-8b5e-4575-b297-a630310fc06e'))
             ->setFullName('Mathieu MARCHOIS')
             ->setEmail(self::MAIN_ORG_USER_EMAIL)
-            ->setPassword(self::PASSWORD);
+            ->setPassword(self::PASSWORD_HASH);
 
         $mainOtherAdmin = (new User('5bc831a3-7a09-44e9-aefa-5ce3588dac33'))
             ->setFullName('Mathieu FERNANDEZ')
             ->setEmail(self::MAIN_ORG_ADMIN_EMAIL)
-            ->setPassword(self::PASSWORD);
+            ->setPassword(self::PASSWORD_HASH);
 
         $otherOrgUser = (new User('d47badd9-989e-472b-a80e-9df642e93880'))
             ->setFullName('Florimond MANCA')
             ->setEmail(self::OTHER_ORG_USER_EMAIL)
-            ->setPassword(self::PASSWORD);
+            ->setPassword(self::PASSWORD_HASH);
 
         $manager->persist($mainOrgUser);
         $manager->persist($mainOtherAdmin);

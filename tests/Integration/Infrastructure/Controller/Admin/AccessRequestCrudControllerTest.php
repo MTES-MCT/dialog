@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Admin;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\AccessRequestFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -38,7 +39,7 @@ final class AccessRequestCrudControllerTest extends AbstractWebTestCase
     public function testConvertWithAnUnknownOrganization(): void
     {
         $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
-        $client->request('GET', '/admin?crudAction=convertAccessRequest&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5CAccessRequestCrudController&entityId=970f851a-566c-4d7c-89bb-f114efdc5f5e');
+        $client->request('GET', '/admin?crudAction=convertAccessRequest&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5CAccessRequestCrudController&entityId=' . AccessRequestFixture::UUID);
         $crawler = $client->followRedirect();
 
         $this->assertSame($crawler->filter('div.alert-success')->text(), 'Le compte utilisateur a bien été créé.');

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -13,7 +16,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testEditWithAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_PERMANENT);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -21,8 +24,8 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['general_info_form[identifier]'] = 'FO1/2023';
-        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
+        $form['general_info_form[identifier]'] = RegulationOrderFixture::TYPICAL_IDENTIFIER;
+        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
@@ -35,7 +38,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testEditDescriptionTruncated(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2');
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_LONG_DESCRIPTION);
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Description 5 that is very long and...', $crawler->filter('h3')->text());
@@ -44,22 +47,22 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/general_info/form/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
+        $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST);
 
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testEditRegulationOrderWithNoStartDateYet(): void
     {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_OTHER_ORG_NO_START_DATE);
 
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'FIOIUS';
-        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
+        $form['general_info_form[organization]'] = OrganizationFixture::OTHER_ORG_ID;
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
         $form['general_info_form[startDate]'] = '2023-02-14';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
@@ -82,7 +85,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testFieldsTooLong(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
@@ -99,7 +102,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('GET', '/_fragment/regulations/general_info/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -107,7 +110,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/general_info/form/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

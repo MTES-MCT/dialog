@@ -71,7 +71,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testPermanentRegulationDetail(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
 
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
@@ -85,7 +85,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testDraftRegulationDetailWithoutLocations(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2');
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS);
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
 
@@ -95,14 +95,14 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $saveButton->count()); // Location form
 
         $duplicateButton = $crawler->selectButton('Dupliquer')->form();
-        $this->assertSame($duplicateButton->getUri(), 'http://localhost/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2/duplicate');
+        $this->assertSame($duplicateButton->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS . '/duplicate');
         $this->assertSame($duplicateButton->getMethod(), 'POST');
     }
 
     public function testPublishedRegulationDetail(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
 
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
@@ -112,14 +112,14 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $crawler->selectButton('Publier')->count());
 
         $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
-        $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
         $this->assertSame($formDelete->getMethod(), 'DELETE');
     }
 
     public function testSeeAll(): void
     {
         $client = $this->login();
-        $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
@@ -143,7 +143,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST);
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -151,7 +151,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
         $this->assertResponseRedirects('http://localhost/login', 302);
     }

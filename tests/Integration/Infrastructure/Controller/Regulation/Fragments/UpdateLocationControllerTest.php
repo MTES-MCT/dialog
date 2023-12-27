@@ -220,7 +220,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
     public function testRemoveMeasure(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -234,7 +234,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_location', ['uuid' => 'f15ed802-fa9b-4d75-ab04-d62ea46597e9']);
+        $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
         $this->assertNotContains('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
     }
 
@@ -260,7 +260,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -268,7 +268,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
     public function testLocationNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/c1beed9a-6ec1-417a-abfd-0b5bd245616b/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_DOES_NOT_EXIST . '/form');
 
         $this->assertResponseStatusCodeSame(404);
     }

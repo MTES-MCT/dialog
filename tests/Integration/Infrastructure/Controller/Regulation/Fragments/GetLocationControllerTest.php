@@ -31,7 +31,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testGetWithComplexVehicles(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_COMPLEX_VEHICLES . '/location/' . LocationFixture::UUID_COMPLEX_VEHICLES);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -45,7 +45,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testGetLocationFromOtherRegulationOrderRecord(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/' . LocationFixture::UUID_TYPICAL);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/' . LocationFixture::UUID_TYPICAL);
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -53,20 +53,18 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testGetCityOnly(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_FULL_CITY . '/location/' . LocationFixture::UUID_FULL_CITY);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Rue du Simplon', $crawler->filter('h3')->text());
         $this->assertSame('Paris 18e Arrondissement (75018)', $crawler->filter('li')->eq(0)->text());
-        $this->assertSame('Rue du Simplon', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testIfPublishedThenCannotEdit(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED . '/location/' . LocationFixture::UUID_PUBLISHED);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -77,28 +75,28 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testRegulationDoesNotExist(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511aaa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/location/' . LocationFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testLocationDoesNotExist(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/3ede8b1a-1816-4788-8510-e08f45511aaa');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_DOES_NOT_EXIST);
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL);
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 

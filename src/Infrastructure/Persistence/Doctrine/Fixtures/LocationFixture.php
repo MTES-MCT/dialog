@@ -13,8 +13,16 @@ use Doctrine\Persistence\ObjectManager;
 
 final class LocationFixture extends Fixture implements DependentFixtureInterface
 {
+    public const UUID_DOES_NOT_EXIST = '0658c5da-47d6-7d16-8000-ea88577534a4';
+
     public const UUID_TYPICAL = '51449b82-5032-43c8-a427-46b9ddb44762';
-    public const UUID_SINGLE = '0658c48e-2481-727c-8000-d3ad9cefb5c3';
+
+    public const UUID_PUBLISHED = '2d79e1ff-c991-4767-b8c0-36b644038d0f';
+    public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
+
+    public const UUID_PERMANENT_ONLY_ONE = 'f15ed802-fa9b-4d75-ab04-d62ea46597e9';
+
+    public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
 
     public function load(ObjectManager $manager): void
     {
@@ -54,9 +62,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             geometry: null,
         );
 
-        $location2 = new Location(
-            '2d79e1ff-c991-4767-b8c0-36b644038d0f',
-            $this->getReference('regulationOrder2'),
+        $publishedLocation1 = new Location(
+            self::UUID_PUBLISHED,
+            $this->getReference('publishedRegulationOrder'),
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Avenue de Fonneuve',
@@ -68,9 +76,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             ]),
         );
 
-        $location2Bis = new Location(
+        $publishedLocation2 = new Location(
             '064ca782-771c-783f-8000-e67473eabea6',
-            $this->getReference('regulationOrder2'),
+            $this->getReference('publishedRegulationOrder'),
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: "Rue de l'Hôtel de Ville",
@@ -82,9 +90,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             ]),
         );
 
-        $location2Ter = new Location(
+        $publishedLocation3 = new Location(
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
-            $this->getReference('regulationOrder2'),
+            $this->getReference('publishedRegulationOrder'),
             // Full road, should not appear in DATEX export.
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
@@ -94,12 +102,23 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             geometry: null,
         );
 
-        $location3 = new Location(
-            'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
-            $this->getReference('regulationOrder3'),
+        $permanentRegulationOrderLocation = new Location(
+            self::UUID_PERMANENT_ONLY_ONE,
+            $this->getReference('regulationOrderPermanent'),
             cityCode: '75118',
             cityLabel: 'Paris 18e Arrondissement (75018)',
             roadName: 'Rue du Simplon',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: null,
+        );
+
+        $fullCityLocation = new Location(
+            self::UUID_FULL_CITY,
+            $this->getReference('fullCityRegulationOrder'),
+            cityCode: '75118',
+            cityLabel: 'Paris 18e Arrondissement (75018)',
+            roadName: null,
             fromHouseNumber: null,
             toHouseNumber: null,
             geometry: null,
@@ -122,18 +141,20 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($typicalRegulationOrderLocation1);
         $manager->persist($typicalRegulationOrderLocation2);
         $manager->persist($typicalRegulationOrderLocation3);
-        $manager->persist($location2);
-        $manager->persist($location2Bis);
-        $manager->persist($location2Ter);
-        $manager->persist($location3);
+        $manager->persist($publishedLocation1);
+        $manager->persist($publishedLocation2);
+        $manager->persist($publishedLocation3);
+        $manager->persist($fullCityLocation);
+        $manager->persist($permanentRegulationOrderLocation);
         $manager->persist($locationNoMeasures);
         $manager->flush();
 
         $this->addReference('typicalLocation', $typicalRegulationOrderLocation1);
-        $this->addReference('location2', $location2);
-        $this->addReference('location2Bis', $location2Bis);
-        $this->addReference('location2Ter', $location2Ter);
-        $this->addReference('location3', $location3);
+        $this->addReference('publishedLocation1', $publishedLocation1);
+        $this->addReference('publishedLocation2', $publishedLocation2);
+        $this->addReference('publishedLocation3', $publishedLocation3);
+        $this->addReference('fullCityLocation', $fullCityLocation);
+        $this->addReference('permanentRegulationOrderLocation', $permanentRegulationOrderLocation);
         $this->addReference('locationNoMeasures', $locationNoMeasures);
     }
 

@@ -26,9 +26,3 @@ security:
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
-
-when@test:
-    security:
-        password_hashers:
-            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: "plaintext"
