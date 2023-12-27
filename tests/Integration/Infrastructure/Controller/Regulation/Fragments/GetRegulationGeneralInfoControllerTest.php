@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
@@ -17,7 +19,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertSame('Description 3', $crawler->filter('h3')->text());
-        $this->assertSame('DiaLog', $crawler->filter('li')->eq(0)->text());
+        $this->assertSame(OrganizationFixture::MAIN_ORG_NAME, $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Réglementation permanente', $crawler->filter('li')->eq(1)->text());
         $this->assertSame('Description 3', $crawler->filter('li')->eq(2)->text());
         $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(3)->text());
@@ -64,7 +66,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/general_info');
         $this->assertResponseStatusCodeSame(403);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class ListRegulationsControllerTest extends AbstractWebTestCase
@@ -130,7 +131,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
     public function testListWithOtherOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $pageOne = $client->request('GET', '/regulations');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();

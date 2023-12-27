@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
@@ -43,7 +44,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
     public function testCannotPublishBecauseDifferentOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/publish', [
             'token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);

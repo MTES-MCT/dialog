@@ -21,7 +21,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrder'),
             new \DateTime('2022-01-10'),
-            $this->getReference('organization1'),
+            $this->getReference('mainOrg'),
         );
 
         $regulationOrderRecord2 = new RegulationOrderRecord(
@@ -30,7 +30,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED,
             $this->getReference('regulationOrder2'),
             new \DateTime('2022-01-10'),
-            $this->getReference('organization1'),
+            $this->getReference('mainOrg'),
         );
 
         $regulationOrderRecord3 = new RegulationOrderRecord(
@@ -39,7 +39,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrder3'),
             new \DateTime('2022-01-11'),
-            $this->getReference('organization1'),
+            $this->getReference('mainOrg'),
         );
 
         $regulationOrderRecord4 = new RegulationOrderRecord(
@@ -48,7 +48,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrder4'),
             new \DateTime('2022-01-11'),
-            $this->getReference('organization2'),
+            $this->getReference('otherOrg'),
         );
 
         $regulationOrderRecord5 = new RegulationOrderRecord(
@@ -57,7 +57,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrder5'),
             new \DateTime('2022-01-10'),
-            $this->getReference('organization1'),
+            $this->getReference('mainOrg'),
         );
 
         $regulationOrderRecordNoMeasures = new RegulationOrderRecord(
@@ -66,7 +66,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT,
             $this->getReference('regulationOrderNoMeasures'),
             new \DateTime('2022-01-10'),
-            $this->getReference('organization1'),
+            $this->getReference('mainOrg'),
         );
 
         $manager->persist($regulationOrderRecord);

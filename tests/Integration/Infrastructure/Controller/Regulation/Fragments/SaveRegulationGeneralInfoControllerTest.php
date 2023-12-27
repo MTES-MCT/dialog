@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
@@ -97,7 +98,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('GET', '/_fragment/regulations/general_info/form/3ede8b1a-1816-4788-8510-e08f45511cb5');
 
         $this->assertResponseStatusCodeSame(403);

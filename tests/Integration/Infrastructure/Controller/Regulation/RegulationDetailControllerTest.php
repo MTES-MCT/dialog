@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class RegulationDetailControllerTest extends AbstractWebTestCase
@@ -24,7 +26,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         // General info
         $this->assertSame('Description 1', $generalInfo->filter('h3')->text());
-        $this->assertSame('DiaLog', $generalInfo->filter('li')->eq(0)->text());
+        $this->assertSame(OrganizationFixture::MAIN_ORG_NAME, $generalInfo->filter('li')->eq(0)->text());
         $this->assertSame('Évènement', $generalInfo->filter('li')->eq(1)->text());
         $this->assertSame('Description 1', $generalInfo->filter('li')->eq(2)->text());
         $this->assertSame('Du 13/03/2023 au 15/03/2023', $generalInfo->filter('li')->eq(3)->text());
@@ -127,7 +129,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
 
         $this->assertResponseStatusCodeSame(403);

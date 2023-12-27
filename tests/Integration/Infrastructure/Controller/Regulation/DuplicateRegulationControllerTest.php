@@ -72,6 +72,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
     public function testDuplicateWithNoStartDateYet(): void
     {
+        // TODO
         $client = $this->login('florimond.manca@beta.gouv.fr');
         $client->request('POST', '/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
@@ -82,6 +83,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
     public function testRegulationCannotBeDuplicated(): void
     {
+        // TODO
         $client = $this->login('florimond.manca@beta.gouv.fr');
         $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
