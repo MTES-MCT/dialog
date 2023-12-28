@@ -316,6 +316,49 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $this->assertSame($location, $handler($command));
     }
 
+    public function testHouseNumberOnOneSideOnly(): void
+    {
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                $this->cityCode,
+                $this->cityLabel,
+                $this->roadName,
+                '137',
+            );
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveRegulationLocationCommandHandler(
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
+        $command->roadName = $this->roadName;
+        $command->fromHouseNumber = '137';
+        $command->toHouseNumber = null;
+
+        $this->assertSame($location, $handler($command));
+    }
+
     public function testUpdateNoChangeDoesNotRecomputePoints(): void
     {
         $location = $this->createMock(Location::class);
