@@ -20,7 +20,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public array $measures = [];
 
     public function __construct(
-        public readonly RegulationOrderRecord $regulationOrderRecord,
+        public ?RegulationOrderRecord $regulationOrderRecord = null,
         public readonly ?Location $location = null,
     ) {
     }

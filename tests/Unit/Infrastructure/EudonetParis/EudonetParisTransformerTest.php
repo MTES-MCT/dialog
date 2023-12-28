@@ -8,8 +8,8 @@ use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\GeocoderInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\EudonetParis\EudonetParisLocationItem;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -80,14 +80,16 @@ final class EudonetParisTransformerTest extends TestCase
         $vehicleSet->allVehicles = true;
         $measureCommand->vehicleSet = $vehicleSet;
 
-        $locationItem = new EudonetParisLocationItem();
-        $locationItem->roadName = $roadName;
-        $locationItem->fromHouseNumber = null;
-        $locationItem->toHouseNumber = null;
-        $locationItem->geometry = null;
-        $locationItem->measures = [$measureCommand];
+        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->cityCode = '75056';
+        $locationCommand->cityLabel = 'Paris';
+        $locationCommand->roadName = $roadName;
+        $locationCommand->fromHouseNumber = null;
+        $locationCommand->toHouseNumber = null;
+        $locationCommand->geometry = null;
+        $locationCommand->measures = [$measureCommand];
 
-        $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationItem]);
+        $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationCommand]);
         $result = new EudonetParisTransformerResult($importCommand, []);
 
         $this->geocoder
@@ -171,27 +173,31 @@ final class EudonetParisTransformerTest extends TestCase
 
         $rueEugeneBerthoudXRueJeanPerrin = Coordinates::fromLonLat(2.3453101, 48.9062362);
         $rueEugeneBerthoud26 = Coordinates::fromLonLat(2.3453431, 48.9062625);
-        $locationItem1 = new EudonetParisLocationItem();
-        $locationItem1->roadName = 'Rue Eugène Berthoud';
-        $locationItem1->fromHouseNumber = null;
-        $locationItem1->toHouseNumber = '26';
-        $locationItem1->geometry = GeoJSON::toLineString([
+        $locationCommand1 = new SaveRegulationLocationCommand();
+        $locationCommand1->cityCode = '75056';
+        $locationCommand1->cityLabel = 'Paris';
+        $locationCommand1->roadName = 'Rue Eugène Berthoud';
+        $locationCommand1->fromHouseNumber = null;
+        $locationCommand1->toHouseNumber = '26';
+        $locationCommand1->geometry = GeoJSON::toLineString([
             $rueEugeneBerthoudXRueJeanPerrin,
             $rueEugeneBerthoud26,
         ]);
-        $locationItem1->measures = [$measureCommand];
+        $locationCommand1->measures = [$measureCommand];
 
         $rueEugeneBerthoud15 = Coordinates::fromLonLat(2.3453412, 48.9062610);
         $rueEugeneBerthoudXRueAdrienLesesne = Coordinates::fromLonLat(2.34944, 48.9045598);
-        $locationItem2 = new EudonetParisLocationItem();
-        $locationItem2->roadName = 'Rue Eugène Berthoud';
-        $locationItem2->fromHouseNumber = '15';
-        $locationItem2->toHouseNumber = null;
-        $locationItem2->geometry = GeoJSON::toLineString([
+        $locationCommand2 = new SaveRegulationLocationCommand();
+        $locationCommand2->cityCode = '75056';
+        $locationCommand2->cityLabel = 'Paris';
+        $locationCommand2->roadName = 'Rue Eugène Berthoud';
+        $locationCommand2->fromHouseNumber = '15';
+        $locationCommand2->toHouseNumber = null;
+        $locationCommand2->geometry = GeoJSON::toLineString([
             $rueEugeneBerthoud15,
             $rueEugeneBerthoudXRueAdrienLesesne,
         ]);
-        $locationItem2->measures = [$measureCommand];
+        $locationCommand2->measures = [$measureCommand];
 
         $matcher = self::exactly(2);
         $this->geocoder
@@ -215,7 +221,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = $transformer->transform($record, $organization);
 
-        $this->assertEquals([$locationItem1, $locationItem2], $result->command->locationItems);
+        $this->assertEquals([$locationCommand1, $locationCommand2], $result->command->locationCommands);
     }
 
     public function testSkipNoMeasures(): void

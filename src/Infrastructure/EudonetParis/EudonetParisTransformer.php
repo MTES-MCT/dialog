@@ -8,8 +8,8 @@ use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\GeocoderInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\EudonetParis\EudonetParisLocationItem;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
@@ -17,6 +17,9 @@ use App\Domain\User\Organization;
 
 final class EudonetParisTransformer
 {
+    private const CITY_CODE = '75056';
+    private const CITY_LABEL = 'Paris';
+
     public function __construct(
         private GeocoderInterface $geocoder,
     ) {
@@ -29,7 +32,7 @@ final class EudonetParisTransformer
 
         $generalInfoCommand = $this->buildGeneralInfoCommand($row, $organization);
 
-        $locationItems = [];
+        $locationCommands = [];
         $errors = [];
 
         if (\count($row['measures']) === 0) {
@@ -51,18 +54,18 @@ final class EudonetParisTransformer
             $measureCommand->vehicleSet = $vehicleSet;
 
             foreach ($measureRow['locations'] as $locationRow) {
-                [$locationItem, $error] = $this->buildLocationItem($locationRow, $measureCommand);
+                [$locationCommand, $error] = $this->buildLocationCommand($locationRow, $measureCommand);
 
-                if (empty($locationItem)) {
+                if (empty($locationCommand)) {
                     $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_location'];
                     continue;
                 }
 
-                $locationItems[] = $locationItem;
+                $locationCommands[] = $locationCommand;
             }
         }
 
-        if (\count($locationItems) === 0) {
+        if (\count($locationCommands) === 0) {
             $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_locations_gathered'];
 
             return new EudonetParisTransformerResult(null, $errors);
@@ -70,7 +73,7 @@ final class EudonetParisTransformer
 
         $command = new ImportEudonetParisRegulationCommand(
             $generalInfoCommand,
-            $locationItems,
+            $locationCommands,
         );
 
         return new EudonetParisTransformerResult($command, $errors);
@@ -124,11 +127,9 @@ final class EudonetParisTransformer
         return [$command, null];
     }
 
-    private function buildLocationItem(array $row, SaveMeasureCommand $measureCommand): array
+    private function buildLocationCommand(array $row, SaveMeasureCommand $measureCommand): array
     {
         $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
-
-        $locationItem = new EudonetParisLocationItem();
 
         $porteSur = $row['fields'][EudonetParisExtractor::LOCALISATION_PORTE_SUR];
         $libelleVoie = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE];
@@ -163,14 +164,16 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $locationItem->roadName = $roadName;
-        $locationItem->fromHouseNumber = $fromHouseNumber;
-        $locationItem->toHouseNumber = $toHouseNumber;
-        $locationItem->geometry = $this->makeLocationGeometry($locationItem->roadName, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
+        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->cityCode = self::CITY_CODE;
+        $locationCommand->cityLabel = self::CITY_LABEL;
+        $locationCommand->roadName = $roadName;
+        $locationCommand->fromHouseNumber = $fromHouseNumber;
+        $locationCommand->toHouseNumber = $toHouseNumber;
+        $locationCommand->geometry = $this->makeLocationGeometry($locationCommand->roadName, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
+        $locationCommand->measures[] = $measureCommand;
 
-        $locationItem->measures[] = $measureCommand;
-
-        return [$locationItem, null];
+        return [$locationCommand, null];
     }
 
     private function makeLocationGeometry(
@@ -191,16 +194,16 @@ final class EudonetParisTransformer
 
         if ($fromHouseNumber) {
             $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
-            $fromPoint = $this->geocoder->computeCoordinates($fromAddress, ImportEudonetParisRegulationCommand::CITY_CODE);
+            $fromPoint = $this->geocoder->computeCoordinates($fromAddress, self::CITY_CODE);
         } else {
-            $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
+            $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, self::CITY_CODE);
         }
 
         if ($toHouseNumber) {
             $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
-            $toPoint = $this->geocoder->computeCoordinates($toAddress, ImportEudonetParisRegulationCommand::CITY_CODE);
+            $toPoint = $this->geocoder->computeCoordinates($toAddress, self::CITY_CODE);
         } else {
-            $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, ImportEudonetParisRegulationCommand::CITY_CODE);
+            $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, self::CITY_CODE);
         }
 
         return GeoJSON::toLineString([$fromPoint, $toPoint]);
