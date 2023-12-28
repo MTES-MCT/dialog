@@ -260,7 +260,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $form['location_form[cityCode]'] = '59368';
         $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
-        $form['location_form[roadName]'] = 'Rue des Poilus';
+        $form['location_form[roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
         $form['location_form[fromHouseNumber]'] = '';
         $form['location_form[toHouseNumber]'] = '';
 

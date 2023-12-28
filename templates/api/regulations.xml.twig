@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+{% macro locationCondition(roadName, posList) %}
+    <conditions xsi:type="LocationCondition">
+        <locationByOrder xsi:type="loc:LinearLocation">
+            <loc:supplementaryPositionalDescription>
+                <loc:roadInformation>
+                    <loc:roadName>{{ roadName }}</loc:roadName>
+                </loc:roadInformation>
+            </loc:supplementaryPositionalDescription>
+            <loc:gmlLineString>
+                <loc:posList>{{ posList }}</loc:posList>
+            </loc:gmlLineString>
+        </locationByOrder>
+    </conditions>
+{% endmacro %}
+
 <d2:payload
   modelBaseVersion="3"
   lang="FR"
@@ -72,18 +87,16 @@
                                     </com:validityTimeSpecification>
                                 </validityByOrder>
                             </conditions>
-                            <conditions xsi:type="LocationCondition">
-                                <locationByOrder xsi:type="loc:LinearLocation">
-                                    <loc:supplementaryPositionalDescription>
-                                        <loc:roadInformation>
-                                            <loc:roadName>{{ location.roadName }}</loc:roadName>
-                                        </loc:roadInformation>
-                                    </loc:supplementaryPositionalDescription>
-                                    <loc:gmlLineString>
-                                        <loc:posList>{{ location.gmlPosList }}</loc:posList>
-                                    </loc:gmlLineString>
-                                </locationByOrder>
-                            </conditions>
+                            {% if location.gmlPosLists|length >= 2 %}
+                                <conditions xsi:type="ConditionSet">
+                                    <operator>or</operator>
+                                    {% for posList in location.gmlPosLists %}
+                                        {{ _self.locationCondition(location.roadName, posList) }}
+                                    {% endfor %}
+                                </conditions>
+                            {% else %}
+                                {{ _self.locationCondition(location.roadName, location.gmlPosLists[0]) }}
+                            {% endif %}
                             {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
                                 {% if vehicle.nonVehicularRoadUser %}
                                     <conditions xsi:type="NonVehicularRoadUserCondition">

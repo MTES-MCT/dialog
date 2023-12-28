@@ -28,12 +28,15 @@ class GeoJSON
     /**
      * @return Coordinates[]
      */
-    public static function parseLineString(string $geometry): array
+    public static function parseLineString(string|array $geometry): array
     {
-        $points = [];
-        $geom = json_decode($geometry, associative: true);
+        if (\is_string($geometry)) {
+            $geometry = json_decode($geometry, associative: true);
+        }
 
-        foreach ($geom['coordinates'] as $coords) {
+        $points = [];
+
+        foreach ($geometry['coordinates'] as $coords) {
             $points[] = Coordinates::fromLonLat($coords[0], $coords[1]);
         }
 
