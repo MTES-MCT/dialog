@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-{% macro locationCondition(roadName, posList) %}
-    <conditions xsi:type="LocationCondition">
-        <locationByOrder xsi:type="loc:LinearLocation">
-            <loc:supplementaryPositionalDescription>
-                <loc:roadInformation>
-                    <loc:roadName>{{ roadName }}</loc:roadName>
-                </loc:roadInformation>
-            </loc:supplementaryPositionalDescription>
-            <loc:gmlLineString>
-                <loc:posList>{{ posList }}</loc:posList>
-            </loc:gmlLineString>
-        </locationByOrder>
-    </conditions>
-{% endmacro %}
-
 <d2:payload
   modelBaseVersion="3"
   lang="FR"
@@ -23,6 +8,7 @@
   xmlns:com="http://datex2.eu/schema/3/common"
   xmlns:comx="http://datex2.eu/schema/3/commonExtension"
   xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
   xmlns="http://datex2.eu/schema/3/trafficRegulation"
   xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
   xsi:type="TrafficRegulationPublication"
@@ -87,16 +73,22 @@
                                     </com:validityTimeSpecification>
                                 </validityByOrder>
                             </conditions>
-                            {% if location.gmlPosLists|length >= 2 %}
-                                <conditions xsi:type="ConditionSet">
-                                    <operator>or</operator>
-                                    {% for posList in location.gmlPosLists %}
-                                        {{ _self.locationCondition(location.roadName, posList) }}
-                                    {% endfor %}
-                                </conditions>
-                            {% else %}
-                                {{ _self.locationCondition(location.roadName, location.gmlPosLists[0]) }}
-                            {% endif %}
+
+                            <conditions xsi:type="LocationCondition">
+                                <locationByOrder xsi:type="loc:LinearLocation">
+                                    <loc:supplementaryPositionalDescription>
+                                        <loc:roadInformation>
+                                            <loc:roadName>{{ location.roadName }}</loc:roadName>
+                                        </loc:roadInformation>
+                                    </loc:supplementaryPositionalDescription>
+                                    <loc:_linearLocationExtension>
+                                        <loc:linearLocationExtended>
+                                            <locdx:geoJsonGeometry>{{ location.geometry }}</locdx:geoJsonGeometry>
+                                        </loc:linearLocationExtended>
+                                    </loc:_linearLocationExtension>
+                                </locationByOrder>
+                            </conditions>
+
                             {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
                                 {% if vehicle.nonVehicularRoadUser %}
                                     <conditions xsi:type="NonVehicularRoadUserCondition">

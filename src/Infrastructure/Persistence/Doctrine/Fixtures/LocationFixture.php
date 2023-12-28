@@ -94,8 +94,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $location2Ter = new Location(
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
             $this->getReference('regulationOrder2'),
-            // TODO?
-            // Full road, should not appear in DATEX export.
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Rue Gamot',
