@@ -12,6 +12,8 @@ use Doctrine\Persistence\ObjectManager;
 
 final class MeasureFixture extends Fixture implements DependentFixtureInterface
 {
+    public const INDEX_TYPICAL_TO_REMOVE = 1;
+
     public function load(ObjectManager $manager): void
     {
         $typicalMeasure = new Measure(
@@ -19,6 +21,14 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('typicalLocation'),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-05-11'),
+        );
+
+        $typicalMeasureToRemove = new Measure(
+            '0658d836-de22-75f2-8000-bb36c98113a5',
+            $this->getReference('typicalLocation'),
+            MeasureTypeEnum::SPEED_LIMITATION->value,
+            new \DateTime('2023-05-11'),
+            maxSpeed: 50,
         );
 
         $permanentRegulationOrderLocationMeasure1 = new Measure(
@@ -72,6 +82,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         );
 
         $manager->persist($typicalMeasure);
+        $manager->persist($typicalMeasureToRemove);
         $manager->persist($permanentRegulationOrderLocationMeasure1);
         $manager->persist($permanentRegulationOrderLocationMeasure2);
         $manager->persist($publishedLocation1Measure1);

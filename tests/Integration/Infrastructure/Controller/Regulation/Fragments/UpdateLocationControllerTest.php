@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
@@ -92,26 +93,27 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'] = []; // Remove period
 
         // Add
-        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
-        $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
-        $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['location_form']['measures'][1]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['startTime']['hour'] = '8';
-        $values['location_form']['measures'][1]['periods'][0]['startTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['endTime']['hour'] = '16';
-        $values['location_form']['measures'][1]['periods'][0]['endTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['location_form']['measures'][2]['type'] = 'alternateRoad';
+        $values['location_form']['measures'][2]['vehicleSet']['allVehicles'] = 'yes';
+        $values['location_form']['measures'][2]['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['location_form']['measures'][2]['periods'][0]['startDate'] = '2023-10-30';
+        $values['location_form']['measures'][2]['periods'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][2]['periods'][0]['startTime']['minute'] = '0';
+        $values['location_form']['measures'][2]['periods'][0]['endDate'] = '2023-10-30';
+        $values['location_form']['measures'][2]['periods'][0]['endTime']['hour'] = '16';
+        $values['location_form']['measures'][2]['periods'][0]['endTime']['minute'] = '0';
+        $values['location_form']['measures'][2]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
+        $detailItems = $crawler->filter('ul[data-testid="location-detail-items"] > li');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
-        $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
-        $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $detailItems->eq(2)->text());
+        $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules', $detailItems->eq(4)->text());
     }
 
     public function testDeletePeriod(): void
@@ -217,6 +219,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
     }
 
+    /** @group only */
     public function testRemoveMeasure(): void
     {
         $client = $this->login();
@@ -227,7 +230,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        unset($values['location_form']['measures'][1]);
+        unset($values['location_form']['measures'][MeasureFixture::INDEX_TYPICAL_TO_REMOVE]);
 
         $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
