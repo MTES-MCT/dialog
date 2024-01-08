@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationNew;
@@ -22,6 +23,7 @@ final class SaveRegulationLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private LocationNewRepositoryInterface $locationNewRepository,
         private GeocoderInterface $geocoder,
+        private RoadGeocoderInterface $roadGeocoder,
     ) {
     }
 
@@ -89,8 +91,6 @@ final class SaveRegulationLocationCommandHandler
             if (!$measureCommand->measure) {
                 $locationNew = $this->createLocationNew($measure, $command, $geometry);
                 $measure->addLocation($locationNew);
-                $command->location->addMeasure($measure);
-                $measuresStillPresentUuids[] = $measure->getUuid();
             }
         }
 
@@ -143,6 +143,13 @@ final class SaveRegulationLocationCommandHandler
             $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
 
             return GeoJSON::toLineString([$fromCoords, $toCoords]);
+        }
+
+        $roadName = $command->roadName;
+        $cityCode = $command->cityCode;
+
+        if (!$command->fromHouseNumber && !$command->toHouseNumber && $roadName) {
+            return $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
         }
 
         return null;

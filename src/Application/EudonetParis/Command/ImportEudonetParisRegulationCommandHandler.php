@@ -7,7 +7,6 @@ namespace App\Application\EudonetParis\Command;
 use App\Application\CommandBusInterface;
 use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\Regulation\Command\PublishRegulationCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\RegulationOrderRecord;
 
@@ -23,16 +22,8 @@ final class ImportEudonetParisRegulationCommandHandler
         /** @var RegulationOrderRecord */
         $regulationOrderRecord = $this->commandBus->handle($command->generalInfoCommand);
 
-        foreach ($command->locationItems as $locationItem) {
-            $locationCommand = new SaveRegulationLocationCommand($regulationOrderRecord);
-
-            $locationCommand->cityCode = $command::CITY_CODE;
-            $locationCommand->cityLabel = $command::CITY_LABEL;
-            $locationCommand->roadName = $locationItem->roadName;
-            $locationCommand->fromHouseNumber = $locationItem->fromHouseNumber;
-            $locationCommand->toHouseNumber = $locationItem->toHouseNumber;
-            $locationCommand->geometry = $locationItem->geometry;
-            $locationCommand->measures = $locationItem->measures;
+        foreach ($command->locationCommands as $locationCommand) {
+            $locationCommand->regulationOrderRecord = $regulationOrderRecord;
 
             $location = $this->commandBus->handle($locationCommand);
 
