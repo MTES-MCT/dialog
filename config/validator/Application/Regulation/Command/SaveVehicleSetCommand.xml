@@ -3,21 +3,10 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand">
+        <constraint name="App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommandConstraint" />
         <property name="allVehicles">
             <constraint name="Type">
                 <option name="type">boolean</option>
-            </constraint>
-       </property>
-       <property name="restrictedTypes">
-            <constraint name="When">
-                <option name="expression">
-                    this.allVehicles === false
-                </option>
-                <option name="constraints">
-                    <constraint name="NotBlank">
-                        <option name="message">regulation.vehicle_set.restricted_types.error.not_blank</option>
-                    </constraint>
-                </option>
             </constraint>
         </property>
         <property name="otherRestrictedTypeText">
@@ -73,13 +62,13 @@
             </constraint>
             <constraint name="PositiveOrZero"></constraint>
         </property>
-        <property name="heavyweightMaxWidth">
+        <property name="maxWidth">
             <constraint name="PositiveOrZero"></constraint>
         </property>
-        <property name="heavyweightMaxLength">
+        <property name="maxLength">
             <constraint name="PositiveOrZero"></constraint>
         </property>
-        <property name="heavyweightMaxHeight">
+        <property name="maxHeight">
             <constraint name="PositiveOrZero"></constraint>
         </property>
     </class>

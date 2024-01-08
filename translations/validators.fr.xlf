@@ -34,9 +34,9 @@
                 <source>location.measures.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs restrictions.</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.restricted_types.error.not_blank">
-                <source>regulation.vehicle_set.restricted_types.error.not_blank</source>
-                <target>Veuillez spécifier un ou plusieurs véhicules concernés.</target>
+            <trans-unit id="regulation.vehicle_set.all_vehicles.no.error.not_blank">
+                <source>regulation.vehicle_set.all_vehicles.no.error.not_blank</source>
+                <target>Veuillez spécifier au moins une caractéristique des véhicules concernés.</target>
             </trans-unit>
             <trans-unit id="regulation.period.error.end_date">
                 <source>regulation.period.error.end_date</source>

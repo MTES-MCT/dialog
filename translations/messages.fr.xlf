@@ -1389,16 +1389,16 @@
                 <source>regulation.vehicle_set.heavyweightMaxWeight.help</source>
                 <target>Spécifier le poids maximum autorisé</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.heavyweightMaxWidth">
-                <source>regulation.vehicle_set.heavyweightMaxWidth</source>
+            <trans-unit id="regulation.vehicle_set.maxWidth">
+                <source>regulation.vehicle_set.maxWidth</source>
                 <target>Largeur maximum</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.heavyweightMaxLength">
-                <source>regulation.vehicle_set.heavyweightMaxLength</source>
+            <trans-unit id="regulation.vehicle_set.maxLength">
+                <source>regulation.vehicle_set.maxLength</source>
                 <target>Longueur maximum</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.heavyweightMaxHeight">
-                <source>regulation.vehicle_set.heavyweightMaxHeight</source>
+            <trans-unit id="regulation.vehicle_set.maxHeight">
+                <source>regulation.vehicle_set.maxHeight</source>
                 <target>Hauteur maximum</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.other_restricted_type_text">
@@ -1521,24 +1521,28 @@
                 <source>regulation.vehicles.except</source>
                 <target>sauf</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.prefix">
-                <source>regulation.vehicles.heavyweightCharacteristics.prefix</source>
-                <target>de plus de</target>
+            <trans-unit id="regulation.vehicles.heavyweightMaxWeight">
+                <source>regulation.vehicles.heavyweightMaxWeight</source>
+                <target>de plus de %value% tonnes</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.weight">
-                <source>regulation.vehicles.heavyweightCharacteristics.weight</source>
-                <target>%value% tonnes</target>
+            <trans-unit id="regulation.vehicles.restrictedTypes.suffix">
+                <source>regulation.vehicles.restrictedTypes.suffix</source>
+                <target>et les</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.width">
-                <source>regulation.vehicles.heavyweightCharacteristics.width</source>
+            <trans-unit id="regulation.vehicles.dimensions.prefix">
+                <source>regulation.vehicles.dimensions.prefix</source>
+                <target>véhicules de plus de</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.dimensions.width">
+                <source>regulation.vehicles.dimensions.width</source>
                 <target>%value% mètres de large</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.length">
-                <source>regulation.vehicles.heavyweightCharacteristics.length</source>
+            <trans-unit id="regulation.vehicles.dimensions.length">
+                <source>regulation.vehicles.dimensions.length</source>
                 <target>%value% mètres de long</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.height">
-                <source>regulation.vehicles.heavyweightCharacteristics.height</source>
+            <trans-unit id="regulation.vehicles.dimensions.height">
+                <source>regulation.vehicles.dimensions.height</source>
                 <target>%value% mètres de haut</target>
             </trans-unit>
             <trans-unit id="statistics.title">

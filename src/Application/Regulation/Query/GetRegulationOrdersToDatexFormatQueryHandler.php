@@ -57,9 +57,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 $vehicleConditions[] = new DatexVehicleConditionView(
                     vehicleType: $restrictedVehicleType,
                     maxWeight: $row['heavyweightMaxWeight'],
-                    maxWidth: $row['heavyweightMaxWidth'],
-                    maxLength: $row['heavyweightMaxLength'],
-                    maxHeight: $row['heavyweightMaxHeight'],
+                    maxWidth: $row['maxWidth'],
+                    maxLength: $row['maxLength'],
+                    maxHeight: $row['maxHeight'],
                 );
             }
 

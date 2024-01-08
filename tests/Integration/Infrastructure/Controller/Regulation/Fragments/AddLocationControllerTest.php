@@ -57,9 +57,9 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['commercial', 'other'];
         $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = 'Déchets industriels';
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = 3.5;
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWidth'] = 0.0; // Zero OK
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxLength'] = -0; // Zero OK
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxHeight'] = '2.50';
+        $values['location_form']['measures'][0]['vehicleSet']['maxWidth'] = 0.0; // Zero OK
+        $values['location_form']['measures'][0]['vehicleSet']['maxLength'] = -0; // Zero OK
+        $values['location_form']['measures'][0]['vehicleSet']['maxHeight'] = '2.50';
         $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'certainDays';
         $values['location_form']['measures'][0]['periods'][0]['startDate'] = '2023-10-30';
         $values['location_form']['measures'][0]['periods'][0]['startTime']['hour'] = '8';
@@ -104,7 +104,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_restrictedTypes_error')->text());
+        $this->assertStringContainsString('Veuillez spécifier au moins une caractéristique des véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_allVehicles_error')->text());
     }
 
     public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
@@ -235,7 +235,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
     }
 
-    public function testInvalidVehicleSetHeavyweightCharacteristicsNotNumber(): void
+    public function testInvalidVehicleSetCharacteristicsNotNumber(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
@@ -249,19 +249,19 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = 'not a number';
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWidth'] = 'true';
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxLength'] = [12];
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxHeight'] = '2.4m';
+        $values['location_form']['measures'][0]['vehicleSet']['maxWidth'] = 'true';
+        $values['location_form']['measures'][0]['vehicleSet']['maxLength'] = [12];
+        $values['location_form']['measures'][0]['vehicleSet']['maxHeight'] = '2.4m';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxWidth_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxLength_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxHeight_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_maxWidth_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_maxLength_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#location_form_measures_0_vehicleSet_maxHeight_error')->text());
     }
 
-    public function testInvalidVehicleSetHeavyweightCharacteristicsNotPositive(): void
+    public function testInvalidVehicleSetCharacteristicsNotPositive(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
@@ -275,16 +275,16 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = -1;
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWidth'] = -0.1;
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxLength'] = -2.3;
-        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxHeight'] = -12;
+        $values['location_form']['measures'][0]['vehicleSet']['maxWidth'] = -0.1;
+        $values['location_form']['measures'][0]['vehicleSet']['maxLength'] = -2.3;
+        $values['location_form']['measures'][0]['vehicleSet']['maxHeight'] = -12;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxWidth_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxLength_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxHeight_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_maxWidth_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_maxLength_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#location_form_measures_0_vehicleSet_maxHeight_error')->text());
     }
 
     public function testInvalidBlankPeriod(): void

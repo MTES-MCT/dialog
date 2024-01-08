@@ -75,20 +75,20 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->method('getOtherExemptedTypeText')
             ->willReturn('Convois exceptionnels');
         $vehicleSet
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getHeavyweightMaxWeight')
             ->willReturn(3.5);
         $vehicleSet
             ->expects(self::exactly(2))
-            ->method('getHeavyweightMaxWidth')
+            ->method('getMaxWidth')
             ->willReturn(2.0);
         $vehicleSet
             ->expects(self::exactly(1))
-            ->method('getHeavyweightMaxLength')
+            ->method('getMaxLength')
             ->willReturn(null);
         $vehicleSet
             ->expects(self::exactly(2))
-            ->method('getHeavyweightMaxHeight')
+            ->method('getMaxHeight')
             ->willReturn(2.4);
 
         $timeSlot1 = $this->createMock(TimeSlot::class);
@@ -294,8 +294,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                         ['name' => 'pedestrians'],
                                         ['name' => 'Convois exceptionnels', 'isOther' => true],
                                     ],
+                                    3.5,
                                     [
-                                        ['name' => 'weight', 'value' => 3.5],
                                         ['name' => 'width', 'value' => 2],
                                         ['name' => 'height', 'value' => 2.4],
                                     ],

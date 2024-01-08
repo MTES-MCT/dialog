@@ -27,9 +27,9 @@ final class SaveVehicleSetCommandHandler
                 $command->exemptedTypes,
                 $command->otherExemptedTypeText,
                 $command->heavyweightMaxWeight,
-                $command->heavyweightMaxWidth,
-                $command->heavyweightMaxLength,
-                $command->heavyweightMaxHeight,
+                $command->maxWidth,
+                $command->maxLength,
+                $command->maxHeight,
                 $command->critairTypes,
             );
 
@@ -45,9 +45,9 @@ final class SaveVehicleSetCommandHandler
                 $command->exemptedTypes,
                 $command->otherExemptedTypeText,
                 $command->heavyweightMaxWeight,
-                $command->heavyweightMaxWidth,
-                $command->heavyweightMaxLength,
-                $command->heavyweightMaxHeight,
+                $command->maxWidth,
+                $command->maxLength,
+                $command->maxHeight,
                 $command->critairTypes,
             ),
         );

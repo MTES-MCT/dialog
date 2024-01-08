@@ -22,8 +22,8 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
             exemptedTypes: [VehicleTypeEnum::PEDESTRIANS->value, VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value],
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
-            heavyweightMaxLength: 12,
-            heavyweightMaxHeight: 2.4,
+            maxLength: 12,
+            maxHeight: 2.4,
             critairTypes: [CritairEnum::CRITAIR_4->value, CritairEnum::CRITAIR_5->value],
         );
 

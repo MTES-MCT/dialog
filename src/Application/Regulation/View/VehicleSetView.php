@@ -12,14 +12,15 @@ class VehicleSetView
     public function __construct(
         public readonly array $restrictedTypes,
         public readonly array $exemptedTypes,
-        public readonly array $heavyweightCharacteristics,
+        public readonly ?float $heavyweightMaxWeight,
+        public readonly array $dimensions,
     ) {
     }
 
     public static function fromEntity(?VehicleSet $vehicleSet): self
     {
         if (!$vehicleSet) {
-            return new self([], [], []);
+            return new self([], [], null, []);
         }
 
         $restrictedTypes = [];
@@ -50,40 +51,36 @@ class VehicleSetView
             $exemptedTypes[] = ['name' => $vehicleSet->getOtherExemptedTypeText(), 'isOther' => true];
         }
 
-        $heavyweightCharacteristics = [];
+        $heavyweightMaxWeight = $vehicleSet->getHeavyweightMaxWeight();
 
-        if ($vehicleSet->getHeavyweightMaxWeight()) {
-            $heavyweightCharacteristics[] = [
-                'name' => 'weight',
-                'value' => $vehicleSet->getHeavyweightMaxWeight(),
-            ];
-        }
+        $dimensions = [];
 
-        if ($vehicleSet->getHeavyweightMaxWidth()) {
-            $heavyweightCharacteristics[] = [
+        if ($vehicleSet->getMaxWidth()) {
+            $dimensions[] = [
                 'name' => 'width',
-                'value' => $vehicleSet->getHeavyweightMaxWidth(),
+                'value' => $vehicleSet->getMaxWidth(),
             ];
         }
 
-        if ($vehicleSet->getHeavyweightMaxLength()) {
-            $heavyweightCharacteristics[] = [
+        if ($vehicleSet->getMaxLength()) {
+            $dimensions[] = [
                 'name' => 'length',
-                'value' => $vehicleSet->getHeavyweightMaxLength(),
+                'value' => $vehicleSet->getMaxLength(),
             ];
         }
 
-        if ($vehicleSet->getHeavyweightMaxHeight()) {
-            $heavyweightCharacteristics[] = [
+        if ($vehicleSet->getMaxHeight()) {
+            $dimensions[] = [
                 'name' => 'height',
-                'value' => $vehicleSet->getHeavyweightMaxHeight(),
+                'value' => $vehicleSet->getMaxHeight(),
             ];
         }
 
         return new self(
             $restrictedTypes,
             $exemptedTypes,
-            $heavyweightCharacteristics,
+            $heavyweightMaxWeight,
+            $dimensions,
         );
     }
 }

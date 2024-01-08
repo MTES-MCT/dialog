@@ -110,9 +110,9 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->heavyweightMaxWeight = 3.5;
-        $command->heavyweightMaxWidth = 2;
-        $command->heavyweightMaxLength = 12;
-        $command->heavyweightMaxHeight = 2.4;
+        $command->maxWidth = 2;
+        $command->maxLength = 12;
+        $command->maxHeight = 2.4;
         $command->critairTypes = [];
 
         $result = $handler($command);
@@ -158,16 +158,16 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->exemptedTypes = [VehicleTypeEnum::OTHER->value];
         $command->otherExemptedTypeText = 'Other exempted';
         $command->heavyweightMaxWeight = 3.5;
-        $command->heavyweightMaxWidth = 2;
-        $command->heavyweightMaxLength = 12;
-        $command->heavyweightMaxHeight = 2.4;
+        $command->maxWidth = 2;
+        $command->maxLength = 12;
+        $command->maxHeight = 2.4;
 
         $result = $handler($command);
 
         $this->assertSame($vehicleSet, $result);
     }
 
-    public function testResetHeavyweightCharacteristicsHeavyGoodsVehicleNotRestricted(): void
+    public function testResetHeavyweightMaxWeightIfHeavyGoodsVehicleNotRestricted(): void
     {
         $this->idFactory
             ->expects(self::never())
@@ -183,9 +183,9 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                 ['commercial'],
                 null,
                 null,
-                null,
-                null,
-                null,
+                2,
+                12,
+                2.4,
                 [],
             );
 
@@ -205,16 +205,16 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->heavyweightMaxWeight = 3.5;
-        $command->heavyweightMaxWidth = 2;
-        $command->heavyweightMaxLength = 12;
-        $command->heavyweightMaxHeight = 2.4;
+        $command->maxWidth = 2;
+        $command->maxLength = 12;
+        $command->maxHeight = 2.4;
 
         $result = $handler($command);
 
         $this->assertSame($vehicleSet, $result);
     }
 
-    public function testResetHeavyweightCharacteristicsIfZero(): void
+    public function testResetCharacteristicsIfZero(): void
     {
         $this->idFactory
             ->expects(self::never())
@@ -249,9 +249,9 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->allVehicles = false;
         $command->restrictedTypes = ['heavyGoodsVehicle'];
         $command->heavyweightMaxWeight = 0;
-        $command->heavyweightMaxWidth = 0.0;
-        $command->heavyweightMaxLength = -0;
-        $command->heavyweightMaxHeight = -0.0;
+        $command->maxWidth = 0.0;
+        $command->maxLength = -0;
+        $command->maxHeight = -0.0;
 
         $result = $handler($command);
 

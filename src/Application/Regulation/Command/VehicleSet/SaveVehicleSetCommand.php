@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\VehicleSet;
 
 use App\Application\CommandInterface;
+use App\Domain\Condition\IsMeasureForAllVehiclesInterface;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\Specification\IsMeasureForAllVehicles;
 
-final class SaveVehicleSetCommand implements CommandInterface
+final class SaveVehicleSetCommand implements CommandInterface, IsMeasureForAllVehiclesInterface
 {
     public ?bool $allVehicles;
     public array $critairTypes;
     public array $restrictedTypes;
     public ?float $heavyweightMaxWeight;
-    public ?float $heavyweightMaxWidth;
-    public ?float $heavyweightMaxLength;
-    public ?float $heavyweightMaxHeight;
+    public ?float $maxWidth;
+    public ?float $maxLength;
+    public ?float $maxHeight;
     public ?string $otherRestrictedTypeText;
     public array $exemptedTypes;
     public ?string $otherExemptedTypeText;
@@ -31,15 +33,15 @@ final class SaveVehicleSetCommand implements CommandInterface
 
     public function initFromEntity(?VehicleSet $vehicleSet): self
     {
-        $this->allVehicles = $vehicleSet ? empty($vehicleSet->getRestrictedTypes()) : null;
+        $this->allVehicles = $vehicleSet ? (new IsMeasureForAllVehicles())->isSatisfiedBy($vehicleSet) : null;
         $this->restrictedTypes = $vehicleSet?->getRestrictedTypes() ?? [];
         $this->otherRestrictedTypeText = $vehicleSet?->getOtherRestrictedTypeText();
         $this->exemptedTypes = $vehicleSet?->getExemptedTypes() ?? [];
         $this->otherExemptedTypeText = $vehicleSet?->getOtherExemptedTypeText();
         $this->heavyweightMaxWeight = $vehicleSet?->getHeavyweightMaxWeight();
-        $this->heavyweightMaxWidth = $vehicleSet?->getHeavyweightMaxWidth();
-        $this->heavyweightMaxLength = $vehicleSet?->getHeavyweightMaxLength();
-        $this->heavyweightMaxHeight = $vehicleSet?->getHeavyweightMaxHeight();
+        $this->maxWidth = $vehicleSet?->getMaxWidth();
+        $this->maxLength = $vehicleSet?->getMaxLength();
+        $this->maxHeight = $vehicleSet?->getMaxHeight();
         $this->critairTypes = $vehicleSet?->getCritairTypes() ?? [];
 
         return $this;
@@ -51,9 +53,9 @@ final class SaveVehicleSetCommand implements CommandInterface
             $this->restrictedTypes = [];
             $this->otherRestrictedTypeText = null;
             $this->heavyweightMaxWeight = null;
-            $this->heavyweightMaxWidth = null;
-            $this->heavyweightMaxLength = null;
-            $this->heavyweightMaxHeight = null;
+            $this->maxWidth = null;
+            $this->maxLength = null;
+            $this->maxHeight = null;
         }
 
         if (!\in_array(VehicleTypeEnum::OTHER->value, $this->restrictedTypes)) {
@@ -62,25 +64,22 @@ final class SaveVehicleSetCommand implements CommandInterface
 
         if (!\in_array(VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, $this->restrictedTypes)) {
             $this->heavyweightMaxWeight = null;
-            $this->heavyweightMaxWidth = null;
-            $this->heavyweightMaxLength = null;
-            $this->heavyweightMaxHeight = null;
         }
 
         if ($this->heavyweightMaxWeight === 0.0) {
             $this->heavyweightMaxWeight = null;
         }
 
-        if ($this->heavyweightMaxWidth === 0.0) {
-            $this->heavyweightMaxWidth = null;
+        if ($this->maxWidth === 0.0) {
+            $this->maxWidth = null;
         }
 
-        if ($this->heavyweightMaxLength === 0.0) {
-            $this->heavyweightMaxLength = null;
+        if ($this->maxLength === 0.0) {
+            $this->maxLength = null;
         }
 
-        if ($this->heavyweightMaxHeight === 0.0) {
-            $this->heavyweightMaxHeight = null;
+        if ($this->maxHeight === 0.0) {
+            $this->maxHeight = null;
         }
 
         if (!\in_array(VehicleTypeEnum::CRITAIR->value, $this->restrictedTypes)) {
@@ -90,5 +89,25 @@ final class SaveVehicleSetCommand implements CommandInterface
         if (!\in_array(VehicleTypeEnum::OTHER->value, $this->exemptedTypes)) {
             $this->otherExemptedTypeText = null;
         }
+    }
+
+    public function getRestrictedTypes(): array
+    {
+        return $this->restrictedTypes;
+    }
+
+    public function getMaxWidth(): ?float
+    {
+        return $this->maxWidth;
+    }
+
+    public function getMaxLength(): ?float
+    {
+        return $this->maxLength;
+    }
+
+    public function getMaxHeight(): ?float
+    {
+        return $this->maxHeight;
     }
 }

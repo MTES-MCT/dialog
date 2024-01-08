@@ -117,28 +117,28 @@
                                 widget_suffix: 'common.unit.tons'|trans,
                             }) }}
                         </div>
-                        <div class="fr-fieldset__element">
-                            {{ form_row(form.heavyweightMaxWidth, {
-                                group_class: 'fr-input-group',
-                                widget_class: 'fr-input',
-                                widget_suffix: 'common.unit.meters'|trans,
-                            }) }}
-                        </div>
-                        <div class="fr-fieldset__element">
-                            {{ form_row(form.heavyweightMaxLength, {
-                                group_class: 'fr-input-group',
-                                widget_class: 'fr-input',
-                                widget_suffix: 'common.unit.meters'|trans,
-                            }) }}
-                        </div>
-                        <div class="fr-fieldset__element">
-                            {{ form_row(form.heavyweightMaxHeight, {
-                                group_class: 'fr-input-group',
-                                widget_class: 'fr-input',
-                                widget_suffix: 'common.unit.meters'|trans,
-                            }) }}
-                        </div>
                     </fieldset>
+
+                    {{ form_row(form.maxWidth, {
+                        row_attr: {class: 'fr-x-max-w-32w'},
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        widget_suffix: 'common.unit.meters'|trans,
+                    }) }}
+
+                    {{ form_row(form.maxLength, {
+                        row_attr: {class: 'fr-x-max-w-32w'},
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        widget_suffix: 'common.unit.meters'|trans,
+                    }) }}
+
+                    {{ form_row(form.maxHeight, {
+                        row_attr: {class: 'fr-x-max-w-32w'},
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        widget_suffix: 'common.unit.meters'|trans,
+                    }) }}
 
                     {{ form_row(form.otherRestrictedTypeText, {
                         row_attr: {
