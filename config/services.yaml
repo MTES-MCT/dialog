@@ -19,7 +19,7 @@ services:
             $adminEmail: '%admin_email%'
             $eudonetParisOrgId: '%env(APP_EUDONET_PARIS_ORG_ID)%'
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
-
+            $ignWfsUrl: '%env(APP_IGN_WFS_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -93,6 +93,9 @@ when@test:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
             decorates: 'api.adresse.client'
             decoration_inner_name: 'App\Tests\Mock\APIAdresseMockClient::api.adresse.client'
+        App\Tests\Mock\IgnWfsMockClient:
+            decorates: 'ign.wfs.client'
+            decoration_inner_name: 'App\Tests\Mock\IgnWfsMockClient::ign.wfs.client'
         App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient:
             decorates: 'eudonet_paris.http.client'
             decoration_inner_name: 'App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient::eudonet_paris.http.client'

@@ -8,6 +8,7 @@
   xmlns:com="http://datex2.eu/schema/3/common"
   xmlns:comx="http://datex2.eu/schema/3/commonExtension"
   xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
   xmlns="http://datex2.eu/schema/3/trafficRegulation"
   xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
   xsi:type="TrafficRegulationPublication"
@@ -72,6 +73,7 @@
                                     </com:validityTimeSpecification>
                                 </validityByOrder>
                             </conditions>
+
                             <conditions xsi:type="LocationCondition">
                                 <locationByOrder xsi:type="loc:LinearLocation">
                                     <loc:supplementaryPositionalDescription>
@@ -79,11 +81,14 @@
                                             <loc:roadName>{{ location.roadName }}</loc:roadName>
                                         </loc:roadInformation>
                                     </loc:supplementaryPositionalDescription>
-                                    <loc:gmlLineString>
-                                        <loc:posList>{{ location.gmlPosList }}</loc:posList>
-                                    </loc:gmlLineString>
+                                    <loc:_linearLocationExtension>
+                                        <loc:linearLocationExtended>
+                                            <locdx:geoJsonGeometry>{{ location.geometry }}</locdx:geoJsonGeometry>
+                                        </loc:linearLocationExtended>
+                                    </loc:_linearLocationExtension>
                                 </locationByOrder>
                             </conditions>
+
                             {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
                                 {% if vehicle.nonVehicularRoadUser %}
                                     <conditions xsi:type="NonVehicularRoadUserCondition">

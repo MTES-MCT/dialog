@@ -63,6 +63,7 @@ final class DuplicateRegulationCommandHandler
             $locationCommand->roadName = $location->getRoadNAme();
             $locationCommand->fromHouseNumber = $location->getFromHouseNumber();
             $locationCommand->toHouseNumber = $location->getToHouseNumber();
+            $locationCommand->geometry = $location->getGeometry();
 
             if (!empty($location->getMeasures())) {
                 foreach ($location->getMeasures() as $measure) {

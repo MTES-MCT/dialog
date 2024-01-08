@@ -6,6 +6,7 @@
     xmlns:com="http://datex2.eu/schema/3/common"
     xmlns:comx="http://datex2.eu/schema/3/commonExtension"
     xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+    xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
     xmlns="http://datex2.eu/schema/3/trafficRegulation"
     xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
     xsi:type="TrafficRegulationPublication"
@@ -451,9 +452,11 @@
                                     <loc:roadName>Avenue de Fonneuve</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
-                            <loc:gmlLineString>
-                                <loc:posList>1.362275 44.028996 1.35931 44.025665</loc:posList>
-                            </loc:gmlLineString>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
@@ -528,9 +531,11 @@
                                     <loc:roadName>Avenue de Fonneuve</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
-                            <loc:gmlLineString>
-                                <loc:posList>1.362275 44.028996 1.35931 44.025665</loc:posList>
-                            </loc:gmlLineString>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
@@ -568,9 +573,11 @@
                                     <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
-                            <loc:gmlLineString>
-                                <loc:posList>1.352126 44.016833 1.353016 44.016402</loc:posList>
-                            </loc:gmlLineString>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                 </condition>
@@ -604,9 +611,44 @@
                                     <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
-                            <loc:gmlLineString>
-                                <loc:posList>1.352126 44.016833 1.353016 44.016402</loc:posList>
-                            </loc:gmlLineString>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
+                        </locationByOrder>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                        <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                        <com:validityTimeSpecification>
+                            <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                            <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                        </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                <loc:roadName>Rue Gamot</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"MultiLineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                 </condition>

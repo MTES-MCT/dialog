@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:loc="http://datex2.eu/schema/3/locationReferencing" version="3.3" targetNamespace="http://datex2.eu/schema/3/locationReferencing" xmlns:locx="http://datex2.eu/schema/3/locationExtension" xmlns:com="http://datex2.eu/schema/3/common" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+  version="3.3"
+  targetNamespace="http://datex2.eu/schema/3/locationReferencing"
+  xmlns:locx="http://datex2.eu/schema/3/locationExtension"
+  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
+  xmlns:com="http://datex2.eu/schema/3/common"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
   <xs:import namespace="http://datex2.eu/schema/3/common" schemaLocation="DATEXII_3_Common.xsd" />
   <xs:import namespace="http://datex2.eu/schema/3/locationExtension" schemaLocation="DATEXII_3_LocationExtension.xsd" />
+  <xs:import namespace="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2" schemaLocation="DATEXII_3_DiaLogLocationExtension.xsd" />
   <xs:complexType name="_AlertCDirectionEnum">
     <xs:simpleContent>
       <xs:extension base="loc:AlertCDirectionEnum">
@@ -1750,10 +1761,16 @@
               <xs:documentation>Supplementary description that applies to the secondary end of the linear location. Use when properties change along the Linear. For a one-way linear the secondary end should be the destination end.</xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="_linearLocationExtension" type="com:_ExtensionType" minOccurs="0" />
+          <xs:element name="_linearLocationExtension" type="loc:_LinearLocationExtensionType" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="_LinearLocationExtensionType">
+    <xs:sequence>
+      <xs:element name="linearLocationExtended" type="locdx:LinearLocationExtended" minOccurs="0" />
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="LinearWithinLinearElement">
     <xs:annotation>
