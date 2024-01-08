@@ -10,6 +10,7 @@ use App\Application\IdFactoryInterface;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationNewRepositoryInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
@@ -48,19 +49,7 @@ final class SaveRegulationLocationCommandHandler
             foreach ($command->measures as $measureCommand) {
                 $measureCommand->location = $location;
                 $measure = $this->commandBus->handle($measureCommand);
-
-                $locationNew = $this->locationNewRepository->add(
-                    new LocationNew(
-                        uuid: $this->idFactory->make(),
-                        measure: $measure,
-                        cityLabel: $command->cityLabel,
-                        cityCode: $command->cityCode,
-                        roadName: $command->roadName,
-                        fromHouseNumber: $command->fromHouseNumber,
-                        toHouseNumber: $command->toHouseNumber,
-                        geometry: $geometry,
-                    ),
-                );
+                $locationNew = $this->createLocationNew($measure, $command, $geometry);
                 $measure->addLocation($locationNew);
                 $location->addMeasure($measure);
             }
@@ -95,7 +84,14 @@ final class SaveRegulationLocationCommandHandler
             }
 
             $measureCommand->location = $command->location;
-            $this->commandBus->handle($measureCommand);
+            $measure = $this->commandBus->handle($measureCommand);
+
+            if (!$measureCommand->measure) {
+                $locationNew = $this->createLocationNew($measure, $command, $geometry);
+                $measure->addLocation($locationNew);
+                $command->location->addMeasure($measure);
+                $measuresStillPresentUuids[] = $measure->getUuid();
+            }
         }
 
         // Measures that weren't present in the command get deleted.
@@ -116,6 +112,25 @@ final class SaveRegulationLocationCommandHandler
         );
 
         return $command->location;
+    }
+
+    private function createLocationNew(
+        Measure $measure,
+        SaveRegulationLocationCommand $command,
+        ?string $geometry,
+    ): LocationNew {
+        return $this->locationNewRepository->add(
+            new LocationNew(
+                uuid: $this->idFactory->make(),
+                measure: $measure,
+                cityLabel: $command->cityLabel,
+                cityCode: $command->cityCode,
+                roadName: $command->roadName,
+                fromHouseNumber: $command->fromHouseNumber,
+                toHouseNumber: $command->toHouseNumber,
+                geometry: $geometry,
+            ),
+        );
     }
 
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string
