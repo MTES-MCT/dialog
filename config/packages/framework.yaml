@@ -25,6 +25,8 @@ framework:
                 base_uri: '%env(API_ADRESSE_BASE_URL)%'
             eudonet_paris.http.client:
                 base_uri: '%env(APP_EUDONET_PARIS_BASE_URL)%'
+            ign.wfs.client:
+                base_uri: '%env(APP_IGN_WFS_URL)%'
 
 when@test:
     framework:
