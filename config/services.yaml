@@ -19,6 +19,7 @@ services:
             $adminEmail: '%admin_email%'
             $eudonetParisOrgId: '%env(APP_EUDONET_PARIS_ORG_ID)%'
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
+            $ignWfsUrl: '%env(APP_IGN_WFS_URL)%'
             $bacIdfOrgId: '%env(APP_BAC_IDF_ORG_ID)%'
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
 
@@ -99,6 +100,9 @@ when@test:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
             decorates: 'api.adresse.client'
             decoration_inner_name: 'App\Tests\Mock\APIAdresseMockClient::api.adresse.client'
+        App\Tests\Mock\IgnWfsMockClient:
+            decorates: 'ign.wfs.client'
+            decoration_inner_name: 'App\Tests\Mock\IgnWfsMockClient::ign.wfs.client'
         App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient:
             decorates: 'eudonet_paris.http.client'
             decoration_inner_name: 'App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient::eudonet_paris.http.client'

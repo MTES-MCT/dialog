@@ -290,6 +290,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1->roadName = 'Route du Lac';
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
+        $locationCommand1->geometry = null;
         $locationCommand1->measures = [
             $measureCommand1,
             $measureCommand2,
@@ -301,6 +302,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2->roadName = 'Route du Grand Brossais';
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
+        $locationCommand2->geometry = null;
 
         $this->commandBus
             ->expects(self::exactly(3))
