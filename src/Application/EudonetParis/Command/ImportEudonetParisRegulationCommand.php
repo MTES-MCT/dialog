@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\EudonetParis\Command;
 
 use App\Application\CommandInterface;
+use App\Application\Regulation\Command\Location\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 
 final class ImportEudonetParisRegulationCommand implements CommandInterface

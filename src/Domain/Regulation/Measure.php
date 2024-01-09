@@ -17,7 +17,7 @@ class Measure
 
     public function __construct(
         private string $uuid,
-        private Location $location,
+        private RegulationOrder $regulationOrder,
         private string $type,
         private \DateTimeInterface $createdAt,
         private ?int $maxSpeed = null,
@@ -41,9 +41,9 @@ class Measure
         return $this->maxSpeed;
     }
 
-    public function getLocation(): Location
+    public function getRegulationOrder(): RegulationOrder
     {
-        return $this->location;
+        return $this->regulationOrder;
     }
 
     public function getPeriods(): iterable

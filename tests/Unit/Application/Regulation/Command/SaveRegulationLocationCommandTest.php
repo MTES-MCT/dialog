@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command;
 
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Command\Location\SaveRegulationLocationCommand;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;

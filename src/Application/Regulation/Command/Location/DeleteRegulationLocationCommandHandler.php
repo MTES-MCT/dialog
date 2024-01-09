@@ -11,6 +11,7 @@ use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 
+// todo : refacto
 final class DeleteRegulationLocationCommandHandler
 {
     public function __construct(

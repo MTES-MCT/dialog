@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command;
+namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandInterface;
-use App\Domain\Regulation\Location;
-use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Measure;
 
 final class SaveRegulationLocationCommand implements CommandInterface
 {
@@ -17,32 +17,22 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $toHouseNumber;
     public ?string $geometry;
 
-    public array $measures = [];
-
     public function __construct(
-        public ?RegulationOrderRecord $regulationOrderRecord = null,
-        public readonly ?Location $location = null,
+        public ?Measure $measure = null,
+        public readonly ?LocationNew $location = null,
     ) {
     }
 
     public static function create(
-        RegulationOrderRecord $regulationOrderRecord,
-        Location $location = null,
+        Measure $measure,
+        LocationNew $location = null,
     ): self {
-        $command = new self($regulationOrderRecord, $location);
+        $command = new self($measure, $location);
         $command->cityCode = $location?->getCityCode();
         $command->cityLabel = $location?->getCityLabel();
         $command->roadName = $location?->getRoadName();
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
-
-        if ($location) {
-            foreach ($location->getMeasures() as $measure) {
-                $command->measures[] = new SaveMeasureCommand($measure);
-            }
-        } else {
-            $command->measures[] = new SaveMeasureCommand();
-        }
 
         return $command;
     }

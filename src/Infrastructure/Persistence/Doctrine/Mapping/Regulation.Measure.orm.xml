@@ -6,14 +6,14 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="type" type="string" column="type" nullable="false" length="16"/>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false"/>
-    <many-to-one field="location" target-entity="App\Domain\Regulation\Location" inversed-by="measures">
-        <join-columns>
-            <join-column name="location_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
-        </join-columns>
-    </many-to-one>
     <field name="maxSpeed" type="integer" column="max_speed" nullable="true"/>
     <one-to-one field="vehicleSet" target-entity="App\Domain\Condition\VehicleSet" mapped-by="measure" fetch="EAGER"/>
     <one-to-many field="periods" target-entity="App\Domain\Condition\Period\Period" mapped-by="measure" fetch="EAGER"/>
     <one-to-many field="locations" target-entity="App\Domain\Regulation\LocationNew" mapped-by="measure" fetch="EAGER"/>
+    <many-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder">
+        <join-columns>
+            <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+        </join-columns>
+    </many-to-one>
   </entity>
 </doctrine-mapping>

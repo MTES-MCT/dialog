@@ -2,16 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Regulation\Command;
+namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationNew;
-use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationNewRepositoryInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
@@ -27,18 +25,18 @@ final class SaveRegulationLocationCommandHandler
     ) {
     }
 
-    public function __invoke(SaveRegulationLocationCommand $command): Location
+    public function __invoke(SaveRegulationLocationCommand $command): LocationNew
     {
-        $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
+        $measure = $command->measure;
 
         // Create location if needed
-        if (!$command->location instanceof Location) {
+        if (!$command->location instanceof LocationNew) {
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
 
-            $location = $this->locationRepository->add(
-                new Location(
+            $locationNew = $this->locationNewRepository->add(
+                new LocationNew(
                     uuid: $this->idFactory->make(),
-                    regulationOrder: $regulationOrder,
+                    measure: $measure,
                     cityLabel: $command->cityLabel,
                     cityCode: $command->cityCode,
                     roadName: $command->roadName,
@@ -47,60 +45,14 @@ final class SaveRegulationLocationCommandHandler
                     geometry: $geometry,
                 ),
             );
+            $measure->addLocation($locationNew);
 
-            foreach ($command->measures as $measureCommand) {
-                $measureCommand->location = $location;
-                $measure = $this->commandBus->handle($measureCommand);
-                $locationNew = $this->createLocationNew($measure, $command, $geometry);
-                $measure->addLocation($locationNew);
-                $location->addMeasure($measure);
-            }
-
-            $regulationOrder->addLocation($location);
-
-            return $location;
+            return $locationNew;
         }
 
         $geometry = $this->shouldRecomputeGeometry($command)
             ? $this->computeGeometry($command)
             : $command->location->getGeometry();
-
-        $measuresStillPresentUuids = [];
-
-        // Measures provided with the command get created or updated...
-        foreach ($command->measures as $measureCommand) {
-            if ($measureCommand->measure) {
-                $measuresStillPresentUuids[] = $measureCommand->measure->getUuid();
-
-                $locationNew = $measureCommand->measure->getLocationNew();
-                if ($locationNew) {
-                    $locationNew->update(
-                        cityCode: $command->cityCode,
-                        cityLabel: $command->cityLabel,
-                        roadName: $command->roadName,
-                        fromHouseNumber: $command->fromHouseNumber,
-                        toHouseNumber: $command->toHouseNumber,
-                        geometry: $geometry,
-                    );
-                }
-            }
-
-            $measureCommand->location = $command->location;
-            $measure = $this->commandBus->handle($measureCommand);
-
-            if (!$measureCommand->measure) {
-                $locationNew = $this->createLocationNew($measure, $command, $geometry);
-                $measure->addLocation($locationNew);
-            }
-        }
-
-        // Measures that weren't present in the command get deleted.
-        foreach ($command->location->getMeasures() as $measure) {
-            if (!\in_array($measure->getUuid(), $measuresStillPresentUuids)) {
-                $command->location->removeMeasure($measure);
-                $this->commandBus->handle(new DeleteMeasureCommand($measure));
-            }
-        }
 
         $command->location->update(
             cityCode: $command->cityCode,
@@ -112,25 +64,6 @@ final class SaveRegulationLocationCommandHandler
         );
 
         return $command->location;
-    }
-
-    private function createLocationNew(
-        Measure $measure,
-        SaveRegulationLocationCommand $command,
-        ?string $geometry,
-    ): LocationNew {
-        return $this->locationNewRepository->add(
-            new LocationNew(
-                uuid: $this->idFactory->make(),
-                measure: $measure,
-                cityLabel: $command->cityLabel,
-                cityCode: $command->cityCode,
-                roadName: $command->roadName,
-                fromHouseNumber: $command->fromHouseNumber,
-                toHouseNumber: $command->toHouseNumber,
-                geometry: $geometry,
-            ),
-        );
     }
 
     private function computeGeometry(SaveRegulationLocationCommand $command): ?string

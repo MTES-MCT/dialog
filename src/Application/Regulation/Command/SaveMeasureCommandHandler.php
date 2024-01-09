@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\Location\DeleteRegulationLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Measure;
@@ -39,6 +40,7 @@ final class SaveMeasureCommandHandler
             }
 
             $periodsStillPresentUuids = [];
+            $locationsStillPresentUuids = [];
 
             // Periods provided with the command get created or updated...
             foreach ($command->periods as $periodCommand) {
@@ -58,13 +60,30 @@ final class SaveMeasureCommandHandler
                 }
             }
 
+            foreach ($command->locations as $locationCommand) {
+                if ($locationCommand->location) {
+                    $locationsStillPresentUuids[] = $locationCommand->perilocationod->getUuid();
+                }
+
+                $locationCommand->measure = $command->measure;
+                $period = $this->commandBus->handle($locationCommand);
+            }
+
+            // Locations that weren't present in the command get deleted.
+            foreach ($command->measure->getLocations() as $location) {
+                if (!\in_array($location->getUuid(), $locationsStillPresentUuids)) {
+                    $this->commandBus->handle(new DeleteRegulationLocationCommand($location));
+                    $command->measure->removeLocation($location);
+                }
+            }
+
             return $command->measure;
         }
 
         $measure = $this->measureRepository->add(
             new Measure(
                 uuid: $this->idFactory->make(),
-                location: $command->location,
+                regulationOrder: $command->regulationOrder,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
                 maxSpeed: $command->maxSpeed,

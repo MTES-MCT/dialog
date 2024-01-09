@@ -6,9 +6,9 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\GeocoderInterface;
+use App\Application\Regulation\Command\Location\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
