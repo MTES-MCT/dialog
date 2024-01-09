@@ -122,7 +122,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             'geometry' => $location2->geometry,
             'maxSpeed' => null,
             'type' => MeasureTypeEnum::NO_ENTRY->value,
-            'restrictedVehicleTypes' => ['heavyGoodsVehicle'],
+            'restrictedVehicleTypes' => ['heavyGoodsVehicle', 'dimensions'],
             'exemptedVehicleTypes' => ['commercial'],
             'heavyweightMaxWeight' => 3.5,
             'maxWidth' => 2,
@@ -197,6 +197,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                 new DatexVehicleConditionView(
                                     'heavyGoodsVehicle',
                                     maxWeight: 3.5,
+                                ),
+                                new DatexVehicleConditionView(
+                                    'dimensions',
                                     maxWidth: 2,
                                     maxLength: 12,
                                     maxHeight: 2.4,

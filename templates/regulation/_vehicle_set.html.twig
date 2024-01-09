@@ -1,32 +1,23 @@
-{%- if vehicleSet.restrictedTypes|length > 0 or vehicleSet.dimensions|length > 0 -%}
+{%- if vehicleSet.restrictedTypes|length > 0 -%}
     {{ 'regulation.vehicles.prefix'|trans }}
 
-    {%- if vehicleSet.restrictedTypes|length > 0 %}
-        {% for vehicleType in vehicleSet.restrictedTypes %}
-            {%- if vehicleType.isOther|default(false) -%}
-                {{ vehicleType.name|lower }}
-            {%- else -%}
-                {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
-                {%- if vehicleType.name == 'heavyGoodsVehicle' and vehicleSet.heavyweightMaxWeight %}
-                    {{ 'regulation.vehicles.heavyweightMaxWeight'|trans({'%value%': vehicleSet.heavyweightMaxWeight}) }}
-                {%- endif -%}
+    {% for vehicleType in vehicleSet.restrictedTypes %}
+        {%- if vehicleType.isOther|default(false) -%}
+            {{ vehicleType.name|lower }}
+        {%- elseif vehicleType.name == 'dimensions' -%}
+            {{ 'regulation.vehicles.dimensions.prefix'|trans }}
+            {%- for item in vehicleSet.dimensions %}
+                {{ ('regulation.vehicles.dimensions.' ~ item.name)|trans({'%value%': item.value}) }}
+                {%- if loop.revindex0 == 1 %} {{ 'common.or'|trans }} {% elseif not loop.last %}, {% endif -%}
+            {% endfor -%}
+        {%- else -%}
+            {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
+            {%- if vehicleType.name == 'heavyGoodsVehicle' and vehicleSet.heavyweightMaxWeight %}
+                {{ 'regulation.vehicles.heavyweightMaxWeight'|trans({'%value%': vehicleSet.heavyweightMaxWeight}) }}
             {%- endif -%}
-            {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
-        {% endfor -%}
-
-        {%- if vehicleSet.dimensions|length > 0 %}
-            {{ 'regulation.vehicles.restrictedTypes.suffix'|trans }}
-        {% endif -%}
-    {% endif -%}
-
-    {%- if vehicleSet.dimensions|length > 0 %}
-        {{ 'regulation.vehicles.dimensions.prefix'|trans }}
-
-        {%- for item in vehicleSet.dimensions %}
-            {{ ('regulation.vehicles.dimensions.' ~ item.name)|trans({'%value%': item.value}) }}
-            {%- if loop.revindex0 == 1 %} {{ 'common.or'|trans }} {% elseif not loop.last %}, {% endif -%}
-        {% endfor -%}
-    {% endif -%}
+        {%- endif -%}
+        {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
+    {% endfor -%}
 {%- else -%}
     {{ 'regulation.vehicles.all'|trans }}
 {%- endif -%}

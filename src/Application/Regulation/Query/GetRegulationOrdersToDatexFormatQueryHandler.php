@@ -54,13 +54,23 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     continue;
                 }
 
-                $vehicleConditions[] = new DatexVehicleConditionView(
-                    vehicleType: $restrictedVehicleType,
-                    maxWeight: $row['heavyweightMaxWeight'],
-                    maxWidth: $row['maxWidth'],
-                    maxLength: $row['maxLength'],
-                    maxHeight: $row['maxHeight'],
-                );
+                if (VehicleTypeEnum::DIMENSIONS->value === $restrictedVehicleType) {
+                    $vehicleConditions[] = new DatexVehicleConditionView(
+                        vehicleType: $restrictedVehicleType,
+                        maxWidth: $row['maxWidth'],
+                        maxLength: $row['maxLength'],
+                        maxHeight: $row['maxHeight'],
+                    );
+                } elseif (VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value === $restrictedVehicleType) {
+                    $vehicleConditions[] = new DatexVehicleConditionView(
+                        vehicleType: $restrictedVehicleType,
+                        maxWeight: $row['heavyweightMaxWeight'],
+                    );
+                } else {
+                    $vehicleConditions[] = new DatexVehicleConditionView(
+                        vehicleType: $restrictedVehicleType,
+                    );
+                }
             }
 
             foreach ($row['restrictedCritairTypes'] ?: [] as $restrictedCritairTypes) {

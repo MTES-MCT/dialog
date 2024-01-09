@@ -1441,6 +1441,10 @@
                 <source>regulation.vehicle_set.type.heavyGoodsVehicle</source>
                 <target>Poids lourds</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.dimensions">
+                <source>regulation.vehicle_set.type.dimensions</source>
+                <target>Gabarit</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.hazardousmaterials">
                 <source>regulation.vehicle_set.type.hazardousmaterials</source>
                 <target>Matières dangeureuses</target>
@@ -1525,13 +1529,9 @@
                 <source>regulation.vehicles.heavyweightMaxWeight</source>
                 <target>de plus de %value% tonnes</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.restrictedTypes.suffix">
-                <source>regulation.vehicles.restrictedTypes.suffix</source>
-                <target>et les</target>
-            </trans-unit>
             <trans-unit id="regulation.vehicles.dimensions.prefix">
                 <source>regulation.vehicles.dimensions.prefix</source>
-                <target>véhicules de plus de</target>
+                <target>les véhicules de plus de</target>
             </trans-unit>
             <trans-unit id="regulation.vehicles.dimensions.width">
                 <source>regulation.vehicles.dimensions.width</source>

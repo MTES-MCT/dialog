@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Twig;
 
 use App\Application\StringUtilsInterface;
+use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use Symfony\Component\Form\FormError;
 
 class AppExtension extends \Twig\Extension\AbstractExtension
 {
@@ -24,6 +26,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
             new \Twig\TwigFunction('app_vehicle_type_icon_name', [$this, 'getVehicleTypeIconName']),
+            new \Twig\TwigFunction('app_is_fieldset_error', [$this, 'isFieldsetError']),
         ];
     }
 
@@ -70,10 +73,21 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             return '';
         }
 
+        if ($value == VehicleTypeEnum::DIMENSIONS->value) {
+            return ''; // No icon yet.
+        }
+
         if (str_starts_with($value, 'critair')) {
             return 'critair';
         }
 
         return $this->stringUtils->toKebabCase($value);
+    }
+
+    public function isFieldsetError(FormError $error, string $fieldset): bool
+    {
+        $payload = $error->getCause()->getConstraint()->payload;
+
+        return $payload && \array_key_exists('fieldset', $payload) && $payload['fieldset'] === $fieldset;
     }
 }

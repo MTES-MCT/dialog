@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\VehicleSet;
 
 use App\Application\CommandInterface;
-use App\Domain\Condition\IsMeasureForAllVehiclesInterface;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
-use App\Domain\Regulation\Specification\IsMeasureForAllVehicles;
 
-final class SaveVehicleSetCommand implements CommandInterface, IsMeasureForAllVehiclesInterface
+final class SaveVehicleSetCommand implements CommandInterface
 {
     public ?bool $allVehicles;
     public array $critairTypes;
@@ -33,7 +31,7 @@ final class SaveVehicleSetCommand implements CommandInterface, IsMeasureForAllVe
 
     public function initFromEntity(?VehicleSet $vehicleSet): self
     {
-        $this->allVehicles = $vehicleSet ? (new IsMeasureForAllVehicles())->isSatisfiedBy($vehicleSet) : null;
+        $this->allVehicles = $vehicleSet ? empty($vehicleSet->getRestrictedTypes()) : null;
         $this->restrictedTypes = $vehicleSet?->getRestrictedTypes() ?? [];
         $this->otherRestrictedTypeText = $vehicleSet?->getOtherRestrictedTypeText();
         $this->exemptedTypes = $vehicleSet?->getExemptedTypes() ?? [];
@@ -66,6 +64,12 @@ final class SaveVehicleSetCommand implements CommandInterface, IsMeasureForAllVe
             $this->heavyweightMaxWeight = null;
         }
 
+        if (!\in_array(VehicleTypeEnum::DIMENSIONS->value, $this->restrictedTypes)) {
+            $this->maxWidth = null;
+            $this->maxLength = null;
+            $this->maxHeight = null;
+        }
+
         if ($this->heavyweightMaxWeight === 0.0) {
             $this->heavyweightMaxWeight = null;
         }
@@ -89,25 +93,5 @@ final class SaveVehicleSetCommand implements CommandInterface, IsMeasureForAllVe
         if (!\in_array(VehicleTypeEnum::OTHER->value, $this->exemptedTypes)) {
             $this->otherExemptedTypeText = null;
         }
-    }
-
-    public function getRestrictedTypes(): array
-    {
-        return $this->restrictedTypes;
-    }
-
-    public function getMaxWidth(): ?float
-    {
-        return $this->maxWidth;
-    }
-
-    public function getMaxLength(): ?float
-    {
-        return $this->maxLength;
-    }
-
-    public function getMaxHeight(): ?float
-    {
-        return $this->maxHeight;
     }
 }

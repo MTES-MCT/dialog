@@ -6,7 +6,7 @@ namespace App\Domain\Condition;
 
 use App\Domain\Regulation\Measure;
 
-class VehicleSet implements IsMeasureForAllVehiclesInterface
+class VehicleSet
 {
     public const DEFAULT_MAX_WEIGHT = 3.5;
 

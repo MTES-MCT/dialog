@@ -52,7 +52,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
-        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'other'];
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions', 'other'];
         $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = 'Matières dangereuses';
         $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['commercial', 'other'];
         $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = 'Déchets industriels';
@@ -104,7 +104,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez spécifier au moins une caractéristique des véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_allVehicles_error')->text());
+        $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_restrictedTypes_error')->text());
     }
 
     public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
@@ -235,6 +235,25 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
     }
 
+    public function testInvalidVehicleSetBlankDimensions(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['dimensions'];
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Veuillez spécifier le gabarit des véhicules concernés.', $crawler->filter('#location_form_measures_0_vehicleSet_restrictedTypes_error')->text());
+    }
+
     public function testInvalidVehicleSetCharacteristicsNotNumber(): void
     {
         $client = $this->login();
@@ -247,7 +266,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = 'not a number';
         $values['location_form']['measures'][0]['vehicleSet']['maxWidth'] = 'true';
         $values['location_form']['measures'][0]['vehicleSet']['maxLength'] = [12];
@@ -273,7 +292,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
         $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = -1;
         $values['location_form']['measures'][0]['vehicleSet']['maxWidth'] = -0.1;
         $values['location_form']['measures'][0]['vehicleSet']['maxLength'] = -2.3;

@@ -83,7 +83,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
-                ['heavyGoodsVehicle', 'other'],
+                ['heavyGoodsVehicle', 'dimensions', 'other'],
                 'Matières dangereuses',
                 ['commercial'],
                 null,
@@ -105,7 +105,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
 
         $command = new SaveVehicleSetCommand($vehicleSet);
         $command->allVehicles = false;
-        $command->restrictedTypes = ['heavyGoodsVehicle', 'other'];
+        $command->restrictedTypes = ['heavyGoodsVehicle', 'dimensions', 'other'];
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
@@ -167,7 +167,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $this->assertSame($vehicleSet, $result);
     }
 
-    public function testResetHeavyweightMaxWeightIfHeavyGoodsVehicleNotRestricted(): void
+    public function testResetCharacteristicsIfVehicleTypeNotRestricted(): void
     {
         $this->idFactory
             ->expects(self::never())
@@ -183,9 +183,9 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
                 ['commercial'],
                 null,
                 null,
-                2,
-                12,
-                2.4,
+                null,
+                null,
+                null,
                 [],
             );
 
@@ -200,7 +200,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
 
         $command = new SaveVehicleSetCommand($vehicleSet);
         $command->allVehicles = false;
-        $command->restrictedTypes = ['other']; // heavyGoodsVehicle not included
+        $command->restrictedTypes = ['other']; // heavyGoodsVehicle and dimensions not included
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
@@ -225,7 +225,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
-                ['heavyGoodsVehicle'],
+                ['heavyGoodsVehicle', 'dimensions'],
                 null,
                 [],
                 null,
@@ -247,7 +247,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
 
         $command = new SaveVehicleSetCommand($vehicleSet);
         $command->allVehicles = false;
-        $command->restrictedTypes = ['heavyGoodsVehicle'];
+        $command->restrictedTypes = ['heavyGoodsVehicle', 'dimensions'];
         $command->heavyweightMaxWeight = 0;
         $command->maxWidth = 0.0;
         $command->maxLength = -0;
