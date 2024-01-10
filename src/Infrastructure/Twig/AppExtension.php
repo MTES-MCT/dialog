@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Twig;
 
 use App\Application\StringUtilsInterface;
-use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Component\Form\FormError;
 
 class AppExtension extends \Twig\Extension\AbstractExtension
@@ -71,10 +70,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     {
         if ($value === 'other') {
             return '';
-        }
-
-        if ($value == VehicleTypeEnum::DIMENSIONS->value) {
-            return ''; // No icon yet.
         }
 
         if (str_starts_with($value, 'critair')) {
