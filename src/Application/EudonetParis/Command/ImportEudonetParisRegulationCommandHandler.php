@@ -6,6 +6,7 @@ namespace App\Application\EudonetParis\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -25,7 +26,11 @@ final class ImportEudonetParisRegulationCommandHandler
         foreach ($command->locationCommands as $locationCommand) {
             $locationCommand->regulationOrderRecord = $regulationOrderRecord;
 
-            $location = $this->commandBus->handle($locationCommand);
+            try {
+                $location = $this->commandBus->handle($locationCommand);
+            } catch (GeocodingFailureException $exc) {
+                throw new ImportEudonetParisRegulationFailedException($exc->getMessage());
+            }
 
             $regulationOrderRecord->getRegulationOrder()->addLocation($location);
         }

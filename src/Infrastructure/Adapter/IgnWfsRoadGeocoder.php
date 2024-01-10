@@ -19,13 +19,15 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
 
     public function computeRoadLine(string $roadName, string $inseeCode): string
     {
+        $nomMinuscule = str_replace("'", "''", strtolower($roadName));
+
         $query = [
             'SERVICE' => 'WFS',
             'REQUEST' => 'GetFeature',
             'VERSION' => '2.0.0',
             'OUTPUTFORMAT' => 'application/json',
             'TYPENAME' => 'BDTOPO_V3:voie_nommee',
-            'cql_filter' => sprintf("nom_minuscule='%s' AND code_insee='%s'", strtolower($roadName), $inseeCode),
+            'cql_filter' => sprintf("nom_minuscule='%s' AND code_insee='%s'", $nomMinuscule, $inseeCode),
             'PropertyName' => 'geometrie',
         ];
 
@@ -59,7 +61,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             return json_encode($geometry);
         }
 
-        $message = sprintf('could not retrieve geometry: %s', $body);
+        $message = sprintf('could not retrieve geometry for roadName="%s", inseeCode="%s", response was: %s', $roadName, $inseeCode, $body);
         throw new GeocodingFailureException($message);
     }
 }
