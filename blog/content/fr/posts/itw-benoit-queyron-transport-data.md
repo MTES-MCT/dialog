@@ -1,5 +1,5 @@
 ---
-title: "Ouvrir les données de transport : Interview de Benoît Queyron"
+title: Ouvrir les données de transport - Interview de Benoît Queyron
 description: Intrapreneur de transport.data.gouv, Benoît nous a présenté le PAN et a partagé avec nous sa vision de l'open data et du service public numérique. 
 date: "2024-01-11"
 callout:
