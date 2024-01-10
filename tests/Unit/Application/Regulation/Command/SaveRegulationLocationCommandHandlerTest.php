@@ -11,13 +11,16 @@ use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommandHandler;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
+use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Repository\LocationNewRepositoryInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -33,7 +36,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     private $commandBus;
     private $idFactory;
     private $locationRepository;
+    private $locationNewRepository;
     private $geocoder;
+    private $roadGeocoder;
     private $geometry;
 
     protected function setUp(): void
@@ -48,10 +53,12 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             Coordinates::fromLonLat(-1.930973, 47.347917),
         ]);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
+        $this->locationNewRepository = $this->createMock(LocationNewRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->geocoder = $this->createMock(GeocoderInterface::class);
+        $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrderRecord
             ->expects(self::once())
@@ -62,9 +69,12 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     public function testCreate(): void
     {
         $this->idFactory
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('make')
-            ->willReturn('4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8');
+            ->willReturn(
+                '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
+                '9dbbe0ce-2672-4f18-80b9-06d0102cb855',
+            );
 
         $this->geocoder
             ->expects(self::exactly(2))
@@ -74,6 +84,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             );
 
+        $createdMeasure = $this->createMock(Measure::class);
+        $createdLocation = $this->createMock(Location::class);
+        $createdLocationNew = $this->createMock(LocationNew::class);
+
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
@@ -81,8 +95,102 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             cityLabel: $this->cityLabel,
             roadName: $this->roadName,
             fromHouseNumber: $this->fromHouseNumber,
+            toHouseNumber: $this->toHouseNumber,
+            geometry: $this->geometry,
+        );
+
+        $locationNew = new LocationNew(
+            uuid: '9dbbe0ce-2672-4f18-80b9-06d0102cb855',
+            measure: $createdMeasure,
+            cityCode: $this->cityCode,
+            cityLabel: $this->cityLabel,
+            roadName: $this->roadName,
+            fromHouseNumber: $this->fromHouseNumber,
             geometry: $this->geometry,
             toHouseNumber: $this->toHouseNumber,
+        );
+
+        $measureCommand = new SaveMeasureCommand();
+        $measureCommand->location = $createdLocation;
+        $measureCommand->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+
+        $createdLocation
+            ->expects(self::once())
+            ->method('addMeasure')
+            ->with($createdMeasure);
+        $createdMeasure
+            ->expects(self::once())
+            ->method('addLocation')
+            ->with($createdLocationNew);
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with($this->equalTo($location))
+            ->willReturn($createdLocation);
+        $this->locationNewRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with($this->equalTo($locationNew))
+            ->willReturn($createdLocationNew);
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with($measureCommand)
+            ->willReturn($createdMeasure);
+
+        $handler = new SaveRegulationLocationCommandHandler(
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->locationNewRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
+        $command->roadName = $this->roadName;
+        $command->fromHouseNumber = $this->fromHouseNumber;
+        $command->toHouseNumber = $this->toHouseNumber;
+        $command->measures = [
+            $measureCommand,
+        ];
+
+        $this->assertSame($createdLocation, $handler($command));
+    }
+
+    public function testCreateFullRoad(): void
+    {
+        $this->idFactory
+            ->expects(self::exactly(2))
+            ->method('make')
+            ->willReturn(
+                '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
+                '9dbbe0ce-2672-4f18-80b9-06d0102cb855',
+            );
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with('Route du Grand Brossais', '44195')
+            ->willReturn(
+                json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
+            );
+
+        $location = new Location(
+            uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
+            regulationOrder: $this->regulationOrder,
+            cityLabel: $this->cityLabel,
+            cityCode: $this->cityCode,
+            roadName: $this->roadName,
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
         );
 
         $createdMeasure = $this->createMock(Measure::class);
@@ -111,15 +219,17 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->commandBus,
             $this->locationRepository,
+            $this->locationNewRepository,
             $this->geocoder,
+            $this->roadGeocoder,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
-        $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
+        $command->cityCode = $this->cityCode;
         $command->roadName = $this->roadName;
-        $command->fromHouseNumber = $this->fromHouseNumber;
-        $command->toHouseNumber = $this->toHouseNumber;
+        $command->fromHouseNumber = null;
+        $command->toHouseNumber = null;
         $command->measures = [
             $measureCommand,
         ];
@@ -129,11 +239,28 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 
     public function testUpdate(): void
     {
+        $locationNew = $this->createMock(LocationNew::class);
+        $locationNew
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                $this->cityCode,
+                $this->cityLabel,
+                $this->roadName,
+                $this->fromHouseNumber,
+                $this->toHouseNumber,
+                $this->geometry,
+            );
+
         $measureToUpdate = $this->createMock(Measure::class);
         $measureToUpdate
             ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn(new \DateTimeImmutable('2023-06-01'));
+        $measureToUpdate
+            ->expects(self::once())
+            ->method('getLocationNew')
+            ->willReturn($locationNew);
 
         $measureToRemove = $this->createMock(Measure::class);
         $measureToRemove
@@ -203,7 +330,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->commandBus,
             $this->locationRepository,
+            $this->locationNewRepository,
             $this->geocoder,
+            $this->roadGeocoder,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -247,7 +376,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->commandBus,
             $this->locationRepository,
+            $this->locationNewRepository,
             $this->geocoder,
+            $this->roadGeocoder,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
@@ -255,6 +386,50 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = null;
+        $command->toHouseNumber = null;
+
+        $this->assertSame($location, $handler($command));
+    }
+
+    public function testHouseNumberOnOneSideOnly(): void
+    {
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                $this->cityCode,
+                $this->cityLabel,
+                $this->roadName,
+                '137',
+            );
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveRegulationLocationCommandHandler(
+            $this->idFactory,
+            $this->commandBus,
+            $this->locationRepository,
+            $this->locationNewRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
+        $command->roadName = $this->roadName;
+        $command->fromHouseNumber = '137';
         $command->toHouseNumber = null;
 
         $this->assertSame($location, $handler($command));
@@ -315,7 +490,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->commandBus,
             $this->locationRepository,
+            $this->locationNewRepository,
             $this->geocoder,
+            $this->roadGeocoder,
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);

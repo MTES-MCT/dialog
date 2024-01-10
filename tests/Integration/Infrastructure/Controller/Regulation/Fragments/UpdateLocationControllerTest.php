@@ -241,7 +241,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertNotContains('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
     }
 
-    public function testGeocodingFailure(): void
+    public function testGeocodingFailureHouseNumber(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
@@ -254,10 +254,43 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $form['location_form[roadName]'] = 'Route du GEOCODING_FAILURE';
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
+    }
+
+    public function testGeocodingFailureFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['location_form[cityCode]'] = '59368';
+        $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
+        $form['location_form[roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['location_form[fromHouseNumber]'] = '';
+        $form['location_form[toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#location_form_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#location_form_error')->text());
+    }
+
+    public function testUpdateAddressFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['location_form[cityCode]'] = '59368';
+        $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
+        $form['location_form[roadName]'] = 'Rue Saint-Victor';
+        $form['location_form[fromHouseNumber]'] = '';
+        $form['location_form[toHouseNumber]'] = '';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
     }
 
     public function testRegulationOrderRecordNotFound(): void
