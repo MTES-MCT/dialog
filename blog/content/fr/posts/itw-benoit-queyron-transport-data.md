@@ -55,7 +55,8 @@ Cela représente pour nous un coût modique en terme de serveurs. Cf. les statis
 **En quoi transport.data est différente des autres startups d’État ?**
 
 Nous appliquons les mêmes méthodes que toutes les startups d’État. J’ai beaucoup appris des enseignements de beta.gouv (l’organisation en charge des startups d’État) notamment sur la conduite d’un projet numérique. Ce ne sont pas des choses que l’on apprend à l’École des Travaux Publics !
-Le projet transport.data suit donc de près les axes communs à l’ensemble des services numériques développés dans la communauté beta :  
+
+Le projet transport.data suit donc de près les axes communs à l’ensemble des services numériques développés dans la communauté beta :
 Chaque décision est justifiée par le besoin utilisateur, nous passons beaucoup de temps à étudier et comprendre ce besoin pour ne dépenser que le minimum d’énergie à valider ce que nous pressentons comme correct. Autre aspect important : nous fonctionnons en équipe de manière transverse et pluridisciplinaire, cela permet à chacun de bénéficier de points de vue différents sur la problématique à traiter.
 
 Sinon, tous les produits de beta.gouv sont différents. Transport.data a la particularité de mettre à disposition de la matière brute, formatée à destination d’une cible “calculateur d’itinéraires”. Là où d’autres produits mettront l’accent sur la mise à disposition d’un ensemble de services, nous préférons rester sur des formats simples en garantissant cependant la disponibilité et la qualité des données.
