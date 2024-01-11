@@ -219,9 +219,9 @@ test_integration: ## Run integration tests only
 
 test_e2e: ## Run end-to-end tests only
 	make dbfixtures
-	$(BIN_NPX) playwright test --project mobile-chromium ${ARGS}
+	$(BIN_NPX) playwright test --project desktop-firefox ${ARGS}
 	make dbfixtures
-	PW_REUSE_SERVER=1 $(BIN_NPX) playwright test --project desktop-firefox ${ARGS}
+	$(BIN_NPX) playwright test --project mobile-chromium ${ARGS}
 
 report_e2e: ## Open the Playwright HTML report
 	xdg-open playwright-report/index.html
