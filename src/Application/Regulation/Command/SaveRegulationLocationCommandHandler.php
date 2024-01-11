@@ -38,12 +38,15 @@ final class SaveRegulationLocationCommandHandler
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
+                    roadType : $command->roadType,
                     cityLabel: $command->cityLabel,
-                    cityCode: $command->cityCode,
+                    cityCode : $command->cityCode,
+                    administrator : $command->administrator,
+                    roadNumber : $command->roadNumber,
                     roadName: $command->roadName,
-                    fromHouseNumber: $command->fromHouseNumber,
-                    toHouseNumber: $command->toHouseNumber,
-                    geometry: $geometry,
+                    fromHouseNumber : $command->fromHouseNumber,
+                    toHouseNumber : $command->toHouseNumber,
+                    geometry : $geometry,
                 ),
             );
 
@@ -104,6 +107,7 @@ final class SaveRegulationLocationCommandHandler
         }
 
         $command->location->update(
+            roadType: $command->roadType,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,

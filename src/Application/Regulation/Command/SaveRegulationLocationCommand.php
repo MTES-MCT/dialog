@@ -10,6 +10,9 @@ use App\Domain\Regulation\RegulationOrderRecord;
 
 final class SaveRegulationLocationCommand implements CommandInterface
 {
+    public ?string $roadType;
+    public ?string $administrator;
+    public ?string $roadNumber;
     public ?string $cityCode;
     public ?string $cityLabel;
     public ?string $roadName;
@@ -30,8 +33,11 @@ final class SaveRegulationLocationCommand implements CommandInterface
         Location $location = null,
     ): self {
         $command = new self($regulationOrderRecord, $location);
+        $command->roadType = $location?->getRoadType();
         $command->cityCode = $location?->getCityCode();
         $command->cityLabel = $location?->getCityLabel();
+        $command->administrator = $location?->getAdministrator();
+        $command->roadNumber = $location?->getRoadNumber();
         $command->roadName = $location?->getRoadName();
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();

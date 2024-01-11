@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
+use App\Domain\Regulation\Enum\LocationTypeEnum;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -17,6 +19,26 @@ final class LocationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+        ->add(
+            'roadType',
+            ChoiceType::class,
+            options: $this->getTypeOptions(),
+        )
+        ->add(
+            'administrator',
+            TextType::class,
+            options: [
+                'label' => 'regulation.location.administrator',
+                'help' => 'regulation.location.administrator.help',
+            ],
+        )
+        ->add(
+            'roadNumber',
+            TextType::class,
+            options: [
+                'label' => 'Numéro de la départementale',
+            ],
+        )
             ->add(
                 'cityCode',
                 HiddenType::class,
@@ -70,6 +92,23 @@ final class LocationFormType extends AbstractType
                 ],
             )
         ;
+    }
+
+    private function getTypeOptions(): array
+    {
+        $choices = [];
+
+        foreach (LocationTypeEnum::cases() as $case) {
+            $choices[sprintf('regulation.location.road.type.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => array_merge(
+                ['regulation.location.type.placeholder' => ''],
+                $choices,
+            ),
+            'label' => 'regulation.location.type',
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
