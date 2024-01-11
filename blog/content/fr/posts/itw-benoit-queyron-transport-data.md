@@ -10,6 +10,8 @@ callout:
         url: mailto:dialog@beta.gouv.fr
 tags:
   - Interview
+  - Open data
+  - Réglementation
 ---
     
 :::callout
