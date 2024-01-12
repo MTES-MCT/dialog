@@ -65,8 +65,12 @@ jobs:
       - name: Install Symfony CLI
         # Required for E2E testing
         run: |
-          curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
-          sudo apt install symfony-cli
+          curl -sS https://get.symfony.com/cli/installer > installer.sh
+          # v5.8+ is buggy with Playwright
+          # See: https://github.com/MTES-MCT/dialog/pull/591
+          sed -i 's/releases\/latest\/download/releases\/download\/v5.7.7/g' installer.sh
+          sudo bash installer.sh
+          sudo mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
       - name: CI
         run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx" PLAYWRIGHT_ARGS="-x --forbid-only"
