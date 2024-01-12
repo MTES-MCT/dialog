@@ -206,7 +206,7 @@ format: php_lint ## Format code
 
 test: ## Run the test suite
 	${BIN_PHP} ${OPTIONS} ./bin/phpunit ${ARGS}
-	#make test_e2e ARGS="${PLAYWRIGHT_ARGS}"
+	make test_e2e ARGS="${PLAYWRIGHT_ARGS}"
 
 test_cov: ## Run the test suite (with code coverage)
 	make test OPTIONS="-d xdebug.mode=coverage" ARGS="--coverage-html coverage --coverage-clover coverage.xml"
