@@ -64,9 +64,9 @@ final class IgnWfsRoadGeocoderTest extends TestCase
     {
         return [
             ['{"features": }', '/invalid json: Syntax error/'],
-            ['{}', '/could not retrieve geometry: /'],
-            ['{"features": []}', '/could not retrieve geometry: /'],
-            ['{"features": [{}]}', '/could not retrieve geometry: /'],
+            ['{}', '/could not retrieve geometry/'],
+            ['{"features": []}', '/could not retrieve geometry /'],
+            ['{"features": [{}]}', '/could not retrieve geometry/'],
         ];
     }
 

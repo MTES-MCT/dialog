@@ -88,12 +88,19 @@ final class EudonetParisTransformer
 
     private function parseDate(string $value): \DateTimeInterface|null
     {
-        $possibleEudonetFormats = ['Y/m/d H:i:s', 'Y/m/d', 'd/m/Y'];
+        if ($date = \DateTimeImmutable::createFromFormat('Y/m/d H:i:s', $value, new \DateTimeZone('Europe/Paris'))) {
+            return $date;
+        }
 
-        foreach ($possibleEudonetFormats as $format) {
-            if ($date = \DateTimeImmutable::createFromFormat($format, $value, new \DateTimeZone('Europe/Paris'))) {
-                return $date;
-            }
+        if (\DateTimeImmutable::createFromFormat('Y/m/d', $value, new \DateTimeZone('Europe/Paris'))) {
+            // Need to add a datetime otherwise PHP would use the current server time, not midnight.
+            return $this->parseDate($value . ' 00:00:00');
+        }
+
+        if (\DateTimeImmutable::createFromFormat('d/m/Y', $value, new \DateTimeZone('Europe/Paris'))) {
+            // This format is somtimes used by some Eudonet Paris data input users.
+            // Again, we need to ensure there is a datetime.
+            return \DateTimeImmutable::createFromFormat('d/m/Y H:i:s', $value . ' 00:00:00', new \DateTimeZone('Europe/Paris'));
         }
 
         return null;
