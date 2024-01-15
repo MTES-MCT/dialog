@@ -29,7 +29,20 @@ final class GetRegulationsQueryHandler
         foreach ($regulationOrderRecords['items'] as $regulationOrderRecord) {
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
             $locations = $regulationOrder->getLocations();
+
+            $location = $locations->first();
             $nbLocations = $locations->count();
+            $locationView = null;
+
+            if ($nbLocations) {
+                $measure = $location->getMeasures()->first();
+                $locationNew = $measure->getLocations()->first();
+                $locationView = new LocationView(
+                    $locationNew->getCityCode(),
+                    $locationNew->getCityLabel(),
+                    $locationNew->getRoadName(),
+                );
+            }
 
             $regulationOrderViews[] = new RegulationOrderListItemView(
                 uuid: $regulationOrderRecord->getUuid(),
@@ -37,11 +50,7 @@ final class GetRegulationsQueryHandler
                 status: $regulationOrderRecord->getStatus(),
                 numLocations: $nbLocations,
                 organizationName: $regulationOrderRecord->getOrganization()->getName(),
-                location: $nbLocations ? new LocationView(
-                    $locations->first()->getCityCode(),
-                    $locations->first()->getCityLabel(),
-                    $locations->first()->getRoadName(),
-                ) : null,
+                location: $locationView,
                 startDate: $regulationOrder->getStartDate(),
                 endDate: $regulationOrder->getEndDate(),
             );
