@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Domain\Regulation;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location;
+use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -51,5 +52,18 @@ final class MeasureTest extends TestCase
         $measure->removePeriod($period2);
 
         $this->assertEquals(new ArrayCollection([$period1]), $measure->getPeriods());
+
+        $location1 = $this->createMock(LocationNew::class);
+        $location2 = $this->createMock(LocationNew::class);
+        $location3 = $this->createMock(LocationNew::class);
+
+        $measure->addLocation($location1);
+        $measure->addLocation($location1); // Test duplicate
+        $measure->addLocation($location2);
+        $this->assertEquals(new ArrayCollection([$location1, $location2]), $measure->getLocations());
+
+        $measure->removeLocation($location3); // Location that does not belong to the measure
+        $measure->removeLocation($location2);
+        $this->assertEquals(new ArrayCollection([$location1]), $measure->getLocations());
     }
 }
