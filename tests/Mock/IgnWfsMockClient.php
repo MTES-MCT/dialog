@@ -26,7 +26,7 @@ final class IgnWfsMockClient extends MockHttpClient
 
     private function getWfsMock($options): MockResponse
     {
-        if (str_contains($options['query']['cql_filter'], "nom_minuscule='rue saint-victor'")) {
+        if (str_contains($options['query']['cql_filter'], "strStripAccents(nom_minuscule)=strStripAccents('rue saint-victor')")) {
             $body = [
                 'features' => [
                     [
@@ -46,7 +46,7 @@ final class IgnWfsMockClient extends MockHttpClient
                     ],
                 ],
             ];
-        } elseif (str_contains($options['query']['cql_filter'], "nom_minuscule='rue monge'")) {
+        } elseif (str_contains($options['query']['cql_filter'], "strStripAccents(nom_minuscule)=strStripAccents('rue monge')")) {
             // E2E tests
             $body = [
                 'features' => [

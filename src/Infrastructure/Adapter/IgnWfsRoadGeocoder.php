@@ -25,7 +25,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             'VERSION' => '2.0.0',
             'OUTPUTFORMAT' => 'application/json',
             'TYPENAME' => 'BDTOPO_V3:voie_nommee',
-            'cql_filter' => sprintf("nom_minuscule='%s' AND code_insee='%s'", strtolower($roadName), $inseeCode),
+            'cql_filter' => sprintf("strStripAccents(nom_minuscule)=strStripAccents('%s') AND code_insee='%s'", strtolower($roadName), $inseeCode),
             'PropertyName' => 'geometrie',
         ];
 
