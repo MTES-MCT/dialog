@@ -29,7 +29,8 @@ final class SaveRegulationLocationCommandHandler
     public function __invoke(SaveRegulationLocationCommand $command): Location
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
-
+        // contexte
+        $command->reset();
         // Create location if needed
         if (!$command->location instanceof Location) {
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
@@ -107,13 +108,15 @@ final class SaveRegulationLocationCommandHandler
         }
 
         $command->location->update(
-            roadType: $command->roadType,
-            cityCode: $command->cityCode,
+            roadType : $command->roadType,
             cityLabel: $command->cityLabel,
+            cityCode : $command->cityCode,
+            administrator : $command->administrator,
+            roadNumber : $command->roadNumber,
             roadName: $command->roadName,
-            fromHouseNumber: $command->fromHouseNumber,
-            toHouseNumber: $command->toHouseNumber,
-            geometry: $geometry,
+            fromHouseNumber : $command->fromHouseNumber,
+            toHouseNumber : $command->toHouseNumber,
+            geometry : $geometry,
         );
 
         return $command->location;

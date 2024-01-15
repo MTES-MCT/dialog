@@ -30,13 +30,15 @@ final class LocationFormType extends AbstractType
             options: [
                 'label' => 'regulation.location.administrator',
                 'help' => 'regulation.location.administrator.help',
+                'required' => false,
             ],
         )
         ->add(
             'roadNumber',
             TextType::class,
             options: [
-                'label' => 'Numéro de la départementale',
+                'label' => 'regulation.location.roadNumber',
+                'required' => false,
             ],
         )
             ->add(
@@ -48,6 +50,7 @@ final class LocationFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.city',
+                    'required' => false,
                 ],
             )
             ->add(

@@ -113,6 +113,8 @@ class Location
         string $roadType,
         string $cityCode,
         string $cityLabel,
+        ?string $administrator,
+        ?string $roadNumber,
         ?string $roadName,
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
@@ -121,6 +123,8 @@ class Location
         $this->roadType = $roadType;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
+        $this->administrator = $administrator;
+        $this->roadNumber = $roadNumber;
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
