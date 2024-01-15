@@ -1531,7 +1531,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicles.dimensions.prefix">
                 <source>regulation.vehicles.dimensions.prefix</source>
-                <target>les véhicules de plus de</target>
+                <target>véhicules de plus de</target>
             </trans-unit>
             <trans-unit id="regulation.vehicles.dimensions.width">
                 <source>regulation.vehicles.dimensions.width</source>
