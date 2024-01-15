@@ -1,23 +1,28 @@
-{%- if vehicleSet.restrictedTypes|length > 0 -%}
+{%- if vehicleSet.restrictedTypes|length > 0 or vehicleSet.maxCharacteristics|length > 0 -%}
     {{ 'regulation.vehicles.prefix'|trans }}{{ ' ' }}
 
-    {%- for vehicleType in vehicleSet.restrictedTypes -%}
-        {%- if vehicleType.isOther|default(false) -%}
-            {{ vehicleType.name|lower }}
-        {%- elseif vehicleType.name == 'dimensions' -%}
-            {{ 'regulation.vehicles.dimensions.prefix'|trans }}{{ ' ' }}
-            {%- for item in vehicleSet.dimensions -%}
-                {{ ('regulation.vehicles.dimensions.' ~ item.name)|trans({'%value%': item.value}) }}
-                {%- if loop.revindex0 == 1 %} {{ 'common.or'|trans }} {% elseif not loop.last %}, {% endif -%}
-            {% endfor -%}
-        {%- else -%}
-            {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
-            {%- if vehicleType.name == 'heavyGoodsVehicle' and vehicleSet.heavyweightMaxWeight -%}
-                {{ ' ' }}{{ 'regulation.vehicles.heavyweightMaxWeight'|trans({'%value%': vehicleSet.heavyweightMaxWeight}) }}
+    {%- set continued = false -%}
+
+    {%- if vehicleSet.maxCharacteristics|length > 0 -%}
+        {{ 'regulation.vehicles.maxCharacteristics.prefix'|trans }}{{ ' ' }}
+        {%- for item in vehicleSet.maxCharacteristics -%}
+            {{ ('regulation.vehicles.maxCharacteristics.' ~ item.name)|trans({'%value%': item.value}) }}
+            {%- if loop.revindex0 == 1 %} {{ 'common.or'|trans }} {% elseif not loop.last %}, {% endif -%}
+        {% endfor -%}
+        {%- set continued = true -%}
+    {%- endif -%}
+
+    {%- if vehicleSet.restrictedTypes|length > 0 -%}
+        {% if continued %}, {% endif -%}
+        {%- for vehicleType in vehicleSet.restrictedTypes -%}
+            {%- if vehicleType.isOther|default(false) -%}
+                {{ vehicleType.name|lower }}
+            {%- else -%}
+                {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
             {%- endif -%}
-        {%- endif -%}
-        {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
-    {%- endfor -%}
+            {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
+        {%- endfor -%}
+    {%- endif -%}
 {%- else -%}
     {{ 'regulation.vehicles.all'|trans }}
 {%- endif -%}

@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class VehicleSetTemplateTest extends KernelTestCase
 {
     // New line management in the template is fiddly, so we have this dedicated test to ensure the template is rendered correctly.
-    public function testDoesNotContainNewLines(): void
+    public function testRender(): void
     {
         self::bootKernel();
         $container = static::getContainer();
@@ -39,7 +39,7 @@ class VehicleSetTemplateTest extends KernelTestCase
         $text = $twig->render('regulation/_vehicle_set.html.twig', $context);
 
         $this->assertSame(
-            'pour les poids lourds de plus de 3.5 tonnes et véhicules de plus de 4 mètres de large ou 2.4 mètres de haut, sauf véhicules d&#039;urgence',
+            'pour les véhicules de plus de 3.5 tonnes, 4 mètres de large ou 2.4 mètres de haut, sauf véhicules d&#039;urgence',
             $text,
         );
     }

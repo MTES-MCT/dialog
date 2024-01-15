@@ -1525,24 +1525,24 @@
                 <source>regulation.vehicles.except</source>
                 <target>sauf</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightMaxWeight">
-                <source>regulation.vehicles.heavyweightMaxWeight</source>
-                <target>de plus de %value% tonnes</target>
-            </trans-unit>
-            <trans-unit id="regulation.vehicles.dimensions.prefix">
-                <source>regulation.vehicles.dimensions.prefix</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.prefix">
+                <source>regulation.vehicles.maxCharacteristics.prefix</source>
                 <target>véhicules de plus de</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.dimensions.width">
-                <source>regulation.vehicles.dimensions.width</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.weight">
+                <source>regulation.vehicles.maxCharacteristics.weight</source>
+                <target>%value% tonnes</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.width">
+                <source>regulation.vehicles.maxCharacteristics.width</source>
                 <target>%value% mètres de large</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.dimensions.length">
-                <source>regulation.vehicles.dimensions.length</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.length">
+                <source>regulation.vehicles.maxCharacteristics.length</source>
                 <target>%value% mètres de long</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.dimensions.height">
-                <source>regulation.vehicles.dimensions.height</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.height">
+                <source>regulation.vehicles.maxCharacteristics.height</source>
                 <target>%value% mètres de haut</target>
             </trans-unit>
             <trans-unit id="statistics.title">

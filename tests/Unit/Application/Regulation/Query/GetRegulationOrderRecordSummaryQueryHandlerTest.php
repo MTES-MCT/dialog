@@ -75,7 +75,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->method('getOtherExemptedTypeText')
             ->willReturn('Convois exceptionnels');
         $vehicleSet
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getHeavyweightMaxWeight')
             ->willReturn(3.5);
         $vehicleSet
@@ -284,7 +284,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                 ],
                                 new VehicleSetView(
                                     [
-                                        ['name' => 'heavyGoodsVehicle'],
                                         ['name' => 'Matières dangereuses', 'isOther' => true],
                                         ['name' => 'critair2'],
                                         ['name' => 'critair3'],
@@ -294,8 +293,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                         ['name' => 'pedestrians'],
                                         ['name' => 'Convois exceptionnels', 'isOther' => true],
                                     ],
-                                    3.5,
                                     [
+                                        ['name' => 'weight', 'value' => 3.5],
                                         ['name' => 'width', 'value' => 2],
                                         ['name' => 'height', 'value' => 2.4],
                                     ],
