@@ -15,9 +15,17 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
 {
     public function load(ObjectManager $manager): void
     {
-        $vehicleSet1 = new VehicleSet(
+        $typicalVehicleSet = new VehicleSet(
+            '6a65132f-7319-4d5a-aa2d-479685d49df3',
+            measure: $this->getReference('typicalMeasure'),
+            restrictedTypes: [],
+            exemptedTypes: [],
+            otherExemptedTypeText: null,
+        );
+
+        $complexVehicleSet = new VehicleSet(
             '981f0260-948e-45e9-8788-efa23859a884',
-            measure: $this->getReference('measure4'),
+            measure: $this->getReference('measureWithComplexVehicleSet'),
             restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::DIMENSIONS->value, VehicleTypeEnum::CRITAIR->value],
             exemptedTypes: [VehicleTypeEnum::PEDESTRIANS->value, VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value],
             otherExemptedTypeText: 'Convois exceptionnels',
@@ -27,32 +35,24 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
             critairTypes: [CritairEnum::CRITAIR_4->value, CritairEnum::CRITAIR_5->value],
         );
 
-        $vehicleSet2 = new VehicleSet(
-            '6a65132f-7319-4d5a-aa2d-479685d49df3',
-            measure: $this->getReference('measure3'),
-            restrictedTypes: [],
-            exemptedTypes: [],
-            otherExemptedTypeText: null,
-        );
-
-        $vehicleSet3 = new VehicleSet(
+        $publishedLocation1Measure2VehicleSet = new VehicleSet(
             '064ca7cf-a825-7e27-8000-42b09e3ccf61',
-            measure: $this->getReference('measure5'),
+            measure: $this->getReference('publishedLocation1Measure2'),
             restrictedTypes: [VehicleTypeEnum::CRITAIR->value],
             critairTypes: [CritairEnum::CRITAIR_3->value],
         );
 
-        $vehicleSet4 = new VehicleSet(
+        $permanentMeasure1VehicleSet = new VehicleSet(
             '065001b9-28f5-79ad-8000-713cf4da4603',
-            measure: $this->getReference('measure1'),
+            measure: $this->getReference('permanentRegulationOrderLocationMeasure1'),
             restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value],
             heavyweightMaxWeight: 3.5,
         );
 
-        $manager->persist($vehicleSet1);
-        $manager->persist($vehicleSet2);
-        $manager->persist($vehicleSet3);
-        $manager->persist($vehicleSet4);
+        $manager->persist($typicalVehicleSet);
+        $manager->persist($complexVehicleSet);
+        $manager->persist($publishedLocation1Measure2VehicleSet);
+        $manager->persist($permanentMeasure1VehicleSet);
 
         $manager->flush();
     }
