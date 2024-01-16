@@ -83,7 +83,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
-                ['heavyGoodsVehicle', 'other'],
+                ['heavyGoodsVehicle', 'dimensions', 'other'],
                 'Matières dangereuses',
                 ['commercial'],
                 null,
@@ -105,14 +105,14 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
 
         $command = new SaveVehicleSetCommand($vehicleSet);
         $command->allVehicles = false;
-        $command->restrictedTypes = ['heavyGoodsVehicle', 'other'];
+        $command->restrictedTypes = ['heavyGoodsVehicle', 'dimensions', 'other'];
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->heavyweightMaxWeight = 3.5;
-        $command->heavyweightMaxWidth = 2;
-        $command->heavyweightMaxLength = 12;
-        $command->heavyweightMaxHeight = 2.4;
+        $command->maxWidth = 2;
+        $command->maxLength = 12;
+        $command->maxHeight = 2.4;
         $command->critairTypes = [];
 
         $result = $handler($command);
@@ -158,16 +158,16 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->exemptedTypes = [VehicleTypeEnum::OTHER->value];
         $command->otherExemptedTypeText = 'Other exempted';
         $command->heavyweightMaxWeight = 3.5;
-        $command->heavyweightMaxWidth = 2;
-        $command->heavyweightMaxLength = 12;
-        $command->heavyweightMaxHeight = 2.4;
+        $command->maxWidth = 2;
+        $command->maxLength = 12;
+        $command->maxHeight = 2.4;
 
         $result = $handler($command);
 
         $this->assertSame($vehicleSet, $result);
     }
 
-    public function testResetHeavyweightCharacteristicsHeavyGoodsVehicleNotRestricted(): void
+    public function testResetCharacteristicsIfVehicleTypeNotRestricted(): void
     {
         $this->idFactory
             ->expects(self::never())
@@ -200,21 +200,21 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
 
         $command = new SaveVehicleSetCommand($vehicleSet);
         $command->allVehicles = false;
-        $command->restrictedTypes = ['other']; // heavyGoodsVehicle not included
+        $command->restrictedTypes = ['other']; // heavyGoodsVehicle and dimensions not included
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
         $command->heavyweightMaxWeight = 3.5;
-        $command->heavyweightMaxWidth = 2;
-        $command->heavyweightMaxLength = 12;
-        $command->heavyweightMaxHeight = 2.4;
+        $command->maxWidth = 2;
+        $command->maxLength = 12;
+        $command->maxHeight = 2.4;
 
         $result = $handler($command);
 
         $this->assertSame($vehicleSet, $result);
     }
 
-    public function testResetHeavyweightCharacteristicsIfZero(): void
+    public function testResetCharacteristicsIfZero(): void
     {
         $this->idFactory
             ->expects(self::never())
@@ -225,7 +225,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
-                ['heavyGoodsVehicle'],
+                ['heavyGoodsVehicle', 'dimensions'],
                 null,
                 [],
                 null,
@@ -247,11 +247,11 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
 
         $command = new SaveVehicleSetCommand($vehicleSet);
         $command->allVehicles = false;
-        $command->restrictedTypes = ['heavyGoodsVehicle'];
+        $command->restrictedTypes = ['heavyGoodsVehicle', 'dimensions'];
         $command->heavyweightMaxWeight = 0;
-        $command->heavyweightMaxWidth = 0.0;
-        $command->heavyweightMaxLength = -0;
-        $command->heavyweightMaxHeight = -0.0;
+        $command->maxWidth = 0.0;
+        $command->maxLength = -0;
+        $command->maxHeight = -0.0;
 
         $result = $handler($command);
 

@@ -167,6 +167,9 @@ export class RegulationOrderPage {
 
         if (restrictedVehicleTypes.includes('Poids lourds')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
+        }
+        
+        if (restrictedVehicleTypes.includes('Gabarit')) {
             await restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' }).fill('2,4');
         }
 
@@ -195,6 +198,9 @@ export class RegulationOrderPage {
 
         if (restrictedVehicleTypes.includes('Poids lourds')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
+        }
+
+        if (restrictedVehicleTypes.includes('Gabarit')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' })).toHaveValue('2,4');
         }
 

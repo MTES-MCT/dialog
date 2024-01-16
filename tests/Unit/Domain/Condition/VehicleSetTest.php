@@ -23,7 +23,7 @@ final class VehicleSetTest extends TestCase
             exemptedTypes: ['commercial', 'other'],
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
-            heavyweightMaxLength: 12,
+            maxLength: 12,
             critairTypes: [CritairEnum::CRITAIR_2, CritairEnum::CRITAIR_3],
         );
 
@@ -34,9 +34,9 @@ final class VehicleSetTest extends TestCase
         $this->assertSame('Convois exceptionnels', $vehicleSet->getOtherExemptedTypeText());
         $this->assertSame($measure, $vehicleSet->getMeasure());
         $this->assertSame(3.5, $vehicleSet->getHeavyweightMaxWeight());
-        $this->assertNull($vehicleSet->getHeavyweightMaxWidth());
-        $this->assertSame(12.0, $vehicleSet->getHeavyweightMaxLength());
-        $this->assertNull($vehicleSet->getHeavyweightMaxHeight());
+        $this->assertNull($vehicleSet->getMaxWidth());
+        $this->assertSame(12.0, $vehicleSet->getMaxLength());
+        $this->assertNull($vehicleSet->getMaxHeight());
         $this->assertSame([CritairEnum::CRITAIR_2, CritairEnum::CRITAIR_3], $vehicleSet->getCritairTypes());
     }
 
@@ -52,7 +52,7 @@ final class VehicleSetTest extends TestCase
             exemptedTypes: ['commercial', 'other'],
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
-            heavyweightMaxLength: 12,
+            maxLength: 12,
             critairTypes: [CritairEnum::CRITAIR_2, CritairEnum::CRITAIR_3],
         );
 
@@ -62,7 +62,7 @@ final class VehicleSetTest extends TestCase
             exemptedTypes: null,
             otherExemptedTypeText: null,
             heavyweightMaxWeight: 5.5,
-            heavyweightMaxWidth: 3,
+            maxWidth: 3,
             critairTypes: null,
         );
         $this->assertSame(['other'], $vehicleSet->getRestrictedTypes());
@@ -71,8 +71,8 @@ final class VehicleSetTest extends TestCase
         $this->assertSame([], $vehicleSet->getCritairTypes());
         $this->assertNull($vehicleSet->getOtherExemptedTypeText());
         $this->assertSame(5.5, $vehicleSet->getHeavyweightMaxWeight());
-        $this->assertSame(3.0, $vehicleSet->getHeavyweightMaxWidth());
-        $this->assertNull($vehicleSet->getHeavyweightMaxLength());
-        $this->assertNull($vehicleSet->getHeavyweightMaxHeight());
+        $this->assertSame(3.0, $vehicleSet->getMaxWidth());
+        $this->assertNull($vehicleSet->getMaxLength());
+        $this->assertNull($vehicleSet->getMaxHeight());
     }
 }

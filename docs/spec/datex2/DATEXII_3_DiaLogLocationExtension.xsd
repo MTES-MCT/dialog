@@ -7,7 +7,7 @@
   targetNamespace="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
-  <xs:import namespace="http://datex2.eu/schema/3/location" schemaLocation="DATEXII_3_LocationReferencing.xsd" />
+  <xs:import namespace="http://datex2.eu/schema/3/locationReferencing" schemaLocation="DATEXII_3_LocationReferencing.xsd" />
   <xs:complexType name="LinearLocationExtended">
     <xs:annotation>
       <xs:documentation>Extension of class LinearLocation.</xs:documentation>

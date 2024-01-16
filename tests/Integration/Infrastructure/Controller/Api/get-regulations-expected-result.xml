@@ -421,7 +421,7 @@
             </description>
             <issuingAuthority>
                 <com:values>
-                    <com:value>DiaLog</com:value>
+                    <com:value>Main Org</com:value>
                 </com:values>
             </issuingAuthority>
             <regulationId>2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c</regulationId>
@@ -468,6 +468,11 @@
                                 <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
                                 <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
                             </com:grossWeightCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
                             <com:heightCharacteristic>
                                 <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                 <com:vehicleHeight>2.4</com:vehicleHeight>

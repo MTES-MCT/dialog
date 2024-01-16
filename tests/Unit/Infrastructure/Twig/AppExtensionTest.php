@@ -10,6 +10,9 @@ use App\Infrastructure\Adapter\StringUtils;
 use App\Infrastructure\Twig\AppExtension;
 use App\Tests\TimezoneHelper;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Validator\Constraints\Expression;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class AppExtensionTest extends TestCase
 {
@@ -25,7 +28,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(4, $this->extension->getFunctions());
+        $this->assertCount(5, $this->extension->getFunctions());
     }
 
     public function testFormatDateTimeDateOnly(): void
@@ -132,5 +135,35 @@ class AppExtensionTest extends TestCase
         $this->assertSame('emergency-services', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::EMERGENCY_SERVICES->value));
         $this->assertSame('critair', $this->extension->getVehicleTypeIconName(CritairEnum::CRITAIR_4->value));
         $this->assertSame('', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::OTHER->value));
+    }
+
+    protected function provideIsFieldsetError(): array
+    {
+        return [
+            [null, false],
+            [[], false],
+            [['fieldset' => 'other'], false],
+            [['fieldset' => 'example'], true],
+        ];
+    }
+
+    /** @dataProvider provideIsFieldsetError */
+    public function testIsFieldsetError(mixed $payload, bool $expected): void
+    {
+        $error = $this->createMock(FormError::class);
+        $cause = $this->createMock(ConstraintViolation::class);
+        $constraint = $this->createMock(Expression::class);
+
+        $error->expects(self::once())
+            ->method('getCause')
+            ->willReturn($cause);
+
+        $cause->expects(self::once())
+            ->method('getConstraint')
+            ->willReturn($constraint);
+
+        $constraint->payload = $payload;
+
+        $this->assertSame($expected, $this->extension->isFieldsetError($error, 'example'));
     }
 }

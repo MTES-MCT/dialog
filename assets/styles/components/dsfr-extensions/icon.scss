@@ -10,7 +10,18 @@
     --icon-size: 2.75rem;
 }
 
-@each $extraIcon in ('commercial', 'emergency-services', 'bicycle', 'pedestrians', 'critair', 'heavy-goods-vehicle','taxi', 'hazardous-materials', 'car-sharing') {
+@each $extraIcon in (
+    'commercial',
+    'emergency-services',
+    'bicycle',
+    'pedestrians',
+    'critair',
+    'heavy-goods-vehicle',
+    'taxi',
+    'hazardous-materials',
+    'car-sharing',
+    'dimensions',
+) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
         -webkit-mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');

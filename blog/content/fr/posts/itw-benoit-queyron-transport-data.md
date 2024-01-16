@@ -10,6 +10,8 @@ callout:
         url: mailto:dialog@beta.gouv.fr
 tags:
   - Interview
+  - Open data
+  - Réglementation
 ---
     
 :::callout
@@ -24,15 +26,15 @@ Transport.data.gouv.fr est le Point d’Accès National (PAN) aux données de tr
 
 On ne s’étend donc pas sur le champ de la demande, la fréquentation ou la consommation électrique des bornes de recharge : Le PAN se concentre sur les horaires, les tarifs, les perturbations, les infrastructures comme les aménagements cyclables, stationnement vélo, aires de covoiturage, etc.
 
-{% image "./img/Abribus-Angouleme.jpg", "Abribus place de la gare à Angoulême © Arnaud Bouissou / Terra", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
-
-<div class="legende-article">Abribus pace de la gare à Angoulême © Arnaud Bouissou / Terra</div>
-
 **Quelles sont vos priorités en matière de modes de déplacement ?**
 
 Nous ne sommes pas encore exhaustifs et avons une stratégie de priorisation. Par exemple nous avons 98% des réseaux de transport français pour les horaires statiques, pour le temps réel et les perturbations nous en sommes à la moitié. 100% des aires de covoiturage sont disponibles. Pour le stationnement nous avons essentiellement la donnée sur les parc-relais.
 
 Transport.data reste concentré sur les données de mobilités durables. Le stationnement des voitures particulières ou le transport aérien ne sont pas notre priorité.
+
+{% image "./img/Abribus-Angouleme.jpg", "Abribus place de la gare à Angoulême © Arnaud Bouissou / Terra", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+
+<div class="legende-article">Abribus pace de la gare à Angoulême © Arnaud Bouissou / Terra</div>
 
 **Quelles sont les cibles visées par votre service ?**
 
@@ -48,12 +50,13 @@ Par la suite nous avons commencé à standardiser nos process pour passer à l�
 
 Pour les données statiques nous mettons à disposition un fichier de données classique, tandis que pour les données temps réel nous proposons un service de proxy aux collectivités : on met en cache leurs données et on redistribue ainsi à 40, 80, 100 utilisateurs. Cette méthode rassure les collectivités en particulier pour les données temps réel. 
 
-Cela représente pour nous un coût modique en terme de serveurs. Cf. les statistiques détaillées du PAN : https://transport.data.gouv.fr/stats
+Cela représente pour nous un coût modique en terme de serveurs. Cf. les statistiques détaillées du PAN : [transport.data.gouv.fr/stats](https://transport.data.gouv.fr/stats)
 
 **En quoi transport.data est différente des autres startups d’État ?**
 
 Nous appliquons les mêmes méthodes que toutes les startups d’État. J’ai beaucoup appris des enseignements de beta.gouv (l’organisation en charge des startups d’État) notamment sur la conduite d’un projet numérique. Ce ne sont pas des choses que l’on apprend à l’École des Travaux Publics !
-Le projet transport.data suit donc de près les axes communs à l’ensemble des services numériques développés dans la communauté beta :  
+
+Le projet transport.data suit donc de près les axes communs à l’ensemble des services numériques développés dans la communauté beta :
 Chaque décision est justifiée par le besoin utilisateur, nous passons beaucoup de temps à étudier et comprendre ce besoin pour ne dépenser que le minimum d’énergie à valider ce que nous pressentons comme correct. Autre aspect important : nous fonctionnons en équipe de manière transverse et pluridisciplinaire, cela permet à chacun de bénéficier de points de vue différents sur la problématique à traiter.
 
 Sinon, tous les produits de beta.gouv sont différents. Transport.data a la particularité de mettre à disposition de la matière brute, formatée à destination d’une cible “calculateur d’itinéraires”. Là où d’autres produits mettront l’accent sur la mise à disposition d’un ensemble de services, nous préférons rester sur des formats simples en garantissant cependant la disponibilité et la qualité des données.
@@ -80,7 +83,6 @@ Aujourd’hui par exemple 120 réseaux de transport public sont exposés sur Goo
 {% image "./img/Traffic-Aubrais.jpg", "Affichage du trafic dans le poste d'aiguillage de la gare des Aubrais  © Arnaud Bouissou / Terra", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 
 <div class="legende-article">Affichage du trafic dans le poste d'aiguillage de la gare des Aubrais © Arnaud Bouissou / Terra</div>
-
 
 **Quels sont les liens entre DiaLog et transport.data ?**
 

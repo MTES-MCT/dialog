@@ -18,9 +18,9 @@ class VehicleSet
         private array $exemptedTypes = [],
         private ?string $otherExemptedTypeText = null,
         private ?float $heavyweightMaxWeight = null,
-        private ?float $heavyweightMaxWidth = null,
-        private ?float $heavyweightMaxLength = null,
-        private ?float $heavyweightMaxHeight = null,
+        private ?float $maxWidth = null,
+        private ?float $maxLength = null,
+        private ?float $maxHeight = null,
         private ?array $critairTypes = [],
     ) {
     }
@@ -65,19 +65,19 @@ class VehicleSet
         return $this->heavyweightMaxWeight;
     }
 
-    public function getHeavyweightMaxWidth(): ?float
+    public function getMaxWidth(): ?float
     {
-        return $this->heavyweightMaxWidth;
+        return $this->maxWidth;
     }
 
-    public function getHeavyweightMaxLength(): ?float
+    public function getMaxLength(): ?float
     {
-        return $this->heavyweightMaxLength;
+        return $this->maxLength;
     }
 
-    public function getHeavyweightMaxHeight(): ?float
+    public function getMaxHeight(): ?float
     {
-        return $this->heavyweightMaxHeight;
+        return $this->maxHeight;
     }
 
     public function update(
@@ -86,9 +86,9 @@ class VehicleSet
         array $exemptedTypes = null,
         string $otherExemptedTypeText = null,
         float $heavyweightMaxWeight = null,
-        float $heavyweightMaxWidth = null,
-        float $heavyweightMaxLength = null,
-        float $heavyweightMaxHeight = null,
+        float $maxWidth = null,
+        float $maxLength = null,
+        float $maxHeight = null,
         array $critairTypes = null,
     ): void {
         $this->restrictedTypes = $restrictedTypes ?: [];
@@ -96,9 +96,9 @@ class VehicleSet
         $this->exemptedTypes = $exemptedTypes ?: [];
         $this->otherExemptedTypeText = $otherExemptedTypeText;
         $this->heavyweightMaxWeight = $heavyweightMaxWeight;
-        $this->heavyweightMaxWidth = $heavyweightMaxWidth;
-        $this->heavyweightMaxLength = $heavyweightMaxLength;
-        $this->heavyweightMaxHeight = $heavyweightMaxHeight;
+        $this->maxWidth = $maxWidth;
+        $this->maxLength = $maxLength;
+        $this->maxHeight = $maxHeight;
         $this->critairTypes = $critairTypes ?? [];
     }
 }

@@ -31,7 +31,7 @@ final class IgnWfsRoadGeocoderTest extends TestCase
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=nom_minuscule%3D%27rue%20saint-victor%2059110%20la%20madeleine%27%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
+            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(nom_minuscule)%3DstrStripAccents(%27rue%20saint-victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
             $response->getRequestUrl(),
         );
     }
@@ -64,9 +64,9 @@ final class IgnWfsRoadGeocoderTest extends TestCase
     {
         return [
             ['{"features": }', '/invalid json: Syntax error/'],
-            ['{}', '/could not retrieve geometry: /'],
-            ['{"features": []}', '/could not retrieve geometry: /'],
-            ['{"features": [{}]}', '/could not retrieve geometry: /'],
+            ['{}', '/could not retrieve geometry/'],
+            ['{"features": []}', '/could not retrieve geometry /'],
+            ['{"features": [{}]}', '/could not retrieve geometry/'],
         ];
     }
 
