@@ -4,16 +4,30 @@
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\SaveRegulationLocationCommand">
         <property name="cityCode">
-            <constraint name="NotBlank" />
-            <constraint name="Length">
-                <option name="min">5</option>
-                <option name="max">5</option>
+            <constraint name="When">
+                <option name="expression">
+                    this.roadType === 'lane'
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="min">5</option>
+                        <option name="max">5</option>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="cityLabel">
-            <constraint name="NotBlank" />
-            <constraint name="Length">
-                <option name="max">255</option>
+            <constraint name="When">
+                <option name="expression">
+                    this.roadType === 'lane'
+                </option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">255</option>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="roadName">

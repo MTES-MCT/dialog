@@ -15,8 +15,8 @@ class Location
         private string $uuid,
         private RegulationOrder $regulationOrder,
         private string $roadType,
-        private string $cityCode,
-        private string $cityLabel,
+        private ?string $cityLabel,
+        private ?string $cityCode,
         private ?string $administrator,
         private ?string $roadNumber,
         private ?string $roadName,
@@ -46,12 +46,12 @@ class Location
         return $this->roadType;
     }
 
-    public function getCityCode(): string
+    public function getCityCode(): ?string
     {
         return $this->cityCode;
     }
 
-    public function getCityLabel(): string
+    public function getCityLabel(): ?string
     {
         return $this->cityLabel;
     }

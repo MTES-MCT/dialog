@@ -10,7 +10,7 @@ class DetailLocationView
 {
     public function __construct(
         public readonly string $uuid,
-        public readonly string $cityLabel,
+        public readonly ?string $cityLabel,
         public readonly ?string $roadName,
         public readonly ?string $fromHouseNumber,
         public readonly ?string $toHouseNumber,
