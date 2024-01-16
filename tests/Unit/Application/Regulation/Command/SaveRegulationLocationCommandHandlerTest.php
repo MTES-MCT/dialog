@@ -118,10 +118,34 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('addMeasure')
             ->with($createdMeasure);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getCityCode')
+            ->willReturn($this->cityCode);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getCityLabel')
+            ->willReturn($this->cityLabel);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn($this->roadName);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn($this->geometry);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getFromHouseNumber')
+            ->willReturn($this->fromHouseNumber);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getToHouseNumber')
+            ->willReturn($this->toHouseNumber);
         $createdMeasure
             ->expects(self::once())
             ->method('addLocation')
-            ->with($createdLocationNew);
+            ->with($locationNew);
         $this->locationRepository
             ->expects(self::once())
             ->method('add')
