@@ -80,15 +80,15 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->willReturn(3.5);
         $vehicleSet
             ->expects(self::exactly(2))
-            ->method('getHeavyweightMaxWidth')
+            ->method('getMaxWidth')
             ->willReturn(2.0);
         $vehicleSet
             ->expects(self::exactly(1))
-            ->method('getHeavyweightMaxLength')
+            ->method('getMaxLength')
             ->willReturn(null);
         $vehicleSet
             ->expects(self::exactly(2))
-            ->method('getHeavyweightMaxHeight')
+            ->method('getMaxHeight')
             ->willReturn(2.4);
 
         $timeSlot1 = $this->createMock(TimeSlot::class);
@@ -284,7 +284,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                                 ],
                                 new VehicleSetView(
                                     [
-                                        ['name' => 'heavyGoodsVehicle'],
                                         ['name' => 'Matières dangereuses', 'isOther' => true],
                                         ['name' => 'critair2'],
                                         ['name' => 'critair3'],

@@ -30,9 +30,7 @@
                         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
                         <br/>
                         {% include 'regulation/_vehicle_set.html.twig' with {
-                            restrictedTypes: measure.vehicleSet.restrictedTypes,
-                            exemptedTypes: measure.vehicleSet.exemptedTypes,
-                            heavyweightCharacteristics: measure.vehicleSet.heavyweightCharacteristics,
+                            vehicleSet: measure.vehicleSet,
                         } only %}
                     </li>
                 {% endfor %}
