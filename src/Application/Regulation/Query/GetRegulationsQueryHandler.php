@@ -34,7 +34,7 @@ final class GetRegulationsQueryHandler
             $nbLocations = $locations->count();
             $locationView = null;
 
-            if ($nbLocations) {
+            if ($nbLocations && !$location->getMeasures()->isEmpty()) {
                 $measure = $location->getMeasures()->first();
                 $locationNew = $measure->getLocations()->first();
                 $locationView = new LocationView(
@@ -43,7 +43,6 @@ final class GetRegulationsQueryHandler
                     $locationNew->getRoadName(),
                 );
             }
-
             $regulationOrderViews[] = new RegulationOrderListItemView(
                 uuid: $regulationOrderRecord->getUuid(),
                 identifier: $regulationOrder->getIdentifier(),
