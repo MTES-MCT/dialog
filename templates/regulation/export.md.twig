@@ -73,7 +73,7 @@ Arrête
             {{ ('regulation.measure.type.' ~ measure.type)|trans|lower }}
         {% endif %}
         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
-        {% include 'regulation/_vehicle_set.html.twig' with { restrictedTypes: measure.vehicleSet.restrictedTypes, exemptedTypes: measure.vehicleSet.exemptedTypes } only %}
+        {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
     {%- endfor %}
     {# New line #}
 

@@ -1389,16 +1389,16 @@
                 <source>regulation.vehicle_set.heavyweightMaxWeight.help</source>
                 <target>Spécifier le poids maximum autorisé</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.heavyweightMaxWidth">
-                <source>regulation.vehicle_set.heavyweightMaxWidth</source>
+            <trans-unit id="regulation.vehicle_set.maxWidth">
+                <source>regulation.vehicle_set.maxWidth</source>
                 <target>Largeur maximum</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.heavyweightMaxLength">
-                <source>regulation.vehicle_set.heavyweightMaxLength</source>
+            <trans-unit id="regulation.vehicle_set.maxLength">
+                <source>regulation.vehicle_set.maxLength</source>
                 <target>Longueur maximum</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.heavyweightMaxHeight">
-                <source>regulation.vehicle_set.heavyweightMaxHeight</source>
+            <trans-unit id="regulation.vehicle_set.maxHeight">
+                <source>regulation.vehicle_set.maxHeight</source>
                 <target>Hauteur maximum</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.other_restricted_type_text">
@@ -1440,6 +1440,10 @@
             <trans-unit id="regulation.vehicle_set.type.heavyGoodsVehicle">
                 <source>regulation.vehicle_set.type.heavyGoodsVehicle</source>
                 <target>Poids lourds</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.dimensions">
+                <source>regulation.vehicle_set.type.dimensions</source>
+                <target>Gabarit</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.hazardousmaterials">
                 <source>regulation.vehicle_set.type.hazardousmaterials</source>
@@ -1521,24 +1525,24 @@
                 <source>regulation.vehicles.except</source>
                 <target>sauf</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.prefix">
-                <source>regulation.vehicles.heavyweightCharacteristics.prefix</source>
-                <target>de plus de</target>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.prefix">
+                <source>regulation.vehicles.maxCharacteristics.prefix</source>
+                <target>véhicules de plus de</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.weight">
-                <source>regulation.vehicles.heavyweightCharacteristics.weight</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.weight">
+                <source>regulation.vehicles.maxCharacteristics.weight</source>
                 <target>%value% tonnes</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.width">
-                <source>regulation.vehicles.heavyweightCharacteristics.width</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.width">
+                <source>regulation.vehicles.maxCharacteristics.width</source>
                 <target>%value% mètres de large</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.length">
-                <source>regulation.vehicles.heavyweightCharacteristics.length</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.length">
+                <source>regulation.vehicles.maxCharacteristics.length</source>
                 <target>%value% mètres de long</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicles.heavyweightCharacteristics.height">
-                <source>regulation.vehicles.heavyweightCharacteristics.height</source>
+            <trans-unit id="regulation.vehicles.maxCharacteristics.height">
+                <source>regulation.vehicles.maxCharacteristics.height</source>
                 <target>%value% mètres de haut</target>
             </trans-unit>
             <trans-unit id="statistics.title">

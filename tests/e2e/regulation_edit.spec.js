@@ -84,7 +84,7 @@ test('Set vehicles on a measure', async ({ regulationOrderPage }) => {
     const location = await page.addLocation({ cityLabel: 'Dijon', roadName: 'Rue Monge', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
     await page.setVehiclesOnMeasureAndAssertChangesWereSaved(location, {
         measureIndex: 0,
-        restrictedVehicleTypes: ['Poids lourds'],
+        restrictedVehicleTypes: ['Poids lourds', 'Gabarit'],
         otherRestrictedVehicleType: 'Matières dangereuses',
         exemptedVehicleTypes: ['Transports en commun'],
         otherExemptedVehicleType: 'Déchets industriels',

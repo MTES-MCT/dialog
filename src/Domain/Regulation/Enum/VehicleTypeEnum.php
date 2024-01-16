@@ -9,6 +9,7 @@ enum VehicleTypeEnum: string
     // NOTE: this enum combines items from multiple DATEX II enums, including VehicleTypeEnum, VehicleUsageEnum, and NonVehicularRoadUserTypeEnum.
     // So it is not a 1:1 mapping with DATEX II's VehicleTypeEnum, although it shares the same name.
     case HEAVY_GOODS_VEHICLE = 'heavyGoodsVehicle'; // Vehicles with a total weight above 3,500 kg (vehicle and load)
+    case DIMENSIONS = 'dimensions'; // CUSTOM: Vehicle characterized by its maximum dimensions
     case COMMERCIAL = 'commercial'; // public transport.
     case PEDESTRIANS = 'pedestrians'; // Pedestrians.
     case BICYCLE = 'bicycle'; // Bicycle.
@@ -23,6 +24,7 @@ enum VehicleTypeEnum: string
     {
         return [
             VehicleTypeEnum::HEAVY_GOODS_VEHICLE,
+            VehicleTypeEnum::DIMENSIONS,
             VehicleTypeEnum::CRITAIR,
             VehicleTypeEnum::HAZARDOUS_MATERIALS,
             VehicleTypeEnum::OTHER,

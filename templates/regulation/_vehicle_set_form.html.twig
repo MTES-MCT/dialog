@@ -1,5 +1,6 @@
 {% set restrictedDetailsClass = {
     heavyGoodsVehicle: 'restricted-details-heavyGoodsVehicle' ~ index,
+    dimensions: 'restricted-details-dimensions' ~ index,
     critair: 'restricted-details-critair' ~ index,
     other: 'restricted-details-other' ~ index,
 } %}
@@ -117,22 +118,35 @@
                                 widget_suffix: 'common.unit.tons'|trans,
                             }) }}
                         </div>
+                    </fieldset>
+
+                    {% set hasDimensionsErrors = form.restrictedTypes.vars.errors|filter(e => app_is_fieldset_error(e, 'dimensions'))|length > 0 %}
+
+                    <fieldset
+                        data-controller="section form-control"
+                        class="fr-fieldset fr-x-max-w-32w {{ restrictedDetailsClass['dimensions'] }} {% if hasDimensionsErrors %}fr-fieldset--error{% endif %}"
+                        aria-labelledby="dimensions-details-legend-{{ index }}"
+                        {% if 'dimensions' not in form.restrictedTypes.vars.value %}hidden disabled{% endif %}
+                    >
+                        <legend class="fr-fieldset__legend" id="dimensions-details-legend-{{ index }}">
+                            {{ 'regulation.vehicle_set.type.dimensions'|trans }}
+                        </legend>
                         <div class="fr-fieldset__element">
-                            {{ form_row(form.heavyweightMaxWidth, {
+                            {{ form_row(form.maxWidth, {
                                 group_class: 'fr-input-group',
                                 widget_class: 'fr-input',
                                 widget_suffix: 'common.unit.meters'|trans,
                             }) }}
                         </div>
                         <div class="fr-fieldset__element">
-                            {{ form_row(form.heavyweightMaxLength, {
+                            {{ form_row(form.maxLength, {
                                 group_class: 'fr-input-group',
                                 widget_class: 'fr-input',
                                 widget_suffix: 'common.unit.meters'|trans,
                             }) }}
                         </div>
                         <div class="fr-fieldset__element">
-                            {{ form_row(form.heavyweightMaxHeight, {
+                            {{ form_row(form.maxHeight, {
                                 group_class: 'fr-input-group',
                                 widget_class: 'fr-input',
                                 widget_suffix: 'common.unit.meters'|trans,
