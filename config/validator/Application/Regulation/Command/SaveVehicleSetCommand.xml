@@ -7,8 +7,8 @@
             <constraint name="Type">
                 <option name="type">boolean</option>
             </constraint>
-       </property>
-       <property name="restrictedTypes">
+        </property>
+        <property name="restrictedTypes">
             <constraint name="When">
                 <option name="expression">
                     this.allVehicles === false
@@ -16,6 +16,22 @@
                 <option name="constraints">
                     <constraint name="NotBlank">
                         <option name="message">regulation.vehicle_set.restricted_types.error.not_blank</option>
+                    </constraint>
+                </option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">
+                    'dimensions' in this.restrictedTypes
+                </option>
+                <option name="constraints">
+                    <constraint name="Expression">
+                        <option name="expression">
+                            this.maxWidth or this.maxLength or this.maxHeight
+                        </option>
+                        <option name="message">regulation.vehicle_set.dimensions.error.not_blank</option>
+                        <option name="payload">
+                            <value key="fieldset">dimensions</value>
+                        </option>
                     </constraint>
                 </option>
             </constraint>
@@ -73,13 +89,13 @@
             </constraint>
             <constraint name="PositiveOrZero"></constraint>
         </property>
-        <property name="heavyweightMaxWidth">
+        <property name="maxWidth">
             <constraint name="PositiveOrZero"></constraint>
         </property>
-        <property name="heavyweightMaxLength">
+        <property name="maxLength">
             <constraint name="PositiveOrZero"></constraint>
         </property>
-        <property name="heavyweightMaxHeight">
+        <property name="maxHeight">
             <constraint name="PositiveOrZero"></constraint>
         </property>
     </class>

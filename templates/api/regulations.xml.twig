@@ -106,15 +106,7 @@
                                                     <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
                                                 </com:emissions>
                                             {% else %}
-                                                <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
-                                                {% if vehicle.type == 'heavyGoodsVehicle' %}
-                                                    {% if vehicle.maxWeight %}
-                                                        <com:grossWeightCharacteristic>
-                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
-                                                            <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
-                                                        </com:grossWeightCharacteristic>
-                                                    {% endif %}
+                                                {% if vehicle.type == 'dimensions' %}
                                                     {% if vehicle.maxHeight %}
                                                         <com:heightCharacteristic>
                                                             <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
@@ -132,6 +124,17 @@
                                                             <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                                             <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
                                                         </com:widthCharacteristic>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                                                {% endif %}
+                                                {% if vehicle.type == 'heavyGoodsVehicle' %}
+                                                    {% if vehicle.maxWeight %}
+                                                        <com:grossWeightCharacteristic>
+                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                            <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
+                                                            <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                                                        </com:grossWeightCharacteristic>
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}

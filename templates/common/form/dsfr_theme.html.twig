@@ -32,7 +32,7 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
       {{- form_label(form) -}}
 
       {%- if widget_suffix is defined -%}
-        <div class="app-widget--suffix">
+        <div class="fr-input-wrap app-widget--suffix">
           {{- form_widget(form, widget_attr) -}}
           {{- widget_suffix -}}
         </div>
