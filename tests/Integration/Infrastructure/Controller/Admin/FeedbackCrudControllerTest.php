@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Admin;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class FeedbackCrudControllerTest extends AbstractWebTestCase
 {
     public function testIndex(): void
     {
-        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/admin?crudAction=index&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5CFeedbackCrudController');
 
         $this->assertResponseStatusCodeSame(200);
@@ -28,7 +29,7 @@ final class FeedbackCrudControllerTest extends AbstractWebTestCase
 
     public function testIndexWithRoleUser(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login();
         $client->request('GET', '/admin?crudAction=index&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5CFeedbackCrudController');
 
         $this->assertResponseStatusCodeSame(403);

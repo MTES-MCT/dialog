@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
+
 final class LandingControllerTest extends AbstractWebTestCase
 {
     public function testLanding(): void
@@ -43,7 +45,7 @@ final class LandingControllerTest extends AbstractWebTestCase
 
     public function testLandingWithRoleAdmin(): void
     {
-        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(200);
@@ -56,7 +58,7 @@ final class LandingControllerTest extends AbstractWebTestCase
 
     public function testNavigationLink(): void
     {
-        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client = $this->login();
         $crawler = $client->request('GET', '/');
 
         $this->assertNavStructure([

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommandHandler;
@@ -251,15 +252,21 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 $this->geometry,
             );
 
-        $measure = $this->createMock(Measure::class);
-        $measure
+        $measureToUpdate = $this->createMock(Measure::class);
+        $measureToUpdate
             ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn(new \DateTimeImmutable('2023-06-01'));
-        $measure
+        $measureToUpdate
             ->expects(self::once())
             ->method('getLocationNew')
             ->willReturn($locationNew);
+
+        $measureToRemove = $this->createMock(Measure::class);
+        $measureToRemove
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('0658d819-e69b-713c-8000-b30143acb13a');
 
         $location = $this->createMock(Location::class);
         $location
@@ -273,6 +280,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
                 $this->toHouseNumber,
                 $this->geometry,
             );
+
+        $location
+            ->expects(self::once())
+            ->method('getMeasures')
+            ->willReturn([$measureToUpdate, $measureToRemove]);
 
         $this->idFactory
             ->expects(self::never())
@@ -290,18 +302,29 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
-        $measureCommand = new SaveMeasureCommand($measure);
-        $measureCommand->location = $location;
-        $measureCommand->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $measureToUpdateCommand = new SaveMeasureCommand($measureToUpdate);
+        $measureToUpdateCommand->location = $location;
+        $measureToUpdateCommand->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
 
+        $matcher = self::exactly(2);
         $this->commandBus
-            ->expects(self::once())
+            ->expects($matcher)
             ->method('handle')
-            ->with($measureCommand);
+            ->willReturnCallback(
+                fn ($command) => match ($matcher->getInvocationCount()) {
+                    1 => $this->assertEquals($measureToUpdateCommand, $command),
+                    2 => $this->assertEquals(new DeleteMeasureCommand($measureToRemove), $command),
+                },
+            );
 
         $location
             ->expects(self::never())
             ->method('addMeasure');
+
+        $location
+            ->expects(self::once())
+            ->method('removeMeasure')
+            ->with($measureToRemove);
 
         $handler = new SaveRegulationLocationCommandHandler(
             $this->idFactory,
@@ -319,7 +342,7 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
         $command->measures = [
-            $measureCommand,
+            $measureToUpdateCommand,
         ];
 
         $this->assertSame($location, $handler($command));

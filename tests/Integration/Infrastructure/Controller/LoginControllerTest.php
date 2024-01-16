@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
+
 final class LoginControllerTest extends AbstractWebTestCase
 {
     public function testLoginSuccessfully(): void
@@ -18,8 +20,8 @@ final class LoginControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
 
-        $form['email'] = 'mathieu.marchois@beta.gouv.fr';
-        $form['password'] = 'password';
+        $form['email'] = UserFixture::MAIN_ORG_USER_EMAIL;
+        $form['password'] = UserFixture::PASSWORD;
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
         $crawler = $client->followRedirect();
@@ -35,8 +37,8 @@ final class LoginControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
 
-        $form['email'] = 'mathieu.fernandez@beta.gouv.fr';
-        $form['password'] = 'password';
+        $form['email'] = UserFixture::MAIN_ORG_ADMIN_EMAIL;
+        $form['password'] = UserFixture::PASSWORD;
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
         $crawler = $client->followRedirect();

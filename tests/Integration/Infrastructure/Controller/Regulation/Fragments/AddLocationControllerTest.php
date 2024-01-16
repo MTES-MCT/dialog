@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddLocationControllerTest extends AbstractWebTestCase
@@ -11,7 +14,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidBlank(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Localisation', $crawler->filter('h3')->text());
@@ -36,7 +39,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testAdd(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -78,7 +81,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
         $this->assertEquals([
-            ['replace', 'location_f15ed802-fa9b-4d75-ab04-d62ea46597e9_delete_button'],
+            ['replace', 'location_' . LocationFixture::UUID_PERMANENT_ONLY_ONE . '_delete_button'],
             ['append', 'location_list'],
             ['replace', 'block_location'],
             ['replace', 'block_export'],
@@ -86,13 +89,13 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         ], $streams);
 
         $addLocationBtn = $crawler->filter('turbo-stream[target=block_location]')->selectButton('Ajouter une localisation');
-        $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $addLocationBtn->form()->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/add', $addLocationBtn->form()->getUri());
     }
 
     public function testInvalidVehicleSetBlankRestrictedTypes(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -110,7 +113,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -130,7 +133,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidVehicleSetBlankOtherExemptedTypeText(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -150,7 +153,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testBlankCritairTypes(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -172,7 +175,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidCritairTypes(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -194,7 +197,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidVehicleSetOtherTextsTooLong(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -217,7 +220,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidVehicleSetBlankHeavyweightMaxWeight(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -238,7 +241,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidVehicleSetBlankDimensions(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -283,7 +286,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidVehicleSetCharacteristicsNotPositive(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -309,7 +312,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidBlankPeriod(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Localisation', $crawler->filter('h3')->text());
@@ -345,7 +348,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidPeriod(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Localisation', $crawler->filter('h3')->text());
@@ -403,7 +406,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testGeocodingFailure(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
@@ -427,7 +430,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/c1beed9a-6ec1-417a-abfd-0b5bd245616b/location/add');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/location/add');
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -443,18 +446,18 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/add');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
 
         $client->clickLink('Annuler');
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulation_location_add_link', ['regulationOrderRecordUuid' => '3ede8b1a-1816-4788-8510-e08f45511cb5']);
+        $this->assertRouteSame('fragment_regulation_location_add_link', ['regulationOrderRecordUuid' => RegulationOrderRecordFixture::UUID_TYPICAL]);
     }
 
     public function testFieldsTooLong(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/add');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
@@ -477,15 +480,15 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('GET', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add'); // Has no location yet
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/location/add');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

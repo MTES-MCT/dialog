@@ -14,63 +14,63 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $period1 = new Period(
+        $typicalPeriod = new Period(
             uuid: '76680fcb-0d80-491b-b245-0c326eaef37b',
-            measure: $this->getReference('measure3'),
+            measure: $this->getReference('typicalMeasure'),
             startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'everyDay',
         );
 
-        $period2 = new Period(
+        $permanentMeasurePeriod = new Period(
             uuid: 'c01b254c-b7db-4761-9490-b8fea7d42312',
-            measure: $this->getReference('measure1'),
+            measure: $this->getReference('permanentRegulationOrderLocationMeasure1'),
             startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'certainDays',
         );
 
-        $dailyRange2 = new DailyRange(
+        $permanentMeasureDailyRange = new DailyRange(
             uuid: '90e9eef7-9364-4587-9862-d8297566011f',
             applicableDays: ['monday'],
-            period: $period2,
+            period: $permanentMeasurePeriod,
         );
 
-        $period3 = new Period(
+        $publishedLocation1Measure1Period = new Period(
             uuid: '064ca7ce-ee4d-7bdb-8000-46856a6d9fa6',
-            measure: $this->getReference('measure4'),
+            measure: $this->getReference('publishedLocation1Measure1'),
             startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'certainDays',
         );
 
-        $dailyRange3 = new DailyRange(
+        $publishedLocation1Measure1DailyRange = new DailyRange(
             uuid: '2d11558e-a2d5-4f44-b688-672aa3c0e9b8',
             applicableDays: ['monday', 'thursday'],
-            period: $period3,
+            period: $publishedLocation1Measure1Period,
         );
 
-        $period4 = new Period(
+        $publishedLocation1Measure2Period = new Period(
             uuid: '064ca7cf-43a0-7d0f-8000-b608ba0d2344',
-            measure: $this->getReference('measure5'),
+            measure: $this->getReference('publishedLocation1Measure2'),
             startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'weekend',
         );
 
-        $dailyRange4 = new DailyRange(
+        $publishedLocation1Measure2DailyRange = new DailyRange(
             uuid: 'a4a61a6c-7777-4794-8fcd-caf1effb95e4',
             applicableDays: ['tuesday', 'wednesday'],
-            period: $period4,
+            period: $publishedLocation1Measure2Period,
         );
 
-        $manager->persist($period1);
-        $manager->persist($period2);
-        $manager->persist($period3);
-        $manager->persist($period4);
-        $manager->persist($dailyRange2);
-        $manager->persist($dailyRange3);
-        $manager->persist($dailyRange4);
+        $manager->persist($typicalPeriod);
+        $manager->persist($permanentMeasurePeriod);
+        $manager->persist($permanentMeasureDailyRange);
+        $manager->persist($publishedLocation1Measure1Period);
+        $manager->persist($publishedLocation1Measure1DailyRange);
+        $manager->persist($publishedLocation1Measure2Period);
+        $manager->persist($publishedLocation1Measure2DailyRange);
 
         $manager->flush();
     }

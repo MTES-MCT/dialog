@@ -10,10 +10,12 @@ use Doctrine\Persistence\ObjectManager;
 
 final class AccessRequestFixture extends Fixture
 {
+    public const UUID = '970f851a-566c-4d7c-89bb-f114efdc5f5e';
+
     public function load(ObjectManager $manager): void
     {
         $accessRequest = new AccessRequest(
-            '970f851a-566c-4d7c-89bb-f114efdc5f5e',
+            self::UUID,
             'Mathieu Marchois',
             'mathieu@fairness.coop',
             'Fairness',

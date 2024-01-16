@@ -10,30 +10,35 @@ use Doctrine\Persistence\ObjectManager;
 
 final class UserFixture extends Fixture
 {
+    public const MAIN_ORG_USER_EMAIL = 'mathieu.marchois@beta.gouv.fr';
+    public const MAIN_ORG_ADMIN_EMAIL = 'mathieu.fernandez@beta.gouv.fr';
+    public const OTHER_ORG_USER_EMAIL = 'florimond.manca@beta.gouv.fr';
+    public const PASSWORD = 'password';
+
     public function load(ObjectManager $manager): void
     {
-        $user1 = (new User('0b507871-8b5e-4575-b297-a630310fc06e'))
+        $mainOrgUser = (new User('0b507871-8b5e-4575-b297-a630310fc06e'))
             ->setFullName('Mathieu MARCHOIS')
-            ->setEmail('mathieu.marchois@beta.gouv.fr')
-            ->setPassword('password');
+            ->setEmail(self::MAIN_ORG_USER_EMAIL)
+            ->setPassword(self::PASSWORD);
 
-        $user2 = (new User('d47badd9-989e-472b-a80e-9df642e93880'))
-            ->setFullName('Florimond MANCA')
-            ->setEmail('florimond.manca@beta.gouv.fr')
-            ->setPassword('password');
-
-        $user3 = (new User('5bc831a3-7a09-44e9-aefa-5ce3588dac33'))
+        $mainOtherAdmin = (new User('5bc831a3-7a09-44e9-aefa-5ce3588dac33'))
             ->setFullName('Mathieu FERNANDEZ')
-            ->setEmail('mathieu.fernandez@beta.gouv.fr')
-            ->setPassword('password');
+            ->setEmail(self::MAIN_ORG_ADMIN_EMAIL)
+            ->setPassword(self::PASSWORD);
 
-        $manager->persist($user1);
-        $manager->persist($user2);
-        $manager->persist($user3);
+        $otherOrgUser = (new User('d47badd9-989e-472b-a80e-9df642e93880'))
+            ->setFullName('Florimond MANCA')
+            ->setEmail(self::OTHER_ORG_USER_EMAIL)
+            ->setPassword(self::PASSWORD);
+
+        $manager->persist($mainOrgUser);
+        $manager->persist($mainOtherAdmin);
+        $manager->persist($otherOrgUser);
         $manager->flush();
 
-        $this->addReference('user1', $user1);
-        $this->addReference('user2', $user2);
-        $this->addReference('user3', $user3);
+        $this->addReference('mainOrgUser', $mainOrgUser);
+        $this->addReference('mainOrgAdmin', $mainOtherAdmin);
+        $this->addReference('otherOrgUser', $otherOrgUser);
     }
 }

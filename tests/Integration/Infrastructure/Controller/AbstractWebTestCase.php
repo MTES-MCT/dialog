@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller;
 
 use App\Domain\User\Organization;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Infrastructure\Persistence\Doctrine\Repository\User\UserRepository;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -13,7 +14,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
-    protected function login(string $email = 'mathieu.marchois@beta.gouv.fr'): KernelBrowser
+    protected function login(string $email = UserFixture::MAIN_ORG_USER_EMAIL): KernelBrowser
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);

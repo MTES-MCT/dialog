@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
@@ -26,7 +28,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations');
         [$numTemporary, $numPermanent] = $this->countRows($crawler);
 
-        $client->request('DELETE', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5', [
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseRedirects('/regulations?tab=temporary', 303);
@@ -39,13 +41,13 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
 
-        $client->request('GET', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
         $this->assertResponseStatusCodeSame(200);
 
         $crawler = $client->request('GET', '/regulations');
         [$numTemporary, $numPermanent] = $this->countRows($crawler);
 
-        $client->request('DELETE', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', [
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseRedirects('/regulations?tab=permanent', 303);
@@ -55,14 +57,14 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame([$numTemporary, $numPermanent - 1], $this->countRows($crawler), $crawler->html());
 
         // Detail page doesn't exist anymore.
-        $client->request('GET', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testCannotDeleteBecauseDifferentOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', [
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -71,7 +73,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/regulations/547a5639-655a-41c3-9428-a5256b5a9e38', [
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseRedirects('/regulations?tab=temporary', 303);
@@ -80,14 +82,14 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     public function testInvalidCsrfToken(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(400);
     }
 
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5');
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

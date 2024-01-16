@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
@@ -30,7 +31,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $this->assertSame('2023-05-10', $form->get('general_info_form[startDate]')->getValue()); // Init with tomorrow date
         $form['general_info_form[identifier]'] = 'F022023';
-        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
+        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
         $form['general_info_form[startDate]'] = '2023-02-14';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
@@ -82,7 +83,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'F022030';
-        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
+        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2023-02-11';
@@ -101,7 +102,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = 'FO1/2023';
-        $form['general_info_form[organization]'] = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // Dialog
+        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
         $form['general_info_form[endDate]'] = '2024-02-11';
