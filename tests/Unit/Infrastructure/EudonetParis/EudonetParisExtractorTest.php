@@ -90,7 +90,7 @@ final class EudonetParisExtractorTest extends TestCase
 
                 3 => $this->assertSame([
                     2700,
-                    [2701, 2705, 2710, 2730, 2740, 2720, 2737],
+                    [2701, 2705, 2708, 2710, 2730, 2740, 2720, 2737],
                     [
                         'Criteria' => [
                             'Field' => 1200,
@@ -126,7 +126,7 @@ final class EudonetParisExtractorTest extends TestCase
 
                 5 => $this->assertSame([
                     2700,
-                    [2701, 2705, 2710, 2730, 2740, 2720, 2737],
+                    [2701, 2705, 2708, 2710, 2730, 2740, 2720, 2737],
                     [
                         'Criteria' => [
                             'Field' => 1200,
@@ -138,7 +138,7 @@ final class EudonetParisExtractorTest extends TestCase
 
                 6 => $this->assertSame([
                     2700,
-                    [2701, 2705, 2710, 2730, 2740, 2720, 2737],
+                    [2701, 2705, 2708, 2710, 2730, 2740, 2720, 2737],
                     [
                         'Criteria' => [
                             'Field' => 1200,

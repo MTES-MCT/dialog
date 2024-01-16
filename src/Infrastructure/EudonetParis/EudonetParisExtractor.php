@@ -27,6 +27,7 @@ final class EudonetParisExtractor
     public const LOCALISATION_TAB_ID = 2700;
     public const LOCALISATION_ID = 2701;
     public const LOCALISATION_PORTE_SUR = 2705;
+    public const LOCALISATION_ARRONDISSEMENT = 2708;
     public const LOCALISATION_LIBELLE_VOIE = 2710;
     public const LOCALISATION_LIBELLE_VOIE_DEBUT = 2730;
     public const LOCALISATION_LIBELLE_VOIE_FIN = 2740;
@@ -129,6 +130,7 @@ final class EudonetParisExtractor
                     listCols: [
                         $this::LOCALISATION_ID,
                         $this::LOCALISATION_PORTE_SUR,
+                        $this::LOCALISATION_ARRONDISSEMENT,
                         $this::LOCALISATION_LIBELLE_VOIE,
                         $this::LOCALISATION_LIBELLE_VOIE_DEBUT,
                         $this::LOCALISATION_LIBELLE_VOIE_FIN,

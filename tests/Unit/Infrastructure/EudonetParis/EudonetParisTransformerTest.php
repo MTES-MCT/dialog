@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
@@ -53,6 +54,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => $roadName,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
@@ -81,7 +83,7 @@ final class EudonetParisTransformerTest extends TestCase
         $measureCommand->vehicleSet = $vehicleSet;
 
         $locationCommand = new SaveRegulationLocationCommand();
-        $locationCommand->cityCode = '75056';
+        $locationCommand->cityCode = '75118';
         $locationCommand->cityLabel = 'Paris';
         $locationCommand->roadName = $roadName;
         $locationCommand->fromHouseNumber = null;
@@ -99,6 +101,61 @@ final class EudonetParisTransformerTest extends TestCase
         $transformer = new EudonetParisTransformer($this->geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
+    }
+
+    private function provideDateParsing(): array
+    {
+        return [
+            'standard' => ['2023/12/14 00:00:00'],
+            'no-datetime' => ['2023/12/14'],
+            'dmy-no-datetime' => ['14/12/2023'],
+        ];
+    }
+
+    /** @dataProvider provideDateParsing */
+    public function testDateParsing($startDateValue): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $record = [
+            'fields' => [
+                EudonetParisExtractor::ARRETE_ID => '20230514-1',
+                EudonetParisExtractor::ARRETE_DATE_DEBUT => $startDateValue,
+                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
+                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
+                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
+            ],
+            'measures' => [
+                [
+                    'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
+                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                    ],
+                    'locations' => [
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $transformer = new EudonetParisTransformer($this->geocoder);
+        $result = $transformer->transform($record, $organization);
+
+        $this->assertEquals(
+            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-12-14 00:00:00', new \DateTimeZone('Europe/Paris')),
+            $result->command->generalInfoCommand->startDate,
+        );
     }
 
     private function provideTransformHouseNumberAndJunction(): array
@@ -142,6 +199,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => $porteSur,
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => 'Rue Jean Perrin',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
@@ -153,6 +211,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => $porteSur,
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => 'Rue Adrien Lesesne',
@@ -174,7 +233,7 @@ final class EudonetParisTransformerTest extends TestCase
         $rueEugeneBerthoudXRueJeanPerrin = Coordinates::fromLonLat(2.3453101, 48.9062362);
         $rueEugeneBerthoud26 = Coordinates::fromLonLat(2.3453431, 48.9062625);
         $locationCommand1 = new SaveRegulationLocationCommand();
-        $locationCommand1->cityCode = '75056';
+        $locationCommand1->cityCode = '75118';
         $locationCommand1->cityLabel = 'Paris';
         $locationCommand1->roadName = 'Rue Eugène Berthoud';
         $locationCommand1->fromHouseNumber = null;
@@ -188,7 +247,7 @@ final class EudonetParisTransformerTest extends TestCase
         $rueEugeneBerthoud15 = Coordinates::fromLonLat(2.3453412, 48.9062610);
         $rueEugeneBerthoudXRueAdrienLesesne = Coordinates::fromLonLat(2.34944, 48.9045598);
         $locationCommand2 = new SaveRegulationLocationCommand();
-        $locationCommand2->cityCode = '75056';
+        $locationCommand2->cityCode = '75118';
         $locationCommand2->cityLabel = 'Paris';
         $locationCommand2->roadName = 'Rue Eugène Berthoud';
         $locationCommand2->fromHouseNumber = '15';
@@ -333,6 +392,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Autre chose',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
@@ -350,7 +410,7 @@ final class EudonetParisTransformerTest extends TestCase
                 'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
                 'impact' => 'skip_location',
                 'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Autre chose","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
+                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Autre chose","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
             ],
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
@@ -395,6 +455,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => 'Start road',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
@@ -406,6 +467,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => 'End road',
@@ -417,6 +479,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
@@ -428,6 +491,7 @@ final class EudonetParisTransformerTest extends TestCase
                             'fields' => [
                                 EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
                                 EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
                                 EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
@@ -445,25 +509,25 @@ final class EudonetParisTransformerTest extends TestCase
                 'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
                 'impact' => 'skip_location',
                 'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
+                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
             ],
             [
                 'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
                 'impact' => 'skip_location',
                 'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
+                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
             ],
             [
                 'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
                 'impact' => 'skip_location',
                 'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
+                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
             ],
             [
                 'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
                 'impact' => 'skip_location',
                 'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
+                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
             ],
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
@@ -481,6 +545,189 @@ final class EudonetParisTransformerTest extends TestCase
             ->method('computeCoordinates');
 
         $transformer = new EudonetParisTransformer($this->geocoder);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization));
+    }
+
+    public function testSkipInvalidArrondissement(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $record = [
+            'fields' => [
+                EudonetParisExtractor::ARRETE_ID => '20230514-1',
+                EudonetParisExtractor::ARRETE_DATE_DEBUT => '2023/06/05 14:30:00',
+                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
+                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
+                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
+            ],
+            'measures' => [
+                [
+                    'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
+                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                    ],
+                    'locations' => [
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => 'invalid',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $errors = [
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1', 'fieldname' => 'ARRONDISSEMENT'],
+                'reason' => 'value_does_not_match_pattern',
+                'impact' => 'skip_location',
+                'value' => 'invalid',
+                'pattern' => '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'reason' => 'no_locations_gathered',
+                'impact' => 'skip_regulation',
+            ],
+        ];
+
+        $result = new EudonetParisTransformerResult(null, $errors);
+
+        $transformer = new EudonetParisTransformer($this->geocoder);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization));
+    }
+
+    public function testSkipGeocodingFailure(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $record = [
+            'fields' => [
+                EudonetParisExtractor::ARRETE_ID => '20230514-1',
+                EudonetParisExtractor::ARRETE_DATE_DEBUT => '2023/06/05 14:30:00',
+                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
+                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
+                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
+            ],
+            'measures' => [
+                [
+                    'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
+                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                    ],
+                    'locations' => [
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => '13',
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => '19',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $errors = [
+            [
+                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
+                'reason' => 'geocoding_failure',
+                'message' => 'Could not geocode',
+                'impact' => 'skip_location',
+                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"Rue Eug\u00e8ne Berthoud","2730":null,"2740":null,"2720":"13","2737":"19"}}',
+            ],
+            [
+                'loc' => ['regulation_identifier' => '20230514-1'],
+                'reason' => 'no_locations_gathered',
+                'impact' => 'skip_regulation',
+            ],
+        ];
+
+        $result = new EudonetParisTransformerResult(null, $errors);
+
+        $this->geocoder
+            ->expects(self::once())
+            ->method('computeCoordinates')
+            ->willThrowException(new GeocodingFailureException('Could not geocode'));
+
+        $transformer = new EudonetParisTransformer($this->geocoder);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization));
+    }
+
+    public function testSkipInvalidStartDate(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $record = [
+            'fields' => [
+                EudonetParisExtractor::ARRETE_ID => '20230514-1',
+                EudonetParisExtractor::ARRETE_DATE_DEBUT => 'invalid',
+                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
+                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
+                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
+            ],
+            'measures' => ['...'],
+        ];
+
+        $transformer = new EudonetParisTransformer($this->geocoder);
+        $result = new EudonetParisTransformerResult(
+            null,
+            [
+                [
+                    'loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'],
+                    'impact' => 'skip_regulation',
+                    'reason' => 'parsing_failed',
+                    'value' => 'invalid',
+                ],
+            ],
+        );
+
+        $this->assertEquals($result, $transformer->transform($record, $organization));
+    }
+
+    public function testSkipInvalidEndDate(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $record = [
+            'fields' => [
+                EudonetParisExtractor::ARRETE_ID => '20230514-1',
+                EudonetParisExtractor::ARRETE_DATE_DEBUT => '2023/07/12 18:00:00',
+                EudonetParisExtractor::ARRETE_DATE_FIN => 'invalid',
+                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
+                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
+            ],
+            'measures' => ['...'],
+        ];
+
+        $transformer = new EudonetParisTransformer($this->geocoder);
+        $result = new EudonetParisTransformerResult(
+            null,
+            [
+                [
+                    'loc' => ['fieldname' => 'ARRETE_DATE_FIN'],
+                    'impact' => 'skip_regulation',
+                    'reason' => 'parsing_failed',
+                    'value' => 'invalid',
+                ],
+            ],
+        );
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
