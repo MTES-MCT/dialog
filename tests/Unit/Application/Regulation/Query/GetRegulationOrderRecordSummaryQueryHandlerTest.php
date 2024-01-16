@@ -271,6 +271,8 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                 locations: [
                     new DetailLocationView(
                         uuid: '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
+                        administrator: 'Yvelines',
+                        roadNumber: 'D78',
                         cityLabel: 'Montauban',
                         roadName: 'Avenue de Fonneuve',
                         fromHouseNumber: '95',

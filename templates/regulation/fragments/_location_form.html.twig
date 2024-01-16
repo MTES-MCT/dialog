@@ -179,19 +179,16 @@
 
 			<div
 				data-controller="form-reveal autocomplete" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
-				{# <div data-condition-equals-value = "{{ form.roadType.vars.value == 'departmentalRoad' ? 'departmentalRoad' : 'lane' }}" > #}
+				
 				{{ form_row(form.roadType, {
                             group_class: 'fr-select-group',
                             widget_class: 'fr-select',
                             row_attr: {
-                                'data-controller': 'condition',
-                                'data-condition-equals-value' : 'departmentalRoad',
                                 'data-action':
-                                'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                                'change->form-reveal#openByValue'
                             },
                         }) }}
-				{# </div> #}
-				<div data-form-reveal-target="section" hidden="{{ form.roadType.vars.value != 'departmentalRoad' }}">
+				<div data-form-reveal-target="section" data-value="departmentalRoad" hidden="{{ form.roadType.vars.value != 'departmentalRoad' }}">
 					{{ form_row(form.administrator, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
@@ -211,7 +208,7 @@
                         }) }}
 				</div>
 
-				<div data-form-reveal-target="section" hidden="{{ form.roadType.vars.value != 'lane' }}">
+				<div data-form-reveal-target="section" data-value="lane" hidden="{{ form.roadType.vars.value != 'lane' }}">
 
 					<div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
 						{{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}

@@ -10,6 +10,8 @@ class DetailLocationView
 {
     public function __construct(
         public readonly string $uuid,
+        public readonly ?string $administrator,
+        public readonly ?string $roadNumber,
         public readonly ?string $cityLabel,
         public readonly ?string $roadName,
         public readonly ?string $fromHouseNumber,
@@ -56,6 +58,8 @@ class DetailLocationView
 
         return new self(
             uuid: $location->getUuid(),
+            administrator: $location->getAdministrator(),
+            roadNumber: $location->getRoadNumber(),
             cityLabel: $location->getCityLabel(),
             roadName: $location->getRoadName(),
             fromHouseNumber: $location->getFromHouseNumber(),
