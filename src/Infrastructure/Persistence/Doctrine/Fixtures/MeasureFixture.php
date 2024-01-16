@@ -92,10 +92,15 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($publishedLocation3Measure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
+        $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
         $this->addReference('permanentRegulationOrderLocationMeasure1', $permanentRegulationOrderLocationMeasure1);
+        $this->addReference('permanentRegulationOrderLocationMeasure2', $permanentRegulationOrderLocationMeasure2);
         $this->addReference('publishedLocation1Measure1', $publishedLocation1Measure1);
-        $this->addReference('measureWithComplexVehicleSet', $publishedLocation1Measure1);
         $this->addReference('publishedLocation1Measure2', $publishedLocation1Measure2);
+        $this->addReference('publishedLocation2NoEntry', $publishedLocation2NoEntry);
+        $this->addReference('publishedLocation2SpeedLimit', $publishedLocation2SpeedLimit);
+        $this->addReference('publishedLocation3Measure', $publishedLocation3Measure);
+        $this->addReference('measureWithComplexVehicleSet', $publishedLocation1Measure1);
 
         $manager->flush();
     }

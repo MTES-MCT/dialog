@@ -26,7 +26,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             return [];
         }
 
-        // There is one row per unique combination of (regulationOrder, location, measure).
+        // There is one row per unique combination of (regulationOrder, measure, locationNew).
         // Rows are sorted by regulationOrder uuid.
         // So we iterate over rows, pushing a new regulation order view when the row's regulationOrder uuid changes.
         $regulationOrderViews = [];
