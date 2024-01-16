@@ -86,7 +86,7 @@ final class EudonetParisTransformer
         return new EudonetParisTransformerResult($command, $errors);
     }
 
-    private function parseDate(string $value): \DateTimeInterface|null
+    private function parseDate(string $value): ?\DateTimeInterface
     {
         if ($date = \DateTimeImmutable::createFromFormat('Y/m/d H:i:s', $value, new \DateTimeZone('Europe/Paris'))) {
             return $date;
