@@ -57,13 +57,13 @@ final class MeasureTest extends TestCase
         $location2 = $this->createMock(LocationNew::class);
         $location3 = $this->createMock(LocationNew::class);
 
-        $measure->addLocation($location1);
-        $measure->addLocation($location1); // Test duplicate
-        $measure->addLocation($location2);
-        $this->assertEquals(new ArrayCollection([$location1, $location2]), $measure->getLocations());
+        $measure->addLocationNew($location1);
+        $measure->addLocationNew($location1); // Test duplicate
+        $measure->addLocationNew($location2);
+        $this->assertEquals(new ArrayCollection([$location1, $location2]), $measure->getLocationsNew());
 
-        $measure->removeLocation($location3); // Location that does not belong to the measure
-        $measure->removeLocation($location2);
-        $this->assertEquals(new ArrayCollection([$location1]), $measure->getLocations());
+        $measure->removeLocationNew($location3); // Location that does not belong to the measure
+        $measure->removeLocationNew($location2);
+        $this->assertEquals(new ArrayCollection([$location1]), $measure->getLocationsNew());
     }
 }

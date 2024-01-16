@@ -16,10 +16,15 @@ final class LocationNewRepository extends ServiceEntityRepository implements Loc
         parent::__construct($registry, LocationNew::class);
     }
 
-    public function add(LocationNew $location): LocationNew
+    public function add(LocationNew $locationNew): LocationNew
     {
-        $this->getEntityManager()->persist($location);
+        $this->getEntityManager()->persist($locationNew);
 
-        return $location;
+        return $locationNew;
+    }
+
+    public function delete(LocationNew $locationNew): void
+    {
+        $this->getEntityManager()->remove($locationNew);
     }
 }
