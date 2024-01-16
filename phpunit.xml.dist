@@ -9,6 +9,7 @@
          convertDeprecationsToExceptions="false"
 >
     <php>
+        <server name="APP_DEBUG" value="false" />
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
@@ -17,7 +18,7 @@
         <server name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
     </php>
 
-    <coverage>
+    <coverage cacheDirectory=".coverage-cache">
         <include>
             <directory>src</directory>
         </include>
