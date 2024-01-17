@@ -53,26 +53,26 @@ final class VehicleSetFormType extends AbstractType
                 ],
             )
             ->add(
-                'heavyweightMaxWidth',
+                'maxWidth',
                 NumberType::class,
                 options: [
-                    'label' => 'regulation.vehicle_set.heavyweightMaxWidth',
+                    'label' => 'regulation.vehicle_set.maxWidth',
                     'required' => false,
                 ],
             )
             ->add(
-                'heavyweightMaxLength',
+                'maxLength',
                 NumberType::class,
                 options: [
-                    'label' => 'regulation.vehicle_set.heavyweightMaxLength',
+                    'label' => 'regulation.vehicle_set.maxLength',
                     'required' => false,
                 ],
             )
             ->add(
-                'heavyweightMaxHeight',
+                'maxHeight',
                 NumberType::class,
                 options: [
-                    'label' => 'regulation.vehicle_set.heavyweightMaxHeight',
+                    'label' => 'regulation.vehicle_set.maxHeight',
                     'required' => false,
                 ],
             )
