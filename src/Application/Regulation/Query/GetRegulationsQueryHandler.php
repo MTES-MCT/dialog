@@ -18,38 +18,37 @@ final class GetRegulationsQueryHandler
 
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
-        $regulationOrderRecords = $this->repository->findRegulationsByOrganizations(
+        $regulationOrderViews = [];
+        $rows = $this->repository->findRegulationsByOrganizations(
             $query->organizationUuids,
             $query->pageSize,
             $query->page,
             $query->isPermanent,
         );
-        $regulationOrderViews = [];
 
-        foreach ($regulationOrderRecords['items'] as $regulationOrderRecord) {
-            $regulationOrder = $regulationOrderRecord->getRegulationOrder();
-            $locations = $regulationOrder->getLocations();
-            $nbLocations = $locations->count();
+        foreach ($rows['items'] as $row) {
+            $locationView = null;
+
+            if ($row['location']) {
+                [$roadName, $cityLabel, $cityCode] = explode('#', $row['location']);
+                $locationView = new LocationView($cityCode, $cityLabel, $roadName);
+            }
 
             $regulationOrderViews[] = new RegulationOrderListItemView(
-                uuid: $regulationOrderRecord->getUuid(),
-                identifier: $regulationOrder->getIdentifier(),
-                status: $regulationOrderRecord->getStatus(),
-                numLocations: $nbLocations,
-                organizationName: $regulationOrderRecord->getOrganization()->getName(),
-                location: $nbLocations ? new LocationView(
-                    $locations->first()->getCityCode(),
-                    $locations->first()->getCityLabel(),
-                    $locations->first()->getRoadName(),
-                ) : null,
-                startDate: $regulationOrder->getStartDate(),
-                endDate: $regulationOrder->getEndDate(),
+                uuid: $row['uuid'],
+                identifier: $row['identifier'],
+                status: $row['status'],
+                numLocations: $row['nbLocations'],
+                organizationName: $row['organizationName'],
+                location: $locationView,
+                startDate: $row['startDate'],
+                endDate: $row['endDate'],
             );
         }
 
         return new Pagination(
             $regulationOrderViews,
-            $regulationOrderRecords['count'],
+            $rows['count'],
             $query->page,
             $query->pageSize,
         );
