@@ -16,7 +16,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $roadNumber = null;
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
-    public ?string $roadName= null;
+    public ?string $roadName = null;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
     public ?string $geometry;
@@ -54,16 +54,17 @@ final class SaveRegulationLocationCommand implements CommandInterface
         return $command;
     }
 
-    public function reset():void {
-        if($this->roadType == LocationTypeEnum::DEPARTMENTAL_ROAD->value ) {
-            $this->cityLabel  = null;
-            $this->cityCode  = null;
-            $this->roadName  = null;
-            $this->fromHouseNumber  = null;
-            $this->toHouseNumber  = null;
+    public function reset(): void
+    {
+        if ($this->roadType == LocationTypeEnum::DEPARTMENTAL_ROAD->value) {
+            $this->cityLabel = null;
+            $this->cityCode = null;
+            $this->roadName = null;
+            $this->fromHouseNumber = null;
+            $this->toHouseNumber = null;
         }
 
-        if($this->roadType == LocationTypeEnum::LANE->value || $this->roadType == null) {
+        if ($this->roadType == LocationTypeEnum::LANE->value || $this->roadType == null) {
             $this->administrator = null;
             $this->roadNumber = null;
         }

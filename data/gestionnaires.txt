@@ -1,0 +1,27 @@
+ADELAC | Ain | Aisne | ALBEA | ALIAE | ALICORNE | A'LIENOR | ALIS |
+Allemagne | Allier | Alpes-de-Haute-Provence | Alpes-Maritimes | APRR | APRR | ARCOS | ARCOUR | Ardèche |
+Ardennes | AREA | Ariège | Ariège | ASF | ASF | ATB | ATLANDES | ATMB | ATMB | Aube | Aude | Aveyron | Bas-
+Rhin | Belgique | Bordeaux Métropole | Bouches-du-Rhône | Brésil | Brest Métropole | Calvados | Cantal | CCI du
+Havre | CEVM | Charente | Charente-Maritime | Cher | Clermont Auvergne Métropole | COFIROUTE | Collectivité de
+Corse | Collectivité de Corse | Collectivité de Corse | Collectivité européenne d'Alsace | Collectivité européenne
+d'Alsace | Collectivité européenne d'Alsace | Collectivité européenne d'Alsace | Collectivité territoriale de Martinique
+| Collectivité territoriale de Martinique | Collectivité territoriale de Martinique | Corrèze | Corse-du-Sud | Côte-d'Or |
+Côtes-d'Armor | Creuse | DEAL Guyane | DEAL Mayotte | Deux-Sèvres | Dijon Métropole | DIR Atlantique | DIR
+Atlantique | DIR Centre Est | DIR Centre Est | DIR Centre Ouest | DIR Centre Ouest | DIR Est | DIR Est | DIR Île-de-
+France | DIR Île-de-France | DIR Massif Central | DIR Massif Central | DIR Méditerranée | DIR Méditerranée | DIR
+Méditerranée | DIR Nord | DIR Nord | DIR Nord Ouest | DIR Nord Ouest | DIR Ouest | DIR Ouest | DIR Sud Ouest |
+DIR Sud Ouest | Dordogne | Doubs | Drôme | Drôme | DTAM Saint-Pierre-et-Miquelon | ESCOTA | Espagne |
+Essonne | Eure | Eure-et-Loir | Eurométropole de Strasbourg | Finistère | Gard | Gers | Gironde | GPMM | Grenoble
+Alpes Métropole | Guadeloupe | Guyane | Haute-Corse | Haute-Garonne | Haute-Loire | Haute-Marne | Hautes-
+Alpes | Haute-Saône | Haute-Savoie | Hautes-Pyrénées | Haute-Vienne | Haut-Rhin | Hauts-de-Seine | Hérault | Ille-
+et-Vilaine | Indre | Indre-et-Loire | Isère | Italie | Jura | Landes | Loire | Loire-Atlantique | Loiret | Loir-et-Cher | Lot |
+Lot-et-Garonne | Lozère | Maine-et-Loire | Manche | Marne | Mayenne | Mayotte | Métropole de Lyon | Métropole de
+Lyon | Métropole de Lyon | Métropole du Grand Nancy | Métropole Européenne de Lille | Métropole Nice Côte
+d'Azur | Métropole Nice Côte d'Azur | Métropole Rouen Normandie | Métropole Toulon-Provence-Méditerranée |
+Metz Métropole | Meurthe-et-Moselle | Meuse | Montpellier Méditerranée Métropole | Morbihan | Moselle | Nantes
+Métropole | Nièvre | Nord | Oise | Orléans Métropole | Orne | Paris | Pas-de-Calais | Principauté d'Andorre |
+Principauté de Monaco | Puy-de-Dôme | Pyrénées-Atlantiques | Pyrénées-Orientales | Région Réunion | Rennes
+Métropole | Réunion | Rhône | Rhône | Royaume-Uni | Saint-Etienne Métropole | SANEF | Saône-et-Loire | SAPN |
+Sarthe | Savoie | Seine-et-Marne | Seine-Maritime | Seine-Saint-Denis | SFTRF | SFTRF | Somme | Suisse | Tarn |
+Tarn-et-Garonne | Territoire de Belfort | Toulouse Métropole | Tours Métropole Val de Loire | Val-de-Marne | Val-
+d'Oise | Var | Vaucluse | Vendée | Vienne | Ville de Paris | Vosges | Yonne | Yvelines

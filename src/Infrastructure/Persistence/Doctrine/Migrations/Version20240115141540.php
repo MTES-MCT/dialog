@@ -28,7 +28,6 @@ final class Version20240115141540 extends AbstractMigration
 
         $this->addSql("UPDATE location SET road_type = 'lane'");
         $this->addSql('ALTER TABLE location ALTER road_type SET NOT NULL');
-
     }
 
     public function down(Schema $schema): void

@@ -19,28 +19,24 @@ final class LocationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add(
-            'roadType',
-            ChoiceType::class,
-            options: $this->getTypeOptions(),
-        )
-        ->add(
-            'administrator',
-            TextType::class,
-            options: [
-                'label' => 'regulation.location.administrator',
-                'help' => 'regulation.location.administrator.help',
-                'required' => false,
-            ],
-        )
-        ->add(
-            'roadNumber',
-            TextType::class,
-            options: [
-                'label' => 'regulation.location.roadNumber',
-                'required' => false,
-            ],
-        )
+            ->add(
+                'roadType',
+                ChoiceType::class,
+                options: $this->getTypeOptions(),
+            )
+            ->add(
+                'administrator',
+                ChoiceType::class,
+                options: $this->getAdministratorOptions($options['administrators']),
+            )
+            ->add(
+                'roadNumber',
+                TextType::class,
+                options: [
+                    'label' => 'regulation.location.roadNumber',
+                    'required' => false,
+                ],
+            )
             ->add(
                 'cityCode',
                 HiddenType::class,
@@ -114,10 +110,31 @@ final class LocationFormType extends AbstractType
         ];
     }
 
+    private function getAdministratorOptions(array $administrators): array
+    {
+        $choices = [];
+
+        foreach ($administrators as $value) {
+            $choices[$value] = $value;
+        }
+
+        return [
+            'label' => 'regulation.location.administrator',
+            'help' => 'regulation.location.administrator.help',
+            'choices' => array_merge(
+                ['regulation.location.administrator.placeholder' => ''],
+                $choices,
+            ),
+            'required' => false,
+        ];
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
+            'administrators' => [],
         ]);
+        $resolver->setAllowedTypes('administrators', 'array');
     }
 }

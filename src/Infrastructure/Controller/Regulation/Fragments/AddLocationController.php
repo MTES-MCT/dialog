@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -45,10 +46,13 @@ final class AddLocationController extends AbstractRegulationController
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
+
         $command = SaveRegulationLocationCommand::create($regulationOrderRecord);
 
         $form = $this->formFactory->create(LocationFormType::class, $command, [
             'action' => $this->router->generate('fragment_regulations_location_add', ['uuid' => $uuid]),
+            'administrators' => $administrators,
         ]);
         $form->handleRequest($request);
         $commandFailed = false;
