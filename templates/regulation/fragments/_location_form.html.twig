@@ -188,7 +188,7 @@
                                 'change->form-reveal#openByValue'
                             },
                         }) }}
-				<div data-form-reveal-target="section" data-value="departmentalRoad" hidden="{{ form.roadType.vars.value != 'departmentalRoad' }}">
+				<div data-form-reveal-target="section" data-value="departmentalRoad" {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}>
 					{{ form_row(form.administrator, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
@@ -208,7 +208,7 @@
                         }) }}
 				</div>
 
-				<div data-form-reveal-target="section" data-value="lane" hidden="{{ form.roadType.vars.value != 'lane' }}">
+				<div data-form-reveal-target="section" data-value="lane" {% if form.roadType.vars.value != 'lane'%} hidden {% endif%}>
 
 					<div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
 						{{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}

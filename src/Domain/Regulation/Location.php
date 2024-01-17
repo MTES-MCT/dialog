@@ -111,8 +111,8 @@ class Location
 
     public function update(
         string $roadType,
-        string $cityCode,
-        string $cityLabel,
+        ?string $cityCode,
+        ?string $cityLabel,
         ?string $administrator,
         ?string $roadNumber,
         ?string $roadName,
