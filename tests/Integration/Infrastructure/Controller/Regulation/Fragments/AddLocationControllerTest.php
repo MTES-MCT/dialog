@@ -24,6 +24,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '';
         $values['location_form']['cityLabel'] = '';
         $values['location_form']['measures'][0]['type'] = '';
@@ -48,6 +49,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
@@ -322,6 +324,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
@@ -358,6 +361,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Bad period
         $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
@@ -413,6 +417,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         // Get the raw values.
         $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du GEOCODING_FAILURE';
@@ -463,6 +468,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
+        $form['location_form[roadType]'] = 'lane';
         $form['location_form[cityCode]'] = str_repeat('a', 6);
         $form['location_form[cityLabel]'] = str_repeat('a', 256);
         $form['location_form[roadName]'] = str_repeat('a', 256);

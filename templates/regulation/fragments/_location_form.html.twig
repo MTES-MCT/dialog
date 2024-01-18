@@ -178,7 +178,7 @@
 			{{ form_errors(form) }}
 
 			<div
-				data-controller="form-reveal autocomplete" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
+				data-controller="form-reveal" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
 				
 				{{ form_row(form.roadType, {
                             group_class: 'fr-select-group',
@@ -192,9 +192,6 @@
 					{{ form_row(form.administrator, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
-                            attr: {
-                                'data-autocomplete-target': 'input',
-                            },
                         }) }}
 
 					<ul id="{{ form.administrator.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.city.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
@@ -244,66 +241,6 @@
 					</div>
 				</div>
 			</div>
-
-			{# <div
-			                    class="fr-x-autocomplete-wrapper"
-			                    data-controller="autocomplete"
-			                    data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
-			                    data-autocomplete-query-param-value="search"
-			                    data-autocomplete-min-length-value="3"
-			                    data-autocomplete-delay-value="500"
-			                >
-			                    {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
-			    
-			                    {{ form_row(form.cityLabel, {
-			                        group_class: 'fr-input-group',
-			                        widget_class: 'fr-input',
-			                        attr: {
-			                            'data-autocomplete-target': 'input',
-			                        },
-			                    }) }}
-			
-			                    <ul
-			                        id="{{ form.cityLabel.vars.id }}-results"
-			                        role="listbox"
-			                        aria-label="{{ 'regulation.location.city.results_label'|trans }}"
-			                        class="fr-x-autocomplete"
-			                        data-autocomplete-target="results"
-			                    ></ul>
-			                </div>
-			
-			                <div
-			                    class="fr-x-autocomplete-wrapper"
-			                    data-controller="autocomplete"
-			                    data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
-			                    data-autocomplete-query-param-value="search"
-			                    data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
-			                    data-autocomplete-min-length-value="3"
-			                    data-autocomplete-delay-value="500"
-			                >
-			                    {{ form_row(form.roadName, {
-			                        group_class: 'fr-input-group',
-			                        widget_class: 'fr-input',
-			                        attr: {
-			                            'data-autocomplete-target': 'input',
-			                        },
-			                    }) }}
-			
-			                    <ul
-			                        id="{{ form.roadName.vars.id }}-results"
-			                        role="listbox"
-			                        aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
-			                        class="fr-x-autocomplete"
-			                        data-autocomplete-target="results"
-			                    ></ul>
-			                </div>
-			
-			                <div class="fr-container--fluid">
-			                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
-			                        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-			                        {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-			                    </div>
-			                </div> #}
 
 			<div data-controller="form-collection" data-form-collection-prototype-key-value="measure" data-form-collection-next-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}" data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_name__', '__measure_position__')|e('html_attr') }}" class="fr-mb-4w">
 				<ul id="measure-list" class="fr-raw-list fr-mb-2w" data-testid="measure-list" data-form-collection-target="collectionContainer" data-action="remove:child-removed->form-collection#syncPositions" aria-label="{{ form.measures.vars.label|trans }}">

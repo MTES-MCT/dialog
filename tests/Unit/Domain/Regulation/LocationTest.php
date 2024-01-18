@@ -28,6 +28,9 @@ final class LocationTest extends TestCase
         $location = new Location(
             'b4812143-c4d8-44e6-8c3a-34688becae6e',
             $regulationOrder,
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',
@@ -38,6 +41,9 @@ final class LocationTest extends TestCase
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
         $this->assertSame($regulationOrder, $location->getRegulationOrder());
+        $this->assertSame('lane', $location->getRoadType());
+        $this->assertSame(null, $location->getAdministrator());
+        $this->assertSame(null, $location->getRoadNumber());
         $this->assertSame('44195', $location->getCityCode());
         $this->assertSame('Savenay', $location->getCityLabel());
         $this->assertSame('Route du Grand Brossais', $location->getRoadNAme());
@@ -70,6 +76,9 @@ final class LocationTest extends TestCase
         $location = new Location(
             '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             $regulationOrder,
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',
@@ -81,6 +90,9 @@ final class LocationTest extends TestCase
             ]),
         );
 
+        $newRoadType = 'lane';
+        $newAdministrator = null;
+        $newRoadNumber = null;
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
         $newRoadName = 'La Forge Hervé';
@@ -92,15 +104,22 @@ final class LocationTest extends TestCase
         ]);
 
         $location->update(
+            $newRoadType,
             $newCityCode,
             $newCityLabel,
+            $newAdministrator,
+            $newRoadNumber,
             $newRoadName,
             $newFromHouseNumber,
             $newToHouseNumber,
             $newGeometry,
         );
 
-        $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
+        $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+        $location->getUuid());
+        $this->assertSame($newRoadType, $location->getRoadType());
+        $this->assertSame($newAdministrator, $location->getAdministrator());
+        $this->assertSame($newRoadNumber, $location->getRoadNumber());
         $this->assertSame($newCityCode, $location->getCityCode());
         $this->assertSame($newCityLabel, $location->getCityLabel());
         $this->assertSame($newRoadName, $location->getRoadName());

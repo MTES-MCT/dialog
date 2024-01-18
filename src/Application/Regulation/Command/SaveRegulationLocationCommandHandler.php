@@ -109,8 +109,8 @@ final class SaveRegulationLocationCommandHandler
 
         $command->location->update(
             roadType : $command->roadType,
-            cityLabel: $command->cityLabel,
             cityCode : $command->cityCode,
+            cityLabel: $command->cityLabel,
             administrator : $command->administrator,
             roadNumber : $command->roadNumber,
             roadName: $command->roadName,
