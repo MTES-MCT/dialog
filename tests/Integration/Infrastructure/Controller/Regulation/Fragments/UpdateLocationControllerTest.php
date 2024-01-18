@@ -219,7 +219,6 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
     }
 
-    /** @group only */
     public function testRemoveMeasure(): void
     {
         $client = $this->login();
