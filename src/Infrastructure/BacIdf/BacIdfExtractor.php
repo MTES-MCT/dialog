@@ -35,6 +35,7 @@ final class BacIdfExtractor
             return false;
         }
 
+        // TODO: return a skip message?
         foreach ($row['REG_CIRCULATION'] as $regCirculation) {
             if (!\array_key_exists('REG_VOIES', $regCirculation['CIRC_REG'])) {
                 // Full-city regulation, skip

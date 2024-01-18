@@ -6,6 +6,7 @@ namespace App\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
@@ -24,6 +25,7 @@ final class BacIdfExecutor
         private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private string $bacIdfOrgId,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -37,8 +39,9 @@ final class BacIdfExecutor
         $numCreated = 0;
         $numSkipped = 0;
         $numErrors = 0;
+        $startTime = $this->dateUtils->getMicroTime();
 
-        $this->logger->debug('started');
+        $this->logger->info('started');
 
         try {
             try {
@@ -51,17 +54,18 @@ final class BacIdfExecutor
                 ->findIdentifiersForSourceInOrganization(RegulationOrderRecordSourceEnum::BAC_IDF->value, $organization);
 
             foreach ($this->extractor->iterExtract(ignoreIDs: $existingIdentifiers) as $record) {
+                $this->logger->debug('before-transform', ['record' => $record]);
                 $result = $this->transformer->transform($record, $organization);
 
                 ++$numProcessed;
 
                 if (empty($result->command)) {
-                    $this->logger->debug('skipped', $result->messages);
+                    $this->logger->info('skipped', $result->messages);
                     ++$numSkipped;
                 } else {
                     try {
                         $this->commandBus->handle($result->command);
-                        $this->logger->debug('created', ['command' => $result->command]);
+                        $this->logger->info('created', ['command' => $result->command]);
                         ++$numCreated;
                     } catch (ImportBacIdfRegulationFailedException $exc) {
                         $this->logger->error('failed', ['command' => $result->command, 'exc' => $exc]);
@@ -70,11 +74,14 @@ final class BacIdfExecutor
                 }
             }
         } catch (\Exception $exc) {
-            $this->logger->error($exc);
+            $this->logger->error('exception', ['exc' => $exc]);
 
             throw new BacIdfException($exc->getMessage());
         } finally {
-            $this->logger->debug('done', [
+            $endTime = $this->dateUtils->getMicroTime();
+            $elapsedSeconds = $endTime - $startTime;
+
+            $this->logger->info('done', [
                 'numProcessed' => $numProcessed,
                 'numCreated' => $numCreated,
                 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
@@ -82,6 +89,7 @@ final class BacIdfExecutor
                 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
                 'numErrors' => $numErrors,
                 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
+                'elapsedSeconds' => round($elapsedSeconds, 2),
             ]);
         }
     }

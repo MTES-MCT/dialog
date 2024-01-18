@@ -31,10 +31,10 @@ final class BacIdfTransformer
         }
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
-        $generalInfo->organization = $organization;
         $generalInfo->identifier = $row['ARR_REF'];
         $generalInfo->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfo->description = $row['ARR_NOM'];
+        $generalInfo->organization = $organization;
 
         $date = $row['ARR_DUREE']['PERIODE_DEBUT']['$date'];
 
@@ -50,7 +50,7 @@ final class BacIdfTransformer
 
         $generalInfo->startDate = new \DateTimeImmutable($date);
 
-        $locations = [];
+        $locationCommands = [];
 
         foreach ($row['REG_CIRCULATION'] as $regCirculation) {
             if (empty($regCirculation['CIRC_REG'])) {
@@ -76,7 +76,7 @@ final class BacIdfTransformer
                     continue;
                 }
 
-                $location = new SaveRegulationLocationCommand();
+                $locationCommand = new SaveRegulationLocationCommand();
 
                 $geometries = [];
 
@@ -89,25 +89,23 @@ final class BacIdfTransformer
                     'geometries' => $geometries,
                 ];
 
-                $location->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
-                $location->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
-                $location->roadName = $regVoie['VOIE_NAME'];
-                $location->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
-                $location->fromHouseNumber = null;
-                $location->toHouseNumber = null;
+                $locationCommand->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
+                $locationCommand->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
+                $locationCommand->roadName = $regVoie['VOIE_NAME'];
+                $locationCommand->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
+                $locationCommand->fromHouseNumber = null;
+                $locationCommand->toHouseNumber = null;
+                $locationCommand->measures[] = $measureCommand;
 
-                // TODO add measure
-                $location->measures[] = $measureCommand;
-
-                $locations[] = $location;
+                $locationCommands[] = $locationCommand;
             }
         }
 
-        if (\count($locations) === 0) {
+        if (\count($locationCommands) === 0) {
             return new BacIdfTransformerResult(null, [['reason' => 'no_locations_gathered']]);
         }
 
-        $command = new ImportBacIdfRegulationCommand($generalInfo, $locations);
+        $command = new ImportBacIdfRegulationCommand($generalInfo, $locationCommands);
 
         return new BacIdfTransformerResult($command, []);
     }
@@ -116,73 +114,144 @@ final class BacIdfTransformer
     {
         $vehicleSetCommand = new SaveVehicleSetCommand();
 
-        $allVehicles = true;
+        $isHeavyGoodsVehicle = false;
+        $isDimensions = false;
 
         if (isset($regCirculation['CIRC_VEHICULES'])) {
             $vehicules = $regCirculation['CIRC_VEHICULES'];
 
             // NOTE: Most of the time, BAC-IDF think in terms of "which vehicles are forbidden".
             // But DiaLog thinks in terms of "what are the maximum allowed characteristics".
-            // => Most of the timeheir 'min' become a 'max' for us.
-            // Some decrees in the data use MAX values, but they are always a mistake.
+            // So, most of the time their 'min' become a 'max' for us.
+            // Some decrees in the data use "max" values, but they are always a mistake and should be considered as "min" values.
 
             if (isset($vehicules['VEH_POIDS'])) {
                 $vehPoids = $vehicules['VEH_POIDS'];
 
                 if (isset($vehPoids['VEH_PTAC_MIN'])) {
                     $vehicleSetCommand->heavyweightMaxWeight = $vehPoids['VEH_PTAC_MIN'];
-                    $allVehicles = false;
+                    $isHeavyGoodsVehicle = true;
                 }
                 if (isset($vehPoids['VEH_PTAC_MAX'])) {
                     $vehicleSetCommand->heavyweightMaxWeight = $vehPoids['VEH_PTAC_MAX'];
-                    $allVehicles = false;
+                    $isHeavyGoodsVehicle = true;
                 }
             }
 
             if (isset($vehicules['VEH_DIMENSION'])) {
                 $dimensions = $vehicules['VEH_DIMENSION'];
 
-                if (isset($dimensions['VEH_LARG_MIN'])) {
-                    $vehicleSetCommand->heavyweightMaxWidth = $dimensions['VEH_LARG_MIN'];
-                    $allVehicles = false;
+                if (isset($dimensions['VEH_LARG_MIN']) && $dimensions['VEH_LARG_MIN'] > 0) {
+                    $vehicleSetCommand->maxWidth = $dimensions['VEH_LARG_MIN'];
+                    $isDimensions = true;
                 }
-                if (isset($dimensions['VEH_LARG_MAX'])) {
-                    $vehicleSetCommand->heavyweightMaxWidth = $dimensions['VEH_LARG_MAX'];
-                    $allVehicles = false;
-                }
-
-                if (isset($dimensions['VEH_LONG_MIN'])) {
-                    $vehicleSetCommand->heavyweightMaxLength = $dimensions['VEH_LONG_MIN'];
-                    $allVehicles = false;
-                }
-                if (isset($dimensions['VEH_LONG_MAX'])) {
-                    $vehicleSetCommand->heavyweightMaxLength = $dimensions['VEH_LONG_MAX'];
-                    $allVehicles = false;
+                if (isset($dimensions['VEH_LARG_MAX']) && $dimensions['VEH_LARG_MAX'] > 0) {
+                    $vehicleSetCommand->maxWidth = $dimensions['VEH_LARG_MAX'];
+                    $isDimensions = true;
                 }
 
-                if (isset($dimensions['VEH_HAUT_MIN'])) {
-                    $vehicleSetCommand->heavyweightMaxHeight = $dimensions['VEH_HAUT_MIN'];
-                    $allVehicles = false;
+                if (isset($dimensions['VEH_LONG_MIN']) && $dimensions['VEH_LONG_MIN'] > 0) {
+                    $vehicleSetCommand->maxLength = $dimensions['VEH_LONG_MIN'];
+                    $isDimensions = true;
                 }
-                if (isset($dimensions['VEH_HAUT_MAX'])) {
-                    $vehicleSetCommand->heavyweightMaxHeight = $dimensions['VEH_HAUT_MAX'];
-                    $allVehicles = false;
+                if (isset($dimensions['VEH_LONG_MAX']) && $dimensions['VEH_LONG_MAX'] > 0) {
+                    $vehicleSetCommand->maxLength = $dimensions['VEH_LONG_MAX'];
+                    $isDimensions = true;
+                }
+
+                if (isset($dimensions['VEH_HAUT_MIN']) && $dimensions['VEH_HAUT_MIN'] > 0) {
+                    $vehicleSetCommand->maxHeight = $dimensions['VEH_HAUT_MIN'];
+                    $isDimensions = true;
+                }
+                if (isset($dimensions['VEH_HAUT_MAX']) && $dimensions['VEH_HAUT_MAX'] > 0) {
+                    $vehicleSetCommand->maxHeight = $dimensions['VEH_HAUT_MAX'];
+                    $isDimensions = true;
                 }
             }
         }
 
-        $vehicleSetCommand->allVehicles = $allVehicles;
+        $vehicleSetCommand->allVehicles = !$isHeavyGoodsVehicle && !$isDimensions;
 
-        if (!$allVehicles) {
-            // TODO: restrictedTypes is required to save the other fields
-            $vehicleSetCommand->restrictedTypes = [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value];
+        if ($isHeavyGoodsVehicle) {
+            $vehicleSetCommand->restrictedTypes[] = VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value;
             if (!$vehicleSetCommand->heavyweightMaxWeight) {
                 $vehicleSetCommand->heavyweightMaxWeight = 3.5;
             }
         }
 
-        // TODO
-        // $regCirculation['CIRC_REG']['REG_EXCEPT']
+        if ($isDimensions) {
+            $vehicleSetCommand->restrictedTypes[] = VehicleTypeEnum::DIMENSIONS->value;
+        }
+
+        $exemptedTypes = [];
+        $otherExemptedTypes = [];
+
+        if (isset($regCirculation['CIRC_REG']['REG_EXCEPT'])) {
+            $regExcept = $regCirculation['CIRC_REG']['REG_EXCEPT'];
+
+            foreach ($regExcept as $value) {
+                switch ($value) {
+                    case 'SECOURS':
+                        $exemptedTypes[] = VehicleTypeEnum::EMERGENCY_SERVICES->value;
+                        break;
+                    case 'VEHICULES DE SERVICES':
+                        $otherExemptedTypes[] = 'Véhicules de services';
+                        break;
+                    case 'TRANSPORT DE DECHETS':
+                        $otherExemptedTypes[] = 'Transport de déchets';
+                        break;
+                    case 'POLICE':
+                        $otherExemptedTypes[] = 'Police';
+                        break;
+                    case 'POMPIERS':
+                        $otherExemptedTypes[] = 'Pompiers';
+                        break;
+                    case 'OTHER':
+                        $value = trim($regCirculation['CIRC_REG']['REG_EXCEPT_DESC'], "., \n\r\t\v");
+
+                        if (str_starts_with($value, "Tous moteurs de quelque nature qu'ils soient")) {
+                            // This one does not actually define an "exception"
+                            break;
+                        }
+
+                        // Summarize the longest ones...
+
+                        if (str_starts_with($value, 'Les véhicules de charges et de commerces dont le conducteur peut justifier sa présence ')) {
+                            $value = 'Véhicules autorisés';
+                        }
+
+                        if (str_starts_with($value, "véhicules d'intervention des Services Publics de l'Etat ")) {
+                            $value = 'Véhicules de services, transports en commun, livraisons';
+                        }
+
+                        if (str_starts_with($value, "éhicules d'intérêt général tels que définis")) { // sic: "éhicules"
+                            $value = "Véhicules d'intérêt général, véhicules de démanagement, véhicules de transport de matériel de chantier";
+                        }
+
+                        // Clean up some of the values...
+                        $substitutions = [
+                            'Les véhicules de ces catégories pourront avoir accès à cette rue, uniquement pour des motifs obligatoires : ' => '',
+                            'Les véhicules de ces catégories pourront avoir accès à cette rue, uniquement pour des motifs exceptionnels : ' => '',
+                            'La circulation est interdite aux véhicules de plus de 3,5 tonnes, dans la rue Mahmoud Darwich, sauf aux véhicules de service,' => 'véhicules',
+                        ];
+                        foreach ($substitutions as $search => $replace) {
+                            $value = str_replace($search, $replace, $value);
+                        }
+
+                        $otherExemptedTypes[] = $value;
+                        break;
+                }
+            }
+        }
+
+        if ($otherExemptedTypes) {
+            $exemptedTypes[] = VehicleTypeEnum::OTHER->value;
+            $vehicleSetCommand->otherExemptedTypeText = implode(', ', $otherExemptedTypes);
+        }
+
+        $vehicleSetCommand->exemptedTypes = $exemptedTypes;
+
+        dump($vehicleSetCommand);
 
         return $vehicleSetCommand;
     }

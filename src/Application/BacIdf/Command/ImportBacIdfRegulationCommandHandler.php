@@ -6,6 +6,7 @@ namespace App\Application\BacIdf\Command;
 
 use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -25,7 +26,11 @@ final class ImportBacIdfRegulationCommandHandler
         foreach ($command->locationCommands as $locationCommand) {
             $locationCommand->regulationOrderRecord = $regulationOrderRecord;
 
-            $location = $this->commandBus->handle($locationCommand);
+            try {
+                $location = $this->commandBus->handle($locationCommand);
+            } catch (GeocodingFailureException $exc) {
+                throw new ImportBacIdfRegulationFailedException($exc->getMessage());
+            }
 
             $regulationOrderRecord->getRegulationOrder()->addLocation($location);
         }
