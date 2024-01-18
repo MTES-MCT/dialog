@@ -21,6 +21,24 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
+    private const COUNT_LOCATIONS_QUERY = '
+        SELECT count(DISTINCT(_loc.uuid))
+        FROM App\Domain\Regulation\LocationNew _locNew
+        INNER JOIN _locNew.measure _m
+        INNER JOIN _m.location _loc
+        INNER JOIN _loc.regulationOrder _ro
+        WHERE _ro.uuid = ro.uuid';
+
+    private const GET_LOCATION_QUERY = "
+        FIRST(
+            SELECT CONCAT(_locNew2.roadName, '#', _locNew2.cityLabel, '#',  _locNew2.cityCode)
+            FROM App\Domain\Regulation\LocationNew _locNew2
+            INNER JOIN _locNew2.measure _m2
+            INNER JOIN _m2.location _loc2
+            INNER JOIN _loc2.regulationOrder _ro2
+            WHERE _ro2.uuid = ro.uuid
+        )";
+
     public function findRegulationsByOrganizations(
         array $organizationUuids,
         int $maxItemsPerPage,
@@ -28,13 +46,15 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         bool $isPermanent,
     ): array {
         $query = $this->createQueryBuilder('roc')
+            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, ro.startDate, ro.endDate')
+            ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
+            ->addSelect(sprintf('(%s) as location', self::GET_LOCATION_QUERY))
             ->where('roc.organization IN (:organizationUuids)')
             ->setParameter('organizationUuids', $organizationUuids)
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
-            ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
-            ->addGroupBy('ro, roc')
+            ->addGroupBy('ro, roc, o')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
             ->getQuery();
