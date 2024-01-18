@@ -6,8 +6,10 @@ namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
 use PHPUnit\Framework\TestCase;
 
 final class LocationNewTest extends TestCase
@@ -85,5 +87,41 @@ final class LocationNewTest extends TestCase
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
         $this->assertSame($newGeometry, $location->getGeometry());
+    }
+
+    public function testCreate(): void
+    {
+        $measure = $this->createMock(Measure::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+
+        $location = new Location(
+            uuid: '504a1515-af1a-432c-bcc3-7938eca2b33f',
+            regulationOrder: $regulationOrder,
+            cityCode: '44195',
+            cityLabel: 'Savenay',
+            roadName: 'Route du Grand Brossais',
+            fromHouseNumber: '15',
+            toHouseNumber: '37bis',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
+        );
+
+        $locationNew = new LocationNew(
+            uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+            measure: $measure,
+            cityCode: '44195',
+            cityLabel: 'Savenay',
+            roadName: 'Route du Grand Brossais',
+            fromHouseNumber: '15',
+            toHouseNumber: '37bis',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
+        );
+
+        $this->assertEquals($locationNew, LocationNew::fromLocation('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $measure, $location));
     }
 }

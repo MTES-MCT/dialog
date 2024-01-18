@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Command\Location;
+namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
