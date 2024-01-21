@@ -36,6 +36,7 @@ final class GetRegulationOrderRecordSummaryQueryHandler
 
         return new RegulationOrderRecordSummaryView(
             uuid: $regulationOrderRecord->getUuid(),
+            regulationOrderUuid: $regulationOrder->getUuid(),
             identifier: $regulationOrder->getIdentifier(),
             organizationUuid: $regulationOrderRecord->getOrganizationUuid(),
             organizationName: $regulationOrderRecord->getOrganizationName(),

@@ -13,4 +13,6 @@ interface LocationRepositoryInterface
     public function delete(Location $location): void;
 
     public function findOneByUuid(string $uuid): ?Location;
+
+    public function findGeoJsonGeometriesByRegulationOrderUuid(string $uuid): array;
 }

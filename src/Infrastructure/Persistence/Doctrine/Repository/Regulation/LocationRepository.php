@@ -41,4 +41,27 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ->getOneOrNullResult()
         ;
     }
+
+    public function findGeoJsonGeometriesByRegulationOrderUuid(string $uuid): array
+    {
+        $geometryStrings = $this->createQueryBuilder('loc')
+            ->select(
+                'ST_AsGeoJSON(loc.geometry)',
+            )
+            ->where(
+                'loc.geometry IS NOT NULL',
+                'loc.regulationOrder = :uuid',
+            )
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        $geometries = [];
+
+        foreach ($geometryStrings as $str) {
+            $geometries[] = json_decode($str, associative: true, flags: JSON_THROW_ON_ERROR);
+        }
+
+        return $geometries;
+    }
 }
