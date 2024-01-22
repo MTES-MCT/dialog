@@ -7,7 +7,7 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 {% block form_row %}
   {%- set widget_attr = {} -%}
   {%- if errors|length > 0 -%}
-    {%- set widget_attr = {attr: {'aria-describedby': id ~"_error", 'autofocus': null}} -%}
+    {%- set widget_attr = {attr: {'aria-describedby': id ~"_error"}} -%}
     {%- if group_class is defined -%}
       {# DSFR generally uses e.g. "fr-input-group fr-input-group--error" #}
       {%- set group_class = group_class ~ ' ' ~ (group_error_class|default(group_class ~'--error')) -%}
@@ -135,6 +135,13 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
     </div>
   {% endif %}
 {% endblock form_errors %}
+
+{% block form_widget %}
+  {% if errors|length > 0 %}
+      {%- set attr = attr|merge({'autofocus': null}) -%}
+  {% endif %}
+  {{ parent() }}
+{% endblock form_widget %}
 
 {% block choice_widget %}
   {%- set widget_class = (widget_class|default('') ~ ' ' ~ attr.class|default(''))|trim -%}
