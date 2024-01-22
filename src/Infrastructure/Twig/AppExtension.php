@@ -6,6 +6,7 @@ namespace App\Infrastructure\Twig;
 
 use App\Application\StringUtilsInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
 
 class AppExtension extends \Twig\Extension\AbstractExtension
 {
@@ -26,6 +27,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
             new \Twig\TwigFunction('app_vehicle_type_icon_name', [$this, 'getVehicleTypeIconName']),
             new \Twig\TwigFunction('app_is_fieldset_error', [$this, 'isFieldsetError']),
+            new \Twig\TwigFunction('app_is_feature_enabled', [$this, 'isFeatureEnabled']),
         ];
     }
 
@@ -84,5 +86,18 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         $payload = $error->getCause()->getConstraint()->payload;
 
         return $payload && \array_key_exists('fieldset', $payload) && $payload['fieldset'] === $fieldset;
+    }
+
+    public function isFeatureEnabled(string $featureName, Request $request = null): bool
+    {
+        if (\array_key_exists('FEATURE_' . $featureName . '_ENABLED', $_ENV)) {
+            return true;
+        }
+
+        if ($request && $request->query->get('FEATURE_' . $featureName . '_ENABLED')) {
+            return true;
+        }
+
+        return false;
     }
 }

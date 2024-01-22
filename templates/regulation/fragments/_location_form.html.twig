@@ -177,18 +177,26 @@
 			{{ form_start(form, {attr: {id: 'location-form'}}) }}
 			{{ form_errors(form) }}
 
-			<div
-				data-controller="form-reveal" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
-				
-				{{ form_row(form.roadType, {
-                            group_class: 'fr-select-group',
-                            widget_class: 'fr-select',
-                            row_attr: {
-                                'data-action':
-                                'change->form-reveal#openByValue'
-                            },
-                        }) }}
-				<div data-form-reveal-target="section" data-value="departmentalRoad" {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}>
+			{% set roadTypeFeatureEnabled = app_is_feature_enabled('ROAD_TYPE', app.request) %}
+
+			{% if roadTypeFeatureEnabled %}
+				<div
+					data-controller="form-reveal" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
+					
+					{{ form_row(form.roadType, {
+															group_class: 'fr-select-group',
+															widget_class: 'fr-select',
+															row_attr: {
+																	'data-action':
+																	'change->form-reveal#openByValue'
+															},
+													}) }}
+			{% else %}
+				<input type="hidden" value="lane" name="{{ form.roadType.vars.name }}"> 
+				{% do form.roadType.setRendered %}
+			{% endif %}
+
+				<div data-form-reveal-target="section" data-value="departmentalRoad" {% if not roadTypeFeatureEnabled or form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}>
 					{{ form_row(form.administrator, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
@@ -205,7 +213,7 @@
                         }) }}
 				</div>
 
-				<div data-form-reveal-target="section" data-value="lane" {% if form.roadType.vars.value != 'lane'%} hidden {% endif%}>
+				<div data-form-reveal-target="section" data-value="lane" {% if roadTypeFeatureEnabled and form.roadType.vars.value != 'lane'%} hidden {% endif%}>
 
 					<div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
 						{{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
@@ -240,7 +248,9 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			{% if roadTypeFeatureEnabled %}
+				</div>
+			{% endif %}
 
 			<div data-controller="form-collection" data-form-collection-prototype-key-value="measure" data-form-collection-next-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}" data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_name__', '__measure_position__')|e('html_attr') }}" class="fr-mb-4w">
 				<ul id="measure-list" class="fr-raw-list fr-mb-2w" data-testid="measure-list" data-form-collection-target="collectionContainer" data-action="remove:child-removed->form-collection#syncPositions" aria-label="{{ form.measures.vars.label|trans }}">
