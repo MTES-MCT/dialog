@@ -111,8 +111,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $locationNew = new LocationNew(
             uuid: '9dbbe0ce-2672-4f18-80b9-06d0102cb855',
             measure: $createdMeasure,
+            roadType: $this->roadType,
             cityCode: $this->cityCode,
             cityLabel: $this->cityLabel,
+            administrator: $this->administrator,
+            roadNumber: $this->roadNumber,
             roadName: $this->roadName,
             fromHouseNumber: $this->fromHouseNumber,
             geometry: $this->geometry,
@@ -127,6 +130,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('addMeasure')
             ->with($createdMeasure);
+        $createdLocation
+            ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn($this->roadType);
         $createdLocation
             ->expects(self::once())
             ->method('getCityCode')
@@ -286,8 +293,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->roadType,
                 $this->cityCode,
                 $this->cityLabel,
+                $this->administrator,
+                $this->roadNumber,
                 $this->roadName,
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
@@ -382,10 +392,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
         $command->roadType = $this->roadType;
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
-        $command->cityLabel = $this->cityLabel;
-        $command->cityCode = $this->cityCode;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
@@ -501,12 +511,12 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $location
             ->expects(self::never())
             ->method('getRoadType');
-            $location
-            ->expects(self::never())
-            ->method('getAdministrator');
-            $location
-            ->expects(self::never())
-            ->method('getRoadNumber');
+        $location
+        ->expects(self::never())
+        ->method('getAdministrator');
+        $location
+        ->expects(self::never())
+        ->method('getRoadNumber');
         $location
             ->expects(self::never())
             ->method('getCityLabel');

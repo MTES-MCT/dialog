@@ -29,9 +29,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalRegulationOrderLocation1 = new Location(
             self::UUID_TYPICAL,
             $this->getReference('typicalRegulationOrder'),
-        $location1 = new Location(
-            '51449b82-5032-43c8-a427-46b9ddb44762',
-            $this->getReference('regulationOrder'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -49,7 +46,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalRegulationOrderLocation2 = new Location(
             '34247125-38f4-4e69-b5d7-5516a577d149',
             $this->getReference('typicalRegulationOrder'),
-            $this->getReference('regulationOrder'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -70,7 +66,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalRegulationOrderLocation3 = new Location(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
             $this->getReference('typicalRegulationOrder'),
-            $this->getReference('regulationOrder'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -91,9 +86,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation1 = new Location(
             self::UUID_PUBLISHED,
             $this->getReference('publishedRegulationOrder'),
-        $location2 = new Location(
-            '2d79e1ff-c991-4767-b8c0-36b644038d0f',
-            $this->getReference('regulationOrder2'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -111,7 +103,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation2 = new Location(
             '064ca782-771c-783f-8000-e67473eabea6',
             $this->getReference('publishedRegulationOrder'),
-            $this->getReference('regulationOrder2'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -129,7 +120,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation3 = new Location(
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
             $this->getReference('publishedRegulationOrder'),
-            $this->getReference('regulationOrder2'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -150,9 +140,6 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $permanentRegulationOrderLocation = new Location(
             self::UUID_PERMANENT_ONLY_ONE,
             $this->getReference('regulationOrderPermanent'),
-        $location3 = new Location(
-            'f15ed802-fa9b-4d75-ab04-d62ea46597e9',
-            $this->getReference('regulationOrder3'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -173,6 +160,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $fullCityLocation = new Location(
             self::UUID_FULL_CITY,
             $this->getReference('fullCityRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '75118',
             cityLabel: 'Paris 18e Arrondissement (75018)',
             roadName: null,

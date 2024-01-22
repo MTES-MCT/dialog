@@ -79,8 +79,11 @@ final class SaveRegulationLocationCommandHandler
                 $locationNew = $measureCommand->measure->getLocationNew();
                 if ($locationNew) {
                     $locationNew->update(
+                        roadType: $command->roadType,
                         cityCode: $command->cityCode,
                         cityLabel: $command->cityLabel,
+                        administrator : $command->administrator,
+                        roadNumber : $command->roadNumber,
                         roadName: $command->roadName,
                         fromHouseNumber: $command->fromHouseNumber,
                         toHouseNumber: $command->toHouseNumber,

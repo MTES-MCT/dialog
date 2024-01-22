@@ -116,7 +116,7 @@ final class LocationTest extends TestCase
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-        $location->getUuid());
+            $location->getUuid());
         $this->assertSame($newRoadType, $location->getRoadType());
         $this->assertSame($newAdministrator, $location->getAdministrator());
         $this->assertSame($newRoadNumber, $location->getRoadNumber());

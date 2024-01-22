@@ -16,8 +16,6 @@ use App\Domain\Regulation\Enum\LocationTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
-use Doctrine\Common\Annotations\Annotation\Enum;
-use Doctrine\Common\Collections\Expr\Value;
 
 final class EudonetParisTransformer
 {

@@ -23,8 +23,11 @@ final class LocationNewTest extends TestCase
         $location = new LocationNew(
             uuid: 'b4812143-c4d8-44e6-8c3a-34688becae6e',
             measure: $measure,
+            roadType: 'lane',
             cityCode: '44195',
             cityLabel: 'Savenay',
+            administrator: '',
+            roadNumber: '',
             roadName: 'Route du Grand Brossais',
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
@@ -48,8 +51,11 @@ final class LocationNewTest extends TestCase
         $location = new LocationNew(
             uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             measure: $measure,
+            roadType: 'lane',
             cityCode: '44195',
             cityLabel: 'Savenay',
+            administrator: '',
+            roadNumber: '',
             roadName: 'Route du Grand Brossais',
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
@@ -59,8 +65,11 @@ final class LocationNewTest extends TestCase
             ]),
         );
 
+        $newRoadType = 'lane';
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
+        $newAdministrator = '';
+        $newRoadNumber = '';
         $newRoadName = 'La Forge Hervé';
         $newFromHouseNumber = '1';
         $newToHouseNumber = '4';
@@ -70,8 +79,11 @@ final class LocationNewTest extends TestCase
         ]);
 
         $location->update(
+            $newRoadType,
             $newCityCode,
             $newCityLabel,
+            $newAdministrator,
+            $newRoadNumber,
             $newRoadName,
             $newFromHouseNumber,
             $newToHouseNumber,
@@ -79,8 +91,11 @@ final class LocationNewTest extends TestCase
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
+        $this->assertSame($newRoadType, $location->getRoadType());
         $this->assertSame($newCityCode, $location->getCityCode());
         $this->assertSame($newCityLabel, $location->getCityLabel());
+        $this->assertSame($newAdministrator, $location->getAdministrator());
+        $this->assertSame($newRoadNumber, $location->getRoadNumber());
         $this->assertSame($newRoadName, $location->getRoadName());
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
