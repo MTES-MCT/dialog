@@ -160,7 +160,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->innerJoin('loc.measures', 'm')
-            ->innerJoin('m.locations', 'locNew')
+            ->innerJoin('m.locationsNew', 'locNew')
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)

@@ -76,11 +76,11 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testPublishedRegulationRendering(): void
     {
         $client = $this->login();
-        $cralwer = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=5');
+        $crawler = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=4');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $rows = $cralwer->filter('#temporary-panel tbody > tr');
+        $rows = $crawler->filter('#temporary-panel tbody > tr');
         $this->assertSame(1, $rows->count());
 
         $row0 = $rows->eq(0)->filter('td');

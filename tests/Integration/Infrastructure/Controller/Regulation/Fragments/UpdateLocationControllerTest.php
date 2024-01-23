@@ -75,6 +75,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_maxSpeed_error')->text());
     }
 
+    /** @group only */
     public function testEditAndAddMeasure(): void
     {
         $client = $this->login();
@@ -88,9 +89,9 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         // Edit
-        $values['location_form']['measures'][0]['type'] = 'speedLimitation';
-        $values['location_form']['measures'][0]['maxSpeed'] = 60;
-        $values['location_form']['measures'][0]['periods'] = []; // Remove period
+        $values['location_form']['measures'][1]['type'] = 'speedLimitation';
+        $values['location_form']['measures'][1]['maxSpeed'] = 60;
+        $values['location_form']['measures'][1]['periods'] = []; // Remove period
 
         // Add
         $values['location_form']['measures'][2]['type'] = 'alternateRoad';
@@ -112,7 +113,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
-        $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $detailItems->eq(2)->text());
+        $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $detailItems->eq(3)->text());
         $this->assertSame('Circulation alternée du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour tous les véhicules', $detailItems->eq(4)->text());
     }
 

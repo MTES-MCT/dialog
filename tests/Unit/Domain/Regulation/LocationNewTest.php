@@ -89,7 +89,7 @@ final class LocationNewTest extends TestCase
         $this->assertSame($newGeometry, $location->getGeometry());
     }
 
-    public function testCreate(): void
+    public function testFromLocation(): void
     {
         $measure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
