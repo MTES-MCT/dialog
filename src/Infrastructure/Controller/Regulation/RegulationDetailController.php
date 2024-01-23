@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetGeneralInformationQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
+use App\Application\Regulation\View\GeneralInformationView;
 use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -41,15 +43,19 @@ final class RegulationDetailController extends AbstractRegulationController
             return $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
         });
 
+        /** @var GeneralInformationView */
+        $generalInformation = $this->queryBus->handle(new GetGeneralInformationQuery($uuid));
+
         return new Response(
             $this->twig->render(
                 name: 'regulation/detail.html.twig',
                 context: [
                     'regulationOrderRecord' => $regulationOrderRecord,
-                    'isDraft' => $regulationOrderRecord->isDraft(),
+                    'isDraft' => $generalInformation->isDraft(),
                     'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
                     'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
                     'uuid' => $uuid,
+                    'generalInformation' => $generalInformation,
                 ],
             ),
         );

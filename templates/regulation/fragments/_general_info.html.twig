@@ -3,22 +3,22 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ regulationOrderRecord.description|u.truncate(36, '...', false) }}
+                {{ generalInformation.description|u.truncate(36, '...', false) }}
             </h3>
         </div>
         <div class="app-card__content">
             <ul class="fr-ml-1w fr-my-0 fr-list">
-                <li>{{ regulationOrderRecord.organizationName }}</li>
+                <li>{{ generalInformation.organizationName }}</li>
                 <li>
-                    {% if regulationOrderRecord.category == 'other' %}
-                        {{ 'regulation.category.other'|trans }} : {{ regulationOrderRecord.otherCategoryText }}
+                    {% if generalInformation.category == 'other' %}
+                        {{ 'regulation.category.other'|trans }} : {{ generalInformation.otherCategoryText }}
                     {% else %}
-                        {{ ('regulation.category.' ~ regulationOrderRecord.category)|trans }}
+                        {{ ('regulation.category.' ~ generalInformation.category)|trans }}
                     {% endif %}
                 </li>
-                <li>{{ regulationOrderRecord.description }}</li>
+                <li>{{ generalInformation.description }}</li>
                 <li>
-                    {% include 'regulation/_overall_period.html.twig' with { regulationOrderRecord } only %}
+                    {% include 'regulation/_overall_period.html.twig' with { regulationOrderRecord: generalInformation } only %}
                 </li>
             </ul>
         </div>
@@ -26,7 +26,7 @@
         {% if canEdit %}
             <ul class="app-card__actions">
                 <li>
-                    <form method="GET" action="{{ path('fragment_regulations_general_info_form', { uuid: regulationOrderRecord.uuid }) }}">
+                    <form method="GET" action="{{ path('fragment_regulations_general_info_form', { uuid: generalInformation.uuid }) }}">
                         <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
                             {{ 'common.update'|trans }}
                         </button>

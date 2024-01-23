@@ -11,7 +11,7 @@
 {% block page_class %}fr-background-alt--grey{% endblock %}
 
 {% block body %}
-    {% set isDraft = regulationOrderRecord.isDraft %}
+    {% set isDraft = generalInformation.isDraft %}
     <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
@@ -24,7 +24,7 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-8 fr-col-xl-9">
                     <div class="fr-mx-n4v fr-mx-md-0">
-                        {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, regulationOrderRecord } only %}
+                        {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, generalInformation } only %}
                     </div>
 
                     <section aria-labelledby="locations-title">
