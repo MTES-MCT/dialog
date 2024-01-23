@@ -95,10 +95,10 @@ class LocationNew
 
     public function update(
         string $roadType,
-        ?string $administrator,
-        ?string $roadNumber,
         ?string $cityCode,
         ?string $cityLabel,
+        ?string $administrator,
+        ?string $roadNumber,
         ?string $roadName,
         ?string $fromHouseNumber,
         ?string $toHouseNumber,

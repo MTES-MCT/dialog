@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -54,6 +55,7 @@ final class UpdateLocationController extends AbstractRegulationController
         }
 
         $command = SaveRegulationLocationCommand::create($regulationOrderRecord, $location);
+        $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
 
         $form = $this->formFactory->create(
             type: LocationFormType::class,
@@ -63,6 +65,7 @@ final class UpdateLocationController extends AbstractRegulationController
                     'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
                     'uuid' => $uuid,
                 ]),
+                'administrators' => $administrators,
             ],
         );
         $form->handleRequest($request);

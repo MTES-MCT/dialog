@@ -14,7 +14,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidBlank(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Localisation', $crawler->filter('h3')->text());
@@ -29,11 +29,35 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['cityLabel'] = '';
         $values['location_form']['measures'][0]['type'] = '';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
+    }
+
+    public function testInvalidBlankDepartmentalRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Localisation', $crawler->filter('h3')->text());
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'departmentalRoad';
+        $values['location_form']['administrator'] = '';
+        $values['location_form']['roadNumber'] = '';
+        $values['location_form']['measures'][0]['type'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_administrator_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_roadNumber_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
 
@@ -78,6 +102,60 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '20';
         $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertEquals([
+            ['replace', 'location_' . LocationFixture::UUID_PERMANENT_ONLY_ONE . '_delete_button'],
+            ['append', 'location_list'],
+            ['replace', 'block_location'],
+            ['replace', 'block_export'],
+            ['update', 'block_publication'],
+        ], $streams);
+
+        $addLocationBtn = $crawler->filter('turbo-stream[target=block_location]')->selectButton('Ajouter une localisation');
+        $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/add', $addLocationBtn->form()->getUri());
+    }
+
+    public function testAddDepartmentalRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['roadType'] = 'departmentalRoad';
+        $values['location_form']['administrator'] = 'Ain';
+        $values['location_form']['roadNumber'] = 'D1075';
+        $values['location_form']['measures'][0]['type'] = 'noEntry';
+        $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
+        $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions', 'other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = 'Matières dangereuses';
+        $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['commercial', 'other'];
+        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = 'Déchets industriels';
+        $values['location_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = 3.5;
+        $values['location_form']['measures'][0]['vehicleSet']['maxWidth'] = 0.0; // Zero OK
+        $values['location_form']['measures'][0]['vehicleSet']['maxLength'] = -0; // Zero OK
+        $values['location_form']['measures'][0]['vehicleSet']['maxHeight'] = '2.50';
+        $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['location_form']['measures'][0]['periods'][0]['startDate'] = '2023-10-30';
+        $values['location_form']['measures'][0]['periods'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][0]['periods'][0]['startTime']['minute'] = '0';
+        $values['location_form']['measures'][0]['periods'][0]['endDate'] = '2023-10-30';
+        $values['location_form']['measures'][0]['periods'][0]['endTime']['hour'] = '16';
+        $values['location_form']['measures'][0]['periods'][0]['endTime']['minute'] = '0';
+        $values['location_form']['measures'][0]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '20';
+        $values['location_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
 
         $this->assertResponseStatusCodeSame(200);
 
@@ -482,6 +560,25 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#location_form_roadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#location_form_fromHouseNumber_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#location_form_toHouseNumber_error')->text());
+    }
+
+    public function testFieldsTooLongDepartmentalRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $form['location_form[roadType]'] = 'departmentalRoad';
+        $form['location_form[administrator]'] = 'Ain';
+        $form['location_form[roadNumber]'] = str_repeat('a', 51);
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#location_form_roadNumber_error')->text());
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

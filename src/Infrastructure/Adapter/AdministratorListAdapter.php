@@ -10,12 +10,9 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 final class AdministratorListAdapter implements AdministratorListInterface
 {
-    private ?array $administrators;
-
     public function __construct(
         private CacheInterface $cache,
     ) {
-        $this->administrators = null;
     }
 
     public function findAll(): array

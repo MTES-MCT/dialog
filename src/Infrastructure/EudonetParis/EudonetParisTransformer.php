@@ -17,7 +17,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
 
-final class EudonetParisTransformer
+class EudonetParisTransformer
 {
     private const ARRONDISSEMENT_REGEX = '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i';
     private const CITY_CODE_TEMPLATE = '751%s';
@@ -181,7 +181,6 @@ final class EudonetParisTransformer
         }
 
         $cityCode = sprintf(self::CITY_CODE_TEMPLATE, str_pad($matches['arrondissement'], 2, '0', STR_PAD_LEFT));
-
         $porteSur = $row['fields'][EudonetParisExtractor::LOCALISATION_PORTE_SUR];
         $libelleVoie = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE];
         $libelleVoieDebut = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT];
@@ -217,7 +216,7 @@ final class EudonetParisTransformer
 
         $locationCommand = new SaveRegulationLocationCommand();
         $locationCommand->roadType = LocationTypeEnum::LANE->value;
-        $locationCommand->cityCode = self::CITY_CODE;
+        $locationCommand->cityCode = $cityCode;
         $locationCommand->cityLabel = self::CITY_LABEL;
         $locationCommand->roadName = $roadName;
         $locationCommand->fromHouseNumber = $fromHouseNumber;
