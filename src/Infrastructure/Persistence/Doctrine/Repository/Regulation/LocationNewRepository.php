@@ -25,6 +25,7 @@ final class LocationNewRepository extends ServiceEntityRepository implements Loc
 
     public function delete(LocationNew $locationNew): void
     {
+        // Cannot be covered by integration tests yet
         $this->getEntityManager()->remove($locationNew);
     }
 }

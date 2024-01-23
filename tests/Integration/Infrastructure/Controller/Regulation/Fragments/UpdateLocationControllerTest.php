@@ -75,7 +75,6 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_maxSpeed_error')->text());
     }
 
-    /** @group only */
     public function testEditAndAddMeasure(): void
     {
         $client = $this->login();
