@@ -10,6 +10,7 @@ callout:
         url: mailto:dialog@beta.gouv.fr
 tags:
   - Interview
+  - Géodata
 ---
     
 :::callout
@@ -25,9 +26,13 @@ C’est déjà l’incubateur de startups d’État de l’IGN (Institut nationa
 
 L’Institut a déjà connu deux révolutions :
 
-●   l’open data et la gratuité d’accès aux données, qui provoque un changement de modèle économique mais aussi un changement de lien avec utilisateurs. Avant nous avions des clients, par exemple des sociétés privées, qui achetaient nos produits. Le fait de passer en open data avec licence ouverte amène une disruption de cette relation. La Fabrique des Géocommuns doit être un outil d’action dynamique de lien avec les usagers des services qui sont produits par l’IGN.
+L’open data et la gratuité d’accès aux données, qui provoque un changement de modèle économique mais aussi un changement de lien avec utilisateurs. Avant nous avions des clients, par exemple des sociétés privées, qui achetaient nos produits. Le fait de passer en open data avec licence ouverte amène une disruption de cette relation. La Fabrique des Géocommuns doit être un outil d’action dynamique de lien avec les usagers des services qui sont produits par l’IGN.
 
-●   Le deuxième chantier majeur est le fait qu’on n’est plus tout seul à être capable de produire des données géolocalisées. L’IGN a été pensé comme une grosse usine de production de données topographiques qui décrivent le territoire, qui ont été ensuite déclinées en cartes papier. Il faut imaginer que dans les années 90 les agents de l’IGN, ouvriers d’État, allaient sur le terrain pendant 3 mois pour numériser tous les éléments du territoire en mode “commando”. Ils arrivaient à 100 et cartographiaient département par département. Le fait que les collectivités et d’autres administrations soient aussi capables de cartographier leurs bâtiments et leurs routes, a motivé l’évolution. L’IGN s’est rendu compte qu’il n’était plus possible de fonctionner en mode “on est une usine de production, il faut qu’on produise en commun des ressources”. On doit plutôt se dire : “on a produit des référentiels de données qui sont super, on est capable sans doute de s’interfacer avec plein de canaux pour constituer un commun, ce qui suppose aussi de ne plus être tout le temps parfaitement au centre”. Ce n’est parfois pas évident. Il y a plein de sujets sur lesquels on n’arrive pas encore à changer de paradigme. Du coup la Fabrique avait pour but de proposer des manières différentes de faire, en illustration et en accompagnement. La Fabrique n’a pas pour vocation de prendre tous les trucs de l’IGN et les passer à la moulinette des communs et des startups d’Etat. C’est plutôt de lancer des chantiers qui vont être des illustrations de manière autres de développer des produits de données géolocalisées avec des manières différentes.
+Le deuxième chantier majeur est le fait qu’on n’est plus tout seul à être capable de produire des données géolocalisées. L’IGN a été pensé comme une grosse usine de production de données topographiques qui décrivent le territoire, qui ont été ensuite déclinées en cartes papier. Il faut imaginer que dans les années 90 les agents de l’IGN, ouvriers d’État, allaient sur le terrain pendant 3 mois pour numériser tous les éléments du territoire en mode “commando”. 
+
+Ils arrivaient à 100 et cartographiaient département par département. Le fait que les collectivités et d’autres administrations soient aussi capables de cartographier leurs bâtiments et leurs routes, a motivé l’évolution. L’IGN s’est rendu compte qu’il n’était plus possible de fonctionner en mode “on est une usine de production, il faut qu’on produise en commun des ressources”. On doit plutôt se dire : “on a produit des référentiels de données qui sont super, on est capable sans doute de s’interfacer avec plein de canaux pour constituer un commun, ce qui suppose aussi de ne plus être tout le temps parfaitement au centre”. Ce n’est parfois pas évident. Il y a plein de sujets sur lesquels on n’arrive pas encore à changer de paradigme. 
+
+Du coup la Fabrique avait pour but de proposer des manières différentes de faire, en illustration et en accompagnement. La Fabrique n’a pas pour vocation de prendre tous les trucs de l’IGN et les passer à la moulinette des communs et des startups d’Etat. C’est plutôt de lancer des chantiers qui vont être des illustrations de manière autres de développer des produits de données géolocalisées avec des manières différentes.
 
 **Est-ce que les projets incubés doivent nécessairement réutiliser les données de l’IGN ?**
 
@@ -35,7 +40,9 @@ On ne se pose pas trop de contraintes. La méthode est l’approche Beta Gouv : 
 
 L’enjeu est plutôt d’avoir la méthode Beta Gouv en point focal, être centré utilisateur et se concentrer sur les usagers de la ressource. On s’est dit que ce n’était pas idiot de prendre cette méthode pour faire des communs : “comment entretenir des ressources avec des règles qui fassent que tous les gens qui alimentent la ressource ne se sentent pas lésés ?”.  La stratégie c’est d’être centré sur les besoins, parce que si tu es centré sur les besoins tu es capable de capter de la collaboration. Si les gens ont vraiment besoin de ton logiciel ou de ta base de données, à la fin ils sont en capacité de t’aider en partie sur le développement de la ressource auquel tu as contribué. 
 
-Par exemple, le produit emblématique c’est Panoramax : le “Street View” libre avec plus de 100 contributeurs tiers, collectivités et personnes physiques bénévoles qui déposent des photos sur des espaces de stockage pour photo-cartographier le territoire. C’est vraiment le cas typique où on essaie d’inciter les gens à contribuer. La proposition de valeur pour les contributeurs est “on floute tes photos, on les héberge, on te permet de les visualiser et prochainement on lui permettra d’extraire la position de certains éléments visibles comme des panneaux”. En contrepartie, les gens donnent au public leurs photos. C’est vertueux car potentiellement sur un même espace plusieurs acteurs ont intérêt à mettre à jour ces bases de données. Se pose alors la question des bases de données routières. La cible principale de Panoramax est d’avoir une vision de où sont les panneaux de circulation, la signalisation verticale et horizontale, et potentiellement les détecter par l’intelligence artificielle, et les localiser dans l’espace. 
+Par exemple, le produit emblématique c’est Panoramax : le “Street View” libre avec plus de 100 contributeurs tiers, collectivités et personnes physiques bénévoles qui déposent des photos sur des espaces de stockage pour photo-cartographier le territoire. C’est vraiment le cas typique où on essaie d’inciter les gens à contribuer. La proposition de valeur pour les contributeurs est “on floute tes photos, on les héberge, on te permet de les visualiser et prochainement on lui permettra d’extraire la position de certains éléments visibles comme des panneaux”. En contrepartie, les gens donnent au public leurs photos. 
+
+C’est vertueux car potentiellement sur un même espace plusieurs acteurs ont intérêt à mettre à jour ces bases de données. Se pose alors la question des bases de données routières. La cible principale de Panoramax est d’avoir une vision de où sont les panneaux de circulation, la signalisation verticale et horizontale, et potentiellement les détecter par l’intelligence artificielle, et les localiser dans l’espace. 
 
 **Avez-vous vocation à couvrir tout le territoire avec un produit comme Panoramax ?**
 
@@ -59,9 +66,11 @@ C’est un grand chantier mené au travers de la Géoplateforme et avec son inca
 
 Cela dépend des interlocuteurs et des types de contribution.
 
-●   Sur Panoramax par exemple, les gens qui veulent alimenter ont juste besoin de créer un compte. 
-●   Pour d’autres référentiels comme la BD Topo, nous sommes dans une démarche de conventionnement. Nous avons des délégués régionaux qui sont capables de rapidement élaborer des procédures qui permettent de faire du partage. 
-●   Pour la Base Adresse Nationale, avec des entreprises comme TomTom ou Here on est beaucoup plus dans des logiques d’expérimentation. 
+Sur Panoramax par exemple, les gens qui veulent alimenter ont juste besoin de créer un compte. 
+
+Pour d’autres référentiels comme la BD Topo, nous sommes dans une démarche de conventionnement. Nous avons des délégués régionaux qui sont capables de rapidement élaborer des procédures qui permettent de faire du partage. 
+
+Pour la Base Adresse Nationale, avec des entreprises comme TomTom ou Here on est beaucoup plus dans des logiques d’expérimentation. 
 
 **Comment se passe le déploiement et le passage à l’échelle des solutions expérimentées ?**
 
