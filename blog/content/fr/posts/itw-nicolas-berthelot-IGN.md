@@ -92,9 +92,9 @@ Il y a eu un travail de 2 ans pour poser des définitions et donc les jalons d�
 
 Quand je suis arrivé à la Fabrique on m’a dit : “tu as 3 chantiers :
 
-●   le Commun des Vues Immersives qu’OSM aimerait voir émerger
-●   Identifiant Unique des Bâtiments
-●   La Base de Données Routières Nationale.
+- le Commun des Vues Immersives qu’OSM aimerait voir émerger
+- L'identifiant Unique des Bâtiments
+- La Base de Données Routières Nationale.
 
 Chez data.gouv ma mission portait déjà sur le référentiel routier et cela avait été très difficile. Le sujet est tellement complexe avec un objet qui concerne des acteurs hyper hétérogènes qui ont une conception très différente de ce qu’est une route, on en est jamais sorti. Du coup quand je vois DiaLog je me dis que quand même, c’est le truc qui peut mettre le pied à l’étrier de la conception de ce Référentiel. Tu as la définition légale de ce qu’est une voie, qui peut permettre d’avoir un référentiel partagé qui donne envie à d’autres acteurs de s’en servir et contribuer.
 
