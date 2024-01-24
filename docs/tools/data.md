@@ -32,6 +32,6 @@ On stocke un copier-coller de la liste dans un fichier `data/gestionnaires.txt` 
 
 Pour mettre à jour cette liste, ouvrir la dernière version de la [documentation](https://geoservices.ign.fr/documentation/donnees/vecteur/bdtopo) (fichier "Descriptif du contenu"), puis :
 
-* Aller à la section "Route numérotée ou nommée > Gestionnaires" (page 302)
+* Aller à la section "Route numérotée ou nommée > Type de route = « Départementale » > Valeurs du champ « Gestionnaire » associées" (page 300)
 * Copier-coller la liste dans `data/gestionnaires.txt`
 * Retirer la valeur "Sans valeur"
