@@ -15,6 +15,7 @@ final class GeneralInformationViewTest extends TestCase
         $endDate = new \DateTime('2022-12-17');
         $generalInformation = new GeneralInformationView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            identifier: 'FO1/2024',
             organizationName: 'DiaLog',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             status: 'draft',
@@ -29,6 +30,7 @@ final class GeneralInformationViewTest extends TestCase
 
         $generalInformation2 = new GeneralInformationView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
+            identifier: 'FO1/2024',
             organizationName: 'DiaLog',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             status: 'published',

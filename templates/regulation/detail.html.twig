@@ -1,6 +1,6 @@
 {% extends 'layouts/app.html.twig' %}
 
-{% set title = (regulationOrderRecord.endDate ? 'regulation.temporary' : 'regulation.permanent')|trans ~ ' ' ~ regulationOrderRecord.identifier  %}
+{% set title = (generalInformation.endDate ? 'regulation.temporary' : 'regulation.permanent')|trans ~ ' ' ~ generalInformation.identifier  %}
 
 {% block title %}
     {{ title }}
@@ -15,7 +15,7 @@
     <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
-            { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': regulationOrderRecord.identifier }) },
+            { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': generalInformation.identifier }) },
         ]} %}
 
         <div>
@@ -35,16 +35,16 @@
                         <ul id="location_list" class="fr-raw-list">
                             {% for location in regulationOrderRecord.locations %}
                                 <li class="fr-mx-n4v fr-mx-md-0">
-                                    {% include "regulation/fragments/_location.html.twig" with { location, regulationOrderRecord, canDelete } only %}
+                                    {% include "regulation/fragments/_location.html.twig" with { location, generalInformation, canDelete } only %}
                                 </li>
                             {% endfor %}
                         </ul>
 
                         {% if isDraft %}
                             {% if regulationOrderRecord.locations|length > 0 %}
-                                {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                                {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: generalInformation.uuid } only %}
                             {% else %}
-                                {{ render(path('fragment_regulations_location_add', { uuid: regulationOrderRecord.uuid })) }}
+                                {{ render(path('fragment_regulations_location_add', { uuid: generalInformation.uuid })) }}
                             {% endif %}
                         {% endif %}
                     </section>
@@ -54,11 +54,11 @@
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
                             <h3 class="fr-h4">{{ 'regulation.status'|trans }}</h3>
-                            {% include 'regulation/_status_badge.html.twig' with { status: regulationOrderRecord.status, withHint: true } %}
+                            {% include 'regulation/_status_badge.html.twig' with { status: generalInformation.status, withHint: true } %}
 
                             <turbo-frame id="block_export">
                                 {% if canPublish %}
-                                    {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: regulationOrderRecord.uuid } only %}
+                                    {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInformation.uuid } only %}
                                 {% endif %}
                             </turbo-frame>
 
@@ -67,13 +67,13 @@
                                 {% if isDraft %}
                                     <li>
                                         <div id="block_publication">
-                                            {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, regulationOrderRecord } only %}
+                                            {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInformation.uuid } only %}
                                         </div>
                                     </li>
                                 {% endif %}
                                 <li>
                                     {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
-                                    <form method="post" action="{{ path('app_regulation_duplicate', { uuid: regulationOrderRecord.uuid })}}">
+                                    <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInformation.uuid })}}">
                                         <button class="fr-btn fr-btn--secondary" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
                                         <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
                                     </form>
@@ -82,7 +82,7 @@
                                     {% set deleteCsrfToken = csrf_token('delete-regulation') %}
                                     <form
                                         method="delete"
-                                        action="{{ path('app_regulation_delete', { uuid: regulationOrderRecord.uuid }) }}"
+                                        action="{{ path('app_regulation_delete', { uuid: generalInformation.uuid }) }}"
                                         data-controller="form-submit"
                                         data-action="modal-trigger:submit->form-submit#submit"
                                     >
@@ -105,7 +105,7 @@
                 </aside>
             </div>
             <div class="fr-mt-22v">
-                {% set tab = regulationOrderRecord.startDate and regulationOrderRecord.endDate ? 'temporary' : 'permanent'  %}
+                {% set tab = generalInformation.startDate and generalInformation.endDate ? 'temporary' : 'permanent'  %}
                 <a href="{{ path('app_regulations_list', { tab }) }}" class="fr-link fr-fi-arrow-left-line fr-link--icon-left">
                     {{ 'regulation.back'|trans }}
                 </a>

@@ -111,6 +111,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->select(sprintf(
                 'NEW %s(
                     roc.uuid,
+                    ro.identifier,
                     org.name,
                     org.uuid,
                     roc.status,

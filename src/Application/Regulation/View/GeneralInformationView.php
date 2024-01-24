@@ -10,6 +10,7 @@ readonly class GeneralInformationView implements OrganizationRegulationAccessInt
 {
     public function __construct(
         public readonly string $uuid,
+        public readonly string $identifier,
         public readonly string $organizationName,
         public readonly ?string $organizationUuid,
         public readonly string $status,
