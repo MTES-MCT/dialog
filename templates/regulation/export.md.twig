@@ -63,8 +63,12 @@ Arrête
 
 {% for location in regulationOrderRecord.locations -%}
     [
-    {{ location.roadName }} à {{ location.cityLabel }}
-    {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
+    {% if location.cityLabel %}
+        {{ location.roadName }} à {{ location.cityLabel }}
+        {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
+    {% else %}
+        {{ location.roadNumber }} - {{ location.administrator }}
+    {% endif %}
     –
     {%- for measure in location.measures %}
         {% if measure.maxSpeed %}
