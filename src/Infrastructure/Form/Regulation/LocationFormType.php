@@ -22,7 +22,7 @@ final class LocationFormType extends AbstractType
             ->add(
                 'roadType',
                 ChoiceType::class,
-                options: $this->getTypeOptions(),
+                options: $this->getRoadTypeOptions(),
             )
             ->add(
                 'administrator',
@@ -93,7 +93,7 @@ final class LocationFormType extends AbstractType
         ;
     }
 
-    private function getTypeOptions(): array
+    private function getRoadTypeOptions(): array
     {
         $choices = [];
 

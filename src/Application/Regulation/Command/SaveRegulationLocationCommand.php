@@ -54,7 +54,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
         return $command;
     }
 
-    public function reset(): void
+    public function clean(): void
     {
         if ($this->roadType == LocationTypeEnum::DEPARTMENTAL_ROAD->value) {
             $this->cityLabel = null;

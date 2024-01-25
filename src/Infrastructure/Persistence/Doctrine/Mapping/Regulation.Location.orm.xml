@@ -4,10 +4,10 @@
     name="App\Domain\Regulation\Location"
     table="location">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="cityCode" type="string" column="city_code" nullable="true" length="5" />
     <field name="roadType" type="string" column="road_type" nullable="false" length="40" />
     <field name="administrator" type="string" column="administrator" nullable="true" length="255" />
     <field name="roadNumber" type="string" column="road_number" nullable="true" length="50" />
+    <field name="cityCode" type="string" column="city_code" nullable="true" length="5" />
     <field name="cityLabel" type="string" column="city_label" nullable="true" />
     <field name="roadName" type="string" column="road_name" nullable="true" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />

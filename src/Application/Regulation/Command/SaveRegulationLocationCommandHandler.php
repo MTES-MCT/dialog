@@ -29,8 +29,8 @@ final class SaveRegulationLocationCommandHandler
     public function __invoke(SaveRegulationLocationCommand $command): Location
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
-        // contexte
-        $command->reset();
+        // resets values to null when changing location type 
+        $command->clean();
         // Create location if needed
         if (!$command->location instanceof Location) {
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;

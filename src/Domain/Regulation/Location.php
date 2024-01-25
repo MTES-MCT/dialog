@@ -46,16 +46,6 @@ class Location
         return $this->roadType;
     }
 
-    public function getCityCode(): ?string
-    {
-        return $this->cityCode;
-    }
-
-    public function getCityLabel(): ?string
-    {
-        return $this->cityLabel;
-    }
-
     public function getAdministrator(): ?string
     {
         return $this->administrator;
@@ -64,6 +54,16 @@ class Location
     public function getRoadNumber(): ?string
     {
         return $this->roadNumber;
+    }
+    
+    public function getCityCode(): ?string
+    {
+        return $this->cityCode;
+    }
+
+    public function getCityLabel(): ?string
+    {
+        return $this->cityLabel;
     }
 
     public function getRoadName(): ?string
