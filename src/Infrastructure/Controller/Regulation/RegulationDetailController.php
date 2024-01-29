@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
-use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
+use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
+use App\Application\Regulation\View\GeneralInfoView;
+use App\Application\Regulation\View\RegulationOrderLocationsView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
@@ -36,20 +38,24 @@ final class RegulationDetailController extends AbstractRegulationController
     )]
     public function __invoke(string $uuid): Response
     {
-        /** @var RegulationOrderRecordSummaryView */
-        $regulationOrderRecord = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
-            return $this->queryBus->handle(new GetRegulationOrderRecordSummaryQuery($uuid));
+        /** @var GeneralInfoView */
+        $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
+            return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
+
+        /** @var RegulationOrderLocationsView */
+        $regulationOrderLocations = $this->queryBus->handle(new GetRegulationLocationsQuery($uuid));
 
         return new Response(
             $this->twig->render(
                 name: 'regulation/detail.html.twig',
                 context: [
-                    'regulationOrderRecord' => $regulationOrderRecord,
-                    'isDraft' => $regulationOrderRecord->isDraft(),
-                    'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
-                    'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
+                    'regulationOrderLocations' => $regulationOrderLocations,
+                    'isDraft' => $generalInfo->isDraft(),
+                    'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderLocations),
+                    'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderLocations),
                     'uuid' => $uuid,
+                    'generalInfo' => $generalInfo,
                 ],
             ),
         );

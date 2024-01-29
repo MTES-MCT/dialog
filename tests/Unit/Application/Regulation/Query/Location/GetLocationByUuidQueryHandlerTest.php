@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Location;
+namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQueryHandler;

@@ -1,9 +1,9 @@
-{% set startDate = regulationOrderRecord.startDate %}
-{% set endDate = regulationOrderRecord.endDate %}
+{% set startDate = generalInfo.startDate %}
+{% set endDate = generalInfo.endDate %}
 
 ::: {custom-style="Dialog_AligneDroite"}
 [
-Espace réservé au logo ou nom de  
+Espace réservé au logo ou nom de
 l’administration émettrice
 ]{custom-style="Dialog_ACompleter"}
 :::
@@ -28,15 +28,15 @@ Vous pouvez supprimer cet encart une fois votre arrêté complété.
 <br/>
 
 ::: {custom-style="Dialog_TitrePrincipal"}
-Arrếté {{ endDate ? 'temporaire' : 'permanent' }} [{{ regulationOrderRecord.identifier }}]{custom-style="Dialog_Variable"}
+Arrếté {{ endDate ? 'temporaire' : 'permanent' }} [{{ generalInfo.identifier }}]{custom-style="Dialog_Variable"}
 :::
 
 ::: {custom-style="Dialog_Description"}
-[{{ regulationOrderRecord.description }}]{custom-style="Dialog_Variable"}
+[{{ generalInfo.description }}]{custom-style="Dialog_Variable"}
 :::
 
 ::: {custom-style="Dialog_Organisation"}
-Le maire de [{{ regulationOrderRecord.organizationName }}]{custom-style="Dialog_ACompleter"}
+Le maire de [{{ generalInfo.organizationName }}]{custom-style="Dialog_ACompleter"}
 :::
 
 [Vu]{custom-style="Dialog_GrasMajuscules"} :
@@ -45,7 +45,7 @@ Le maire de [{{ regulationOrderRecord.organizationName }}]{custom-style="Dialog_
 
 [Vu]{custom-style="Dialog_GrasMajuscules"} :
 
-[Vu]{custom-style="Dialog_GrasMajuscules"} :  
+[Vu]{custom-style="Dialog_GrasMajuscules"} :
 
 [Considérant]{custom-style="Dialog_GrasMajuscules"} [que...]{custom-style="Dialog_ACompleter"}
 
@@ -59,9 +59,9 @@ Arrête
 [Article 1]{custom-style="Dialog_Gras"} - Circulation
 :::
 
-[{% include 'regulation/_overall_period.html.twig' with { regulationOrderRecord } only %}]{custom-style="Dialog_Variable"}
+[{% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}]{custom-style="Dialog_Variable"}
 
-{% for location in regulationOrderRecord.locations -%}
+{% for location in regulationOrderLocations.locations -%}
     [
     {{ location.roadName }} à {{ location.cityLabel }}
     {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
@@ -106,7 +106,7 @@ Arrête
 Arrêté publié le : [XXX]{custom-style="Dialog_ACompleter"}
 
 ::: {custom-style="Dialog_AligneDroite"}
-[Fait à {{ regulationOrderRecord.organizationName }}, le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
+[Fait à {{ generalInfo.organizationName }}, le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
 
 [Le maire / adjoint délégué / autre]{custom-style="Dialog_ACompleter"}
 

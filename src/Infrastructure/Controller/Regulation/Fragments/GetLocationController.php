@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\DetailLocationView;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -40,6 +42,11 @@ final class GetLocationController extends AbstractRegulationController
     )]
     public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
     {
+        /** @var GeneralInfoView */
+        $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($regulationOrderRecordUuid) {
+            return $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));
+        });
+
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
 
         $location = $this->queryBus->handle(new GetLocationByUuidQuery($uuid));
@@ -56,7 +63,7 @@ final class GetLocationController extends AbstractRegulationController
                 name: 'regulation/fragments/_location.html.twig',
                 context: [
                     'location' => DetailLocationView::fromEntity($location),
-                    'regulationOrderRecord' => $regulationOrderRecord,
+                    'generalInfo' => $generalInfo,
                     'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
                 ],
             ),

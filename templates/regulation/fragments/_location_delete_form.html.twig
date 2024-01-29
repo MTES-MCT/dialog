@@ -1,6 +1,6 @@
 <form
     method="delete"
-    action="{{ path('fragment_regulations_location_delete', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid }) }}"
+    action="{{ path('fragment_regulations_location_delete', { regulationOrderRecordUuid, uuid }) }}"
     data-controller="form-submit"
     data-action="modal-trigger:submit->form-submit#submit"
 >
