@@ -12,6 +12,7 @@ use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -56,5 +57,14 @@ abstract class AbstractRegulationController
         return $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
         });
+    }
+
+    protected function isFeatureEnabled(string $featureName, Request $request): bool
+    {
+        if ($request->query->get('FEATURE_' . $featureName . '_ENABLED')) {
+            return true;
+        }
+
+        return false;
     }
 }

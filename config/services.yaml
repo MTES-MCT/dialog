@@ -22,6 +22,7 @@ services:
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
             $ignWfsUrl: '%env(APP_IGN_WFS_URL)%'
             $featureMap: '%features%'
+            $featureNewLocationEnabled: '%env(bool:FEATURE_NEW_LOCATION_ENABLED)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 class RegulationOrder
 {
     private Collection $locations;
+    private RegulationOrderRecord $regulationOrderRecord;
 
     public function __construct(
         private string $uuid,
@@ -70,6 +71,11 @@ class RegulationOrder
         }
 
         $this->locations->add($location);
+    }
+
+    public function getRegulationOrderRecord(): RegulationOrderRecord
+    {
+        return $this->regulationOrderRecord;
     }
 
     public function update(
