@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\Location\DeleteLocationNewCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Measure;
@@ -58,6 +59,25 @@ final class SaveMeasureCommandHandler
                 }
             }
 
+            $locationsNewStillPresentUuids = [];
+
+            foreach ($command->locationsNew as $locationNewCommand) {
+                if ($locationNewCommand->locationNew) {
+                    $locationsNewStillPresentUuids[] = $locationNewCommand->locationNew->getUuid();
+                }
+
+                $locationNewCommand->measure = $command->measure;
+                $this->commandBus->handle($locationNewCommand);
+            }
+
+            // Locations that weren't present in the command get deleted.
+            foreach ($command->measure->getLocationsNew() as $locationNew) {
+                if (!\in_array($locationNew->getUuid(), $locationsNewStillPresentUuids)) {
+                    $this->commandBus->handle(new DeleteLocationNewCommand($locationNew));
+                    $command->measure->removeLocationNew($locationNew);
+                }
+            }
+
             return $command->measure;
         }
 
@@ -81,6 +101,12 @@ final class SaveMeasureCommandHandler
             $periodCommand->measure = $measure;
             $period = $this->commandBus->handle($periodCommand);
             $measure->addPeriod($period);
+        }
+
+        foreach ($command->locationsNew as $locationNewCommand) {
+            $locationNewCommand->measure = $measure;
+            $locationNew = $this->commandBus->handle($locationNewCommand);
+            $measure->addLocationNew($locationNew);
         }
 
         return $measure;
