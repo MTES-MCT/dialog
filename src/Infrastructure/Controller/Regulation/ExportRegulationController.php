@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetGeneralInformationQuery;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
-use App\Application\Regulation\View\GeneralInformationView;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -36,9 +36,9 @@ final class ExportRegulationController extends AbstractRegulationController
     )]
     public function __invoke(string $uuid): Response
     {
-        /** @var GeneralInformationView */
+        /** @var GeneralInfoView */
         $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
-            return $this->queryBus->handle(new GetGeneralInformationQuery($uuid));
+            return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
         $regulationOrderLocations = $this->queryBus->handle(new GetRegulationLocationsQuery($uuid));
@@ -47,7 +47,7 @@ final class ExportRegulationController extends AbstractRegulationController
             name: 'regulation/export.md.twig',
             context: [
                 'generalInformation' => $generalInformation,
-                'regulationOrderRecord' => $regulationOrderLocations,
+                'regulationOrderLocations' => $regulationOrderLocations,
             ],
         );
 

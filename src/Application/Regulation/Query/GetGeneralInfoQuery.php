@@ -6,7 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\QueryInterface;
 
-final class GetGeneralInformationQuery implements QueryInterface
+final class GetGeneralInfoQuery implements QueryInterface
 {
     public function __construct(
         public readonly string $uuid,

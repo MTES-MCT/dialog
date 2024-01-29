@@ -6,7 +6,7 @@ namespace App\Application\Regulation\View;
 
 use App\Domain\User\OrganizationRegulationAccessInterface;
 
-readonly class GeneralInformationView implements OrganizationRegulationAccessInterface
+readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
 {
     public function __construct(
         public readonly string $uuid,

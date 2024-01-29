@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
-use App\Application\Regulation\View\GeneralInformationView;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
-final class GetGeneralInformationQueryHandler
+final class GetGeneralInfoQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
     ) {
     }
 
-    public function __invoke(GetGeneralInformationQuery $query): GeneralInformationView
+    public function __invoke(GetGeneralInfoQuery $query): GeneralInfoView
     {
         $row = $this->regulationOrderRecordRepository->findGeneralInformation(
             $query->uuid,

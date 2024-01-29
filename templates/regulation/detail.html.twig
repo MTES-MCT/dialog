@@ -33,7 +33,7 @@
                         </h3>
 
                         <ul id="location_list" class="fr-raw-list">
-                            {% for location in regulationOrderRecord.locations %}
+                            {% for location in regulationOrderLocations.locations %}
                                 <li class="fr-mx-n4v fr-mx-md-0">
                                     {% include "regulation/fragments/_location.html.twig" with { location, generalInformation, canDelete } only %}
                                 </li>
@@ -41,7 +41,7 @@
                         </ul>
 
                         {% if isDraft %}
-                            {% if regulationOrderRecord.locations|length > 0 %}
+                            {% if regulationOrderLocations.locations|length > 0 %}
                                 {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: generalInformation.uuid } only %}
                             {% else %}
                                 {{ render(path('fragment_regulations_location_add', { uuid: generalInformation.uuid })) }}

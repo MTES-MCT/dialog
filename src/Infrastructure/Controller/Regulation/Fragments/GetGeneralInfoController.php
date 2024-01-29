@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetGeneralInformationQuery;
-use App\Application\Regulation\View\GeneralInformationView;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -33,9 +33,9 @@ final class GetGeneralInfoController extends AbstractRegulationController
     )]
     public function __invoke(string $uuid): Response
     {
-        /** @var GeneralInformationView */
+        /** @var GeneralInfoView */
         $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
-            return $this->queryBus->handle(new GetGeneralInformationQuery($uuid));
+            return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
         return new Response(

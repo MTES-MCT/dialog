@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetGeneralInformationQuery;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
-use App\Application\Regulation\View\GeneralInformationView;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\Regulation\View\RegulationOrderLocationsView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -38,9 +38,9 @@ final class RegulationDetailController extends AbstractRegulationController
     )]
     public function __invoke(string $uuid): Response
     {
-        /** @var GeneralInformationView */
+        /** @var GeneralInfoView */
         $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
-            return $this->queryBus->handle(new GetGeneralInformationQuery($uuid));
+            return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
         /** @var RegulationOrderLocationsView */
@@ -50,7 +50,7 @@ final class RegulationDetailController extends AbstractRegulationController
             $this->twig->render(
                 name: 'regulation/detail.html.twig',
                 context: [
-                    'regulationOrderRecord' => $regulationOrderLocations,
+                    'regulationOrderLocations' => $regulationOrderLocations,
                     'isDraft' => $generalInformation->isDraft(),
                     'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderLocations),
                     'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderLocations),

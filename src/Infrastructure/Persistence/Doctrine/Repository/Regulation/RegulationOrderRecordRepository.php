@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Application\Regulation\View\GeneralInformationView;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -105,6 +105,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    /**
+     * @return GeneralInfoView[]
+     */
     public function findGeneralInformation(string $uuid): ?array
     {
         return $this->createQueryBuilder('roc')
@@ -121,7 +124,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     ro.startDate,
                     ro.endDate
                 )',
-                GeneralInformationView::class,
+                GeneralInfoView::class,
             ))
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)

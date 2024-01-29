@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
-use App\Application\Regulation\Query\GetGeneralInformationQuery;
-use App\Application\Regulation\Query\GetGeneralInformationQueryHandler;
-use App\Application\Regulation\View\GeneralInformationView;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
+use App\Application\Regulation\Query\GetGeneralInfoQueryHandler;
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
-final class GetGeneralInformationQueryHandlerTest extends TestCase
+final class GetGeneralInfoQueryHandlerTest extends TestCase
 {
     public function testGetGeneralInformation(): void
     {
         $startDate = new \DateTime('2022-12-07');
         $endDate = new \DateTime('2022-12-17');
-        $generalInformation = new GeneralInformationView(
+        $generalInformation = new GeneralInfoView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             identifier: 'FO1/2024',
             organizationName: 'DiaLog',
@@ -36,11 +36,11 @@ final class GetGeneralInformationQueryHandlerTest extends TestCase
             ->method('findGeneralInformation')
             ->willReturn([$generalInformation]);
 
-        $handler = new GetGeneralInformationQueryHandler($repository);
+        $handler = new GetGeneralInfoQueryHandler($repository);
 
         $this->assertEquals(
             $generalInformation,
-            $handler(new GetGeneralInformationQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf')),
+            $handler(new GetGeneralInfoQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf')),
         );
     }
 
@@ -54,7 +54,7 @@ final class GetGeneralInformationQueryHandlerTest extends TestCase
             ->method('findGeneralInformation')
             ->willReturn([]);
 
-        $handler = new GetGeneralInformationQueryHandler($repository);
-        $handler(new GetGeneralInformationQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetGeneralInfoQueryHandler($repository);
+        $handler(new GetGeneralInfoQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
     }
 }
