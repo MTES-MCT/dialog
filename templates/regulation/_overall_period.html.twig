@@ -1,5 +1,5 @@
-{% set startDate = generalInformation.startDate %}
-{% set endDate = generalInformation.endDate %}
+{% set startDate = generalInfo.startDate %}
+{% set endDate = generalInfo.endDate %}
 {% set isFuture = app_is_client_future_day(startDate) %}
 
 {% if startDate and endDate %}

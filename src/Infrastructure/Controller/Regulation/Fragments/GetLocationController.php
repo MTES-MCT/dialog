@@ -43,7 +43,7 @@ final class GetLocationController extends AbstractRegulationController
     public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
     {
         /** @var GeneralInfoView */
-        $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($regulationOrderRecordUuid) {
+        $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($regulationOrderRecordUuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));
         });
 
@@ -63,7 +63,7 @@ final class GetLocationController extends AbstractRegulationController
                 name: 'regulation/fragments/_location.html.twig',
                 context: [
                     'location' => DetailLocationView::fromEntity($location),
-                    'generalInformation' => $generalInformation,
+                    'generalInfo' => $generalInfo,
                     'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderRecord),
                 ],
             ),

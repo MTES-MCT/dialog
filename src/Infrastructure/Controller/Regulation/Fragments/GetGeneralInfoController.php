@@ -34,7 +34,7 @@ final class GetGeneralInfoController extends AbstractRegulationController
     public function __invoke(string $uuid): Response
     {
         /** @var GeneralInfoView */
-        $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
+        $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
@@ -42,8 +42,8 @@ final class GetGeneralInfoController extends AbstractRegulationController
             $this->twig->render(
                 name: 'regulation/fragments/_general_info.html.twig',
                 context: [
-                    'generalInformation' => $generalInformation,
-                    'canEdit' => $generalInformation->isDraft(),
+                    'generalInfo' => $generalInfo,
+                    'canEdit' => $generalInfo->isDraft(),
                 ],
             ),
         );

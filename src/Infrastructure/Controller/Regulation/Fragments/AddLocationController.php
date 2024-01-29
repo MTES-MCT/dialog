@@ -59,7 +59,7 @@ final class AddLocationController extends AbstractRegulationController
                 $preExistingLocationUuids = $regulationOrderRecord->getLocationUuids();
 
                 $location = $this->commandBus->handle($command);
-                $generalInformation = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
+                $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
                 return new Response(
@@ -68,7 +68,7 @@ final class AddLocationController extends AbstractRegulationController
                         context: [
                             'location' => DetailLocationView::fromEntity($location),
                             'regulationOrderRecordUuid' => $uuid,
-                            'generalInformation' => $generalInformation,
+                            'generalInfo' => $generalInfo,
                             'canDelete' => ($regulationOrderRecord->countLocations() + 1) > 1,
                             'preExistingLocationUuids' => $preExistingLocationUuids,
                         ],

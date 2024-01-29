@@ -36,10 +36,10 @@
                 {% endfor %}
             </ul>
         </div>
-        {% if generalInformation.isDraft %}
+        {% if generalInfo.isDraft %}
             <ul class="app-card__actions">
                 <li>
-                    <form method="GET" action="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: generalInformation.uuid, uuid: location.uuid }) }}">
+                    <form method="GET" action="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: generalInfo.uuid, uuid: location.uuid }) }}">
                         <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
                             {{ 'common.update'|trans }}
                         </button>
@@ -47,7 +47,7 @@
                 </li>
                 {% if canDelete %}
                     <li id="location_{{ uuid }}_delete_button">
-                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecordUuid: generalInformation.uuid, uuid: location.uuid, deleteCsrfToken } only %}
+                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid, uuid: location.uuid, deleteCsrfToken } only %}
                     </li>
                 {% else %}
                     <li id="location_{{ uuid }}_delete_button" hidden></li>

@@ -37,7 +37,7 @@ final class ExportRegulationController extends AbstractRegulationController
     public function __invoke(string $uuid): Response
     {
         /** @var GeneralInfoView */
-        $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
+        $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
@@ -46,7 +46,7 @@ final class ExportRegulationController extends AbstractRegulationController
         $content = $this->twig->render(
             name: 'regulation/export.md.twig',
             context: [
-                'generalInformation' => $generalInformation,
+                'generalInfo' => $generalInfo,
                 'regulationOrderLocations' => $regulationOrderLocations,
             ],
         );

@@ -13,7 +13,7 @@ final class GeneralInfoViewTest extends TestCase
     {
         $startDate = new \DateTime('2022-12-07');
         $endDate = new \DateTime('2022-12-17');
-        $generalInformation = new GeneralInfoView(
+        $generalInfo = new GeneralInfoView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             identifier: 'FO1/2024',
             organizationName: 'DiaLog',
@@ -26,7 +26,7 @@ final class GeneralInfoViewTest extends TestCase
             endDate: $endDate,
         );
 
-        $this->assertTrue($generalInformation->isDraft());
+        $this->assertTrue($generalInfo->isDraft());
 
         $generalInformation2 = new GeneralInfoView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',

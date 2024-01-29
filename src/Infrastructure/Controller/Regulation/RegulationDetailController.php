@@ -39,7 +39,7 @@ final class RegulationDetailController extends AbstractRegulationController
     public function __invoke(string $uuid): Response
     {
         /** @var GeneralInfoView */
-        $generalInformation = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
+        $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
@@ -51,11 +51,11 @@ final class RegulationDetailController extends AbstractRegulationController
                 name: 'regulation/detail.html.twig',
                 context: [
                     'regulationOrderLocations' => $regulationOrderLocations,
-                    'isDraft' => $generalInformation->isDraft(),
+                    'isDraft' => $generalInfo->isDraft(),
                     'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderLocations),
                     'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderLocations),
                     'uuid' => $uuid,
-                    'generalInformation' => $generalInformation,
+                    'generalInfo' => $generalInfo,
                 ],
             ),
         );
