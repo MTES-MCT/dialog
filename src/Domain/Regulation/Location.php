@@ -55,7 +55,7 @@ class Location
     {
         return $this->roadNumber;
     }
-    
+
     public function getCityCode(): ?string
     {
         return $this->cityCode;

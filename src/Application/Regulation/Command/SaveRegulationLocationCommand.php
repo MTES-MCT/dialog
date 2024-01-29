@@ -64,7 +64,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
             $this->toHouseNumber = null;
         }
 
-        if ($this->roadType == LocationTypeEnum::LANE->value || $this->roadType == null) {
+        if ($this->roadType === LocationTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
         }

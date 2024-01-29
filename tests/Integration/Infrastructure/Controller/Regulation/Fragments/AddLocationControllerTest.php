@@ -14,7 +14,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidBlank(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Localisation', $crawler->filter('h3')->text());
@@ -29,9 +29,8 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['cityLabel'] = '';
         $values['location_form']['measures'][0]['type'] = '';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
     }
@@ -73,7 +72,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
@@ -135,7 +133,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['roadNumber'] = 'D1075';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
-        
+
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
 
         $this->assertResponseStatusCodeSame(200);
@@ -372,7 +370,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
@@ -409,7 +406,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Bad period
         $values = $form->getPhpValues();
-        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
@@ -465,7 +461,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['roadType'] = 'lane';
+
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du GEOCODING_FAILURE';
@@ -516,7 +512,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
-        $form['location_form[roadType]'] = 'lane';
         $form['location_form[cityCode]'] = str_repeat('a', 6);
         $form['location_form[cityLabel]'] = str_repeat('a', 256);
         $form['location_form[roadName]'] = str_repeat('a', 256);

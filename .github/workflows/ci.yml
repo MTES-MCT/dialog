@@ -61,7 +61,6 @@ jobs:
         run: |
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
           echo "REDIS_URL=redis://localhost:6379" >> .env
-          echo "FEATURE_ROAD_TYPE_ENABLED=true" >> .env
 
       - name: Install Symfony CLI
         # Required for E2E testing
