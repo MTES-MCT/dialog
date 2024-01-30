@@ -11,8 +11,7 @@ class RegulationOrder
 {
     private Collection $locations;
 
-    /** @phpstan-ignore-next-line : automatically set by Doctrine*/
-    private RegulationOrderRecord $regulationOrderRecord;
+    private ?RegulationOrderRecord $regulationOrderRecord = null;
 
     public function __construct(
         private string $uuid,
@@ -75,7 +74,7 @@ class RegulationOrder
         $this->locations->add($location);
     }
 
-    public function getRegulationOrderRecord(): RegulationOrderRecord
+    public function getRegulationOrderRecord(): ?RegulationOrderRecord
     {
         return $this->regulationOrderRecord;
     }
