@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Query\Location;
+namespace App\Tests\Unit\Application\Regulation\Query\Measure;
 
-use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
-use App\Application\Regulation\Query\Location\GetRegulationLocationsQueryHandler;
+use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
+use App\Application\Regulation\Query\Measure\GetMeasuresQueryHandler;
 use App\Application\Regulation\View\DailyRangeView;
-use App\Application\Regulation\View\DetailLocationView;
-use App\Application\Regulation\View\MeasureView;
+use App\Application\Regulation\View\Measure\LocationView;
+use App\Application\Regulation\View\Measure\MeasureView;
 use App\Application\Regulation\View\PeriodView;
-use App\Application\Regulation\View\RegulationOrderLocationsView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Condition\Period\DailyRange;
@@ -18,17 +17,14 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
-use App\Domain\Regulation\RegulationOrder;
-use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\MeasureRepository;
 use PHPUnit\Framework\TestCase;
 
-final class GetRegulationLocationsQueryHandlerTest extends TestCase
+final class GetMeasuresQueryHandlerTest extends TestCase
 {
-    public function testGetOne(): void
+    public function testGetMeasures(): void
     {
         $startTime = new \DateTime('2022-12-07 08:00:00');
         $endTime = new \DateTime('2022-12-17 19:00:00');
@@ -150,25 +146,7 @@ final class GetRegulationLocationsQueryHandlerTest extends TestCase
             ->method('getRecurrenceType')
             ->willReturn('certainDays');
 
-        $measure = $this->createMock(Measure::class);
-        $measure
-            ->expects(self::once())
-            ->method('getType')
-            ->willReturn('noEntry');
-        $measure
-            ->expects(self::once())
-            ->method('getPeriods')
-            ->willReturn([$period1, $period2]);
-        $measure
-            ->expects(self::once())
-            ->method('getVehicleSet')
-            ->willReturn($vehicleSet);
-
-        $location = $this->createMock(Location::class);
-        $location
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea');
+        $location = $this->createMock(LocationNew::class);
         $location
             ->expects(self::never())
             ->method('getCityCode');
@@ -188,87 +166,77 @@ final class GetRegulationLocationsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn('253');
-        $location
+
+        $measure = $this->createMock(Measure::class);
+        $measure
             ->expects(self::once())
-            ->method('getMeasures')
-            ->willReturn([$measure]);
-
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
-
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrder
+            ->method('getUuid')
+            ->willReturn('2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea');
+        $measure
+            ->expects(self::once())
+            ->method('getType')
+            ->willReturn('noEntry');
+        $measure
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([$period1, $period2]);
+        $measure
+            ->expects(self::once())
+            ->method('getVehicleSet')
+            ->willReturn($vehicleSet);
+        $measure
             ->expects(self::once())
             ->method('getLocations')
             ->willReturn([$location]);
 
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $regulationOrderRecord
+        $measureRepository = $this->createMock(MeasureRepository::class);
+        $measureRepository
             ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
+            ->method('findByRegulationOrderRecordUuid')
+            ->with('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf')
+            ->willReturn([$measure]);
 
-        $regulationOrderRecordRepository
-            ->expects(self::once())
-            ->method('findOneForSummary')
-            ->willReturn($regulationOrderRecord);
-
-        $handler = new GetRegulationLocationsQueryHandler($regulationOrderRecordRepository);
-        $summary = $handler(new GetRegulationLocationsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetMeasuresQueryHandler($measureRepository);
+        $summary = $handler(new GetMeasuresQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(
-            new RegulationOrderLocationsView(
-                locations: [
-                    new DetailLocationView(
-                        uuid: '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
-                        cityLabel: 'Montauban',
-                        roadName: 'Avenue de Fonneuve',
-                        fromHouseNumber: '95',
-                        toHouseNumber: '253',
-                        measures: [
-                            new MeasureView(
-                                'noEntry',
-                                [
-                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange1), [new TimeSlotView($startTime, $endTime)]),
-                                    new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange2), []),
-                                ],
-                                new VehicleSetView(
-                                    [
-                                        ['name' => 'Matières dangereuses', 'isOther' => true],
-                                        ['name' => 'critair2'],
-                                        ['name' => 'critair3'],
-                                    ],
-                                    [
-                                        ['name' => 'commercial'],
-                                        ['name' => 'pedestrians'],
-                                        ['name' => 'Convois exceptionnels', 'isOther' => true],
-                                    ],
-                                    [
-                                        ['name' => 'weight', 'value' => 3.5],
-                                        ['name' => 'width', 'value' => 2],
-                                        ['name' => 'height', 'value' => 2.4],
-                                    ],
-                                ),
-                            ),
+            [
+                new MeasureView(
+                    '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
+                    'noEntry',
+                    [
+                        new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange1), [new TimeSlotView($startTime, $endTime)]),
+                        new PeriodView('certainDays', $startTime, $endTime, new DailyRangeView($daysRange2), []),
+                    ],
+                    new VehicleSetView(
+                        [
+                            ['name' => 'Matières dangereuses', 'isOther' => true],
+                            ['name' => 'critair2'],
+                            ['name' => 'critair3'],
+                        ],
+                        [
+                            ['name' => 'commercial'],
+                            ['name' => 'pedestrians'],
+                            ['name' => 'Convois exceptionnels', 'isOther' => true],
+                        ],
+                        [
+                            ['name' => 'weight', 'value' => 3.5],
+                            ['name' => 'width', 'value' => 2],
+                            ['name' => 'height', 'value' => 2.4],
                         ],
                     ),
-                ],
-            ),
+                    null,
+                    [
+                        new LocationView(
+                            cityLabel: 'Montauban',
+                            roadName: 'Avenue de Fonneuve',
+                            fromHouseNumber: '95',
+                            toHouseNumber: '253',
+                        ),
+                    ],
+                ),
+            ],
             $summary,
         );
-    }
-
-    public function testNotFound(): void
-    {
-        $this->expectException(RegulationOrderRecordNotFoundException::class);
-
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
-
-        $regulationOrderRecordRepository
-            ->expects(self::once())
-            ->method('findOneForSummary')
-            ->willReturn(null);
-
-        $handler = new GetRegulationLocationsQueryHandler($regulationOrderRecordRepository);
-        $handler(new GetRegulationLocationsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
     }
 }

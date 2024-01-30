@@ -16,7 +16,7 @@ final class GetMeasuresQueryHandler
 
     public function __invoke(GetMeasuresQuery $query): array
     {
-        $measures = $this->measureRepository->findByRegulationOrderUuid(
+        $measures = $this->measureRepository->findByRegulationOrderRecordUuid(
             $query->uuid,
         );
 

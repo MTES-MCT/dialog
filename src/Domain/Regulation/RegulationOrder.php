@@ -10,6 +10,8 @@ use Doctrine\Common\Collections\Collection;
 class RegulationOrder
 {
     private Collection $locations;
+
+    /** @phpstan-ignore-next-line : automatically set by Doctrine*/
     private RegulationOrderRecord $regulationOrderRecord;
 
     public function __construct(

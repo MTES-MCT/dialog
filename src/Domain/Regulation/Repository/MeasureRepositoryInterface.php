@@ -12,5 +12,5 @@ interface MeasureRepositoryInterface
 
     public function delete(Measure $measure): void;
 
-    public function findByRegulationOrderUuid(string $uuid);
+    public function findByRegulationOrderRecordUuid(string $uuid);
 }

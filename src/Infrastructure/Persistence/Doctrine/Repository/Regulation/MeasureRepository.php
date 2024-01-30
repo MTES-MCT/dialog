@@ -28,7 +28,7 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
         $this->getEntityManager()->remove($measure);
     }
 
-    public function findByRegulationOrderUuid(string $uuid): array
+    public function findByRegulationOrderRecordUuid(string $uuid): array
     {
         return $this->createQueryBuilder('m')
             ->where('roc.uuid = :uuid')
