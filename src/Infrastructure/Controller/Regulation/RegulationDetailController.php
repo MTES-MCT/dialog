@@ -12,6 +12,7 @@ use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Infrastructure\FeatureFlagService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,7 @@ final class RegulationDetailController extends AbstractRegulationController
         protected QueryBusInterface $queryBus,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
         private CanDeleteLocations $canDeleteLocations,
-        private bool $featureNewLocationEnabled,
+        private FeatureFlagService $featureFlagService,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
     ) {
@@ -46,8 +47,7 @@ final class RegulationDetailController extends AbstractRegulationController
         });
 
         $regulationOrderLocations = $this->queryBus->handle(new GetRegulationLocationsQuery($uuid));
-
-        $featureNewLocationEnabled = $this->isFeatureEnabled('NEW_LOCATION', $request) || $this->featureNewLocationEnabled;
+        $featureNewLocationEnabled = $this->featureFlagService->isFeatureEnabled('loc_inversion', $request);
         $measures = [];
 
         if ($featureNewLocationEnabled) {

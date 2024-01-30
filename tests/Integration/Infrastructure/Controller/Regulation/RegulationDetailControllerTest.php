@@ -71,7 +71,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testDraftRegulationWithNewUIDetail(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '?FEATURE_NEW_LOCATION_ENABLED=true');
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '?feature_loc_inversion=true');
 
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
@@ -86,7 +86,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measureTitle->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measureDetail->filter('li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 - 08h00 au 31/10/2023 - 22h00', $measureDetail->filter('li')->eq(1)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measureDetail->filter('li')->eq(2)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measureDetail->filter('li')->eq(3)->text());
     }
 
     public function testPermanentRegulationDetail(): void

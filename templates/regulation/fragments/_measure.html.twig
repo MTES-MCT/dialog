@@ -25,12 +25,14 @@
                         <span class="app-card__img fr-icon-calendar-2-line fr-x-icon-decorative--blue-france" aria-hidden="true"></span>
                         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
                     </li>
+                    <li>
+                        <hr class="fr-mt-3w fr-mr-3w" />
+                    </li>
                 </ul>
-                <hr />
-                <ul>
+                <ul class="fr-pb-3w">
                     {% for location in measure.locations %}
                         {% if location.roadName %}
-                            <li class="fr-mb-2w">
+                            <li>
                                 <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon-decorative--blue-france" aria-hidden="true"></span>
                                 {{ location.roadName }}
                                 {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}

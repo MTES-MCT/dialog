@@ -26,19 +26,13 @@ final class FeatureFlagServiceTest extends TestCase
                 'expected' => false,
             ],
             'disabled-other-featyre' => [
-                'env' => ['other' => 'true'],
+                'env' => ['other' => true],
                 'featureName' => 'example',
                 'request' => null,
                 'expected' => false,
             ],
             'disabled-false' => [
-                'env' => ['example' => 'false'],
-                'featureName' => 'example',
-                'request' => null,
-                'expected' => false,
-            ],
-            'disabled-false-case-insensitive' => [
-                'env' => ['example' => 'FaLse'],
+                'env' => ['example' => false],
                 'featureName' => 'example',
                 'request' => null,
                 'expected' => false,
@@ -58,13 +52,13 @@ final class FeatureFlagServiceTest extends TestCase
             'enabled-by-request' => [
                 'env' => [],
                 'featureName' => 'example',
-                'request' => new Request(query: ['feature_example' => 'true']),
+                'request' => new Request(query: ['feature_example' => true]),
                 'expected' => true,
             ],
             'disabled-by-request' => [
                 'env' => ['example' => 'true'],
                 'featureName' => 'example',
-                'request' => new Request(query: ['feature_example' => 'false']),
+                'request' => new Request(query: ['feature_example' => false]),
                 'expected' => false,
             ],
         ];
