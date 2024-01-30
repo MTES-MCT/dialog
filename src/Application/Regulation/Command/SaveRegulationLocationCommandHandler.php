@@ -7,11 +7,10 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
-use App\Domain\Regulation\LocationNew;
-use App\Domain\Regulation\Repository\LocationNewRepositoryInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
 final class SaveRegulationLocationCommandHandler
@@ -20,7 +19,6 @@ final class SaveRegulationLocationCommandHandler
         private IdFactoryInterface $idFactory,
         private CommandBusInterface $commandBus,
         private LocationRepositoryInterface $locationRepository,
-        private LocationNewRepositoryInterface $locationNewRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
     ) {
@@ -33,6 +31,7 @@ final class SaveRegulationLocationCommandHandler
         $command->clean();
         // Create location if needed
         if (!$command->location instanceof Location) {
+            // NOTE: move this to LocationNew handlers when Location entity is removed.
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
 
             $location = $this->locationRepository->add(
@@ -53,10 +52,8 @@ final class SaveRegulationLocationCommandHandler
 
             foreach ($command->measures as $measureCommand) {
                 $measureCommand->location = $location;
+                $measureCommand->locationsNew = [SaveLocationNewCommand::fromLocation($location)];
                 $measure = $this->commandBus->handle($measureCommand);
-                $locationNew = LocationNew::fromLocation($this->idFactory->make(), $measure, $location);
-                $this->locationNewRepository->add($locationNew);
-                $measure->addLocation($locationNew);
                 $location->addMeasure($measure);
             }
 
@@ -69,37 +66,38 @@ final class SaveRegulationLocationCommandHandler
             ? $this->computeGeometry($command)
             : $command->location->getGeometry();
 
+        $command->location->update(
+            roadType: $command->roadType,
+            administrator: $command->administrator,
+            roadNumber: $command->roadNumber,
+            cityCode: $command->cityCode,
+            cityLabel: $command->cityLabel,
+            roadName: $command->roadName,
+            fromHouseNumber: $command->fromHouseNumber,
+            toHouseNumber: $command->toHouseNumber,
+            geometry: $geometry,
+        );
+
         $measuresStillPresentUuids = [];
 
         // Measures provided with the command get created or updated...
         foreach ($command->measures as $measureCommand) {
             if ($measureCommand->measure) {
                 $measuresStillPresentUuids[] = $measureCommand->measure->getUuid();
-
-                $locationNew = $measureCommand->measure->getLocationNew();
-                if ($locationNew) {
-                    $locationNew->update(
-                        roadType: $command->roadType,
-                        cityCode: $command->cityCode,
-                        cityLabel: $command->cityLabel,
-                        administrator : $command->administrator,
-                        roadNumber : $command->roadNumber,
-                        roadName: $command->roadName,
-                        fromHouseNumber: $command->fromHouseNumber,
-                        toHouseNumber: $command->toHouseNumber,
-                        geometry: $geometry,
-                    );
-                }
             }
 
             $measureCommand->location = $command->location;
-            $measure = $this->commandBus->handle($measureCommand);
 
-            if (!$measureCommand->measure) {
-                $locationNew = LocationNew::fromLocation($this->idFactory->make(), $measure, $command->location);
-                $this->locationNewRepository->add($locationNew);
-                $measure->addLocation($locationNew);
+            if ($measureCommand->locationsNew) {
+                $measureCommand->locationsNew[0] = SaveLocationNewCommand::fromLocation(
+                    $command->location,
+                    $measureCommand->locationsNew[0]->locationNew,
+                );
+            } else {
+                $measureCommand->locationsNew = [SaveLocationNewCommand::fromLocation($command->location)];
             }
+
+            $this->commandBus->handle($measureCommand);
         }
 
         // Measures that weren't present in the command get deleted.
@@ -109,18 +107,6 @@ final class SaveRegulationLocationCommandHandler
                 $this->commandBus->handle(new DeleteMeasureCommand($measure));
             }
         }
-
-        $command->location->update(
-            roadType : $command->roadType,
-            cityCode : $command->cityCode,
-            cityLabel: $command->cityLabel,
-            administrator : $command->administrator,
-            roadNumber : $command->roadNumber,
-            roadName: $command->roadName,
-            fromHouseNumber : $command->fromHouseNumber,
-            toHouseNumber : $command->toHouseNumber,
-            geometry : $geometry,
-        );
 
         return $command->location;
     }

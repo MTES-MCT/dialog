@@ -21,8 +21,8 @@
         <option name="srid">2154</option>
       </options>
     </field>
-    <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="locations">
-      <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE" />
+    <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="locationsNew">
+        <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>
   </entity>
 </doctrine-mapping>

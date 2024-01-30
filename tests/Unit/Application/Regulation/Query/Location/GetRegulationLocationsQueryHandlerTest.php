@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Query;
+namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQuery;
-use App\Application\Regulation\Query\GetRegulationOrderRecordSummaryQueryHandler;
+use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
+use App\Application\Regulation\Query\Location\GetRegulationLocationsQueryHandler;
 use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Application\Regulation\View\MeasureView;
 use App\Application\Regulation\View\PeriodView;
-use App\Application\Regulation\View\RegulationOrderRecordSummaryView;
+use App\Application\Regulation\View\RegulationOrderLocationsView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Condition\Period\DailyRange;
@@ -26,7 +26,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
-final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
+final class GetRegulationLocationsQueryHandlerTest extends TestCase
 {
     public function testGetOne(): void
     {
@@ -201,30 +201,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder
             ->expects(self::once())
-            ->method('getIdentifier')
-            ->willReturn('F01/2023');
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getCategory')
-            ->willReturn('other');
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getOtherCategoryText')
-            ->willReturn('Other category 1');
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getDescription')
-            ->willReturn('Description 1');
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($endDate);
-        $regulationOrder
-            ->expects(self::once())
             ->method('getLocations')
             ->willReturn([$location]);
 
@@ -233,41 +209,17 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf');
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganizationName')
-            ->willReturn('DiaLog');
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganizationUuid')
-            ->willReturn('a8439603-40f7-4b1e-8a35-cee9e53b98d4');
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getStatus')
-            ->willReturn('draft');
 
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findOneForSummary')
             ->willReturn($regulationOrderRecord);
 
-        $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $summary = $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetRegulationLocationsQueryHandler($regulationOrderRecordRepository);
+        $summary = $handler(new GetRegulationLocationsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(
-            new RegulationOrderRecordSummaryView(
-                uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                identifier: 'F01/2023',
-                organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-                organizationName: 'DiaLog',
-                status: 'draft',
-                category: 'other',
-                otherCategoryText: 'Other category 1',
-                description: 'Description 1',
+            new RegulationOrderLocationsView(
                 locations: [
                     new DetailLocationView(
                         uuid: '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
@@ -305,8 +257,6 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
                         ],
                     ),
                 ],
-                startDate: $startDate,
-                endDate: $endDate,
             ),
             $summary,
         );
@@ -323,7 +273,7 @@ final class GetRegulationOrderRecordSummaryQueryHandlerTest extends TestCase
             ->method('findOneForSummary')
             ->willReturn(null);
 
-        $handler = new GetRegulationOrderRecordSummaryQueryHandler($regulationOrderRecordRepository);
-        $handler(new GetRegulationOrderRecordSummaryQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetRegulationLocationsQueryHandler($regulationOrderRecordRepository);
+        $handler(new GetRegulationLocationsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
     }
 }

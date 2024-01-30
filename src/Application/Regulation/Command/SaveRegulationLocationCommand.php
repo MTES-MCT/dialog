@@ -21,6 +21,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $toHouseNumber = null;
     public ?string $geometry;
 
+    /** @var SaveMeasureCommand[] */
     public array $measures = [];
 
     public function __construct(

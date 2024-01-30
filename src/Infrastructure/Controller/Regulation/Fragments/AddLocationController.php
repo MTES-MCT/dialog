@@ -9,6 +9,7 @@ use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -62,6 +63,7 @@ final class AddLocationController extends AbstractRegulationController
                 $preExistingLocationUuids = $regulationOrderRecord->getLocationUuids();
 
                 $location = $this->commandBus->handle($command);
+                $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
                 return new Response(
@@ -69,7 +71,8 @@ final class AddLocationController extends AbstractRegulationController
                         name: 'regulation/fragments/_location.added.stream.html.twig',
                         context: [
                             'location' => DetailLocationView::fromEntity($location),
-                            'regulationOrderRecord' => $regulationOrderRecord,
+                            'regulationOrderRecordUuid' => $uuid,
+                            'generalInfo' => $generalInfo,
                             'canDelete' => ($regulationOrderRecord->countLocations() + 1) > 1,
                             'preExistingLocationUuids' => $preExistingLocationUuids,
                         ],
