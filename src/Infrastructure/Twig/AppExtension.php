@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Twig;
 
 use App\Application\StringUtilsInterface;
+use App\Infrastructure\FeatureFlagService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,6 +16,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     public function __construct(
         string $clientTimezone,
         private StringUtilsInterface $stringUtils,
+        private FeatureFlagService $featureFlagService,
     ) {
         $this->clientTimezone = new \DateTimeZone($clientTimezone);
     }
@@ -90,14 +92,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function isFeatureEnabled(string $featureName, Request $request = null): bool
     {
-        if (\array_key_exists('FEATURE_' . $featureName . '_ENABLED', $_ENV)) {
-            return true;
-        }
-
-        if ($request && $request->query->get('FEATURE_' . $featureName . '_ENABLED')) {
-            return true;
-        }
-
-        return false;
+        return $this->featureFlagService->isFeatureEnabled($featureName, $request);
     }
 }
