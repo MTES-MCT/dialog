@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Twig;
 
 use App\Application\StringUtilsInterface;
+use App\Infrastructure\FeatureFlagService;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
 
 class AppExtension extends \Twig\Extension\AbstractExtension
 {
@@ -14,6 +16,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     public function __construct(
         string $clientTimezone,
         private StringUtilsInterface $stringUtils,
+        private FeatureFlagService $featureFlagService,
     ) {
         $this->clientTimezone = new \DateTimeZone($clientTimezone);
     }
@@ -26,6 +29,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
             new \Twig\TwigFunction('app_vehicle_type_icon_name', [$this, 'getVehicleTypeIconName']),
             new \Twig\TwigFunction('app_is_fieldset_error', [$this, 'isFieldsetError']),
+            new \Twig\TwigFunction('app_is_feature_enabled', [$this, 'isFeatureEnabled']),
         ];
     }
 
@@ -84,5 +88,10 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         $payload = $error->getCause()->getConstraint()->payload;
 
         return $payload && \array_key_exists('fieldset', $payload) && $payload['fieldset'] === $fieldset;
+    }
+
+    public function isFeatureEnabled(string $featureName, Request $request = null): bool
+    {
+        return $this->featureFlagService->isFeatureEnabled($featureName, $request);
     }
 }
