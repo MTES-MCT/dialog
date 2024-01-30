@@ -13,58 +13,58 @@ final class FeatureFlagServiceTest extends TestCase
     private function provideIsFeatureEnabled(): array
     {
         return [
-            'disabled-env-not-present' => [
-                'env' => [],
+            'disabled-not-present' => [
+                'featureMap' => [],
                 'featureName' => 'EXAMPLE',
                 'request' => null,
                 'expected' => false,
             ],
-            'disabled-env-empty' => [
-                'env' => ['APP_FEATURE_EXAMPLE_ENABLED' => ''],
-                'featureName' => 'EXAMPLE',
+            'disabled-empty' => [
+                'featureMap' => ['example' => ''],
+                'featureName' => 'example',
                 'request' => null,
                 'expected' => false,
             ],
-            'disabled-env-other-featyre' => [
-                'env' => ['APP_FEATURE_OTHER_ENABLED' => 'true'],
-                'featureName' => 'EXAMPLE',
+            'disabled-other-featyre' => [
+                'env' => ['other' => 'true'],
+                'featureName' => 'example',
                 'request' => null,
                 'expected' => false,
             ],
-            'disabled-env-false' => [
-                'env' => ['APP_FEATURE_EXAMPLE_ENABLED' => 'false'],
-                'featureName' => 'EXAMPLE',
+            'disabled-false' => [
+                'env' => ['example' => 'false'],
+                'featureName' => 'example',
                 'request' => null,
                 'expected' => false,
             ],
-            'disabled-env-false-case-insensitive' => [
-                'env' => ['APP_FEATURE_EXAMPLE_ENABLED' => 'FaLse'],
-                'featureName' => 'EXAMPLE',
+            'disabled-false-case-insensitive' => [
+                'env' => ['example' => 'FaLse'],
+                'featureName' => 'example',
                 'request' => null,
                 'expected' => false,
             ],
-            'enabled-by-env' => [
-                'env' => ['APP_FEATURE_EXAMPLE_ENABLED' => 'true'],
-                'featureName' => 'EXAMPLE',
+            'enabled' => [
+                'env' => ['example' => 'true'],
+                'featureName' => 'example',
                 'request' => null,
                 'expected' => true,
             ],
-            'enabled-by-env-truthy' => [
-                'env' => ['APP_FEATURE_EXAMPLE_ENABLED' => 'something'],
-                'featureName' => 'EXAMPLE',
+            'enabled-truthy' => [
+                'env' => ['example' => 'something'],
+                'featureName' => 'example',
                 'request' => null,
                 'expected' => true,
             ],
             'enabled-by-request' => [
                 'env' => [],
-                'featureName' => 'EXAMPLE',
-                'request' => new Request(query: ['APP_FEATURE_EXAMPLE_ENABLED' => 'true']),
+                'featureName' => 'example',
+                'request' => new Request(query: ['feature_example' => 'true']),
                 'expected' => true,
             ],
             'disabled-by-request' => [
-                'env' => ['APP_FEATURE_EXAMPLE_ENABLED' => 'true'],
-                'featureName' => 'EXAMPLE',
-                'request' => new Request(query: ['APP_FEATURE_EXAMPLE_ENABLED' => 'false']),
+                'env' => ['example' => 'true'],
+                'featureName' => 'example',
+                'request' => new Request(query: ['feature_example' => 'false']),
                 'expected' => false,
             ],
         ];
@@ -73,9 +73,9 @@ final class FeatureFlagServiceTest extends TestCase
     /**
      * @dataProvider provideIsFeatureEnabled
      */
-    public function testIsFeatureEnabled(array $env, string $featureName, ?Request $request, bool $expected): void
+    public function testIsFeatureEnabled(array $featureMap, string $featureName, ?Request $request, bool $expected): void
     {
-        $featureFlagService = new FeatureFlagService($env);
+        $featureFlagService = new FeatureFlagService($featureMap);
 
         $this->assertSame($expected, $featureFlagService->isFeatureEnabled($featureName, $request));
     }

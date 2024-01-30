@@ -8,11 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FeatureFlagService
 {
-    private array $env;
-
-    public function __construct(array $env = null)
+    public function __construct(private array $featureMap)
     {
-        $this->env = $env ?? $_ENV;
     }
 
     private function isTruthy(?string $value): bool
@@ -22,12 +19,12 @@ class FeatureFlagService
 
     public function isFeatureEnabled(string $featureName, Request $request = null): bool
     {
-        $key = 'APP_FEATURE_' . $featureName . '_ENABLED';
+        $queryParam = 'feature_' . $featureName;
 
-        if ($request && $request->query->has($key)) {
-            return $this->isTruthy($request->query->get($key));
+        if ($request && $request->query->has($queryParam)) {
+            return $this->isTruthy($request->query->get($queryParam));
         }
 
-        return \array_key_exists($key, $this->env) && $this->isTruthy($this->env[$key]);
+        return \array_key_exists($featureName, $this->featureMap) && $this->isTruthy($this->featureMap[$featureName]);
     }
 }
