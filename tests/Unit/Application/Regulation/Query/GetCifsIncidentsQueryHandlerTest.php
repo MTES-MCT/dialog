@@ -41,8 +41,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: '44.028996 1.362275 44.025665 1.359310',
             startTime: '2023-11-02T00:00:00+00:00',
             endTime: '2023-11-06T00:00:00+00:00',
-            sourceReference: 'TODO',
-            sourceName: 'DiaLog',
             schedule: [],
         );
 
@@ -56,8 +54,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: '44.028996 1.362275 44.025665 1.359310',
             startTime: '2023-11-02T00:00:00+00:00',
             endTime: '2023-11-06T00:00:00+00:00',
-            sourceReference: 'TODO',
-            sourceName: 'DiaLog',
             schedule: [
                 'everyday' => [['startTime' => '14:00', 'endTime' => '16:00']],
                 'monday' => [['startTime' => '03:00', 'endTime' => '06:00'], ['startTime' => '08:00', 'endTime' => '10:00'], ['startTime' => '19:00', 'endTime' => '21:00']],
@@ -77,11 +73,14 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'regulationOrderStartDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
             'regulationOrderEndDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
-            'address' => 'Rue des Arts, 82000 Montauban',
-            'fromLatitude' => '44.028996',
-            'fromLongitude' => '1.362275',
-            'toLatitude' => '44.025665',
-            'toLongitude' => '1.35931',
+            'roadName' => 'Rue des Arts',
+            'geometry' => json_encode([
+                'type' => 'LineString',
+                'coordinates' => [
+                    [1.362275, 44.028996],
+                    [1.35931, 44.025665],
+                ],
+            ]),
             'applicableDays' => null,
             'startTime' => null,
             'endTime' => null,
@@ -95,11 +94,16 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             'type' => MeasureTypeEnum::NO_ENTRY->value,
             'regulationOrderStartDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-02 00:00:00'),
             'regulationOrderEndDate' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-11-06 00:00:00'),
-            'address' => 'Avenue de Fonneuve, 82000 Montauban',
-            'fromLatitude' => '44.028996',
-            'fromLongitude' => '1.362275',
-            'toLatitude' => '44.025665',
-            'toLongitude' => '1.35931',
+            'roadName' => 'Avenue de Fonneuve',
+            'geometry' => json_encode([
+                'type' => 'MultiLineString',
+                'coordinates' => [
+                    [
+                        [1.362275, 44.028996],
+                        [1.35931, 44.025665],
+                    ],
+                ],
+            ]),
         ];
 
         $measure2Period1TimeSlot1 = [

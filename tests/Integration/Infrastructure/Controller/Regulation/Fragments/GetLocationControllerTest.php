@@ -22,7 +22,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Route du Grand Brossais', $crawler->filter('h3')->text());
         $this->assertSame('Savenay (44260)', $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis', $crawler->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite du 13/03/2023 - 00h00 au 15/03/2023 - 23h59 pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation interdite du 31/10/2023 - 08h00 au 31/10/2023 - 22h00 pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form', $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());

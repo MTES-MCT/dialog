@@ -68,7 +68,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 
         $cifsPeriod1 = new Period(
             uuid: '06548fe3-7bfb-73af-8000-f7f34af31312',
-            measure: $this->getReference('measureCifs'),
+            measure: $this->getReference('cifsMeasure'),
             startDateTime: new \DateTimeImmutable('2021-11-02'),
             endDateTime: new \DateTimeImmutable('2021-11-06'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
@@ -87,7 +87,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 
         $cifsPeriod2 = new Period(
             uuid: '0654b639-cd33-7507-8000-e2ea21673135',
-            measure: $this->getReference('measureCifs'),
+            measure: $this->getReference('cifsMeasure'),
             startDateTime: new \DateTimeImmutable('2021-11-02'),
             endDateTime: new \DateTimeImmutable('2021-11-06'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
@@ -112,7 +112,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 
         $cifsPeriod3 = new Period(
             uuid: '0654b63a-838d-798b-8000-044b619f225d',
-            measure: $this->getReference('measureCifs'),
+            measure: $this->getReference('cifsMeasure'),
             startDateTime: new \DateTimeImmutable('2021-11-02'),
             endDateTime: new \DateTimeImmutable('2021-11-06'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,

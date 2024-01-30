@@ -11,7 +11,7 @@
         <starttime>2023-03-10T00:00:00+00:00</starttime>
         <endtime>2023-03-20T00:00:00+00:00</endtime>
         <source>
-            <reference>TODO</reference>
+            <reference>dialog.beta.gouv.fr</reference>
             <name>DiaLog</name>
             <url>http://localhost/api/regulations/cifs.xml</url>
         </source>
@@ -26,7 +26,7 @@
         <starttime>2021-11-02T00:00:00+00:00</starttime>
         <endtime>2021-11-06T00:00:00+00:00</endtime>
         <source>
-            <reference>TODO</reference>
+            <reference>dialog.beta.gouv.fr</reference>
             <name>DiaLog</name>
             <url>http://localhost/api/regulations/cifs.xml</url>
         </source>

@@ -89,12 +89,16 @@ final class GetCifsIncidentsQueryHandler
 
         if ($geom['type'] === 'LineString') {
             foreach ($geom['coordinates'] as $coords) {
-                $polyLineCoords[] = sprintf('%.6f %.6f', $coords[0], $coords[1]);
+                $lon = $coords[0];
+                $lat = $coords[1];
+                $polyLineCoords[] = sprintf('%.6f %.6f', $lat, $lon);
             }
         } elseif ($geom['type'] === 'MultiLineString') {
             foreach ($geom['coordinates'] as $coordsList) {
                 foreach ($coordsList as $coords) {
-                    $polyLineCoords[] = sprintf('%.6f %.6f', $coords[0], $coords[1]);
+                    $lon = $coords[0];
+                    $lat = $coords[1];
+                    $polyLineCoords[] = sprintf('%.6f %.6f', $lat, $lon);
                 }
             }
         }

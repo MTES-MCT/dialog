@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 final class RegulationOrderFixture extends Fixture
 {
     public const TYPICAL_IDENTIFIER = 'FO1/2023';
-    public const NUM_TEMPORARY = 6;
+    public const NUM_TEMPORARY = 7;
     public const NUM_PERMANENT = 1;
 
     public function load(ObjectManager $manager): void

@@ -115,7 +115,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED,
             $this->getReference('regulationOrderCifs'),
             new \DateTime('2021-11-02'),
-            $this->getReference('organization1'),
+            $this->getReference('mainOrg'),
         );
 
         $manager->persist($typicalRegulationOrderRecord);
