@@ -112,6 +112,9 @@ final class LocationNewTest extends TestCase
         $location = new Location(
             uuid: '504a1515-af1a-432c-bcc3-7938eca2b33f',
             regulationOrder: $regulationOrder,
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',
@@ -126,6 +129,9 @@ final class LocationNewTest extends TestCase
         $locationNew = new LocationNew(
             uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             measure: $measure,
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',

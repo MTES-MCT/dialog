@@ -7,7 +7,6 @@ namespace App\Application\Regulation\Command\Location;
 use App\Application\IdFactoryInterface;
 use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Repository\LocationNewRepositoryInterface;
-use Doctrine\ORM\Cache\Persister\Entity\ReadOnlyCachedEntityPersister;
 
 final class SaveLocationNewCommandHandler
 {

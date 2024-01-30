@@ -24,7 +24,6 @@ final class AddLocationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['location_form']['roadType'] = 'lane';
         $values['location_form']['cityCode'] = '';
         $values['location_form']['cityLabel'] = '';
         $values['location_form']['measures'][0]['type'] = '';
@@ -38,7 +37,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testInvalidBlankDepartmentalRoad(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?feature_road_type_enabled=true');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Localisation', $crawler->filter('h3')->text());
@@ -54,7 +53,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type_enabled' => true]);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_administrator_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_roadNumber_error')->text());
@@ -119,7 +118,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testAddDepartmentalRoad(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/add?feature_road_type_enabled=true');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -134,7 +133,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['type'] = 'noEntry';
         $values['location_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['FEATURE_ROAD_TYPE_ENABLED' => true]);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type_enabled' => true]);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('D1075 (Ain)', $crawler->filter('h3')->text());
@@ -530,7 +529,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
     public function testFieldsTooLongDepartmentalRoad(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?FEATURE_ROAD_TYPE_ENABLED=true');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?feature_road_type_enabled=true');
 
         $this->assertResponseStatusCodeSame(200);
 

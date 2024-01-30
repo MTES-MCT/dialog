@@ -22,6 +22,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
+        // $form['location_form[roadType]'] = 'lane';
         $form['location_form[cityCode]'] = ''; // reset
         $form['location_form[cityLabel]'] = ''; // reset
         $form['location_form[roadName]'] = ''; // reset

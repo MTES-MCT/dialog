@@ -18,12 +18,23 @@ final class LocationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if ($options['feature_road_type_enabled'] === true) {
+            $builder
+                ->add(
+                    'roadType',
+                    ChoiceType::class,
+                    options: $this->getRoadTypeOptions(),
+                );
+        } else {
+            $builder
+                ->add(
+                    'roadType',
+                    HiddenType::class,
+                    options: ['empty_data' => 'lane'],
+                );
+        }
+
         $builder
-            ->add(
-                'roadType',
-                ChoiceType::class,
-                options: $this->getRoadTypeOptions(),
-            )
             ->add(
                 'administrator',
                 ChoiceType::class,
@@ -89,8 +100,7 @@ final class LocationFormType extends AbstractType
                 options: [
                     'label' => 'common.form.validate',
                 ],
-            )
-        ;
+            );
     }
 
     private function getRoadTypeOptions(): array
@@ -134,6 +144,7 @@ final class LocationFormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'administrators' => [],
+            'feature_road_type_enabled' => false,
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
     }

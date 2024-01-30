@@ -17,6 +17,9 @@ use PHPUnit\Framework\TestCase;
 
 final class SaveLocationNewCommandHandlerTest extends TestCase
 {
+    private string $roadType;
+    private ?string $administrator;
+    private ?string $roadNumber;
     private string $cityCode;
     private string $cityLabel;
     private string $roadName;
@@ -31,6 +34,9 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->locationNewRepository = $this->createMock(LocationNewRepositoryInterface::class);
 
+        $this->roadType = 'lane';
+        $this->administrator = null;
+        $this->roadNumber = null;
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
         $this->roadName = 'Route du Grand Brossais';
@@ -60,6 +66,9 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
                     new LocationNew(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
+                        roadType: $this->roadType,
+                        administrator: $this->administrator,
+                        roadNumber: $this->roadNumber,
                         cityCode: $this->cityCode,
                         cityLabel: $this->cityLabel,
                         roadName: $this->roadName,
@@ -78,6 +87,9 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
 
         $command = new SaveLocationNewCommand();
         $command->measure = $measure;
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -102,8 +114,11 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->roadType,
                 $this->cityCode,
                 $this->cityLabel,
+                $this->administrator,
+                $this->roadNumber,
                 $this->roadName,
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
@@ -117,6 +132,9 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
 
         $command = new SaveLocationNewCommand($locationNew);
         $command->measure = $measure;
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;

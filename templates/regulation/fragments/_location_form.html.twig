@@ -165,8 +165,7 @@
         <div class="app-card__content">
             {{ form_start(form, {attr: {id: 'location-form'}}) }}
             {{ form_errors(form) }}    
-            {% set roadTypeFeatureEnabled = app_is_feature_enabled('ROAD_TYPE', app.request) %}    
-            {% if roadTypeFeatureEnabled %}
+            {% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type_enabled', app.request) %}
                 <div data-controller="form-reveal" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
                 	
                     {{ form_row(form.roadType, {
@@ -177,10 +176,7 @@
                             'change->form-reveal#openByValue'
                         },
                     }) }}
-            {% else %}
-                <input type="hidden" value="lane" name="{{ form.roadType.vars.name }}"> 
-                {% do form.roadType.setRendered %}
-            {% endif %}    
+   
                 <div data-form-reveal-target="section" data-value="departmentalRoad" {% if not roadTypeFeatureEnabled or form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}>
                     {{ form_row(form.administrator, {
                         group_class: 'fr-input-group',
