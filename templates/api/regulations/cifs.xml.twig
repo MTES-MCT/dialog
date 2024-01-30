@@ -11,8 +11,8 @@
             <starttime>{{ incident.startTime }}</starttime>
             <endtime>{{ incident.endTime }}</endtime>
             <source>
-                <reference>{{ incident.sourceReference }}</reference>
-                <name>{{ incident.sourceName }}</name>
+                <reference>dialog.beta.gouv.fr</reference>
+                <name>DiaLog</name>
                 <url>{{ url('api_regulations_cifs', {_format: 'xml'}) }}</url>
             </source>
             {% if incident.schedule %}

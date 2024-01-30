@@ -83,6 +83,24 @@ final class GetCifsIncidentsQueryHandler
             usort($schedule[$day], fn ($a, $b) => $a['startTime'] === $b['startTime'] ? 0 : ($a['startTime'] < $b['startTime'] ? -1 : 1));
         }
 
+        $geom = json_decode($row['geometry'], associative: true);
+
+        $polyLineCoords = [];
+
+        if ($geom['type'] === 'LineString') {
+            foreach ($geom['coordinates'] as $coords) {
+                $polyLineCoords[] = sprintf('%.6f %.6f', $coords[0], $coords[1]);
+            }
+        } elseif ($geom['type'] === 'MultiLineString') {
+            foreach ($geom['coordinates'] as $coordsList) {
+                foreach ($coordsList as $coords) {
+                    $polyLineCoords[] = sprintf('%.6f %.6f', $coords[0], $coords[1]);
+                }
+            }
+        }
+
+        $polyLine = implode(' ', $polyLineCoords);
+
         return new CifsIncidentView(
             id: $row['measureId'],
             creationTime: $row['createdAt']->format('Y-m-d\TH:i:sP'),
@@ -90,12 +108,9 @@ final class GetCifsIncidentsQueryHandler
             subType: $subType,
             street: $row['roadName'],
             direction: 'BOTH_DIRECTIONS',
-            polyline: sprintf('%f %f %f %f', $row['fromLatitude'], $row['fromLongitude'], $row['toLatitude'], $row['toLongitude']),
+            polyline: $polyLine,
             startTime: ($row['periodStartDateTime'] ?? $row['regulationOrderStartDate'])->format('Y-m-d\TH:i:sP'),
             endTime: ($row['periodEndDateTime'] ?? $row['regulationOrderEndDate'])->format('Y-m-d\TH:i:sP'),
-            // TODO: need a source organization ID provided by Waze.
-            sourceReference: 'TODO',
-            sourceName: 'DiaLog',
             schedule: $schedule,
         );
     }
