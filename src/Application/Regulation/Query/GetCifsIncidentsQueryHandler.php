@@ -7,7 +7,6 @@ namespace App\Application\Regulation\Query;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetCifsIncidentsQueryHandler
@@ -34,8 +33,7 @@ final class GetCifsIncidentsQueryHandler
 
         foreach ($rows as $row) {
             if ($row['measureId'] !== $currentMeasure['measureId']) {
-                $address = LocationAddress::fromString($currentMeasure['address']);
-                $incidentViews[] = self::makeIncidentView($currentMeasure, $address, $schedule);
+                $incidentViews[] = self::makeIncidentView($currentMeasure, $schedule);
 
                 $currentMeasure = $row;
                 $schedule = [];
@@ -62,13 +60,12 @@ final class GetCifsIncidentsQueryHandler
         }
 
         // Flush the last pending view.
-        $address = LocationAddress::fromString($currentMeasure['address']);
-        $incidentViews[] = self::makeIncidentView($currentMeasure, $address, $schedule);
+        $incidentViews[] = self::makeIncidentView($currentMeasure, $schedule);
 
         return $incidentViews;
     }
 
-    private static function makeIncidentView(array $row, LocationAddress $address, array $schedule): CifsIncidentView
+    private static function makeIncidentView(array $row, array $schedule): CifsIncidentView
     {
         $subType = match ($row['category']) {
             RegulationOrderCategoryEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
@@ -91,7 +88,7 @@ final class GetCifsIncidentsQueryHandler
             creationTime: $row['createdAt']->format('Y-m-d\TH:i:sP'),
             type: 'ROAD_CLOSED',
             subType: $subType,
-            street: $address->getRoadName(),
+            street: $row['roadName'],
             direction: 'BOTH_DIRECTIONS',
             polyline: sprintf('%f %f %f %f', $row['fromLatitude'], $row['fromLongitude'], $row['toLatitude'], $row['toLongitude']),
             startTime: ($row['periodStartDateTime'] ?? $row['regulationOrderStartDate'])->format('Y-m-d\TH:i:sP'),

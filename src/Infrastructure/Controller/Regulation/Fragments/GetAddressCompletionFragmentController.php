@@ -21,23 +21,24 @@ final class GetAddressCompletionFragmentController
     #[Route(
         '/_fragment/address-completions',
         methods: 'GET',
-        name: 'fragment_address_completion',
+        name: 'fragment_roadName_completion',
     )]
     public function __invoke(Request $request): Response
     {
         $search = $request->query->get('search');
+        $cityCode = $request->query->get('cityCode');
 
-        if (!$search) {
+        if (!$search || !$cityCode) {
             throw new BadRequestHttpException();
         }
 
-        $addresses = $this->geocoder->findAddresses($search);
+        $roadNames = $this->geocoder->findRoadNames($search, $cityCode);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_address_completions.html.twig',
+                name: 'regulation/fragments/_road_name_completions.html.twig',
                 context: [
-                    'addresses' => $addresses,
+                    'roadNames' => $roadNames,
                 ],
             ),
         );

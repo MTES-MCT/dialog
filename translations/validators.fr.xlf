@@ -30,10 +30,6 @@
                 <source>regulation.general_info.error.identifier</source>
                 <target>Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.</target>
             </trans-unit>
-            <trans-unit id="location.error.valid_address">
-                <source>location.error.valid_address</source>
-                <target>Veuillez saisir une adresse valide. Ex : Rue Saint-Léonard, 49000 Angers.</target>
-            </trans-unit>
             <trans-unit id="location.measures.error.not_blank">
                 <source>location.measures.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs restrictions.</target>
@@ -41,6 +37,10 @@
             <trans-unit id="regulation.vehicle_set.restricted_types.error.not_blank">
                 <source>regulation.vehicle_set.restricted_types.error.not_blank</source>
                 <target>Veuillez spécifier un ou plusieurs véhicules concernés.</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.dimensions.error.not_blank">
+                <source>regulation.vehicle_set.dimensions.error.not_blank</source>
+                <target>Veuillez spécifier le gabarit des véhicules concernés.</target>
             </trans-unit>
             <trans-unit id="regulation.period.error.end_date">
                 <source>regulation.period.error.end_date</source>

@@ -8,6 +8,7 @@
   xmlns:com="http://datex2.eu/schema/3/common"
   xmlns:comx="http://datex2.eu/schema/3/commonExtension"
   xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
   xmlns="http://datex2.eu/schema/3/trafficRegulation"
   xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
   xsi:type="TrafficRegulationPublication"
@@ -72,59 +73,22 @@
                                     </com:validityTimeSpecification>
                                 </validityByOrder>
                             </conditions>
+
                             <conditions xsi:type="LocationCondition">
-                                <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                                    <loc:linearWithinLinearElement>
-                                        <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                        <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                        <loc:linearElement xsi:type="loc:LinearElement">
-                                            <loc:roadName>
-                                                <com:values>
-                                                    <com:value lang="fr">{{ location.address }}</com:value>
-                                                </com:values>
-                                            </loc:roadName>
-                                        </loc:linearElement>
-
-                                        {% if location.fromLatitude and location.fromLongitude %}
-                                            <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                                <loc:distanceAlong>0</loc:distanceAlong>
-                                                <loc:fromReferent>
-                                                    <loc:referentIdentifier>start</loc:referentIdentifier>
-                                                    <loc:referentName>{{ location.fromHouseNumber ?? 'start' }}</loc:referentName>
-                                                    <loc:referentType>referenceMarker</loc:referentType>
-                                                    <loc:pointCoordinates>
-                                                        <loc:latitude>{{ location.fromLatitude }}</loc:latitude>
-                                                        <loc:longitude>{{ location.fromLongitude }}</loc:longitude>
-                                                    </loc:pointCoordinates>
-                                                </loc:fromReferent>
-                                            </loc:fromPoint>
-                                        {% else %}
-                                            <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
-                                                <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
-                                            </loc:fromPoint>
-                                        {% endif %}
-
-                                        {% if location.toLatitude and location.toLongitude %}
-                                            <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                                <loc:distanceAlong>0</loc:distanceAlong>
-                                                <loc:fromReferent>
-                                                    <loc:referentIdentifier>end</loc:referentIdentifier>
-                                                    <loc:referentName>{{ location.toHouseNumber ?? 'end' }}</loc:referentName>
-                                                    <loc:referentType>referenceMarker</loc:referentType>
-                                                    <loc:pointCoordinates>
-                                                        <loc:latitude>{{ location.toLatitude }}</loc:latitude>
-                                                        <loc:longitude>{{ location.toLongitude }}</loc:longitude>
-                                                    </loc:pointCoordinates>
-                                                </loc:fromReferent>
-                                            </loc:toPoint>
-                                        {% else %}
-                                            <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
-                                                <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
-                                            </loc:toPoint>
-                                        {% endif %}
-                                    </loc:linearWithinLinearElement>
+                                <locationByOrder xsi:type="loc:LinearLocation">
+                                    <loc:supplementaryPositionalDescription>
+                                        <loc:roadInformation>
+                                            <loc:roadName>{{ location.roadName }}</loc:roadName>
+                                        </loc:roadInformation>
+                                    </loc:supplementaryPositionalDescription>
+                                    <loc:_linearLocationExtension>
+                                        <loc:linearLocationExtended>
+                                            <locdx:geoJsonGeometry>{{ location.geometry }}</locdx:geoJsonGeometry>
+                                        </loc:linearLocationExtended>
+                                    </loc:_linearLocationExtension>
                                 </locationByOrder>
                             </conditions>
+
                             {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
                                 {% if vehicle.nonVehicularRoadUser %}
                                     <conditions xsi:type="NonVehicularRoadUserCondition">
@@ -142,15 +106,7 @@
                                                     <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
                                                 </com:emissions>
                                             {% else %}
-                                                <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
-                                                {% if vehicle.type == 'heavyGoodsVehicle' %}
-                                                    {% if vehicle.maxWeight %}
-                                                        <com:grossWeightCharacteristic>
-                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
-                                                            <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
-                                                        </com:grossWeightCharacteristic>
-                                                    {% endif %}
+                                                {% if vehicle.type == 'dimensions' %}
                                                     {% if vehicle.maxHeight %}
                                                         <com:heightCharacteristic>
                                                             <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
@@ -168,6 +124,17 @@
                                                             <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                                             <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
                                                         </com:widthCharacteristic>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                                                {% endif %}
+                                                {% if vehicle.type == 'heavyGoodsVehicle' %}
+                                                    {% if vehicle.maxWeight %}
+                                                        <com:grossWeightCharacteristic>
+                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                            <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
+                                                            <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                                                        </com:grossWeightCharacteristic>
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}

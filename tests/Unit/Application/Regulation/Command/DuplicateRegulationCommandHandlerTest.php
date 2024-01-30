@@ -149,8 +149,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $location1 = $this->createMock(Location::class);
         $location1
             ->expects(self::once())
-            ->method('getAddress')
-            ->willReturn('Route du Lac 44260 Savenay');
+            ->method('getCityCode')
+            ->willReturn('44195');
+        $location1
+            ->expects(self::once())
+            ->method('getCityLabel')
+            ->willReturn('Savenay');
+        $location1
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn('Route du Lac');
         $location1
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -167,8 +175,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $location2 = $this->createMock(Location::class);
         $location2
             ->expects(self::once())
-            ->method('getAddress')
-            ->willReturn('Route du Grand Brossais 44260 Savenay');
+            ->method('getCityCode')
+            ->willReturn('44195');
+        $location2
+            ->expects(self::once())
+            ->method('getCityLabel')
+            ->willReturn('Savenay');
+        $location2
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn('Route du Grand Brossais');
         $location2
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -269,18 +285,24 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand2->createdAt = $startDate;
 
         $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
-        $locationCommand1->address = 'Route du Lac 44260 Savenay';
+        $locationCommand1->cityCode = '44195';
+        $locationCommand1->cityLabel = 'Savenay';
+        $locationCommand1->roadName = 'Route du Lac';
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
+        $locationCommand1->geometry = null;
         $locationCommand1->measures = [
             $measureCommand1,
             $measureCommand2,
         ];
 
         $locationCommand2 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
-        $locationCommand2->address = 'Route du Grand Brossais 44260 Savenay';
+        $locationCommand2->cityCode = '44195';
+        $locationCommand2->cityLabel = 'Savenay';
+        $locationCommand2->roadName = 'Route du Grand Brossais';
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
+        $locationCommand2->geometry = null;
 
         $this->commandBus
             ->expects(self::exactly(3))

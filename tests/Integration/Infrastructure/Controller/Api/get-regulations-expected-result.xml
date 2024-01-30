@@ -6,6 +6,7 @@
     xmlns:com="http://datex2.eu/schema/3/common"
     xmlns:comx="http://datex2.eu/schema/3/commonExtension"
     xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
+    xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
     xmlns="http://datex2.eu/schema/3/trafficRegulation"
     xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
     xsi:type="TrafficRegulationPublication"
@@ -496,7 +497,7 @@
             </description>
             <issuingAuthority>
                 <com:values>
-                    <com:value>DiaLog</com:value>
+                    <com:value>Main Org</com:value>
                 </com:values>
             </issuingAuthority>
             <regulationId>2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c</regulationId>
@@ -521,44 +522,17 @@
                         </validityByOrder>
                     </conditions>
                     <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:linearWithinLinearElement>
-                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                <loc:linearElement xsi:type="loc:LinearElement">
-                                    <loc:roadName>
-                                        <com:values>
-                                            <com:value lang="fr">Avenue de Fonneuve 82000 Montauban</com:value>
-                                        </com:values>
-                                    </loc:roadName>
-                                </loc:linearElement>
-
-                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>start</loc:referentIdentifier>
-                                        <loc:referentName>695</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.028996</loc:latitude>
-                                            <loc:longitude>1.362275</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:fromPoint>
-
-                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>end</loc:referentIdentifier>
-                                        <loc:referentName>253</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.025665</loc:latitude>
-                                            <loc:longitude>1.35931</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:toPoint>
-                            </loc:linearWithinLinearElement>
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Avenue de Fonneuve</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
@@ -570,6 +544,11 @@
                                 <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
                                 <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
                             </com:grossWeightCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
                             <com:heightCharacteristic>
                                 <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
                                 <com:vehicleHeight>2.4</com:vehicleHeight>
@@ -627,44 +606,17 @@
                         </validityByOrder>
                     </conditions>
                     <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:linearWithinLinearElement>
-                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                <loc:linearElement xsi:type="loc:LinearElement">
-                                    <loc:roadName>
-                                        <com:values>
-                                            <com:value lang="fr">Avenue de Fonneuve 82000 Montauban</com:value>
-                                        </com:values>
-                                    </loc:roadName>
-                                </loc:linearElement>
-
-                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>start</loc:referentIdentifier>
-                                        <loc:referentName>695</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.028996</loc:latitude>
-                                            <loc:longitude>1.362275</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:fromPoint>
-
-                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>end</loc:referentIdentifier>
-                                        <loc:referentName>253</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.025665</loc:latitude>
-                                            <loc:longitude>1.35931</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:toPoint>
-                            </loc:linearWithinLinearElement>
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Avenue de Fonneuve</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
@@ -696,48 +648,22 @@
                         </validityByOrder>
                     </conditions>
                     <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:linearWithinLinearElement>
-                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                <loc:linearElement xsi:type="loc:LinearElement">
-                                    <loc:roadName>
-                                        <com:values>
-                                            <com:value lang="fr">Rue de l'Hôtel de Ville 82000 Montauban</com:value>
-                                        </com:values>
-                                    </loc:roadName>
-                                </loc:linearElement>
-
-                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>start</loc:referentIdentifier>
-                                        <loc:referentName>30</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.016833</loc:latitude>
-                                            <loc:longitude>1.352126</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:fromPoint>
-
-                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>end</loc:referentIdentifier>
-                                        <loc:referentName>12</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.016402</loc:latitude>
-                                            <loc:longitude>1.353016</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:toPoint>
-                            </loc:linearWithinLinearElement>
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                 </condition>
             </trafficRegulation>
+
             <trafficRegulation>
                 <status>active</status>
                 <typeOfRegulation xsi:type="SpeedLimit">
@@ -760,44 +686,50 @@
                         </validityByOrder>
                     </conditions>
                     <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
-                            <loc:linearWithinLinearElement>
-                                <loc:directionRelativeOnLinearSection>both</loc:directionRelativeOnLinearSection>
-                                <loc:heightGradeOfLinearSection>atGrade</loc:heightGradeOfLinearSection>
-                                <loc:linearElement xsi:type="loc:LinearElement">
-                                    <loc:roadName>
-                                        <com:values>
-                                            <com:value lang="fr">Rue de l'Hôtel de Ville 82000 Montauban</com:value>
-                                        </com:values>
-                                    </loc:roadName>
-                                </loc:linearElement>
-
-                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>start</loc:referentIdentifier>
-                                        <loc:referentName>30</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.016833</loc:latitude>
-                                            <loc:longitude>1.352126</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:fromPoint>
-
-                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
-                                    <loc:distanceAlong>0</loc:distanceAlong>
-                                    <loc:fromReferent>
-                                        <loc:referentIdentifier>end</loc:referentIdentifier>
-                                        <loc:referentName>12</loc:referentName>
-                                        <loc:referentType>referenceMarker</loc:referentType>
-                                        <loc:pointCoordinates>
-                                            <loc:latitude>44.016402</loc:latitude>
-                                            <loc:longitude>1.353016</loc:longitude>
-                                        </loc:pointCoordinates>
-                                    </loc:fromReferent>
-                                </loc:toPoint>
-                            </loc:linearWithinLinearElement>
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
+                        </locationByOrder>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                        <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                        <com:validityTimeSpecification>
+                            <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                            <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                        </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                <loc:roadName>Rue Gamot</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"MultiLineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
                 </condition>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddLocationLinkFragmentControllerTest extends AbstractWebTestCase
@@ -11,14 +12,14 @@ final class AddLocationLinkFragmentControllerTest extends AbstractWebTestCase
     public function testLink(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add-link');
+        $crawler = $client->request('GET', '_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add-link');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Ajouter une localisation');
         $form = $saveButton->form();
-        $this->assertSame('http://localhost/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/add', $form->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add', $form->getUri());
     }
 
     public function testBadUuid(): void
@@ -32,7 +33,7 @@ final class AddLocationLinkFragmentControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/location/add-link');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add-link');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

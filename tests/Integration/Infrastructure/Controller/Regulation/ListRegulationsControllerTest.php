@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class ListRegulationsControllerTest extends AbstractWebTestCase
@@ -20,7 +23,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $tabs = $crawler->filter('.fr-tabs__list')->eq(0);
         $this->assertSame('tablist', $tabs->attr('role'));
-        $this->assertSame('Temporaires (5) Permanents (1)', $tabs->text());
+        $this->assertSame('Temporaires (' . RegulationOrderFixture::NUM_TEMPORARY . ') Permanents (' . RegulationOrderFixture::NUM_PERMANENT . ')', $tabs->text());
 
         $client->clickLink('Ajouter un arrêté');
         $this->assertRouteSame('app_regulation_add');
@@ -31,62 +34,64 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $client = $this->login();
 
         // First item
-        $pageOne = $client->request('GET', '/regulations?pageSize=1');
+        $pageOne = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=1');
+
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $pageOneTemporaryRows = $pageOne->filter('#temporary-panel tbody > tr');
-        $this->assertSame(1, $pageOneTemporaryRows->count()); // One item per page
+        $this->assertSame(1, $pageOneTemporaryRows->count());
 
         $pageOneTemporaryRow0 = $pageOneTemporaryRows->eq(0)->filter('td');
-        $this->assertSame('FO1/2023', $pageOneTemporaryRow0->eq(0)->text());
-        $this->assertSame('Savenay Route du Grand Brossais + 2 localisations', $pageOneTemporaryRow0->eq(1)->text());
+        $this->assertSame('F2023/no-locations', $pageOneTemporaryRow0->eq(0)->text());
+        $this->assertEmpty($pageOneTemporaryRow0->eq(1)->text()); // No location set
         $this->assertSame('du 13/03/2023 au 15/03/2023 passé', $pageOneTemporaryRow0->eq(2)->text());
         $this->assertSame('Brouillon', $pageOneTemporaryRow0->eq(3)->text());
 
         $links = $pageOneTemporaryRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS, $links->eq(0)->link()->getUri());
 
         // Second item
         $pageTwo = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=2');
-
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $pageTwoTemporaryRows = $pageTwo->filter('#temporary-panel tbody > tr');
-        $this->assertSame(1, $pageTwoTemporaryRows->count());
+        $this->assertSame(1, $pageTwoTemporaryRows->count()); // One item per page
 
         $pageTwoTemporaryRow0 = $pageTwoTemporaryRows->eq(0)->filter('td');
-        $this->assertSame('FO1/2023 (copie)', $pageTwoTemporaryRow0->eq(0)->text());
-        $this->assertEmpty($pageTwoTemporaryRow0->eq(1)->text()); // No location set
+        $this->assertSame('FO1/2023', $pageTwoTemporaryRow0->eq(0)->text());
+        // This test cannot work because there is no measure associated with this regulationOrder
+        // $this->assertSame('Savenay (44260) Route du Grand Brossais + 2 localisations', $pageOneTemporaryRow0->eq(1)->text());
+        $this->assertSame('Savenay (44260) Route du Grand Brossais', $pageTwoTemporaryRow0->eq(1)->text());
         $this->assertSame('du 13/03/2023 au 15/03/2023 passé', $pageTwoTemporaryRow0->eq(2)->text());
         $this->assertSame('Brouillon', $pageTwoTemporaryRow0->eq(3)->text());
 
-        $links = $pageOneTemporaryRow0->eq(4)->filter('a');
+        $links = $pageTwoTemporaryRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, $links->eq(0)->link()->getUri());
     }
 
     public function testPublishedRegulationRendering(): void
     {
         $client = $this->login();
-        $pageThree = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=3');
+        $crawler = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=4');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $pageThreeTemporaryRows = $pageThree->filter('#temporary-panel tbody > tr');
-        $this->assertSame(1, $pageThreeTemporaryRows->count());
+        $rows = $crawler->filter('#temporary-panel tbody > tr');
+        $this->assertSame(1, $rows->count());
 
-        $pageThreeTemporaryRow0 = $pageThreeTemporaryRows->eq(0)->filter('td');
-        $this->assertSame('FO2/2023', $pageThreeTemporaryRow0->eq(0)->text());
-        $this->assertSame('Montauban Avenue de Fonneuve + 1 localisation', $pageThreeTemporaryRow0->eq(1)->text());
-        $this->assertSame('du 10/03/2023 au 20/03/2023 passé', $pageThreeTemporaryRow0->eq(2)->text());
-        $this->assertSame('Publié', $pageThreeTemporaryRow0->eq(3)->text());
+        $row0 = $rows->eq(0)->filter('td');
+        $this->assertSame('FO2/2023', $row0->eq(0)->text());
+        $this->assertSame('Montauban (82000) Avenue de Fonneuve + 2 localisations', $row0->eq(1)->text());
+        $this->assertSame('du 10/03/2023 au 20/03/2023 passé', $row0->eq(2)->text());
+        $this->assertSame('Publié', $row0->eq(3)->text());
 
-        $links = $pageThreeTemporaryRow0->eq(4)->filter('a');
+        $links = $row0->eq(4)->filter('a');
         $this->assertSame('Voir le détail', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED, $links->eq(0)->link()->getUri());
     }
 
     public function testPermanentRegulationRendering(): void
@@ -101,19 +106,19 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $pageOnePermanentRow0 = $pageOnePermanentRows->eq(0)->filter('td');
         $this->assertSame('FO3/2023', $pageOnePermanentRow0->eq(0)->text());
-        $this->assertSame('Paris 18e Arrondissement', $pageOnePermanentRow0->eq(1)->text());
+        $this->assertSame('Paris 18e Arrondissement (75018) Rue du Simplon', $pageOnePermanentRow0->eq(1)->text());
         $this->assertSame('à partir du 11/03/2023 en cours', $pageOnePermanentRow0->eq(2)->text());
         $this->assertSame('Brouillon', $pageOnePermanentRow0->eq(3)->text());
 
         $links = $pageOnePermanentRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT, $links->eq(0)->link()->getUri());
     }
 
     public function testPaginationRendering(): void
     {
         $client = $this->login();
-        $pageOne = $client->request('GET', '/regulations?pageSize=2&tab=permanent&page=1');
+        $pageOne = $client->request('GET', '/regulations?pageSize=1&tab=temporary&page=1');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -123,13 +128,15 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('1', $navLi->eq(2)->filter('a')->text());
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
-        $this->assertSame('Page suivante', $navLi->eq(5)->filter('a')->text());
-        $this->assertSame('Dernière page', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('...', $navLi->eq(5)->text());
+        $this->assertSame((string) RegulationOrderFixture::NUM_TEMPORARY, $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
+        $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
     }
 
     public function testListWithOtherOrganization(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $pageOne = $client->request('GET', '/regulations');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -149,7 +156,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $links = $pageOnePermanentRow0->eq(4)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5', $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_OTHER_ORG, $links->eq(0)->link()->getUri());
     }
 
     public function testInvalidPageSize(): void

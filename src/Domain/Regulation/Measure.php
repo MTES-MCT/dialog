@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 
 class Measure
 {
+    private Collection $locationsNew;
     private Collection $periods;
     private ?VehicleSet $vehicleSet = null;
 
@@ -22,6 +23,7 @@ class Measure
         private ?int $maxSpeed = null,
     ) {
         $this->periods = new ArrayCollection();
+        $this->locationsNew = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -47,6 +49,16 @@ class Measure
     public function getPeriods(): iterable
     {
         return $this->periods;
+    }
+
+    public function getLocationsNew(): iterable
+    {
+        return $this->locationsNew;
+    }
+
+    public function getLocationNew(): ?LocationNew
+    {
+        return !empty($this->locationsNew) ? $this->locationsNew[0] : null;
     }
 
     public function getCreatedAt(): \DateTimeInterface
@@ -80,6 +92,24 @@ class Measure
         }
 
         $this->periods->removeElement($period);
+    }
+
+    public function addLocationNew(LocationNew $locationNew): void
+    {
+        if ($this->locationsNew->contains($locationNew)) {
+            return;
+        }
+
+        $this->locationsNew[] = $locationNew;
+    }
+
+    public function removeLocationNew(LocationNew $locationNew): void
+    {
+        if (!$this->locationsNew->contains($locationNew)) {
+            return;
+        }
+
+        $this->locationsNew->removeElement($locationNew);
     }
 
     public function update(string $type, ?int $maxSpeed): void

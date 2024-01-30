@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -22,6 +23,24 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
+    private const COUNT_LOCATIONS_QUERY = '
+        SELECT count(DISTINCT(_loc.uuid))
+        FROM App\Domain\Regulation\LocationNew _locNew
+        INNER JOIN _locNew.measure _m
+        INNER JOIN _m.location _loc
+        INNER JOIN _loc.regulationOrder _ro
+        WHERE _ro.uuid = ro.uuid';
+
+    private const GET_LOCATION_QUERY = "
+        FIRST(
+            SELECT CONCAT(_locNew2.roadName, '#', _locNew2.cityLabel, '#',  _locNew2.cityCode)
+            FROM App\Domain\Regulation\LocationNew _locNew2
+            INNER JOIN _locNew2.measure _m2
+            INNER JOIN _m2.location _loc2
+            INNER JOIN _loc2.regulationOrder _ro2
+            WHERE _ro2.uuid = ro.uuid
+        )";
+
     public function findRegulationsByOrganizations(
         array $organizationUuids,
         int $maxItemsPerPage,
@@ -29,13 +48,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         bool $isPermanent,
     ): array {
         $query = $this->createQueryBuilder('roc')
+            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, ro.startDate, ro.endDate')
+            ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
+            ->addSelect(sprintf('(%s) as location', self::GET_LOCATION_QUERY))
             ->where('roc.organization IN (:organizationUuids)')
             ->setParameter('organizationUuids', $organizationUuids)
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
-            ->leftJoin('ro.locations', 'loc')
             ->orderBy('ro.startDate', 'DESC')
-            ->addGroupBy('ro, roc')
+            ->addOrderBy('ro.identifier', 'ASC')
+            ->addGroupBy('ro, roc, o')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
             ->getQuery();
@@ -85,6 +107,36 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    /**
+     * @return GeneralInfoView[]
+     */
+    public function findGeneralInformation(string $uuid): ?array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(sprintf(
+                'NEW %s(
+                    roc.uuid,
+                    ro.identifier,
+                    org.name,
+                    org.uuid,
+                    roc.status,
+                    ro.category,
+                    ro.otherCategoryText,
+                    ro.description,
+                    ro.startDate,
+                    ro.endDate
+                )',
+                GeneralInfoView::class,
+            ))
+            ->where('roc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('roc.organization', 'org')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
@@ -94,30 +146,27 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
-                'loc.address',
-                'loc.fromHouseNumber',
-                'ST_X(loc.fromPoint) as fromLongitude',
-                'ST_Y(loc.fromPoint) as fromLatitude',
-                'loc.toHouseNumber',
-                'ST_X(loc.toPoint) as toLongitude',
-                'ST_Y(loc.toPoint) as toLatitude',
+                'locNew.roadName',
+                'ST_AsGeoJSON(locNew.geometry) as geometry',
                 'm.maxSpeed',
                 'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
                 'v.critairTypes as restrictedCritairTypes',
                 'v.exemptedTypes as exemptedVehicleTypes',
                 'v.heavyweightMaxWeight',
-                'v.heavyweightMaxWidth',
-                'v.heavyweightMaxLength',
-                'v.heavyweightMaxHeight',
+                'v.maxWidth',
+                'v.maxLength',
+                'v.maxHeight',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->innerJoin('loc.measures', 'm')
+            ->innerJoin('m.locationsNew', 'locNew')
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->andWhere('locNew.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
             ->getQuery()
             ->getResult()
@@ -133,11 +182,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.category',
                 'ro.startDate as regulationOrderStartDate',
                 'ro.endDate as regulationOrderEndDate',
-                'loc.address',
-                'ST_X(loc.fromPoint) as fromLongitude',
-                'ST_Y(loc.fromPoint) as fromLatitude',
-                'ST_X(loc.toPoint) as toLongitude',
-                'ST_Y(loc.toPoint) as toLatitude',
+                'locNew.roadName',
+                'ST_AsGeoJSON(locNew.geometry) as geometry',
                 'm.uuid as measureId',
                 'm.type as measureType',
                 'p.startDateTime as periodStartDateTime',
@@ -148,8 +194,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('ro.locations', 'loc')
-            ->innerJoin('loc.measures', 'm')
+            ->innerJoin('ro.locations', '_loc')
+            ->innerJoin('_loc.measures', 'm')
+            ->innerJoin('m.locationsNew', 'locNew')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
@@ -157,8 +204,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
-                'loc.fromPoint IS NOT NULL',
-                'loc.toPoint IS NOT NULL',
+                'locNew.geometry IS NOT NULL',
                 'm.type = :measureType',
                 'v.uuid IS NULL',
             )

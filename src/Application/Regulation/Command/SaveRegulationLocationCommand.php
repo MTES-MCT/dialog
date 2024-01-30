@@ -10,15 +10,18 @@ use App\Domain\Regulation\RegulationOrderRecord;
 
 final class SaveRegulationLocationCommand implements CommandInterface
 {
-    public ?string $address;
+    public ?string $cityCode;
+    public ?string $cityLabel;
+    public ?string $roadName;
     public ?string $fromHouseNumber;
     public ?string $toHouseNumber;
-    public ?string $fromPoint;
-    public ?string $toPoint;
+    public ?string $geometry;
+
+    /** @var SaveMeasureCommand[] */
     public array $measures = [];
 
     public function __construct(
-        public readonly RegulationOrderRecord $regulationOrderRecord,
+        public ?RegulationOrderRecord $regulationOrderRecord = null,
         public readonly ?Location $location = null,
     ) {
     }
@@ -28,7 +31,9 @@ final class SaveRegulationLocationCommand implements CommandInterface
         Location $location = null,
     ): self {
         $command = new self($regulationOrderRecord, $location);
-        $command->address = $location?->getAddress();
+        $command->cityCode = $location?->getCityCode();
+        $command->cityLabel = $location?->getCityLabel();
+        $command->roadName = $location?->getRoadName();
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
 

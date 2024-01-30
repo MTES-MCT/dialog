@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<xs:schema
+  version="3.3"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
+  targetNamespace="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:import namespace="http://datex2.eu/schema/3/locationReferencing" schemaLocation="DATEXII_3_LocationReferencing.xsd" />
+  <xs:complexType name="LinearLocationExtended">
+    <xs:annotation>
+      <xs:documentation>Extension of class LinearLocation.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="geoJsonGeometry" type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>GeoJSON representation for the linear location.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

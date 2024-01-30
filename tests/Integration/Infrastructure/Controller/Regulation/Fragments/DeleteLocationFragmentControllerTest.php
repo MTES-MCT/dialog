@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
@@ -20,24 +22,24 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
 
-        $crawler = $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertSame(3, $this->countRows($crawler));
 
-        $crawler = $client->request('DELETE', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/34247125-38f4-4e69-b5d7-5516a577d149/delete', [
+        $crawler = $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $streams = $crawler->filter('turbo-stream');
-        $this->assertSame($streams->eq(0)->attr('target'), 'block_location_34247125-38f4-4e69-b5d7-5516a577d149');
+        $this->assertSame($streams->eq(0)->attr('target'), 'block_location_' . LocationFixture::UUID_TYPICAL);
         $this->assertSame($streams->eq(0)->attr('action'), 'remove');
 
-        $crawler = $client->request('GET', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+        $crawler = $client->request('GET', sprintf('/regulations/%s', RegulationOrderRecordFixture::UUID_TYPICAL));
         $this->assertSame(2, $this->countRows($crawler));
     }
 
     public function testLocationDoesntBelongsToRegulationOrder(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f/delete', [
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_PUBLISHED . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -46,16 +48,16 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     public function testLocationNotFound(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/3c79e1ff-b000-0000-b8c0-00b644038d0f/delete', [
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_DOES_NOT_EXIST . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testLocationCannotBeDeleted(): void
+    public function testLocationCannotBeDeletedBecauseItIsTheOnlyOne(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/location/f15ed802-fa9b-4d75-ab04-d62ea46597e9/delete', [
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_ONLY_ONE_LOCATION . '/location/' . LocationFixture::UUID_PERMANENT_ONLY_ONE . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(400);
@@ -64,7 +66,7 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/aede8b1a-2020-5788-8510-f08f45511cb5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f/delete', [
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/location/' . LocationFixture::UUID_TYPICAL . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(404);
@@ -73,14 +75,14 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     public function testInvalidCsrfToken(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f/delete');
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/delete');
         $this->assertResponseStatusCodeSame(400);
     }
 
     public function testBadRegulationOrderUuid(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/aaa/location/34247125-38f4-4e69-b5d7-5516a577d149/delete', [
+        $client->request('DELETE', '/_fragment/regulations/aaa/location/' . LocationFixture::UUID_TYPICAL . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(400);
@@ -89,7 +91,7 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     public function testBadLocationUuid(): void
     {
         $client = $this->login();
-        $crawler = $client->request('DELETE', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/aaa/delete', [
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/aaa/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-location'),
         ]);
         $this->assertResponseStatusCodeSame(400);
@@ -98,7 +100,7 @@ final class DeleteLocationFragmentControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('DELETE', '/_fragment/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5/location/2d79e1ff-c991-4767-b8c0-36b644038d0f/delete');
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/delete');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

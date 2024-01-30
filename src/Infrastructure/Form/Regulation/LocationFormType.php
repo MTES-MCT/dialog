@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,11 +18,23 @@ final class LocationFormType extends AbstractType
     {
         $builder
             ->add(
-                'address',
+                'cityCode',
+                HiddenType::class,
+            )
+            ->add(
+                'cityLabel',
                 TextType::class,
                 options: [
-                    'label' => 'regulation.location.address',
-                    'help' => 'regulation.location.address.help',
+                    'label' => 'regulation.location.city',
+                ],
+            )
+            ->add(
+                'roadName',
+                TextType::class,
+                options: [
+                    'label' => 'regulation.location.roadName',
+                    'help' => 'regulation.location.roadName.help',
+                    'required' => false,
                 ],
             )
             ->add(

@@ -6,18 +6,16 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ location.address.roadName|default(location.address.city) }}
+                {{ location.roadName|default(location.cityLabel) }}
             </h3>
         </div>
 
         <div class="app-card__content">
-            <ul class="fr-ml-1w fr-my-0 fr-list">
-                <li>{{ location.address.city }}
-				    ({{ location.address.postCode }})
-                </li>
-                {% if location.address.roadName %}
+            <ul class="fr-ml-1w fr-my-0 fr-list" data-testid="location-detail-items">
+                <li>{{ location.cityLabel }}</li>
+                {% if location.roadName %}
                     <li>
-                        {{ location.address.roadName }}
+                        {{ location.roadName }}
                         {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                     </li>
                 {% endif %}
@@ -32,18 +30,16 @@
                         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
                         <br/>
                         {% include 'regulation/_vehicle_set.html.twig' with {
-                            restrictedTypes: measure.vehicleSet.restrictedTypes,
-                            exemptedTypes: measure.vehicleSet.exemptedTypes,
-                            heavyweightCharacteristics: measure.vehicleSet.heavyweightCharacteristics,
+                            vehicleSet: measure.vehicleSet,
                         } only %}
                     </li>
                 {% endfor %}
             </ul>
         </div>
-        {% if regulationOrderRecord.isDraft %}
+        {% if generalInfo.isDraft %}
             <ul class="app-card__actions">
                 <li>
-                    <form method="GET" action="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: location.uuid }) }}">
+                    <form method="GET" action="{{ path('fragment_regulations_location_update', { regulationOrderRecordUuid: generalInfo.uuid, uuid: location.uuid }) }}">
                         <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
                             {{ 'common.update'|trans }}
                         </button>
@@ -51,7 +47,7 @@
                 </li>
                 {% if canDelete %}
                     <li id="location_{{ uuid }}_delete_button">
-                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecord, uuid: location.uuid, deleteCsrfToken } only %}
+                        {% include 'regulation/fragments/_location_delete_form.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid, uuid: location.uuid, deleteCsrfToken } only %}
                     </li>
                 {% else %}
                     <li id="location_{{ uuid }}_delete_button" hidden></li>

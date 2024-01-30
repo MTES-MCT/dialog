@@ -21,7 +21,7 @@ test('Create then publish a regulation order', async ({ page }) => {
 
     // Add a location
     const regPage = new RegulationOrderPage(page);
-    const location = await regPage.addLocation({ address: 'Rue Monge, 21000 Dijon', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' }, { doBegin: false });
+    const location = await regPage.addLocation({ cityLabel: 'Dijon', roadName: 'Rue Monge', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' }, { doBegin: false });
     await expect(location).toContainText('Circulation interdite tous les jours');
 
     // Regulation order can now be downloaded and published

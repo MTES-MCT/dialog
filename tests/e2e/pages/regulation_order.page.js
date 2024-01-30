@@ -50,17 +50,19 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {{address: string, restrictionType: string, expectedTitle: string}} args
+     * @param {{cityLabel: string, roadName: string, restrictionType: string, expectedTitle: string}} args
      * @param {{doBegin: boolean}} options
      *
      * @returns Locator
      */
-    async addLocation({ address, restrictionType, expectedTitle }, { doBegin } = { doBegin: true }) {
+    async addLocation({ cityLabel, roadName, restrictionType, expectedTitle }, { doBegin } = { doBegin: true }) {
         if (doBegin) {
             await this.beginNewLocation();
         }
 
-        await this.page.getByLabel('Voie ou ville').fill(address);
+        await this.page.getByLabel('Ville ou commune').fill(cityLabel);
+        await this.page.getByRole('listbox', {name: 'Noms de communes suggérés'}).getByRole('option').first().click();
+        await this.page.getByRole('textbox', {name: 'Voie'}).fill(roadName);
         await this.page.getByLabel('Type de restriction').selectOption({ label: restrictionType });
         await this.page.getByTestId('allVehicles-0-yes').click();
         await this.saveBtn.click();
@@ -165,6 +167,9 @@ export class RegulationOrderPage {
 
         if (restrictedVehicleTypes.includes('Poids lourds')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
+        }
+        
+        if (restrictedVehicleTypes.includes('Gabarit')) {
             await restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' }).fill('2,4');
         }
 
@@ -193,6 +198,9 @@ export class RegulationOrderPage {
 
         if (restrictedVehicleTypes.includes('Poids lourds')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
+        }
+
+        if (restrictedVehicleTypes.includes('Gabarit')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' })).toHaveValue('2,4');
         }
 
@@ -206,21 +214,25 @@ export class RegulationOrderPage {
 
     /**
      * @param {Locator} location
-     * @param {{ measureIndex: number, days: string[], startDate: string, startTime: string, endDate: string, endTime: string, dayOption: string }} options
+     * @param {{ measureIndex: number, days: string[], startDate: string, startTime: string[], endDate: string, endTime: string[], dayOption: string }} options
      */
     async addPeriodToMeasure(location, { measureIndex, days, startDate, startTime, endDate, endTime, dayOption }) {
         await this._beginEditLocation(location);
 
         const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
         await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
-
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
+        await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
+
+        await period.getByTestId('start').nth(0).selectOption({ label: startTime[0]});
+        await period.getByTestId('start').nth(1).selectOption({ label: startTime[1]});
+
+        await period.getByTestId('end').nth(0).selectOption({ label: endTime[0]});
+        await period.getByTestId('end').nth(1).selectOption({ label: endTime[1]});
 
         await period.getByLabel('Date de début').fill(startDate);
-        await period.getByLabel('Heure de début').fill(startTime);
         await period.getByLabel('Date de fin').fill(endDate);
-        await period.getByLabel('Heure de fin').fill(endTime);
-        await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
+
 
         if (dayOption == 'Certains jours') {
             for (const day of days) {
@@ -244,6 +256,34 @@ export class RegulationOrderPage {
         await period.getByRole('button', { name: 'Supprimer' }).click();
 
         await this._endEditLocation(location);
+    }
+
+    /**
+     * @param {Locator} location
+     * @param {{ measureIndex: number }} options
+     */
+    async manipulateTimeSlots(location, { measureIndex }) {
+        await this._beginEditLocation(location);
+
+        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
+        await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
+
+        const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
+        const timeSlots = period.getByTestId('timeslot-list').getByRole('listitem');
+        const addTimeSlotBtn = period.getByRole('button', { name: 'Définir des horaires' });
+
+        await expect(timeSlots).toHaveCount(0);
+        await expect(addTimeSlotBtn).toBeVisible();
+
+        await addTimeSlotBtn.click();
+        await expect(timeSlots).toHaveCount(1);
+        await expect(addTimeSlotBtn).not.toBeVisible();
+
+        await timeSlots.nth(0).getByRole('button', {name: 'Supprimer'}).click();
+        await expect(timeSlots).toHaveCount(0);
+        await expect(addTimeSlotBtn).toBeVisible();
+
+        await this.cancelLocation(location);
     }
 
     /**

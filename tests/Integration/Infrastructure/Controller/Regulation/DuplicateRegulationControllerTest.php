@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
@@ -14,7 +16,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testDuplicate(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/duplicate', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
@@ -26,29 +28,30 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $location = $crawler->filter('[data-testid="location"]');
 
         // Location
-        $this->assertSame('Paris 18e Arrondissement', $location->filter('h3')->text());
+        $this->assertSame('Rue du Simplon', $location->filter('h3')->text());
         $this->assertSame('Paris 18e Arrondissement (75018)', $location->filter('li')->eq(0)->text());
-        $this->assertSame('Circulation alternée tous les jours pour tous les véhicules', $location->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour les poids lourds de plus de 3.5 tonnes', $location->filter('li')->eq(2)->text());
+        $this->assertSame('Rue du Simplon', $location->filter('li')->eq(1)->text());
+        $this->assertSame('Circulation alternée tous les jours pour tous les véhicules', $location->filter('li')->eq(2)->text());
+        $this->assertSame('Circulation interdite du 09/06/2023 - 09h00 au 09/06/2023 - 09h00, le lundi pour les véhicules de plus de 3.5 tonnes', $location->filter('li')->eq(3)->text());
     }
 
     public function testWithoutLocations(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/b1a3e982-39a1-4f0e-8a6f-ea2fd5e872c2/duplicate', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $crawler = $client->followRedirect();
 
-        $this->assertSame('Arrêté temporaire FO1/2023 (copie) (copie)', $crawler->filter('h2')->text());
+        $this->assertSame('Arrêté temporaire F2023/no-locations (copie)', $crawler->filter('h2')->text());
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
     }
 
     public function testWithoutMeasures(): void
     {
         $client = $this->login();
-        $crawler = $client->request('POST', '/regulations/0650037d-3e90-7a99-8000-a2099e71ae4a/duplicate', [
+        $crawler = $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_NO_MEASURES . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $crawler = $client->followRedirect();
@@ -60,7 +63,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testDuplicateAnAlreadyExistingIdentifier(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_DUPLICATE_NAME_CONFLICT . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
@@ -71,18 +74,18 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
     public function testDuplicateWithNoStartDateYet(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('POST', '/regulations/867d2be6-0d80-41b5-b1ff-8452b30a95f5/duplicate', [
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_OTHER_ORG_NO_START_DATE . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
     }
 
-    public function testRegulationCannotBeDuplicated(): void
+    public function testCannotDuplicateBcauseDifferentOrg(): void
     {
-        $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('POST', '/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/duplicate', [
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
@@ -92,7 +95,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testRegulationNotFound(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/e2beed9a-6ec1-417a-abfd-0b5bd245615a/duplicate', [
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/duplicate', [
             'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
@@ -102,7 +105,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testInvalidCsrfToken(): void
     {
         $client = $this->login();
-        $client->request('POST', '/regulations/e2beed9a-6ec1-417a-abfd-0b5bd245615a/duplicate');
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate');
 
         $this->assertResponseStatusCodeSame(400);
     }
@@ -110,7 +113,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('POST', '/regulations/e2beed9a-6ec1-417a-abfd-0b5bd245615a/duplicate');
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate');
 
         $this->assertResponseRedirects('http://localhost/login', 302);
     }

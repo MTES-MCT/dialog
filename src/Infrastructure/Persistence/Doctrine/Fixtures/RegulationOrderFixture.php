@@ -11,18 +11,22 @@ use Doctrine\Persistence\ObjectManager;
 
 final class RegulationOrderFixture extends Fixture
 {
+    public const TYPICAL_IDENTIFIER = 'FO1/2023';
+    public const NUM_TEMPORARY = 6;
+    public const NUM_PERMANENT = 1;
+
     public function load(ObjectManager $manager): void
     {
-        $regulationOrder = new RegulationOrder(
+        $typicalRegulationOrder = new RegulationOrder(
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
-            identifier: 'FO1/2023',
+            identifier: self::TYPICAL_IDENTIFIER,
             category: RegulationOrderCategoryEnum::EVENT->value,
             description: 'Description 1',
             startDate: new \DateTimeImmutable('2023-03-13'),
             endDate: new \DateTimeImmutable('2023-03-15'),
         );
 
-        $regulationOrder2 = new RegulationOrder(
+        $publishedRegulationOrder = new RegulationOrder(
             uuid: '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
             identifier: 'FO2/2023',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
@@ -31,7 +35,16 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2023-03-20'),
         );
 
-        $regulationOrder3 = new RegulationOrder(
+        $regulationOrderDuplicate = new RegulationOrder(
+            uuid: '0658c6ab-6b49-7a3b-8000-0683622905a3',
+            identifier: 'FO2/2023 (copie)',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Description 2',
+            startDate: new \DateTimeImmutable('2023-03-10'),
+            endDate: new \DateTimeImmutable('2023-03-20'),
+        );
+
+        $regulationOrderPermanent = new RegulationOrder(
             uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
             identifier: 'FO3/2023',
             category: RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
@@ -40,7 +53,7 @@ final class RegulationOrderFixture extends Fixture
             endDate: null,
         );
 
-        $regulationOrder4 = new RegulationOrder(
+        $otherOrgRegulationOrder = new RegulationOrder(
             uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
             identifier: 'FO4/2023',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
@@ -49,9 +62,18 @@ final class RegulationOrderFixture extends Fixture
             endDate: null,
         );
 
-        $regulationOrder5 = new RegulationOrder(
+        $fullCityRegulationOrder = new RegulationOrder(
+            uuid: '0658c568-dfbe-7c64-8000-303f7e2ae9b3',
+            identifier: 'F2023/full-city',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Description 2',
+            startDate: new \DateTimeImmutable('2023-03-11'),
+            endDate: new \DateTimeImmutable('2023-03-21'),
+        );
+
+        $regulationOrderNoLocations = new RegulationOrder(
             uuid: 'e589f277-ccd4-4364-967a-7e9db80e6d34',
-            identifier: 'FO1/2023 (copie)',
+            identifier: 'F2023/no-locations',
             description: 'Description 5 that is very long and will be truncated',
             category: RegulationOrderCategoryEnum::OTHER->value,
             otherCategoryText: 'Dérogation préfectorale',
@@ -77,21 +99,25 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2021-11-06'),
         );
 
-        $manager->persist($regulationOrder);
-        $manager->persist($regulationOrder2);
-        $manager->persist($regulationOrder3);
-        $manager->persist($regulationOrder4);
-        $manager->persist($regulationOrder5);
+        $manager->persist($typicalRegulationOrder);
+        $manager->persist($publishedRegulationOrder);
+        $manager->persist($regulationOrderDuplicate);
+        $manager->persist($regulationOrderPermanent);
+        $manager->persist($otherOrgRegulationOrder);
+        $manager->persist($fullCityRegulationOrder);
+        $manager->persist($regulationOrderNoLocations);
         $manager->persist($regulationOrderNoMeasures);
         $manager->persist($regulationOrderCifs);
         $manager->flush();
 
-        $this->addReference('regulationOrder', $regulationOrder);
-        $this->addReference('regulationOrder2', $regulationOrder2);
-        $this->addReference('regulationOrder3', $regulationOrder3);
-        $this->addReference('regulationOrder4', $regulationOrder4);
-        $this->addReference('regulationOrder5', $regulationOrder5);
+        $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
+        $this->addReference('publishedRegulationOrder', $publishedRegulationOrder);
+        $this->addReference('regulationOrderPermanent', $regulationOrderPermanent);
+        $this->addReference('otherOrgRegulationOrder', $otherOrgRegulationOrder);
+        $this->addReference('fullCityRegulationOrder', $fullCityRegulationOrder);
+        $this->addReference('regulationOrderNoLocations', $regulationOrderNoLocations);
         $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
+        $this->addReference('regulationOrderDuplicate', $regulationOrderDuplicate);
         $this->addReference('regulationOrderCifs', $regulationOrderCifs);
     }
 }

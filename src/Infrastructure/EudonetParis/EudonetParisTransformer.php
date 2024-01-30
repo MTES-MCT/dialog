@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace App\Infrastructure\EudonetParis;
 
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\EudonetParis\EudonetParisLocationItem;
-use App\Domain\Geography\GeometryFormatter;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\Regulation\LocationAddress;
 use App\Domain\User\Organization;
 
 final class EudonetParisTransformer
 {
     private const ARRONDISSEMENT_REGEX = '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i';
+    private const CITY_CODE_TEMPLATE = '751%s';
+    private const CITY_LABEL = 'Paris';
 
     public function __construct(
         private GeocoderInterface $geocoder,
-        private GeometryFormatter $geometryFormatter,
     ) {
     }
 
@@ -31,16 +32,21 @@ final class EudonetParisTransformer
         $errors = [];
         $loc = ['regulation_identifier' => $row['fields'][EudonetParisExtractor::ARRETE_ID]];
 
-        $generalInfoCommand = $this->buildGeneralInfoCommand($row, $organization);
-
-        $locationItems = [];
-        $errors = [];
-
         if (\count($row['measures']) === 0) {
             $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_measures_found'];
 
             return new EudonetParisTransformerResult(null, $errors);
         }
+
+        [$generalInfoCommand, $error] = $this->buildGeneralInfoCommand($row, $organization);
+
+        if ($error) {
+            $errors[] = ['loc' => [...$loc, ...$error['loc']], 'impact' => 'skip_regulation', ...$error];
+
+            return new EudonetParisTransformerResult(null, $errors);
+        }
+
+        $locationCommands = [];
 
         foreach ($row['measures'] as $measureRow) {
             [$measureCommand, $error] = $this->buildMeasureCommand($measureRow);
@@ -55,18 +61,18 @@ final class EudonetParisTransformer
             $measureCommand->vehicleSet = $vehicleSet;
 
             foreach ($measureRow['locations'] as $locationRow) {
-                [$locationItem, $error] = $this->buildLocationItem($locationRow, $measureCommand);
+                [$locationCommand, $error] = $this->buildLocationCommand($locationRow, $measureCommand);
 
-                if (empty($locationItem)) {
+                if (empty($locationCommand)) {
                     $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_location'];
                     continue;
                 }
 
-                $locationItems[] = $locationItem;
+                $locationCommands[] = $locationCommand;
             }
         }
 
-        if (\count($locationItems) === 0) {
+        if (\count($locationCommands) === 0) {
             $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_locations_gathered'];
 
             return new EudonetParisTransformerResult(null, $errors);
@@ -74,13 +80,33 @@ final class EudonetParisTransformer
 
         $command = new ImportEudonetParisRegulationCommand(
             $generalInfoCommand,
-            $locationItems,
+            $locationCommands,
         );
 
         return new EudonetParisTransformerResult($command, $errors);
     }
 
-    private function buildGeneralInfoCommand(array $row, Organization $organization): SaveRegulationGeneralInfoCommand
+    private function parseDate(string $value): ?\DateTimeInterface
+    {
+        if ($date = \DateTimeImmutable::createFromFormat('Y/m/d H:i:s', $value, new \DateTimeZone('Europe/Paris'))) {
+            return $date;
+        }
+
+        if (\DateTimeImmutable::createFromFormat('Y/m/d', $value, new \DateTimeZone('Europe/Paris'))) {
+            // Need to add a datetime otherwise PHP would use the current server time, not midnight.
+            return $this->parseDate($value . ' 00:00:00');
+        }
+
+        if (\DateTimeImmutable::createFromFormat('d/m/Y', $value, new \DateTimeZone('Europe/Paris'))) {
+            // This format is somtimes used by some Eudonet Paris data input users.
+            // Again, we need to ensure there is a datetime.
+            return \DateTimeImmutable::createFromFormat('d/m/Y H:i:s', $value . ' 00:00:00', new \DateTimeZone('Europe/Paris'));
+        }
+
+        return null;
+    }
+
+    private function buildGeneralInfoCommand(array $row, Organization $organization): array
     {
         $command = new SaveRegulationGeneralInfoCommand();
         $command->identifier = $row['fields'][EudonetParisExtractor::ARRETE_ID];
@@ -95,19 +121,27 @@ final class EudonetParisTransformer
 
         $command->organization = $organization;
 
-        $command->startDate = \DateTimeImmutable::createFromFormat(
-            'Y/m/d H:i:s',
-            $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT],
-            new \DateTimeZone('Europe/Paris'),
-        );
+        $startDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]);
 
-        $command->endDate = \DateTimeImmutable::createFromFormat(
-            'Y/m/d H:i:s',
-            $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN],
-            new \DateTimeZone('Europe/Paris'),
-        );
+        if (!$startDate) {
+            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => 'parsing_failed', 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
 
-        return $command;
+            return [null, $error];
+        }
+
+        $command->startDate = $startDate;
+
+        $endDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]);
+
+        if (!$endDate) {
+            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => 'parsing_failed', 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
+
+            return [null, $error];
+        }
+
+        $command->endDate = $endDate;
+
+        return [$command, null];
     }
 
     private function buildMeasureCommand(array $row): array
@@ -128,18 +162,9 @@ final class EudonetParisTransformer
         return [$command, null];
     }
 
-    private function computeJunctionPoint(string $address, string $roadName): string
-    {
-        $coords = $this->geocoder->computeJunctionCoordinates($address, $roadName);
-
-        return $this->geometryFormatter->formatPoint($coords->latitude, $coords->longitude);
-    }
-
-    private function buildLocationItem(array $row, SaveMeasureCommand $measureCommand): array
+    private function buildLocationCommand(array $row, SaveMeasureCommand $measureCommand): array
     {
         $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
-
-        $locationItem = new EudonetParisLocationItem();
 
         $arrondissement = $row['fields'][EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT];
 
@@ -154,8 +179,7 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $arrondissement = (int) $matches['arrondissement'];
-        $postCode = sprintf('750%s', str_pad((string) $arrondissement, 2, '0', STR_PAD_LEFT));
+        $cityCode = sprintf(self::CITY_CODE_TEMPLATE, str_pad($matches['arrondissement'], 2, '0', STR_PAD_LEFT));
 
         $porteSur = $row['fields'][EudonetParisExtractor::LOCALISATION_PORTE_SUR];
         $libelleVoie = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE];
@@ -190,26 +214,66 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $locationItem->address = (string) new LocationAddress(
-            postCode: $postCode,
-            city: 'Paris',
-            roadName: $roadName,
+        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->cityCode = $cityCode;
+        $locationCommand->cityLabel = self::CITY_LABEL;
+        $locationCommand->roadName = $roadName;
+        $locationCommand->fromHouseNumber = $fromHouseNumber;
+        $locationCommand->toHouseNumber = $toHouseNumber;
+
+        try {
+            $locationCommand->geometry = $this->makeLocationGeometry($locationCommand->roadName, $cityCode, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
+        } catch (GeocodingFailureException $exc) {
+            $error = [
+                'loc' => $loc,
+                'reason' => 'geocoding_failure',
+                'message' => $exc->getMessage(),
+                'location_raw' => json_encode($row),
+            ];
+
+            return [null, $error];
+        }
+
+        $locationCommand->measures[] = $measureCommand;
+
+        return [$locationCommand, null];
+    }
+
+    private function makeLocationGeometry(
+        string $roadName,
+        string $cityCode,
+        ?string $fromHouseNumber,
+        ?string $fromRoadName,
+        ?string $toHouseNumber,
+        ?string $toRoadName,
+    ): ?string {
+        $hasBothEnds = (
+            ($fromHouseNumber || $fromRoadName)
+            && ($toHouseNumber || $toRoadName)
         );
 
-        if ($fromHouseNumber) {
-            $locationItem->fromHouseNumber = $fromHouseNumber;
-        } elseif ($fromRoadName) {
-            $locationItem->fromPoint = $this->computeJunctionPoint($locationItem->address, $fromRoadName);
+        if (!$hasBothEnds) {
+            return null;
         }
 
-        if ($toHouseNumber) {
-            $locationItem->toHouseNumber = $toHouseNumber;
-        } elseif ($toRoadName) {
-            $locationItem->toPoint = $this->computeJunctionPoint($locationItem->address, $toRoadName);
+        try {
+            if ($fromHouseNumber) {
+                $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
+                $fromPoint = $this->geocoder->computeCoordinates($fromAddress, $cityCode);
+            } else {
+                $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, $cityCode);
+            }
+
+            if ($toHouseNumber) {
+                $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
+                $toPoint = $this->geocoder->computeCoordinates($toAddress, $cityCode);
+            } else {
+                $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, $cityCode);
+            }
+        } catch (GeocodingFailureException $exc) {
+            throw $exc;
         }
 
-        $locationItem->measures[] = $measureCommand;
-
-        return [$locationItem, null];
+        return GeoJSON::toLineString([$fromPoint, $toPoint]);
     }
 }

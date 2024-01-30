@@ -8,9 +8,11 @@ use App\Domain\Geography\Coordinates;
 
 interface GeocoderInterface
 {
-    public function computeCoordinates(string $address): Coordinates;
+    public function computeCoordinates(string $address, string $cityCode): Coordinates;
 
-    public function computeJunctionCoordinates(string $address, string $roadName): Coordinates;
+    public function computeJunctionCoordinates(string $address, string $roadName, string $cityCode): Coordinates;
 
-    public function findAddresses(string $search): array;
+    public function findRoadNames(string $search, string $cityCode): array;
+
+    public function findCities(string $search): array;
 }
