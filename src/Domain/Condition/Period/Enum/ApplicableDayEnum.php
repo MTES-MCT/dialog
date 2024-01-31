@@ -26,4 +26,15 @@ enum ApplicableDayEnum: string
 
         return \is_int($key) ? $key : null;
     }
+
+    public static function getByIndex(int $index): ?string
+    {
+        $values = self::getValues();
+
+        if (0 <= $index && $index < \count($values)) {
+            return $values[$index];
+        }
+
+        return null;
+    }
 }

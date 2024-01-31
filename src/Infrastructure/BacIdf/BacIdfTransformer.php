@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
+use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -48,7 +53,7 @@ final class BacIdfTransformer
             ]);
         }
 
-        $generalInfo->startDate = new \DateTimeImmutable($date);
+        $generalInfo->startDate = new \DateTimeImmutable($date, new \DateTimeZone('Europe/Paris'));
 
         $locationCommands = [];
 
@@ -66,9 +71,6 @@ final class BacIdfTransformer
             $measureCommand = new SaveMeasureCommand();
             $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
             $measureCommand->vehicleSet = $this->parseVehicleSetCommand($regCirculation);
-
-            // TODO periods
-            // $regCirculation['CIRC_REG']['PERIODE_JH']
 
             foreach ($circReg['REG_VOIES'] as $regVoie) {
                 if (\count($regVoie['VOIE_GEOJSON']['features']) === 0) {
@@ -98,6 +100,12 @@ final class BacIdfTransformer
                 $locationCommand->measures[] = $measureCommand;
 
                 $locationCommands[] = $locationCommand;
+            }
+
+            $periodCommands = $this->parsePeriodCommands($circReg, startDate: $generalInfo->startDate);
+
+            foreach ($periodCommands as $periodCommand) {
+                $measureCommand->periods[] = $periodCommand;
             }
         }
 
@@ -251,8 +259,82 @@ final class BacIdfTransformer
 
         $vehicleSetCommand->exemptedTypes = $exemptedTypes;
 
-        dump($vehicleSetCommand);
-
         return $vehicleSetCommand;
+    }
+
+    private function parsePeriodCommands(array $circReg, \DateTimeInterface $startDate): array
+    {
+        $periodCommands = [];
+
+        foreach ($circReg['PERIODE_JH'] as $periodItem) {
+            $jour = $periodItem['JOUR'];
+            $heureDeb = \array_key_exists('HEURE_DEB', $periodItem) ? $periodItem['HEURE_DEB'] : null;
+            $heureFin = \array_key_exists('HEURE_FIN', $periodItem) ? $periodItem['HEURE_FIN'] : null;
+
+            $isAllTheTime = $jour === [1, 2, 3, 4, 5, 6, 0]
+                && (
+                    ($heureDeb === '00:00' && $heureFin === '23:59')
+                    || (!$heureDeb && !$heureFin)
+                );
+
+            if ($isAllTheTime) {
+                return [];
+            }
+
+            $periodCommand = new SavePeriodCommand();
+
+            $periodCommand->startDate = $startDate;
+            $periodCommand->startTime = $startDate;
+
+            // TODO: We require an end date but permanent regulations won't have one.
+            $endDate = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2100-01-01 00:00:00', new \DateTimeZone('Europe/Paris'));
+            $periodCommand->endDate = $endDate;
+            $periodCommand->endTime = $endDate;
+
+            $days = $periodItem['JOUR'];
+
+            // In Bac-IDF data, 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+            // But we do 0 = Monday, ..., 5 = Saturday, 6 = Sunday
+            $days = array_map(fn ($day) => ($day + 6) % 7, $days);
+
+            sort($days);
+
+            if ($days === [0, 1, 2, 3, 4, 5, 6]) {
+                $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+            } else {
+                $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
+
+                $applicableDays = [];
+
+                foreach ($days as $dayIndex) {
+                    $day = ApplicableDayEnum::getByIndex($dayIndex);
+
+                    if ($day === null) {
+                        throw new \RuntimeException(sprintf('invalid day: %d', $dayIndex));
+                    }
+
+                    $applicableDays[] = $day;
+                }
+
+                $dailyRangeCommand = new SaveDailyRangeCommand();
+                $dailyRangeCommand->applicableDays = $applicableDays;
+                $periodCommand->dailyRange = $dailyRangeCommand;
+            }
+
+            $timeSlotCommands = [];
+
+            if ($heureDeb !== '00:00' && $heureFin !== '23:59') {
+                $timeSlotCommand = new SaveTimeSlotCommand();
+                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $heureDeb, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $heureFin, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommands[] = $timeSlotCommand;
+            }
+
+            $periodCommand->timeSlots = $timeSlotCommands;
+
+            $periodCommands[] = $periodCommand;
+        }
+
+        return $periodCommands;
     }
 }
