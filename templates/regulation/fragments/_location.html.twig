@@ -6,12 +6,10 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {% if location.roadName %}
-                        {{ location.roadName }}
-                    {% elseif location.roadNumber %}
-                        {{ location.roadNumber }} ({{ location.administrator }})
-                    {% else %}
-                        {{ location.cityLabel }}
+                {% if location.roadType == 'lane' %}
+                    {{ location.roadName|default(location.cityLabel) }}
+                {% else %}
+                    {{ location.roadNumber }} ({{ location.administrator }})
                 {% endif %}
             </h3>
         </div>
@@ -19,7 +17,7 @@
         <div class="app-card__content">
             <ul class="fr-ml-1w fr-my-0 fr-list" data-testid="location-detail-items">
                 <li>
-                    {% if location.cityLabel %}
+                    {% if location.roadType == 'lane' %}
                         {{ location.cityLabel }}
                     {% else %}
                         {{ location.roadNumber }}  ({{ location.administrator }})

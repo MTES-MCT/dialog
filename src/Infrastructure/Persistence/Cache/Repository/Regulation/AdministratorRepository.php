@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Adapter;
+namespace App\Infrastructure\Persistence\Cache\Repository\Regulation;
 
-use App\Application\AdministratorListInterface;
+use App\Domain\Regulation\Repository\AdministratorRepositoryInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-final class AdministratorListAdapter implements AdministratorListInterface
+final class AdministratorRepository implements AdministratorRepositoryInterface
 {
     public function __construct(
         private CacheInterface $cache,
@@ -20,7 +20,7 @@ final class AdministratorListAdapter implements AdministratorListInterface
         return $this->cache->get('administrators', function (ItemInterface $item) {
             $item->expiresAfter(86400); // one day
 
-            $content = file_get_contents(__DIR__ . '/../../../data/gestionnaires.txt');
+            $content = file_get_contents(__DIR__ . '/../../../../../../data/gestionnaires.txt');
             $administrators = [];
 
             foreach (explode('|', $content) as $value) {

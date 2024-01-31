@@ -17,7 +17,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
 
-class EudonetParisTransformer
+final class EudonetParisTransformer
 {
     private const ARRONDISSEMENT_REGEX = '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i';
     private const CITY_CODE_TEMPLATE = '751%s';

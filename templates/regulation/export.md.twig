@@ -63,11 +63,11 @@ Arrête
 
 {% for location in regulationOrderLocations.locations -%}
     [
-    {% if location.cityLabel %}
+    {% if location.roadType == 'lane' %}
         {{ location.roadName }} à {{ location.cityLabel }}
         {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
     {% else %}
-        {{ location.roadNumber }} - {{ location.administrator }}
+        {{ location.roadNumber }} ({{ location.administrator }})
     {% endif %}
     –
     {%- for measure in location.measures %}
