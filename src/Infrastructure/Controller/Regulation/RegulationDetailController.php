@@ -49,28 +49,24 @@ final class RegulationDetailController extends AbstractRegulationController
 
         /** @var RegulationOrderLocationsView */
         $regulationOrderLocations = $this->queryBus->handle(new GetRegulationLocationsQuery($uuid));
-        $featureLocInversion = $this->featureFlagService->isFeatureEnabled('loc_inversion', $request);
-        $measures = [];
 
-        if ($featureLocInversion) {
-            $viewName = 'detail_measure';
-            $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
-        } else {
-            $viewName = 'detail';
+        $context = [
+            'regulationOrderLocations' => $regulationOrderLocations,
+            'isDraft' => $generalInfo->isDraft(),
+            'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderLocations),
+            'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderLocations),
+            'uuid' => $uuid,
+            'generalInfo' => $generalInfo,
+        ];
+
+        if ($this->featureFlagService->isFeatureEnabled('loc_inversion', $request)) {
+            $context['measures'] = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         }
 
         return new Response(
             $this->twig->render(
-                name: sprintf('regulation/%s.html.twig', $viewName),
-                context: [
-                    'regulationOrderLocations' => $regulationOrderLocations,
-                    'measures' => $measures,
-                    'isDraft' => $generalInfo->isDraft(),
-                    'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderLocations),
-                    'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderLocations),
-                    'uuid' => $uuid,
-                    'generalInfo' => $generalInfo,
-                ],
+                name: 'regulation/detail.html.twig',
+                context: $context,
             ),
         );
     }
