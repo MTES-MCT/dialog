@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -54,6 +55,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->orderBy('ro.startDate', 'DESC')
+            ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc, o')
             ->setFirstResult($maxItemsPerPage * ($page - 1))
             ->setMaxResults($maxItemsPerPage)
@@ -104,6 +106,36 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    /**
+     * @return GeneralInfoView[]
+     */
+    public function findGeneralInformation(string $uuid): ?array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(sprintf(
+                'NEW %s(
+                    roc.uuid,
+                    ro.identifier,
+                    org.name,
+                    org.uuid,
+                    roc.status,
+                    ro.category,
+                    ro.otherCategoryText,
+                    ro.description,
+                    ro.startDate,
+                    ro.endDate
+                )',
+                GeneralInfoView::class,
+            ))
+            ->where('roc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->innerJoin('roc.organization', 'org')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
@@ -129,7 +161,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.locations', 'loc')
             ->innerJoin('loc.measures', 'm')
-            ->innerJoin('m.locations', 'locNew')
+            ->innerJoin('m.locationsNew', 'locNew')
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
