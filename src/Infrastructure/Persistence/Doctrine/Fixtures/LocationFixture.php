@@ -161,7 +161,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             ]),
         );
 
-        $locationCifs = new Location(
+        $cifsLocation = new Location(
             '06548f85-d545-7b45-8000-8a23c45850b3',
             $this->getReference('regulationOrderCifs'),
             cityCode: '82121',
@@ -184,7 +184,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($fullCityLocation);
         $manager->persist($permanentRegulationOrderLocation);
         $manager->persist($locationNoMeasures);
-        $manager->persist($locationCifs);
+        $manager->persist($cifsLocation);
         $manager->flush();
 
         $this->addReference('typicalLocation', $typicalRegulationOrderLocation1);
@@ -194,7 +194,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('fullCityLocation', $fullCityLocation);
         $this->addReference('permanentRegulationOrderLocation', $permanentRegulationOrderLocation);
         $this->addReference('locationNoMeasures', $locationNoMeasures);
-        $this->addReference('locationCifs', $locationCifs);
+        $this->addReference('cifsLocation', $cifsLocation);
     }
 
     public function getDependencies(): array

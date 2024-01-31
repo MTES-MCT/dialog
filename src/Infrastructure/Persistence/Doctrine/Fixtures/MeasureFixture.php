@@ -83,7 +83,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
 
         $cifsMeasure = new Measure(
             '06548f88-56a9-70e2-8000-a06baed6a93d',
-            $this->getReference('locationCifs'),
+            $this->getReference('cifsLocation'),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2021-11-02'),
         );

@@ -206,8 +206,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.endDate IS NOT NULL',
                 'locNew.geometry IS NOT NULL',
                 'm.type = :measureType',
-                'v.restrictedTypes = \'a:0:{}\'',
-                'v.exemptedTypes = \'a:0:{}\'',
+                'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)
