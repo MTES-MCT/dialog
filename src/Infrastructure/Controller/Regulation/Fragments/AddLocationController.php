@@ -56,7 +56,7 @@ final class AddLocationController extends AbstractRegulationController
         $form = $this->formFactory->create(LocationFormType::class, $command, [
             'action' => $this->router->generate('fragment_regulations_location_add', ['uuid' => $uuid]),
             'administrators' => $administrators,
-            'feature_road_type_enabled' => $this->featureFlagService->isFeatureEnabled('road_type_enabled', $request),
+            'feature_road_type' => $this->featureFlagService->isFeatureEnabled('road_type', $request),
         ]);
         $form->handleRequest($request);
         $commandFailed = false;

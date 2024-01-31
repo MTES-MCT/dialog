@@ -9,8 +9,7 @@
             </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option
-                    name="constraints">
+                <option name="constraints">
                     <constraint name="NotBlank" />
                 </option>
             </constraint>
@@ -21,8 +20,7 @@
             </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option
-                    name="constraints">
+                <option name="constraints">
                     <constraint name="NotBlank" />
                 </option>
             </constraint>
@@ -34,8 +32,7 @@
             </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'lane'</option>
-                <option
-                    name="constraints">
+                <option name="constraints">
                     <constraint name="NotBlank" />
                 </option>
             </constraint>

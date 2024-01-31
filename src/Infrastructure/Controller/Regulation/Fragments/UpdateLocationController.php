@@ -68,7 +68,7 @@ final class UpdateLocationController extends AbstractRegulationController
                     'uuid' => $uuid,
                 ]),
                 'administrators' => $administrators,
-                'feature_road_type_enabled' => $this->featureFlagService->isFeatureEnabled('road_type_enabled', $request),
+                'feature_road_type' => $this->featureFlagService->isFeatureEnabled('road_type', $request),
             ],
         );
         $form->handleRequest($request);

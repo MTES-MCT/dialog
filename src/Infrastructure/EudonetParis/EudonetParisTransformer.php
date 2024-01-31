@@ -12,9 +12,9 @@ use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\Enum\LocationTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\User\Organization;
 
 final class EudonetParisTransformer
@@ -215,7 +215,7 @@ final class EudonetParisTransformer
         }
 
         $locationCommand = new SaveRegulationLocationCommand();
-        $locationCommand->roadType = LocationTypeEnum::LANE->value;
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $cityCode;
         $locationCommand->cityLabel = self::CITY_LABEL;
         $locationCommand->roadName = $roadName;

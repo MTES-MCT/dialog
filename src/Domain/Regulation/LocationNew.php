@@ -29,8 +29,8 @@ class LocationNew
             roadType: $location->getRoadType(),
             administrator: $location->getAdministrator(),
             roadNumber: $location->getRoadNumber(),
-            cityLabel: $location->getCityLabel(),
             cityCode: $location->getCityCode(),
+            cityLabel: $location->getCityLabel(),
             roadName: $location->getRoadName(),
             fromHouseNumber: $location->getFromHouseNumber(),
             toHouseNumber: $location->getToHouseNumber(),
@@ -95,10 +95,10 @@ class LocationNew
 
     public function update(
         string $roadType,
-        ?string $cityCode,
-        ?string $cityLabel,
         ?string $administrator,
         ?string $roadNumber,
+        ?string $cityCode,
+        ?string $cityLabel,
         ?string $roadName,
         ?string $fromHouseNumber,
         ?string $toHouseNumber,

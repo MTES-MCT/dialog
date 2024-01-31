@@ -105,10 +105,10 @@ final class LocationTest extends TestCase
 
         $location->update(
             $newRoadType,
-            $newCityCode,
-            $newCityLabel,
             $newAdministrator,
             $newRoadNumber,
+            $newCityCode,
+            $newCityLabel,
             $newRoadName,
             $newFromHouseNumber,
             $newToHouseNumber,

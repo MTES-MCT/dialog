@@ -48,12 +48,12 @@ export default class extends Controller {
     }
 
     openByValue(event) {
-        this.sectionTargets.forEach((element)=>{
-            if(element.dataset.value === event.target.value) {
+        this.sectionTargets.forEach((element) => {
+            if (element.dataset.value === event.target.value) {
                 element.hidden = false;
-            }else {
+            } else {
                 element.hidden = true;
             }
-        })
+        });
     }
 }

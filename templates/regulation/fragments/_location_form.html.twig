@@ -5,7 +5,12 @@
 %}
 
 {% macro periods_list_item(form, index) %}
-    <li class="app-card" data-controller="remove" data-remove-target="this" data-form-collection-target="collectionItem">
+    <li
+        class="app-card"
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+    >
         <div class="app-card__header">
             <div class="app-card__title fr-text--heavy">
             	{{ 'regulation.period.title'|trans }}
@@ -71,7 +76,7 @@
         	            <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>    
         	        </button>
         	    </div>
-        	</div>
+            </div>
         </div>
     </li>
 {% endmacro %}
@@ -165,7 +170,7 @@
         <div class="app-card__content">
             {{ form_start(form, {attr: {id: 'location-form'}}) }}
             {{ form_errors(form) }}    
-            {% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type_enabled', app.request) %}
+            {% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type', app.request) %}
                 <div data-controller="form-reveal" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
                 	
                     {{ form_row(form.roadType, {

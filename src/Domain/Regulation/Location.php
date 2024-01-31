@@ -15,10 +15,10 @@ class Location
         private string $uuid,
         private RegulationOrder $regulationOrder,
         private string $roadType,
-        private ?string $cityLabel,
-        private ?string $cityCode,
         private ?string $administrator,
         private ?string $roadNumber,
+        private ?string $cityCode,
+        private ?string $cityLabel,
         private ?string $roadName,
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
@@ -111,20 +111,20 @@ class Location
 
     public function update(
         string $roadType,
-        ?string $cityCode,
-        ?string $cityLabel,
         ?string $administrator,
         ?string $roadNumber,
+        ?string $cityCode,
+        ?string $cityLabel,
         ?string $roadName,
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
         ?string $geometry,
     ): void {
         $this->roadType = $roadType;
-        $this->cityCode = $cityCode;
-        $this->cityLabel = $cityLabel;
         $this->administrator = $administrator;
         $this->roadNumber = $roadNumber;
+        $this->cityCode = $cityCode;
+        $this->cityLabel = $cityLabel;
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;

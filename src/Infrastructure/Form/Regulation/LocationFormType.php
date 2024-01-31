@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
-use App\Domain\Regulation\Enum\LocationTypeEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -18,7 +18,7 @@ final class LocationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if ($options['feature_road_type_enabled'] === true) {
+        if ($options['feature_road_type'] === true) {
             $builder
                 ->add(
                     'roadType',
@@ -57,7 +57,9 @@ final class LocationFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.city',
-                    'required' => false,
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(
@@ -107,7 +109,7 @@ final class LocationFormType extends AbstractType
     {
         $choices = [];
 
-        foreach (LocationTypeEnum::cases() as $case) {
+        foreach (RoadTypeEnum::cases() as $case) {
             $choices[sprintf('regulation.location.road.type.%s', $case->value)] = $case->value;
         }
 
@@ -144,7 +146,7 @@ final class LocationFormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'administrators' => [],
-            'feature_road_type_enabled' => false,
+            'feature_road_type' => false,
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
     }

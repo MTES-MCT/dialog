@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
-use App\Domain\Regulation\Enum\LocationTypeEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\RegulationOrderRecord;
 
@@ -36,10 +36,10 @@ final class SaveRegulationLocationCommand implements CommandInterface
     ): self {
         $command = new self($regulationOrderRecord, $location);
         $command->roadType = $location?->getRoadType();
-        $command->cityCode = $location?->getCityCode();
-        $command->cityLabel = $location?->getCityLabel();
         $command->administrator = $location?->getAdministrator();
         $command->roadNumber = $location?->getRoadNumber();
+        $command->cityCode = $location?->getCityCode();
+        $command->cityLabel = $location?->getCityLabel();
         $command->roadName = $location?->getRoadName();
         $command->fromHouseNumber = $location?->getFromHouseNumber();
         $command->toHouseNumber = $location?->getToHouseNumber();
@@ -57,7 +57,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
 
     public function clean(): void
     {
-        if ($this->roadType == LocationTypeEnum::DEPARTMENTAL_ROAD->value) {
+        if ($this->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value) {
             $this->cityLabel = null;
             $this->cityCode = null;
             $this->roadName = null;
@@ -65,7 +65,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
             $this->toHouseNumber = null;
         }
 
-        if ($this->roadType === LocationTypeEnum::LANE->value || $this->roadType === null) {
+        if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
         }

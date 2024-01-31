@@ -115,10 +115,10 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 $this->roadType,
-                $this->cityCode,
-                $this->cityLabel,
                 $this->administrator,
                 $this->roadNumber,
+                $this->cityCode,
+                $this->cityLabel,
                 $this->roadName,
                 $this->fromHouseNumber,
                 $this->toHouseNumber,

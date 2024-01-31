@@ -91,10 +91,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
             roadType: $this->roadType,
-            cityCode: $this->cityCode,
-            cityLabel: $this->cityLabel,
             administrator: $this->administrator,
             roadNumber: $this->roadNumber,
+            cityCode: $this->cityCode,
+            cityLabel: $this->cityLabel,
             roadName: $this->roadName,
             fromHouseNumber: $this->fromHouseNumber,
             toHouseNumber: $this->toHouseNumber,
@@ -137,8 +137,8 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
-        $command->cityLabel = $this->cityLabel;
         $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
@@ -172,10 +172,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
             roadType: $this->roadType,
-            cityCode: $this->cityCode,
-            cityLabel: $this->cityLabel,
             administrator: $this->administrator,
             roadNumber: $this->roadNumber,
+            cityCode: $this->cityCode,
+            cityLabel: $this->cityLabel,
             roadName: $this->roadName,
             fromHouseNumber: null,
             toHouseNumber: null,
@@ -217,10 +217,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
         $command->roadType = $this->roadType;
-        $command->cityCode = $this->cityCode;
-        $command->cityLabel = $this->cityLabel;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
@@ -251,10 +251,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 $this->roadType,
-                $this->cityCode,
-                $this->cityLabel,
                 $this->administrator,
                 $this->roadNumber,
+                $this->cityCode,
+                $this->cityLabel,
                 $this->roadName,
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
@@ -317,10 +317,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
         $command->roadType = $this->roadType;
-        $command->cityCode = $this->cityCode;
-        $command->cityLabel = $this->cityLabel;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
@@ -339,10 +339,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 $this->roadType,
-                $this->cityCode,
-                $this->cityLabel,
                 $this->administrator,
                 $this->roadNumber,
+                $this->cityCode,
+                $this->cityLabel,
                 $this->roadName,
             );
 
@@ -370,8 +370,8 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
-        $command->cityLabel = $this->cityLabel;
         $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
@@ -387,10 +387,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 $this->roadType,
-                $this->cityCode,
-                $this->cityLabel,
                 $this->administrator,
                 $this->roadNumber,
+                $this->cityCode,
+                $this->cityLabel,
                 $this->roadName,
                 '137',
             );
@@ -419,8 +419,8 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
-        $command->cityLabel = $this->cityLabel;
         $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = '137';
         $command->toHouseNumber = null;
@@ -469,10 +469,10 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 $this->roadType,
-                $this->cityCode,
-                $this->cityLabel,
                 $this->administrator,
                 $this->roadNumber,
+                $this->cityCode,
+                $this->cityLabel,
                 $this->roadName,
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
@@ -503,8 +503,8 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
-        $command->cityLabel = $this->cityLabel;
         $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
