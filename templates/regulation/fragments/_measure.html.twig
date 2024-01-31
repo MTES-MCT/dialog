@@ -14,7 +14,7 @@
         </div>
         <div class="app-card__content">
             <div class="fr-ml-1w fr-my-0 fr-list" data-testid="measure-detail-items">
-                <ul>
+                <ul class="fr-raw-list">
                     <li class="fr-mb-2w">
                         <span class="app-card__img fr-icon-car-line fr-x-icon-decorative--blue-france" aria-hidden="true"></span>
                         {% include 'regulation/_vehicle_set.html.twig' with {
@@ -29,7 +29,7 @@
                         <hr class="fr-mt-3w fr-mr-3w" />
                     </li>
                 </ul>
-                <ul class="fr-pb-3w">
+                <ul class="fr-pb-3w fr-raw-list">
                     {% for location in measure.locations %}
                         {% if location.roadName %}
                             <li>

@@ -68,7 +68,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('/regulations?tab=temporary', $goBackLink->extract(['href'])[0]);
     }
 
-    public function testDraftRegulationWithNewUIDetail(): void
+    public function testDraftRegulationWithMeasuresDetail(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '?feature_loc_inversion=true');

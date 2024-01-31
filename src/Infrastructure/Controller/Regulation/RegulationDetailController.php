@@ -9,6 +9,7 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Application\Regulation\View\RegulationOrderLocationsView;
 use App\Domain\Regulation\Specification\CanDeleteLocations;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
@@ -46,11 +47,12 @@ final class RegulationDetailController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
+        /** @var RegulationOrderLocationsView */
         $regulationOrderLocations = $this->queryBus->handle(new GetRegulationLocationsQuery($uuid));
-        $featureNewLocationEnabled = $this->featureFlagService->isFeatureEnabled('loc_inversion', $request);
+        $featureLocInversion = $this->featureFlagService->isFeatureEnabled('loc_inversion', $request);
         $measures = [];
 
-        if ($featureNewLocationEnabled) {
+        if ($featureLocInversion) {
             $viewName = 'detail_measure';
             $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         } else {

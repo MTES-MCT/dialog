@@ -23,16 +23,10 @@
     column-gap: 0;
 }
 
-
-.app-card--with-background ul {
-    list-style-type: none;
-}
-
-.app-card__header--with-background {
+.app-card--with-background .app-card__header {
     background: var(--alt-blue-france);
     padding: 1.5rem;
 }
-
 
 .app-card--with-background ul {
     @media screen and (min-width: 992px) {

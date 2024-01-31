@@ -10,14 +10,14 @@ use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Regulation\Measure;
 
-class MeasureView
+readonly class MeasureView
 {
     public function __construct(
-        public readonly string $uuid,
-        public readonly string $type,
-        public readonly ?iterable $periods = null,
-        public readonly ?VehicleSetView $vehicleSet = null,
-        public readonly ?int $maxSpeed = null,
+        public string $uuid,
+        public string $type,
+        public ?iterable $periods = null,
+        public ?VehicleSetView $vehicleSet = null,
+        public ?int $maxSpeed = null,
         public array $locations = [],
     ) {
     }
