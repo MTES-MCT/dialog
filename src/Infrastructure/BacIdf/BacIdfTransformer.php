@@ -23,16 +23,18 @@ final class BacIdfTransformer
 {
     public function transform(array $row, Organization $organization): BacIdfTransformerResult
     {
-        $temporality = $row['ARR_DUREE']['ARR_TEMPORALITE'];
+        $loc = ['regulation_identifier', $row['ARR_REF']];
 
-        if ($temporality !== 'PERMANENT') {
-            return new BacIdfTransformerResult(null, [
-                [
-                    'reason' => 'not permanent',
-                    'ARR_TEMPORALITE' => $temporality,
-                    'ARR_REF' => $row['ARR_REF'],
-                ],
-            ]);
+        $errors = $this->makeBasicChecks($row);
+
+        if ($errors) {
+            $errors = array_map(fn ($error) => [
+                'loc' => empty($error['loc']) ? $loc : [...$loc, $error['loc']],
+                ...array_diff_key($error, ['loc' => '']),
+                'impact' => 'skip_regulation',
+            ], $errors);
+
+            return new BacIdfTransformerResult(null, $errors);
         }
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
@@ -44,27 +46,52 @@ final class BacIdfTransformer
         $date = $row['ARR_DUREE']['PERIODE_DEBUT']['$date'];
 
         if (!\is_string($date)) {
-            // Probably a $numberLong, which seem to contain inconsistent data (eg dates ranging from 632 to 2040...).
             return new BacIdfTransformerResult(null, [
                 [
-                    'reason' => 'PERIODE_DEBUT.$date is not a string',
-                    'date' => json_encode($date),
+                    'loc' => [...$loc, 'fieldname' => 'PERIODE_DEBUT.$date'],
+                    'reason' => 'value_not_expected_type',
+                    'value' => json_encode($date),
+                    'expected_type' => 'string',
+                    'explaination' => 'Probably a $numberLong, which contains inconsistent data (such as dates ranging from 632 to 2040...)',
+                    'impact' => 'skip_regulation',
                 ],
             ]);
         }
 
-        $generalInfo->startDate = new \DateTimeImmutable($date, new \DateTimeZone('Europe/Paris'));
+        $generalInfo->startDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
 
         $locationCommands = [];
+        $errors = [];
 
-        foreach ($row['REG_CIRCULATION'] as $regCirculation) {
+        foreach ($row['REG_CIRCULATION'] as $index => $regCirculation) {
             if (empty($regCirculation['CIRC_REG'])) {
+                $errors[] = [
+                    'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG"],
+                    'reason' => 'value_is_absent',
+                    'impact' => 'skip_measure',
+                ];
                 continue;
             }
 
             $circReg = $regCirculation['CIRC_REG'];
 
             if (empty($circReg['REG_RESTRICTION']) || $circReg['REG_RESTRICTION'] != true) {
+                $errors[] = [
+                    'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_RESTRICTION"],
+                    'reason' => 'value_is_absent',
+                    'impact' => 'skip_measure',
+                ];
+                continue;
+            }
+
+            if ($circReg['REG_RESTRICTION'] !== true) {
+                $errors[] = [
+                    'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_RESTRICTION"],
+                    'reason' => 'value_not_expected',
+                    'value' => $circReg['REG_RESTRICTION'],
+                    'expected' => true,
+                    'impact' => 'skip_measure',
+                ];
                 continue;
             }
 
@@ -72,37 +99,24 @@ final class BacIdfTransformer
             $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
             $measureCommand->vehicleSet = $this->parseVehicleSetCommand($regCirculation);
 
-            foreach ($circReg['REG_VOIES'] as $regVoie) {
+            foreach ($circReg['REG_VOIES'] as $regVoieIndex => $regVoie) {
                 if (\count($regVoie['VOIE_GEOJSON']['features']) === 0) {
-                    // Probably a road-less POI such as public squares or a roundabout.
+                    $errors[] = [
+                        'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_VOIE.$regVoieIndex.VOIE_GEOJSON.features"],
+                        'reason' => 'array_empty',
+                        'explaination' => 'Probably a road-less POI such as public square or roundabout',
+                        'impact' => 'skip_location',
+                    ];
                     continue;
                 }
 
-                $locationCommand = new SaveRegulationLocationCommand();
-
-                $geometries = [];
-
-                foreach ($regVoie['VOIE_GEOJSON']['features'] as $feature) {
-                    $geometries[] = $feature['geometry'];
-                }
-
-                $geometry = [
-                    'type' => 'GeometryCollection',
-                    'geometries' => $geometries,
-                ];
-
-                $locationCommand->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
-                $locationCommand->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
-                $locationCommand->roadName = $regVoie['VOIE_NAME'];
-                $locationCommand->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
-                $locationCommand->fromHouseNumber = null;
-                $locationCommand->toHouseNumber = null;
+                $locationCommand = $this->parseLocation($row, $regVoie);
                 $locationCommand->measures[] = $measureCommand;
 
                 $locationCommands[] = $locationCommand;
             }
 
-            $periodCommands = $this->parsePeriodCommands($circReg, startDate: $generalInfo->startDate);
+            $periodCommands = $this->parsePeriods($circReg, startDate: $generalInfo->startDate);
 
             foreach ($periodCommands as $periodCommand) {
                 $measureCommand->periods[] = $periodCommand;
@@ -110,12 +124,80 @@ final class BacIdfTransformer
         }
 
         if (\count($locationCommands) === 0) {
-            return new BacIdfTransformerResult(null, [['reason' => 'no_locations_gathered']]);
+            return new BacIdfTransformerResult(null, [
+                [
+                    'loc' => $loc,
+                    'reason' => 'no_locations_gathered',
+                    'impact' => 'skip_regulation',
+                ],
+            ]);
         }
 
         $command = new ImportBacIdfRegulationCommand($generalInfo, $locationCommands);
 
         return new BacIdfTransformerResult($command, []);
+    }
+
+    private function makeBasicChecks(array $row): ?array
+    {
+        if (empty($row['REG_TYPE'])) {
+            return [
+                [
+                    'loc' => ['fieldname' => 'REG_TYPE'],
+                    'reason' => 'value_absent',
+                ],
+            ];
+        }
+
+        if ($row['REG_TYPE'] !== 'CIRCULATION') {
+            return [
+                [
+                    'loc' => ['fieldname' => 'REG_TYPE'],
+                    'reason' => 'value_not_expected',
+                    'value' => $row['REG_TYPE'],
+                    'expected' => 'CIRCULATION',
+                ],
+            ];
+        }
+
+        foreach ($row['REG_CIRCULATION'] as $index => $regCirculation) {
+            if (!\array_key_exists('REG_VOIES', $regCirculation['CIRC_REG'])) {
+                return [
+                    [
+                        'loc' => ['fieldname' => "REG_CIRCULATION.$index.REG_VOIES"],
+                        'reason' => 'value_absent',
+                        'explaination' => 'most likely a full-city regulation',
+                    ],
+                ];
+            }
+
+            foreach ($regCirculation['CIRC_REG']['REG_VOIES'] as $regVoie) {
+                if (empty($regVoie['VOIE_GEOJSON'])) {
+                    return [
+                        [
+                            'loc' => ['fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_VOIES.VOIE_GEOJSON"],
+                            'reason' => 'value_absent',
+                            'explaination' => 'most likely an unclean case of full-city regulation',
+                        ],
+                    ];
+                }
+            }
+        }
+
+        $temporality = $row['ARR_DUREE']['ARR_TEMPORALITE'];
+
+        if ($temporality !== 'PERMANENT') {
+            return [
+                [
+                    'loc' => ['fieldname' => 'ARR_DUREE.ARR_TEMPORALITE'],
+                    'reason' => 'value_not_expected',
+                    'value' => $temporality,
+                    'expected' => 'PERMANENT',
+                ],
+            ];
+        }
+
+        return null;
     }
 
     private function parseVehicleSetCommand(array $regCirculation): SaveVehicleSetCommand
@@ -262,7 +344,32 @@ final class BacIdfTransformer
         return $vehicleSetCommand;
     }
 
-    private function parsePeriodCommands(array $circReg, \DateTimeInterface $startDate): array
+    private function parseLocation(array $row, array $regVoie): SaveRegulationLocationCommand
+    {
+        $locationCommand = new SaveRegulationLocationCommand();
+
+        $geometries = [];
+
+        foreach ($regVoie['VOIE_GEOJSON']['features'] as $feature) {
+            $geometries[] = $feature['geometry'];
+        }
+
+        $geometry = [
+            'type' => 'GeometryCollection',
+            'geometries' => $geometries,
+        ];
+
+        $locationCommand->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
+        $locationCommand->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
+        $locationCommand->roadName = $regVoie['VOIE_NAME'];
+        $locationCommand->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
+        $locationCommand->fromHouseNumber = null;
+        $locationCommand->toHouseNumber = null;
+
+        return $locationCommand;
+    }
+
+    private function parsePeriods(array $circReg, \DateTimeInterface $startDate): array
     {
         $periodCommands = [];
 
@@ -286,7 +393,7 @@ final class BacIdfTransformer
             $periodCommand->startDate = $startDate;
             $periodCommand->startTime = $startDate;
 
-            // TODO: We require an end date but permanent regulations won't have one.
+            // Workaround for https://github.com/MTES-MCT/dialog/issues/622
             $endDate = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2100-01-01 00:00:00', new \DateTimeZone('Europe/Paris'));
             $periodCommand->endDate = $endDate;
             $periodCommand->endTime = $endDate;

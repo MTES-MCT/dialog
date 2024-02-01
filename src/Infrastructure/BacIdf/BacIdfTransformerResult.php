@@ -10,7 +10,7 @@ final class BacIdfTransformerResult
 {
     public function __construct(
         public readonly ?ImportBacIdfRegulationCommand $command,
-        public readonly array $messages,
+        public readonly array $errors,
     ) {
     }
 }

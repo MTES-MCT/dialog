@@ -130,6 +130,7 @@ final class BacIdfExecutorTest extends TestCase
                         'numCreated' => 2,
                         'percentCreated' => 66.7,
                         'numSkipped' => 1,
+                        'numSkippedNotCirculation' => 0,
                         'percentSkipped' => 33.3,
                         'numErrors' => 0,
                         'percentErrors' => 0.0,

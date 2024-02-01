@@ -38,6 +38,7 @@ final class BacIdfExecutor
         $numProcessed = 0;
         $numCreated = 0;
         $numSkipped = 0;
+        $numSkippedNotCirculation = 0;
         $numErrors = 0;
         $startTime = $this->dateUtils->getMicroTime();
 
@@ -60,8 +61,14 @@ final class BacIdfExecutor
                 ++$numProcessed;
 
                 if (empty($result->command)) {
-                    $this->logger->info('skipped', $result->messages);
+                    $this->logger->info('skipped', $result->errors);
                     ++$numSkipped;
+                    foreach ($result->errors as $error) {
+                        if ($error['reason'] == 'value_not_expected' && $error['expected'] === 'CIRCULATION') {
+                            ++$numSkippedNotCirculation;
+                            break;
+                        }
+                    }
                 } else {
                     try {
                         $this->commandBus->handle($result->command);
@@ -86,6 +93,7 @@ final class BacIdfExecutor
                 'numCreated' => $numCreated,
                 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
                 'numSkipped' => $numSkipped,
+                'numSkippedNotCirculation' => $numSkippedNotCirculation,
                 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
                 'numErrors' => $numErrors,
                 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
