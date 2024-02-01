@@ -209,12 +209,12 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['other'];
         $values['location_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = str_repeat('a', 101);
         $values['location_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['other'];
-        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 101);
+        $values['location_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 301);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
-        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 300 caractères.', $crawler->filter('#location_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testInvalidVehicleSetBlankHeavyweightMaxWeight(): void
