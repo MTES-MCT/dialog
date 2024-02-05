@@ -470,6 +470,10 @@
                 <source>regulation.location.add</source>
                 <target>Ajouter une localisation</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.add">
+                <source>regulation.measure.add</source>
+                <target>Ajouter une mesure</target>
+            </trans-unit>
             <trans-unit id="regulation.detail.draft">
                 <source>regulation.detail.draft</source>
                 <target>Sauvegarder le brouillon</target>
@@ -1117,6 +1121,10 @@
                 <source>location.delete_modal.title</source>
                 <target>Supprimer cette localisation ?</target>
             </trans-unit>
+            <trans-unit id="measure.delete_modal.title">
+                <source>measure.delete_modal.title</source>
+                <target>Supprimer cette mesure ?</target>
+            </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
@@ -1212,10 +1220,6 @@
             <trans-unit id="regulation.measure_list_item.help">
                 <source>regulation.measure_list_item.help</source>
                 <target>Quelle perturbation est prévue ?</target>
-            </trans-unit>
-            <trans-unit id="regulation.measure.add">
-                <source>regulation.measure.add</source>
-                <target>Ajouter une restriction</target>
             </trans-unit>
             <trans-unit id="regulation.measure.type">
                 <source>regulation.measure.type</source>

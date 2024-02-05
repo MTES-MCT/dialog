@@ -24,11 +24,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     }
 
     private const COUNT_LOCATIONS_QUERY = '
-        SELECT count(DISTINCT(_loc.uuid))
+        SELECT count(DISTINCT(_locNew.uuid))
         FROM App\Domain\Regulation\LocationNew _locNew
         INNER JOIN _locNew.measure _m
-        INNER JOIN _m.location _loc
-        INNER JOIN _loc.regulationOrder _ro
+        INNER JOIN _m.regulationOrder _ro
         WHERE _ro.uuid = ro.uuid';
 
     private const GET_LOCATION_QUERY = "
@@ -36,8 +35,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             SELECT CONCAT(_locNew2.roadName, '#', _locNew2.cityLabel, '#',  _locNew2.cityCode)
             FROM App\Domain\Regulation\LocationNew _locNew2
             INNER JOIN _locNew2.measure _m2
-            INNER JOIN _m2.location _loc2
-            INNER JOIN _loc2.regulationOrder _ro2
+            INNER JOIN _m2.regulationOrder _ro2
             WHERE _ro2.uuid = ro.uuid
         )";
 
@@ -82,25 +80,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
-            ->leftJoin('ro.locations', 'l')
-            ->leftJoin('l.measures', 'm')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
-    public function findOneForSummary(string $uuid): ?RegulationOrderRecord
-    {
-        return $this->createQueryBuilder('roc')
-            ->where('roc.uuid = :uuid')
-            ->setParameter('uuid', $uuid)
-            ->innerJoin('roc.organization', 'org')
-            ->innerJoin('roc.regulationOrder', 'ro')
-            ->leftJoin('ro.locations', 'l')
-            ->leftJoin('l.measures', 'm')
-            ->leftJoin('m.periods', 'p')
-            ->leftJoin('m.vehicleSet', 'v')
+            //->leftJoin('ro.measures', 'm')
+           // ->leftJoin('m.locationsNew', 'l')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -160,8 +141,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('ro.locations', 'loc')
-            ->innerJoin('loc.measures', 'm')
+            ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locationsNew', 'locNew')
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
@@ -194,8 +174,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('ro.locations', '_loc')
-            ->innerJoin('_loc.measures', 'm')
+            ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locationsNew', 'locNew')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')

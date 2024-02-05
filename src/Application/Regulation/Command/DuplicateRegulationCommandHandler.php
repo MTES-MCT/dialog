@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -29,7 +30,7 @@ final class DuplicateRegulationCommandHandler
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
 
         $duplicatedRegulationOrderRecord = $this->duplicateRegulationOrderRecord($organization, $originalRegulationOrder);
-        $this->duplicateRegulationLocations($originalRegulationOrder, $duplicatedRegulationOrderRecord);
+        $this->duplicateRegulationMeasures($originalRegulationOrder, $duplicatedRegulationOrderRecord);
 
         return $duplicatedRegulationOrderRecord;
     }
@@ -52,66 +53,72 @@ final class DuplicateRegulationCommandHandler
         return $this->commandBus->handle($generalInfo);
     }
 
-    private function duplicateRegulationLocations(
+    private function duplicateRegulationMeasures(
         RegulationOrder $originalRegulationOrder,
         RegulationOrderRecord $duplicatedRegulationOrderRecord,
     ): void {
-        foreach ($originalRegulationOrder->getLocations() as $location) {
-            $locationCommand = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
-            $locationCommand->roadType = $location->getRoadType();
-            $locationCommand->administrator = $location->getAdministrator();
-            $locationCommand->roadNumber = $location->getRoadNumber();
-            $locationCommand->cityCode = $location->getCityCode();
-            $locationCommand->cityLabel = $location->getCityLabel();
-            $locationCommand->roadName = $location->getRoadNAme();
-            $locationCommand->fromHouseNumber = $location->getFromHouseNumber();
-            $locationCommand->toHouseNumber = $location->getToHouseNumber();
-            $locationCommand->geometry = $location->getGeometry();
+        if (!$originalRegulationOrder->getMeasures()) {
+            return;
+        }
 
-            if (!empty($location->getMeasures())) {
-                foreach ($location->getMeasures() as $measure) {
-                    $periodCommands = [];
+        foreach ($originalRegulationOrder->getMeasures() as $measure) {
+            $periodCommands = [];
+            $locationCommands = [];
 
-                    foreach ($measure->getPeriods() as $period) {
-                        $cmd = new SavePeriodCommand();
-                        $cmd->startDate = $period->getStartDateTime();
-                        $cmd->startTime = $period->getStartDateTime();
-                        $cmd->endDate = $period->getEndDateTime();
-                        $cmd->endTime = $period->getEndDateTime();
-                        $cmd->recurrenceType = $period->getRecurrenceType();
+            foreach ($measure->getPeriods() as $period) {
+                $cmd = new SavePeriodCommand();
+                $cmd->startDate = $period->getStartDateTime();
+                $cmd->startTime = $period->getStartDateTime();
+                $cmd->endDate = $period->getEndDateTime();
+                $cmd->endTime = $period->getEndDateTime();
+                $cmd->recurrenceType = $period->getRecurrenceType();
 
-                        $dailyRange = $period->getDailyRange();
-                        if ($dailyRange) {
-                            $dailyRangeCommand = (new SaveDailyRangeCommand())->initFromEntity($dailyRange);
-                            $cmd->dailyRange = $dailyRangeCommand;
-                        }
-
-                        $timeSlotCommands = [];
-                        if ($period->getTimeSlots()) {
-                            foreach ($period->getTimeSlots() as $timeSlot) {
-                                $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
-                            }
-                        }
-
-                        $cmd->timeSlots = $timeSlotCommands;
-                        $periodCommands[] = $cmd;
-                    }
-
-                    $vehicleSetCommand = $measure->getVehicleSet()
-                        ? (new SaveVehicleSetCommand())->initFromEntity($measure->getVehicleSet())
-                        : null;
-
-                    $measureCommand = new SaveMeasureCommand();
-                    $measureCommand->type = $measure->getType();
-                    $measureCommand->createdAt = $measure->getCreatedAt();
-                    $measureCommand->maxSpeed = $measure->getMaxSpeed();
-                    $measureCommand->vehicleSet = $vehicleSetCommand;
-                    $measureCommand->periods = $periodCommands;
-                    $locationCommand->measures[] = $measureCommand;
+                $dailyRange = $period->getDailyRange();
+                if ($dailyRange) {
+                    $dailyRangeCommand = (new SaveDailyRangeCommand())->initFromEntity($dailyRange);
+                    $cmd->dailyRange = $dailyRangeCommand;
                 }
+
+                $timeSlotCommands = [];
+                if ($period->getTimeSlots()) {
+                    foreach ($period->getTimeSlots() as $timeSlot) {
+                        $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
+                    }
+                }
+
+                $cmd->timeSlots = $timeSlotCommands;
+                $periodCommands[] = $cmd;
             }
 
-            $this->commandBus->handle($locationCommand);
+            foreach ($measure->getLocationsNew() as $location) {
+                $cmd = new SaveLocationNewCommand();
+                $cmd->roadType = $location->getRoadType();
+                $cmd->administrator = $location->getAdministrator();
+                $cmd->roadNumber = $location->getRoadNumber();
+                $cmd->cityCode = $location->getCityCode();
+                $cmd->cityLabel = $location->getCityLabel();
+                $cmd->roadName = $location->getRoadNAme();
+                $cmd->fromHouseNumber = $location->getFromHouseNumber();
+                $cmd->toHouseNumber = $location->getToHouseNumber();
+                $cmd->geometry = $location->getGeometry();
+                $cmd->measure = $measure;
+
+                $locationCommands[] = $location;
+            }
+
+            $vehicleSetCommand = $measure->getVehicleSet()
+                ? (new SaveVehicleSetCommand())->initFromEntity($measure->getVehicleSet())
+                : null;
+
+            $measureCommand = new SaveMeasureCommand($duplicatedRegulationOrderRecord->getRegulationOrder());
+            $measureCommand->type = $measure->getType();
+            $measureCommand->createdAt = $measure->getCreatedAt();
+            $measureCommand->maxSpeed = $measure->getMaxSpeed();
+            $measureCommand->vehicleSet = $vehicleSetCommand;
+            $measureCommand->periods = $periodCommands;
+            $measureCommand->locationsNew[] = $locationCommands;
+
+            $this->commandBus->handle($measureCommand);
         }
     }
 }

@@ -8,14 +8,13 @@ use App\Application\CommandInterface;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
 
 final class SaveMeasureCommand implements CommandInterface
 {
     public ?string $type;
     public ?int $maxSpeed = null;
-    public ?Location $location;
     /** @var SaveLocationNewCommand[] */
     public array $locationsNew = [];
     public array $periods = [];
@@ -23,9 +22,9 @@ final class SaveMeasureCommand implements CommandInterface
     public ?SaveVehicleSetCommand $vehicleSet = null;
 
     public function __construct(
+        public readonly RegulationOrder $regulationOrder,
         public readonly ?Measure $measure = null,
     ) {
-        $this->location = $measure?->getLocation();
         $this->type = $measure?->getType();
         $this->createdAt = $measure?->getCreatedAt();
         $this->maxSpeed = $measure?->getMaxSpeed();

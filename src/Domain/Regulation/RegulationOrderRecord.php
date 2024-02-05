@@ -7,7 +7,7 @@ namespace App\Domain\Regulation;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 
-class RegulationOrderRecord implements OrganizationRegulationAccessInterface, RegulationLocationsInterface
+class RegulationOrderRecord implements OrganizationRegulationAccessInterface, RegulationLocationsInterface, RegulationMeasuresInterface
 {
     public function __construct(
         private string $uuid,
@@ -85,6 +85,22 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface, Re
 
         foreach ($this->regulationOrder->getLocations() as $location) {
             $uuids[] = $location->getUuid();
+        }
+
+        return $uuids;
+    }
+
+    public function countMeasures(): int
+    {
+        return \count($this->regulationOrder->getMeasures());
+    }
+
+    public function getMeasureUuids(): array
+    {
+        $uuids = [];
+
+        foreach ($this->regulationOrder->getMeasures() as $measure) {
+            $uuids[] = $measure->getUuid();
         }
 
         return $uuids;

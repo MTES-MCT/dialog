@@ -9,8 +9,7 @@ use Doctrine\Common\Collections\Collection;
 
 class RegulationOrder
 {
-    private Collection $locations;
-
+    private Collection $measures;
     private ?RegulationOrderRecord $regulationOrderRecord = null;
 
     public function __construct(
@@ -22,7 +21,7 @@ class RegulationOrder
         private ?\DateTimeInterface $endDate = null,
         private ?string $otherCategoryText = null,
     ) {
-        $this->locations = new ArrayCollection();
+        $this->measures = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -60,18 +59,9 @@ class RegulationOrder
         return $this->endDate;
     }
 
-    public function getLocations(): iterable
+    public function getMeasures(): iterable
     {
-        return $this->locations;
-    }
-
-    public function addLocation(Location $location): void
-    {
-        if ($this->locations->contains($location)) {
-            return;
-        }
-
-        $this->locations->add($location);
+        return $this->measures;
     }
 
     public function getRegulationOrderRecord(): ?RegulationOrderRecord

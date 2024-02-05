@@ -11,14 +11,14 @@ use App\Domain\Regulation\Measure;
 
 final class SaveLocationNewCommand implements CommandInterface
 {
-    public ?string $roadType;
-    public ?string $administrator;
-    public ?string $roadNumber;
-    public ?string $cityCode;
-    public ?string $cityLabel;
-    public ?string $roadName;
-    public ?string $fromHouseNumber;
-    public ?string $toHouseNumber;
+    public ?string $roadType = null;
+    public ?string $administrator = null;
+    public ?string $roadNumber = null;
+    public ?string $cityCode = null;
+    public ?string $cityLabel = null;
+    public ?string $roadName = null;
+    public ?string $fromHouseNumber = null;
+    public ?string $toHouseNumber = null;
     public ?string $geometry;
     public ?Measure $measure;
 

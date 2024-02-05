@@ -84,7 +84,7 @@ final class SaveMeasureCommandHandler
         $measure = $this->measureRepository->add(
             new Measure(
                 uuid: $this->idFactory->make(),
-                location: $command->location,
+                regulationOrder: $command->regulationOrder,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
                 maxSpeed: $command->maxSpeed,

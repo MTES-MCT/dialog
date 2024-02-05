@@ -16,6 +16,17 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
         parent::__construct($registry, Measure::class);
     }
 
+    public function findOneByUuid(string $uuid): ?Measure
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function add(Measure $measure): Measure
     {
         $this->getEntityManager()->persist($measure);
@@ -31,8 +42,7 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
     public function findByRegulationOrderRecordUuid(string $uuid): array
     {
         return $this->createQueryBuilder('m')
-            ->innerJoin('m.location', 'l')
-            ->innerJoin('l.regulationOrder', 'ro')
+            ->innerJoin('m.regulationOrder', 'ro')
             ->innerJoin('ro.regulationOrderRecord', 'roc')
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)

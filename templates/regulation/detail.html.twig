@@ -146,6 +146,12 @@
             confirmLabel: 'common.delete'|trans,
             cancelLabel: 'common.do_not_delete'|trans,
         } only %}
+        {% include "common/confirmation_modal.html.twig" with {
+            id: 'measure-delete-modal',
+            title: 'measure.delete_modal.title'|trans,
+            confirmLabel: 'common.delete'|trans,
+            cancelLabel: 'common.do_not_delete'|trans,
+        } only %}
     {% endif %}
     {% include "common/confirmation_modal.html.twig" with {
         id: 'regulation-delete-modal',

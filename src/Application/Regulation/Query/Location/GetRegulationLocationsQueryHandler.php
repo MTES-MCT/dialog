@@ -4,34 +4,27 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query\Location;
 
-use App\Application\Regulation\View\DetailLocationView;
+use App\Application\Regulation\View\Measure\MeasureView;
 use App\Application\Regulation\View\RegulationOrderLocationsView;
-use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
-use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
 
 final class GetRegulationLocationsQueryHandler
 {
     public function __construct(
-        private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
+        private MeasureRepositoryInterface $measureRepository,
     ) {
     }
 
     public function __invoke(GetRegulationLocationsQuery $query): RegulationOrderLocationsView
     {
-        $regulationOrderRecord = $this->regulationOrderRecordRepository->findOneForSummary(
+        $measures = $this->measureRepository->findByRegulationOrderRecordUuid(
             $query->uuid,
         );
 
-        if (!$regulationOrderRecord instanceof RegulationOrderRecord) {
-            throw new RegulationOrderRecordNotFoundException();
-        }
-
-        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $locationViews = [];
 
-        foreach ($regulationOrder->getLocations() as $location) {
-            $locationViews[] = DetailLocationView::fromEntity($location);
+        foreach ($measures as $measure) {
+            $locationViews[] = MeasureView::fromEntity($measure);
         }
 
         return new RegulationOrderLocationsView($locationViews);
