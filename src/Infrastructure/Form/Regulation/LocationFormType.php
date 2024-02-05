@@ -45,7 +45,9 @@ final class LocationFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.roadNumber',
-                    'required' => false,
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(
@@ -119,6 +121,9 @@ final class LocationFormType extends AbstractType
                 $choices,
             ),
             'label' => 'regulation.location.type',
+            'label_attr' => [
+                'class' => 'required',
+            ],
         ];
     }
 
@@ -132,12 +137,14 @@ final class LocationFormType extends AbstractType
 
         return [
             'label' => 'regulation.location.administrator',
+            'label_attr' => [
+                'class' => 'required',
+            ],
             'help' => 'regulation.location.administrator.help',
             'choices' => array_merge(
                 ['regulation.location.administrator.placeholder' => ''],
                 $choices,
             ),
-            'required' => false,
         ];
     }
 

@@ -400,7 +400,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
-                <target>Département ou gestionnaire *</target>
+                <target>Département ou gestionnaire</target>
             </trans-unit>
             <trans-unit id="regulation.location.administrator.help">
                 <source>regulation.location.administrator.help</source>
@@ -412,7 +412,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.roadNumber">
                 <source>regulation.location.roadNumber</source>
-                <target>Numéro de la départementale *</target>
+                <target>Numéro de la départementale</target>
             </trans-unit>
             <trans-unit id="regulation.location.city">
                 <source>regulation.location.city</source>
