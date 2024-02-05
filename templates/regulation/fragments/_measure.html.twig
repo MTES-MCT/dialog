@@ -16,13 +16,13 @@
             <div class="fr-ml-1w fr-my-0 fr-list" data-testid="measure-detail-items">
                 <ul class="fr-raw-list">
                     <li class="fr-mb-2w">
-                        <span class="app-card__img fr-icon-car-line fr-x-icon-decorative--blue-france" aria-hidden="true"></span>
+                        <span class="app-card__img fr-icon-car-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
                         {% include 'regulation/_vehicle_set.html.twig' with {
                             vehicleSet: measure.vehicleSet,
                         } only %}
                     </li>
                     <li class="fr-mb-2w">
-                        <span class="app-card__img fr-icon-calendar-2-line fr-x-icon-decorative--blue-france" aria-hidden="true"></span>
+                        <span class="app-card__img fr-icon-calendar-2-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
                         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
                     </li>
                     <li>
@@ -33,7 +33,7 @@
                     {% for location in measure.locations %}
                         {% if location.roadName %}
                             <li>
-                                <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon-decorative--blue-france" aria-hidden="true"></span>
+                                <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
                                 {{ location.roadName }}
                                 {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                                 {{ location.cityLabel }}
