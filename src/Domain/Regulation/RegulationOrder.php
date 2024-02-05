@@ -11,6 +11,8 @@ class RegulationOrder
 {
     private Collection $locations;
 
+    private ?RegulationOrderRecord $regulationOrderRecord = null;
+
     public function __construct(
         private string $uuid,
         private string $identifier,
@@ -70,6 +72,11 @@ class RegulationOrder
         }
 
         $this->locations->add($location);
+    }
+
+    public function getRegulationOrderRecord(): ?RegulationOrderRecord
+    {
+        return $this->regulationOrderRecord;
     }
 
     public function update(

@@ -11,4 +11,6 @@ interface MeasureRepositoryInterface
     public function add(Measure $measure): Measure;
 
     public function delete(Measure $measure): void;
+
+    public function findByRegulationOrderRecordUuid(string $uuid);
 }

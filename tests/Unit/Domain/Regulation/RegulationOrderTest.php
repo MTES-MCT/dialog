@@ -33,6 +33,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame($start, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
         $this->assertEmpty($regulationOrder->getLocations()); // Automatically set by Doctrine
+        $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getOtherCategoryText());
     }
 

@@ -27,4 +27,17 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
     {
         $this->getEntityManager()->remove($measure);
     }
+
+    public function findByRegulationOrderRecordUuid(string $uuid): array
+    {
+        return $this->createQueryBuilder('m')
+            ->innerJoin('m.location', 'l')
+            ->innerJoin('l.regulationOrder', 'ro')
+            ->innerJoin('ro.regulationOrderRecord', 'roc')
+            ->where('roc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

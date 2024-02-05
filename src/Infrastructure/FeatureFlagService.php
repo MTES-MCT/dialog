@@ -8,13 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FeatureFlagService
 {
-    public function __construct(private array $featureMap)
-    {
-    }
-
-    private function isTruthy(?string $value): bool
-    {
-        return $value && strtolower($value) !== 'false';
+    public function __construct(
+        private array $featureMap,
+    ) {
     }
 
     public function isFeatureEnabled(string $featureName, Request $request = null): bool
@@ -22,9 +18,9 @@ class FeatureFlagService
         $queryParam = 'feature_' . $featureName;
 
         if ($request && $request->query->has($queryParam)) {
-            return $this->isTruthy($request->query->get($queryParam));
+            return $request->query->getBoolean($queryParam);
         }
 
-        return \array_key_exists($featureName, $this->featureMap) && $this->isTruthy($this->featureMap[$featureName]);
+        return \array_key_exists($featureName, $this->featureMap) && $this->featureMap[$featureName];
     }
 }

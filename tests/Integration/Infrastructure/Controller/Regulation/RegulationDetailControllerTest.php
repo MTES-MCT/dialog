@@ -68,6 +68,27 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('/regulations?tab=temporary', $goBackLink->extract(['href'])[0]);
     }
 
+    public function testDraftRegulationWithMeasuresDetail(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '?feature_loc_inversion=true');
+
+        $this->assertSecurityHeaders();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('Arrêté temporaire FO1/2023', $crawler->filter('h2')->text());
+        $this->assertMetaTitle('Arrêté temporaire FO1/2023 - DiaLog', $crawler);
+        $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
+
+        $measureTitle = $crawler->filter('[data-testid="measure"]');
+        $measureDetail = $crawler->filter('[data-testid="measure-detail-items"]');
+
+        // Measures
+        $this->assertSame('Circulation interdite', $measureTitle->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measureDetail->filter('li')->eq(0)->text());
+        $this->assertSame('du 31/10/2023 - 08h00 au 31/10/2023 - 22h00', $measureDetail->filter('li')->eq(1)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measureDetail->filter('li')->eq(3)->text());
+    }
+
     public function testPermanentRegulationDetail(): void
     {
         $client = $this->login();
