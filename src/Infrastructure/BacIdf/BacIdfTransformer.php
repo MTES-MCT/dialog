@@ -23,13 +23,13 @@ final class BacIdfTransformer
 {
     public function transform(array $row, Organization $organization): BacIdfTransformerResult
     {
-        $loc = ['regulation_identifier', $row['ARR_REF']];
+        $loc = ['regulation_identifier' => $row['ARR_REF']];
 
         $errors = $this->makeBasicChecks($row);
 
         if ($errors) {
             $errors = array_map(fn ($error) => [
-                'loc' => empty($error['loc']) ? $loc : [...$loc, $error['loc']],
+                'loc' => empty($error['loc']) ? $loc : [...$loc, ...$error['loc']],
                 ...array_diff_key($error, ['loc' => '']),
                 'impact' => 'skip_regulation',
             ], $errors);
@@ -48,7 +48,7 @@ final class BacIdfTransformer
         if (!\is_string($date)) {
             return new BacIdfTransformerResult(null, [
                 [
-                    'loc' => [...$loc, 'fieldname' => 'PERIODE_DEBUT.$date'],
+                    'loc' => [...$loc, 'fieldname' => 'ARR_DUREE.PERIODE_DEBUT.$date'],
                     'reason' => 'value_not_expected_type',
                     'value' => json_encode($date),
                     'expected_type' => 'string',
@@ -64,21 +64,12 @@ final class BacIdfTransformer
         $errors = [];
 
         foreach ($row['REG_CIRCULATION'] as $index => $regCirculation) {
-            if (empty($regCirculation['CIRC_REG'])) {
-                $errors[] = [
-                    'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG"],
-                    'reason' => 'value_is_absent',
-                    'impact' => 'skip_measure',
-                ];
-                continue;
-            }
-
             $circReg = $regCirculation['CIRC_REG'];
 
-            if (empty($circReg['REG_RESTRICTION']) || $circReg['REG_RESTRICTION'] != true) {
+            if (!\array_key_exists('REG_RESTRICTION', $circReg)) {
                 $errors[] = [
                     'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_RESTRICTION"],
-                    'reason' => 'value_is_absent',
+                    'reason' => 'value_absent',
                     'impact' => 'skip_measure',
                 ];
                 continue;
@@ -102,7 +93,7 @@ final class BacIdfTransformer
             foreach ($circReg['REG_VOIES'] as $regVoieIndex => $regVoie) {
                 if (\count($regVoie['VOIE_GEOJSON']['features']) === 0) {
                     $errors[] = [
-                        'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_VOIE.$regVoieIndex.VOIE_GEOJSON.features"],
+                        'loc' => [...$loc, 'fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_VOIES.$regVoieIndex.VOIE_GEOJSON.features"],
                         'reason' => 'array_empty',
                         'explaination' => 'Probably a road-less POI such as public square or roundabout',
                         'impact' => 'skip_location',
@@ -124,13 +115,15 @@ final class BacIdfTransformer
         }
 
         if (\count($locationCommands) === 0) {
-            return new BacIdfTransformerResult(null, [
-                [
-                    'loc' => $loc,
-                    'reason' => 'no_locations_gathered',
-                    'impact' => 'skip_regulation',
-                ],
-            ]);
+            $errors[] = [
+                'loc' => $loc,
+                'reason' => 'no_locations_gathered',
+                'impact' => 'skip_regulation',
+            ];
+        }
+
+        if (\count($errors) > 0) {
+            return new BacIdfTransformerResult(null, $errors);
         }
 
         $command = new ImportBacIdfRegulationCommand($generalInfo, $locationCommands);
@@ -164,7 +157,7 @@ final class BacIdfTransformer
             if (!\array_key_exists('REG_VOIES', $regCirculation['CIRC_REG'])) {
                 return [
                     [
-                        'loc' => ['fieldname' => "REG_CIRCULATION.$index.REG_VOIES"],
+                        'loc' => ['fieldname' => "REG_CIRCULATION.$index.CIRC_REG.REG_VOIES"],
                         'reason' => 'value_absent',
                         'explaination' => 'most likely a full-city regulation',
                     ],
@@ -264,9 +257,6 @@ final class BacIdfTransformer
 
         if ($isHeavyGoodsVehicle) {
             $vehicleSetCommand->restrictedTypes[] = VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value;
-            if (!$vehicleSetCommand->heavyweightMaxWeight) {
-                $vehicleSetCommand->heavyweightMaxWeight = 3.5;
-            }
         }
 
         if ($isDimensions) {
@@ -336,12 +326,23 @@ final class BacIdfTransformer
 
         if ($otherExemptedTypes) {
             $exemptedTypes[] = VehicleTypeEnum::OTHER->value;
-            $vehicleSetCommand->otherExemptedTypeText = implode(', ', $otherExemptedTypes);
+            $vehicleSetCommand->otherExemptedTypeText = $this->formatOtherExemptedTypes($otherExemptedTypes);
         }
 
         $vehicleSetCommand->exemptedTypes = $exemptedTypes;
 
         return $vehicleSetCommand;
+    }
+
+    private function formatOtherExemptedTypes(array $types): string
+    {
+        $types[0] = ucfirst($types[0]);
+
+        foreach (\array_slice($types, 1) as $index => $type) {
+            $types[$index + 1] = strtolower($type);
+        }
+
+        return implode(', ', $types);
     }
 
     private function parseLocation(array $row, array $regVoie): SaveRegulationLocationCommand
