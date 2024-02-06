@@ -59,6 +59,23 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_roadNumber_error')->text());
     }
 
+    public function testCertainDaysWithoutApplicableDays(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/add?feature_road_type=true');
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['location_form']['measures'][0]['periods'][0]['recurrenceType'] = 'certainDays';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_periods_0_dailyRange_applicableDays_error')->text());
+    }
+
     public function testAdd(): void
     {
         $client = $this->login();
