@@ -170,6 +170,10 @@ final class GetRegulationLocationsQueryHandlerTest extends TestCase
             ->method('getUuid')
             ->willReturn('2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea');
         $location
+            ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn('lane');
+        $location
             ->expects(self::never())
             ->method('getCityCode');
         $location
@@ -220,6 +224,9 @@ final class GetRegulationLocationsQueryHandlerTest extends TestCase
                 locations: [
                     new DetailLocationView(
                         uuid: '2c85cbb4-cce4-460b-9e68-e8fc9de2c0ea',
+                        roadType: 'lane',
+                        administrator: null,
+                        roadNumber: null,
                         cityLabel: 'Montauban',
                         roadName: 'Avenue de Fonneuve',
                         fromHouseNumber: '95',

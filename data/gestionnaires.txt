@@ -1,0 +1,13 @@
+Ain | Aisne | Allier | Alpes-de-Haute-Provence | Alpes-
+Maritimes | Ardèche | Ardennes | Ariège | Aube | Aude | Aveyron | Bas-Rhin | Bouches-du-Rhône | Calvados |
+Cantal | Charente | Charente-Maritime | Cher | Collectivité de Corse | Collectivité européenne d'Alsace |
+Collectivité territoriale de Martinique | Corrèze | Corse-du-Sud | Côte-d'Or | Côtes-d'Armor | Creuse | Deux-Sèvres
+| DIR Méditerranée | Dordogne | Doubs | Drôme | Essonne | Eure | Eure-et-Loir | Finistère | Gard | Gers | Gironde
+| Guadeloupe | Guyane | Haute-Corse | Haute-Garonne | Haute-Loire | Haute-Marne | Hautes-Alpes | Haute-
+Saône | Haute-Savoie | Hautes-Pyrénées | Haute-Vienne | Haut-Rhin | Hauts-de-Seine | Hérault | Ille-et-Vilaine |
+Indre | Indre-et-Loire | Isère | Jura | Landes | Loire | Loire-Atlantique | Loiret | Loir-et-Cher | Lot | Lot-et-Garonne |
+Lozère | Maine-et-Loire | Manche | Marne | Mayenne | Mayotte | Métropole de Lyon | Métropole Nice Côte d'Azur |
+Meurthe-et-Moselle | Meuse | Morbihan | Moselle | Nièvre | Nord | Oise | Orne | Paris | Pas-de-Calais | Puy-de-
+Dôme | Pyrénées-Atlantiques | Pyrénées-Orientales | Réunion | Rhône | Saône-et-Loire | Sarthe | Savoie | Seine-
+et-Marne | Seine-Maritime | Seine-Saint-Denis | Somme | Tarn | Tarn-et-Garonne | Territoire de Belfort | Val-de-
+Marne | Val-d'Oise | Var | Vaucluse | Vendée | Vienne | Ville de Paris | Vosges | Yonne | Yvelines
