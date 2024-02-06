@@ -81,6 +81,13 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2023-06-01'),
         );
 
+        $cifsMeasure = new Measure(
+            '06548f88-56a9-70e2-8000-a06baed6a93d',
+            $this->getReference('cifsLocation'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2021-11-02'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($permanentRegulationOrderLocationMeasure1);
@@ -90,6 +97,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($publishedLocation2NoEntry);
         $manager->persist($publishedLocation2SpeedLimit);
         $manager->persist($publishedLocation3Measure);
+        $manager->persist($cifsMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
@@ -100,6 +108,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('publishedLocation2NoEntry', $publishedLocation2NoEntry);
         $this->addReference('publishedLocation2SpeedLimit', $publishedLocation2SpeedLimit);
         $this->addReference('publishedLocation3Measure', $publishedLocation3Measure);
+        $this->addReference('cifsMeasure', $cifsMeasure);
         $this->addReference('measureWithComplexVehicleSet', $publishedLocation1Measure1);
 
         $manager->flush();

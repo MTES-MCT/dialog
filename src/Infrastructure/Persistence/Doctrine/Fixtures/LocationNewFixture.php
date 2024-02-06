@@ -23,6 +23,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ['065a677e-22d9-7555-8000-8a60576f18ce', $this->getReference('publishedLocation2NoEntry')],
             ['065a677e-4aae-7f89-8000-9da7a148530e', $this->getReference('publishedLocation2SpeedLimit')],
             ['065a677e-7839-710f-8000-cc4df666c443', $this->getReference('publishedLocation3Measure')],
+            ['065ba5b8-8547-7607-8000-e852917aeb32', $this->getReference('cifsMeasure')],
         ];
 
         foreach ($datasets as [$uuid, $measure]) {
