@@ -479,6 +479,10 @@
                 <source>regulation.locations</source>
                 <target>Localisations</target>
             </trans-unit>
+            <trans-unit id="regulation.measures">
+                <source>regulation.measures</source>
+                <target>Dispositif</target>
+            </trans-unit>
             <trans-unit id="regulation.period">
                 <source>regulation.period</source>
                 <target>Période</target>
@@ -1644,6 +1648,10 @@
             <trans-unit id="accessRequest.meta.subtitle">
                 <source>accessRequest.meta.subtitle</source>
                 <target>Vous pouvez demander la création d’un compte pour votre commune ou collectivité.</target>
+            </trans-unit>
+            <trans-unit id="api.cifs.incident.description">
+                <source>api.cifs.incident.description</source>
+                <target>%street% : circulation interdite tous les jours pour tous les véhicles</target>
             </trans-unit>
         </body>
     </file>

@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:documentation>
+    History:
+    2023-11-07 Ido Lackrif. Fix schedule patterns.
+    2022-11-13 Ido Lackrif. Add lane_impact and lanes definitions.
+    2022-04-25 Gil Garibi. Clean slate schema for the CIFSv2 standard. Overriding the deprecated and erronoeus incidents_feed.xsd schema in the same folder.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:element name="incidents">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="incident" minOccurs="0" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>Encapsulates all of the information pertaining to a single incident.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="parent_event" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>For events with multiple closures such as marathons or festivals, you can associate the incident to an event object.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:attribute name="id" use="required">
+                    <xs:annotation>
+                      <xs:documentation>Specifies an alphanumeric or numeric identifier. The ID must be globally unique to your feed and remain stable over an incident’s lifetime.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:minLength value="3"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="creationtime" type="xs:dateTime" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Datetime when the incident was created.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="updatetime" type="xs:dateTime" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Datetime when the incident was last updated.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="source" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Encapsulates the elements that specify the source of information for a single incident.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="reference">
+                      <xs:annotation>
+                        <xs:documentation>Uses a reference ID to identify the organization that sourced the information.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:minLength value="1"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="name" minOccurs="0">
+                      <xs:annotation>
+                        <xs:documentation>Identifies the organization from which the information was sourced, by the organization’s name.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:minLength value="1"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="url" minOccurs="0">
+                      <xs:annotation>
+                        <xs:documentation>Specifies the URL for the organization from which the information was sourced.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:minLength value="1"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="type">
+                <xs:annotation>
+                  <xs:documentation>Specifies the type of incident.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="ACCIDENT"/>
+                    <xs:enumeration value="CONSTRUCTION"/>
+                    <xs:enumeration value="HAZARD"/>
+                    <xs:enumeration value="ROAD_CLOSED"/>
+                    <xs:enumeration value="POLICE"/>
+                    <xs:enumeration value="CHIT_CHAT"/>
+                    <xs:enumeration value="JAM"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="subtype" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Further refinement of the information in the "type" element.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value=""/>
+                    <xs:enumeration value="ACCIDENT_MAJOR"/>
+                    <xs:enumeration value="ACCIDENT_MINOR"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_CAR_STOPPED"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_CONSTRUCTION"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_ICE"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_LANE_CLOSED"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_OBJECT"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_OIL"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_POT_HOLE"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_ROAD_KILL"/>
+                    <xs:enumeration value="HAZARD_ON_ROAD_TRAFFIC_LIGHT_FAULT"/>
+                    <xs:enumeration value="HAZARD_ON_SHOULDER"/>
+                    <xs:enumeration value="HAZARD_ON_SHOULDER_ANIMALS"/>
+                    <xs:enumeration value="HAZARD_ON_SHOULDER_CAR_STOPPED"/>
+                    <xs:enumeration value="HAZARD_ON_SHOULDER_MISSING_SIGN"/>
+                    <xs:enumeration value="HAZARD_WEATHER"/>
+                    <xs:enumeration value="HAZARD_WEATHER_FLOOD"/>
+                    <xs:enumeration value="HAZARD_WEATHER_FOG"/>
+                    <xs:enumeration value="HAZARD_WEATHER_FREEZING_RAIN"/>
+                    <xs:enumeration value="HAZARD_WEATHER_HAIL"/>
+                    <xs:enumeration value="HAZARD_WEATHER_HEAT_WAVE"/>
+                    <xs:enumeration value="HAZARD_WEATHER_HEAVY_RAIN"/>
+                    <xs:enumeration value="HAZARD_WEATHER_HEAVY_SNOW"/>
+                    <xs:enumeration value="HAZARD_WEATHER_HURRICANE"/>
+                    <xs:enumeration value="HAZARD_WEATHER_MONSOON"/>
+                    <xs:enumeration value="HAZARD_WEATHER_TORNADO"/>
+                    <xs:enumeration value="JAM_HEAVY_TRAFFIC"/>
+                    <xs:enumeration value="JAM_LIGHT_TRAFFIC"/>
+                    <xs:enumeration value="JAM_MODERATE_TRAFFIC"/>
+                    <xs:enumeration value="JAM_STAND_STILL_TRAFFIC"/>
+                    <xs:enumeration value="ROAD_CLOSED_CONSTRUCTION"/>
+                    <xs:enumeration value="ROAD_CLOSED_EVENT"/>
+                    <xs:enumeration value="ROAD_CLOSED_HAZARD"/>
+                    <xs:enumeration value="POLICE_VISIBLE"/>
+                    <xs:enumeration value="POLICE_HIDING"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="description">
+                <xs:annotation>
+                  <xs:documentation>Describes the incident, including the possible cause and consequences of the disruption.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="street">
+                <xs:annotation>
+                  <xs:documentation>Specifies the name of the street on which the incident is occurring.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="2"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="polyline">
+                <xs:annotation>
+                  <xs:documentation>Specifies the WGS84 latitude/longitude coordinates that describe the location of the incident. The decimal value should have at least 6 digits (to ensure accuracy of 0.11m or better). For any incident, you must submit at least two coordinates.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="direction" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Specifies whether the disruption or closure affects one or both sides of the road.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="ONE_DIRECTION"/>
+                    <xs:enumeration value="BOTH_DIRECTIONS"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="location" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Deprecated! Specify 'street', 'polyline' and 'direction' directly under 'incident'</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="street">
+                      <xs:annotation>
+                        <xs:documentation>Specifies the name of the street on which the incident is occurring.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:minLength value="2"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="polyline">
+                      <xs:annotation>
+                        <xs:documentation>Specifies the WGS84 latitude/longitude coordinates that describe the location of the incident. The decimal value should have at least 6 digits (to ensure accuracy of 0.11m or better). For any incident, you must submit at least two coordinates.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:minLength value="1"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="location_description" minOccurs="0">
+                      <xs:annotation>
+                        <xs:documentation>Specifies the address or other textual description of the incident’s location.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:minLength value="1"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="direction" minOccurs="0">
+                      <xs:annotation>
+                        <xs:documentation>Specifies whether the disruption or closure affects one or both sides of the road.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="ONE_DIRECTION"/>
+                          <xs:enumeration value="BOTH_DIRECTIONS"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lane_impact" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Specifies partial data of closed lanes, if you have all lanes information please use 'lanes' instead. Note: Supply this only if the incident doesn't entail a full road closure!</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="total_closed_lanes">
+                      <xs:annotation>
+                        <xs:documentation>Specifies the number of closed lanes.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:integer">
+                          <xs:minInclusive value="0"/>
+                          <xs:maxInclusive value="99"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="roadside">
+                      <xs:annotation>
+                        <xs:documentation>Specifies the side of the road where the lanes are closed.</xs:documentation>
+                      </xs:annotation>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="LEFT"/>
+                          <xs:enumeration value="MIDDLE"/>
+                          <xs:enumeration value="RIGHT"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lanes" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Specifies full data of closed lanes, if you have only partial information please use 'lane_impact' instead. Note: Supply this only if the incident doesn't entail a full road closure!</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="lane" minOccurs="1" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation>Represents a single lane.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="order">
+                            <xs:annotation>
+                              <xs:documentation>Represents the lane order, starting from left.</xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType>
+                              <xs:restriction base="xs:integer">
+                                <xs:minInclusive value="0"/>
+                                <xs:maxInclusive value="99"/>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                          <xs:element name="type">
+                            <xs:annotation>
+                              <xs:documentation>Represents the lane type, traffic lane should be reported as "LANE".</xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType>
+                              <xs:restriction base="xs:string">
+                                <xs:minLength value="1"/>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                          <xs:element name="status">
+                            <xs:annotation>
+                              <xs:documentation>Represents the lane status, either open or closed.</xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType>
+                              <xs:restriction base="xs:string">
+                                <xs:enumeration value="OPEN_LANE"/>
+                                <xs:enumeration value="OPEN"/>
+                                <xs:enumeration value="OPENED"/>
+                                <xs:enumeration value="CLOSED_LANE"/>
+                                <xs:enumeration value="CLOSE"/>
+                                <xs:enumeration value="CLOSED"/>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="starttime" type="xs:dateTime" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Specifies the start datetime for the period of disruption.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="endtime" type="xs:dateTime" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>Specifies the end datetime for the period of disruption.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="schedule" minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>The schedule encapsulates all start and end times for an recurring incident.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="everyday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="monday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="tuesday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="wednesday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="thursday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="friday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="saturday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="sunday" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:pattern value="(\d{1,2}:\d{2}-\d{1,2}:\d{2},?)+"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:all>
+            <xs:attribute name="id" use="required">
+              <xs:annotation>
+                <xs:documentation>Specifies an alphanumeric or numeric identifier. The ID must be globally unique to your feed and remain stable over an incident’s lifetime.</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:minLength value="3"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>Specifies the creation time of the feed.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

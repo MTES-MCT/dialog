@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 final class RegulationOrderFixture extends Fixture
 {
     public const TYPICAL_IDENTIFIER = 'FO1/2023';
-    public const NUM_TEMPORARY = 6;
+    public const NUM_TEMPORARY = 7;
     public const NUM_PERMANENT = 1;
 
     public function load(ObjectManager $manager): void
@@ -90,6 +90,15 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2023-01-15'),
         );
 
+        $regulationOrderCifs = new RegulationOrder(
+            uuid: '06549047-db9d-74bb-8000-754a6f2ff4c3',
+            identifier: 'F/CIFS/2021',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Arrêté exporté vers CIFS',
+            startDate: new \DateTimeImmutable('2021-11-02'),
+            endDate: new \DateTimeImmutable('2021-11-06'),
+        );
+
         $manager->persist($typicalRegulationOrder);
         $manager->persist($publishedRegulationOrder);
         $manager->persist($regulationOrderDuplicate);
@@ -98,6 +107,7 @@ final class RegulationOrderFixture extends Fixture
         $manager->persist($fullCityRegulationOrder);
         $manager->persist($regulationOrderNoLocations);
         $manager->persist($regulationOrderNoMeasures);
+        $manager->persist($regulationOrderCifs);
         $manager->flush();
 
         $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
@@ -108,5 +118,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('regulationOrderNoLocations', $regulationOrderNoLocations);
         $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
         $this->addReference('regulationOrderDuplicate', $regulationOrderDuplicate);
+        $this->addReference('regulationOrderCifs', $regulationOrderCifs);
     }
 }
