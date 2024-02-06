@@ -8,6 +8,7 @@ parameters:
     client_timezone: '%env(APP_CLIENT_TIMEZONE)%'
     admin_email: '%env(ADMIN_EMAIL)%'
     features: 
+        loc_inversion: '%env(bool:FEATURE_LOC_INVERSION_ENABLED)%'
         road_type: '%env(bool:FEATURE_ROAD_TYPE_ENABLED)%' 
 
 services:

@@ -511,6 +511,10 @@
                 <source>regulation.locations</source>
                 <target>Localisations</target>
             </trans-unit>
+            <trans-unit id="regulation.measures">
+                <source>regulation.measures</source>
+                <target>Dispositif</target>
+            </trans-unit>
             <trans-unit id="regulation.period">
                 <source>regulation.period</source>
                 <target>Période</target>

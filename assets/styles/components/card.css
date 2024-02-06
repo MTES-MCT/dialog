@@ -18,6 +18,22 @@
     }
 }
 
+.app-card--with-background {
+    padding: 0;
+    column-gap: 0;
+}
+
+.app-card--with-background .app-card__header {
+    background: var(--alt-blue-france);
+    padding: 1.5rem;
+}
+
+.app-card--with-background ul {
+    @media screen and (min-width: 992px) {
+        margin-left: 4rem;
+    }
+}
+
 .app-card--content-only {
     grid-template-areas: "content";
 
