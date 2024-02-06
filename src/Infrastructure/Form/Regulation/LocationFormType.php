@@ -45,6 +45,7 @@ final class LocationFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.roadNumber',
+                    'required' => false, // Due to error "An invalid form control with name='x' is not focusable"
                     'label_attr' => [
                         'class' => 'required',
                     ],
@@ -140,6 +141,7 @@ final class LocationFormType extends AbstractType
             'label_attr' => [
                 'class' => 'required',
             ],
+            'required' => false, // Due to error "An invalid form control with name='x' is not focusable"
             'help' => 'regulation.location.administrator.help',
             'choices' => array_merge(
                 ['regulation.location.administrator.placeholder' => ''],
