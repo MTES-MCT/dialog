@@ -161,6 +161,20 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             ]),
         );
 
+        $cifsLocation = new Location(
+            '06548f85-d545-7b45-8000-8a23c45850b3',
+            $this->getReference('regulationOrderCifs'),
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Rue de la République',
+            fromHouseNumber: '21',
+            toHouseNumber: '33',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.35500, 44.01630),
+                Coordinates::fromLonLat(1.35419, 44.01665),
+            ]),
+        );
+
         $manager->persist($typicalRegulationOrderLocation1);
         $manager->persist($typicalRegulationOrderLocation2);
         $manager->persist($typicalRegulationOrderLocation3);
@@ -170,6 +184,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($fullCityLocation);
         $manager->persist($permanentRegulationOrderLocation);
         $manager->persist($locationNoMeasures);
+        $manager->persist($cifsLocation);
         $manager->flush();
 
         $this->addReference('typicalLocation', $typicalRegulationOrderLocation1);
@@ -179,6 +194,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('fullCityLocation', $fullCityLocation);
         $this->addReference('permanentRegulationOrderLocation', $permanentRegulationOrderLocation);
         $this->addReference('locationNoMeasures', $locationNoMeasures);
+        $this->addReference('cifsLocation', $cifsLocation);
     }
 
     public function getDependencies(): array
