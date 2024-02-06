@@ -15,8 +15,8 @@ final readonly class CifsIncidentView
         public string $polyline,
         public string $startTime,
         public string $endTime,
-        public ?string $subType = null,
         public ?array $schedule = [],
+        public ?string $subType = null,
     ) {
     }
 }

@@ -208,8 +208,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'm.type = :measureType',
                 'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )
-            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
-            ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)
+            ->setParameters([
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'measureType' => MeasureTypeEnum::NO_ENTRY->value,
+            ])
             ->orderBy('m.uuid')
             ->getQuery()
             ->getResult()
