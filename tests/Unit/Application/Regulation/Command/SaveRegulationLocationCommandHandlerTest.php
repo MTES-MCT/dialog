@@ -25,6 +25,9 @@ use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationLocationCommandHandlerTest extends TestCase
 {
+    private $roadType;
+    private $administrator;
+    private $roadNumber;
     private $cityCode;
     private $cityLabel;
     private $roadName;
@@ -41,8 +44,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->roadType = 'lane';
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
+        $this->administrator = null;
+        $this->roadNumber = null;
         $this->roadName = 'Route du Grand Brossais';
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
@@ -84,6 +90,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
+            roadType: $this->roadType,
+            administrator: $this->administrator,
+            roadNumber: $this->roadNumber,
             cityCode: $this->cityCode,
             cityLabel: $this->cityLabel,
             roadName: $this->roadName,
@@ -125,6 +134,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -159,8 +171,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             regulationOrder: $this->regulationOrder,
-            cityLabel: $this->cityLabel,
+            roadType: $this->roadType,
+            administrator: $this->administrator,
+            roadNumber: $this->roadNumber,
             cityCode: $this->cityCode,
+            cityLabel: $this->cityLabel,
             roadName: $this->roadName,
             fromHouseNumber: null,
             toHouseNumber: null,
@@ -201,8 +216,11 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord);
-        $command->cityLabel = $this->cityLabel;
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
@@ -232,6 +250,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->roadType,
+                $this->administrator,
+                $this->roadNumber,
                 $this->cityCode,
                 $this->cityLabel,
                 $this->roadName,
@@ -295,6 +316,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -314,6 +338,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->roadType,
+                $this->administrator,
+                $this->roadNumber,
                 $this->cityCode,
                 $this->cityLabel,
                 $this->roadName,
@@ -340,6 +367,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -356,6 +386,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->roadType,
+                $this->administrator,
+                $this->roadNumber,
                 $this->cityCode,
                 $this->cityLabel,
                 $this->roadName,
@@ -383,6 +416,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -395,6 +431,15 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
     public function testUpdateNoChangeDoesNotRecomputePoints(): void
     {
         $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::never())
+            ->method('getRoadType');
+        $location
+        ->expects(self::never())
+        ->method('getAdministrator');
+        $location
+        ->expects(self::never())
+        ->method('getRoadNumber');
         $location
             ->expects(self::never())
             ->method('getCityLabel');
@@ -423,6 +468,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->roadType,
+                $this->administrator,
+                $this->roadNumber,
                 $this->cityCode,
                 $this->cityLabel,
                 $this->roadName,
@@ -452,6 +500,9 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveRegulationLocationCommand($this->regulationOrderRecord, $location);
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;

@@ -25,7 +25,7 @@ final class FeatureFlagServiceTest extends TestCase
                 'request' => null,
                 'expected' => false,
             ],
-            'disabled-other-featyre' => [
+            'disabled-other-feature' => [
                 'env' => ['other' => true],
                 'featureName' => 'example',
                 'request' => null,

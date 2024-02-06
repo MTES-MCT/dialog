@@ -24,6 +24,9 @@ final class SaveLocationNewCommandHandler
                 new LocationNew(
                     uuid: $this->idFactory->make(),
                     measure: $command->measure,
+                    roadType: $command->roadType,
+                    administrator: $command->administrator,
+                    roadNumber: $command->roadNumber,
                     cityLabel: $command->cityLabel,
                     cityCode: $command->cityCode,
                     roadName: $command->roadName,
@@ -39,6 +42,9 @@ final class SaveLocationNewCommandHandler
         }
 
         $command->locationNew->update(
+            roadType: $command->roadType,
+            administrator: $command->administrator,
+            roadNumber: $command->roadNumber,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,

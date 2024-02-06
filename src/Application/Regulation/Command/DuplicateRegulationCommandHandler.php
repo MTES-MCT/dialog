@@ -58,6 +58,9 @@ final class DuplicateRegulationCommandHandler
     ): void {
         foreach ($originalRegulationOrder->getLocations() as $location) {
             $locationCommand = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
+            $locationCommand->roadType = $location->getRoadType();
+            $locationCommand->administrator = $location->getAdministrator();
+            $locationCommand->roadNumber = $location->getRoadNumber();
             $locationCommand->cityCode = $location->getCityCode();
             $locationCommand->cityLabel = $location->getCityLabel();
             $locationCommand->roadName = $location->getRoadNAme();

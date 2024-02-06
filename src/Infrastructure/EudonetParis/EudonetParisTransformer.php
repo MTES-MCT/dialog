@@ -14,6 +14,7 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\User\Organization;
 
 final class EudonetParisTransformer
@@ -180,7 +181,6 @@ final class EudonetParisTransformer
         }
 
         $cityCode = sprintf(self::CITY_CODE_TEMPLATE, str_pad($matches['arrondissement'], 2, '0', STR_PAD_LEFT));
-
         $porteSur = $row['fields'][EudonetParisExtractor::LOCALISATION_PORTE_SUR];
         $libelleVoie = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE];
         $libelleVoieDebut = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT];
@@ -215,6 +215,7 @@ final class EudonetParisTransformer
         }
 
         $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $cityCode;
         $locationCommand->cityLabel = self::CITY_LABEL;
         $locationCommand->roadName = $roadName;

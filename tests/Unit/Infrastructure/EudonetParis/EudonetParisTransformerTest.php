@@ -83,6 +83,7 @@ final class EudonetParisTransformerTest extends TestCase
         $measureCommand->vehicleSet = $vehicleSet;
 
         $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->roadType = 'lane';
         $locationCommand->cityCode = '75118';
         $locationCommand->cityLabel = 'Paris';
         $locationCommand->roadName = $roadName;
@@ -233,6 +234,7 @@ final class EudonetParisTransformerTest extends TestCase
         $rueEugeneBerthoudXRueJeanPerrin = Coordinates::fromLonLat(2.3453101, 48.9062362);
         $rueEugeneBerthoud26 = Coordinates::fromLonLat(2.3453431, 48.9062625);
         $locationCommand1 = new SaveRegulationLocationCommand();
+        $locationCommand1->roadType = 'lane';
         $locationCommand1->cityCode = '75118';
         $locationCommand1->cityLabel = 'Paris';
         $locationCommand1->roadName = 'Rue Eugène Berthoud';
@@ -247,6 +249,7 @@ final class EudonetParisTransformerTest extends TestCase
         $rueEugeneBerthoud15 = Coordinates::fromLonLat(2.3453412, 48.9062610);
         $rueEugeneBerthoudXRueAdrienLesesne = Coordinates::fromLonLat(2.34944, 48.9045598);
         $locationCommand2 = new SaveRegulationLocationCommand();
+        $locationCommand2->roadType = 'lane';
         $locationCommand2->cityCode = '75118';
         $locationCommand2->cityLabel = 'Paris';
         $locationCommand2->roadName = 'Rue Eugène Berthoud';

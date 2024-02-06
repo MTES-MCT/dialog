@@ -46,4 +46,14 @@ export default class extends Controller {
             this.buttonTarget.hidden = false;
         }
     }
+
+    openByValue(event) {
+        this.sectionTargets.forEach((element) => {
+            if (element.dataset.value === event.target.value) {
+                element.hidden = false;
+            } else {
+                element.hidden = true;
+            }
+        });
+    }
 }
