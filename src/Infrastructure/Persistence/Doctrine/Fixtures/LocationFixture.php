@@ -191,6 +191,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $cifsLocation = new Location(
             '06548f85-d545-7b45-8000-8a23c45850b3',
             $this->getReference('regulationOrderCifs'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Rue de la République',
