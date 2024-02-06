@@ -33,6 +33,9 @@
                 <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
+        <property name="dailyRange">
+            <constraint name="Valid"/>
+       </property>
         <property name="timeSlots">
             <constraint name="Valid"/>
        </property>
