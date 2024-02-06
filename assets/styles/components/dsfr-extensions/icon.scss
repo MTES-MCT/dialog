@@ -21,6 +21,7 @@
     'hazardous-materials',
     'car-sharing',
     'dimensions',
+    'restriction',
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
