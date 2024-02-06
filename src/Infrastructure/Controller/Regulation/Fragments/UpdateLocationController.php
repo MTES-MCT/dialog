@@ -8,10 +8,12 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
+use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\DetailLocationView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
+use App\Infrastructure\FeatureFlagService;
 use App\Infrastructure\Form\Regulation\LocationFormType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -32,6 +34,7 @@ final class UpdateLocationController extends AbstractRegulationController
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
+        private FeatureFlagService $featureFlagService,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
@@ -54,6 +57,7 @@ final class UpdateLocationController extends AbstractRegulationController
         }
 
         $command = SaveRegulationLocationCommand::create($regulationOrderRecord, $location);
+        $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
 
         $form = $this->formFactory->create(
             type: LocationFormType::class,
@@ -63,6 +67,8 @@ final class UpdateLocationController extends AbstractRegulationController
                     'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
                     'uuid' => $uuid,
                 ]),
+                'administrators' => $administrators,
+                'feature_road_type' => $this->featureFlagService->isFeatureEnabled('road_type', $request),
             ],
         );
         $form->handleRequest($request);

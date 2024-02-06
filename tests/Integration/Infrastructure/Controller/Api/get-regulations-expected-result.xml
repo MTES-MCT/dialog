@@ -413,6 +413,55 @@
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
+        <trafficRegulationOrder id="06549047-db9d-74bb-8000-754a6f2ff4c3" version="1">
+            <description>
+                <com:values>
+                    <com:value>Arrêté exporté vers CIFS</com:value>
+                </com:values>
+            </description>
+            <issuingAuthority>
+                <com:values>
+                    <com:value>Main Org</com:value>
+                </com:values>
+            </issuingAuthority>
+            <regulationId>06549047-db9d-74bb-8000-754a6f2ff4c3</regulationId>
+            <status>madeAndImplemented</status>
+
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                            <com:validityTimeSpecification>
+                                <com:overallStartTime>2021-11-02T00:00:00.000Z</com:overallStartTime>
+                                <com:overallEndTime>2021-11-06T23:59:59.000Z</com:overallEndTime>
+                            </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                    <loc:roadName>Rue de la République</loc:roadName>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.355,44.0163],[1.35419,44.01665]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
+                        </locationByOrder>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+        </trafficRegulationOrder>
         <trafficRegulationOrder id="2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c" version="1">
             <description>
                 <com:values>

@@ -27,7 +27,8 @@ final class SaveRegulationLocationCommandHandler
     public function __invoke(SaveRegulationLocationCommand $command): Location
     {
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
-
+        // resets values to null when changing location type
+        $command->clean();
         // Create location if needed
         if (!$command->location instanceof Location) {
             // NOTE: move this to LocationNew handlers when Location entity is removed.
@@ -37,8 +38,11 @@ final class SaveRegulationLocationCommandHandler
                 new Location(
                     uuid: $this->idFactory->make(),
                     regulationOrder: $regulationOrder,
-                    cityLabel: $command->cityLabel,
+                    roadType: $command->roadType,
+                    administrator: $command->administrator,
+                    roadNumber: $command->roadNumber,
                     cityCode: $command->cityCode,
+                    cityLabel: $command->cityLabel,
                     roadName: $command->roadName,
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
@@ -63,6 +67,9 @@ final class SaveRegulationLocationCommandHandler
             : $command->location->getGeometry();
 
         $command->location->update(
+            roadType: $command->roadType,
+            administrator: $command->administrator,
+            roadNumber: $command->roadNumber,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,

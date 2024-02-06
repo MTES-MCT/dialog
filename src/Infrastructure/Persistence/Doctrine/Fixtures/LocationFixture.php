@@ -29,6 +29,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalRegulationOrderLocation1 = new Location(
             self::UUID_TYPICAL,
             $this->getReference('typicalRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Grand Brossais',
@@ -43,6 +46,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalRegulationOrderLocation2 = new Location(
             '34247125-38f4-4e69-b5d7-5516a577d149',
             $this->getReference('typicalRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Lac',
@@ -60,6 +66,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalRegulationOrderLocation3 = new Location(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
             $this->getReference('typicalRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Grand Brossais',
@@ -77,6 +86,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation1 = new Location(
             self::UUID_PUBLISHED,
             $this->getReference('publishedRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Avenue de Fonneuve',
@@ -91,6 +103,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation2 = new Location(
             '064ca782-771c-783f-8000-e67473eabea6',
             $this->getReference('publishedRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: "Rue de l'Hôtel de Ville",
@@ -105,6 +120,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation3 = new Location(
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
             $this->getReference('publishedRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Rue Gamot',
@@ -122,6 +140,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $permanentRegulationOrderLocation = new Location(
             self::UUID_PERMANENT_ONLY_ONE,
             $this->getReference('regulationOrderPermanent'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '75118',
             cityLabel: 'Paris 18e Arrondissement (75018)',
             roadName: 'Rue du Simplon',
@@ -139,6 +160,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $fullCityLocation = new Location(
             self::UUID_FULL_CITY,
             $this->getReference('fullCityRegulationOrder'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '75118',
             cityLabel: 'Paris 18e Arrondissement (75018)',
             roadName: null,
@@ -150,6 +174,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $locationNoMeasures = new Location(
             '06500383-ad31-7e57-8000-e080e2755bd4',
             $this->getReference('regulationOrderNoMeasures'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Grand Brossais',
@@ -158,6 +185,23 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
+            ]),
+        );
+
+        $cifsLocation = new Location(
+            '06548f85-d545-7b45-8000-8a23c45850b3',
+            $this->getReference('regulationOrderCifs'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Rue de la République',
+            fromHouseNumber: '21',
+            toHouseNumber: '33',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.35500, 44.01630),
+                Coordinates::fromLonLat(1.35419, 44.01665),
             ]),
         );
 
@@ -170,6 +214,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($fullCityLocation);
         $manager->persist($permanentRegulationOrderLocation);
         $manager->persist($locationNoMeasures);
+        $manager->persist($cifsLocation);
         $manager->flush();
 
         $this->addReference('typicalLocation', $typicalRegulationOrderLocation1);
@@ -179,6 +224,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('fullCityLocation', $fullCityLocation);
         $this->addReference('permanentRegulationOrderLocation', $permanentRegulationOrderLocation);
         $this->addReference('locationNoMeasures', $locationNoMeasures);
+        $this->addReference('cifsLocation', $cifsLocation);
     }
 
     public function getDependencies(): array

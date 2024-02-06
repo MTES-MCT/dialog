@@ -253,64 +253,106 @@
             {{ form_start(form, {attr: {id: 'location-form'}}) }}
                 {{ form_errors(form) }}
 
+                {% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type', app.request) %}
+                <div 
+                    data-controller="form-reveal"
+                    class="fr-x-autocomplete-wrapper"
+                    data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
+                    data-autocomplete-query-param-value="search"
+                    data-autocomplete-min-length-value="3"
+                    data-autocomplete-delay-value="500"
+                >
+                    {{ form_row(form.roadType, {
+                        group_class: 'fr-select-group',
+                        widget_class: 'fr-select',
+                        row_attr: {
+                            'data-action':
+                            'change->form-reveal#openByValue'
+                        },
+                    }) }}
+   
                 <div
+                    data-form-reveal-target="section"
+                    data-value="departmentalRoad"
+                    {% if not roadTypeFeatureEnabled or form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}
+                >
+                    {{ form_row(form.administrator, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        }) }}    
+                    <ul
+                    id="{{ form.administrator.vars.id }}-results"
+                    role="listbox"
+                    aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                    class="fr-x-autocomplete"
+                    data-autocomplete-target="results"
+                    ></ul>    
+                    {{ form_row(form.roadNumber, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        row_attr: {
+                            'class': 'fr-pb-3w',
+                        }, 
+                    }) }}
+                </div>    
+                <div
+                data-form-reveal-target="section"
+                data-value="lane"
+                {% if roadTypeFeatureEnabled and form.roadType.vars.value != 'lane'%} hidden {% endif%}
+                >
+                    <div
                     class="fr-x-autocomplete-wrapper"
                     data-controller="autocomplete"
                     data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
                     data-autocomplete-query-param-value="search"
                     data-autocomplete-min-length-value="3"
                     data-autocomplete-delay-value="500"
-                >
-                    {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
-    
-                    {{ form_row(form.cityLabel, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-autocomplete-target': 'input',
-                        },
-                    }) }}
+                    >
+                        {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
 
-                    <ul
-                        id="{{ form.cityLabel.vars.id }}-results"
-                        role="listbox"
-                        aria-label="{{ 'regulation.location.city.results_label'|trans }}"
-                        class="fr-x-autocomplete"
-                        data-autocomplete-target="results"
-                    ></ul>
-                </div>
-
-                <div
-                    class="fr-x-autocomplete-wrapper"
-                    data-controller="autocomplete"
-                    data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
-                    data-autocomplete-query-param-value="search"
-                    data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
-                    data-autocomplete-min-length-value="3"
-                    data-autocomplete-delay-value="500"
-                >
-                    {{ form_row(form.roadName, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-autocomplete-target': 'input',
-                        },
-                    }) }}
-
-                    <ul
-                        id="{{ form.roadName.vars.id }}-results"
-                        role="listbox"
-                        aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
-                        class="fr-x-autocomplete"
-                        data-autocomplete-target="results"
-                    ></ul>
-                </div>
-
-
-                <div class="fr-container--fluid">
-                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
-                        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-                        {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                        {{ form_row(form.cityLabel, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                            },
+                        }) }}
+                        <ul
+                            id="{{ form.cityLabel.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        ></ul>
+                    </div>
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
+                        data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
+                    >
+                        {{ form_row(form.roadName, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                            },
+                        }) }}
+                        <ul
+                            id="{{ form.roadName.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        ></ul>
+                    </div>
+                    <div class="fr-container--fluid">
+                        <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
+                            {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                            {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                        </div>
                     </div>
                 </div>
 
