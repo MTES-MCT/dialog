@@ -26,4 +26,11 @@ enum ApplicableDayEnum: string
 
         return \is_int($key) ? $key : null;
     }
+
+    public static function hasAllValues(array $arr): bool
+    {
+        $diff = array_diff(self::getValues(), $arr);
+
+        return \count($diff) === 0;
+    }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<incidents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.gstatic.com/road-incidents/cifsv2.xsd">
+    {% for incident in incidents %}
+        <incident id="{{ incident.id }}">
+            <creationtime>{{ incident.creationTime }}</creationtime>
+            <type>{{ incident.type }}</type>
+            <description>{{ 'api.cifs.incident.description'|trans({'%street%': incident.street}) }}</description>
+            <street>{{ incident.street }}</street>
+            <direction>{{ incident.direction }}</direction>
+            <polyline>{{ incident.polyline }}</polyline>
+            <starttime>{{ incident.startTime }}</starttime>
+            <endtime>{{ incident.endTime }}</endtime>
+            <source>
+                <reference>dialog.beta.gouv.fr</reference>
+                <name>DiaLog</name>
+                <url>{{ url('api_regulations_cifs', {_format: 'xml'}) }}</url>
+            </source>
+            {% if incident.schedule %}
+                <schedule>
+                    {% for day, dayTimes in incident.schedule %}
+                        <{{ day }}>{% for times in dayTimes %}{{ times.startTime|date('H:i') }}-{{ times.endTime|date('H:i') }}{% if not loop.last %},{% endif %}{% endfor %}</{{ day }}>
+                    {% endfor %}
+                </schedule>
+            {% endif %}
+        </incident>
+    {% endfor %}
+</incidents>

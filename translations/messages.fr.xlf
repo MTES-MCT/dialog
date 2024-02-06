@@ -1681,6 +1681,10 @@
                 <source>accessRequest.meta.subtitle</source>
                 <target>Vous pouvez demander la création d’un compte pour votre commune ou collectivité.</target>
             </trans-unit>
+            <trans-unit id="api.cifs.incident.description">
+                <source>api.cifs.incident.description</source>
+                <target>%street% : circulation interdite tous les jours pour tous les véhicles</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

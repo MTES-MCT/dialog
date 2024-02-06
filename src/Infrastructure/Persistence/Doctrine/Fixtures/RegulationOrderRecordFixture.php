@@ -109,6 +109,15 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('mainOrg'),
         );
 
+        $regulationOrderRecordCifs = new RegulationOrderRecord(
+            '0654905d-6771-75d8-8000-d523184d0b55',
+            RegulationOrderRecordSourceEnum::DIALOG->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED,
+            $this->getReference('regulationOrderCifs'),
+            new \DateTime('2021-11-02'),
+            $this->getReference('mainOrg'),
+        );
+
         $manager->persist($typicalRegulationOrderRecord);
         $manager->persist($publishedRegulationOrderRecord);
         $manager->persist($regulationOrderRecordDuplicate);
@@ -117,6 +126,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $manager->persist($fullCityRegulationOrderRecord);
         $manager->persist($regulationOrderRecordNoLocations);
         $manager->persist($regulationOrderRecordNoMeasures);
+        $manager->persist($regulationOrderRecordCifs);
         $manager->flush();
     }
 

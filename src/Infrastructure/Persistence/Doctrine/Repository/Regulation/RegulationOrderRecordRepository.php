@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -167,6 +168,51 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
             ->andWhere('locNew.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findRegulationOrdersForCifsIncidentFormat(): array
+    {
+        return $this->createQueryBuilder('roc')
+            ->select(
+                'roc.createdAt',
+                'ro.description',
+                'ro.category',
+                'ro.startDate as regulationOrderStartDate',
+                'ro.endDate as regulationOrderEndDate',
+                'locNew.roadName',
+                'ST_AsGeoJSON(locNew.geometry) as geometry',
+                'm.uuid as measureId',
+                'm.type as measureType',
+                'p.startDateTime as periodStartDateTime',
+                'p.endDateTime as periodEndDateTime',
+                'd.applicableDays',
+                't.startTime',
+                't.endTime',
+            )
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->innerJoin('roc.organization', 'o')
+            ->innerJoin('ro.locations', '_loc')
+            ->innerJoin('_loc.measures', 'm')
+            ->innerJoin('m.locationsNew', 'locNew')
+            ->leftJoin('m.vehicleSet', 'v')
+            ->leftJoin('m.periods', 'p')
+            ->leftJoin('p.dailyRange', 'd')
+            ->leftJoin('p.timeSlots', 't')
+            ->where(
+                'roc.status = :status',
+                'ro.endDate IS NOT NULL',
+                'locNew.geometry IS NOT NULL',
+                'm.type = :measureType',
+                'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
+            )
+            ->setParameters([
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'measureType' => MeasureTypeEnum::NO_ENTRY->value,
+            ])
+            ->orderBy('m.uuid')
             ->getQuery()
             ->getResult()
         ;
