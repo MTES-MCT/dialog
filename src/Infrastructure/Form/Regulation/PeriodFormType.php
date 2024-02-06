@@ -16,24 +16,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class PeriodFormType extends AbstractType
 {
+    public function __construct(
+        private string $clientTimezone,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('startDate', DateType::class, [
                 'label' => 'regulation.period.startDate',
                 'widget' => 'single_text',
+                'view_timezone' => $this->clientTimezone,
             ])
             ->add('startTime', TimeType::class, [
                 'label' => 'regulation.period.startTime',
                 'widget' => 'choice',
+                'view_timezone' => $this->clientTimezone,
             ])
             ->add('endDate', DateType::class, [
                 'label' => 'regulation.period.endDate',
                 'widget' => 'single_text',
+                'view_timezone' => $this->clientTimezone,
             ])
             ->add('endTime', TimeType::class, [
                 'label' => 'regulation.period.endTime',
                 'widget' => 'choice',
+                'view_timezone' => $this->clientTimezone,
             ])
             ->add('recurrenceType', ChoiceType::class,
                 options: $this->getRecurrenceTypeOptions(),

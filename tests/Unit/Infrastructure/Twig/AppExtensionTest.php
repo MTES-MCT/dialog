@@ -24,7 +24,6 @@ class AppExtensionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setDefaultTimezone('UTC');
         $this->featureFlagService = $this->createMock(FeatureFlagService::class);
         $this->extension = new AppExtension(
             'Etc/GMT-1', // Independent of Daylight Saving Time (DST).
@@ -35,7 +34,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(6, $this->extension->getFunctions());
+        $this->assertCount(7, $this->extension->getFunctions());
     }
 
     public function testFormatDateTimeDateOnly(): void
@@ -49,12 +48,25 @@ class AppExtensionTest extends TestCase
     {
         $this->assertSame(
             '06/01/2023 à 09h30',
-            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 UTC'), new \DateTimeImmutable('08:30:00 UTC')),
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06'), new \DateTimeImmutable('08:30:00')),
         );
         $this->assertSame(
             '07/01/2023 à 11h30',
-            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 23:00 UTC'), new \DateTimeImmutable('10:30:00 UTC')),
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 23:00'), new \DateTimeImmutable('10:30:00')),
         );
+    }
+
+    public function testFormatDateTimeReuseTime(): void
+    {
+        $this->assertSame(
+            '06/01/2023 à 18h00',
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 17:00'), true),
+        );
+    }
+
+    public function testFormatTime(): void
+    {
+        $this->assertSame('18h00', $this->extension->formatTime(new \DateTimeImmutable('2023-01-06 17:00')));
     }
 
     private function provideIsPast(): array

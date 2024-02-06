@@ -1,9 +1,9 @@
 {%- for period in periods -%}
     <br/>
     {%- if period.endDateTime -%}
-        du {{ period.startDateTime|date('d/m/Y - H\\hi' ) }} au {{ period.endDateTime|date('d/m/Y - H\\hi' ) }}
+        du {{ app_datetime(period.startDateTime, true) }} au {{ app_datetime(period.endDateTime, true) }}
     {%- else -%}
-        {{ period.startDateTime|date('d/m/Y - H\\hi' ) }}
+        {{ app_datetime(period.startDateTime, true) }}
     {%- endif -%}
     {%- if period.dailyRange -%}
         ,&nbsp;
@@ -24,7 +24,7 @@
     {% if period.timeSlots|length %}
         (
         {%- for timeSlot in period.timeSlots -%}
-            {{ timeSlot.startTime|date('H\\hi' ) }}-{{ timeSlot.endTime|date('H\\hi' ) }}
+            {{ app_time(timeSlot.startTime) }}-{{ app_time(timeSlot.endTime) }}
             {%- if not loop.last -%}&nbsp;et&nbsp;{% endif %}
         {%- endfor -%}
         )
