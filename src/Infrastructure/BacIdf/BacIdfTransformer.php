@@ -375,17 +375,16 @@ final class BacIdfTransformer
         $periodCommands = [];
 
         foreach ($circReg['PERIODE_JH'] as $periodItem) {
-            $jour = $periodItem['JOUR'];
             $heureDeb = \array_key_exists('HEURE_DEB', $periodItem) ? $periodItem['HEURE_DEB'] : null;
             $heureFin = \array_key_exists('HEURE_FIN', $periodItem) ? $periodItem['HEURE_FIN'] : null;
 
-            $isAllTheTime = $jour === [1, 2, 3, 4, 5, 6, 0]
-                && (
-                    ($heureDeb === '00:00' && $heureFin === '23:59')
-                    || (!$heureDeb && !$heureFin)
-                );
+            $isEveryDay = $periodItem['JOUR'] === [1, 2, 3, 4, 5, 6, 0];
 
-            if ($isAllTheTime) {
+            if ($isEveryDay && !$heureDeb && !$heureFin) {
+                return [];
+            }
+
+            if ($isEveryDay && $heureDeb === '00:00' && $heureFin === '23:59') {
                 return [];
             }
 
@@ -415,13 +414,7 @@ final class BacIdfTransformer
                 $applicableDays = [];
 
                 foreach ($days as $dayIndex) {
-                    $day = ApplicableDayEnum::getByIndex($dayIndex);
-
-                    if ($day === null) {
-                        throw new \RuntimeException(sprintf('invalid day: %d', $dayIndex));
-                    }
-
-                    $applicableDays[] = $day;
+                    $applicableDays[] = ApplicableDayEnum::getByIndex($dayIndex);
                 }
 
                 $dailyRangeCommand = new SaveDailyRangeCommand();

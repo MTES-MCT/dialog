@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
+use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
+use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -468,7 +473,7 @@ final class BacIdfTransformerTest extends TestCase
         );
     }
 
-    private function doTestTransform(SaveVehicleSetCommand $vehicleSetCommand, callable $prepare): void
+    private function doTestTransform(callable $callback): void
     {
         $regCirculation = [
             'CIRC_REG' => [
@@ -495,28 +500,6 @@ final class BacIdfTransformerTest extends TestCase
             ],
         ];
 
-        $prepare($regCirculation);
-
-        $record = [
-            'ARR_REF' => 'arr_1',
-            'ARR_NOM' => 'nom_1',
-            'ARR_COMMUNE' => [
-                'ARR_INSEE' => '93027',
-                'ARR_VILLE' => 'La Courneuve',
-                'ARR_CODE_POSTAL' => '93120',
-            ],
-            'REG_TYPE' => 'CIRCULATION',
-            'REG_CIRCULATION' => [
-                $regCirculation,
-            ],
-            'ARR_DUREE' => [
-                'ARR_TEMPORALITE' => 'PERMANENT',
-                'PERIODE_DEBUT' => [
-                    '$date' => '2024-02-06T17:25:00Z',
-                ],
-            ],
-        ];
-
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
@@ -527,7 +510,11 @@ final class BacIdfTransformerTest extends TestCase
 
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $vehicleSetCommand = new SaveVehicleSetCommand();
+        $vehicleSetCommand->allVehicles = true;
         $measureCommand->vehicleSet = $vehicleSetCommand;
+
+        $callback($regCirculation, $measureCommand);
 
         $locationCommand = new SaveRegulationLocationCommand();
         $locationCommand->cityCode = '93027';
@@ -550,6 +537,26 @@ final class BacIdfTransformerTest extends TestCase
             ],
         );
         $locationCommand->measures = [$measureCommand];
+
+        $record = [
+            'ARR_REF' => 'arr_1',
+            'ARR_NOM' => 'nom_1',
+            'ARR_COMMUNE' => [
+                'ARR_INSEE' => '93027',
+                'ARR_VILLE' => 'La Courneuve',
+                'ARR_CODE_POSTAL' => '93120',
+            ],
+            'REG_TYPE' => 'CIRCULATION',
+            'REG_CIRCULATION' => [
+                $regCirculation,
+            ],
+            'ARR_DUREE' => [
+                'ARR_TEMPORALITE' => 'PERMANENT',
+                'PERIODE_DEBUT' => [
+                    '$date' => '2024-02-06T17:25:00Z',
+                ],
+            ],
+        ];
 
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
         $result = new BacIdfTransformerResult($importCommand, []);
@@ -627,8 +634,9 @@ final class BacIdfTransformerTest extends TestCase
      */
     public function testTransformVehicleSet($data, SaveVehicleSetCommand $vehicleSetCommand): void
     {
-        $this->doTestTransform($vehicleSetCommand, function (array &$regCirculation) use ($data) {
+        $this->doTestTransform(function (array &$regCirculation, SaveMeasureCommand &$measureCommand) use ($data, $vehicleSetCommand) {
             $regCirculation['CIRC_VEHICULES'] = $data;
+            $measureCommand->vehicleSet = $vehicleSetCommand;
         });
     }
 
@@ -723,10 +731,96 @@ final class BacIdfTransformerTest extends TestCase
     /**
      * @dataProvider provideTransformExemptedVehicleTypes
      */
-    public function testTransformExemptedVehicleTypes($data, SaveVehicleSetCommand $vehicleSetCommand): void
+    public function testTransformExemptedVehicleTypes(array $data, SaveVehicleSetCommand $vehicleSetCommand): void
     {
-        $this->doTestTransform($vehicleSetCommand, function (array &$regCirculation) use ($data) {
+        $this->doTestTransform(function (array &$regCirculation, SaveMeasureCommand &$measureCommand) use ($data, $vehicleSetCommand) {
             $regCirculation['CIRC_REG'] = array_merge($regCirculation['CIRC_REG'], $data);
+            $measureCommand->vehicleSet = $vehicleSetCommand;
+        });
+    }
+
+    private function provideTransformPeriods(): \Iterator
+    {
+        yield [
+            [
+                [
+                    'JOUR' => [1, 2, 3, 4, 5, 6, 0],
+                ],
+                [
+                    'JOUR' => [1, 2, 3, 4, 5, 6, 0],
+                    'HEURE_DEB' => '00:00',
+                    'HEURE_FIN' => '23:59',
+                ],
+            ],
+            [],
+        ];
+
+        $periodCommand1 = new SavePeriodCommand();
+        $periodCommand1->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand1->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand1->endDate = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand1->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $timeSlot = new SaveTimeSlotCommand();
+        $timeSlot->startTime = new \DateTimeImmutable('07:00');
+        $timeSlot->endTime = new \DateTimeImmutable('21:00');
+        $periodCommand1->timeSlots = [$timeSlot];
+
+        $periodCommand2 = new SavePeriodCommand();
+        $periodCommand2->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand2->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand2->endDate = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand2->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand2->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
+        $dailyRange = new SaveDailyRangeCommand();
+        $dailyRange->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value];
+        $periodCommand2->dailyRange = $dailyRange;
+        $periodCommand2->timeSlots = [];
+
+        $periodCommand3 = new SavePeriodCommand();
+        $periodCommand3->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand3->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand3->endDate = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand3->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand3->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
+        $dailyRange = new SaveDailyRangeCommand();
+        $dailyRange->applicableDays = [ApplicableDayEnum::WEDNESDAY->value, ApplicableDayEnum::SUNDAY->value];
+        $periodCommand3->dailyRange = $dailyRange;
+        $timeSlot = new SaveTimeSlotCommand();
+        $timeSlot->startTime = new \DateTimeImmutable('07:00');
+        $timeSlot->endTime = new \DateTimeImmutable('15:00');
+        $periodCommand3->timeSlots = [$timeSlot];
+
+        yield [
+            [
+                [
+                    'JOUR' => [1, 2, 3, 4, 5, 6, 0],
+                    'HEURE_DEB' => '08:00',
+                    'HEURE_FIN' => '22:00',
+                ],
+                [
+                    'JOUR' => [1, 2],
+                    'HEURE_DEB' => '00:00',
+                    'HEURE_FIN' => '23:59',
+                ],
+                [
+                    'JOUR' => [0, 3],
+                    'HEURE_DEB' => '08:00',
+                    'HEURE_FIN' => '16:00',
+                ],
+            ],
+            [$periodCommand1, $periodCommand2, $periodCommand3],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTransformPeriods
+     */
+    public function testTransformPeriods(array $data, array $periodCommands): void
+    {
+        $this->doTestTransform(function (array &$regCirculation, SaveMeasureCommand &$measureCommand) use ($data, $periodCommands) {
+            $regCirculation['CIRC_REG']['PERIODE_JH'] = $data;
+            $measureCommand->periods = $periodCommands;
         });
     }
 }
