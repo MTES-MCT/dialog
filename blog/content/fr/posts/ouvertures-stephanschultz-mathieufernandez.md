@@ -55,7 +55,7 @@ Attention il ne s’agit pas là nécessairement de gratuité et d’accès libr
 
 Google ou Amazon par exemple fournissent des ressources et places de marché à leurs développeurs ou leurs marchands et en tirent de très substantiels revenus. Leur modèle économique est même construit sur le succès de leurs réutilisateurs. Ces derniers deviennent à la fois le client et le produit, en améliorant l’offre globale de services dans un cercle vertueux. Pensez aux App Stores de Google ou Apple et à la marketplace d’Amazon. À l'inverse, une organisation à but non lucratif peut se comporter de manière rigoureusement “fermée” en concevant et délivrant des services qui ne peuvent ni être modifiés ni réutilisés par ses utilisateurs. 
 
-Et pour une collectivité publique ?
+**Et pour une collectivité publique ?**
 
 Le concept d’État-plateforme a été repris en France par Henri Verdier et Pierre Pezziardi dans leur ouvrage de 2017 “Des startups d’État à l’État-plateforme” (à retrouver dans la liste de ressources ci-dessous). Il reprend schématiquement les principes des plateformes numériques théorisés par l’éditeur Tim O’Reilly en 2010 : 
 
