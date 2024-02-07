@@ -11,6 +11,7 @@ use App\Domain\Condition\Period\Period;
 
 final class SaveDailyRangeCommand implements CommandInterface
 {
+    public ?string $recurrenceType = null;
     public ?array $applicableDays;
     public ?Period $period;
 

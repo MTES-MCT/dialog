@@ -11,6 +11,6 @@ class DependencyInjectionTest extends KernelTestCase
     public function testTimezoneParameters(): void
     {
         $this->assertSame('UTC', $this->getContainer()->getParameter('server_timezone'));
-        $this->assertSame('Europe/Paris', $this->getContainer()->getParameter('client_timezone'));
+        $this->assertSame('Etc/GMT-1', $this->getContainer()->getParameter('client_timezone'));
     }
 }

@@ -41,7 +41,6 @@ final class DateUtils implements DateUtilsInterface
         $min = (int) $date2->format('i');
 
         return \DateTime::createFromInterface($date1)
-            ->setTime($hour, $min)
-            ->setTimeZone($this->clientTimezone);
+            ->setTime($hour, $min);
     }
 }

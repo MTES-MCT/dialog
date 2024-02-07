@@ -25,8 +25,11 @@ final class LocationNewTest extends TestCase
         $location = new LocationNew(
             uuid: 'b4812143-c4d8-44e6-8c3a-34688becae6e',
             measure: $measure,
+            roadType: 'lane',
             cityCode: '44195',
             cityLabel: 'Savenay',
+            administrator: null,
+            roadNumber: null,
             roadName: 'Route du Grand Brossais',
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
@@ -50,8 +53,11 @@ final class LocationNewTest extends TestCase
         $location = new LocationNew(
             uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             measure: $measure,
+            roadType: 'lane',
             cityCode: '44195',
             cityLabel: 'Savenay',
+            administrator: null,
+            roadNumber: null,
             roadName: 'Route du Grand Brossais',
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
@@ -61,8 +67,11 @@ final class LocationNewTest extends TestCase
             ]),
         );
 
+        $newRoadType = 'lane';
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
+        $newAdministrator = null;
+        $newRoadNumber = null;
         $newRoadName = 'La Forge Hervé';
         $newFromHouseNumber = '1';
         $newToHouseNumber = '4';
@@ -72,6 +81,9 @@ final class LocationNewTest extends TestCase
         ]);
 
         $location->update(
+            $newRoadType,
+            $newAdministrator,
+            $newRoadNumber,
             $newCityCode,
             $newCityLabel,
             $newRoadName,
@@ -81,6 +93,9 @@ final class LocationNewTest extends TestCase
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
+        $this->assertSame($newRoadType, $location->getRoadType());
+        $this->assertSame($newAdministrator, $location->getAdministrator());
+        $this->assertSame($newRoadNumber, $location->getRoadNumber());
         $this->assertSame($newCityCode, $location->getCityCode());
         $this->assertSame($newCityLabel, $location->getCityLabel());
         $this->assertSame($newRoadName, $location->getRoadName());
@@ -97,6 +112,9 @@ final class LocationNewTest extends TestCase
         $location = new Location(
             uuid: '504a1515-af1a-432c-bcc3-7938eca2b33f',
             regulationOrder: $regulationOrder,
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',
@@ -111,6 +129,9 @@ final class LocationNewTest extends TestCase
         $locationNew = new LocationNew(
             uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             measure: $measure,
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',

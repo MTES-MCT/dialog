@@ -382,6 +382,38 @@
                 <source>regulation.general_info.end_date.help</source>
                 <target>Laisser vide si l'arrêté est permanent.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.type">
+                <source>regulation.location.type</source>
+                <target>Type de route ou voie</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.type.placeholder">
+                <source>regulation.location.type.placeholder</source>
+                <target>Sélectionner un type de route...</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.type.departmentalRoad">
+                <source>regulation.location.road.type.departmentalRoad</source>
+                <target>Route départementale</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.type.lane">
+                <source>regulation.location.road.type.lane</source>
+                <target>Voie</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.administrator">
+                <source>regulation.location.administrator</source>
+                <target>Département ou gestionnaire</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.administrator.help">
+                <source>regulation.location.administrator.help</source>
+                <target>Indiquez le gestionnaire de la route, par exemple Ille-et-Vilaine (35) ou Ville de Paris.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.administrator.placeholder">
+                <source>regulation.location.administrator.placeholder</source>
+                <target>Sélectionner un département...</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.roadNumber">
+                <source>regulation.location.roadNumber</source>
+                <target>Numéro de la départementale</target>
+            </trans-unit>
             <trans-unit id="regulation.location.city">
                 <source>regulation.location.city</source>
                 <target>Ville ou commune</target>
