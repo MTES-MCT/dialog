@@ -16,6 +16,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\User\Organization;
 
@@ -360,6 +361,7 @@ final class BacIdfTransformer
             'geometries' => $geometries,
         ];
 
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
         $locationCommand->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
         $locationCommand->roadName = $regVoie['VOIE_NAME'];

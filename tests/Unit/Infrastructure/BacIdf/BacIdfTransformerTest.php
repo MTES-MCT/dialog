@@ -16,6 +16,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\User\Organization;
 use App\Infrastructure\BacIdf\BacIdfTransformer;
@@ -54,6 +55,7 @@ final class BacIdfTransformerTest extends TestCase
         $measureCommand->vehicleSet = $vehicleSet;
 
         $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = '93027';
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Passage Pierre Curie';
@@ -145,6 +147,7 @@ final class BacIdfTransformerTest extends TestCase
         $measureCommand->vehicleSet = $vehicleSet;
 
         $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = '93027';
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Ruelle du Pressin';
@@ -517,6 +520,7 @@ final class BacIdfTransformerTest extends TestCase
         $callback($regCirculation, $measureCommand);
 
         $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = '93027';
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Ruelle du Pressin';
