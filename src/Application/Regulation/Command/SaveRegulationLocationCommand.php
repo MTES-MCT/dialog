@@ -39,7 +39,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
         $command->roadType = $location?->getRoadType();
         $command->administrator = $location?->getAdministrator();
         $command->roadNumber = $location?->getRoadNumber();
-        $command->isEntireStreet = $location ? $location->isEntireStreet() : true;
+        $command->isEntireStreet = $location ? $location->getIsEntireStreet() : true;
         $command->cityCode = $location?->getCityCode();
         $command->cityLabel = $location?->getCityLabel();
         $command->roadName = $location?->getRoadName();
