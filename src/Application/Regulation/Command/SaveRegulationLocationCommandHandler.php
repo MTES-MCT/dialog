@@ -9,12 +9,10 @@ use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadsNumberInterface;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\Exception\RoadNumberNotFoundException;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
-use Http\Client\Exception\HttpException;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class SaveRegulationLocationCommandHandler
 {
@@ -24,8 +22,7 @@ final class SaveRegulationLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
-        private HttpClientInterface $ignWfsClient,
-        private string $ignWfsUrl,
+        private RoadsNumberInterface $roadsNumberInterface,
     ) {
     }
 
@@ -63,13 +60,11 @@ final class SaveRegulationLocationCommandHandler
             }
 
             $regulationOrder->addLocation($location);
-            $gestionnaire = $command->administrator;
+            $administrator = $command->administrator;
 
             if ($command->roadType === 'departmentalRoad') {
                 $type_de_route = 'Départementale';
-                $roadNumberIsValid = $this->roadNumberIsValid($gestionnaire, $type_de_route);
-
-                return $roadNumberIsValid;
+                $roadsNumber = $this->roadsNumberInterface->getRoadsNumber($administrator, $type_de_route);
             }
 
             return $location;
@@ -152,31 +147,5 @@ final class SaveRegulationLocationCommandHandler
             || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
-    }
-
-    public function roadNumberIsValid(string $gestionnaire, string $type_de_route): void
-    {
-        $query = [
-            'SERVICE' => 'WFS',
-            'REQUEST' => 'GetFeature',
-            'VERSION' => '2.0.0',
-            'OUTPUTFORMAT' => 'application/json',
-            'TYPENAME' => 'BDTOPO_V3:route_numerotee_ou_nommee',
-            'cql_filter' => sprintf("gestionnaire='%s' AND type_de_route='%s'", $gestionnaire, $type_de_route),
-            'PropertyName' => 'numero',
-        ];
-
-        $response = $this->ignWfsClient->request('GET', $this->ignWfsUrl, [
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-            'query' => $query,
-        ]);
-        try {
-            $body = $response->getContent(throw: true);
-        } catch (HttpException $exc) {
-            $message = sprintf('invalid response: %s', $exc->getMessage());
-            throw new RoadNumberNotFoundException($message);
-        }
     }
 }
