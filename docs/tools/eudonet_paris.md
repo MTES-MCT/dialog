@@ -62,3 +62,46 @@ Notes :
 5. Après l'exécution :
   * Vérifiez l'exécution en inspectant le fichier `import.prod-*.log` alimenté pendant l'import.
   * Commentez les variables dans `.env.prod.local` pour éviter de les réutiliser par mégarde jusqu'au prochain import.
+
+## Déploiement périodique automatique
+
+Les données Eudonet Paris sont automatiquement intégrées en production tous les lundis à 17h00.
+
+Cette automatisation est réalisée au moyen de GitHub Actions (voir [`eudonet_paris_import.yml`](../../workflows/eudonet_paris_import.yml)).
+
+### Accès SSH de GitHub Actions à la base de données sur Scalingo
+
+Cette GitHub Action a besoin d'un accès SSH à la base de données hébergée chez Scalingo.
+
+Pour cela des clés SSH ont été générées comme suit :
+
+```bash
+ssh-keygen -t ed25519 -q -N "" -f ~/.ssh/id_dialog_gh_scalingo
+```
+
+La clé publique `~/.ssh/id_dialog_gh_scalingo.pub` ainsi générée a été enregistrée sur Scalingo dans la section [Mes clés SSH](https://dashboard.scalingo.com/account/keys) du compte Scalingo professionnel de @florimondmanca.
+
+> 💡 Pour renouveler les clés, ou en cas de perte, de nouvelles clés peuvent être régénérées en utilisant la méthode ci-dessus, puis rattachées au compte de toute personne ayant un accès "Collaborator" sur l'app Scalingo `dialog`.
+
+La clé privée a été ajoutée comme secret `$GH_SCALINGO_SSH_PRIVATE_KEY` au dépôt GitHub et est utilisée par la GitHub Action.
+
+L'accès à la base de données lors de l'import se fait via un [tunnel chiffré Scalingo](https://doc.scalingo.com/platform/databases/access#encrypted-tunnel).
+
+* L'URL de base de données résultant a été ajouté comme secret `$EUDONET_PARIS_IMPORT_DATABASE_URL`.
+* La valeur de ce secret doit être la `DATABASE_URL` de production où l'on remplace le `host:port` par `127.0.0.1:10000` afin de pointer sur le DB tunnel Scalingo (le port `10000` est hardcodé dans la GitHub Action).
+
+### Données Addok
+
+L'intégration Eudonet Paris a besoin de faire tourner l'[instance Addok personnalisée](./addok.md) en local.
+
+Il faut donc que la GitHub Action télécharge le fichier ZIP contenant les données (1.6 Go environ) hébergé sur le kDrive de Fairness.
+
+Cela est fait par le script `tools/download_addok_bundle.sh`. Pour cela une clé d'API Infomaniak a été créée par @florimondmanca et enregistrée dans le secret `EUDONET_PARIS_KDRIVE_TOKEN`.
+
+L'identifiant du fichier sur kDrive est stocké dans le secret `EUDONET_PARIS_KDRIVE_FILE_ID`.
+
+#### Mise à jour des données Addok
+
+Si un nouveau bundle Addok est stocké sur le kDrive, récupérer le FileID (visible dans l'URL de partage du fichier) et mettre à jour le secret `EUDONET_PARIS_KDRIVE_FILE_ID`.
+
+Le ZIP est mis en cache après le premier téléchargement.

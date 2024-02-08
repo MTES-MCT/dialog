@@ -86,6 +86,9 @@ dbfixtures: ## Load tests fixtures
 redisshell: ## Connect to the Redis container
 	docker-compose exec redis redis-cli
 
+addok_build: ## Build Addok containers
+	${_DOCKER_COMPOSE_ADDOK} build --force
+
 addok_start: ## Start Addok containers
 	${_DOCKER_COMPOSE_ADDOK} up -d
 
@@ -277,3 +280,9 @@ scalingo-node-postbuild:
 scalingo-postdeploy:
 	@echo 'Executing migrations...'
 	${BIN_CONSOLE} doctrine:migrations:migrate --no-interaction
+
+eudonet_paris_import_ci:
+	make composer CMD="install -n --prefer-dist"
+	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	scalingo --app dialog-staging-pr634 db-tunnel -p 10000 DATABASE_URL & ./tools/wait-for-it.sh 127.0.0.1:10000
+	make console CMD="app:eudonet_paris:import"
