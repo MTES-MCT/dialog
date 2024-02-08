@@ -51,7 +51,11 @@ final class MeasureFormType extends AbstractType
             ])
             ->add('locationsNew', CollectionType::class, [
                 'entry_type' => LocationNewFormType::class,
-                'entry_options' => ['label' => false],
+                'entry_options' => [
+                    'label' => false,
+                    'administrators' => $options['administrators'],
+                    'feature_road_type' => $options['feature_road_type'],
+                ],
                 'prototype_name' => '__location_name__',
                 'label' => 'regulation.location_list',
                 'help' => 'regulation.location_list.help',

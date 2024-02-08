@@ -103,7 +103,7 @@ final class DuplicateRegulationCommandHandler
                 $cmd->geometry = $location->getGeometry();
                 $cmd->measure = $measure;
 
-                $locationCommands[] = $location;
+                $locationCommands[] = $cmd;
             }
 
             $vehicleSetCommand = $measure->getVehicleSet()
@@ -116,7 +116,7 @@ final class DuplicateRegulationCommandHandler
             $measureCommand->maxSpeed = $measure->getMaxSpeed();
             $measureCommand->vehicleSet = $vehicleSetCommand;
             $measureCommand->periods = $periodCommands;
-            $measureCommand->locationsNew[] = $locationCommands;
+            $measureCommand->locationsNew = $locationCommands;
 
             $this->commandBus->handle($measureCommand);
         }

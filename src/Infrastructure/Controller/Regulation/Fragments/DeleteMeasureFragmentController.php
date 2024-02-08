@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteMeasureCommand;
+use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -14,6 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Csrf\CsrfToken;
@@ -49,7 +51,12 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
 
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
 
-        $this->commandBus->handle(new DeleteMeasureCommand());
+        $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
+        if (!$measure) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->commandBus->handle(new DeleteMeasureCommand($measure));
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

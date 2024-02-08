@@ -63,7 +63,7 @@ final class AddMeasureController extends AbstractRegulationController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $preExistingMeasureUuids = $regulationOrderRecord->getLocationUuids();
+                $preExistingMeasureUuids = $regulationOrderRecord->getMeasureUuids();
 
                 $measure = $this->commandBus->handle($command);
                 $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
