@@ -274,6 +274,3 @@ scalingo-node-postbuild:
 scalingo-postdeploy:
 	@echo 'Executing migrations...'
 	${BIN_CONSOLE} doctrine:migrations:migrate --no-interaction
-
-	@echo 'Installing data...'
-	make data_install
