@@ -243,7 +243,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $row !== null;
     }
 
-    public function findIdentifiersForSourceInOrganization(string $source, Organization $organization): array
+    public function findIdentifiersForSource(string $source): array
     {
         return $this->createQueryBuilder('roc')
             ->select('ro.identifier')

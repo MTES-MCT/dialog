@@ -12,7 +12,7 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 final class ImportBacIdfRegulationCommand implements CommandInterface
 {
     public function __construct(
-        public readonly SaveRegulationGeneralInfoCommand $generalInfoCommand,
+        public SaveRegulationGeneralInfoCommand $generalInfoCommand,
         /** @var SaveRegulationLocationCommand[] */
         public readonly array $locationCommands,
     ) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -12,12 +13,15 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Application\User\Command\CreateOrganizationCommand;
+use App\Application\User\Query\GetOrganizationBySiretQuery;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Infrastructure\BacIdf\BacIdfTransformer;
 use App\Infrastructure\BacIdf\BacIdfTransformerResult;
@@ -25,22 +29,30 @@ use PHPUnit\Framework\TestCase;
 
 final class BacIdfTransformerTest extends TestCase
 {
+    private $queryBus;
     private $organization;
+    private $siret = '93027';
 
     protected function setUp(): void
     {
+        $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
     }
 
     public function testTransform(): void
     {
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetOrganizationBySiretQuery($this->siret))
+            ->willReturn($this->organization);
+
         $record = json_decode(file_get_contents(__DIR__ . '/data/decree1.json'), associative: true);
 
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = '15.248-circ';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfoCommand->description = 'Circulation passage Pierre Curie';
-        $generalInfoCommand->organization = $this->organization;
         $generalInfoCommand->startDate = new \DateTimeImmutable('2015-08-17 00:00');
         $generalInfoCommand->endDate = null;
 
@@ -56,7 +68,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveRegulationLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = '93027';
+        $locationCommand->cityCode = $this->siret;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Passage Pierre Curie';
         $locationCommand->fromHouseNumber = null;
@@ -80,20 +92,30 @@ final class BacIdfTransformerTest extends TestCase
         $locationCommand->measures = [$measureCommand];
 
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
-        $result = new BacIdfTransformerResult($importCommand, []);
+        $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer();
+        $transformer = new BacIdfTransformer($this->queryBus);
 
-        $this->assertEquals($result, $transformer->transform($record, $this->organization));
+        $this->assertEquals($result, $transformer->transform($record));
     }
 
-    public function testTransformEmpty(): void
+    public function testTransformMinimal(): void
     {
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetOrganizationBySiretQuery($this->siret))
+            ->willThrowException(new OrganizationNotFoundException());
+
+        $organizationCommand = new CreateOrganizationCommand();
+        $organizationCommand->siret = $this->siret;
+        $organizationCommand->name = 'La Courneuve';
+
         $record = [
             'ARR_REF' => 'arr_1',
             'ARR_NOM' => 'nom_1',
             'ARR_COMMUNE' => [
-                'ARR_INSEE' => '93027',
+                'ARR_INSEE' => $this->siret,
                 'ARR_VILLE' => 'La Courneuve',
                 'ARR_CODE_POSTAL' => '93120',
             ],
@@ -136,7 +158,6 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfoCommand->description = 'nom_1';
-        $generalInfoCommand->organization = $this->organization;
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
         $generalInfoCommand->endDate = null;
 
@@ -170,11 +191,11 @@ final class BacIdfTransformerTest extends TestCase
         $locationCommand->measures = [$measureCommand];
 
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
-        $result = new BacIdfTransformerResult($importCommand, []);
+        $result = new BacIdfTransformerResult($importCommand, [], null, $organizationCommand);
 
-        $transformer = new BacIdfTransformer();
+        $transformer = new BacIdfTransformer($this->queryBus);
 
-        $this->assertEquals($result, $transformer->transform($record, $this->organization));
+        $this->assertEquals($result, $transformer->transform($record));
     }
 
     private function provideTransformErrors(): array
@@ -465,9 +486,13 @@ final class BacIdfTransformerTest extends TestCase
      */
     public function testTransformErrors(array $record, array $errors): void
     {
-        $transformer = new BacIdfTransformer();
+        $this->queryBus
+            ->expects(self::never())
+            ->method('handle');
 
-        $result = $transformer->transform($record, $this->organization);
+        $transformer = new BacIdfTransformer($this->queryBus);
+
+        $result = $transformer->transform($record);
 
         $this->assertNull($result->command);
         $this->assertEquals(
@@ -478,6 +503,12 @@ final class BacIdfTransformerTest extends TestCase
 
     private function doTestTransform(callable $callback): void
     {
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetOrganizationBySiretQuery($this->siret))
+            ->willReturn($this->organization);
+
         $regCirculation = [
             'CIRC_REG' => [
                 'REG_VOIES' => [
@@ -507,7 +538,6 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfoCommand->description = 'nom_1';
-        $generalInfoCommand->organization = $this->organization;
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
         $generalInfoCommand->endDate = null;
 
@@ -563,11 +593,11 @@ final class BacIdfTransformerTest extends TestCase
         ];
 
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
-        $result = new BacIdfTransformerResult($importCommand, []);
+        $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer();
+        $transformer = new BacIdfTransformer($this->queryBus);
 
-        $this->assertEquals($result, $transformer->transform($record, $this->organization));
+        $this->assertEquals($result, $transformer->transform($record));
     }
 
     private function provideTransformVehicleSet(): \Iterator

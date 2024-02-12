@@ -7,11 +7,8 @@ namespace App\Infrastructure\BacIdf;
 use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
-use App\Application\QueryBusInterface;
-use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Infrastructure\BacIdf\Exception\BacIdfException;
 use Psr\Log\LoggerInterface;
 
@@ -22,19 +19,13 @@ final class BacIdfExecutor
         private BacIdfExtractor $extractor,
         private BacIdfTransformer $transformer,
         private CommandBusInterface $commandBus,
-        private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
-        private string $bacIdfOrgId,
         private DateUtilsInterface $dateUtils,
     ) {
     }
 
     public function execute(): void
     {
-        if (!$this->bacIdfOrgId) {
-            throw new BacIdfException('No target organization ID set. Please set APP_BAC_IDF_ORG_ID in .env.local');
-        }
-
         $numProcessed = 0;
         $numCreated = 0;
         $numSkipped = 0;
@@ -45,18 +36,12 @@ final class BacIdfExecutor
         $this->logger->info('started');
 
         try {
-            try {
-                $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($this->bacIdfOrgId));
-            } catch (OrganizationNotFoundException $exc) {
-                throw new BacIdfException("Organization not found: $this->bacIdfOrgId");
-            }
-
             $existingIdentifiers = $this->regulationOrderRecordRepository
-                ->findIdentifiersForSourceInOrganization(RegulationOrderRecordSourceEnum::BAC_IDF->value, $organization);
+                ->findIdentifiersForSource(RegulationOrderRecordSourceEnum::BAC_IDF->value);
 
             foreach ($this->extractor->iterExtract(ignoreIDs: $existingIdentifiers) as $record) {
                 $this->logger->debug('before-transform', ['record' => $record]);
-                $result = $this->transformer->transform($record, $organization);
+                $result = $this->transformer->transform($record);
 
                 ++$numProcessed;
 
@@ -70,6 +55,15 @@ final class BacIdfExecutor
                         }
                     }
                 } else {
+                    if ($result->organizationCommand !== null) {
+                        $organization = $this->commandBus->handle($result->organizationCommand);
+                        $this->logger->info('organization:created', ['command' => $result->organizationCommand]);
+                    } else {
+                        $organization = $result->organization;
+                    }
+
+                    $result->command->generalInfoCommand->organization = $organization;
+
                     try {
                         $this->commandBus->handle($result->command);
                         $this->logger->info('created', ['command' => $result->command]);

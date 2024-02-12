@@ -52,7 +52,7 @@ final class EudonetParisExecutor
             }
 
             $existingIdentifiers = $this->regulationOrderRecordRepository
-                ->findIdentifiersForSourceInOrganization(RegulationOrderRecordSourceEnum::EUDONET_PARIS->value, $organization);
+                ->findIdentifiersForSource(RegulationOrderRecordSourceEnum::EUDONET_PARIS->value);
 
             foreach ($this->eudonetParisExtractor->iterExtract($laterThanUTC, ignoreIDs: $existingIdentifiers) as $record) {
                 $result = $this->eudonetParisTransformer->transform($record, $organization);

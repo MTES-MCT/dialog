@@ -8,16 +8,14 @@ use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
-use App\Application\QueryBusInterface;
-use App\Application\User\Query\GetOrganizationByUuidQuery;
+use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\User\Command\CreateOrganizationCommand;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Infrastructure\BacIdf\BacIdfExecutor;
 use App\Infrastructure\BacIdf\BacIdfExtractor;
 use App\Infrastructure\BacIdf\BacIdfTransformer;
 use App\Infrastructure\BacIdf\BacIdfTransformerResult;
-use App\Infrastructure\BacIdf\Exception\BacIdfException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -27,9 +25,7 @@ final class BacIdfExecutorTest extends TestCase
     private $extractor;
     private $transformer;
     private $commandBus;
-    private $queryBus;
     private $regulationOrderRecordRepository;
-    private $orgId = '064f5eba-5eb2-7ffd-8000-77e8f8b7bb9b';
     private $dateUtils;
 
     protected function setUp(): void
@@ -38,7 +34,6 @@ final class BacIdfExecutorTest extends TestCase
         $this->extractor = $this->createMock(BacIdfExtractor::class);
         $this->transformer = $this->createMock(BacIdfTransformer::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
@@ -47,39 +42,38 @@ final class BacIdfExecutorTest extends TestCase
     {
         $organization = $this->createMock(Organization::class);
 
+        $organizationCommand = new CreateOrganizationCommand();
+        $organizationCommand->siret = '93123';
+        $organizationCommand->name = 'Ville Nouvelle';
+        $createdOrganization = $this->createMock(Organization::class);
+
         $executor = new BacIdfExecutor(
             $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
-            $this->queryBus,
             $this->regulationOrderRecordRepository,
-            $this->orgId,
             $this->dateUtils,
         );
 
-        $this->queryBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with(new GetOrganizationByUuidQuery($this->orgId))
-            ->willReturn($organization);
-
         $this->regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findIdentifiersForSourceInOrganization')
-            ->with('bacidf', $organization)
+            ->method('findIdentifiersForSource')
+            ->with('bacidf')
             ->willReturn(['064ef37c-170f-7737-8000-d6f3b1db7685']);
 
         $record1 = ['ARR_REF' => 'arr_1'];
         $importCommand1 = $this->createMock(ImportBacIdfRegulationCommand::class);
-        $result1 = new BacIdfTransformerResult($importCommand1, []);
+        $importCommand1->generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
+        $result1 = new BacIdfTransformerResult($importCommand1, [], $organization);
 
         $record2 = ['ARR_REF' => 'arr_2'];
         $result2 = new BacIdfTransformerResult(null, [['reason' => 'no_locations_gathered']]);
 
         $record3 = ['ARR_REF' => 'arr_3'];
         $importCommand3 = $this->createMock(ImportBacIdfRegulationCommand::class);
-        $result3 = new BacIdfTransformerResult($importCommand3, []);
+        $importCommand3->generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
+        $result3 = new BacIdfTransformerResult($importCommand3, [], null, $organizationCommand);
 
         $record4 = ['ARR_REF' => 'arr_4'];
         $result4 = new BacIdfTransformerResult(null, [['reason' => 'value_not_expected', 'expected' => 'CIRCULATION']]);
@@ -96,20 +90,21 @@ final class BacIdfExecutorTest extends TestCase
         $this->transformer
             ->expects($transformMatcher)
             ->method('transform')
-            ->willReturnCallback(fn ($record, $org) => match ($transformMatcher->getInvocationCount()) {
-                1 => $this->assertEquals($record1, $record) ?: $this->assertEquals($organization, $org) ?: $result1,
-                2 => $this->assertEquals($record2, $record) ?: $this->assertEquals($organization, $org) ?: $result2,
-                3 => $this->assertEquals($record3, $record) ?: $this->assertEquals($organization, $org) ?: $result3,
-                4 => $this->assertEquals($record4, $record) ?: $this->assertEquals($organization, $org) ?: $result4,
+            ->willReturnCallback(fn ($record) => match ($transformMatcher->getInvocationCount()) {
+                1 => $this->assertEquals($record1, $record) ?: $result1,
+                2 => $this->assertEquals($record2, $record) ?: $result2,
+                3 => $this->assertEquals($record3, $record) ?: $result3,
+                4 => $this->assertEquals($record4, $record) ?: $result4,
             });
 
-        $handleMatcher = self::exactly(2);
+        $handleMatcher = self::exactly(3);
         $this->commandBus
             ->expects($handleMatcher)
             ->method('handle')
             ->willReturnCallback(fn ($command) => match ($handleMatcher->getInvocationCount()) {
                 1 => $this->assertEquals($importCommand1, $command),
-                2 => $this->assertEquals($importCommand3, $command),
+                2 => $this->assertEquals($organizationCommand, $command) ?: $createdOrganization,
+                3 => $this->assertEquals($importCommand3, $command),
             });
 
         $timeMatcher = self::exactly(2);
@@ -121,7 +116,7 @@ final class BacIdfExecutorTest extends TestCase
                 2 => 1695218796.3069,
             });
 
-        $logMatcher = self::exactly(6);
+        $logMatcher = self::exactly(7);
         $this->logger
             ->expects($logMatcher)
             ->method('info')
@@ -129,9 +124,10 @@ final class BacIdfExecutorTest extends TestCase
                 1 => $this->assertEquals($message, 'started'),
                 2 => $this->assertEquals($message, 'created'),
                 3 => $this->assertEquals($message, 'skipped'),
-                4 => $this->assertEquals($message, 'created'),
-                5 => $this->assertEquals($message, 'skipped'),
-                6 => (
+                4 => $this->assertEquals($message, 'organization:created'),
+                5 => $this->assertEquals($message, 'created'),
+                6 => $this->assertEquals($message, 'skipped'),
+                7 => (
                     $this->assertEquals($message, 'done')
                     ?: $this->assertEquals([
                         'numProcessed' => 4,
@@ -152,18 +148,10 @@ final class BacIdfExecutorTest extends TestCase
 
     public function testExecuteEmpty(): void
     {
-        $organization = $this->createMock(Organization::class);
-
-        $this->queryBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with(new GetOrganizationByUuidQuery($this->orgId))
-            ->willReturn($organization);
-
         $this->regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findIdentifiersForSourceInOrganization')
-            ->with('bacidf', $organization)
+            ->method('findIdentifiersForSource')
+            ->with('bacidf')
             ->willReturn([]);
 
         $this->extractor
@@ -177,9 +165,7 @@ final class BacIdfExecutorTest extends TestCase
             $this->extractor,
             $this->transformer,
             $this->commandBus,
-            $this->queryBus,
             $this->regulationOrderRecordRepository,
-            $this->orgId,
             $this->dateUtils,
         );
 
@@ -217,75 +203,23 @@ final class BacIdfExecutorTest extends TestCase
         $executor->execute();
     }
 
-    public function testExecuteOrganizationDoesNotExist(): void
-    {
-        $this->expectException(BacIdfException::class);
-
-        $this->queryBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with(new GetOrganizationByUuidQuery($this->orgId))
-            ->willThrowException(new OrganizationNotFoundException('my_message'));
-
-        $this->regulationOrderRecordRepository
-            ->expects(self::never())
-            ->method('findIdentifiersForSourceInOrganization');
-
-        $this->extractor
-            ->expects(self::never())
-            ->method('iterExtract');
-
-        $this->logger
-            ->expects(self::exactly(1))
-            ->method('error');
-
-        $timeMatcher = self::exactly(2);
-        $this->dateUtils
-            ->expects($timeMatcher)
-            ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
-                1 => 1695218778.6387,
-                2 => 1695218796.3069,
-            });
-
-        $executor = new BacIdfExecutor(
-            $this->logger,
-            $this->extractor,
-            $this->transformer,
-            $this->commandBus,
-            $this->queryBus,
-            $this->regulationOrderRecordRepository,
-            $this->orgId,
-            $this->dateUtils,
-        );
-
-        $executor->execute();
-    }
-
     public function testExecuteImportFailed(): void
     {
         $organization = $this->createMock(Organization::class);
 
-        $this->queryBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with(new GetOrganizationByUuidQuery($this->orgId))
-            ->willReturn($organization);
-
         $executor = new BacIdfExecutor(
             $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
-            $this->queryBus,
             $this->regulationOrderRecordRepository,
-            $this->orgId,
             $this->dateUtils,
         );
 
         $record1 = ['ARR_REF' => 'arr_1'];
         $importCommand1 = $this->createMock(ImportBacIdfRegulationCommand::class);
-        $result1 = new BacIdfTransformerResult($importCommand1, []);
+        $importCommand1->generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
+        $result1 = new BacIdfTransformerResult($importCommand1, [], $organization);
 
         $this->extractor
             ->expects(self::once())
@@ -339,45 +273,6 @@ final class BacIdfExecutorTest extends TestCase
             ->expects(self::once())
             ->method('error')
             ->with('failed', self::anything());
-
-        $executor->execute();
-    }
-
-    public function testExecuteOrgIdMissing(): void
-    {
-        $this->expectException(BacIdfException::class);
-        $this->expectExceptionMessageMatches("/Please set APP_BAC_IDF_ORG_ID in \.env\.local/");
-
-        $this->queryBus
-            ->expects(self::never())
-            ->method('handle');
-
-        $this->regulationOrderRecordRepository
-            ->expects(self::never())
-            ->method('findIdentifiersForSourceInOrganization');
-
-        $this->extractor
-            ->expects(self::never())
-            ->method('iterExtract');
-
-        $this->logger
-            ->expects(self::never())
-            ->method('debug');
-
-        $this->dateUtils
-            ->expects(self::never())
-            ->method('getMicroTime');
-
-        $executor = new BacIdfExecutor(
-            $this->logger,
-            $this->extractor,
-            $this->transformer,
-            $this->commandBus,
-            $this->queryBus,
-            $this->regulationOrderRecordRepository,
-            '',
-            $this->dateUtils,
-        );
 
         $executor->execute();
     }

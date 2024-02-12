@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -12,17 +13,24 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Application\User\Command\CreateOrganizationCommand;
+use App\Application\User\Query\GetOrganizationBySiretQuery;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
-use App\Domain\User\Organization;
+use App\Domain\User\Exception\OrganizationNotFoundException;
 
 final class BacIdfTransformer
 {
-    public function transform(array $row, Organization $organization): BacIdfTransformerResult
+    public function __construct(
+        private QueryBusInterface $queryBus,
+    ) {
+    }
+
+    public function transform(array $row): BacIdfTransformerResult
     {
         $loc = ['regulation_identifier' => $row['ARR_REF']];
 
@@ -42,7 +50,6 @@ final class BacIdfTransformer
         $generalInfo->identifier = $row['ARR_REF'];
         $generalInfo->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfo->description = $row['ARR_NOM'];
-        $generalInfo->organization = $organization;
 
         $date = $row['ARR_DUREE']['PERIODE_DEBUT']['$date'];
 
@@ -127,9 +134,22 @@ final class BacIdfTransformer
             return new BacIdfTransformerResult(null, $errors);
         }
 
+        $siret = $row['ARR_COMMUNE']['ARR_INSEE'];
+
+        $organization = null;
+        $organizationCommand = null;
+
+        try {
+            $organization = $this->queryBus->handle(new GetOrganizationBySiretQuery($siret));
+        } catch (OrganizationNotFoundException) {
+            $organizationCommand = new CreateOrganizationCommand();
+            $organizationCommand->siret = $siret;
+            $organizationCommand->name = $row['ARR_COMMUNE']['ARR_VILLE'];
+        }
+
         $command = new ImportBacIdfRegulationCommand($generalInfo, $locationCommands);
 
-        return new BacIdfTransformerResult($command, []);
+        return new BacIdfTransformerResult($command, [], $organization, $organizationCommand);
     }
 
     private function makeBasicChecks(array $row): ?array

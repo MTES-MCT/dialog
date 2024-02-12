@@ -23,7 +23,6 @@ services:
             $eudonetParisOrgId: '%env(APP_EUDONET_PARIS_ORG_ID)%'
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
             $ignWfsUrl: '%env(APP_IGN_WFS_URL)%'
-            $bacIdfOrgId: '%env(APP_BAC_IDF_ORG_ID)%'
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
             $featureMap: '%features%'
 
