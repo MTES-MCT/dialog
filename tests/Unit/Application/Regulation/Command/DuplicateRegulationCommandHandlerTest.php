@@ -7,12 +7,12 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
@@ -140,6 +140,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn([]);
         $measure2
             ->expects(self::once())
+            ->method('getLocationsNew')
+            ->willReturn([]);
+        $measure2
+            ->expects(self::once())
             ->method('getVehicleSet')
             ->willReturn(null);
 
@@ -231,7 +235,12 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getMeasures')
             ->willReturn([$measure1, $measure2]);
 
+        $duplicatedRegulationOrder = $this->createMock(RegulationOrder::class);
         $duplicatedRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $duplicatedRegulationOrderRecord
+            ->expects(self::exactly(2))
+            ->method('getRegulationOrder')
+            ->willReturn($duplicatedRegulationOrder);
 
         $this->translator
             ->expects(self::once())
@@ -270,23 +279,26 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             $timeSlotCommand,
         ];
 
-        $locationCommand1 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
+        $locationCommand1 = new SaveLocationNewCommand();
         $locationCommand1->cityCode = '44195';
         $locationCommand1->cityLabel = 'Savenay';
         $locationCommand1->roadName = 'Route du Lac';
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
         $locationCommand1->geometry = null;
+        $locationCommand1->measure = $measure1;
 
-        $locationCommand2 = new SaveRegulationLocationCommand($duplicatedRegulationOrderRecord);
+        $locationCommand2 = new SaveLocationNewCommand();
         $locationCommand2->cityCode = '44195';
         $locationCommand2->cityLabel = 'Savenay';
         $locationCommand2->roadName = 'Route du Grand Brossais';
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
         $locationCommand2->geometry = null;
+        $locationCommand2->measure = $measure1;
 
         $measureCommand1 = new SaveMeasureCommand();
+        $measureCommand1->regulationOrder = $duplicatedRegulationOrder;
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand1->createdAt = $startDate;
         $measureCommand1->periods = [
@@ -299,13 +311,14 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->vehicleSet = $vehicleSetCommand;
 
         $measureCommand2 = new SaveMeasureCommand();
+        $measureCommand2->regulationOrder = $duplicatedRegulationOrder;
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $measureCommand2->createdAt = $startDate;
 
         $this->commandBus
             ->expects(self::exactly(3))
             ->method('handle')
-            ->withConsecutive([$generalInfoCommand], [$locationCommand1], [$locationCommand2])
+            ->withConsecutive([$generalInfoCommand], [$measureCommand1], [$measureCommand2])
             ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
 
         $handler = new DuplicateRegulationCommandHandler(

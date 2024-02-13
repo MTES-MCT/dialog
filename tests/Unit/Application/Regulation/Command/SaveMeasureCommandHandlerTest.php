@@ -17,9 +17,9 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -54,7 +54,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $createdPeriod = $this->createMock(Period::class);
         $createdLocationNew = $this->createMock(LocationNew::class);
         $createdMeasure = $this->createMock(Measure::class);
-        $location = $this->createMock(Location::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
 
         $createdMeasure
             ->expects(self::once())
@@ -73,7 +73,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 $this->equalTo(
                     new Measure(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
-                        location: $location,
+                        regulationOrder: $regulationOrder,
                         type: MeasureTypeEnum::ALTERNATE_ROAD->value,
                         createdAt: $now,
                     ),
@@ -102,8 +102,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->dateUtils,
         );
 
-        $command = new SaveMeasureCommand();
-        $command->location = $location;
+        $command = new SaveMeasureCommand($regulationOrder);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->periods = [$periodCommand];
         $command->locationsNew = [$locationNewCommand];
@@ -127,7 +126,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $createdPeriod = $this->createMock(Period::class);
         $createdMeasure = $this->createMock(Measure::class);
-        $location = $this->createMock(Location::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
 
         $createdMeasure
             ->expects(self::once())
@@ -141,7 +140,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 $this->equalTo(
                     new Measure(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
-                        location: $location,
+                        regulationOrder: $regulationOrder,
                         type: MeasureTypeEnum::ALTERNATE_ROAD->value,
                         createdAt: $createdAt,
                     ),
@@ -165,8 +164,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->dateUtils,
         );
 
-        $command = new SaveMeasureCommand();
-        $command->location = $location;
+        $command = new SaveMeasureCommand($regulationOrder);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->createdAt = $createdAt;
         $command->periods = [$periodCommand];
@@ -191,7 +189,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $createdVehicleSet = $this->createMock(VehicleSet::class);
         $createdMeasure = $this->createMock(Measure::class);
-        $location = $this->createMock(Location::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
 
         $createdMeasure
             ->expects(self::once())
@@ -205,7 +203,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 $this->equalTo(
                     new Measure(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
-                        location: $location,
+                        regulationOrder: $regulationOrder,
                         type: MeasureTypeEnum::ALTERNATE_ROAD->value,
                         createdAt: $now,
                     ),
@@ -229,8 +227,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->dateUtils,
         );
 
-        $command = new SaveMeasureCommand();
-        $command->location = $location;
+        $command = new SaveMeasureCommand($regulationOrder);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->vehicleSet = $vehicleSetCommand;
 
@@ -274,6 +271,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturn('065af992-ecb9-7afd-8000-a1ac6e020f2f');
 
         $measure = $this->createMock(Measure::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
 
         $measure
             ->expects(self::once())
@@ -334,7 +332,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->dateUtils,
         );
 
-        $command = new SaveMeasureCommand($measure);
+        $command = new SaveMeasureCommand($regulationOrder, $measure);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->vehicleSet = null; // Removes vehicle set
         $command->periods = [$periodCommand1]; // Removes period2.
