@@ -64,6 +64,13 @@ class RegulationOrder
         return $this->measures;
     }
 
+    public function addMeasure(Measure $measure): void
+    {
+        if (!$this->measures->contains($measure)) {
+            $this->measures->add($measure);
+        }
+    }
+
     public function getRegulationOrderRecord(): ?RegulationOrderRecord
     {
         return $this->regulationOrderRecord;

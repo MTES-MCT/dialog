@@ -22,7 +22,7 @@ final class SaveMeasureCommand implements CommandInterface
     public ?SaveVehicleSetCommand $vehicleSet = null;
 
     public function __construct(
-        public readonly RegulationOrder $regulationOrder,
+        public ?RegulationOrder $regulationOrder = null,
         public readonly ?Measure $measure = null,
     ) {
         $this->type = $measure?->getType();

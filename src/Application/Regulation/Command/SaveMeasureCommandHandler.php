@@ -66,6 +66,7 @@ final class SaveMeasureCommandHandler
                     $locationsNewStillPresentUuids[] = $locationNewCommand->locationNew->getUuid();
                 }
 
+                // TODO GeocodingFailureException
                 $locationNewCommand->measure = $command->measure;
                 $this->commandBus->handle($locationNewCommand);
             }

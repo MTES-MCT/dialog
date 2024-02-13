@@ -290,71 +290,69 @@
                 </h3>
             </div>
             <div class="app-card__content">
+                {{ form_errors(form) }}
+                <div data-controller="form-reveal">
+                    {{ form_row(form.type, {
+                        group_class: 'fr-select-group',
+                        widget_class: 'fr-select',
+                        row_attr: {
+                            'data-controller': 'condition',
+                            'data-condition-equals-value': 'speedLimitation',
+                            'data-action':
+                            'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                        },
+                    }) }}
 
-                    {{ form_errors(form) }}
-                    <div data-controller="form-reveal">
-                        {{ form_row(form.type, {
-                            group_class: 'fr-select-group',
-                            widget_class: 'fr-select',
-                            row_attr: {
-                                'data-controller': 'condition',
-                                'data-condition-equals-value': 'speedLimitation',
-                                'data-action':
-                                'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
-                            },
-                        }) }}
-
-                        {{ form_row(form.maxSpeed, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input',
-                            row_attr: {
-                                'data-form-reveal-target': 'section',
-                                hidden: form.type.vars.value != 'speedLimitation',
-                                'class': 'fr-pb-3w',
-                            },
-                            attr: {
-                                'class': 'fr-x-max-w-32w fr-mt-1w',
-                                'data-form-reveal-target': 'form-control',
-                            },
-                            widget_suffix: 'regulation.measure.maxSpeed.unit'|trans
-                        }) }}
-                    </div>
-
-                    {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index: 0 } only %}
-
-                    <fieldset
-                        class="fr-fieldset"
-                        aria-labelledby="periods-legend"
-                        data-controller="form-collection"
-                        data-form-collection-prototype-key-value="period"
-                        data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
-                        data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
-                    >
-                        {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
-                        <ul
-                            id="period-list"
-                            class="fr-raw-list fr-mb-2w"
-                            data-testid="period-list"
-                            data-form-collection-target="collectionContainer"
-                            aria-label="{{ form.periods.vars.label|trans }}"
-                        >
-                            {% for item in form.periods %}
-                                {{ _self.periods_list_item(item, loop.index) }}
-                            {% else %}
-                                {% do form.periods.setRendered %}
-                            {% endfor %}
-                        </ul>
-
-                        <button
-                            type="button"
-                            class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
-                            data-action="form-collection#addCollectionElement"
-                            aria-controls="period-list"
-                        >
-                            {{ 'regulation.period.add'|trans }}
-                        </button>
-                    </fieldset>
+                    {{ form_row(form.maxSpeed, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        row_attr: {
+                            'data-form-reveal-target': 'section',
+                            hidden: form.type.vars.value != 'speedLimitation',
+                            'class': 'fr-pb-3w',
+                        },
+                        attr: {
+                            'class': 'fr-x-max-w-32w fr-mt-1w',
+                            'data-form-reveal-target': 'form-control',
+                        },
+                        widget_suffix: 'regulation.measure.maxSpeed.unit'|trans
+                    }) }}
                 </div>
+
+                {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index: 0 } only %}
+
+                <fieldset
+                    class="fr-fieldset"
+                    aria-labelledby="periods-legend"
+                    data-controller="form-collection"
+                    data-form-collection-prototype-key-value="period"
+                    data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
+                    data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
+                >
+                    {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
+                    <ul
+                        id="period-list"
+                        class="fr-raw-list fr-mb-2w"
+                        data-testid="period-list"
+                        data-form-collection-target="collectionContainer"
+                        aria-label="{{ form.periods.vars.label|trans }}"
+                    >
+                        {% for item in form.periods %}
+                            {{ _self.periods_list_item(item, loop.index) }}
+                        {% else %}
+                            {% do form.periods.setRendered %}
+                        {% endfor %}
+                    </ul>
+
+                    <button
+                        type="button"
+                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
+                        data-action="form-collection#addCollectionElement"
+                        aria-controls="period-list"
+                    >
+                        {{ 'regulation.period.add'|trans }}
+                    </button>
+                </fieldset>
             </div>
         </div>
         <div class="app-card app-card--raised fr-mt-3w">

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Application\EudonetParis\Command;
 
 use App\Application\CommandInterface;
+use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 
 final class ImportEudonetParisRegulationCommand implements CommandInterface
 {
     public function __construct(
         public readonly SaveRegulationGeneralInfoCommand $generalInfoCommand,
-        /** @var SaveRegulationLocationCommand[] */
-        public readonly array $locationCommands,
+        /** @var SaveMeasureCommand[] */
+        public readonly array $measureCommands,
     ) {
         $generalInfoCommand->source = RegulationOrderRecordSourceEnum::EUDONET_PARIS->value;
     }
