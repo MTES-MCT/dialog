@@ -160,6 +160,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->willReturn('Avenue de Fonneuve');
         $location
             ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn('lane');
+        $location
+            ->expects(self::once())
             ->method('getFromHouseNumber')
             ->willReturn('95');
         $location
@@ -230,6 +234,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                         new LocationView(
                             cityLabel: 'Montauban',
                             roadName: 'Avenue de Fonneuve',
+                            roadType: 'lane',
                             fromHouseNumber: '95',
                             toHouseNumber: '253',
                         ),

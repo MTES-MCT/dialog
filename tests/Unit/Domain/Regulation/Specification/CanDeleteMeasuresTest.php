@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Regulation\Specification;
 
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Domain\Regulation\Specification\CanDeleteLocations;
+use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use PHPUnit\Framework\TestCase;
 
-final class CanDeleteLocationsTest extends TestCase
+final class CanDeleteMeasuresTest extends TestCase
 {
     private $regulationOrderRecord;
 
@@ -17,25 +17,25 @@ final class CanDeleteLocationsTest extends TestCase
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
     }
 
-    public function testCanDeleteLocations(): void
+    public function testCanDeleteMeasures(): void
     {
         $this->regulationOrderRecord
             ->expects(self::once())
-            ->method('countLocations')
+            ->method('countMeasures')
             ->willReturn(2);
 
-        $specification = new CanDeleteLocations();
+        $specification = new CanDeleteMeasures();
         $this->assertTrue($specification->isSatisfiedBy($this->regulationOrderRecord));
     }
 
-    public function testCantDeleteLocations(): void
+    public function testCantDeleteMeasures(): void
     {
         $this->regulationOrderRecord
             ->expects(self::once())
-            ->method('countLocations')
+            ->method('countMeasures')
             ->willReturn(1);
 
-        $specification = new CanDeleteLocations();
+        $specification = new CanDeleteMeasures();
         $this->assertFalse($specification->isSatisfiedBy($this->regulationOrderRecord));
     }
 }

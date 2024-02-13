@@ -52,6 +52,7 @@ readonly class MeasureView
             $locations[] = new LocationView(
                 cityLabel: $location->getCityLabel(),
                 roadName: $location->getRoadName(),
+                roadType: $location->getRoadType(),
                 fromHouseNumber: $location->getFromHouseNumber(),
                 toHouseNumber: $location->getToHouseNumber(),
             );
