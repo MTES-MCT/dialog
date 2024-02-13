@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
-use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class GetLocationControllerTest extends AbstractWebTestCase
+final class GetMeasureControllerTest extends AbstractWebTestCase
 {
     public function testGet(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -24,14 +24,14 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis', $crawler->filter('li')->eq(1)->text());
         $this->assertSame('Circulation interdite du 31/10/2023 à 09h00 au 31/10/2023 à 23h00 pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
-        $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form', $editForm->getUri());
+        $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form', $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());
     }
 
     public function testGetWithComplexVehicles(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_COMPLEX_VEHICLES . '/location/' . LocationFixture::UUID_COMPLEX_VEHICLES);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_COMPLEX_VEHICLES . '/measure/' . MeasureFixture::UUID_COMPLEX_VEHICLES);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -45,7 +45,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testGetLocationFromOtherRegulationOrderRecord(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/location/' . LocationFixture::UUID_TYPICAL);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/' . MeasureFixture::UUID_TYPICAL);
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -53,7 +53,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testGetCityOnly(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_FULL_CITY . '/location/' . LocationFixture::UUID_FULL_CITY);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_FULL_CITY . '/measure/' . MeasureFixture::UUID_FULL_CITY);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -64,7 +64,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testIfPublishedThenCannotEdit(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED . '/location/' . LocationFixture::UUID_PUBLISHED);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED . '/measure/' . MeasureFixture::UUID_PUBLISHED);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -75,35 +75,35 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     public function testRegulationDoesNotExist(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/location/' . LocationFixture::UUID_TYPICAL);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/measure/' . MeasureFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testLocationDoesNotExist(): void
+    public function testMeasureDoesNotExist(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_DOES_NOT_EXIST);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_DOES_NOT_EXIST);
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL);
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL);
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL);
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
     public function testBadUuid(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/aaa/location/bbb');
+        $client->request('GET', '/_fragment/regulations/aaa/measure/bbb');
         $this->assertResponseStatusCodeSame(404);
     }
 }
