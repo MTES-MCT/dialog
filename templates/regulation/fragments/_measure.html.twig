@@ -2,7 +2,7 @@
 {% set deleteCsrfToken = csrf_token('delete-measure') %}
 
 <turbo-frame id="block_measure_{{ uuid }}">
-    <div class="app-card app-card--raised app-card--with-background fr-mt-3w" data-testid="measure">
+    <div class="app-card app-card--with-head-background fr-mt-3w" data-testid="measure">
         <div class="app-card__header">
             <span class="app-card__img fr-icon-x-restriction fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
@@ -30,7 +30,7 @@
                         <hr class="fr-mt-3w fr-mr-3w" />
                     </li>
                 </ul>
-                <ul class="fr-pb-3w fr-raw-list">
+                <ul class="fr-raw-list">
                     {% for location in measure.locations %}
                         {% if location.roadName %}
                             <li>
@@ -48,7 +48,7 @@
             <ul class="app-card__actions">
                 <li>
                     <form method="GET" action="{{ path('fragment_regulations_measure_update', { regulationOrderRecordUuid: generalInfo.uuid, uuid: measure.uuid }) }}">
-                        <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-2w fr-mt-md-0">
+                        <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
                             {{ 'common.update'|trans }}
                         </button>
                     </form>

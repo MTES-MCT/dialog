@@ -1245,6 +1245,14 @@
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.card.title">
+                <source>regulation.measure.card.title</source>
+                <target>Mesure</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.card.description">
+                <source>regulation.measure.card.description</source>
+                <target>Indiquez le type de restriction et ses localisations</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.maxSpeed">
                 <source>regulation.measure.maxSpeed</source>
                 <target>Vitesse limitée à %maxSpeed% km/h</target>
