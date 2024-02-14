@@ -28,7 +28,7 @@ final class Version20240208093351 extends AbstractMigration
             FROM measure AS m
             INNER JOIN location AS l ON l.uuid = m.location_uuid
         ');
-        $this->addSql('ALTER TABLE measure ALTER regulation_order_uuid DROP NOT NULL');
+        $this->addSql('ALTER TABLE measure ALTER regulation_order_uuid SET NOT NULL');
         $this->addSql('ALTER TABLE measure DROP CONSTRAINT fk_80071925517be5e6');
         $this->addSql('DROP INDEX idx_80071925517be5e6');
         $this->addSql('ALTER TABLE measure DROP location_uuid');

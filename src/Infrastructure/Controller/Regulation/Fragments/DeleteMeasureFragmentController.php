@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
+use App\Domain\Regulation\Exception\MeasureCannotBeDeletedException;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -56,7 +57,11 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
             throw new NotFoundHttpException();
         }
 
-        $this->commandBus->handle(new DeleteMeasureCommand($measure));
+        try {
+            $this->commandBus->handle(new DeleteMeasureCommand($measure));
+        } catch (MeasureCannotBeDeletedException) {
+            throw new BadRequestHttpException();
+        }
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

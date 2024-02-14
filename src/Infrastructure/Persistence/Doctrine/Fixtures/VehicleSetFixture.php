@@ -23,7 +23,7 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
             otherExemptedTypeText: null,
         );
 
-        $complexVehicleSet = new VehicleSet(
+        /*$complexVehicleSet = new VehicleSet(
             '981f0260-948e-45e9-8788-efa23859a884',
             measure: $this->getReference('measureWithComplexVehicleSet'),
             restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::DIMENSIONS->value, VehicleTypeEnum::CRITAIR->value],
@@ -48,11 +48,11 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
             restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value],
             heavyweightMaxWeight: 3.5,
         );
-
+*/
         $manager->persist($typicalVehicleSet);
-        $manager->persist($complexVehicleSet);
-        $manager->persist($publishedLocation1Measure2VehicleSet);
-        $manager->persist($permanentMeasure1VehicleSet);
+        // $manager->persist($complexVehicleSet);
+        // $manager->persist($publishedLocation1Measure2VehicleSet);
+        // $manager->persist($permanentMeasure1VehicleSet);
 
         $manager->flush();
     }

@@ -97,3 +97,7 @@ li.app-card + li.app-card {
         margin-left: 4rem;
     }
 }
+
+.app-card__content .fr-raw-list li:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
