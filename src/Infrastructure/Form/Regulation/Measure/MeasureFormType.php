@@ -96,6 +96,7 @@ final class MeasureFormType extends AbstractType
             'data_class' => SaveMeasureCommand::class,
             'administrators' => [],
             'feature_road_type' => false,
+            'validation_groups' => ['Default', 'html_form'],
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
     }

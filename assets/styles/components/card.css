@@ -91,3 +91,9 @@ li.app-card + li.app-card {
         background: var(--alt-blue-france);
     }
 }
+
+.app-card--with-head-background .app-card__content {
+    @media screen and (min-width: 992px) {
+        margin-left: 4rem;
+    }
+}
