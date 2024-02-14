@@ -49,12 +49,15 @@ readonly class MeasureView
         }
 
         foreach ($measure->getLocationsNew() as $location) {
+            // @todo : manage departmentalRoad when road type feature is enabled
             $locations[] = new LocationView(
                 cityLabel: $location->getCityLabel(),
                 roadName: $location->getRoadName(),
                 roadType: $location->getRoadType(),
                 fromHouseNumber: $location->getFromHouseNumber(),
                 toHouseNumber: $location->getToHouseNumber(),
+                administrator: $location->getAdministrator(),
+                roadNumber: $location->getRoadNumber(),
             );
         }
 

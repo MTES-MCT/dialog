@@ -32,16 +32,16 @@
                 </ul>
                 <ul class="fr-raw-list">
                     {% for location in measure.locations %}
-                        {% if location.roadName %}
-                            <li>
-                                <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
+                        <li>
+                            <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
+                            {% if location.roadType == 'lane' %}
                                 {{ location.roadName }}
                                 {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                                 {{ location.cityLabel }}
-                            </li>
-                        {% elseif location.cityLabel %}
-                            <li>{{ location.cityLabel }}</li>
-                        {% endif %}
+                            {% else %}
+                                {{ location.roadNumber }}  ({{ location.administrator }})
+                            {% endif %}
+                        </li>
                     {% endfor %}
                 </ul>
             </div>

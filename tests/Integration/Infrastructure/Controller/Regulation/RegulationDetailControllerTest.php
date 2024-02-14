@@ -46,8 +46,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measures->eq(1)->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measures->eq(1)->filter('.app-card__content li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measures->eq(1)->filter('.app-card__content li')->eq(1)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measures->eq(1)->filter('.app-card__content li')->eq(3)->text());
-        $this->assertSame('Route du Lac Savenay (44260)', $measures->eq(1)->filter('.app-card__content li')->eq(4)->text());
+        $this->assertSame('Route du Lac Savenay (44260)', $measures->eq(1)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measures->eq(1)->filter('.app-card__content li')->eq(4)->text());
 
         $editLocationForm = $measures->eq(1)->selectButton('Modifier')->form();
         $this->assertSame(

@@ -18,6 +18,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
     public const UUID_PUBLISHED = '59143d8d-d201-4950-be76-f367e39be522';
     public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
     public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
+    public const UUID_PERMANENT_ONLY_ONE = 'fa8f07e7-2db6-444d-bb41-3815b46198be';
 
     public function load(ObjectManager $manager): void
     {
