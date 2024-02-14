@@ -90,7 +90,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 \Sentry\captureException($exc);
                 $form->addError(
                     new FormError(
-                        $this->translator->trans('regulation.measure.error.geocoding_failed', [], 'validators'),
+                        $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),
                 );
             }

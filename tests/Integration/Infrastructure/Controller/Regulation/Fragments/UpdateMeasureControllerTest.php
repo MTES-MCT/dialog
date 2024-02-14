@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
-use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
@@ -15,70 +14,60 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testInvalidBlank(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Route du Grand Brossais', $crawler->filter('h3')->text());
+        $this->assertSame('Mesure', $crawler->filter('h3')->text());
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[cityCode]'] = ''; // reset
-        $form['location_form[cityLabel]'] = ''; // reset
-        $form['location_form[roadName]'] = ''; // reset
-        $form['location_form[measures][0][type]'] = '';
+        $form['measure_form[type]'] = ''; // reset
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
 
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_cityLabel_error')->text());
-        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_type_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#location_form_measures_0_type_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#measure_form_type_error')->text());
     }
 
     public function testWithNegativeMaxSpeed(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[cityCode]'] = '44195';
-        $form['location_form[cityLabel]'] = 'Savenay (44260)';
-        $form['location_form[roadName]'] = 'Route du Grand Brossais';
-        $form['location_form[measures][0][type]'] = 'speedLimitation';
-        $form['location_form[measures][0][maxSpeed]'] = '-10';
+        $form['measure_form[type]'] = 'speedLimitation';
+        $form['measure_form[maxSpeed]'] = '-10';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#location_form_measures_0_maxSpeed_error')->text());
+        $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#measure_form_maxSpeed_error')->text());
     }
 
     public function testWithoutMaxSpeed(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[cityCode]'] = '44195';
-        $form['location_form[cityLabel]'] = 'Savenay (44260)';
-        $form['location_form[roadName]'] = 'Route du Grand Brossais';
-        $form['location_form[measures][0][type]'] = 'speedLimitation';
-        $form['location_form[measures][0][maxSpeed]'] = '';
+        $form['measure_form[type]'] = 'speedLimitation';
+        $form['measure_form[maxSpeed]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#location_form_measures_0_maxSpeed_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_maxSpeed_error')->text());
     }
 
+    /** @group only */
     public function testEditAndAddMeasure(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -88,30 +77,30 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         // Edit
-        $values['location_form']['measures'][1]['type'] = 'speedLimitation';
-        $values['location_form']['measures'][1]['maxSpeed'] = 60;
-        $values['location_form']['measures'][1]['periods'] = []; // Remove period
+        $values['measure_form']['type'] = 'speedLimitation';
+        $values['measure_form']['measures'][1]['maxSpeed'] = 60;
+        $values['measure_form']['measures'][1]['periods'] = []; // Remove period
 
         // Add
-        $values['location_form']['measures'][2]['type'] = 'alternateRoad';
-        $values['location_form']['measures'][2]['vehicleSet']['allVehicles'] = 'yes';
-        $values['location_form']['measures'][2]['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['location_form']['measures'][2]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][2]['periods'][0]['startTime']['hour'] = '8';
-        $values['location_form']['measures'][2]['periods'][0]['startTime']['minute'] = '0';
-        $values['location_form']['measures'][2]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][2]['periods'][0]['endTime']['hour'] = '16';
-        $values['location_form']['measures'][2]['periods'][0]['endTime']['minute'] = '0';
-        $values['location_form']['measures'][2]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['measure_form']['measures'][2]['type'] = 'alternateRoad';
+        $values['measure_form']['measures'][2]['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['measures'][2]['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['measure_form']['measures'][2]['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['measures'][2]['periods'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['measures'][2]['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['measures'][2]['periods'][0]['endDate'] = '2023-10-30';
+        $values['measure_form']['measures'][2]['periods'][0]['endTime']['hour'] = '16';
+        $values['measure_form']['measures'][2]['periods'][0]['endTime']['minute'] = '0';
+        $values['measure_form']['measures'][2]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $detailItems = $crawler->filter('ul[data-testid="location-detail-items"] > li');
+        $detailItems = $crawler->filter('ul[data-testid="measure-detail-items"] > li');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
+        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
         $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $detailItems->eq(3)->text());
         $this->assertSame('Circulation alternée du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi pour tous les véhicules', $detailItems->eq(4)->text());
     }
@@ -119,7 +108,11 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testDeletePeriod(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL);
+        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $crawler->filter('li')->eq(1)->text());
+
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $saveButton = $crawler->selectButton('Valider');
@@ -127,166 +120,148 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        // Remove period
-        $values['location_form']['measures'][0]['periods'] = []; // Remove period
+        $values['measure_form']['periods'] = []; // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
-        $this->assertSame('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
+        $this->assertSame('tous les jours', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testRemoveDailyRange(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $values = $form->getPhpValues();
         // Add complete dailyRange
-        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
-        $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
-        $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['location_form']['measures'][1]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['startTime']['hour'] = '8';
-        $values['location_form']['measures'][1]['periods'][0]['startTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['endTime']['hour'] = '16';
-        $values['location_form']['measures'][1]['periods'][0]['endTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '16';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
-        $this->assertSame('Circulation alternée du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
         // Remove added daily range
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Circulation alternée du 09/06/2023 à 10h00 au 09/06/2023 à 10h00 (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00 (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testRemoveTimeSlots(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $values = $form->getPhpValues();
         // Add complete dailyRange
-        $values['location_form']['measures'][1]['type'] = 'alternateRoad';
-        $values['location_form']['measures'][1]['vehicleSet']['allVehicles'] = 'yes';
-        $values['location_form']['measures'][1]['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['location_form']['measures'][1]['periods'][0]['startDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['startTime']['hour'] = '8';
-        $values['location_form']['measures'][1]['periods'][0]['startTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['endDate'] = '2023-10-30';
-        $values['location_form']['measures'][1]['periods'][0]['endTime']['hour'] = '16';
-        $values['location_form']['measures'][1]['periods'][0]['endTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        $values['measure_form']['type'] = 'alternateRoad';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '16';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
-        $this->assertSame('Circulation alternée du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi (08h00-18h00) pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
         // Remove added timeslot
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['location_form']['measures'][1]['periods'][0]['timeSlots'] = [];
+        $values['measure_form']['periods'][0]['timeSlots'] = [];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Circulation alternée du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi pour tous les véhicules', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi', $crawler->filter('li')->eq(1)->text());
     }
 
-    public function testRemoveMeasure(): void
+    public function testRemoveLocation(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        unset($values['location_form']['measures'][MeasureFixture::INDEX_TYPICAL_TO_REMOVE]);
+        unset($values['measure_form']['locationsNew'][MeasureFixture::INDEX_TYPICAL_TO_REMOVE]);
 
         $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
-        $this->assertNotContains('Circulation interdite tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
-    }
-
-    public function testGeocodingFailureHouseNumber(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
-        $this->assertResponseStatusCodeSame(200);
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $form['location_form[cityCode]'] = '44195';
-        $form['location_form[cityLabel]'] = 'Savenay (44260)';
-        $form['location_form[roadName]'] = 'Route du GEOCODING_FAILURE';
-        $form['location_form[fromHouseNumber]'] = '15';
-        $form['location_form[toHouseNumber]'] = '37bis';
+        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
+        $this->assertNotContains('tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
     }
 
     public function testGeocodingFailureFullRoad(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[cityCode]'] = '59368';
-        $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
-        $form['location_form[roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
-        $form['location_form[fromHouseNumber]'] = '';
-        $form['location_form[toHouseNumber]'] = '';
+        $form['measure_form[locationsNew][0][cityCode]'] = '59368';
+        $form['measure_form[locationsNew][0][cityLabel]'] = 'La Madeleine (59110)';
+        $form['measure_form[locationsNew][0][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['measure_form[locationsNew][0][fromHouseNumber]'] = '';
+        $form['measure_form[locationsNew][0][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#location_form_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_error')->text());
     }
 
     public function testUpdateAddressFullRoad(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/e413a47e-5928-4353-a8b2-8b7dda27f9a5/location/51449b82-5032-43c8-a427-46b9ddb44762/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['location_form[cityCode]'] = '59368';
-        $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
-        $form['location_form[roadName]'] = 'Rue Saint-Victor';
-        $form['location_form[fromHouseNumber]'] = '';
-        $form['location_form[toHouseNumber]'] = '';
+        $form['measure_form[locationsNew][0][cityCode]'] = '59368';
+        $form['measure_form[locationsNew][0][cityLabel]'] = 'La Madeleine (59110)';
+        $form['measure_form[locationsNew][0][roadName]'] = 'Rue Saint-Victor';
+        $form['measure_form[locationsNew][0][fromHouseNumber]'] = '';
+        $form['measure_form[locationsNew][0][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -295,15 +270,15 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
 
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testLocationNotFound(): void
+    public function testMeasureNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_DOES_NOT_EXIST . '/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_DOES_NOT_EXIST . '/form');
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -311,7 +286,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testBadUuid(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/aaaaa/location/bbbbb/form');
+        $client->request('GET', '/_fragment/regulations/aaaaa/measure/bbbbb/form');
 
         $this->assertResponseStatusCodeSame(400);
     }
@@ -319,25 +294,25 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testCancel(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $client->clickLink('Annuler');
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_location', ['uuid' => LocationFixture::UUID_TYPICAL]);
+        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form');
+        $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }
