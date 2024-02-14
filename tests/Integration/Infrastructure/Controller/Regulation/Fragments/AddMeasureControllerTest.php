@@ -28,7 +28,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#measure_form_type_error')->text());
-        $this->assertSame('Veuillez définir une ou plusieurs localisations.', $crawler->filter('#measure_form_measuresNew_error')->text());
+        $this->assertSame('Veuillez définir une ou plusieurs localisations.', $crawler->filter('#measure_form_locationsNew_error')->text());
     }
 
     public function testInvalidBlankDepartmentalRoad(): void
@@ -170,12 +170,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#measure_form_measures_0_vehicleSet_restrictedTypes_error')->text());
+        $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#measure_form_vehicleSet_restrictedTypes_error')->text());
     }
 
     public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
@@ -188,14 +188,14 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['other'];
-        $values['measure_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = '';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['other'];
+        $values['measure_form']['vehicleSet']['otherRestrictedTypeText'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_otherRestrictedTypeText_error')->text());
     }
 
     public function testInvalidVehicleSetBlankOtherExemptedTypeText(): void
@@ -208,14 +208,14 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['other'];
-        $values['measure_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = '';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['vehicleSet']['exemptedTypes'] = ['other'];
+        $values['measure_form']['vehicleSet']['otherExemptedTypeText'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testBlankCritairTypes(): void
@@ -228,16 +228,16 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['cityCode'] = '44195';
-        $values['measure_form']['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['roadName'] = 'Route du Grand Brossais';
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
-        $values['measure_form']['measures'][0]['vehicleSet']['critairTypes'] = [];
+        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['critair'];
+        $values['measure_form']['vehicleSet']['critairTypes'] = [];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_vehicleSet_critairTypes_error')->text());
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_critairTypes_error')->text());
     }
 
     public function testInvalidCritairTypes(): void
@@ -250,16 +250,16 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['cityCode'] = '44195';
-        $values['measure_form']['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['roadName'] = 'Route du Grand Brossais';
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['critair'];
-        $values['measure_form']['measures'][0]['vehicleSet']['critairTypes'] = ['invalidCritair'];
+        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['critair'];
+        $values['measure_form']['vehicleSet']['critairTypes'] = ['invalidCritair'];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_measures_0_vehicleSet_critairTypes_error')->text());
+        $this->assertStringContainsString('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_vehicleSet_critairTypes_error')->text());
     }
 
     public function testInvalidVehicleSetOtherTextsTooLong(): void
@@ -272,17 +272,17 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['other'];
-        $values['measure_form']['measures'][0]['vehicleSet']['otherRestrictedTypeText'] = str_repeat('a', 101);
-        $values['measure_form']['measures'][0]['vehicleSet']['exemptedTypes'] = ['other'];
-        $values['measure_form']['measures'][0]['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 101);
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['other'];
+        $values['measure_form']['vehicleSet']['otherRestrictedTypeText'] = str_repeat('a', 101);
+        $values['measure_form']['vehicleSet']['exemptedTypes'] = ['other'];
+        $values['measure_form']['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 101);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_measures_0_vehicleSet_otherRestrictedTypeText_error')->text());
-        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_measures_0_vehicleSet_otherExemptedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_vehicleSet_otherRestrictedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testInvalidVehicleSetBlankHeavyweightMaxWeight(): void
@@ -295,15 +295,15 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $this->assertEquals('3,5', $values['measure_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight']);
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
-        $values['measure_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = ''; // Unset default
+        $this->assertEquals('3,5', $values['measure_form']['vehicleSet']['heavyweightMaxWeight']);
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
+        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = ''; // Unset default
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
     }
 
     public function testInvalidVehicleSetBlankDimensions(): void
@@ -316,13 +316,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['dimensions'];
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['dimensions'];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez spécifier le gabarit des véhicules concernés.', $crawler->filter('#measure_form_measures_0_vehicleSet_restrictedTypes_error')->text());
+        $this->assertStringContainsString('Veuillez spécifier le gabarit des véhicules concernés.', $crawler->filter('#measure_form_vehicleSet_restrictedTypes_error')->text());
     }
 
     public function testInvalidVehicleSetCharacteristicsNotNumber(): void
@@ -335,20 +335,20 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
-        $values['measure_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = 'not a number';
-        $values['measure_form']['measures'][0]['vehicleSet']['maxWidth'] = 'true';
-        $values['measure_form']['measures'][0]['vehicleSet']['maxLength'] = [12];
-        $values['measure_form']['measures'][0]['vehicleSet']['maxHeight'] = '2.4m';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
+        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = 'not a number';
+        $values['measure_form']['vehicleSet']['maxWidth'] = 'true';
+        $values['measure_form']['vehicleSet']['maxLength'] = [12];
+        $values['measure_form']['vehicleSet']['maxHeight'] = '2.4m';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_measures_0_vehicleSet_maxWidth_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_measures_0_vehicleSet_maxLength_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_measures_0_vehicleSet_maxHeight_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxWidth_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxLength_error')->text());
+        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());
     }
 
     public function testInvalidVehicleSetCharacteristicsNotPositive(): void
@@ -361,20 +361,20 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['measures'][0]['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
-        $values['measure_form']['measures'][0]['vehicleSet']['heavyweightMaxWeight'] = -1;
-        $values['measure_form']['measures'][0]['vehicleSet']['maxWidth'] = -0.1;
-        $values['measure_form']['measures'][0]['vehicleSet']['maxLength'] = -2.3;
-        $values['measure_form']['measures'][0]['vehicleSet']['maxHeight'] = -12;
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
+        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = -1;
+        $values['measure_form']['vehicleSet']['maxWidth'] = -0.1;
+        $values['measure_form']['vehicleSet']['maxLength'] = -2.3;
+        $values['measure_form']['vehicleSet']['maxHeight'] = -12;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_measures_0_vehicleSet_heavyweightMaxWeight_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_measures_0_vehicleSet_maxWidth_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_measures_0_vehicleSet_maxLength_error')->text());
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_measures_0_vehicleSet_maxHeight_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxWidth_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxLength_error')->text());
+        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());
     }
 
     public function testInvalidBlankPeriod(): void
@@ -383,34 +383,33 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Localisation', $crawler->filter('h3')->text());
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['cityCode'] = '44195';
-        $values['measure_form']['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['roadName'] = 'Route du Grand Brossais';
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['measures'][0]['periods'][0]['recurrenceType'] = '';
-        $values['measure_form']['measures'][0]['periods'][0]['startTime']['hour'] = '';
-        $values['measure_form']['measures'][0]['periods'][0]['startTime']['minute'] = '';
-        $values['measure_form']['measures'][0]['periods'][0]['startDate'] = '';
-        $values['measure_form']['measures'][0]['periods'][0]['endDate'] = '';
-        $values['measure_form']['measures'][0]['periods'][0]['endTime']['hour'] = '';
-        $values['measure_form']['measures'][0]['periods'][0]['endTime']['minute'] = '';
+        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['recurrenceType'] = '';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '';
+        $values['measure_form']['periods'][0]['startDate'] = '';
+        $values['measure_form']['periods'][0]['endDate'] = '';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_periods_0_startTime_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_periods_0_endTime_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_periods_0_startDate_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_measures_0_periods_0_endDate_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_endTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_endDate_error')->text());
     }
 
     public function testInvalidPeriod(): void
@@ -419,56 +418,55 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Localisation', $crawler->filter('h3')->text());
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         // Bad period
         $values = $form->getPhpValues();
-        $values['measure_form']['cityCode'] = '44195';
-        $values['measure_form']['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['roadName'] = 'Route du Grand Brossais';
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['measures'][0]['periods'][0]['recurrenceType'] = 'everyDay';
-        $values['measure_form']['measures'][0]['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['measures'][0]['periods'][0]['startTime']['hour'] = '10';
-        $values['measure_form']['measures'][0]['periods'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['measures'][0]['periods'][0]['endDate'] = '2023-10-29';
-        $values['measure_form']['measures'][0]['periods'][0]['endTime']['hour'] = '8';
-        $values['measure_form']['measures'][0]['periods'][0]['endTime']['minute'] = '0';
+        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '10';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-29';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La date de fin doit être supérieure à la date de début.', $crawler->filter('#measure_form_measures_0_periods_0_endDate_error')->text());
+        $this->assertSame('La date de fin doit être supérieure à la date de début.', $crawler->filter('#measure_form_periods_0_endDate_error')->text());
 
         // Bad values
-        $values['measure_form']['measures'][0]['periods'][0]['recurrenceType'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['startDate'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['startTime']['hour'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['startTime']['minute'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['endDate'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['endTime']['hour'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['endTime']['minute'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['dailyRange']['applicableDays'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['timeSlots'][0]['startTime']['hour'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['timeSlots'][0]['startTime']['minute'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime']['hour'] = 'test';
-        $values['measure_form']['measures'][0]['periods'][0]['timeSlots'][0]['endTime']['minute'] = 'test';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'test';
+        $values['measure_form']['periods'][0]['startDate'] = 'test';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = 'test';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = 'test';
+        $values['measure_form']['periods'][0]['endDate'] = 'test';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = 'test';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = 'test';
+        $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = 'test';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = 'test';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = 'test';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = 'test';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = 'test';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_measures_0_periods_0_dailyRange_applicableDays_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_measures_0_periods_0_timeSlots_0_startTime_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_measures_0_periods_0_timeSlots_0_endTime_error')->text());
-        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_measures_0_periods_0_recurrenceType_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_measures_0_periods_0_startTime_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_measures_0_periods_0_endTime_error')->text());
-        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_measures_0_periods_0_endDate_error')->text());
-        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_measures_0_periods_0_startDate_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_periods_0_dailyRange_applicableDays_error')->text());
+        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_timeSlots_0_startTime_error')->text());
+        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_timeSlots_0_endTime_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_periods_0_recurrenceType_error')->text());
+        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_startTime_error')->text());
+        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_endTime_error')->text());
+        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_periods_0_endDate_error')->text());
+        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
     }
 
     public function testGeocodingFailure(): void
@@ -482,13 +480,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
 
-        $values['measure_form']['cityCode'] = '44195';
-        $values['measure_form']['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['roadName'] = 'Route du GEOCODING_FAILURE';
-        $values['measure_form']['fromHouseNumber'] = '15';
-        $values['measure_form']['toHouseNumber'] = '37bis';
-        $values['measure_form']['measures'][0]['type'] = 'noEntry';
-        $values['measure_form']['measures'][0]['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du GEOCODING_FAILURE';
+        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '15';
+        $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '37bis';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -532,19 +530,22 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
-        $form['measure_form[cityCode]'] = str_repeat('a', 6);
-        $form['measure_form[cityLabel]'] = str_repeat('a', 256);
-        $form['measure_form[roadName]'] = str_repeat('a', 256);
-        $form['measure_form[fromHouseNumber]'] = str_repeat('a', 9);
-        $form['measure_form[toHouseNumber]'] = str_repeat('a', 9);
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locationsNew'][0]['cityCode'] = str_repeat('a', 6);
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = str_repeat('a', 256);
+        $values['measure_form']['locationsNew'][0]['roadName'] = str_repeat('a', 256);
+        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locationsNew'][0]['toHouseNumber'] = str_repeat('a', 9);
 
-        $crawler = $client->submit($form);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères.', $crawler->filter('#measure_form_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_cityLabel_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_roadName_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_fromHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_toHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères.', $crawler->filter('#measure_form_locationsNew_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locationsNew_0_cityLabel_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locationsNew_0_roadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locationsNew_0_fromHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locationsNew_0_toHouseNumber_error')->text());
     }
 
     public function testFieldsTooLongDepartmentalRoad(): void
@@ -557,13 +558,16 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
-        $form['measure_form[roadType]'] = 'departmentalRoad';
-        $form['measure_form[administrator]'] = 'Ain';
-        $form['measure_form[roadNumber]'] = str_repeat('a', 51);
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locationsNew'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locationsNew'][0]['administrator'] = 'Ain';
+        $values['measure_form']['locationsNew'][0]['roadNumber'] = str_repeat('a', 51);
 
-        $crawler = $client->submit($form);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_roadNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locationsNew_0_roadNumber_error')->text());
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

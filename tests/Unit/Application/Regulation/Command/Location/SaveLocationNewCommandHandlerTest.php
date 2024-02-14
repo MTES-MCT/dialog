@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
+use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommandHandler;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\LocationNew;
@@ -28,11 +30,15 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
     private string $geometry;
     private MockObject $idFactory;
     private MockObject $locationNewRepository;
+    private MockObject $geocoder;
+    private MockObject $roadGeocoder;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->locationNewRepository = $this->createMock(LocationNewRepositoryInterface::class);
+        $this->geocoder = $this->createMock(GeocoderInterface::class);
+        $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
 
         $this->roadType = 'lane';
         $this->administrator = null;
@@ -54,6 +60,14 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->geocoder
+            ->expects(self::exactly(2))
+            ->method('computeCoordinates')
+            ->willReturnOnConsecutiveCalls(
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            );
 
         $createdLocationNew = $this->createMock(LocationNew::class);
         $measure = $this->createMock(Measure::class);
@@ -83,6 +97,8 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $handler = new SaveLocationNewCommandHandler(
             $this->idFactory,
             $this->locationNewRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
         );
 
         $command = new SaveLocationNewCommand();
@@ -108,6 +124,14 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
+        $this->geocoder
+            ->expects(self::exactly(2))
+            ->method('computeCoordinates')
+            ->willReturnOnConsecutiveCalls(
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            );
+
         $measure = $this->createMock(Measure::class);
         $locationNew = $this->createMock(LocationNew::class);
         $locationNew
@@ -128,6 +152,8 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $handler = new SaveLocationNewCommandHandler(
             $this->idFactory,
             $this->locationNewRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
         );
 
         $command = new SaveLocationNewCommand($locationNew);

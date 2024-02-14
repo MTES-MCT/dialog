@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationNewCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -66,9 +67,12 @@ final class SaveMeasureCommandHandler
                     $locationsNewStillPresentUuids[] = $locationNewCommand->locationNew->getUuid();
                 }
 
-                // TODO GeocodingFailureException
-                $locationNewCommand->measure = $command->measure;
-                $this->commandBus->handle($locationNewCommand);
+                try {
+                    $locationNewCommand->measure = $command->measure;
+                    $this->commandBus->handle($locationNewCommand);
+                } catch (GeocodingFailureException $e) {
+                    throw $e;
+                }
             }
 
             // Locations that weren't present in the command get deleted.

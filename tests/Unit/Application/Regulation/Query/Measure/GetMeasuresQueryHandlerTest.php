@@ -168,6 +168,14 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->willReturn('95');
         $location
             ->expects(self::once())
+            ->method('getRoadNumber')
+            ->willReturn(null);
+        $location
+            ->expects(self::once())
+            ->method('getAdministrator')
+            ->willReturn(null);
+        $location
+            ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn('253');
 
@@ -237,6 +245,8 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                             roadType: 'lane',
                             fromHouseNumber: '95',
                             toHouseNumber: '253',
+                            administrator: null,
+                            roadNumber: null,
                         ),
                     ],
                 ),
