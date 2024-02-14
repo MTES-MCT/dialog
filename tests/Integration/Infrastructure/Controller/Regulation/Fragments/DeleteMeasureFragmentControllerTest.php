@@ -23,17 +23,20 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $client = $this->login();
 
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
-        $this->assertSame(3, $this->countRows($crawler));
+        $this->assertSame(2, $this->countRows($crawler));
 
         $crawler = $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $streams = $crawler->filter('turbo-stream');
-        $this->assertSame($streams->eq(0)->attr('target'), 'block_measure_' . MeasureFixture::UUID_TYPICAL);
-        $this->assertSame($streams->eq(0)->attr('action'), 'remove');
+
+        $this->assertSame($streams->eq(0)->attr('action'), 'replace');
+        $this->assertSame($streams->eq(0)->attr('target'), 'measure_0658d836-de22-75f2-8000-bb36c98113a5_delete_button');
+        $this->assertSame($streams->eq(1)->attr('target'), 'block_measure_' . MeasureFixture::UUID_TYPICAL);
+        $this->assertSame($streams->eq(1)->attr('action'), 'remove');
 
         $crawler = $client->request('GET', sprintf('/regulations/%s', RegulationOrderRecordFixture::UUID_TYPICAL));
-        $this->assertSame(2, $this->countRows($crawler));
+        $this->assertSame(1, $this->countRows($crawler));
     }
 
     public function testMeasureNotFound(): void
@@ -76,7 +79,7 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/aaa/delete', [
             'token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(404);
     }
 
     public function testWithoutAuthenticatedUser(): void

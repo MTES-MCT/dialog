@@ -65,7 +65,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
 
         $typicalMeasureLocation3 = new LocationNew(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
-            $this->getReference('typicalMeasure'),
+            $this->getReference('typicalMeasureToRemove'),
             roadType: 'lane',
             administrator: null,
             roadNumber: null,
@@ -83,9 +83,102 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ),
         );
 
+        $publishedLocation1 = new LocationNew(
+            self::UUID_PUBLISHED,
+            $this->getReference('publishedMeasure'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Avenue de Fonneuve',
+            fromHouseNumber: '695',
+            toHouseNumber: '253',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.362275, 44.028996),
+                Coordinates::fromLonLat(1.35931, 44.025665),
+            ]),
+        );
+
+        $publishedLocation2 = new LocationNew(
+            '064ca782-771c-783f-8000-e67473eabea6',
+            $this->getReference('publishedMeasure'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: "Rue de l'Hôtel de Ville",
+            fromHouseNumber: '30',
+            toHouseNumber: '12',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.352126, 44.016833),
+                Coordinates::fromLonLat(1.353016, 44.016402),
+            ]),
+        );
+
+        $publishedLocation3 = new LocationNew(
+            '0655b3f6-124a-7f8d-8000-7c747883d40d',
+            $this->getReference('publishedMeasure'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Rue Gamot',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: json_encode(
+                // Source: https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=nom_minuscule=%27rue%20gamot%27%20AND%20code_insee=82121&PropertyName=geometrie
+                [
+                    'type' => 'MultiLineString',
+                    'coordinates' => [[[1.34352783, 44.01741201], [1.34351021, 44.01728842], [1.34344305, 44.01672388]], [[1.34361127, 44.01827476], [1.34363309, 44.01855416], [1.34367982, 44.01909228], [1.34373623, 44.01964046], [1.34376444, 44.02004327]], [[1.34355908, 44.01762403], [1.34352783, 44.01741201]], [[1.34361127, 44.01827476], [1.34359579, 44.01799187], [1.34355908, 44.01762403]]],
+                ],
+            ),
+        );
+
+        $permanentRegulationOrderLocation = new LocationNew(
+            self::UUID_PERMANENT_ONLY_ONE,
+            $this->getReference('permanentMeasure'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '75118',
+            cityLabel: 'Paris 18e Arrondissement (75018)',
+            roadName: 'Rue du Simplon',
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: json_encode(
+                // Source: https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=nom_minuscule=%27rue%20du%20simplon%27%20AND%20code_insee=75118&PropertyName=geometrie
+                [
+                    'type' => 'MultiLineString',
+                    'coordinates' => [[[2.35263563, 48.89325427], [2.35117787, 48.89356294], [2.35100967, 48.893598]], [[2.35100967, 48.893598], [2.3492403, 48.89406594]], [[2.3457314, 48.8950073], [2.3463186, 48.89484233]], [[2.3463186, 48.89484233], [2.3471424, 48.89462649]], [[2.34777601, 48.89445727], [2.3492403, 48.89406594]], [[2.3471424, 48.89462649], [2.34777601, 48.89445727]]],
+                ],
+            ),
+        );
+
+        $fullCityLocation = new LocationNew(
+            self::UUID_FULL_CITY,
+            $this->getReference('fullCityMeasure'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '75118',
+            cityLabel: 'Paris 18e Arrondissement (75018)',
+            roadName: null,
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: null,
+        );
+
         $manager->persist($typicalMeasureLocation1);
         $manager->persist($typicalMeasureLocation2);
         $manager->persist($typicalMeasureLocation3);
+        $manager->persist($publishedLocation1);
+        $manager->persist($publishedLocation2);
+        $manager->persist($publishedLocation3);
+        $manager->persist($permanentRegulationOrderLocation);
+        $manager->persist($fullCityLocation);
         $manager->flush();
 
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);

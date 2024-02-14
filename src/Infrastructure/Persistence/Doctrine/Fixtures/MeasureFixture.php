@@ -13,11 +13,16 @@ use Doctrine\Persistence\ObjectManager;
 final class MeasureFixture extends Fixture implements DependentFixtureInterface
 {
     public const INDEX_TYPICAL_TO_REMOVE = 1;
+    public const UUID_TYPICAL = 'e48cbfff-bb04-428e-9cb0-22456fd7aab6';
+    public const UUID_DOES_NOT_EXIST = '3f45e08a-c6b6-4026-86f1-cb8766756ad5';
+    public const UUID_PUBLISHED = '59143d8d-d201-4950-be76-f367e39be522';
+    public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
+    public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
 
     public function load(ObjectManager $manager): void
     {
         $typicalMeasure = new Measure(
-            'e48cbfff-bb04-428e-9cb0-22456fd7aab6',
+            self::UUID_TYPICAL,
             $this->getReference('typicalRegulationOrder'),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-05-11'),
@@ -31,11 +36,38 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             maxSpeed: 50,
         );
 
+        $publishedMeasure = new Measure(
+            self::UUID_PUBLISHED,
+            $this->getReference('publishedRegulationOrder'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-06-01'),
+        );
+
+        $permanentMeasure = new Measure(
+            'fa8f07e7-2db6-444d-bb41-3815b46198be',
+            $this->getReference('regulationOrderPermanent'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-05-12'),
+        );
+
+        $fullCityMeasure = new Measure(
+            self::UUID_FULL_CITY,
+            $this->getReference('fullCityRegulationOrder'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-05-12'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
+        $manager->persist($publishedMeasure);
+        $manager->persist($permanentMeasure);
+        $manager->persist($fullCityMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
+        $this->addReference('publishedMeasure', $publishedMeasure);
+        $this->addReference('permanentMeasure', $permanentMeasure);
+        $this->addReference('fullCityMeasure', $fullCityMeasure);
 
         $manager->flush();
     }

@@ -17,7 +17,7 @@ final class AddMeasureLinkFragmentControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $saveButton = $crawler->selectButton('Ajouter une localisation');
+        $saveButton = $crawler->selectButton('Ajouter une mesure');
         $form = $saveButton->form();
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add', $form->getUri());
     }

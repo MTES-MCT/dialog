@@ -19,10 +19,14 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Route du Grand Brossais', $crawler->filter('h3')->text());
-        $this->assertSame('Savenay (44260)', $crawler->filter('li')->eq(0)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis', $crawler->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite du 31/10/2023 à 09h00 au 31/10/2023 à 23h00 pour tous les véhicules', $crawler->filter('li')->eq(2)->text());
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
+        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Route du Lac Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
+
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form', $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());
@@ -36,10 +40,14 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame(
-            'Circulation interdite du 31/10/2023 à 09h00 au 31/10/2023 à 23h00, le lundi et le jeudi pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
-            $crawler->filter('li')->eq(2)->text(),
-        );
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
+        $this->assertSame('pour les véhicules de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
+        $this->assertSame('tous les jours', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text());
+        $this->assertSame('Avenue de Fonneuve du n° 695 au n° 253 Montauban (82000)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Rue de l\'Hôtel de Ville du n° 30 au n° 12 Montauban (82000)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
+        $this->assertSame('Rue Gamot Montauban (82000)', $measures->eq(0)->filter('.app-card__content li')->eq(5)->text());
     }
 
     public function testGetLocationFromOtherRegulationOrderRecord(): void
@@ -58,7 +66,7 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Paris 18e Arrondissement (75018)', $crawler->filter('li')->eq(0)->text());
+        $this->assertSame('Paris 18e Arrondissement (75018)', $crawler->filter('li')->eq(3)->text());
     }
 
     public function testIfPublishedThenCannotEdit(): void

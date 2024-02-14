@@ -39,6 +39,8 @@
                                 {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                                 {{ location.cityLabel }}
                             </li>
+                        {% elseif location.cityLabel %}
+                            <li>{{ location.cityLabel }}</li>
                         {% endif %}
                     {% endfor %}
                 </ul>
