@@ -21,23 +21,6 @@ class LocationNew
     ) {
     }
 
-    public static function fromLocation(string $uuid, Measure $measure, Location $location): self
-    {
-        return new self(
-            uuid: $uuid,
-            measure: $measure,
-            roadType: $location->getRoadType(),
-            administrator: $location->getAdministrator(),
-            roadNumber: $location->getRoadNumber(),
-            cityCode: $location->getCityCode(),
-            cityLabel: $location->getCityLabel(),
-            roadName: $location->getRoadName(),
-            fromHouseNumber: $location->getFromHouseNumber(),
-            toHouseNumber: $location->getToHouseNumber(),
-            geometry: $location->getGeometry(),
-        );
-    }
-
     public function getUuid(): string
     {
         return $this->uuid;
