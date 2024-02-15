@@ -21,6 +21,7 @@ class VehicleSet
         private ?float $maxWidth = null,
         private ?float $maxLength = null,
         private ?float $maxHeight = null,
+        /** @var string[] */
         private ?array $critairTypes = [],
     ) {
     }
@@ -47,7 +48,7 @@ class VehicleSet
         }
 
         $critairTypes = $this->critairTypes;
-        usort($critairTypes, fn ($a, $b) => strcmp($a->value, $b->value));
+        sort($critairTypes);
 
         return $critairTypes;
     }
