@@ -55,7 +55,7 @@ Attention il ne s’agit pas là nécessairement de gratuité et d’accès libr
 
 Google ou Amazon par exemple fournissent des ressources et places de marché à leurs développeurs ou leurs marchands et en tirent de très substantiels revenus. Leur modèle économique est même construit sur le succès de leurs réutilisateurs. Ces derniers deviennent à la fois le client et le produit, en améliorant l’offre globale de services dans un cercle vertueux. Pensez aux App Stores de Google ou Apple et à la marketplace d’Amazon. À l'inverse, une organisation à but non lucratif peut se comporter de manière rigoureusement “fermée” en concevant et délivrant des services qui ne peuvent ni être modifiés ni réutilisés par ses utilisateurs. 
 
-Et pour une collectivité publique ?
+**Et pour une collectivité publique ?**
 
 Le concept d’État-plateforme a été repris en France par Henri Verdier et Pierre Pezziardi dans leur ouvrage de 2017 “Des startups d’État à l’État-plateforme” (à retrouver dans la liste de ressources ci-dessous). Il reprend schématiquement les principes des plateformes numériques théorisés par l’éditeur Tim O’Reilly en 2010 : 
 
@@ -107,35 +107,35 @@ C’est la mission que nous poursuivons chez DiaLog avec nos partenaires. Rejoig
 
 Merci à [Sandrine Mathon](https://www.linkedin.com/in/sandrine-mathon-753092b/), [Céline Faivre](https://www.linkedin.com/in/celinefaivre/), [Claire Gallic](https://www.linkedin.com/in/claire-gallic/), [Jean-Marc Lazard](https://www.linkedin.com/in/jmlazard/), [Simon Chignard](https://www.linkedin.com/in/simonchignard/), [Samuel Goëta](https://www.linkedin.com/in/samgoeta/), [Joël Gombin](https://www.linkedin.com/in/jgombin/) pour le partage de leurs références utiles :
 
-Les archives d'InternetActu par feu la Fing : https://www.internetactu.net/search/open+data avec des articles aussi bien sûr : 
+Les archives d'InternetActu par feu la Fing : [lien](https://www.internetactu.net/search/open+data) avec des articles aussi bien sûr : 
 
-- 2006, le mouvement en UK sur "free your data" et "rendez-nous nos données" et les 1ers sujets de crowdsourcing tq. Fixmystreet (https://www.internetactu.net/2008/12/03/les-joyaux-de-la-couronne-nappartiennent-a-personne/)
-- 2007, avec Tim O'Reilly, la Sunlight Foundation ... (https://www.internetactu.net/2007/12/20/principes-pour-des-donnees-publiques-ouvertes/)
-- 2008/2009, les prémices des liens tech avec Linked Open Data, le rôle Thomson Reuters et Open Calais ... (https://www.internetactu.net/2008/12/04/lavenir-de-linformation-le-web-de-donnees/)
-- le Ted Talk de Tim Berners Lee (https://www.ted.com/talks/tim_berners_lee_the_next_web) 
-- 2009/2010, Gov as a Platform (https://www.internetactu.net/2010/06/24/du-gouvernement-comme-plate-forme-ou-linverse/) 
-- 2011 LiberTic indeed (https://www.internetactu.net/2011/03/09/pourquoi-la-reutilisation-des-donnees-publiques-a-des-fins-commerciales-doit-elle-etre-gratuite/)
-- 2011 New-York as a platform (https://www.lemonde.fr/blog/internetactu/2011/12/05/open-data-new-york-comme-plateforme/)
+- 2006, le mouvement en UK sur "free your data" et "rendez-nous nos données" et les 1ers sujets de crowdsourcing tq. Fixmystreet [lien](https://www.internetactu.net/2008/12/03/les-joyaux-de-la-couronne-nappartiennent-a-personne/)
+- 2007, avec Tim O'Reilly, la Sunlight Foundation ... [lien](https://www.internetactu.net/2007/12/20/principes-pour-des-donnees-publiques-ouvertes/)
+- 2008/2009, les prémices des liens tech avec Linked Open Data, le rôle Thomson Reuters et Open Calais ... [lien](https://www.internetactu.net/2008/12/04/lavenir-de-linformation-le-web-de-donnees/)
+- le Ted Talk de Tim Berners Lee [lien](https://www.ted.com/talks/tim_berners_lee_the_next_web) 
+- 2009/2010, Gov as a Platform [lien](https://www.internetactu.net/2010/06/24/du-gouvernement-comme-plate-forme-ou-linverse/) 
+- 2011 LiberTic indeed [lien](https://www.internetactu.net/2011/03/09/pourquoi-la-reutilisation-des-donnees-publiques-a-des-fins-commerciales-doit-elle-etre-gratuite/)
+- 2011 New-York as a platform [lien](https://www.lemonde.fr/blog/internetactu/2011/12/05/open-data-new-york-comme-plateforme/)
 
-Également les archives Gov US, sur l'open gov plan avec les V1 de 2010 (l'open data étant un des 3 "moyens" de l'open gov aux US) : https://www.archives.gov/open/open-plan.html
+Également les archives Gov US, sur l'open gov plan avec les V1 de 2010 (l'open data étant un des 3 "moyens" de l'open gov aux US) : [lien](https://www.archives.gov/open/open-plan.html)
 
-Le blog LiberTIC de Claire Gallic : https://libertic.wordpress.com/
+Le blog LiberTIC de Claire Gallic : [lien](https://libertic.wordpress.com/)
 
-Le blog d’Henri Verdier : http://www.henriverdier.com/
+Le blog d’Henri Verdier : [lien](http://www.henriverdier.com/)
 
-Le livre d’Henri Verdier et Pierre Pezziardi - Des startups d’État à l’État plateforme : https://www.fondapol.org/etude/pierre-pezziardi-et-henri-verdier-des-startups-detat-a-letat-plateforme/
+Le livre d’Henri Verdier et Pierre Pezziardi - Des startups d’État à l’État plateforme : [lien](https://www.fondapol.org/etude/pierre-pezziardi-et-henri-verdier-des-startups-detat-a-letat-plateforme/)
 
-Les livres de Simon Chignard - Open data et Datanomics : https://www.eyrolles.com/Accueil/Auteur/simon-chignard-111638/
+Les livres de Simon Chignard - Open data et Datanomics : [lien](https://www.eyrolles.com/Accueil/Auteur/simon-chignard-111638/)
 
-Le nouveau livre de Samuel Goëta : Les données de la démocratie : https://cfeditions.com/donnees-democratie/
+Le nouveau livre de Samuel Goëta : Les données de la démocratie : [lien](https://cfeditions.com/donnees-democratie/)
 
-Le TED talk d’Hans Rosling : https://www.ted.com/talks/hans_rosling_let_my_dataset_change_your_mindset?language=fr
+Le TED talk d’Hans Rosling : [lien](https://www.ted.com/talks/hans_rosling_let_my_dataset_change_your_mindset?language=fr)
 
-Et également un documentaire de la BBC à son sujet : https://www.youtube.com/watch?v=jbkSRLYSojo
+Et également un documentaire de la BBC à son sujet : [lien](https://www.youtube.com/watch?v=jbkSRLYSojo)
 
-Plan d'action G8 sur l’ouverture des données publiques : https://www.numerique.gouv.fr/actualites/plan-daction-g8-sur-louverture-des-donnees-publiques/
+Plan d'action G8 sur l’ouverture des données publiques : [lien](https://www.numerique.gouv.fr/actualites/plan-daction-g8-sur-louverture-des-donnees-publiques/)
 
-La conférence de Sébastopol : https://opengovdata.org/
+La conférence de Sébastopol : [lien](https://opengovdata.org/)
 
 
 </div>
