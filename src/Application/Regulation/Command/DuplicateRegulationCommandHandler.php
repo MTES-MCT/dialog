@@ -57,68 +57,66 @@ final class DuplicateRegulationCommandHandler
         RegulationOrder $originalRegulationOrder,
         RegulationOrderRecord $duplicatedRegulationOrderRecord,
     ): void {
-        if (!$originalRegulationOrder->getMeasures()) {
-            return;
-        }
+        if (!empty($originalRegulationOrder->getMeasures())) {
+            foreach ($originalRegulationOrder->getMeasures() as $measure) {
+                $periodCommands = [];
+                $locationCommands = [];
 
-        foreach ($originalRegulationOrder->getMeasures() as $measure) {
-            $periodCommands = [];
-            $locationCommands = [];
+                foreach ($measure->getPeriods() as $period) {
+                    $cmd = new SavePeriodCommand();
+                    $cmd->startDate = $period->getStartDateTime();
+                    $cmd->startTime = $period->getStartDateTime();
+                    $cmd->endDate = $period->getEndDateTime();
+                    $cmd->endTime = $period->getEndDateTime();
+                    $cmd->recurrenceType = $period->getRecurrenceType();
 
-            foreach ($measure->getPeriods() as $period) {
-                $cmd = new SavePeriodCommand();
-                $cmd->startDate = $period->getStartDateTime();
-                $cmd->startTime = $period->getStartDateTime();
-                $cmd->endDate = $period->getEndDateTime();
-                $cmd->endTime = $period->getEndDateTime();
-                $cmd->recurrenceType = $period->getRecurrenceType();
-
-                $dailyRange = $period->getDailyRange();
-                if ($dailyRange) {
-                    $dailyRangeCommand = (new SaveDailyRangeCommand())->initFromEntity($dailyRange);
-                    $cmd->dailyRange = $dailyRangeCommand;
-                }
-
-                $timeSlotCommands = [];
-                if ($period->getTimeSlots()) {
-                    foreach ($period->getTimeSlots() as $timeSlot) {
-                        $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
+                    $dailyRange = $period->getDailyRange();
+                    if ($dailyRange) {
+                        $dailyRangeCommand = (new SaveDailyRangeCommand())->initFromEntity($dailyRange);
+                        $cmd->dailyRange = $dailyRangeCommand;
                     }
+
+                    $timeSlotCommands = [];
+                    if ($period->getTimeSlots()) {
+                        foreach ($period->getTimeSlots() as $timeSlot) {
+                            $timeSlotCommands[] = (new SaveTimeSlotCommand())->initFromEntity($timeSlot);
+                        }
+                    }
+
+                    $cmd->timeSlots = $timeSlotCommands;
+                    $periodCommands[] = $cmd;
                 }
 
-                $cmd->timeSlots = $timeSlotCommands;
-                $periodCommands[] = $cmd;
+                foreach ($measure->getLocationsNew() as $location) {
+                    $cmd = new SaveLocationNewCommand();
+                    $cmd->roadType = $location->getRoadType();
+                    $cmd->administrator = $location->getAdministrator();
+                    $cmd->roadNumber = $location->getRoadNumber();
+                    $cmd->cityCode = $location->getCityCode();
+                    $cmd->cityLabel = $location->getCityLabel();
+                    $cmd->roadName = $location->getRoadNAme();
+                    $cmd->fromHouseNumber = $location->getFromHouseNumber();
+                    $cmd->toHouseNumber = $location->getToHouseNumber();
+                    $cmd->geometry = $location->getGeometry();
+                    $cmd->measure = $measure;
+
+                    $locationCommands[] = $cmd;
+                }
+
+                $vehicleSetCommand = $measure->getVehicleSet()
+                    ? (new SaveVehicleSetCommand())->initFromEntity($measure->getVehicleSet())
+                    : null;
+
+                $measureCommand = new SaveMeasureCommand($duplicatedRegulationOrderRecord->getRegulationOrder());
+                $measureCommand->type = $measure->getType();
+                $measureCommand->createdAt = $measure->getCreatedAt();
+                $measureCommand->maxSpeed = $measure->getMaxSpeed();
+                $measureCommand->vehicleSet = $vehicleSetCommand;
+                $measureCommand->periods = $periodCommands;
+                $measureCommand->locationsNew = $locationCommands;
+
+                $this->commandBus->handle($measureCommand);
             }
-
-            foreach ($measure->getLocationsNew() as $location) {
-                $cmd = new SaveLocationNewCommand();
-                $cmd->roadType = $location->getRoadType();
-                $cmd->administrator = $location->getAdministrator();
-                $cmd->roadNumber = $location->getRoadNumber();
-                $cmd->cityCode = $location->getCityCode();
-                $cmd->cityLabel = $location->getCityLabel();
-                $cmd->roadName = $location->getRoadNAme();
-                $cmd->fromHouseNumber = $location->getFromHouseNumber();
-                $cmd->toHouseNumber = $location->getToHouseNumber();
-                $cmd->geometry = $location->getGeometry();
-                $cmd->measure = $measure;
-
-                $locationCommands[] = $cmd;
-            }
-
-            $vehicleSetCommand = $measure->getVehicleSet()
-                ? (new SaveVehicleSetCommand())->initFromEntity($measure->getVehicleSet())
-                : null;
-
-            $measureCommand = new SaveMeasureCommand($duplicatedRegulationOrderRecord->getRegulationOrder());
-            $measureCommand->type = $measure->getType();
-            $measureCommand->createdAt = $measure->getCreatedAt();
-            $measureCommand->maxSpeed = $measure->getMaxSpeed();
-            $measureCommand->vehicleSet = $vehicleSetCommand;
-            $measureCommand->periods = $periodCommands;
-            $measureCommand->locationsNew = $locationCommands;
-
-            $this->commandBus->handle($measureCommand);
         }
     }
 }

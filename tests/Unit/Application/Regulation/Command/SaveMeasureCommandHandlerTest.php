@@ -266,7 +266,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $locationNew2 = $this->createMock(LocationNew::class);
         $locationNew2
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('getUuid')
             ->willReturn('065af992-ecb9-7afd-8000-a1ac6e020f2f');
 
@@ -323,7 +323,8 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 [$this->equalTo(new DeletePeriodCommand($period2))],
                 [$this->equalTo($locationNewCommand2)],
                 [$this->equalTo(new DeleteLocationNewCommand($locationNew1))],
-            );
+            )
+            ->willReturnOnConsecutiveCalls(null, null, $locationNew2);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,

@@ -491,7 +491,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#measure_form_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#measure_form_locationsNew_0_roadName_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void

@@ -39,6 +39,16 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $this->countRows($crawler));
     }
 
+    public function testMeasureCannotBeDeleted(): void
+    {
+        $client = $this->login();
+
+        $crawler = $client->request('DELETE', '/_fragment/regulations/4ce75a1f-82f3-40ee-8f95-48d0f04446aa/measure/fa8f07e7-2db6-444d-bb41-3815b46198be/delete', [
+            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+        ]);
+        $this->assertResponseStatusCodeSame(400);
+    }
+
     public function testMeasureNotFound(): void
     {
         $client = $this->login();

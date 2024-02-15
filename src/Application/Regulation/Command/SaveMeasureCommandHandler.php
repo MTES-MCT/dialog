@@ -62,16 +62,17 @@ final class SaveMeasureCommandHandler
 
             $locationsNewStillPresentUuids = [];
 
-            foreach ($command->locationsNew as $locationNewCommand) {
+            foreach ($command->locationsNew as $index => $locationNewCommand) {
                 if ($locationNewCommand->locationNew) {
                     $locationsNewStillPresentUuids[] = $locationNewCommand->locationNew->getUuid();
                 }
 
                 try {
                     $locationNewCommand->measure = $command->measure;
-                    $this->commandBus->handle($locationNewCommand);
+                    $locationNew = $this->commandBus->handle($locationNewCommand);
+                    $locationsNewStillPresentUuids[] = $locationNew->getUuid();
                 } catch (GeocodingFailureException $e) {
-                    throw $e;
+                    throw new GeocodingFailureException((string) $index, 0, $e);
                 }
             }
 
@@ -108,10 +109,15 @@ final class SaveMeasureCommandHandler
             $measure->addPeriod($period);
         }
 
-        foreach ($command->locationsNew as $locationNewCommand) {
+        foreach ($command->locationsNew as $index => $locationNewCommand) {
             $locationNewCommand->measure = $measure;
-            $locationNew = $this->commandBus->handle($locationNewCommand);
-            $measure->addLocationNew($locationNew);
+
+            try {
+                $locationNew = $this->commandBus->handle($locationNewCommand);
+                $measure->addLocationNew($locationNew);
+            } catch (GeocodingFailureException $e) {
+                throw new GeocodingFailureException((string) $index, 0, $e);
+            }
         }
 
         return $measure;
