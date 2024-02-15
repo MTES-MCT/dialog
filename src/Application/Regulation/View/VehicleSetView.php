@@ -41,10 +41,7 @@ class VehicleSetView
             $restrictedTypes[] = ['name' => $vehicleSet->getOtherRestrictedTypeText(), 'isOther' => true];
         }
 
-        $critairTypes = $vehicleSet->getCritairTypes();
-        sort($critairTypes);
-
-        foreach ($critairTypes as $critair) {
+        foreach ($vehicleSet->getCritairTypes() as $critair) {
             $restrictedTypes[] = ['name' => $critair];
         }
 

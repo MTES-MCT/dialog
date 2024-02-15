@@ -42,7 +42,14 @@ class VehicleSet
 
     public function getCritairTypes(): array
     {
-        return $this->critairTypes ?? [];
+        if (!$this->critairTypes) {
+            return [];
+        }
+
+        $critairTypes = $this->critairTypes;
+        usort($critairTypes, fn ($a, $b) => strcmp($a->value, $b->value));
+
+        return $critairTypes;
     }
 
     public function getOtherRestrictedTypeText(): ?string
