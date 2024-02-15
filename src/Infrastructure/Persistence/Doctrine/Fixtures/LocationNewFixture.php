@@ -171,6 +171,23 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             geometry: null,
         );
 
+        $cifsLocation = new LocationNew(
+            '06548f85-d545-7b45-8000-8a23c45850b3',
+            $this->getReference('cifsMeasure'),
+            roadType: 'lane',
+            administrator: null,
+            roadNumber: null,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Rue de la République',
+            fromHouseNumber: '21',
+            toHouseNumber: '33',
+            geometry: GeoJSON::toLineString([
+                Coordinates::fromLonLat(1.35500, 44.01630),
+                Coordinates::fromLonLat(1.35419, 44.01665),
+            ]),
+        );
+
         $manager->persist($typicalMeasureLocation1);
         $manager->persist($typicalMeasureLocation2);
         $manager->persist($typicalMeasureLocation3);
@@ -179,6 +196,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
         $manager->persist($publishedLocation3);
         $manager->persist($permanentRegulationOrderLocation);
         $manager->persist($fullCityLocation);
+        $manager->persist($cifsLocation);
         $manager->flush();
 
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);

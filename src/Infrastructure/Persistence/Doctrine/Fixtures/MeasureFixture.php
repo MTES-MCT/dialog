@@ -58,17 +58,26 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2023-05-12'),
         );
 
+        $cifsMeasure = new Measure(
+            '06548f88-56a9-70e2-8000-a06baed6a93d',
+            $this->getReference('regulationOrderCifs'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2021-11-02'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
         $manager->persist($permanentMeasure);
         $manager->persist($fullCityMeasure);
+        $manager->persist($cifsMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
         $this->addReference('publishedMeasure', $publishedMeasure);
         $this->addReference('permanentMeasure', $permanentMeasure);
         $this->addReference('fullCityMeasure', $fullCityMeasure);
+        $this->addReference('cifsMeasure', $cifsMeasure);
 
         $manager->flush();
     }
