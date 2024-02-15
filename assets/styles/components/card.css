@@ -98,6 +98,10 @@ li.app-card + li.app-card {
     }
 }
 
-.app-card__content .fr-raw-list li:not(:last-child) {
-    margin-bottom: 0.5rem;
+.d-stack > * {
+    margin-bottom: 0;
+}
+
+.d-stack > * + * {
+    margin-top: var(--stack-gap, var(--2w));
 }
