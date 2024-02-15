@@ -24,9 +24,9 @@ final class Version20240208093351 extends AbstractMigration
         $this->addSql('ALTER TABLE measure ADD CONSTRAINT FK_80071925267E0D5E FOREIGN KEY (regulation_order_uuid) REFERENCES regulation_order (uuid) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE INDEX IDX_80071925267E0D5E ON measure (regulation_order_uuid)');
         $this->addSql('
-            UPDATE measure SET regulation_order_uuid = l.regulation_order_uuid
-            FROM measure AS m
-            INNER JOIN location AS l ON l.uuid = m.location_uuid
+            UPDATE measure m SET regulation_order_uuid = l.regulation_order_uuid
+            FROM location AS l
+            WHERE l.uuid = m.location_uuid
         ');
         $this->addSql('ALTER TABLE measure ALTER regulation_order_uuid SET NOT NULL');
         $this->addSql('ALTER TABLE measure DROP CONSTRAINT fk_80071925517be5e6');
