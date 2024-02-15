@@ -63,8 +63,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_maxSpeed_error')->text());
     }
 
-    /** @group only */
-    public function testEditAndAddMeasure(): void
+    public function testAddAndRemoveLocation(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
@@ -76,33 +75,26 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        // Edit
-        $values['measure_form']['type'] = 'speedLimitation';
-        $values['measure_form']['measures'][1]['maxSpeed'] = 60;
-        $values['measure_form']['measures'][1]['periods'] = []; // Remove period
+        // Edit measure
+        $values['measure_form']['locationsNew'][0] = []; // Remove first
 
         // Add
-        $values['measure_form']['measures'][2]['type'] = 'alternateRoad';
-        $values['measure_form']['measures'][2]['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['measures'][2]['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['measure_form']['measures'][2]['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['measures'][2]['periods'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['measures'][2]['periods'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['measures'][2]['periods'][0]['endDate'] = '2023-10-30';
-        $values['measure_form']['measures'][2]['periods'][0]['endTime']['hour'] = '16';
-        $values['measure_form']['measures'][2]['periods'][0]['endTime']['minute'] = '0';
-        $values['measure_form']['measures'][2]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['measure_form']['locationsNew'][0]['roadType'] = 'lane';
+        $values['measure_form']['locationsNew'][0]['cityCode'] = '59368';
+        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'La Madeleine (59110)';
+        $values['measure_form']['locationsNew'][0]['roadName'] = 'Rue Saint-Victor';
+        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '';
+        $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $detailItems = $crawler->filter('ul[data-testid="measure-detail-items"] > li');
-
-        $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
-        $this->assertSame('Vitesse limitée à 60 km/h tous les jours pour tous les véhicules', $detailItems->eq(3)->text());
-        $this->assertSame('Circulation alternée du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi pour tous les véhicules', $detailItems->eq(4)->text());
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertSame('Rue Saint-Victor La Madeleine (59110)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
     public function testDeletePeriod(): void
