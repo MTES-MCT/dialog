@@ -21,6 +21,7 @@ class VehicleSet
         private ?float $maxWidth = null,
         private ?float $maxLength = null,
         private ?float $maxHeight = null,
+        /** @var string[] */
         private ?array $critairTypes = [],
     ) {
     }
@@ -42,7 +43,14 @@ class VehicleSet
 
     public function getCritairTypes(): array
     {
-        return $this->critairTypes ?? [];
+        if (!$this->critairTypes) {
+            return [];
+        }
+
+        $critairTypes = $this->critairTypes;
+        sort($critairTypes);
+
+        return $critairTypes;
     }
 
     public function getOtherRestrictedTypeText(): ?string

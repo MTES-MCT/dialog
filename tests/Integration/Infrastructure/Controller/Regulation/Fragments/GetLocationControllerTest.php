@@ -37,7 +37,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertSame(
-            'Circulation interdite du 31/10/2023 à 09h00 au 31/10/2023 à 23h00, le lundi et le jeudi pour les véhicules de plus de 3.5 tonnes, 12 mètres de long ou 2.4 mètres de haut, crit\'air 4 et crit\'air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
+            'Circulation interdite du 31/10/2023 à 09h00 au 31/10/2023 à 23h00, le lundi et le jeudi pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels',
             $crawler->filter('li')->eq(2)->text(),
         );
     }
