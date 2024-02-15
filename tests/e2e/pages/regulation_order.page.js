@@ -10,10 +10,10 @@ export class RegulationOrderPage {
      */
     constructor(page) {
         this.page = page;
-        this._locations = page.getByRole('region', { name: 'Localisations' }).getByRole('list').first();
+        this._measures = page.getByRole('region', { name: 'Dispositif' }).getByRole('list').first();
         /** @type {string[]} */
-        this.addedLocationTitles = [];
-        this.addBtn = page.getByRole('button', { name: 'Ajouter une localisation' });
+        this.addedMeasuresTitles = [];
+        this.addBtn = page.getByRole('button', { name: 'Ajouter une mesure' });
         this.saveBtn = page.getByRole('button', { name: 'Valider' });
     }
 
@@ -24,16 +24,16 @@ export class RegulationOrderPage {
         await this.page.goto(`/regulations/${uuid}`);
     }
 
-    async beginNewLocation() {
+    async beginNewMeasure() {
         await this.addBtn.click();
         await expect(this.addBtn).not.toBeVisible();
     }
 
     /**
-     * @param {Locator|undefined} location
+     * @param {Locator|undefined} measure
      */
-    async cancelLocation(location = undefined) {
-        const cancelBtn = (location || this.page).getByRole('button', { name: 'Annuler' });
+    async cancelMeasure(measure = undefined) {
+        const cancelBtn = (measure || this.page).getByRole('button', { name: 'Annuler' });
         await cancelBtn.click();
         await expect(cancelBtn).not.toBeVisible();
         await this.addBtn.waitFor();
@@ -43,10 +43,47 @@ export class RegulationOrderPage {
      * @param {string} title
      * @returns Locator
      */
-    getLocationByTitle(title) {
-        return this._locations.locator('> li').filter({
+    getMeasureByTitle(title) {
+        return this._measures.locator('> li').filter({
             has: this.page.getByRole('heading', { level: 3, name: title }),
         });
+    }
+
+    /**
+     * @param {{maxSpeed?: string, cityLabel: string, roadName: string, expectedIndex: number, restrictionType: string}} args
+     * @param {{doBegin: boolean}} options
+     *
+     * @returns Locator
+     */
+    async addMeasureWithLocation({ cityLabel, roadName, maxSpeed, restrictionType, expectedIndex }, { doBegin } = { doBegin: true }) {
+        if (doBegin) {
+            await this.beginNewMeasure();
+        }
+
+        const restrictionTypeField = this.page.getByRole('combobox', { name: 'Type de restriction' });
+        expect(await restrictionTypeField.getAttribute('name')).toBe(`measure_form[type]`);
+        await restrictionTypeField.selectOption({ label: restrictionType });
+
+        if (maxSpeed) {
+            await this.page.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
+        }
+
+        await this.page.getByTestId(`allVehicles-${expectedIndex}-yes`).click();
+
+        // Advanced vehicles options are not shown
+        await expect(this.page.getByLabel('Types de véhicules concernés', { exact: true })).not.toBeVisible(); // Restricted
+        await expect(this.page.getByLabel('Indiquez les exceptions à la restriction', { exact: true })).not.toBeVisible(); // Exempted
+
+        await this.page.getByRole('button', { name: 'Ajouter une localisation' }).click();
+
+        await this.page.getByLabel('Ville ou commune').fill(cityLabel);
+        await this.page.getByRole('listbox', {name: 'Noms de communes suggérés'}).getByRole('option').first().click();
+        await this.page.getByRole('textbox', {name: 'Voie'}).fill(roadName);
+
+        await this.saveBtn.click();
+
+        this.addedMeasuresTitles.push(restrictionType);
+        return this.getMeasureByTitle(restrictionType);
     }
 
     /**
@@ -168,7 +205,7 @@ export class RegulationOrderPage {
         if (restrictedVehicleTypes.includes('Poids lourds')) {
             await expect(restrictedVehiclesFieldset.getByRole('textbox', { name: 'Poids maximum' })).toHaveValue('3,5');
         }
-        
+
         if (restrictedVehicleTypes.includes('Gabarit')) {
             await restrictedVehiclesFieldset.getByRole('textbox', { name: 'Hauteur maximum' }).fill('2,4');
         }
@@ -294,11 +331,11 @@ export class RegulationOrderPage {
     }
 
     async reset() {
-        for (const title of this.addedLocationTitles) {
-            const location = this.getLocationByTitle(title);
+        for (const title of this.addedMeasuresTitles) {
+            const location = this.getMeasureByTitle(title);
             await this._waitForReadMode(location);
             await location.getByRole('button', { name: 'Supprimer' }).click();
-            await this.page.getByRole('dialog', { name: 'Supprimer cette localisation ?' }).getByRole('button', { name: 'Supprimer', exact: true }).click();
+            await this.page.getByRole('dialog', { name: 'Supprimer cette mesure ?' }).getByRole('button', { name: 'Supprimer', exact: true }).click();
         }
     }
 

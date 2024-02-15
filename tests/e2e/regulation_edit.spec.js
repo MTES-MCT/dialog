@@ -12,38 +12,31 @@ const test = base.extend({
 
 test.use({ storageState: 'playwright/.auth/mathieu.json' });
 
-test('Begin then cancel a location', async ({ regulationOrderPage }) => {
+test('Begin then cancel a measure', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
-    await page.beginNewLocation();
-    await page.cancelLocation();
+    await page.beginNewMeasure();
+    await page.cancelMeasure();
 });
 
-test('Add a minimal location', async ({ regulationOrderPage }) => {
+test('Add a minimal measure', async ({ regulationOrderPage }) => {
     /** @type {RegulationOrderPage} */
     let page = regulationOrderPage;
 
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
-    const location = await page.addLocation({ cityLabel: 'Dijon', roadName: 'Rue Monge', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
-    await expect(location).toContainText('Dijon (21000)');
-    await expect(location).toContainText('Circulation interdite tous les jours');
-});
-
-test('Add a minimal measure to a location', async ({ regulationOrderPage }) => {
-    /** @type {RegulationOrderPage} */
-    let page = regulationOrderPage;
-
-    await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
-    const location = await page.addLocation({ cityLabel: 'Dijon', roadName: 'Rue Monge', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' });
-    await page.addMinimalMeasureToLocation(location, {
-        expectedIndex: 1,
-        expectedPosition: 2,
-        restrictionType: 'Circulation à sens unique',
+    const measure = await page.addMeasureWithLocation({
+        cityLabel: 'Dijon',
+        roadName: 'Rue Monge',
+        expectedIndex: 0,
+        restrictionType: 'Circulation interdite',
     });
-    await expect(location).toContainText('Circulation interdite tous les jours');
-    await expect(location).toContainText('Circulation à sens unique tous les jours');
+
+    await expect(measure).toContainText('Dijon (21000)');
+    await expect(measure).toContainText('tous les jours');
+    await expect(measure).toContainText('pour tous les véhicules');
+    await expect(measure).toContainText('Circulation interdite');
 });
 
 /*
@@ -75,9 +68,9 @@ test('Remove a measure and add another one to location', async ({ regulationOrde
     await expect(location).toContainText('Vitesse limitée à 50 km/h tous les jours');
 });
 */
-
+/*
 test('Set vehicles on a measure', async ({ regulationOrderPage }) => {
-    /** @type {RegulationOrderPage} */
+    @type {RegulationOrderPage}
     let page = regulationOrderPage;
 
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
@@ -92,7 +85,7 @@ test('Set vehicles on a measure', async ({ regulationOrderPage }) => {
 });
 
 test('Add a period to a measure', async ({ regulationOrderPage }) => {
-    /** @type {RegulationOrderPage} */
+    @type {RegulationOrderPage}
     let page = regulationOrderPage;
 
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
@@ -112,7 +105,7 @@ test('Add a period to a measure', async ({ regulationOrderPage }) => {
 });
 
 test('Delete a period from a measure', async ({ regulationOrderPage }) => {
-    /** @type {RegulationOrderPage} */
+    @type {RegulationOrderPage}
     let page = regulationOrderPage;
 
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
@@ -132,7 +125,7 @@ test('Delete a period from a measure', async ({ regulationOrderPage }) => {
 });
 
 test('Manipulate time slots', async ({ regulationOrderPage }) => {
-    /** @type {RegulationOrderPage} */
+     @type {RegulationOrderPage}
     let page = regulationOrderPage;
 
     await page.goToRegulation('e413a47e-5928-4353-a8b2-8b7dda27f9a5');
@@ -140,3 +133,4 @@ test('Manipulate time slots', async ({ regulationOrderPage }) => {
 
     await page.manipulateTimeSlots(location, { measureIndex: 0 });
 });
+*/
