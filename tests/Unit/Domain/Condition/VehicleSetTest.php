@@ -24,7 +24,7 @@ final class VehicleSetTest extends TestCase
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
             maxLength: 12,
-            critairTypes: [CritairEnum::CRITAIR_2, CritairEnum::CRITAIR_3],
+            critairTypes: [CritairEnum::CRITAIR_3->value, CritairEnum::CRITAIR_2->value],
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $vehicleSet->getUuid());
@@ -37,7 +37,11 @@ final class VehicleSetTest extends TestCase
         $this->assertNull($vehicleSet->getMaxWidth());
         $this->assertSame(12.0, $vehicleSet->getMaxLength());
         $this->assertNull($vehicleSet->getMaxHeight());
-        $this->assertSame([CritairEnum::CRITAIR_2, CritairEnum::CRITAIR_3], $vehicleSet->getCritairTypes());
+        $critairTypes = $vehicleSet->getCritairTypes();
+        $this->assertEquals([CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value], $critairTypes);
+        // Check does not return mutable array
+        $critairTypes[0] = CritairEnum::CRITAIR_4;
+        $this->assertEquals([CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value], $vehicleSet->getCritairTypes());
     }
 
     public function testUpdate(): void
@@ -53,7 +57,7 @@ final class VehicleSetTest extends TestCase
             otherExemptedTypeText: 'Convois exceptionnels',
             heavyweightMaxWeight: 3.5,
             maxLength: 12,
-            critairTypes: [CritairEnum::CRITAIR_2, CritairEnum::CRITAIR_3],
+            critairTypes: [CritairEnum::CRITAIR_2->value, CritairEnum::CRITAIR_3->value],
         );
 
         $vehicleSet->update(
