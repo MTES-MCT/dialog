@@ -14,10 +14,6 @@
     <field name="maxSpeed" type="integer" column="max_speed" nullable="true"/>
     <one-to-one field="vehicleSet" target-entity="App\Domain\Condition\VehicleSet" mapped-by="measure" fetch="EAGER"/>
     <one-to-many field="periods" target-entity="App\Domain\Condition\Period\Period" mapped-by="measure" fetch="EAGER"/>
-    <one-to-many field="locationsNew" target-entity="App\Domain\Regulation\LocationNew" mapped-by="measure" fetch="EAGER">
-        <order-by>
-            <order-by-field name="uuid" direction="ASC" />
-        </order-by>
-    </one-to-many>
+    <one-to-many field="locationsNew" target-entity="App\Domain\Regulation\LocationNew" mapped-by="measure" fetch="EAGER"/>
   </entity>
 </doctrine-mapping>

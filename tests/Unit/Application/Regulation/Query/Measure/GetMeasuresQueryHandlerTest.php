@@ -240,9 +240,9 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                     null,
                     [
                         new LocationView(
+                            roadType: 'lane',
                             cityLabel: 'Montauban',
                             roadName: 'Avenue de Fonneuve',
-                            roadType: 'lane',
                             fromHouseNumber: '95',
                             toHouseNumber: '253',
                             administrator: null,
