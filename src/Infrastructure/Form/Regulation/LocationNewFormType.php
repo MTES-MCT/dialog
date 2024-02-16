@@ -136,7 +136,6 @@ final class LocationNewFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'validation_groups' => ['Default'],
             'administrators' => [],
             'feature_road_type' => false,
             'data_class' => SaveLocationNewCommand::class,

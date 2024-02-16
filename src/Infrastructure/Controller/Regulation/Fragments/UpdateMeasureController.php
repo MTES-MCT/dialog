@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
-use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\GeocodingFailureWithLocationIndexException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
@@ -85,10 +85,10 @@ final class UpdateMeasureController extends AbstractRegulationController
                     ]),
                     status: Response::HTTP_SEE_OTHER,
                 );
-            } catch (GeocodingFailureException $exc) {
+            } catch (GeocodingFailureWithLocationIndexException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locationsNew')->get($exc->getMessage())->get('roadName')->addError(
+                $form->get('locationsNew')->get($exc->getLocationIndex())->get('roadName')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),

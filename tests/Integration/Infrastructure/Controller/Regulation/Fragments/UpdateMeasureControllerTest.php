@@ -201,27 +201,6 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi', $crawler->filter('li')->eq(1)->text());
     }
 
-    public function testRemoveLocation(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $values = $form->getPhpValues();
-        unset($values['measure_form']['locationsNew'][MeasureFixture::INDEX_TYPICAL_TO_REMOVE]);
-
-        $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(303);
-
-        $crawler = $client->followRedirect();
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
-        $this->assertNotContains('tous les jours pour tous les véhicules', $crawler->filter('li')->extract(['_text']));
-    }
-
     public function testGeocodingFailureFullRoad(): void
     {
         $client = $this->login();

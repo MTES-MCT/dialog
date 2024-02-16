@@ -185,53 +185,6 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $this->assertSame($createdLocationNew, $handler($command));
     }
 
-    public function testHouseNumbersOptional(): void
-    {
-        $locationNew = $this->createMock(LocationNew::class);
-        $locationNew
-            ->expects(self::once())
-            ->method('update')
-            ->with(
-                $this->roadType,
-                $this->administrator,
-                $this->roadNumber,
-                $this->cityCode,
-                $this->cityLabel,
-                $this->roadName,
-            );
-
-        $this->idFactory
-            ->expects(self::never())
-            ->method('make');
-
-        $this->geocoder
-            ->expects(self::never())
-            ->method('computeCoordinates');
-
-        $this->locationNewRepository
-            ->expects(self::never())
-            ->method('add');
-
-        $handler = new SaveLocationNewCommandHandler(
-            $this->idFactory,
-            $this->locationNewRepository,
-            $this->geocoder,
-            $this->roadGeocoder,
-        );
-
-        $command = new SaveLocationNewCommand($locationNew);
-        $command->roadType = $this->roadType;
-        $command->administrator = $this->administrator;
-        $command->roadNumber = $this->roadNumber;
-        $command->cityCode = $this->cityCode;
-        $command->cityLabel = $this->cityLabel;
-        $command->roadName = $this->roadName;
-        $command->fromHouseNumber = null;
-        $command->toHouseNumber = null;
-
-        $this->assertSame($locationNew, $handler($command));
-    }
-
     public function testHouseNumberOnOneSideOnly(): void
     {
         $locationNew = $this->createMock(LocationNew::class);

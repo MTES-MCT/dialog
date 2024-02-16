@@ -457,7 +457,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;crs&quot;:{&quot;type&quot;:&quot;name&quot;,&quot;properties&quot;:{&quot;name&quot;:&quot;EPSG:2154&quot;}},&quot;coordinates&quot;:[[1.355,44.0163],[1.35419,44.01665]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.355,44.0163],[1.35419,44.01665]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -507,7 +507,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;crs&quot;:{&quot;type&quot;:&quot;name&quot;,&quot;properties&quot;:{&quot;name&quot;:&quot;EPSG:2154&quot;}},&quot;coordinates&quot;:[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -588,12 +588,12 @@
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Rue de l&#039;Hôtel de Ville</loc:roadName>
+                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;crs&quot;:{&quot;type&quot;:&quot;name&quot;,&quot;properties&quot;:{&quot;name&quot;:&quot;EPSG:2154&quot;}},&quot;coordinates&quot;:[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -679,7 +679,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{&quot;type&quot;:&quot;MultiLineString&quot;,&quot;crs&quot;:{&quot;type&quot;:&quot;name&quot;,&quot;properties&quot;:{&quot;name&quot;:&quot;EPSG:2154&quot;}},&quot;coordinates&quot;:[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"MultiLineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>

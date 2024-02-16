@@ -324,7 +324,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 [$this->equalTo($locationNewCommand2)],
                 [$this->equalTo(new DeleteLocationNewCommand($locationNew1))],
             )
-            ->willReturnOnConsecutiveCalls(null, null, $locationNew2);
+            ->willReturnOnConsecutiveCalls(null, null, $locationNew2, null);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,

@@ -56,7 +56,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locationsNew_0_roadNumber_error')->text());
     }
 
-    public function testCertainDaysWithoutApplicableDays(): void
+    public function testInvalidCertainDaysWithoutApplicableDays(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add?feature_road_type=true');
@@ -218,7 +218,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
-    public function testBlankCritairTypes(): void
+    public function testInvalidBlankCritairTypes(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');

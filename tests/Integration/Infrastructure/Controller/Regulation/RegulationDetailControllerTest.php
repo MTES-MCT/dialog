@@ -37,17 +37,23 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('GET', $editGeneralInfoForm->getMethod());
 
         // Measure 1
-        $this->assertSame('Vitesse limitée à 50 km/h', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('pour tous les véhicules', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
-        $this->assertSame('tous les jours', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text());
-        $this->assertSame('Route du Grand Brossais Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $measure1Header = $crawler->filter('[data-testid="measure"]')->eq(0);
+        $measure1Content = $crawler->filter('[data-testid="measure-content"]')->eq(0);
+
+        $this->assertSame('Vitesse limitée à 50 km/h', $measure1Header->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measure1Content->filter('li')->eq(0)->text());
+        $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
+        $this->assertSame('Route du Grand Brossais Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
 
         // Measure 2
-        $this->assertSame('Circulation interdite', $measures->eq(1)->filter('h3')->text());
-        $this->assertSame('pour tous les véhicules', $measures->eq(1)->filter('.app-card__content li')->eq(0)->text());
-        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measures->eq(1)->filter('.app-card__content li')->eq(1)->text());
-        $this->assertSame('Route du Lac Savenay (44260)', $measures->eq(1)->filter('.app-card__content li')->eq(3)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measures->eq(1)->filter('.app-card__content li')->eq(4)->text());
+        $measure2Header = $crawler->filter('[data-testid="measure"]')->eq(1);
+        $measure2Content = $crawler->filter('[data-testid="measure-content"]')->eq(1);
+
+        $this->assertSame('Circulation interdite', $measure2Header->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measure2Content->filter('li')->eq(0)->text());
+        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure2Content->filter('li')->eq(1)->text());
+        $this->assertSame('Route du Lac Savenay (44260)', $measure2Content->filter('li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measure2Content->filter('li')->eq(4)->text());
 
         $editLocationForm = $measures->eq(1)->selectButton('Modifier')->form();
         $this->assertSame(
