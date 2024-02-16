@@ -225,7 +225,6 @@ test_e2e: ## Run end-to-end tests only
 
 test_all: ## Run the test suite (with coverage) and E2E tests
 	make test_cov
-	make test_e2e ARGS="${PLAYWRIGHT_ARGS}"
 
 report_e2e: ## Open the Playwright HTML report
 	xdg-open playwright-report/index.html

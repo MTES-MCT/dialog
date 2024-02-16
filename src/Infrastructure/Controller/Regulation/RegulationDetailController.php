@@ -10,6 +10,7 @@ use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ final class RegulationDetailController extends AbstractRegulationController
         private \Twig\Environment $twig,
         protected QueryBusInterface $queryBus,
         private CanDeleteMeasures $canDeleteMeasures,
+        private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
     ) {
@@ -46,7 +48,7 @@ final class RegulationDetailController extends AbstractRegulationController
 
         $context = [
             'isDraft' => $generalInfo->isDraft(),
-            'canPublish' => \count($measures) >= 1,
+            'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
             'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
             'uuid' => $uuid,
             'generalInfo' => $generalInfo,
