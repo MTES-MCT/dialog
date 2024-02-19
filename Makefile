@@ -206,7 +206,6 @@ format: php_lint ## Format code
 
 test: ## Run the test suite
 	${BIN_PHP} ${OPTIONS} ./bin/phpunit ${ARGS}
-	#make test_e2e ARGS="${PLAYWRIGHT_ARGS}"
 
 test_cov: ## Run the test suite (with code coverage)
 	make test OPTIONS="-d xdebug.mode=coverage" ARGS="${ARGS} --coverage-html coverage --coverage-clover coverage.xml"
@@ -225,6 +224,7 @@ test_e2e: ## Run end-to-end tests only
 
 test_all: ## Run the test suite (with coverage) and E2E tests
 	make test_cov
+	make test_e2e ARGS="${PLAYWRIGHT_ARGS}"
 
 report_e2e: ## Open the Playwright HTML report
 	xdg-open playwright-report/index.html

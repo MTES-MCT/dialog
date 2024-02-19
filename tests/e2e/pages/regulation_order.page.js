@@ -46,7 +46,15 @@ export class RegulationOrderPage {
     getMeasureByTitle(title) {
         return this._measures.locator('> li').filter({
             has: this.page.getByRole('heading', { level: 3, name: title }),
-        });
+        }).nth(0);
+    }
+
+    /**
+     * @param {number} index
+     * @returns Locator
+     */
+    getMeasureByIndex(index) {
+        return this._measures.locator('> li').nth(index);
     }
 
     /**
@@ -68,7 +76,7 @@ export class RegulationOrderPage {
             await this.page.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
         }
 
-        await this.page.getByTestId(`allVehicles-${expectedIndex}-yes`).click();
+        await this.page.getByTestId(/allVehicles-\d+-yes/i).click();
 
         // Advanced vehicles options are not shown
         await expect(this.page.getByLabel('Types de véhicules concernés', { exact: true })).not.toBeVisible(); // Restricted
@@ -83,117 +91,44 @@ export class RegulationOrderPage {
         await this.saveBtn.click();
 
         this.addedMeasuresTitles.push(restrictionType);
-        return this.getMeasureByTitle(restrictionType);
+        return this.getMeasureByIndex(expectedIndex);
     }
 
     /**
-     * @param {{cityLabel: string, roadName: string, restrictionType: string, expectedTitle: string}} args
-     * @param {{doBegin: boolean}} options
-     *
-     * @returns Locator
+     * @param {Locator} measure
      */
-    async addLocation({ cityLabel, roadName, restrictionType, expectedTitle }, { doBegin } = { doBegin: true }) {
-        if (doBegin) {
-            await this.beginNewLocation();
-        }
+    async _beginEditMeasure(measure) {
+        await measure.getByRole('button', { name: 'Modifier' }).click();
+    }
 
-        await this.page.getByLabel('Ville ou commune').fill(cityLabel);
-        await this.page.getByRole('listbox', {name: 'Noms de communes suggérés'}).getByRole('option').first().click();
-        await this.page.getByRole('textbox', {name: 'Voie'}).fill(roadName);
-        await this.page.getByLabel('Type de restriction').selectOption({ label: restrictionType });
-        await this.page.getByTestId('allVehicles-0-yes').click();
+    /**
+     * @param {Locator} measure
+     */
+    async _endEditMeasure(measure) {
         await this.saveBtn.click();
-        this.addedLocationTitles.push(expectedTitle);
-        return this.getLocationByTitle(expectedTitle);
+        await this._waitForReadMode(measure);
     }
 
     /**
-     * @param {Locator} location
-     */
-    async _beginEditLocation(location) {
-        await location.getByRole('button', { name: 'Modifier' }).click();
-    }
-
-    /**
-     * @param {Locator} location
-     */
-    async _endEditLocation(location) {
-        await this.saveBtn.click();
-        await this._waitForReadMode(location);
-    }
-
-    /**
-     * @param {Locator} location
-     * @param {{expectedIndex: number, expectedPosition: number, restrictionType: string, isAlreadyEditing?: boolean, maxSpeed?: string}} options
-     */
-    async _doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed, isAlreadyEditing = false }) {
-        await location.getByRole('button', { name: 'Ajouter une restriction' }).click();
-
-        const measure = location.getByTestId('measure-list').getByRole('listitem').last();
-        expect(await measure.getByRole('heading', { level: 4 }).innerText()).toBe(`Restriction ${expectedPosition}`);
-
-        const restrictionTypeField = measure.getByRole('combobox', { name: 'Type de restriction' });
-        expect(await restrictionTypeField.getAttribute('name')).toBe(`location_form[measures][${expectedIndex}][type]`);
-        await restrictionTypeField.selectOption({ label: restrictionType });
-
-        if (maxSpeed) {
-            await measure.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
-        }
-
-        await this.page.getByTestId(`allVehicles-${expectedIndex}-yes`).click();
-
-        // Advanced vehicles options are not shown
-        await expect(measure.getByLabel('Types de véhicules concernés', { exact: true })).not.toBeVisible(); // Restricted
-        await expect(measure.getByLabel('Indiquez les exceptions à la restriction', { exact: true })).not.toBeVisible(); // Exempted
-    }
-
-    /**
-     * @param {Locator} location
-     * @param {{ expectedIndex: number, expectedPosition: number, restrictionType: string, maxSpeed?: string }} options
-     */
-    async addMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed }) {
-        await this._beginEditLocation(location);
-        await this._doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed });
-        await this.saveBtn.click();
-        await this._waitForReadMode(location);
-    }
-
-    /**
-     * @param {Locator} location
-    * @param {{ indexToRemove: number, expectedIndex: number, expectedPosition: number, restrictionType: string, maxSpeed?: string }} options
-     */
-    async removeMeasureAndAddAnotherOne(location, { indexToRemove, expectedIndex, expectedPosition, restrictionType, maxSpeed }) {
-        await this._beginEditLocation(location);
-        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(indexToRemove);
-        await measure.getByRole('button', { name: 'Supprimer' }).click();
-        await this._doAddMinimalMeasureToLocation(location, { expectedIndex, expectedPosition, restrictionType, maxSpeed });
-        await this._endEditLocation(location);
-    }
-
-    /**
-     * @param {Locator} location
+     * @param {Locator} measure
      * @param {{
-     *   measureIndex: number,
      *   restrictedVehicleTypes: string[],
      *   otherRestrictedVehicleType: string,
      *   exemptedVehicleTypes: string[],
      *   otherExemptedVehicleType: string,
      * }} options
      */
-    async setVehiclesOnMeasureAndAssertChangesWereSaved(location, {
-        measureIndex,
+    async setVehiclesOnMeasureAndAssertChangesWereSaved(measure, {
         restrictedVehicleTypes,
         otherRestrictedVehicleType,
         exemptedVehicleTypes,
         otherExemptedVehicleType,
     }) {
-        await this._beginEditLocation(location);
-
-        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
+        await this._beginEditMeasure(measure);
 
         // Define restricted vehicles
         const restrictedVehiclesFieldset = measure.getByRole('radiogroup', { name: 'Véhicules concernés' });
-        await restrictedVehiclesFieldset.getByTestId(`allVehicles-${measureIndex}-no`).click();
+        await restrictedVehiclesFieldset.getByTestId(/allVehicles-\d+-no/g).click();
         for (const vehicleType of restrictedVehicleTypes) {
             await restrictedVehiclesFieldset.getByLabel('Types de véhicules concernés').getByLabel(vehicleType, { exact: true }).click();
         }
@@ -223,10 +158,10 @@ export class RegulationOrderPage {
         await exemptedVehiclesFieldset.getByLabel('Autres', { exact: true }).click();
         await otherExemptedVehicleTypeField.fill(otherExemptedVehicleType);
 
-        await this._endEditLocation(location);
+        await this._endEditMeasure(measure);
 
         // Check changes were saved by inspecting the edit view
-        await this._beginEditLocation(location);
+        await this._beginEditMeasure(measure);
         for (const vehicleType of restrictedVehicleTypes) {
             expect(await restrictedVehiclesFieldset.getByLabel('Types de véhicules concernés').getByText(vehicleType, { exact: true }).getAttribute('aria-pressed')).toBe('true');
         }
@@ -246,17 +181,16 @@ export class RegulationOrderPage {
         }
         expect(await exemptedVehiclesFieldset.getByLabel('Autres', { exact: true }).getAttribute('aria-pressed')).toBe('true');
         await expect(exemptedVehiclesFieldset.getByRole('textbox', { name: 'Autres' })).toHaveValue(otherExemptedVehicleType);
-        await this.cancelLocation(location);
+        await this.cancelMeasure(measure);
     }
 
     /**
-     * @param {Locator} location
-     * @param {{ measureIndex: number, days: string[], startDate: string, startTime: string[], endDate: string, endTime: string[], dayOption: string }} options
+     * @param {Locator} measure
+     * @param {{ days: string[], startDate: string, startTime: string[], endDate: string, endTime: string[], dayOption: string }} options
      */
-    async addPeriodToMeasure(location, { measureIndex, days, startDate, startTime, endDate, endTime, dayOption }) {
-        await this._beginEditLocation(location);
+    async addPeriodToMeasure(measure, { days, startDate, startTime, endDate, endTime, dayOption }) {
+        await this._beginEditMeasure(measure);
 
-        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
         await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
         await this.page.getByLabel('Quels jours sont concernés ?').selectOption({ label: dayOption });
@@ -277,32 +211,29 @@ export class RegulationOrderPage {
             }
         }
 
-        await this._endEditLocation(location);
+        await this._endEditMeasure(measure);
     }
 
     /**
-     * @param {Locator} location
-     * @param {{ measureIndex: number, periodIndex: number}} options
+     * @param {Locator} measure
+     * @param {{ periodIndex: number}} options
      */
-    async removePeriodFromMeasure(location, { measureIndex, periodIndex }) {
-        await this._beginEditLocation(location);
+    async removePeriodFromMeasure(measure, { periodIndex }) {
+        await this._beginEditMeasure(measure);
 
-        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(periodIndex);
 
         await period.getByRole('button', { name: 'Supprimer' }).click();
 
-        await this._endEditLocation(location);
+        await this._endEditMeasure(measure);
     }
 
     /**
-     * @param {Locator} location
-     * @param {{ measureIndex: number }} options
+     * @param {Locator} measure
      */
-    async manipulateTimeSlots(location, { measureIndex }) {
-        await this._beginEditLocation(location);
+    async manipulateTimeSlots(measure) {
+        await this._beginEditMeasure(measure);
 
-        const measure = location.getByTestId('measure-list').getByRole('listitem').nth(measureIndex);
         await measure.getByRole('button', { name: 'Ajouter une plage' }).click();
 
         const period = measure.getByTestId('period-list').getByRole('listitem').nth(0);
@@ -320,21 +251,21 @@ export class RegulationOrderPage {
         await expect(timeSlots).toHaveCount(0);
         await expect(addTimeSlotBtn).toBeVisible();
 
-        await this.cancelLocation(location);
+        await this.cancelMeasure(measure);
     }
 
     /**
-     * @param {Locator} location
+     * @param {Locator} measure
      */
-    async _waitForReadMode(location) {
-        await location.getByRole('button', { name: 'Modifier' }).waitFor();
+    async _waitForReadMode(measure) {
+        await measure.getByRole('button', { name: 'Modifier' }).waitFor();
     }
 
     async reset() {
         for (const title of this.addedMeasuresTitles) {
-            const location = this.getMeasureByTitle(title);
-            await this._waitForReadMode(location);
-            await location.getByRole('button', { name: 'Supprimer' }).click();
+            const measure = this.getMeasureByTitle(title);
+            await this._waitForReadMode(measure);
+            await measure.getByRole('button', { name: 'Supprimer' }).click();
             await this.page.getByRole('dialog', { name: 'Supprimer cette mesure ?' }).getByRole('button', { name: 'Supprimer', exact: true }).click();
         }
     }

@@ -378,9 +378,7 @@
                             class="fr-mb-4w"
                         >
                             <ul
-                                id="location-list"
                                 class="fr-raw-list fr-mb-2w"
-                                data-testid="location-list"
                                 data-form-collection-target="collectionContainer"
                                 data-action="remove:child-removed->form-collection#syncPositions"
                                 aria-label="{{ form.locationsNew.vars.label|trans }}"
@@ -396,7 +394,6 @@
                                 type="button"
                                 class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-map-pin-2-line"
                                 data-action="form-collection#addCollectionElement"
-                                aria-controls="measure-list"
                             >
                                 {{ 'regulation.location.add'|trans }}
                             </button>
