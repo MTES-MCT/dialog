@@ -81,9 +81,6 @@ final class LocationFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.isEntireStreet',
                     'required' => false,
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
