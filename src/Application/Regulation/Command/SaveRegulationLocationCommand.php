@@ -17,6 +17,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
+    public ?bool $isEntireStreet = null;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
     public ?string $geometry;
@@ -38,6 +39,7 @@ final class SaveRegulationLocationCommand implements CommandInterface
         $command->roadType = $location?->getRoadType();
         $command->administrator = $location?->getAdministrator();
         $command->roadNumber = $location?->getRoadNumber();
+        $command->isEntireStreet = $location ? $location->getIsEntireStreet() : true;
         $command->cityCode = $location?->getCityCode();
         $command->cityLabel = $location?->getCityLabel();
         $command->roadName = $location?->getRoadName();
@@ -68,6 +70,11 @@ final class SaveRegulationLocationCommand implements CommandInterface
         if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
+        }
+
+        if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreet) {
+            $this->fromHouseNumber = null;
+            $this->toHouseNumber = null;
         }
     }
 }

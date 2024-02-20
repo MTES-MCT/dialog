@@ -116,7 +116,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $organizationCommand = new CreateOrganizationCommand();
         $organizationCommand->siret = $this->siret;
-        $organizationCommand->name = 'La Courneuve';
+        $organizationCommand->name = 'Mairie de La Courneuve';
 
         $record = [
             'ARR_REF' => 'arr_1',

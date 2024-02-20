@@ -251,8 +251,13 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $form['location_form[cityCode]'] = '44195';
         $form['location_form[cityLabel]'] = 'Savenay (44260)';
         $form['location_form[roadName]'] = 'Route du GEOCODING_FAILURE';
+        unset($form['location_form[isEntireStreet]']);
         $form['location_form[fromHouseNumber]'] = '15';
         $form['location_form[toHouseNumber]'] = '37bis';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#location_form_error')->text());
     }
 
     public function testGeocodingFailureFullRoad(): void
@@ -266,6 +271,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $form['location_form[cityCode]'] = '59368';
         $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
         $form['location_form[roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['location_form[isEntireStreet]'] = '1';
         $form['location_form[fromHouseNumber]'] = '';
         $form['location_form[toHouseNumber]'] = '';
 
@@ -285,8 +291,7 @@ final class UpdateLocationControllerTest extends AbstractWebTestCase
         $form['location_form[cityCode]'] = '59368';
         $form['location_form[cityLabel]'] = 'La Madeleine (59110)';
         $form['location_form[roadName]'] = 'Rue Saint-Victor';
-        $form['location_form[fromHouseNumber]'] = '';
-        $form['location_form[toHouseNumber]'] = '';
+        $form['location_form[isEntireStreet]'] = '1';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
