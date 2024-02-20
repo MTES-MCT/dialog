@@ -129,7 +129,7 @@ data/communes.json:
 data_bac_idf_import: # Import BAC-IDF decrees as regulation orders
 	make console CMD="app:bac_idf:import ${ARGS}"
 
-data/decrees.json: ## Create BAC-IDF decrees file
+data/bac_idf/decrees.json: ## Create BAC-IDF decrees file
 	./tools/bacidfinstall
 
 ##

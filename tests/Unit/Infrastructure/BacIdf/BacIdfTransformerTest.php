@@ -23,6 +23,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
+use App\Infrastructure\BacIdf\BacIdfCityProcessorInterface;
 use App\Infrastructure\BacIdf\BacIdfTransformer;
 use App\Infrastructure\BacIdf\BacIdfTransformerResult;
 use PHPUnit\Framework\TestCase;
@@ -31,12 +32,18 @@ final class BacIdfTransformerTest extends TestCase
 {
     private $queryBus;
     private $organization;
-    private $siret = '93027';
+    private $cityProcessor;
+    private $cityCode = '93027';
+    private $siret = '21930027400012';
 
     protected function setUp(): void
     {
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
+        $this->cityProcessor = $this->createMock(BacIdfCityProcessorInterface::class);
+        $this->cityProcessor
+            ->method('getSiretFromInseeCode')
+            ->willReturn($this->siret);
     }
 
     public function testTransform(): void
@@ -68,7 +75,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveRegulationLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = $this->siret;
+        $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Passage Pierre Curie';
         $locationCommand->fromHouseNumber = null;
@@ -94,7 +101,7 @@ final class BacIdfTransformerTest extends TestCase
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer($this->queryBus);
+        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
 
         $this->assertEquals($result, $transformer->transform($record));
     }
@@ -115,7 +122,7 @@ final class BacIdfTransformerTest extends TestCase
             'ARR_REF' => 'arr_1',
             'ARR_NOM' => 'nom_1',
             'ARR_COMMUNE' => [
-                'ARR_INSEE' => $this->siret,
+                'ARR_INSEE' => $this->cityCode,
                 'ARR_VILLE' => 'La Courneuve',
                 'ARR_CODE_POSTAL' => '93120',
             ],
@@ -169,7 +176,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveRegulationLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = '93027';
+        $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Ruelle du Pressin';
         $locationCommand->fromHouseNumber = null;
@@ -193,7 +200,7 @@ final class BacIdfTransformerTest extends TestCase
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], null, $organizationCommand);
 
-        $transformer = new BacIdfTransformer($this->queryBus);
+        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
 
         $this->assertEquals($result, $transformer->transform($record));
     }
@@ -490,7 +497,7 @@ final class BacIdfTransformerTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
-        $transformer = new BacIdfTransformer($this->queryBus);
+        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
 
         $result = $transformer->transform($record);
 
@@ -551,7 +558,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveRegulationLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = '93027';
+        $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
         $locationCommand->roadName = 'Ruelle du Pressin';
         $locationCommand->fromHouseNumber = null;
@@ -576,7 +583,7 @@ final class BacIdfTransformerTest extends TestCase
             'ARR_REF' => 'arr_1',
             'ARR_NOM' => 'nom_1',
             'ARR_COMMUNE' => [
-                'ARR_INSEE' => '93027',
+                'ARR_INSEE' => $this->cityCode,
                 'ARR_VILLE' => 'La Courneuve',
                 'ARR_CODE_POSTAL' => '93120',
             ],
@@ -595,7 +602,7 @@ final class BacIdfTransformerTest extends TestCase
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer($this->queryBus);
+        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
 
         $this->assertEquals($result, $transformer->transform($record));
     }

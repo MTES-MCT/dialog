@@ -4,7 +4,7 @@
 
 ### Préparation
 
-* Récupérer le [fichier `decrees.json` sur le kDrive](https://kdrive.infomaniak.com/app/drive/184671/files/26737) puis le placer dans `data/decrees.json`.
+* Récupérer le [fichier `decrees.json` sur le kDrive](https://kdrive.infomaniak.com/app/drive/184671/files/26737) puis le placer dans `data/bac_idf/decrees.json`.
 
 ### Exécution
 

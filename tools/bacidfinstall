@@ -13,4 +13,4 @@ docker-compose -f docker-compose-bac-idf.yml rm -f mongo
 
 # Convert decrees.jsonl to decrees.json containing array
 # Credit: https://stackoverflow.com/a/60641566
-cat docker/bac_idf/data/decrees.jsonl | awk 'BEGIN {print "[";} NF==0{next;} n=="" {print;n++;next;} {print ","; print;} END {print "]"}' > data/decrees.json
+cat docker/bac_idf/data/decrees.jsonl | awk 'BEGIN {print "[";} NF==0{next;} n=="" {print;n++;next;} {print ","; print;} END {print "]"}' > data/bac_idf/decrees.json

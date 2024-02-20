@@ -27,6 +27,7 @@ final class BacIdfTransformer
 {
     public function __construct(
         private QueryBusInterface $queryBus,
+        private BacIdfCityProcessorInterface $cityProcessor,
     ) {
     }
 
@@ -134,7 +135,19 @@ final class BacIdfTransformer
             return new BacIdfTransformerResult(null, $errors);
         }
 
-        $siret = $row['ARR_COMMUNE']['ARR_INSEE'];
+        $inseeCode = $row['ARR_COMMUNE']['ARR_INSEE'];
+        $siret = $this->cityProcessor->getSiretFromInseeCode($inseeCode);
+
+        if (!$siret) {
+            $errors[] = [
+                'loc' => $loc,
+                'reason' => 'no_siret_found',
+                'insee_code' => $inseeCode,
+                'impact' => 'skip_regulation',
+            ];
+
+            return new BacIdfTransformerResult(null, $errors);
+        }
 
         $organization = null;
         $organizationCommand = null;
