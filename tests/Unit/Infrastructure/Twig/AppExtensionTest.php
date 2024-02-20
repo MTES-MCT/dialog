@@ -34,7 +34,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(7, $this->extension->getFunctions());
+        $this->assertCount(8, $this->extension->getFunctions());
     }
 
     public function testFormatDateTimeDateOnly(): void
@@ -67,6 +67,30 @@ class AppExtensionTest extends TestCase
     public function testFormatTime(): void
     {
         $this->assertSame('18h00', $this->extension->formatTime(new \DateTimeImmutable('2023-01-06 17:00')));
+    }
+
+    private function provideFormatNumber(): array
+    {
+        return [
+            [[12], '12'],
+            [[12.0], '12'],
+            [[12, 0], '12'],
+            [[12.0, 0], '12'],
+            [[12, 1], '12,0'],
+            [[12.0, 1], '12,0'],
+            [[12.1, 0], '12'],
+            [[12.1, 1], '12,1'],
+            [[1000], '1 000'],
+            [[1000.45, 3], '1 000,450'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideFormatNumber
+     */
+    public function testFormatNumber(array $args, $expected): void
+    {
+        $this->assertSame($expected, $this->extension->formatNumber(...$args));
     }
 
     private function provideIsPast(): array
