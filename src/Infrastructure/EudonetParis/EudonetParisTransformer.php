@@ -239,6 +239,7 @@ final class EudonetParisTransformer
                 'loc' => $loc,
                 'reason' => 'geocoding_failure',
                 'message' => $exc->getMessage(),
+                'index' => $exc->getLocationIndex(),
                 'location_raw' => json_encode($row),
             ];
 

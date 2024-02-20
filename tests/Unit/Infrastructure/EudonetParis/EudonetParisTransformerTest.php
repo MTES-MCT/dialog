@@ -679,6 +679,7 @@ final class EudonetParisTransformerTest extends TestCase
                         'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                         'reason' => 'geocoding_failure',
                         'message' => 'Could not geocode',
+                        'index' => 2,
                         'impact' => 'skip_location',
                         'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"Rue Eug\u00e8ne Berthoud","2730":null,"2740":null,"2720":"13","2737":"19"}}',
                     ],
@@ -696,7 +697,7 @@ final class EudonetParisTransformerTest extends TestCase
         $this->geocoder
             ->expects(self::once())
             ->method('computeCoordinates')
-            ->willThrowException(new GeocodingFailureException('Could not geocode'));
+            ->willThrowException(new GeocodingFailureException('Could not geocode', locationIndex: 2));
 
         $transformer = new EudonetParisTransformer($this->geocoder);
 

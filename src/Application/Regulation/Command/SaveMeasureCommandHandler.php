@@ -7,7 +7,6 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Exception\GeocodingFailureException;
-use App\Application\Exception\GeocodingFailureWithLocationIndexException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationNewCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -73,7 +72,7 @@ final class SaveMeasureCommandHandler
                     $locationNew = $this->commandBus->handle($locationNewCommand);
                     $locationsNewStillPresentUuids[] = $locationNew->getUuid();
                 } catch (GeocodingFailureException $e) {
-                    throw new GeocodingFailureWithLocationIndexException($index, sprintf('Location %d geocoding failed', $index), $e);
+                    throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
                 }
             }
 
@@ -117,7 +116,7 @@ final class SaveMeasureCommandHandler
                 $locationNew = $this->commandBus->handle($locationNewCommand);
                 $measure->addLocationNew($locationNew);
             } catch (GeocodingFailureException $e) {
-                throw new GeocodingFailureWithLocationIndexException($index, sprintf('Location %d geocoding failed', $index), $e);
+                throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
             }
         }
 
