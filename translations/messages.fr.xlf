@@ -102,10 +102,6 @@
                 <source>common.breadcrumb.see</source>
                 <target>Voir le fil d'Ariane</target>
             </trans-unit>
-            <trans-unit id="common.legals">
-                <source>common.legals</source>
-                <target>Mentions légales</target>
-            </trans-unit>
             <trans-unit id="common.save">
                 <source>common.save</source>
                 <target>Sauvegarder</target>
@@ -217,6 +213,14 @@
             <trans-unit id="ecodesign_statement.breadcrumb">
                 <source>ecodesign_statement.breadcrumb</source>
                 <target>Déclaration d'écoconception</target>
+            </trans-unit>
+            <trans-unit id="legal.title">
+                <source>legal.title</source>
+                <target>Mentions légales</target>
+            </trans-unit>
+            <trans-unit id="source_code.title">
+                <source>source_code.title</source>
+                <target>Code source</target>
             </trans-unit>
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>

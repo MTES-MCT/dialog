@@ -295,7 +295,7 @@ final class SaveVehicleSetCommandHandlerTest extends TestCase
         $command->otherRestrictedTypeText = 'Matières dangereuses';
         $command->exemptedTypes = ['commercial'];
         $command->otherExemptedTypeText = null;
-        $command->critairTypes = [CritairEnum::CRITAIR_2];
+        $command->critairTypes = [CritairEnum::CRITAIR_2->value];
 
         $result = $handler($command);
 

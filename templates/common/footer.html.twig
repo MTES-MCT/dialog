@@ -34,13 +34,16 @@
                     <a href="{{ path('app_ecodesign_statement') }}" class="fr-footer__bottom-link">{{ 'ecodesign_statement.link'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="#">{{ 'common.legals'|trans }}</a>
+                    <a class="fr-footer__bottom-link" href="{{ path('app_legal') }}">{{ 'legal.title'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
                     <a class="fr-footer__bottom-link" href="#">{{ 'common.privacy'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
                     <a class="fr-footer__bottom-link" href="{{ path('app_stats') }}">{{ 'statistics.title'|trans }}</a>
+                </li>
+                <li class="fr-footer__bottom-item">
+                    <a class="fr-footer__bottom-link" href="https://github.com/MTES-MCT/dialog" target="_blank" rel="noreferrer">{{ 'source_code.title'|trans }}</a>
                 </li>
             </ul>
             <div class="fr-footer__bottom-copy">

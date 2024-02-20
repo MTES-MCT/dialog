@@ -25,6 +25,8 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     {
         return [
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
+            new \Twig\TwigFunction('app_time', [$this, 'formatTime']),
+            new \Twig\TwigFunction('app_number', [$this, 'formatNumber']),
             new \Twig\TwigFunction('app_is_client_past_day', [$this, 'isClientPastDay']),
             new \Twig\TwigFunction('app_is_client_future_day', [$this, 'isClientFutureDay']),
             new \Twig\TwigFunction('app_vehicle_type_icon_name', [$this, 'getVehicleTypeIconName']),
@@ -36,18 +38,40 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     /**
      * Format a $date with an optional $time
      */
-    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface $time = null): string
+    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface|bool $time = null): string
     {
         $dateTime = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
         $format = 'd/m/Y';
 
         if ($time) {
-            $time = \DateTimeImmutable::createFromInterface($time)->setTimezone($this->clientTimezone);
+            $time = \DateTimeImmutable::createFromInterface($time === true ? $date : $time)->setTimezone($this->clientTimezone);
             $dateTime = $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
             $format = 'd/m/Y à H\hi';
         }
 
         return $dateTime->format($format);
+    }
+
+    public function formatTime(\DateTimeInterface $time): string
+    {
+        return \DateTimeImmutable::createFromInterface($time)->setTimeZone($this->clientTimezone)->format('H\hi');
+    }
+
+    public function formatNumber(float $value, int $decimals = null): string
+    {
+        if ($decimals === null) {
+            if (filter_var($value, FILTER_VALIDATE_INT)) {
+                // It's an int
+                $decimals = 0;
+            } else {
+                // Detect number of decimals
+                // Source: https://stackoverflow.com/a/2430214
+                $strValue = (string) $value;
+                $decimals = \strlen($strValue) - strpos($strValue, '.') - 1;
+            }
+        }
+
+        return number_format($value, $decimals, ',', ' ');
     }
 
     public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
