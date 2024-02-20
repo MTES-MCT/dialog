@@ -157,7 +157,7 @@ final class BacIdfTransformer
         } catch (OrganizationNotFoundException) {
             $organizationCommand = new CreateOrganizationCommand();
             $organizationCommand->siret = $siret;
-            $organizationCommand->name = $row['ARR_COMMUNE']['ARR_VILLE'];
+            $organizationCommand->name = sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
         }
 
         $command = new ImportBacIdfRegulationCommand($generalInfo, $locationCommands);
