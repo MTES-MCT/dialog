@@ -56,7 +56,7 @@ final class UpdateMeasureController extends AbstractRegulationController
             throw new NotFoundHttpException();
         }
 
-        $command = new SaveMeasureCommand($regulationOrderRecord->getRegulationOrder(), $measure);
+        $command = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder(), $measure);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
 
         $form = $this->formFactory->create(

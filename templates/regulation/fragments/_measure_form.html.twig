@@ -259,8 +259,8 @@
                     ></ul>
                 </div>
                 <div class="fr-container--fluid">
-                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
-                        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                    <div class="fr-grid-row fr-grid-row--gutters fr-mb-md-0">
+                        {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3 fr-mb-0'}}) }}
                         {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
                     </div>
                 </div>
@@ -281,7 +281,7 @@
             {{ form_start(form, {attr: {id: 'measure-form'}}) }}
                 <div class="app-card">
                     <div class="app-card__header">
-                        <span class="app-card__img fr-icon-x-restriction fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+                        <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
                         <h3 class="app-card__title fr-h4 fr-mb-0">
                             {% if measure %}
                                 {% if measure.type == 'speedLimitation' %}
@@ -296,6 +296,7 @@
                     </div>
                     <div class="app-card__content">
                         {{ form_errors(form) }}
+
                         <div data-controller="form-reveal">
                             {{ form_row(form.type, {
                                 group_class: 'fr-select-group',
@@ -364,10 +365,15 @@
                 </div>
                 <div class="app-card fr-mt-3w">
                     <div class="app-card__header">
-                        <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-                        <h3 class="app-card__title fr-h4 fr-mb-0">
-                            {{ 'regulation.location'|trans }}
-                        </h3>
+                        <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
+                        <div class="app-card__title">
+                            <h3 class="fr-h4 fr-mb-0">
+                                {{ 'regulation.locations'|trans }}
+                            </h3>
+                            <p class="fr-x-text--mention-grey fr-mb-0">
+                                {{ 'regulation.locations.description'|trans }}
+                            </p>
+                        </div>
                     </div>
                     <div class="app-card__content">
                         <div
@@ -378,7 +384,8 @@
                             class="fr-mb-4w"
                         >
                             <ul
-                                class="fr-raw-list fr-mb-2w"
+                                class="fr-raw-list fr-mb-2w d-stack"
+                                style="--stack-gap: var(--2w)"
                                 data-form-collection-target="collectionContainer"
                                 data-action="remove:child-removed->form-collection#syncPositions"
                                 aria-label="{{ form.locationsNew.vars.label|trans }}"

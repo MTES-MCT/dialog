@@ -333,7 +333,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             $this->dateUtils,
         );
 
-        $command = new SaveMeasureCommand($regulationOrder, $measure);
+        $command = SaveMeasureCommand::create($regulationOrder, $measure);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->vehicleSet = null; // Removes vehicle set
         $command->periods = [$periodCommand1]; // Removes period2.

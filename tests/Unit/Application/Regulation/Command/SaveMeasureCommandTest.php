@@ -18,17 +18,19 @@ use PHPUnit\Framework\TestCase;
 
 final class SaveMeasureCommandTest extends TestCase
 {
-    public function testWithoutMeasure(): void
+    public function testCreateWithoutMeasure(): void
     {
-        $command = new SaveMeasureCommand();
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $command = SaveMeasureCommand::create($regulationOrder);
 
         $this->assertEmpty($command->measure);
         $this->assertEmpty($command->type);
-        $this->assertEmpty($command->regulationOrder);
+        $this->assertSame($regulationOrder, $command->regulationOrder);
+        $this->assertEquals([new SaveLocationNewCommand()], $command->locationsNew);
         $this->assertEmpty($command->periods);
     }
 
-    public function testWithMeasure(): void
+    public function testCreateWithMeasure(): void
     {
         $location1 = $this->createMock(LocationNew::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
@@ -61,7 +63,7 @@ final class SaveMeasureCommandTest extends TestCase
             ->method('getCreatedAt')
             ->willReturn($createdAt);
 
-        $command = new SaveMeasureCommand($regulationOrder, $measure);
+        $command = SaveMeasureCommand::create($regulationOrder, $measure);
 
         $this->assertSame($measure, $command->measure);
         $this->assertSame(MeasureTypeEnum::ALTERNATE_ROAD->value, $command->type);

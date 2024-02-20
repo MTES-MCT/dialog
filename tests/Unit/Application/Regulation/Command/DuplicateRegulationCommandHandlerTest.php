@@ -297,8 +297,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2->geometry = null;
         $locationCommand2->measure = $measure1;
 
-        $measureCommand1 = new SaveMeasureCommand();
-        $measureCommand1->regulationOrder = $duplicatedRegulationOrder;
+        $measureCommand1 = new SaveMeasureCommand($duplicatedRegulationOrder);
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand1->createdAt = $startDate;
         $measureCommand1->periods = [
@@ -310,8 +309,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         ];
         $measureCommand1->vehicleSet = $vehicleSetCommand;
 
-        $measureCommand2 = new SaveMeasureCommand();
-        $measureCommand2->regulationOrder = $duplicatedRegulationOrder;
+        $measureCommand2 = new SaveMeasureCommand($duplicatedRegulationOrder);
         $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $measureCommand2->createdAt = $startDate;
 

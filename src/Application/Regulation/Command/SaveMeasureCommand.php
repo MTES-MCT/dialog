@@ -25,24 +25,36 @@ final class SaveMeasureCommand implements CommandInterface
         public ?RegulationOrder $regulationOrder = null,
         public readonly ?Measure $measure = null,
     ) {
-        $this->type = $measure?->getType();
-        $this->createdAt = $measure?->getCreatedAt();
-        $this->maxSpeed = $measure?->getMaxSpeed();
+    }
+
+    public static function create(
+        ?RegulationOrder $regulationOrder,
+        Measure $measure = null,
+    ): self {
+        $command = new self($regulationOrder, $measure);
+
+        $command->type = $measure?->getType();
+        $command->createdAt = $measure?->getCreatedAt();
+        $command->maxSpeed = $measure?->getMaxSpeed();
 
         if ($measure) {
             $vehicleSet = $measure->getVehicleSet();
 
             if ($vehicleSet) {
-                $this->vehicleSet = new SaveVehicleSetCommand($vehicleSet);
+                $command->vehicleSet = new SaveVehicleSetCommand($vehicleSet);
             }
 
             foreach ($measure->getLocationsNew() as $locationNew) {
-                $this->locationsNew[] = new SaveLocationNewCommand($locationNew);
+                $command->locationsNew[] = new SaveLocationNewCommand($locationNew);
             }
 
             foreach ($measure->getPeriods() as $period) {
-                $this->periods[] = new SavePeriodCommand($period);
+                $command->periods[] = new SavePeriodCommand($period);
             }
+        } else {
+            $command->locationsNew[] = new SaveLocationNewCommand();
         }
+
+        return $command;
     }
 }

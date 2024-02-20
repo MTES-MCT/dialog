@@ -519,6 +519,10 @@
                 <source>regulation.locations</source>
                 <target>Localisations</target>
             </trans-unit>
+            <trans-unit id="regulation.locations.description">
+                <source>regulation.locations.description</source>
+                <target>Où est prévue la perturbation ?</target>
+            </trans-unit>
             <trans-unit id="regulation.measures">
                 <source>regulation.measures</source>
                 <target>Dispositif</target>

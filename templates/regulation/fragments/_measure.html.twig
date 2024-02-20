@@ -2,9 +2,9 @@
 {% set deleteCsrfToken = csrf_token('delete-measure') %}
 
 <turbo-frame id="block_measure_{{ uuid }}">
-    <div class="app-card app-card--with-head-background fr-mt-3w" data-testid="measure">
+    <div class="app-card app-card--raised app-card--with-head-background fr-mt-3w" data-testid="measure">
         <div class="app-card__header">
-            <span class="app-card__img fr-icon-x-restriction fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+            <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
                 {% if measure.type == 'speedLimitation' %}
                     {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
@@ -13,17 +13,21 @@
                 {% endif %}
             </h3>
         </div>
-        <div class="app-card__content" data-testid="measure-content">
+        <div
+            class="app-card__content"
+            style="--card-content-margin-desktop: var(--6w)"
+            data-testid="measure-content"
+        >
             <div class="fr-ml-1w fr-my-0 fr-list" data-testid="measure-detail-items">
                 <ul class="fr-raw-list">
                     <li class="fr-mb-2w">
-                        <span class="app-card__img fr-icon-car-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
+                        <span class="app-card__img fr-icon-car-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
                         {% include 'regulation/_vehicle_set.html.twig' with {
                             vehicleSet: measure.vehicleSet,
                         } only %}
                     </li>
                     <li class="fr-mb-2w">
-                        <span class="app-card__img fr-icon-calendar-2-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
+                        <span class="app-card__img fr-icon-calendar-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
                         {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
                     </li>
                     <li>
@@ -33,7 +37,7 @@
                 <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
                     {% for location in measure.locations %}
                         <li>
-                            <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon-decorative--blue-france fr-pr-1w" aria-hidden="true"></span>
+                            <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
                             {% if location.roadType == 'lane' %}
                                 {{ location.roadName }}
                                 {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}

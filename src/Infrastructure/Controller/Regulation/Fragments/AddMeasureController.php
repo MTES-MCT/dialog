@@ -50,7 +50,7 @@ final class AddMeasureController extends AbstractRegulationController
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
-        $command = new SaveMeasureCommand($regulationOrder);
+        $command = SaveMeasureCommand::create($regulationOrder);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
 
         $form = $this->formFactory->create(MeasureFormType::class, $command, [

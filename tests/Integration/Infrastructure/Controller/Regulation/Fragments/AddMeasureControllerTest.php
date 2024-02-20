@@ -24,6 +24,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
+        $values['measure_form']['locationsNew'] = []; // Remove the default empty location form
+
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
