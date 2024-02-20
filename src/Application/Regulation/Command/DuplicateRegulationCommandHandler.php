@@ -64,6 +64,7 @@ final class DuplicateRegulationCommandHandler
             $locationCommand->cityCode = $location->getCityCode();
             $locationCommand->cityLabel = $location->getCityLabel();
             $locationCommand->roadName = $location->getRoadNAme();
+            $locationCommand->isEntireStreet = $location->getIsEntireStreet();
             $locationCommand->fromHouseNumber = $location->getFromHouseNumber();
             $locationCommand->toHouseNumber = $location->getToHouseNumber();
             $locationCommand->geometry = $location->getGeometry();
