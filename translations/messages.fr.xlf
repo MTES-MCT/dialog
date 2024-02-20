@@ -418,6 +418,10 @@
                 <source>regulation.location.roadNumber</source>
                 <target>Numéro de la départementale</target>
             </trans-unit>
+            <trans-unit id="regulation.location.isEntireStreet">
+                <source>regulation.location.isEntireStreet</source>
+                <target>Voie entière</target>
+            </trans-unit>
             <trans-unit id="regulation.location.city">
                 <source>regulation.location.city</source>
                 <target>Ville ou commune</target>
@@ -437,6 +441,10 @@
             <trans-unit id="regulation.location.roadName.results_label">
                 <source>regulation.location.roadName.results_label</source>
                 <target>Noms de voies suggérés</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.houseNumbers.legend">
+                <source>regulation.location.houseNumbers.legend</source>
+                <target>Numéros</target>
             </trans-unit>
             <trans-unit id="regulation.location.from_house_number">
                 <source>regulation.location.from_house_number</source>

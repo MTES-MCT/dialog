@@ -7,6 +7,7 @@ namespace App\Infrastructure\Form\Regulation;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -70,6 +71,14 @@ final class LocationNewFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.roadName',
                     'help' => 'regulation.location.roadName.help',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'isEntireStreet',
+                CheckboxType::class,
+                options: [
+                    'label' => 'regulation.location.isEntireStreet',
                     'required' => false,
                 ],
             )

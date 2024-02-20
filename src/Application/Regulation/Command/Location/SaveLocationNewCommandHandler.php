@@ -23,6 +23,8 @@ final class SaveLocationNewCommandHandler
 
     public function __invoke(SaveLocationNewCommand $command): LocationNew
     {
+        $command->clean();
+
         // Create locationNew if needed
         if (!$command->locationNew instanceof LocationNew) {
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;

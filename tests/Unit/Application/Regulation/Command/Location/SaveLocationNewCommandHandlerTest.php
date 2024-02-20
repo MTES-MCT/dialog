@@ -25,6 +25,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
     private string $cityCode;
     private string $cityLabel;
     private string $roadName;
+    private bool $isEntireStreet;
     private string $fromHouseNumber;
     private string $toHouseNumber;
     private string $geometry;
@@ -46,6 +47,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
         $this->roadName = 'Route du Grand Brossais';
+        $this->isEntireStreet = false;
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
         $this->geometry = GeoJSON::toLineString([
@@ -109,6 +111,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
+        $command->isEntireStreet = $this->isEntireStreet;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
 
@@ -179,6 +182,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
+        $command->isEntireStreet = true;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
 
@@ -227,6 +231,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
+        $command->isEntireStreet = $this->isEntireStreet;
         $command->fromHouseNumber = '137';
         $command->toHouseNumber = null;
 
@@ -313,6 +318,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
+        $command->isEntireStreet = $this->isEntireStreet;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
 

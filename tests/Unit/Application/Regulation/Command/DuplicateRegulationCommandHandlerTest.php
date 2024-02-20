@@ -22,6 +22,7 @@ use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
@@ -168,8 +169,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('Savenay');
         $location1
             ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn(RoadTypeEnum::LANE->value);
+        $location1
+            ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Route du Lac');
+        $location1
+            ->expects(self::once())
+            ->method('getIsEntireStreet')
+            ->willReturn(false);
         $location1
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -189,8 +198,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('Savenay');
         $location2
             ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn(RoadTypeEnum::LANE->value);
+        $location2
+            ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Route du Grand Brossais');
+        $location2
+            ->expects(self::once())
+            ->method('getIsEntireStreet')
+            ->willReturn(true);
         $location2
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -282,7 +299,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1 = new SaveLocationNewCommand();
         $locationCommand1->cityCode = '44195';
         $locationCommand1->cityLabel = 'Savenay';
+        $locationCommand1->roadType = RoadTypeEnum::LANE->value;
         $locationCommand1->roadName = 'Route du Lac';
+        $locationCommand1->isEntireStreet = false;
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
         $locationCommand1->geometry = null;
@@ -291,7 +310,9 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2 = new SaveLocationNewCommand();
         $locationCommand2->cityCode = '44195';
         $locationCommand2->cityLabel = 'Savenay';
+        $locationCommand2->roadType = RoadTypeEnum::LANE->value;
         $locationCommand2->roadName = 'Route du Grand Brossais';
+        $locationCommand2->isEntireStreet = true;
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
         $locationCommand2->geometry = null;

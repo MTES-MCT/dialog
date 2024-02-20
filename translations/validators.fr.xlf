@@ -34,6 +34,10 @@
                 <source>location.locationsNew.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs localisations.</target>
             </trans-unit>
+            <trans-unit id="location.isEntireStreet.error.need_house_numbers">
+                <source>location.isEntireStreet.error.need_house_numbers</source>
+                <target>Veuillez définir le numéro de début et/ou le numéro de fin.</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.restricted_types.error.not_blank">
                 <source>regulation.vehicle_set.restricted_types.error.not_blank</source>
                 <target>Veuillez spécifier un ou plusieurs véhicules concernés.</target>

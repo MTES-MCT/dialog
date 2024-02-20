@@ -113,6 +113,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
         $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locationsNew'][0]['isEntireStreet']);
         $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '15';
         $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '37bis';
 
@@ -487,6 +488,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
         $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du GEOCODING_FAILURE';
+        unset($values['location_form']['isEntireStreet']);
         $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '15';
         $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '37bis';
 
@@ -537,6 +539,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locationsNew'][0]['cityCode'] = str_repeat('a', 6);
         $values['measure_form']['locationsNew'][0]['cityLabel'] = str_repeat('a', 256);
         $values['measure_form']['locationsNew'][0]['roadName'] = str_repeat('a', 256);
+        unset($values['location_form']['isEntireStreet']);
         $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = str_repeat('a', 9);
         $values['measure_form']['locationsNew'][0]['toHouseNumber'] = str_repeat('a', 9);
 

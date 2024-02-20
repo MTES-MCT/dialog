@@ -83,6 +83,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locationsNew'][0]['cityCode'] = '59368';
         $values['measure_form']['locationsNew'][0]['cityLabel'] = 'La Madeleine (59110)';
         $values['measure_form']['locationsNew'][0]['roadName'] = 'Rue Saint-Victor';
+        $values['measure_form']['locationsNew'][0]['isEntireStreet'] = '1';
         $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '';
         $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '';
 
@@ -231,6 +232,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form['measure_form[locationsNew][0][cityCode]'] = '59368';
         $form['measure_form[locationsNew][0][cityLabel]'] = 'La Madeleine (59110)';
         $form['measure_form[locationsNew][0][roadName]'] = 'Rue Saint-Victor';
+        $form['measure_form[locationsNew][0][isEntireStreet]'] = '1';
         $form['measure_form[locationsNew][0][fromHouseNumber]'] = '';
         $form['measure_form[locationsNew][0][toHouseNumber]'] = '';
 
