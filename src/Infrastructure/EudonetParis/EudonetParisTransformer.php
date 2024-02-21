@@ -7,7 +7,7 @@ namespace App\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
@@ -224,7 +224,7 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $locationCommand = new SaveLocationNewCommand();
+        $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $cityCode;
         $locationCommand->cityLabel = self::CITY_LABEL;

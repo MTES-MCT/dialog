@@ -8,29 +8,29 @@ use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\LocationNew;
-use App\Domain\Regulation\Repository\LocationNewRepositoryInterface;
+use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
-final class SaveLocationNewCommandHandler
+final class SaveLocationCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
-        private LocationNewRepositoryInterface $locationNewRepository,
+        private LocationRepositoryInterface $locationNewRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
     ) {
     }
 
-    public function __invoke(SaveLocationNewCommand $command): LocationNew
+    public function __invoke(SaveLocationCommand $command): Location
     {
         $command->clean();
 
         // Create locationNew if needed
-        if (!$command->locationNew instanceof LocationNew) {
+        if (!$command->locationNew instanceof Location) {
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
 
             $locationNew = $this->locationNewRepository->add(
-                new LocationNew(
+                new Location(
                     uuid: $this->idFactory->make(),
                     measure: $command->measure,
                     roadType: $command->roadType,
@@ -69,7 +69,7 @@ final class SaveLocationNewCommandHandler
         return $command->locationNew;
     }
 
-    private function computeGeometry(SaveLocationNewCommand $command): ?string
+    private function computeGeometry(SaveLocationCommand $command): ?string
     {
         if ($command->fromHouseNumber && $command->toHouseNumber) {
             $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
@@ -91,7 +91,7 @@ final class SaveLocationNewCommandHandler
         return null;
     }
 
-    private function shouldRecomputeGeometry(SaveLocationNewCommand $command): bool
+    private function shouldRecomputeGeometry(SaveLocationCommand $command): bool
     {
         return $command->cityCode !== $command->locationNew->getCityCode()
             || $command->roadName !== $command->locationNew->getRoadName()

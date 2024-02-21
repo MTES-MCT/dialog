@@ -56,7 +56,7 @@ class Measure
         return $this->locationsNew;
     }
 
-    public function getLocationNew(): ?LocationNew
+    public function getLocationNew(): ?Location
     {
         return !empty($this->locationsNew) ? $this->locationsNew[0] : null;
     }
@@ -94,7 +94,7 @@ class Measure
         $this->periods->removeElement($period);
     }
 
-    public function addLocationNew(LocationNew $locationNew): void
+    public function addLocationNew(Location $locationNew): void
     {
         if ($this->locationsNew->contains($locationNew)) {
             return;
@@ -103,7 +103,7 @@ class Measure
         $this->locationsNew[] = $locationNew;
     }
 
-    public function removeLocationNew(LocationNew $locationNew): void
+    public function removeLocationNew(Location $locationNew): void
     {
         if (!$this->locationsNew->contains($locationNew)) {
             return;

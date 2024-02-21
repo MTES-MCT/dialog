@@ -6,7 +6,7 @@ namespace App\Infrastructure\Form\Regulation\Measure;
 
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Infrastructure\Form\Regulation\LocationNewFormType;
+use App\Infrastructure\Form\Regulation\LocationFormType;
 use App\Infrastructure\Form\Regulation\PeriodFormType;
 use App\Infrastructure\Form\Regulation\VehicleSetFormType;
 use Symfony\Component\Form\AbstractType;
@@ -50,7 +50,7 @@ final class MeasureFormType extends AbstractType
                 'error_bubbling' => false,
             ])
             ->add('locationsNew', CollectionType::class, [
-                'entry_type' => LocationNewFormType::class,
+                'entry_type' => LocationFormType::class,
                 'entry_options' => [
                     'label' => false,
                     'administrators' => $options['administrators'],

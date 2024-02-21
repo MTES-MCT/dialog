@@ -25,7 +25,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     private const COUNT_LOCATIONS_QUERY = '
         SELECT count(DISTINCT(_locNew.uuid))
-        FROM App\Domain\Regulation\LocationNew _locNew
+        FROM App\Domain\Regulation\Location _locNew
         INNER JOIN _locNew.measure _m
         INNER JOIN _m.regulationOrder _ro
         WHERE _ro.uuid = ro.uuid';
@@ -33,7 +33,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     private const GET_LOCATION_QUERY = "
         FIRST(
             SELECT CONCAT(_locNew2.roadName, '#', _locNew2.cityLabel, '#',  _locNew2.cityCode)
-            FROM App\Domain\Regulation\LocationNew _locNew2
+            FROM App\Domain\Regulation\Location _locNew2
             INNER JOIN _locNew2.measure _m2
             INNER JOIN _m2.regulationOrder _ro2
             WHERE _ro2.uuid = ro.uuid

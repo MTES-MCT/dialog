@@ -17,7 +17,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
-use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\MeasureRepository;
 use PHPUnit\Framework\TestCase;
@@ -146,7 +146,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->method('getRecurrenceType')
             ->willReturn('certainDays');
 
-        $location = $this->createMock(LocationNew::class);
+        $location = $this->createMock(Location::class);
         $location
             ->expects(self::never())
             ->method('getCityCode');

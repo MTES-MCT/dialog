@@ -7,8 +7,8 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\Location\DeleteLocationNewCommand;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\DeleteLocationCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
@@ -17,7 +17,7 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
@@ -52,7 +52,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturn($now);
 
         $createdPeriod = $this->createMock(Period::class);
-        $createdLocationNew = $this->createMock(LocationNew::class);
+        $createdLocationNew = $this->createMock(Location::class);
         $createdMeasure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
 
@@ -82,7 +82,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturn($createdMeasure);
 
         $periodCommand = new SavePeriodCommand();
-        $locationNewCommand = new SaveLocationNewCommand();
+        $locationNewCommand = new SaveLocationCommand();
 
         $handleMatcher = self::exactly(2);
         $this->commandBus
@@ -258,13 +258,13 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->method('getUuid')
             ->willReturn('28accfd6-d896-4ed9-96a3-1754f288f511');
 
-        $locationNew1 = $this->createMock(LocationNew::class);
+        $locationNew1 = $this->createMock(Location::class);
         $locationNew1
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('065af978-a0f0-7cf8-8000-ce7f83c57ca3');
 
-        $locationNew2 = $this->createMock(LocationNew::class);
+        $locationNew2 = $this->createMock(Location::class);
         $locationNew2
             ->expects(self::exactly(3))
             ->method('getUuid')
@@ -313,7 +313,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->method('add');
 
         $periodCommand1 = new SavePeriodCommand($period1);
-        $locationNewCommand2 = new SaveLocationNewCommand($locationNew2);
+        $locationNewCommand2 = new SaveLocationCommand($locationNew2);
 
         $this->commandBus
             ->expects(self::exactly(4))
@@ -322,7 +322,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 [$this->equalTo($periodCommand1)],
                 [$this->equalTo(new DeletePeriodCommand($period2))],
                 [$this->equalTo($locationNewCommand2)],
-                [$this->equalTo(new DeleteLocationNewCommand($locationNew1))],
+                [$this->equalTo(new DeleteLocationCommand($locationNew1))],
             )
             ->willReturnOnConsecutiveCalls(null, null, $locationNew2, null);
 

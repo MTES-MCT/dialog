@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
@@ -76,7 +76,7 @@ final class EudonetParisTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2023-06-05 14:30:00 Europe/Paris');
         $generalInfoCommand->endDate = new \DateTimeImmutable('2023-07-12 18:00:00 Europe/Paris');
 
-        $locationCommand = new SaveLocationNewCommand();
+        $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = 'lane';
         $locationCommand->cityCode = '75118';
         $locationCommand->cityLabel = 'Paris';
@@ -228,7 +228,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $rueEugeneBerthoudXRueJeanPerrin = Coordinates::fromLonLat(2.3453101, 48.9062362);
         $rueEugeneBerthoud26 = Coordinates::fromLonLat(2.3453431, 48.9062625);
-        $locationCommand1 = new SaveLocationNewCommand();
+        $locationCommand1 = new SaveLocationCommand();
         $locationCommand1->roadType = 'lane';
         $locationCommand1->cityCode = '75118';
         $locationCommand1->cityLabel = 'Paris';
@@ -242,7 +242,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $rueEugeneBerthoud15 = Coordinates::fromLonLat(2.3453412, 48.9062610);
         $rueEugeneBerthoudXRueAdrienLesesne = Coordinates::fromLonLat(2.34944, 48.9045598);
-        $locationCommand2 = new SaveLocationNewCommand();
+        $locationCommand2 = new SaveLocationCommand();
         $locationCommand2->roadType = 'lane';
         $locationCommand2->cityCode = '75118';
         $locationCommand2->cityLabel = 'Paris';

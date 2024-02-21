@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Regulation\Measure;
@@ -15,7 +15,7 @@ final class SaveMeasureCommand implements CommandInterface
 {
     public ?string $type;
     public ?int $maxSpeed = null;
-    /** @var SaveLocationNewCommand[] */
+    /** @var SaveLocationCommand[] */
     public array $locationsNew = [];
     public array $periods = [];
     public ?\DateTimeInterface $createdAt = null;
@@ -45,14 +45,14 @@ final class SaveMeasureCommand implements CommandInterface
             }
 
             foreach ($measure->getLocationsNew() as $locationNew) {
-                $command->locationsNew[] = new SaveLocationNewCommand($locationNew);
+                $command->locationsNew[] = new SaveLocationCommand($locationNew);
             }
 
             foreach ($measure->getPeriods() as $period) {
                 $command->periods[] = new SavePeriodCommand($period);
             }
         } else {
-            $command->locationsNew[] = new SaveLocationNewCommand();
+            $command->locationsNew[] = new SaveLocationCommand();
         }
 
         return $command;
