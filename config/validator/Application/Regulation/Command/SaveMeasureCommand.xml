@@ -31,7 +31,7 @@
        </property>
        <property name="locations">
         <constraint name="NotBlank">
-            <option name="message">location.locations.error.not_blank</option>
+            <option name="message">measure.locations.error.not_blank</option>
             <option name="groups">
                 <value>html_form</value>
             </option>

@@ -24,17 +24,17 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     }
 
     private const COUNT_LOCATIONS_QUERY = '
-        SELECT count(DISTINCT(_locNew.uuid))
-        FROM App\Domain\Regulation\Location _locNew
-        INNER JOIN _locNew.measure _m
+        SELECT count(DISTINCT(_loc.uuid))
+        FROM App\Domain\Regulation\Location _loc
+        INNER JOIN _loc.measure _m
         INNER JOIN _m.regulationOrder _ro
         WHERE _ro.uuid = ro.uuid';
 
     private const GET_LOCATION_QUERY = "
         FIRST(
-            SELECT CONCAT(_locNew2.roadName, '#', _locNew2.cityLabel, '#',  _locNew2.cityCode)
-            FROM App\Domain\Regulation\Location _locNew2
-            INNER JOIN _locNew2.measure _m2
+            SELECT CONCAT(_loc2.roadName, '#', _loc2.cityLabel, '#',  _loc2.cityCode)
+            FROM App\Domain\Regulation\Location _loc2
+            INNER JOIN _loc2.measure _m2
             INNER JOIN _m2.regulationOrder _ro2
             WHERE _ro2.uuid = ro.uuid
         )";
@@ -127,8 +127,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.description',
                 'ro.startDate',
                 'ro.endDate',
-                'locNew.roadName',
-                'ST_AsGeoJSON(locNew.geometry) as geometry',
+                'loc.roadName',
+                'ST_AsGeoJSON(loc.geometry) as geometry',
                 'm.maxSpeed',
                 'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
@@ -142,11 +142,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
-            ->innerJoin('m.locations', 'locNew')
+            ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
             ->where('roc.status = :status')
             ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
-            ->andWhere('locNew.geometry IS NOT NULL')
+            ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
             ->getQuery()
             ->getResult()
@@ -162,8 +162,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'ro.category',
                 'ro.startDate as regulationOrderStartDate',
                 'ro.endDate as regulationOrderEndDate',
-                'locNew.roadName',
-                'ST_AsGeoJSON(locNew.geometry) as geometry',
+                'loc.roadName',
+                'ST_AsGeoJSON(loc.geometry) as geometry',
                 'm.uuid as measureId',
                 'm.type as measureType',
                 'p.startDateTime as periodStartDateTime',
@@ -175,7 +175,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
-            ->innerJoin('m.locations', 'locNew')
+            ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
@@ -183,7 +183,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
-                'locNew.geometry IS NOT NULL',
+                'loc.geometry IS NOT NULL',
                 'm.type = :measureType',
                 'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )

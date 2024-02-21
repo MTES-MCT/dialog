@@ -25,7 +25,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 
     public function delete(Location $location): void
     {
-        // Cannot be covered by integration tests yet
         $this->getEntityManager()->remove($location);
     }
 }
