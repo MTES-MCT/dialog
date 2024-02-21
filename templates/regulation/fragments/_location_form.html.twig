@@ -228,15 +228,46 @@
                                 'data-autocomplete-target': 'input',
                             },
                         }) }}
-						<ul id="{{ form.roadName.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.roadName.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
-					</div>
-					<div class="fr-container--fluid">
-						<div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
-							{{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-							{{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-						</div>
-					</div>
-				</div>
+                        <ul
+                            id="{{ form.roadName.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        ></ul>
+                    </div>
+
+                    <div data-controller="form-reveal">
+                        {{ form_row(form.isEntireStreet, {
+                            group_class: 'fr-checkbox-group',
+                            row_attr: {
+                                class: 'fr-mb-3w',
+                            },
+                            attr: {
+                                'data-controller': 'condition',
+                                'data-condition-equals-value': true,
+                                'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
+                            }
+                        }) }}
+
+                        {% set hasHouseNumbersErrors = form.isEntireStreet.vars.errors|filter(e => app_is_fieldset_error(e, 'houseNumbers'))|length > 0 %}
+
+                        <fieldset
+                            class="fr-fieldset {% if hasHouseNumbersErrors %}fr-fieldset--error{% endif %}"
+                            aria-labelledby="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend"
+                            data-form-reveal-target="section"
+                            {% if form.isEntireStreet.vars.checked %}hidden{% endif %}
+                        >
+                            <legend id="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend" class="app-sr-only">
+                                {{ 'regulation.location.houseNumbers.legend'|trans }}
+                            </legend>
+                            <div class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
+                                {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                                {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
 
 				<div data-controller="form-collection" data-form-collection-prototype-key-value="measure" data-form-collection-next-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}" data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_name__', '__measure_position__')|e('html_attr') }}" class="fr-mb-4w">
 					<ul id="measure-list" class="fr-raw-list fr-mb-2w" data-testid="measure-list" data-form-collection-target="collectionContainer" data-action="remove:child-removed->form-collection#syncPositions" aria-label="{{ form.measures.vars.label|trans }}">

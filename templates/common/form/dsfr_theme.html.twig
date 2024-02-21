@@ -28,8 +28,12 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
       {{ form_widget(form, widget_attr) }}
     </fieldset>
   {% else %}
+    {%- set isCheckbox = 'checkbox' in block_prefixes -%}
+
     <div {% with {attr: row_attr|merge({class: row_class} )} %} {{ block('attributes') }} {% endwith %}>
-      {{- form_label(form) -}}
+      {%- if not isCheckbox -%}
+        {{- form_label(form) -}}
+      {%- endif -%}
 
       {%- if widget_suffix is defined -%}
         <div class="fr-input-wrap app-widget--suffix">
@@ -38,6 +42,10 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
         </div>
       {%- else -%}
           {{- form_widget(form, widget_attr) -}}
+      {%- endif -%}
+
+      {%- if isCheckbox -%}
+        {{- form_label(form) -}}
       {%- endif -%}
 
       {{- form_errors(form) -}}

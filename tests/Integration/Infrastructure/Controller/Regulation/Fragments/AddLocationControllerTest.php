@@ -91,6 +91,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du Grand Brossais';
+        unset($values['location_form']['isEntireStreet']);
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
@@ -481,6 +482,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $values['location_form']['cityCode'] = '44195';
         $values['location_form']['cityLabel'] = 'Savenay (44260)';
         $values['location_form']['roadName'] = 'Route du GEOCODING_FAILURE';
+        unset($values['location_form']['isEntireStreet']);
         $values['location_form']['fromHouseNumber'] = '15';
         $values['location_form']['toHouseNumber'] = '37bis';
         $values['location_form']['measures'][0]['type'] = 'noEntry';
@@ -531,6 +533,7 @@ final class AddLocationControllerTest extends AbstractWebTestCase
         $form['location_form[cityCode]'] = str_repeat('a', 6);
         $form['location_form[cityLabel]'] = str_repeat('a', 256);
         $form['location_form[roadName]'] = str_repeat('a', 256);
+        unset($form['location_form[isEntireStreet]']);
         $form['location_form[fromHouseNumber]'] = str_repeat('a', 9);
         $form['location_form[toHouseNumber]'] = str_repeat('a', 9);
 
