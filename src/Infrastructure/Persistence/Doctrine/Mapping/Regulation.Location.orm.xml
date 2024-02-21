@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
   <entity
     name="App\Domain\Regulation\Location"
-    table="location_new">
+    table="location">
     <id name="uuid" type="guid" column="uuid" />
     <field name="roadType" type="string" column="road_type" nullable="false" length="40" />
     <field name="administrator" type="string" column="administrator" nullable="true" length="255" />
