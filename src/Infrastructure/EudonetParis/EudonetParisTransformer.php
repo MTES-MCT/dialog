@@ -168,7 +168,7 @@ final class EudonetParisTransformer
         $command = new SaveMeasureCommand();
         $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->vehicleSet = $vehicleSet;
-        $command->locationsNew = $locationCommands;
+        $command->locations = $locationCommands;
 
         return [$command, null];
     }

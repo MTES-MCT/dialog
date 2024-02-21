@@ -16,16 +16,16 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         parent::__construct($registry, Location::class);
     }
 
-    public function add(Location $locationNew): Location
+    public function add(Location $location): Location
     {
-        $this->getEntityManager()->persist($locationNew);
+        $this->getEntityManager()->persist($location);
 
-        return $locationNew;
+        return $location;
     }
 
-    public function delete(Location $locationNew): void
+    public function delete(Location $location): void
     {
         // Cannot be covered by integration tests yet
-        $this->getEntityManager()->remove($locationNew);
+        $this->getEntityManager()->remove($location);
     }
 }

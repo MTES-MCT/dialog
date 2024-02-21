@@ -87,7 +87,7 @@ final class DuplicateRegulationCommandHandler
                     $periodCommands[] = $cmd;
                 }
 
-                foreach ($measure->getLocationsNew() as $location) {
+                foreach ($measure->getLocations() as $location) {
                     $cmd = new SaveLocationCommand();
                     $cmd->roadType = $location->getRoadType();
                     $cmd->administrator = $location->getAdministrator();
@@ -113,7 +113,7 @@ final class DuplicateRegulationCommandHandler
                 $measureCommand->maxSpeed = $measure->getMaxSpeed();
                 $measureCommand->vehicleSet = $vehicleSetCommand;
                 $measureCommand->periods = $periodCommands;
-                $measureCommand->locationsNew = $locationCommands;
+                $measureCommand->locations = $locationCommands;
 
                 $this->commandBus->handle($measureCommand);
             }

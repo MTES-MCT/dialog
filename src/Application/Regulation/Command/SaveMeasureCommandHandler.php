@@ -60,27 +60,27 @@ final class SaveMeasureCommandHandler
                 }
             }
 
-            $locationsNewStillPresentUuids = [];
+            $locationsStillPresentUuids = [];
 
-            foreach ($command->locationsNew as $index => $locationNewCommand) {
-                if ($locationNewCommand->locationNew) {
-                    $locationsNewStillPresentUuids[] = $locationNewCommand->locationNew->getUuid();
+            foreach ($command->locations as $index => $locationCommand) {
+                if ($locationCommand->location) {
+                    $locationsStillPresentUuids[] = $locationCommand->location->getUuid();
                 }
 
                 try {
-                    $locationNewCommand->measure = $command->measure;
-                    $locationNew = $this->commandBus->handle($locationNewCommand);
-                    $locationsNewStillPresentUuids[] = $locationNew->getUuid();
+                    $locationCommand->measure = $command->measure;
+                    $location = $this->commandBus->handle($locationCommand);
+                    $locationsStillPresentUuids[] = $location->getUuid();
                 } catch (GeocodingFailureException $e) {
                     throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
                 }
             }
 
             // Locations that weren't present in the command get deleted.
-            foreach ($command->measure->getLocationsNew() as $locationNew) {
-                if (!\in_array($locationNew->getUuid(), $locationsNewStillPresentUuids)) {
-                    $this->commandBus->handle(new DeleteLocationCommand($locationNew));
-                    $command->measure->removeLocationNew($locationNew);
+            foreach ($command->measure->getLocations() as $location) {
+                if (!\in_array($location->getUuid(), $locationsStillPresentUuids)) {
+                    $this->commandBus->handle(new DeleteLocationCommand($location));
+                    $command->measure->removeLocation($location);
                 }
             }
 
@@ -109,12 +109,12 @@ final class SaveMeasureCommandHandler
             $measure->addPeriod($period);
         }
 
-        foreach ($command->locationsNew as $index => $locationNewCommand) {
-            $locationNewCommand->measure = $measure;
+        foreach ($command->locations as $index => $locationCommand) {
+            $locationCommand->measure = $measure;
 
             try {
-                $locationNew = $this->commandBus->handle($locationNewCommand);
-                $measure->addLocationNew($locationNew);
+                $location = $this->commandBus->handle($locationCommand);
+                $measure->addLocation($location);
             } catch (GeocodingFailureException $e) {
                 throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
             }

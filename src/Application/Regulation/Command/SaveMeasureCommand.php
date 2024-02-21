@@ -16,7 +16,7 @@ final class SaveMeasureCommand implements CommandInterface
     public ?string $type;
     public ?int $maxSpeed = null;
     /** @var SaveLocationCommand[] */
-    public array $locationsNew = [];
+    public array $locations = [];
     public array $periods = [];
     public ?\DateTimeInterface $createdAt = null;
     public ?SaveVehicleSetCommand $vehicleSet = null;
@@ -44,15 +44,15 @@ final class SaveMeasureCommand implements CommandInterface
                 $command->vehicleSet = new SaveVehicleSetCommand($vehicleSet);
             }
 
-            foreach ($measure->getLocationsNew() as $locationNew) {
-                $command->locationsNew[] = new SaveLocationCommand($locationNew);
+            foreach ($measure->getLocations() as $location) {
+                $command->locations[] = new SaveLocationCommand($location);
             }
 
             foreach ($measure->getPeriods() as $period) {
                 $command->periods[] = new SavePeriodCommand($period);
             }
         } else {
-            $command->locationsNew[] = new SaveLocationCommand();
+            $command->locations[] = new SaveLocationCommand();
         }
 
         return $command;

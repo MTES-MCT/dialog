@@ -52,7 +52,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturn($now);
 
         $createdPeriod = $this->createMock(Period::class);
-        $createdLocationNew = $this->createMock(Location::class);
+        $createdLocation = $this->createMock(Location::class);
         $createdMeasure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
 
@@ -63,8 +63,8 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $createdMeasure
             ->expects(self::once())
-            ->method('addLocationNew')
-            ->with($createdLocationNew);
+            ->method('addLocation')
+            ->with($createdLocation);
 
         $this->measureRepository
             ->expects(self::once())
@@ -82,7 +82,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturn($createdMeasure);
 
         $periodCommand = new SavePeriodCommand();
-        $locationNewCommand = new SaveLocationCommand();
+        $locationCommand = new SaveLocationCommand();
 
         $handleMatcher = self::exactly(2);
         $this->commandBus
@@ -91,7 +91,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->willReturnCallback(
                 fn ($command) => match ($handleMatcher->getInvocationCount()) {
                     1 => $this->assertEquals($periodCommand, $command) ?: $createdPeriod,
-                    2 => $this->assertEquals($locationNewCommand, $command) ?: $createdLocationNew,
+                    2 => $this->assertEquals($locationCommand, $command) ?: $createdLocation,
                 },
             );
 
@@ -105,7 +105,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $command = new SaveMeasureCommand($regulationOrder);
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->periods = [$periodCommand];
-        $command->locationsNew = [$locationNewCommand];
+        $command->locations = [$locationCommand];
 
         $result = $handler($command);
 
@@ -258,14 +258,14 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->method('getUuid')
             ->willReturn('28accfd6-d896-4ed9-96a3-1754f288f511');
 
-        $locationNew1 = $this->createMock(Location::class);
-        $locationNew1
+        $location1 = $this->createMock(Location::class);
+        $location1
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('065af978-a0f0-7cf8-8000-ce7f83c57ca3');
 
-        $locationNew2 = $this->createMock(Location::class);
-        $locationNew2
+        $location2 = $this->createMock(Location::class);
+        $location2
             ->expects(self::exactly(3))
             ->method('getUuid')
             ->willReturn('065af992-ecb9-7afd-8000-a1ac6e020f2f');
@@ -290,8 +290,8 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $measure
             ->expects(self::exactly(2))
-            ->method('getLocationsNew')
-            ->willReturn([$locationNew1, $locationNew2]);
+            ->method('getLocations')
+            ->willReturn([$location1, $location2]);
 
         $measure
             ->expects(self::once())
@@ -305,15 +305,15 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $measure
             ->expects(self::once())
-            ->method('removeLocationNew')
-            ->with($locationNew1);
+            ->method('removeLocation')
+            ->with($location1);
 
         $this->measureRepository
             ->expects(self::never())
             ->method('add');
 
         $periodCommand1 = new SavePeriodCommand($period1);
-        $locationNewCommand2 = new SaveLocationCommand($locationNew2);
+        $locationCommand2 = new SaveLocationCommand($location2);
 
         $this->commandBus
             ->expects(self::exactly(4))
@@ -321,10 +321,10 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->withConsecutive(
                 [$this->equalTo($periodCommand1)],
                 [$this->equalTo(new DeletePeriodCommand($period2))],
-                [$this->equalTo($locationNewCommand2)],
-                [$this->equalTo(new DeleteLocationCommand($locationNew1))],
+                [$this->equalTo($locationCommand2)],
+                [$this->equalTo(new DeleteLocationCommand($location1))],
             )
-            ->willReturnOnConsecutiveCalls(null, null, $locationNew2, null);
+            ->willReturnOnConsecutiveCalls(null, null, $location2, null);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,
@@ -337,7 +337,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
         $command->vehicleSet = null; // Removes vehicle set
         $command->periods = [$periodCommand1]; // Removes period2.
-        $command->locationsNew = [$locationNewCommand2]; // Removes locationNew1.
+        $command->locations = [$locationCommand2]; // Removes location1.
 
         $result = $handler($command);
 

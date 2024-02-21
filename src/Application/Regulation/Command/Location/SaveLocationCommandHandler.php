@@ -15,7 +15,7 @@ final class SaveLocationCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
-        private LocationRepositoryInterface $locationNewRepository,
+        private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
     ) {
@@ -25,11 +25,11 @@ final class SaveLocationCommandHandler
     {
         $command->clean();
 
-        // Create locationNew if needed
-        if (!$command->locationNew instanceof Location) {
+        // Create location if needed
+        if (!$command->location instanceof Location) {
             $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
 
-            $locationNew = $this->locationNewRepository->add(
+            $location = $this->locationRepository->add(
                 new Location(
                     uuid: $this->idFactory->make(),
                     measure: $command->measure,
@@ -45,16 +45,16 @@ final class SaveLocationCommandHandler
                 ),
             );
 
-            $command->measure->addLocationNew($locationNew);
+            $command->measure->addLocation($location);
 
-            return $locationNew;
+            return $location;
         }
 
         $geometry = $this->shouldRecomputeGeometry($command)
             ? $this->computeGeometry($command)
-            : $command->locationNew->getGeometry();
+            : $command->location->getGeometry();
 
-        $command->locationNew->update(
+        $command->location->update(
             roadType: $command->roadType,
             administrator: $command->administrator,
             roadNumber: $command->roadNumber,
@@ -66,7 +66,7 @@ final class SaveLocationCommandHandler
             geometry: $geometry,
         );
 
-        return $command->locationNew;
+        return $command->location;
     }
 
     private function computeGeometry(SaveLocationCommand $command): ?string
@@ -93,9 +93,9 @@ final class SaveLocationCommandHandler
 
     private function shouldRecomputeGeometry(SaveLocationCommand $command): bool
     {
-        return $command->cityCode !== $command->locationNew->getCityCode()
-            || $command->roadName !== $command->locationNew->getRoadName()
-            || ($command->fromHouseNumber !== $command->locationNew->getFromHouseNumber())
-            || ($command->toHouseNumber !== $command->locationNew->getToHouseNumber());
+        return $command->cityCode !== $command->location->getCityCode()
+            || $command->roadName !== $command->location->getRoadName()
+            || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
+            || ($command->toHouseNumber !== $command->location->getToHouseNumber());
     }
 }

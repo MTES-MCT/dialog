@@ -49,7 +49,7 @@ final class MeasureFormType extends AbstractType
                 'allow_delete' => true,
                 'error_bubbling' => false,
             ])
-            ->add('locationsNew', CollectionType::class, [
+            ->add('locations', CollectionType::class, [
                 'entry_type' => LocationFormType::class,
                 'entry_options' => [
                     'label' => false,

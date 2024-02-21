@@ -9,12 +9,12 @@ use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 final class DeleteLocationCommandHandler
 {
     public function __construct(
-        private LocationRepositoryInterface $locationNewRepository,
+        private LocationRepositoryInterface $locationRepository,
     ) {
     }
 
     public function __invoke(DeleteLocationCommand $command): void
     {
-        $this->locationNewRepository->delete($command->locationNew);
+        $this->locationRepository->delete($command->location);
     }
 }

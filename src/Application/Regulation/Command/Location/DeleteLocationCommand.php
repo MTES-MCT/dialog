@@ -10,7 +10,7 @@ use App\Domain\Regulation\Location;
 final class DeleteLocationCommand implements CommandInterface
 {
     public function __construct(
-        public readonly Location $locationNew,
+        public readonly Location $location,
     ) {
     }
 }

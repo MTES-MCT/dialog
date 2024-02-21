@@ -16,13 +16,13 @@ final class LocationRepositoryTest extends TestCase
     // Coverage only
     public function testDelete(): void
     {
-        $locationNew = $this->createMock(Location::class);
+        $location = $this->createMock(Location::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em
             ->expects(self::once())
             ->method('remove')
-            ->with($locationNew);
+            ->with($location);
         $em
             ->expects(self::once())
             ->method('getClassMetadata')
@@ -37,6 +37,6 @@ final class LocationRepositoryTest extends TestCase
 
         $repository = new LocationRepository($registry);
 
-        $repository->delete($locationNew);
+        $repository->delete($location);
     }
 }

@@ -12,25 +12,25 @@ use PHPUnit\Framework\TestCase;
 
 final class DeleteLocationCommandHandlerTest extends TestCase
 {
-    private $locationNew;
-    private $locationNewRepository;
+    private $location;
+    private $locationRepository;
 
     protected function setUp(): void
     {
-        $this->locationNew = $this->createMock(Location::class);
-        $this->locationNewRepository = $this->createMock(LocationRepositoryInterface::class);
+        $this->location = $this->createMock(Location::class);
+        $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
     }
 
     public function testDelete(): void
     {
-        $this->locationNewRepository
+        $this->locationRepository
             ->expects(self::once())
             ->method('delete')
-            ->with($this->equalTo($this->locationNew));
+            ->with($this->equalTo($this->location));
 
-        $handler = new DeleteLocationCommandHandler($this->locationNewRepository);
+        $handler = new DeleteLocationCommandHandler($this->locationRepository);
 
-        $command = new DeleteLocationCommand($this->locationNew);
+        $command = new DeleteLocationCommand($this->location);
         $this->assertEmpty($handler($command));
     }
 }

@@ -24,18 +24,18 @@ final class SaveLocationCommand implements CommandInterface
     private ?bool $isEntireStreetFormValue = null;
 
     public function __construct(
-        public readonly ?Location $locationNew = null,
+        public readonly ?Location $location = null,
     ) {
-        $this->roadType = $locationNew?->getRoadType();
-        $this->administrator = $locationNew?->getAdministrator();
-        $this->roadNumber = $locationNew?->getRoadNumber();
-        $this->cityCode = $locationNew?->getCityCode();
-        $this->cityLabel = $locationNew?->getCityLabel();
-        $this->roadName = $locationNew?->getRoadName();
-        $this->fromHouseNumber = $locationNew?->getFromHouseNumber();
-        $this->toHouseNumber = $locationNew?->getToHouseNumber();
-        $this->geometry = $locationNew?->getGeometry();
-        $this->isEntireStreetFormValue = $locationNew ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
+        $this->roadType = $location?->getRoadType();
+        $this->administrator = $location?->getAdministrator();
+        $this->roadNumber = $location?->getRoadNumber();
+        $this->cityCode = $location?->getCityCode();
+        $this->cityLabel = $location?->getCityLabel();
+        $this->roadName = $location?->getRoadName();
+        $this->fromHouseNumber = $location?->getFromHouseNumber();
+        $this->toHouseNumber = $location?->getToHouseNumber();
+        $this->geometry = $location?->getGeometry();
+        $this->isEntireStreetFormValue = $location ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
     }
 
     public function clean(): void

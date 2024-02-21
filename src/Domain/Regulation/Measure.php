@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 
 class Measure
 {
-    private Collection $locationsNew;
+    private Collection $locations;
     private Collection $periods;
     private ?VehicleSet $vehicleSet = null;
 
@@ -23,7 +23,7 @@ class Measure
         private ?int $maxSpeed = null,
     ) {
         $this->periods = new ArrayCollection();
-        $this->locationsNew = new ArrayCollection();
+        $this->locations = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -51,14 +51,14 @@ class Measure
         return $this->periods;
     }
 
-    public function getLocationsNew(): iterable
+    public function getLocations(): iterable
     {
-        return $this->locationsNew;
+        return $this->locations;
     }
 
-    public function getLocationNew(): ?Location
+    public function getLocation(): ?Location
     {
-        return !empty($this->locationsNew) ? $this->locationsNew[0] : null;
+        return !empty($this->locations) ? $this->locations[0] : null;
     }
 
     public function getCreatedAt(): \DateTimeInterface
@@ -94,22 +94,22 @@ class Measure
         $this->periods->removeElement($period);
     }
 
-    public function addLocationNew(Location $locationNew): void
+    public function addLocation(Location $location): void
     {
-        if ($this->locationsNew->contains($locationNew)) {
+        if ($this->locations->contains($location)) {
             return;
         }
 
-        $this->locationsNew[] = $locationNew;
+        $this->locations[] = $location;
     }
 
-    public function removeLocationNew(Location $locationNew): void
+    public function removeLocation(Location $location): void
     {
-        if (!$this->locationsNew->contains($locationNew)) {
+        if (!$this->locations->contains($location)) {
             return;
         }
 
-        $this->locationsNew->removeElement($locationNew);
+        $this->locations->removeElement($location);
     }
 
     public function update(string $type, ?int $maxSpeed): void

@@ -8,7 +8,7 @@ use App\Domain\Regulation\Location;
 
 interface LocationRepositoryInterface
 {
-    public function add(Location $locationNew): Location;
+    public function add(Location $location): Location;
 
-    public function delete(Location $locationNew): void;
+    public function delete(Location $location): void;
 }

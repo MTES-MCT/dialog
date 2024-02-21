@@ -145,7 +145,7 @@
     </li>
 {% endmacro %}
 
-{% macro locationsNew_list_item(form, index) %}
+{% macro locations_list_item(form, index) %}
     {% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type', app.request) %}
 
     <li
@@ -410,8 +410,8 @@
                         <div
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
-                            data-form-collection-next-index-value="{{ form.locationsNew|length > 0 ? form.locationsNew|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locationsNew_list_item(form.locationsNew.vars.prototype, '__location_name__', '__location_position__')|e('html_attr') }}"
+                            data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__')|e('html_attr') }}"
                             class="fr-mb-4w"
                         >
                             <ul
@@ -419,12 +419,12 @@
                                 style="--stack-gap: var(--2w)"
                                 data-form-collection-target="collectionContainer"
                                 data-action="remove:child-removed->form-collection#syncPositions"
-                                aria-label="{{ form.locationsNew.vars.label|trans }}"
+                                aria-label="{{ form.locations.vars.label|trans }}"
                             >
-                                {% for item in form.locationsNew %}
-                                    {{ _self.locationsNew_list_item(item, loop.index0, loop.index) }}
+                                {% for item in form.locations %}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index) }}
                                 {% else %}
-                                    {% do form.locationsNew.setRendered %}
+                                    {% do form.locations.setRendered %}
                                 {% endfor %}
                             </ul>
 
@@ -435,7 +435,7 @@
                             >
                                 {{ 'regulation.location.add'|trans }}
                             </button>
-                            {{ form_errors(form.locationsNew) }}
+                            {{ form_errors(form.locations) }}
                         </div>
                     </div>
                 </div>

@@ -90,7 +90,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $measureCommand->locationsNew[] = $locationCommand;
+        $measureCommand->locations[] = $locationCommand;
         $measureCommand->vehicleSet = $vehicleSet;
 
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
@@ -260,7 +260,7 @@ final class EudonetParisTransformerTest extends TestCase
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand->vehicleSet = $vehicleSet;
-        $measureCommand->locationsNew = [$locationCommand1, $locationCommand2];
+        $measureCommand->locations = [$locationCommand1, $locationCommand2];
 
         $matcher = self::exactly(2);
         $this->geocoder

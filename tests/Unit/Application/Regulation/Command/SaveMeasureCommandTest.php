@@ -26,7 +26,7 @@ final class SaveMeasureCommandTest extends TestCase
         $this->assertEmpty($command->measure);
         $this->assertEmpty($command->type);
         $this->assertSame($regulationOrder, $command->regulationOrder);
-        $this->assertEquals([new SaveLocationCommand()], $command->locationsNew);
+        $this->assertEquals([new SaveLocationCommand()], $command->locations);
         $this->assertEmpty($command->periods);
     }
 
@@ -41,7 +41,7 @@ final class SaveMeasureCommandTest extends TestCase
 
         $measure
             ->expects(self::once())
-            ->method('getLocationsNew')
+            ->method('getLocations')
             ->willReturn([$location1]);
         $measure
             ->expects(self::once())
@@ -70,7 +70,7 @@ final class SaveMeasureCommandTest extends TestCase
         $this->assertSame($regulationOrder, $command->regulationOrder);
         $this->assertEquals(new SaveVehicleSetCommand($vehicleSet), $command->vehicleSet);
         $this->assertEquals([new SavePeriodCommand($period)], $command->periods);
-        $this->assertEquals([new SaveLocationCommand($location1)], $command->locationsNew);
+        $this->assertEquals([new SaveLocationCommand($location1)], $command->locations);
         $this->assertEquals($createdAt, $command->createdAt);
     }
 }

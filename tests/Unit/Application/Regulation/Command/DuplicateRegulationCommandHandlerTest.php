@@ -123,7 +123,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn($vehicleSet);
         $measure1
             ->expects(self::once())
-            ->method('getLocationsNew')
+            ->method('getLocations')
             ->willReturn([$location1, $location2]);
 
         $measure2 = $this->createMock(Measure::class);
@@ -141,7 +141,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn([]);
         $measure2
             ->expects(self::once())
-            ->method('getLocationsNew')
+            ->method('getLocations')
             ->willReturn([]);
         $measure2
             ->expects(self::once())
@@ -314,7 +314,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->periods = [
             $periodCommand1,
         ];
-        $measureCommand1->locationsNew = [
+        $measureCommand1->locations = [
             $locationCommand1,
             $locationCommand2,
         ];

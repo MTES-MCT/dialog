@@ -198,7 +198,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->willReturn($vehicleSet);
         $measure
             ->expects(self::once())
-            ->method('getLocationsNew')
+            ->method('getLocations')
             ->willReturn([$location]);
 
         $measureRepository = $this->createMock(MeasureRepository::class);
