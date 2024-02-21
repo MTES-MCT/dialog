@@ -3,3 +3,11 @@
         padding-block-start: var(--stack-spacing, 1.5rem);
     }
 }
+
+.d-stack > * {
+    margin-bottom: 0;
+}
+
+.d-stack > * + * {
+    margin-top: var(--stack-gap, var(--2w));
+}

@@ -6,9 +6,9 @@ namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\Location;
 use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ final class MeasureTest extends TestCase
 {
     public function testMeasure(): void
     {
-        $location = $this->createMock(Location::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
         $period1 = $this->createMock(Period::class);
         $period2 = $this->createMock(Period::class);
         $period3 = $this->createMock(Period::class);
@@ -25,14 +25,14 @@ final class MeasureTest extends TestCase
 
         $measure = new Measure(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
-            location: $location,
+            regulationOrder: $regulationOrder,
             type: MeasureTypeEnum::NO_ENTRY->value,
             createdAt: $date,
             maxSpeed: null,
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $measure->getUuid());
-        $this->assertSame($location, $measure->getLocation());
+        $this->assertSame($regulationOrder, $measure->getRegulationOrder());
         $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $measure->getType());
         $this->assertSame($date, $measure->getCreatedAt());
         $this->assertNull($measure->getMaxSpeed());

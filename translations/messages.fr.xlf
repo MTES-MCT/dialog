@@ -478,6 +478,10 @@
                 <source>regulation.location.add</source>
                 <target>Ajouter une localisation</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.add">
+                <source>regulation.measure.add</source>
+                <target>Ajouter une mesure</target>
+            </trans-unit>
             <trans-unit id="regulation.detail.draft">
                 <source>regulation.detail.draft</source>
                 <target>Sauvegarder le brouillon</target>
@@ -522,6 +526,10 @@
             <trans-unit id="regulation.locations">
                 <source>regulation.locations</source>
                 <target>Localisations</target>
+            </trans-unit>
+            <trans-unit id="regulation.locations.description">
+                <source>regulation.locations.description</source>
+                <target>Où est prévue la perturbation ?</target>
             </trans-unit>
             <trans-unit id="regulation.measures">
                 <source>regulation.measures</source>
@@ -1125,6 +1133,10 @@
                 <source>location.delete_modal.title</source>
                 <target>Supprimer cette localisation ?</target>
             </trans-unit>
+            <trans-unit id="measure.delete_modal.title">
+                <source>measure.delete_modal.title</source>
+                <target>Supprimer cette mesure ?</target>
+            </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
@@ -1221,10 +1233,6 @@
                 <source>regulation.measure_list_item.help</source>
                 <target>Quelle perturbation est prévue ?</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.add">
-                <source>regulation.measure.add</source>
-                <target>Ajouter une restriction</target>
-            </trans-unit>
             <trans-unit id="regulation.measure.type">
                 <source>regulation.measure.type</source>
                 <target>Type de restriction</target>
@@ -1248,6 +1256,14 @@
             <trans-unit id="regulation.measure.type.speedLimitation">
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.card.title">
+                <source>regulation.measure.card.title</source>
+                <target>Mesure</target>
+            </trans-unit>
+            <trans-unit id="regulation.measure.card.description">
+                <source>regulation.measure.card.description</source>
+                <target>Indiquez le type de restriction et ses localisations</target>
             </trans-unit>
             <trans-unit id="regulation.measure.maxSpeed">
                 <source>regulation.measure.maxSpeed</source>

@@ -29,5 +29,14 @@
         <property name="periods">
             <constraint name="Valid"/>
        </property>
+       <property name="locationsNew">
+        <constraint name="NotBlank">
+            <option name="message">location.locationsNew.error.not_blank</option>
+            <option name="groups">
+                <value>html_form</value>
+            </option>
+        </constraint>
+        <constraint name="Valid" />
+    </property>
     </class>
 </constraint-mapping>
