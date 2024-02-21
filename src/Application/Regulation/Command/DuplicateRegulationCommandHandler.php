@@ -95,7 +95,6 @@ final class DuplicateRegulationCommandHandler
                     $cmd->cityCode = $location->getCityCode();
                     $cmd->cityLabel = $location->getCityLabel();
                     $cmd->roadName = $location->getRoadName();
-                    $cmd->isEntireStreet = $location->getIsEntireStreet();
                     $cmd->fromHouseNumber = $location->getFromHouseNumber();
                     $cmd->toHouseNumber = $location->getToHouseNumber();
                     $cmd->geometry = $location->getGeometry();

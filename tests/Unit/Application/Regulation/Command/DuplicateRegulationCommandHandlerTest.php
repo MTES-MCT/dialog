@@ -177,10 +177,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('Route du Lac');
         $location1
             ->expects(self::once())
-            ->method('getIsEntireStreet')
-            ->willReturn(false);
-        $location1
-            ->expects(self::once())
             ->method('getFromHouseNumber')
             ->willReturn('11');
         $location1
@@ -204,10 +200,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Route du Grand Brossais');
-        $location2
-            ->expects(self::once())
-            ->method('getIsEntireStreet')
-            ->willReturn(true);
         $location2
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -301,7 +293,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1->cityLabel = 'Savenay';
         $locationCommand1->roadType = RoadTypeEnum::LANE->value;
         $locationCommand1->roadName = 'Route du Lac';
-        $locationCommand1->isEntireStreet = false;
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
         $locationCommand1->geometry = null;
@@ -312,7 +303,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2->cityLabel = 'Savenay';
         $locationCommand2->roadType = RoadTypeEnum::LANE->value;
         $locationCommand2->roadName = 'Route du Grand Brossais';
-        $locationCommand2->isEntireStreet = true;
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
         $locationCommand2->geometry = null;

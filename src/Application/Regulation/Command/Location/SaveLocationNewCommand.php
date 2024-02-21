@@ -17,11 +17,11 @@ final class SaveLocationNewCommand implements CommandInterface
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
-    public ?bool $isEntireStreet = null;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
     public ?string $geometry;
     public ?Measure $measure;
+    private ?bool $isEntireStreetFormValue = null;
 
     public function __construct(
         public readonly ?LocationNew $locationNew = null,
@@ -32,7 +32,6 @@ final class SaveLocationNewCommand implements CommandInterface
         $this->cityCode = $locationNew?->getCityCode();
         $this->cityLabel = $locationNew?->getCityLabel();
         $this->roadName = $locationNew?->getRoadName();
-        $this->isEntireStreet = $locationNew ? $locationNew->getIsEntireStreet() : true;
         $this->fromHouseNumber = $locationNew?->getFromHouseNumber();
         $this->toHouseNumber = $locationNew?->getToHouseNumber();
         $this->geometry = $locationNew?->getGeometry();
@@ -53,9 +52,25 @@ final class SaveLocationNewCommand implements CommandInterface
             $this->roadNumber = null;
         }
 
-        if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreet) {
+        if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreetFormValue) {
             $this->fromHouseNumber = null;
             $this->toHouseNumber = null;
         }
+    }
+
+    // Used by validation layer
+
+    public function getIsEntireStreet(): bool
+    {
+        if ($this->isEntireStreetFormValue !== null) {
+            return $this->isEntireStreetFormValue;
+        }
+
+        return !$this->fromHouseNumber && !$this->toHouseNumber;
+    }
+
+    public function setIsEntireStreet(bool $value): void
+    {
+        $this->isEntireStreetFormValue = $value;
     }
 }
