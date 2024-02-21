@@ -228,6 +228,7 @@ final class SaveLocationNewCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
+        $command->setIsEntireStreet(false); // Need to switch explicitly
         $command->fromHouseNumber = '137';
         $command->toHouseNumber = null;
 

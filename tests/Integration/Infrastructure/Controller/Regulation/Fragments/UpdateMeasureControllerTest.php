@@ -84,7 +84,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locationsNew'][0]['cityLabel'] = 'La Madeleine (59110)';
         $values['measure_form']['locationsNew'][0]['roadName'] = 'Rue Saint-Victor';
         $values['measure_form']['locationsNew'][0]['isEntireStreet'] = '1';
-        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '';
+        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '3'; // Will be ignored
         $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);

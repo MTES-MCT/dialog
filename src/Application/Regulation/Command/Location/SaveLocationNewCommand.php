@@ -35,6 +35,7 @@ final class SaveLocationNewCommand implements CommandInterface
         $this->fromHouseNumber = $locationNew?->getFromHouseNumber();
         $this->toHouseNumber = $locationNew?->getToHouseNumber();
         $this->geometry = $locationNew?->getGeometry();
+        $this->isEntireStreetFormValue = $locationNew ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
     }
 
     public function clean(): void
