@@ -13,7 +13,7 @@
     <field name="description" type="text" column="description" nullable="false"/>
     <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
     <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
-    <one-to-many field="locations" target-entity="App\Domain\Regulation\Location" mapped-by="regulationOrder" fetch="EAGER" />
+    <one-to-many field="measures" target-entity="App\Domain\Regulation\Measure" mapped-by="regulationOrder"/>
     <one-to-one field="regulationOrderRecord" target-entity="App\Domain\Regulation\RegulationOrderRecord" mapped-by="regulationOrder" />
   </entity>
 </doctrine-mapping>

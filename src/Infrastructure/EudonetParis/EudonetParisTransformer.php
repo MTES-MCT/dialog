@@ -7,9 +7,9 @@ namespace App\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -47,41 +47,26 @@ final class EudonetParisTransformer
             return new EudonetParisTransformerResult(null, $errors);
         }
 
-        $locationCommands = [];
+        $measureCommands = [];
 
         foreach ($row['measures'] as $measureRow) {
-            [$measureCommand, $error] = $this->buildMeasureCommand($measureRow);
+            [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow);
 
             if (empty($measureCommand)) {
-                $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_measure'];
+                $errors[] = ['loc' => $loc, 'impact' => 'skip_measure', 'reason' => 'measure_errors', 'errors' => $measureErrors];
                 continue;
             }
 
-            $vehicleSet = new SaveVehicleSetCommand();
-            $vehicleSet->allVehicles = true;
-            $measureCommand->vehicleSet = $vehicleSet;
-
-            foreach ($measureRow['locations'] as $locationRow) {
-                [$locationCommand, $error] = $this->buildLocationCommand($locationRow, $measureCommand);
-
-                if (empty($locationCommand)) {
-                    $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_location'];
-                    continue;
-                }
-
-                $locationCommands[] = $locationCommand;
-            }
+            $measureCommands[] = $measureCommand;
         }
 
-        if (\count($locationCommands) === 0) {
-            $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_locations_gathered'];
-
+        if (\count($measureCommands) === 0) {
             return new EudonetParisTransformerResult(null, $errors);
         }
 
         $command = new ImportEudonetParisRegulationCommand(
             $generalInfoCommand,
-            $locationCommands,
+            $measureCommands,
         );
 
         return new EudonetParisTransformerResult($command, $errors);
@@ -148,22 +133,47 @@ final class EudonetParisTransformer
     private function buildMeasureCommand(array $row): array
     {
         $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
+        $errors = [];
 
         $name = $row['fields'][EudonetParisExtractor::MESURE_NOM];
 
         if (strtolower($name) !== 'circulation interdite') {
-            $error = ['loc' => [...$loc, 'fieldname' => 'NOM'], 'reason' => 'value_not_in_enum', 'value' => $name, 'enum' => ['circulation interdite']];
+            $errors[] = ['loc' => [...$loc, 'fieldname' => 'NOM'], 'reason' => 'value_not_in_enum', 'value' => $name, 'enum' => ['circulation interdite']];
 
-            return [null, $error];
+            return [null, $errors];
         }
+
+        $locationCommands = [];
+
+        foreach ($row['locations'] as $locationRow) {
+            [$locationCommand, $error] = $this->buildLocationCommand($locationRow);
+
+            if (empty($locationCommand)) {
+                $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_location'];
+                continue;
+            }
+
+            $locationCommands[] = $locationCommand;
+        }
+
+        if (\count($locationCommands) === 0) {
+            $errors[] = ['loc' => [...$loc, 'fieldname' => 'locations'], 'impact' => 'skip_measure', 'reason' => 'no_locations_gathered'];
+
+            return [null, $errors];
+        }
+
+        $vehicleSet = new SaveVehicleSetCommand();
+        $vehicleSet->allVehicles = true;
 
         $command = new SaveMeasureCommand();
         $command->type = MeasureTypeEnum::NO_ENTRY->value;
+        $command->vehicleSet = $vehicleSet;
+        $command->locationsNew = $locationCommands;
 
         return [$command, null];
     }
 
-    private function buildLocationCommand(array $row, SaveMeasureCommand $measureCommand): array
+    private function buildLocationCommand(array $row): array
     {
         $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
 
@@ -214,7 +224,7 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand = new SaveLocationNewCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $cityCode;
         $locationCommand->cityLabel = self::CITY_LABEL;
@@ -229,13 +239,12 @@ final class EudonetParisTransformer
                 'loc' => $loc,
                 'reason' => 'geocoding_failure',
                 'message' => $exc->getMessage(),
+                'index' => $exc->getLocationIndex(),
                 'location_raw' => json_encode($row),
             ];
 
             return [null, $error];
         }
-
-        $locationCommand->measures[] = $measureCommand;
 
         return [$locationCommand, null];
     }

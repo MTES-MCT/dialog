@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandInterface;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\LocationNew;
 use App\Domain\Regulation\Measure;
 
 final class SaveLocationNewCommand implements CommandInterface
 {
-    public ?string $roadType;
-    public ?string $administrator;
-    public ?string $roadNumber;
-    public ?string $cityCode;
-    public ?string $cityLabel;
-    public ?string $roadName;
-    public ?string $fromHouseNumber;
-    public ?string $toHouseNumber;
+    public ?string $roadType = null;
+    public ?string $administrator = null;
+    public ?string $roadNumber = null;
+    public ?string $cityCode = null;
+    public ?string $cityLabel = null;
+    public ?string $roadName = null;
+    public ?string $fromHouseNumber = null;
+    public ?string $toHouseNumber = null;
     public ?string $geometry;
     public ?Measure $measure;
+    private ?bool $isEntireStreetFormValue = null;
 
     public function __construct(
         public readonly ?LocationNew $locationNew = null,
@@ -34,21 +35,43 @@ final class SaveLocationNewCommand implements CommandInterface
         $this->fromHouseNumber = $locationNew?->getFromHouseNumber();
         $this->toHouseNumber = $locationNew?->getToHouseNumber();
         $this->geometry = $locationNew?->getGeometry();
+        $this->isEntireStreetFormValue = $locationNew ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
     }
 
-    public static function fromLocation(Location $location, LocationNew $locationNew = null): self
+    public function clean(): void
     {
-        $locationNew = new self($locationNew);
-        $locationNew->roadType = $location->getRoadType();
-        $locationNew->administrator = $location->getAdministrator();
-        $locationNew->roadNumber = $location->getRoadNumber();
-        $locationNew->cityLabel = $location->getCityLabel();
-        $locationNew->cityCode = $location->getCityCode();
-        $locationNew->roadName = $location->getRoadName();
-        $locationNew->fromHouseNumber = $location->getFromHouseNumber();
-        $locationNew->toHouseNumber = $location->getToHouseNumber();
-        $locationNew->geometry = $location->getGeometry();
+        if ($this->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value) {
+            $this->cityLabel = null;
+            $this->cityCode = null;
+            $this->roadName = null;
+            $this->fromHouseNumber = null;
+            $this->toHouseNumber = null;
+        }
 
-        return $locationNew;
+        if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
+            $this->administrator = null;
+            $this->roadNumber = null;
+        }
+
+        if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreetFormValue) {
+            $this->fromHouseNumber = null;
+            $this->toHouseNumber = null;
+        }
+    }
+
+    // Used by validation layer
+
+    public function getIsEntireStreet(): bool
+    {
+        if ($this->isEntireStreetFormValue !== null) {
+            return $this->isEntireStreetFormValue;
+        }
+
+        return !$this->fromHouseNumber && !$this->toHouseNumber;
+    }
+
+    public function setIsEntireStreet(bool $value): void
+    {
+        $this->isEntireStreetFormValue = $value;
     }
 }

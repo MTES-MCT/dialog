@@ -1,0 +1,11 @@
+{% if not canDelete %}
+    {% for measureUuid in measureUuids %}
+        <turbo-stream action="replace" target="measure_{{ measureUuid }}_delete_button">
+            <template>
+                <li id="measure_{{ measureUuid }}_delete_button"></li>
+            </template>
+        </turbo-stream>
+    {% endfor %}
+{% endif %}
+
+<turbo-stream action="remove" target="block_measure_{{ uuid }}"></turbo-stream>

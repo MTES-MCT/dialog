@@ -61,23 +61,17 @@ Arrête
 
 [{% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}]{custom-style="Dialog_Variable"}
 
-{% for location in regulationOrderLocations.locations -%}
+{% for measure in measures -%}
     [
-    {% if location.roadType == 'lane' %}
-        {{ location.roadName }} à {{ location.cityLabel }}
-        {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
-    {% else %}
-        {{ location.roadNumber }} ({{ location.administrator }})
-    {% endif %}
-    –
-    {%- for measure in location.measures %}
-        {% if measure.maxSpeed %}
-            {{ 'regulation.measure.maxSpeed'|trans({'%maxSpeed%': measure.maxSpeed }) }}
-        {% else %}
-            {{ ('regulation.measure.type.' ~ measure.type)|trans|lower }}
-        {% endif %}
-        {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
-        {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
+    {% if measure.maxSpeed -%}
+        {{ 'regulation.measure.maxSpeed'|trans({'%maxSpeed%': measure.maxSpeed }) }}
+    {%- else -%}
+        {{ ('regulation.measure.type.' ~ measure.type)|trans|lower }}
+    {%- endif %}
+    {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+    {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
+    {%- for location in measure.locations %}
+        {% if location.roadType == 'lane' %}{{ location.roadName }} à {{ location.cityLabel }}{% include 'regulation/_location_house_numbers.html.twig' with { location } only %}{% else %}{{ location.roadNumber }} ({{ location.administrator }}){% endif %}{% if not loop.last%}, {% endif %}
     {%- endfor %}
     {# New line #}
 

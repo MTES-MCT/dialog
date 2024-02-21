@@ -8,14 +8,13 @@ use App\Application\CommandInterface;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
 
 final class SaveMeasureCommand implements CommandInterface
 {
     public ?string $type;
     public ?int $maxSpeed = null;
-    public ?Location $location;
     /** @var SaveLocationNewCommand[] */
     public array $locationsNew = [];
     public array $periods = [];
@@ -23,27 +22,39 @@ final class SaveMeasureCommand implements CommandInterface
     public ?SaveVehicleSetCommand $vehicleSet = null;
 
     public function __construct(
+        public ?RegulationOrder $regulationOrder = null,
         public readonly ?Measure $measure = null,
     ) {
-        $this->location = $measure?->getLocation();
-        $this->type = $measure?->getType();
-        $this->createdAt = $measure?->getCreatedAt();
-        $this->maxSpeed = $measure?->getMaxSpeed();
+    }
+
+    public static function create(
+        ?RegulationOrder $regulationOrder,
+        Measure $measure = null,
+    ): self {
+        $command = new self($regulationOrder, $measure);
+
+        $command->type = $measure?->getType();
+        $command->createdAt = $measure?->getCreatedAt();
+        $command->maxSpeed = $measure?->getMaxSpeed();
 
         if ($measure) {
             $vehicleSet = $measure->getVehicleSet();
 
             if ($vehicleSet) {
-                $this->vehicleSet = new SaveVehicleSetCommand($vehicleSet);
+                $command->vehicleSet = new SaveVehicleSetCommand($vehicleSet);
             }
 
             foreach ($measure->getLocationsNew() as $locationNew) {
-                $this->locationsNew[] = new SaveLocationNewCommand($locationNew);
+                $command->locationsNew[] = new SaveLocationNewCommand($locationNew);
             }
 
             foreach ($measure->getPeriods() as $period) {
-                $this->periods[] = new SavePeriodCommand($period);
+                $command->periods[] = new SavePeriodCommand($period);
             }
+        } else {
+            $command->locationsNew[] = new SaveLocationNewCommand();
         }
+
+        return $command;
     }
 }

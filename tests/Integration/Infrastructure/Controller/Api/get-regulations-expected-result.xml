@@ -413,6 +413,7 @@
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
+
         <trafficRegulationOrder id="06549047-db9d-74bb-8000-754a6f2ff4c3" version="1">
             <description>
                 <com:values>
@@ -445,6 +446,7 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
+
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
@@ -494,6 +496,7 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
+
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
@@ -508,6 +511,7 @@
                             </loc:_linearLocationExtension>
                         </locationByOrder>
                     </conditions>
+
                     <conditions xsi:type="VehicleCondition">
                         <negate>false</negate>
                         <vehicleCharacteristics>
@@ -578,26 +582,70 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
+
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Avenue de Fonneuve</loc:roadName>
+                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
+                    </conditions>
+
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleType>heavyGoodsVehicle</com:vehicleType>
+                            <com:grossWeightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
+                                <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                            </com:grossWeightCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:heightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleHeight>2.4</com:vehicleHeight>
+                            </com:heightCharacteristic>
+                            <com:lengthCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleLength>12</com:vehicleLength>
+                            </com:lengthCharacteristic>
+                        </vehicleCharacteristics>
                     </conditions>
                     <conditions xsi:type="VehicleCondition">
                         <negate>false</negate>
                         <vehicleCharacteristics>
                             <com:emissions>
-                                <com:emissionClassificationOther>critair3</com:emissionClassificationOther>
+                                <com:emissionClassificationOther>critair4</com:emissionClassificationOther>
                             </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair5</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="NonVehicularRoadUserCondition">
+                        <negate>true</negate>
+                        <nonVehicularRoadUser>pedestrians</nonVehicularRoadUser>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>true</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleUsage>emergencyServices</com:vehicleUsage>
                         </vehicleCharacteristics>
                     </conditions>
                 </condition>
@@ -620,82 +668,12 @@
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
-                    <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:LinearLocation">
-                            <loc:supplementaryPositionalDescription>
-                                <loc:roadInformation>
-                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
-                                </loc:roadInformation>
-                            </loc:supplementaryPositionalDescription>
-                            <loc:_linearLocationExtension>
-                                <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
-                                </loc:linearLocationExtended>
-                            </loc:_linearLocationExtension>
-                        </locationByOrder>
-                    </conditions>
-                </condition>
-            </trafficRegulation>
 
-            <trafficRegulation>
-                <status>active</status>
-                <typeOfRegulation xsi:type="SpeedLimit">
-                    <maxValue>
-                        <numericValue>50</numericValue>
-                        <unitOfMeasure>kilometresPerHour</unitOfMeasure>
-                    </maxValue>
-                </typeOfRegulation>
-
-                <condition xsi:type="ConditionSet">
-                    <operator>and</operator>
-                    <conditions xsi:type="ValidityCondition">
-                        <negate>false</negate>
-                        <validityByOrder>
-                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                            <com:validityTimeSpecification>
-                                <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
-                                <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
-                            </com:validityTimeSpecification>
-                        </validityByOrder>
-                    </conditions>
                     <conditions xsi:type="LocationCondition">
                         <locationByOrder xsi:type="loc:LinearLocation">
                             <loc:supplementaryPositionalDescription>
                                 <loc:roadInformation>
-                                    <loc:roadName>Rue de l'Hôtel de Ville</loc:roadName>
-                                </loc:roadInformation>
-                            </loc:supplementaryPositionalDescription>
-                            <loc:_linearLocationExtension>
-                                <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
-                                </loc:linearLocationExtended>
-                            </loc:_linearLocationExtension>
-                        </locationByOrder>
-                    </conditions>
-                </condition>
-            </trafficRegulation>
-            <trafficRegulation>
-                <status>active</status>
-                <typeOfRegulation xsi:type="AccessRestriction">
-                    <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
-                <condition xsi:type="ConditionSet">
-                    <operator>and</operator>
-                    <conditions xsi:type="ValidityCondition">
-                        <negate>false</negate>
-                        <validityByOrder>
-                        <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                        <com:validityTimeSpecification>
-                            <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
-                            <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
-                        </com:validityTimeSpecification>
-                        </validityByOrder>
-                    </conditions>
-                    <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:LinearLocation">
-                            <loc:supplementaryPositionalDescription>
-                                <loc:roadInformation>
-                                <loc:roadName>Rue Gamot</loc:roadName>
+                                    <loc:roadName>Rue Gamot</loc:roadName>
                                 </loc:roadInformation>
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
@@ -704,6 +682,57 @@
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
+                    </conditions>
+
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleType>heavyGoodsVehicle</com:vehicleType>
+                            <com:grossWeightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
+                                <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                            </com:grossWeightCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:heightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleHeight>2.4</com:vehicleHeight>
+                            </com:heightCharacteristic>
+                            <com:lengthCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleLength>12</com:vehicleLength>
+                            </com:lengthCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair4</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair5</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="NonVehicularRoadUserCondition">
+                        <negate>true</negate>
+                        <nonVehicularRoadUser>pedestrians</nonVehicularRoadUser>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>true</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleUsage>emergencyServices</com:vehicleUsage>
+                        </vehicleCharacteristics>
                     </conditions>
                 </condition>
             </trafficRegulation>

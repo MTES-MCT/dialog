@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationNewCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -61,13 +62,18 @@ final class SaveMeasureCommandHandler
 
             $locationsNewStillPresentUuids = [];
 
-            foreach ($command->locationsNew as $locationNewCommand) {
+            foreach ($command->locationsNew as $index => $locationNewCommand) {
                 if ($locationNewCommand->locationNew) {
                     $locationsNewStillPresentUuids[] = $locationNewCommand->locationNew->getUuid();
                 }
 
-                $locationNewCommand->measure = $command->measure;
-                $this->commandBus->handle($locationNewCommand);
+                try {
+                    $locationNewCommand->measure = $command->measure;
+                    $locationNew = $this->commandBus->handle($locationNewCommand);
+                    $locationsNewStillPresentUuids[] = $locationNew->getUuid();
+                } catch (GeocodingFailureException $e) {
+                    throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
+                }
             }
 
             // Locations that weren't present in the command get deleted.
@@ -84,7 +90,7 @@ final class SaveMeasureCommandHandler
         $measure = $this->measureRepository->add(
             new Measure(
                 uuid: $this->idFactory->make(),
-                location: $command->location,
+                regulationOrder: $command->regulationOrder,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
                 maxSpeed: $command->maxSpeed,
@@ -103,10 +109,15 @@ final class SaveMeasureCommandHandler
             $measure->addPeriod($period);
         }
 
-        foreach ($command->locationsNew as $locationNewCommand) {
+        foreach ($command->locationsNew as $index => $locationNewCommand) {
             $locationNewCommand->measure = $measure;
-            $locationNew = $this->commandBus->handle($locationNewCommand);
-            $measure->addLocationNew($locationNew);
+
+            try {
+                $locationNew = $this->commandBus->handle($locationNewCommand);
+                $measure->addLocationNew($locationNew);
+            } catch (GeocodingFailureException $e) {
+                throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
+            }
         }
 
         return $measure;

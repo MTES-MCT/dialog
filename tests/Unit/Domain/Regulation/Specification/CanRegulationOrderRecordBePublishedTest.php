@@ -21,7 +21,7 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
     {
         $this->regulationOrderRecord
             ->expects(self::once())
-            ->method('countLocations')
+            ->method('countMeasures')
             ->willReturn(1);
 
         $specification = new CanRegulationOrderRecordBePublished();
@@ -32,7 +32,7 @@ final class CanRegulationOrderRecordBePublishedTest extends TestCase
     {
         $this->regulationOrderRecord
             ->expects(self::once())
-            ->method('countLocations')
+            ->method('countMeasures')
             ->willReturn(0);
 
         $specification = new CanRegulationOrderRecordBePublished();

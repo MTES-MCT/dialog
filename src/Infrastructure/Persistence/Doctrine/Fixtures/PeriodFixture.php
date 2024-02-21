@@ -23,49 +23,6 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'everyDay',
         );
-
-        $permanentMeasurePeriod = new Period(
-            uuid: 'c01b254c-b7db-4761-9490-b8fea7d42312',
-            measure: $this->getReference('permanentRegulationOrderLocationMeasure1'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
-            recurrenceType: 'certainDays',
-        );
-
-        $permanentMeasureDailyRange = new DailyRange(
-            uuid: '90e9eef7-9364-4587-9862-d8297566011f',
-            applicableDays: ['monday'],
-            period: $permanentMeasurePeriod,
-        );
-
-        $publishedLocation1Measure1Period = new Period(
-            uuid: '064ca7ce-ee4d-7bdb-8000-46856a6d9fa6',
-            measure: $this->getReference('publishedLocation1Measure1'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
-            recurrenceType: 'certainDays',
-        );
-
-        $publishedLocation1Measure1DailyRange = new DailyRange(
-            uuid: '2d11558e-a2d5-4f44-b688-672aa3c0e9b8',
-            applicableDays: ['monday', 'thursday'],
-            period: $publishedLocation1Measure1Period,
-        );
-
-        $publishedLocation1Measure2Period = new Period(
-            uuid: '064ca7cf-43a0-7d0f-8000-b608ba0d2344',
-            measure: $this->getReference('publishedLocation1Measure2'),
-            startDateTime: new \DateTimeImmutable('2023-10-31 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
-            recurrenceType: 'weekend',
-        );
-
-        $publishedLocation1Measure2DailyRange = new DailyRange(
-            uuid: 'a4a61a6c-7777-4794-8fcd-caf1effb95e4',
-            applicableDays: ['tuesday', 'wednesday'],
-            period: $publishedLocation1Measure2Period,
-        );
-
         $cifsPeriod1 = new Period(
             uuid: '06548fe3-7bfb-73af-8000-f7f34af31312',
             measure: $this->getReference('cifsMeasure'),
@@ -73,6 +30,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2021-11-06'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
+
         $cifsDailyRange1 = new DailyRange(
             uuid: '0654b638-800c-73a8-8000-3edefca88689',
             applicableDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
@@ -130,21 +88,15 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         );
 
         $manager->persist($typicalPeriod);
-        $manager->persist($permanentMeasurePeriod);
-        $manager->persist($permanentMeasureDailyRange);
-        $manager->persist($publishedLocation1Measure1Period);
-        $manager->persist($publishedLocation1Measure1DailyRange);
-        $manager->persist($publishedLocation1Measure2Period);
-        $manager->persist($publishedLocation1Measure2DailyRange);
         $manager->persist($cifsPeriod1);
-        $manager->persist($cifsPeriod2);
-        $manager->persist($cifsPeriod3);
         $manager->persist($cifsDailyRange1);
-        $manager->persist($cifsDailyRange2);
-        $manager->persist($cifsDailyRange3);
         $manager->persist($cifsTimeSlot1);
+        $manager->persist($cifsPeriod2);
+        $manager->persist($cifsDailyRange2);
         $manager->persist($cifsDailyRange2TimeSlot1);
         $manager->persist($cifsDailyRange2TimeSlot2);
+        $manager->persist($cifsPeriod3);
+        $manager->persist($cifsDailyRange3);
         $manager->persist($cifsTimeSlot3);
 
         $manager->flush();
@@ -153,7 +105,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            LocationFixture::class,
+            MeasureFixture::class,
         ];
     }
 }

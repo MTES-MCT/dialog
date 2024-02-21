@@ -1,5 +1,4 @@
 {%- for period in periods -%}
-    <br/>
     {%- if period.endDateTime -%}
         du {{ app_datetime(period.startDateTime, true) }} au {{ app_datetime(period.endDateTime, true) }}
     {%- else -%}

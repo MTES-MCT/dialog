@@ -21,23 +21,6 @@ class LocationNew
     ) {
     }
 
-    public static function fromLocation(string $uuid, Measure $measure, Location $location): self
-    {
-        return new self(
-            uuid: $uuid,
-            measure: $measure,
-            roadType: $location->getRoadType(),
-            administrator: $location->getAdministrator(),
-            roadNumber: $location->getRoadNumber(),
-            cityCode: $location->getCityCode(),
-            cityLabel: $location->getCityLabel(),
-            roadName: $location->getRoadName(),
-            fromHouseNumber: $location->getFromHouseNumber(),
-            toHouseNumber: $location->getToHouseNumber(),
-            geometry: $location->getGeometry(),
-        );
-    }
-
     public function getUuid(): string
     {
         return $this->uuid;
@@ -83,14 +66,14 @@ class LocationNew
         return $this->fromHouseNumber;
     }
 
-    public function getGeometry(): ?string
-    {
-        return $this->geometry;
-    }
-
     public function getToHouseNumber(): ?string
     {
         return $this->toHouseNumber;
+    }
+
+    public function getGeometry(): ?string
+    {
+        return $this->geometry;
     }
 
     public function update(

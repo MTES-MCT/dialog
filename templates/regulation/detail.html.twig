@@ -26,44 +26,27 @@
                     <div class="fr-mx-n4v fr-mx-md-0">
                         {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, generalInfo } only %}
                     </div>
+                    <section aria-labelledby="measures-title">
+                        <h3 id="measures-title" class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                            {{ 'regulation.measures'|trans }}
+                        </h3>
 
-                    {% if measures is defined %}
-                        <section aria-labelledby="measures-title">
-                            <h3 id="locations-title" class="fr-h5 fr-x-text--default-grey fr-mt-5w">
-                                {{ 'regulation.measures'|trans }}
-                            </h3>
+                        <ul id="measure_list" class="fr-raw-list">
+                            {% for measure in measures %}
+                                <li class="fr-mx-n4v fr-mx-md-0">
+                                    {% include "regulation/fragments/_measure.html.twig" with { measure, generalInfo, canDelete } only %}
+                                </li>
+                            {% endfor %}
+                        </ul>
 
-                            <ul id="measure_list" class="fr-raw-list">
-                                {% for measure in measures %}
-                                    <li class="fr-mx-n4v fr-mx-md-0">
-                                        {% include "regulation/fragments/_measure.html.twig" with { measure, generalInfo, canDelete } only %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </section>
-                    {% else %}
-                        <section aria-labelledby="locations-title">
-                            <h3 id="locations-title" class="fr-h5 fr-x-text--default-grey fr-mt-5w">
-                                {{ 'regulation.locations'|trans }}
-                            </h3>
-
-                            <ul id="location_list" class="fr-raw-list">
-                                {% for location in regulationOrderLocations.locations %}
-                                    <li class="fr-mx-n4v fr-mx-md-0">
-                                        {% include "regulation/fragments/_location.html.twig" with { location, generalInfo, canDelete } only %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-
-                            {% if isDraft %}
-                                {% if regulationOrderLocations.locations|length > 0 %}
-                                    {% include "regulation/fragments/_add_location_link.html.twig" with { regulationOrderRecordUuid: generalInfo.uuid } only %}
-                                {% else %}
-                                    {{ render(path('fragment_regulations_location_add', { uuid: generalInfo.uuid })) }}
-                                {% endif %}
+                        {% if isDraft %}
+                            {% if measures|length > 0 %}
+                                {% include "regulation/fragments/_add_measure_link.html.twig" with { regulationOrderRecordUuid: generalInfo.uuid } only %}
+                            {% else %}
+                                {{ render(path('fragment_regulations_measure_add', { uuid: generalInfo.uuid })) }}
                             {% endif %}
-                        </section>
-                    {% endif %}
+                        {% endif %}
+                    </section>
                 </div>
 
                 <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
@@ -141,8 +124,8 @@
             cancelLabel: 'common.do_not_publish'|trans,
         } only %}
         {% include "common/confirmation_modal.html.twig" with {
-            id: 'location-delete-modal',
-            title: 'location.delete_modal.title'|trans,
+            id: 'measure-delete-modal',
+            title: 'measure.delete_modal.title'|trans,
             confirmLabel: 'common.delete'|trans,
             cancelLabel: 'common.do_not_delete'|trans,
         } only %}

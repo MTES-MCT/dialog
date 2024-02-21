@@ -6,6 +6,15 @@
     background-color: var(--x-icon-decorative-blue-france);
 }
 
+.fr-x-icon--primary::before {
+    background-color: var(--x-icon-primary);
+}
+
+.fr-x-icon--dark-border::before {
+    background-color: var(--x-icon-dark-border);
+
+}
+
 .fr-x-icon--xl::before {
     --icon-size: 2.75rem;
 }

@@ -25,14 +25,12 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Arrêté permanent FO3/2023 (copie)', $crawler->filter('h2')->text());
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
-        $location = $crawler->filter('[data-testid="location"]');
-
-        // Location
-        $this->assertSame('Rue du Simplon', $location->filter('h3')->text());
-        $this->assertSame('Paris 18e Arrondissement (75018)', $location->filter('li')->eq(0)->text());
-        $this->assertSame('Rue du Simplon', $location->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation alternée tous les jours pour tous les véhicules', $location->filter('li')->eq(2)->text());
-        $this->assertSame('Circulation interdite du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi pour les véhicules de plus de 3,5 tonnes', $location->filter('li')->eq(3)->text());
+        $measures = $crawler->filter('[data-testid="measure"]');
+        // Measure
+        $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
+        $this->assertSame('tous les jours', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text());
+        $this->assertSame('Rue du Simplon Paris 18e Arrondissement (75018)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testWithoutLocations(): void

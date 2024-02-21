@@ -50,10 +50,13 @@ readonly class MeasureView
 
         foreach ($measure->getLocationsNew() as $location) {
             $locations[] = new LocationView(
+                roadType: $location->getRoadType(),
                 cityLabel: $location->getCityLabel(),
                 roadName: $location->getRoadName(),
                 fromHouseNumber: $location->getFromHouseNumber(),
                 toHouseNumber: $location->getToHouseNumber(),
+                administrator: $location->getAdministrator(),
+                roadNumber: $location->getRoadNumber(),
             );
         }
 
