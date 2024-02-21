@@ -17,10 +17,10 @@ final class SaveRegulationLocationCommand implements CommandInterface
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
-    public ?bool $isEntireStreet = null;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
     public ?string $geometry;
+    private ?bool $isEntireStreetFormValue = null;
 
     /** @var SaveMeasureCommand[] */
     public array $measures = [];
@@ -39,7 +39,6 @@ final class SaveRegulationLocationCommand implements CommandInterface
         $command->roadType = $location?->getRoadType();
         $command->administrator = $location?->getAdministrator();
         $command->roadNumber = $location?->getRoadNumber();
-        $command->isEntireStreet = $location ? $location->getIsEntireStreet() : true;
         $command->cityCode = $location?->getCityCode();
         $command->cityLabel = $location?->getCityLabel();
         $command->roadName = $location?->getRoadName();
@@ -72,9 +71,25 @@ final class SaveRegulationLocationCommand implements CommandInterface
             $this->roadNumber = null;
         }
 
-        if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreet) {
+        if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreetFormValue) {
             $this->fromHouseNumber = null;
             $this->toHouseNumber = null;
         }
+    }
+
+    // Used by validation layer
+
+    public function getIsEntireStreet(): bool
+    {
+        if ($this->isEntireStreetFormValue !== null) {
+            return $this->isEntireStreetFormValue;
+        }
+
+        return !$this->fromHouseNumber && !$this->toHouseNumber;
+    }
+
+    public function setIsEntireStreet(bool $value): void
+    {
+        $this->isEntireStreetFormValue = $value;
     }
 }

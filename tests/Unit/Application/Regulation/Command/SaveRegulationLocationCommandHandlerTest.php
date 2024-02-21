@@ -51,7 +51,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $this->administrator = null;
         $this->roadNumber = null;
         $this->roadName = 'Route du Grand Brossais';
-        $this->isEntireStreet = false;
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
         $this->geometry = GeoJSON::toLineString([
@@ -142,7 +141,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->isEntireStreet = $this->isEntireStreet;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
         $command->measures = [
@@ -225,7 +223,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->isEntireStreet = true;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
         $command->measures = [
@@ -326,7 +323,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->isEntireStreet = $this->isEntireStreet;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
         $command->measures = [
@@ -378,7 +374,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->isEntireStreet = true;
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
 
@@ -428,7 +423,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->isEntireStreet = false;
         $command->fromHouseNumber = '137';
         $command->toHouseNumber = null;
 
@@ -513,7 +507,6 @@ final class SaveRegulationLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->isEntireStreet = $this->isEntireStreet;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
 

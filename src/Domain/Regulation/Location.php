@@ -81,11 +81,6 @@ class Location
         return $this->toHouseNumber;
     }
 
-    public function getIsEntireStreet(): bool
-    {
-        return \is_null($this->fromHouseNumber) && \is_null($this->toHouseNumber);
-    }
-
     public function getGeometry(): ?string
     {
         return $this->geometry;
