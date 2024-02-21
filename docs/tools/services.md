@@ -30,3 +30,13 @@ make console CMD="app:geocode '3 Rue des Tournesols 82000 Montauban'"
 ```console
 POINT(1.386715 44.049081)
 ```
+
+## API Geopf
+
+DiaLog s'interface avec l'[API geoservices de l'IGN] (https://data.geopf.fr/wfs/ows) pour récupérer dynamiquement les géometries des voies et routes.
+
+### Liens utiles
+
+* [Documentation de l'API ] (https://geoservices.ign.fr/documentation/services/services-geoplateforme/diffusion#70070)
+* [Documentation de la BDTOPO] (https://geoservices.ign.fr/sites/default/files/2023-10/DC_BDTOPO_3-3.pdf)
+* [Fonctions de filtrage qui peuvent être utilisées dans le filtrage WFS] (https://docs.geoserver.org/main/en/user/filter/function_reference.html)

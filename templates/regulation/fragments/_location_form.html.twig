@@ -5,43 +5,32 @@
 %}
 
 {% macro periods_list_item(form, index) %}
-    <li
-        class="app-card"
-        data-controller="remove"
-        data-remove-target="this"
-        data-form-collection-target="collectionItem"
-    >
-        <div class ="app-card__header">
-            <div class="app-card__title fr-text--heavy">
-                {{ 'regulation.period.title'|trans }}
-            </div>
-            <button
-                type="button"
-                aria-label="{{ 'common.delete'|trans }}"
-                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
-                data-action="remove#removeElement"
-            >
-            </button>
-        </div>
-        <div class="app-card__content">
-            <div class="fr-x-container--fluid">
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
-                </div>
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
-                </div>
-            </div>
+	<li class="app-card" data-controller="remove" data-remove-target="this" data-form-collection-target="collectionItem">
+		<div class="app-card__header">
+			<div class="app-card__title fr-text--heavy">
+				{{ 'regulation.period.title'|trans }}
+			</div>
+			<button type="button" aria-label="{{ 'common.delete'|trans }}" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line" data-action="remove#removeElement"></button>
+		</div>
+		<div class="app-card__content">
+			<div class="fr-x-container--fluid">
+				<div class="fr-grid-row fr-grid-row--gutters">
+					{{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
+					{{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
+				</div>
+				<div class="fr-grid-row fr-grid-row--gutters">
+					{{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
+					{{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
+				</div>
+			</div>
 
-            <div data-controller="form-reveal">
-                <hr/>
-                <div class="fr-container--fluid">
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-select-group fr-col-12">
-                            {{ form_label(form.recurrenceType, null, { label_attr: { class: 'fr-label required fr-text--heavy' } }) }}
-                            {{ form_widget(form.recurrenceType, {
+			<div data-controller="form-reveal">
+				<hr/>
+				<div class="fr-container--fluid">
+					<div class="fr-grid-row fr-grid-row--gutters">
+						<div class="fr-select-group fr-col-12">
+							{{ form_label(form.recurrenceType, null, { label_attr: { class: 'fr-label required fr-text--heavy' } }) }}
+							{{ form_widget(form.recurrenceType, {
                                 group_class: 'fr-select-group',
                                 widget_class: 'fr-select',
                                 row_attr: {class: 'fr-col-12'},
@@ -51,132 +40,86 @@
                                     'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open   condition:no->form-reveal#close',
                                 }
                             }) }}
-                            {{ form_errors(form.recurrenceType) }}
-                        </div>
-                    </div>
-                </div>
+							{{ form_errors(form.recurrenceType) }}
+						</div>
+					</div>
+				</div>
 
-                <div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %}hidden{% endif %}>
-                    <div class="fr-fieldset__element fr-my-2w" >
-                        {% for day in form.dailyRange.applicableDays %}
-                            {% set dayBtnId = day.vars.id ~ '-btn' %}
-                            {% set isChecked = day.vars.value in form.dailyRange.applicableDays.vars.value ? "true" : "false" %}
-                            <label for="{{ dayBtnId }}" data-controller="chip-button">
-                                <button
-                                    id="{{ dayBtnId }}"
-                                    type="button"
-                                    class="fr-tag fr-mb-1w"
-                                    aria-pressed="{{ isChecked }}"
-                                    data-chip-button-target="button"
-                                >
-                                    {{ ('regulation.period.days.' ~ day.vars.value)|trans }}
-                                    {{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
-                                </button>
-                            </label>
-                        {% endfor %}
-                    </div>
-                    {{ form_row(form.dailyRange.recurrenceType) }}
-                    {{ form_errors(form.dailyRange.applicableDays) }}
-                </div>
-                <div
-                    data-controller="form-collection"
-                    data-form-collection-prototype-key-value="timeSlot"
-                    data-form-collection-next-index-value="{{ form.timeSlots|length > 0 ? form.timeSlots|last.vars.name + 1 : 0 }}"
-                    data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}"
-                >
-                    <ul
-                        class="app-timeslot-list fr-raw-list fr-mb-2w"
-                        data-testid="timeslot-list"
-                        data-form-collection-target="collectionContainer"
-                        {% if form.timeSlots|length == 0 %}data-empty{% endif %}
-                        aria-label="{{ form.timeSlots.vars.label|trans }}"
-                    >
-                        {%- for item in form.timeSlots -%}
-                            {{ _self.timeSlots_list_item(item, loop.index) }}
-                        {%- else -%}
-                            {%- do form.timeSlots.setRendered -%}
-                        {%- endfor -%}
-                    </ul>
+				<div data-form-reveal-target="section" {% if form.recurrenceType.vars.value != 'certainDays' %} hidden {% endif %}>
+					<div class="fr-fieldset__element fr-my-2w">
+						{% for day in form.dailyRange.applicableDays %}
+							{% set dayBtnId = day.vars.id ~ '-btn' %}
+							{% set isChecked = day.vars.value in form.dailyRange.applicableDays.vars.value ? "true" : "false" %}
+							<label for="{{ dayBtnId }}" data-controller="chip-button">
+								<button id="{{ dayBtnId }}" type="button" class="fr-tag fr-mb-1w" aria-pressed="{{ isChecked }}" data-chip-button-target="button">
+									{{ ('regulation.period.days.' ~ day.vars.value)|trans }}
+									{{ form_widget(day, { attr: { hidden: true, 'data-chip-button-target': 'checkbox' } }) }}
+								</button>
+							</label>
+						{% endfor %}
+					</div>
+					{{ form_row(form.dailyRange.recurrenceType) }}
+					{{ form_errors(form.dailyRange.applicableDays) }}
+				</div>
+				<div data-controller="form-collection" data-form-collection-prototype-key-value="timeSlot" data-form-collection-next-index-value="{{ form.timeSlots|length > 0 ? form.timeSlots|last.vars.name + 1 : 0 }}" data-form-collection-prototype-value="{{ _self.timeSlots_list_item(form.timeSlots.vars.prototype, '__timeSlot_name__')|e('html_attr') }}">
+					<ul class="app-timeslot-list fr-raw-list fr-mb-2w" data-testid="timeslot-list" data-form-collection-target="collectionContainer" {% if form.timeSlots|length == 0 %} data-empty {% endif %} aria-label="{{ form.timeSlots.vars.label|trans }}">
+						{%- for item in form.timeSlots -%}
+							{{ _self.timeSlots_list_item(item, loop.index) }}
+						{%- else -%}
+							{%- do form.timeSlots.setRendered -%}
+						{%- endfor -%}
+					</ul>
 
-                    <button
-                        type="button"
-                        class="app-timeslot-define fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-time-line fr-x-btn--with-hint"
-                        data-action="form-collection#addCollectionElement"
-                    >
-                        {{ 'regulation.timeSlot.add'|trans }}
+					<button type="button" class="app-timeslot-define fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-time-line fr-x-btn--with-hint" data-action="form-collection#addCollectionElement">
+						{{ 'regulation.timeSlot.add'|trans }}
 
-                        <span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
+						<span class="fr-hint-text">{{ 'regulation.timeSlot.add.help'|trans }}</span>
 
-                    </button>
-                </div>
-            </div>
-        </div>
-    </li>
+					</button>
+				</div>
+			</div>
+		</div>
+	</li>
 {% endmacro %}
 
 {% macro timeSlots_list_item(form, index) %}
-    <li
-        data-controller="remove"
-        data-remove-target="this"
-        data-form-collection-target="collectionItem"
-    >
-        <div class="fr-container--fluid">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
-                {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
-                <div class="fr-col-12 fr-col-sm-4">
-                    <button
-                        type="button"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line fr-mt-5w"
-                        data-action="remove#removeElement"
-                        aria-label="{{ 'regulation.timeSlots.remove'|trans }}"
-                    >
-                    </button>
-                    <button
-                        type="button"
-                        class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line fr-mt-5w"
-                        data-action="form-collection#addCollectionElement"
-                        aria-controls="period-list"
-                        aria-label="{{ 'regulation.timeSlots.add'|trans }}"
-                    >
-                    </button>
-                </div>
-            </div>
-        </div>
-    </li>
+	<li data-controller="remove" data-remove-target="this" data-form-collection-target="collectionItem">
+		<div class="fr-container--fluid">
+			<div class="fr-grid-row fr-grid-row--gutters">
+				{{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
+				{{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
+				<div class="fr-col-12 fr-col-sm-4">
+					<button type="button" class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line fr-mt-5w" data-action="remove#removeElement" aria-label="{{ 'regulation.timeSlots.remove'|trans }}"></button>
+					<button type="button" class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line fr-mt-5w" data-action="form-collection#addCollectionElement" aria-controls="period-list" aria-label="{{ 'regulation.timeSlots.add'|trans }}"></button>
+				</div>
+			</div>
+		</div>
+	</li>
 {% endmacro %}
 
 {% macro measures_list_item(form, index, position) %}
-    <li
-        class="app-card fr-p-3w"
-        data-controller="remove"
-        data-remove-target="this"
-        data-form-collection-target="collectionItem"
-    >
-        <div class="app-card__header">
-            <div class="app-card__title">
-                <h4 class="fr-h6 fr-mb-0" data-form-collection-position-template="{{ 'regulation.measure'|trans }}">
-                    {{ 'regulation.measure'|trans }} {{ position }}
-                </h4>
-                <p class="fr-text-sm fr-x-text--mention-grey fr-m-0">
-                    {{ 'regulation.measure_list_item.help'|trans }}
-                </p>
-            </div>
-        </div>
+	<li class="app-card fr-p-3w" data-controller="remove" data-remove-target="this" data-form-collection-target="collectionItem">
+		<div class="app-card__header">
+			<div class="app-card__title">
+				<h4 class="fr-h6 fr-mb-0" data-form-collection-position-template="{{ 'regulation.measure'|trans }}">
+					{{ 'regulation.measure'|trans }}
+					{{ position }}
+				</h4>
+				<p class="fr-text-sm fr-x-text--mention-grey fr-m-0">
+					{{ 'regulation.measure_list_item.help'|trans }}
+				</p>
+			</div>
+		</div>
 
-        <div class="app-card__actions">
-            <button
-                type="button"
-                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
-                data-action="remove#removeElement"
-            >
-                {{ 'common.delete'|trans }}
-            </button>
-        </div>
+		<div class="app-card__actions">
+			<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line" data-action="remove#removeElement">
+				{{ 'common.delete'|trans }}
+			</button>
+		</div>
 
-        <div>
-            <div data-controller="form-reveal">
-                {{ form_row(form.type, {
+		<div>
+			<div data-controller="form-reveal">
+				{{ form_row(form.type, {
                     group_class: 'fr-select-group',
                     widget_class: 'fr-select',
                     row_attr: {
@@ -187,7 +130,7 @@
                     },
                 }) }}
 
-                {{ form_row(form.maxSpeed, {
+				{{ form_row(form.maxSpeed, {
                     group_class: 'fr-input-group',
                     widget_class: 'fr-input',
                     row_attr: {
@@ -201,68 +144,43 @@
                     },
                     widget_suffix: 'regulation.measure.maxSpeed.unit'|trans
                 }) }}
-            </div>
+			</div>
 
-            {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index } only %}
+			{% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index } only %}
 
-            <fieldset
-                class="fr-fieldset"
-                aria-labelledby="periods-legend-{{ index }}"
-                data-controller="form-collection"
-                data-form-collection-prototype-key-value="period"
-                data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
-                data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
-            >
-                {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend-' ~ index, class: 'fr-fieldset__legend' } }) }}
-                <ul
-                    id="period-list"
-                    class="fr-raw-list fr-mb-2w"
-                    data-testid="period-list"
-                    data-form-collection-target="collectionContainer"
-                    aria-label="{{ form.periods.vars.label|trans }}"
-                >
-                    {% for item in form.periods %}
-                        {{ _self.periods_list_item(item, loop.index) }}
-                    {% else %}
-                        {% do form.periods.setRendered %}
-                    {% endfor %}
-                </ul>
+			<fieldset class="fr-fieldset" aria-labelledby="periods-legend-{{ index }}" data-controller="form-collection" data-form-collection-prototype-key-value="period" data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}" data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}">
+				{{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend-' ~ index, class: 'fr-fieldset__legend' } }) }}
+				<ul id="period-list" class="fr-raw-list fr-mb-2w" data-testid="period-list" data-form-collection-target="collectionContainer" aria-label="{{ form.periods.vars.label|trans }}">
+					{% for item in form.periods %}
+						{{ _self.periods_list_item(item, loop.index) }}
+					{% else %}
+						{% do form.periods.setRendered %}
+					{% endfor %}
+				</ul>
 
-                <button
-                    type="button"
-                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
-                    data-action="form-collection#addCollectionElement"
-                    aria-controls="period-list"
-                >
-                    {{ 'regulation.period.add'|trans }}
-                </button>
-            </fieldset>
-        </div>
-    </li>
+				<button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line" data-action="form-collection#addCollectionElement" aria-controls="period-list">
+					{{ 'regulation.period.add'|trans }}
+				</button>
+			</fieldset>
+		</div>
+	</li>
 {% endmacro %}
 
 <turbo-frame id="{{ frame }}">
-    <div class="app-card app-card--raised fr-mt-3w">
-        <div class="app-card__header">
-            <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-            <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ location ? location.roadName : 'regulation.location'|trans }}
-            </h3>
-        </div>
-        <div class="app-card__content">
-            {{ form_start(form, {attr: {id: 'location-form'}}) }}
-                {{ form_errors(form) }}
+	<div class="app-card app-card--raised fr-mt-3w">
+		<div class="app-card__header">
+			<span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+			<h3 class="app-card__title fr-h4 fr-mb-0">
+				{{ location ? location.roadName : 'regulation.location'|trans }}
+			</h3>
+		</div>
+		<div class="app-card__content">
+			{{ form_start(form, {attr: {id: 'location-form'}}) }}
+			{{ form_errors(form) }}
 
-                {% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type', app.request) %}
-                <div 
-                    data-controller="form-reveal"
-                    class="fr-x-autocomplete-wrapper"
-                    data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
-                    data-autocomplete-query-param-value="search"
-                    data-autocomplete-min-length-value="3"
-                    data-autocomplete-delay-value="500"
-                >
-                    {{ form_row(form.roadType, {
+			{% set roadTypeFeatureEnabled = app_is_feature_enabled('road_type', app.request) %}
+			<div data-controller="form-reveal" class="fr-x-autocomplete-wrapper" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
+				{{ form_row(form.roadType, {
                         group_class: 'fr-select-group',
                         widget_class: 'fr-select',
                         row_attr: {
@@ -270,135 +188,81 @@
                             'change->form-reveal#openByValue'
                         },
                     }) }}
-   
-                <div
-                    data-form-reveal-target="section"
-                    data-value="departmentalRoad"
-                    {% if not roadTypeFeatureEnabled or form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}
-                >
-                    {{ form_row(form.administrator, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        }) }}    
-                    <ul
-                    id="{{ form.administrator.vars.id }}-results"
-                    role="listbox"
-                    aria-label="{{ 'regulation.location.city.results_label'|trans }}"
-                    class="fr-x-autocomplete"
-                    data-autocomplete-target="results"
-                    ></ul>    
-                    {{ form_row(form.roadNumber, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        row_attr: {
-                            'class': 'fr-pb-3w',
-                        }, 
-                    }) }}
-                </div>    
-                <div
-                data-form-reveal-target="section"
-                data-value="lane"
-                {% if roadTypeFeatureEnabled and form.roadType.vars.value != 'lane'%} hidden {% endif%}
-                >
-                    <div
-                    class="fr-x-autocomplete-wrapper"
-                    data-controller="autocomplete"
-                    data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
-                    data-autocomplete-query-param-value="search"
-                    data-autocomplete-min-length-value="3"
-                    data-autocomplete-delay-value="500"
-                    >
-                        {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
 
-                        {{ form_row(form.cityLabel, {
+				<div data-form-reveal-target="section" data-value="departmentalRoad" {% if not roadTypeFeatureEnabled or form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}>
+					{{ form_row(form.administrator, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        }) }}
+					<ul id="{{ form.administrator.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.city.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
+
+					<div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_roads_numbers_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
+						{{ form_row(form.roadNumber, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                            }, 
+                        }) }}
+						<ul id="{{ form.roadNumber.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
+					</div>
+				</div>
+				<div data-form-reveal-target="section" data-value="lane" {% if roadTypeFeatureEnabled and form.roadType.vars.value != 'lane'%} hidden {% endif%}>
+					<div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_city_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-min-length-value="1" data-autocomplete-delay-value="500">
+						{{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+
+						{{ form_row(form.cityLabel, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
                             attr: {
                                 'data-autocomplete-target': 'input',
                             },
                         }) }}
-                        <ul
-                            id="{{ form.cityLabel.vars.id }}-results"
-                            role="listbox"
-                            aria-label="{{ 'regulation.location.city.results_label'|trans }}"
-                            class="fr-x-autocomplete"
-                            data-autocomplete-target="results"
-                        ></ul>
-                    </div>
-                    <div
-                        class="fr-x-autocomplete-wrapper"
-                        data-controller="autocomplete"
-                        data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
-                        data-autocomplete-query-param-value="search"
-                        data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
-                        data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
-                    >
-                        {{ form_row(form.roadName, {
+						<ul id="{{ form.cityLabel.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.city.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
+					</div>
+					<div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
+						{{ form_row(form.roadName, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
                             attr: {
                                 'data-autocomplete-target': 'input',
                             },
                         }) }}
-                        <ul
-                            id="{{ form.roadName.vars.id }}-results"
-                            role="listbox"
-                            aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
-                            class="fr-x-autocomplete"
-                            data-autocomplete-target="results"
-                        ></ul>
-                    </div>
-                    <div class="fr-container--fluid">
-                        <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
-                            {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-                            {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
-                        </div>
-                    </div>
-                </div>
+						<ul id="{{ form.roadName.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.roadName.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
+					</div>
+					<div class="fr-container--fluid">
+						<div class="fr-grid-row fr-grid-row--gutters fr-mb-3w fr-mb-md-0">
+							{{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+							{{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+						</div>
+					</div>
+				</div>
 
-                <div
-                    data-controller="form-collection"
-                    data-form-collection-prototype-key-value="measure"
-                    data-form-collection-next-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}"
-                    data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_name__', '__measure_position__')|e('html_attr') }}"
-                    class="fr-mb-4w"
-                >
-                    <ul
-                        id="measure-list"
-                        class="fr-raw-list fr-mb-2w"
-                        data-testid="measure-list"
-                        data-form-collection-target="collectionContainer"
-                        data-action="remove:child-removed->form-collection#syncPositions"
-                        aria-label="{{ form.measures.vars.label|trans }}"
-                    >
-                        {% for item in form.measures %}
-                            {{ _self.measures_list_item(item, loop.index0, loop.index) }}
-                        {% else %}
-                            {% do form.measures.setRendered %}
-                        {% endfor %}
-                    </ul>
-                    <button
-                        type="button"
-                        class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
-                        data-action="form-collection#addCollectionElement"
-                        aria-controls="measure-list"
-                    >
-                        {{ 'regulation.measure.add'|trans }}
-                    </button>
-                    {{ form_errors(form.measures) }}
-                </div>
+				<div data-controller="form-collection" data-form-collection-prototype-key-value="measure" data-form-collection-next-index-value="{{ form.measures|length > 0 ? form.measures|last.vars.name + 1 : 0 }}" data-form-collection-prototype-value="{{ _self.measures_list_item(form.measures.vars.prototype, '__measure_name__', '__measure_position__')|e('html_attr') }}" class="fr-mb-4w">
+					<ul id="measure-list" class="fr-raw-list fr-mb-2w" data-testid="measure-list" data-form-collection-target="collectionContainer" data-action="remove:child-removed->form-collection#syncPositions" aria-label="{{ form.measures.vars.label|trans }}">
+						{% for item in form.measures %}
+							{{ _self.measures_list_item(item, loop.index0, loop.index) }}
+						{% else %}
+							{% do form.measures.setRendered %}
+						{% endfor %}
+					</ul>
+					<button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line" data-action="form-collection#addCollectionElement" aria-controls="measure-list">
+						{{ 'regulation.measure.add'|trans }}
+					</button>
+					{{ form_errors(form.measures) }}
+				</div>
 
-                <ul class="fr-btns-group fr-btns-group--inline">
-                    <li>
-                        <a href="{{ cancelUrl }}" role="button" class="fr-btn fr-btn--tertiary">
-                            {{ "common.cancel"|trans }}
-                        </a>
-                    </li>
-                    <li>
-                        {{ form_widget(form.save, {attr: {class: 'fr-btn', form: 'location-form'}}) }}
-                    </li>
-                </ul>
-            {{ form_end(form) }}
-        </div>
-    </div>
-</turbo-frame>
+				<ul class="fr-btns-group fr-btns-group--inline">
+					<li>
+						<a href="{{ cancelUrl }}" role="button" class="fr-btn fr-btn--tertiary">
+							{{ "common.cancel"|trans }}
+						</a>
+					</li>
+					<li>
+						{{ form_widget(form.save, {attr: {class: 'fr-btn', form: 'location-form'}}) }}
+					</li>
+				</ul>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</turbo-frame>

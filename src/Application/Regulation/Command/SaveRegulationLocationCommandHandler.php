@@ -9,7 +9,6 @@ use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\RoadGeocoderInterface;
-use App\Application\RoadsNumberInterface;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -22,7 +21,6 @@ final class SaveRegulationLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
-        private RoadsNumberInterface $roadsNumberInterface,
     ) {
     }
 
@@ -60,12 +58,6 @@ final class SaveRegulationLocationCommandHandler
             }
 
             $regulationOrder->addLocation($location);
-            $administrator = $command->administrator;
-
-            if ($command->roadType === 'departmentalRoad') {
-                $type_de_route = 'Départementale';
-                $roadsNumber = $this->roadsNumberInterface->getRoadsNumber($administrator, $type_de_route);
-            }
 
             return $location;
         }
