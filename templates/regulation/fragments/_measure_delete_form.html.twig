@@ -1,0 +1,19 @@
+<form
+    method="delete"
+    action="{{ path('fragment_regulations_measure_delete', { regulationOrderRecordUuid, uuid }) }}"
+    data-controller="form-submit"
+    data-action="modal-trigger:submit->form-submit#submit"
+>
+    <button
+        class="fr-btn fr-btn--tertiary fr-icon-delete-line"
+        data-controller="modal-trigger"
+        data-modal-trigger-modal-outlet="#measure-delete-modal"
+        data-modal-trigger-key-value="{{ uuid }}"
+        data-action="modal-trigger#showModal:prevent"
+        aria-controls="measure-delete-modal"
+        title="{{ 'common.delete'|trans }}"
+    >
+        {{ 'common.delete'|trans }}
+    </button>
+    <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
+</form>

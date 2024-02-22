@@ -19,10 +19,14 @@ test('Create then publish a regulation order', async ({ page }) => {
     await expect(page.getByRole('link', { name: 'Télécharger le document' })).not.toBeVisible();
     await expect(page.getByRole('button', { name: 'Publier' })).toBeDisabled();
 
-    // Add a location
+    // Add a measure
     const regPage = new RegulationOrderPage(page);
-    const location = await regPage.addLocation({ cityLabel: 'Dijon', roadName: 'Rue Monge', restrictionType: 'Circulation interdite', expectedTitle: 'Rue Monge' }, { doBegin: false });
-    await expect(location).toContainText('Circulation interdite tous les jours');
+    await regPage.addMeasureWithLocation({
+        cityLabel: 'Dijon',
+        roadName: 'Rue Monge',
+        restrictionType: 'Circulation interdite',
+        expectedIndex: 0,
+    }, { doBegin: false });
 
     // Regulation order can now be downloaded and published
     await page.getByRole('link', { name: 'Télécharger le document' }).waitFor();

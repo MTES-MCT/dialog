@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Specification;
 
-use App\Domain\Regulation\RegulationLocationsInterface;
+use App\Domain\Regulation\RegulationMeasuresInterface;
 
 class CanRegulationOrderRecordBePublished
 {
-    public function isSatisfiedBy(RegulationLocationsInterface $regulation): bool
+    public function isSatisfiedBy(RegulationMeasuresInterface $measure): bool
     {
-        return $regulation->countLocations() >= 1;
+        return $measure->countMeasures() >= 1;
     }
 }

@@ -7,9 +7,9 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
@@ -76,13 +76,7 @@ final class EudonetParisTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2023-06-05 14:30:00 Europe/Paris');
         $generalInfoCommand->endDate = new \DateTimeImmutable('2023-07-12 18:00:00 Europe/Paris');
 
-        $measureCommand = new SaveMeasureCommand();
-        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $vehicleSet = new SaveVehicleSetCommand();
-        $vehicleSet->allVehicles = true;
-        $measureCommand->vehicleSet = $vehicleSet;
-
-        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand = new SaveLocationNewCommand();
         $locationCommand->roadType = 'lane';
         $locationCommand->cityCode = '75118';
         $locationCommand->cityLabel = 'Paris';
@@ -90,9 +84,16 @@ final class EudonetParisTransformerTest extends TestCase
         $locationCommand->fromHouseNumber = null;
         $locationCommand->toHouseNumber = null;
         $locationCommand->geometry = null;
-        $locationCommand->measures = [$measureCommand];
 
-        $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$locationCommand]);
+        $vehicleSet = new SaveVehicleSetCommand();
+        $vehicleSet->allVehicles = true;
+
+        $measureCommand = new SaveMeasureCommand();
+        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand->locationsNew[] = $locationCommand;
+        $measureCommand->vehicleSet = $vehicleSet;
+
+        $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new EudonetParisTransformerResult($importCommand, []);
 
         $this->geocoder
@@ -225,15 +226,9 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
-        $measureCommand = new SaveMeasureCommand();
-        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $vehicleSet = new SaveVehicleSetCommand();
-        $vehicleSet->allVehicles = true;
-        $measureCommand->vehicleSet = $vehicleSet;
-
         $rueEugeneBerthoudXRueJeanPerrin = Coordinates::fromLonLat(2.3453101, 48.9062362);
         $rueEugeneBerthoud26 = Coordinates::fromLonLat(2.3453431, 48.9062625);
-        $locationCommand1 = new SaveRegulationLocationCommand();
+        $locationCommand1 = new SaveLocationNewCommand();
         $locationCommand1->roadType = 'lane';
         $locationCommand1->cityCode = '75118';
         $locationCommand1->cityLabel = 'Paris';
@@ -244,11 +239,10 @@ final class EudonetParisTransformerTest extends TestCase
             $rueEugeneBerthoudXRueJeanPerrin,
             $rueEugeneBerthoud26,
         ]);
-        $locationCommand1->measures = [$measureCommand];
 
         $rueEugeneBerthoud15 = Coordinates::fromLonLat(2.3453412, 48.9062610);
         $rueEugeneBerthoudXRueAdrienLesesne = Coordinates::fromLonLat(2.34944, 48.9045598);
-        $locationCommand2 = new SaveRegulationLocationCommand();
+        $locationCommand2 = new SaveLocationNewCommand();
         $locationCommand2->roadType = 'lane';
         $locationCommand2->cityCode = '75118';
         $locationCommand2->cityLabel = 'Paris';
@@ -259,7 +253,14 @@ final class EudonetParisTransformerTest extends TestCase
             $rueEugeneBerthoud15,
             $rueEugeneBerthoudXRueAdrienLesesne,
         ]);
-        $locationCommand2->measures = [$measureCommand];
+
+        $vehicleSet = new SaveVehicleSetCommand();
+        $vehicleSet->allVehicles = true;
+
+        $measureCommand = new SaveMeasureCommand();
+        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand->vehicleSet = $vehicleSet;
+        $measureCommand->locationsNew = [$locationCommand1, $locationCommand2];
 
         $matcher = self::exactly(2);
         $this->geocoder
@@ -283,7 +284,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = $transformer->transform($record, $organization);
 
-        $this->assertEquals([$locationCommand1, $locationCommand2], $result->command->locationCommands);
+        $this->assertEquals([$measureCommand], $result->command->measureCommands);
     }
 
     public function testSkipNoMeasures(): void
@@ -346,16 +347,17 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = new EudonetParisTransformerResult(null, [
             [
-                'loc' => ['regulation_identifier' => '20230514-1', 'measure_id' => 'mesure1', 'fieldname' => 'NOM'],
-                'impact' => 'skip_measure',
-                'reason' => 'value_not_in_enum',
-                'value' => 'interdiction de stationner',
-                'enum' => ['circulation interdite'],
-            ],
-            [
                 'loc' => ['regulation_identifier' => '20230514-1'],
-                'impact' => 'skip_regulation',
-                'reason' => 'no_locations_gathered',
+                'impact' => 'skip_measure',
+                'reason' => 'measure_errors',
+                'errors' => [
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'fieldname' => 'NOM'],
+                        'reason' => 'value_not_in_enum',
+                        'value' => 'interdiction de stationner',
+                        'enum' => ['circulation interdite'],
+                    ],
+                ],
             ],
         ]);
 
@@ -410,15 +412,22 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = new EudonetParisTransformerResult(null, [
             [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
-                'impact' => 'skip_location',
-                'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Autre chose","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
-            ],
-            [
                 'loc' => ['regulation_identifier' => '20230514-1'],
-                'impact' => 'skip_regulation',
-                'reason' => 'no_locations_gathered',
+                'impact' => 'skip_measure',
+                'reason' => 'measure_errors',
+                'errors' => [
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
+                        'impact' => 'skip_location',
+                        'reason' => 'unsupported_location_fieldset',
+                        'location_raw' => '{"fields":{"2701":"localisation1","2705":"Autre chose","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'fieldname' => 'locations'],
+                        'impact' => 'skip_measure',
+                        'reason' => 'no_locations_gathered',
+                    ],
+                ],
             ],
         ]);
 
@@ -509,33 +518,40 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = new EudonetParisTransformerResult(null, [
             [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
-                'impact' => 'skip_location',
-                'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
-            ],
-            [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
-                'impact' => 'skip_location',
-                'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
-            ],
-            [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
-                'impact' => 'skip_location',
-                'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
-            ],
-            [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
-                'impact' => 'skip_location',
-                'reason' => 'unsupported_location_fieldset',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
-            ],
-            [
                 'loc' => ['regulation_identifier' => '20230514-1'],
-                'impact' => 'skip_regulation',
-                'reason' => 'no_locations_gathered',
+                'impact' => 'skip_measure',
+                'reason' => 'measure_errors',
+                'errors' => [
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
+                        'impact' => 'skip_location',
+                        'reason' => 'unsupported_location_fieldset',
+                        'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
+                        'impact' => 'skip_location',
+                        'reason' => 'unsupported_location_fieldset',
+                        'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
+                        'impact' => 'skip_location',
+                        'reason' => 'unsupported_location_fieldset',
+                        'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
+                        'impact' => 'skip_location',
+                        'reason' => 'unsupported_location_fieldset',
+                        'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'fieldname' => 'locations'],
+                        'impact' => 'skip_measure',
+                        'reason' => 'no_locations_gathered',
+                    ],
+                ],
             ],
         ]);
 
@@ -590,16 +606,23 @@ final class EudonetParisTransformerTest extends TestCase
 
         $errors = [
             [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1', 'fieldname' => 'ARRONDISSEMENT'],
-                'reason' => 'value_does_not_match_pattern',
-                'impact' => 'skip_location',
-                'value' => 'invalid',
-                'pattern' => '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i',
-            ],
-            [
                 'loc' => ['regulation_identifier' => '20230514-1'],
-                'reason' => 'no_locations_gathered',
-                'impact' => 'skip_regulation',
+                'impact' => 'skip_measure',
+                'reason' => 'measure_errors',
+                'errors' => [
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1', 'fieldname' => 'ARRONDISSEMENT'],
+                        'reason' => 'value_does_not_match_pattern',
+                        'impact' => 'skip_location',
+                        'value' => 'invalid',
+                        'pattern' => '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'fieldname' => 'locations'],
+                        'reason' => 'no_locations_gathered',
+                        'impact' => 'skip_measure',
+                    ],
+                ],
             ],
         ];
 
@@ -648,16 +671,24 @@ final class EudonetParisTransformerTest extends TestCase
 
         $errors = [
             [
-                'loc' => ['regulation_identifier' => '20230514-1', 'location_id' => 'localisation1'],
-                'reason' => 'geocoding_failure',
-                'message' => 'Could not geocode',
-                'impact' => 'skip_location',
-                'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"Rue Eug\u00e8ne Berthoud","2730":null,"2740":null,"2720":"13","2737":"19"}}',
-            ],
-            [
                 'loc' => ['regulation_identifier' => '20230514-1'],
-                'reason' => 'no_locations_gathered',
-                'impact' => 'skip_regulation',
+                'impact' => 'skip_measure',
+                'reason' => 'measure_errors',
+                'errors' => [
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
+                        'reason' => 'geocoding_failure',
+                        'message' => 'Could not geocode',
+                        'index' => 2,
+                        'impact' => 'skip_location',
+                        'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"Rue Eug\u00e8ne Berthoud","2730":null,"2740":null,"2720":"13","2737":"19"}}',
+                    ],
+                    [
+                        'loc' => ['measure_id' => 'mesure1', 'fieldname' => 'locations'],
+                        'reason' => 'no_locations_gathered',
+                        'impact' => 'skip_measure',
+                    ],
+                ],
             ],
         ];
 
@@ -666,7 +697,7 @@ final class EudonetParisTransformerTest extends TestCase
         $this->geocoder
             ->expects(self::once())
             ->method('computeCoordinates')
-            ->willThrowException(new GeocodingFailureException('Could not geocode'));
+            ->willThrowException(new GeocodingFailureException('Could not geocode', locationIndex: 2));
 
         $transformer = new EudonetParisTransformer($this->geocoder);
 
