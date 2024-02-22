@@ -41,13 +41,15 @@ final class BacIdfTransformerTest extends TestCase
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
         $this->cityProcessor = $this->createMock(BacIdfCityProcessorInterface::class);
-        $this->cityProcessor
-            ->method('getSiretFromInseeCode')
-            ->willReturn($this->siret);
     }
 
     public function testTransform(): void
     {
+        $this->cityProcessor
+            ->expects(self::once())
+            ->method('getSiretFromInseeCode')
+            ->willReturn($this->siret);
+
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
@@ -108,6 +110,11 @@ final class BacIdfTransformerTest extends TestCase
 
     public function testTransformMinimal(): void
     {
+        $this->cityProcessor
+            ->expects(self::once())
+            ->method('getSiretFromInseeCode')
+            ->willReturn($this->siret);
+
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
@@ -377,6 +384,11 @@ final class BacIdfTransformerTest extends TestCase
                             '$date' => '2024-02-06T17:25:00Z',
                         ],
                     ],
+                    'ARR_COMMUNE' => [
+                        'ARR_INSEE' => $this->cityCode,
+                        'ARR_VILLE' => 'La Courneuve',
+                        'ARR_CODE_POSTAL' => '93120',
+                    ],
                 ],
                 'errors' => [
                     [
@@ -418,6 +430,11 @@ final class BacIdfTransformerTest extends TestCase
                         'PERIODE_DEBUT' => [
                             '$date' => '2024-02-06T17:25:00Z',
                         ],
+                    ],
+                    'ARR_COMMUNE' => [
+                        'ARR_INSEE' => $this->cityCode,
+                        'ARR_VILLE' => 'La Courneuve',
+                        'ARR_CODE_POSTAL' => '93120',
                     ],
                 ],
                 'errors' => [
@@ -466,6 +483,11 @@ final class BacIdfTransformerTest extends TestCase
                             '$date' => '2024-02-06T17:25:00Z',
                         ],
                     ],
+                    'ARR_COMMUNE' => [
+                        'ARR_INSEE' => $this->cityCode,
+                        'ARR_VILLE' => 'La Courneuve',
+                        'ARR_CODE_POSTAL' => '93120',
+                    ],
                 ],
                 'errors' => [
                     [
@@ -501,8 +523,12 @@ final class BacIdfTransformerTest extends TestCase
      */
     public function testTransformErrors(array $record, array $errors): void
     {
+        $this->cityProcessor
+            ->method('getSiretFromInseeCode')
+            ->willReturn($this->siret);
+
         $this->queryBus
-            ->expects(self::never())
+            ->expects(\array_key_exists('ARR_COMMUNE', $record) ? self::once() : self::never())
             ->method('handle');
 
         $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
@@ -518,6 +544,11 @@ final class BacIdfTransformerTest extends TestCase
 
     private function doTestTransform(callable $callback): void
     {
+        $this->cityProcessor
+            ->expects(self::once())
+            ->method('getSiretFromInseeCode')
+            ->willReturn($this->siret);
+
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
@@ -871,5 +902,48 @@ final class BacIdfTransformerTest extends TestCase
             $regCirculation['CIRC_REG']['PERIODE_JH'] = $data;
             $measureCommand->periods = $periodCommands;
         });
+    }
+
+    public function testNoSiretFound()
+    {
+        $this->cityProcessor
+            ->expects(self::once())
+            ->method('getSiretFromInseeCode')
+            ->willReturn(null);
+
+        $record = [
+            'ARR_REF' => 'arr_1',
+            'ARR_NOM' => 'nom_1',
+            'ARR_COMMUNE' => [
+                'ARR_INSEE' => $this->cityCode,
+                'ARR_VILLE' => 'La Courneuve',
+                'ARR_CODE_POSTAL' => '93120',
+            ],
+            'REG_TYPE' => 'CIRCULATION',
+            'REG_CIRCULATION' => [],
+            'ARR_DUREE' => [
+                'ARR_TEMPORALITE' => 'PERMANENT',
+                'PERIODE_DEBUT' => [
+                    '$date' => '2024-02-06T17:25:00Z',
+                ],
+            ],
+        ];
+
+        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
+
+        $result = $transformer->transform($record);
+
+        $this->assertNull($result->command);
+        $this->assertEquals(
+            [
+                [
+                    'loc' => ['regulation_identifier' => 'arr_1', 'fieldname' => 'ARR_COMMUNE.ARR_INSEE'],
+                    'reason' => 'no_siret_found',
+                    'insee_code' => $this->cityCode,
+                    'impact' => 'skip_regulation',
+                ],
+            ],
+            $result->errors,
+        );
     }
 }

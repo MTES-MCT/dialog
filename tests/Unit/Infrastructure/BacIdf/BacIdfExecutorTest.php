@@ -276,4 +276,51 @@ final class BacIdfExecutorTest extends TestCase
 
         $executor->execute();
     }
+
+    public function testException(): void
+    {
+        $exc = new \Exception('Oops');
+        $this->expectExceptionObject($exc);
+
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('findIdentifiersForSource')
+            ->willThrowException($exc);
+
+        $this->logger
+            ->expects(self::exactly(2))
+            ->method('info')
+            ->withConsecutive(
+                ['started', []],
+                [
+                    'done', [
+                        'numProcessed' => 0,
+                        'numCreated' => 0,
+                        'percentCreated' => 0,
+                        'numSkipped' => 0,
+                        'numSkippedNotCirculation' => 0,
+                        'percentSkipped' => 0,
+                        'numErrors' => 0,
+                        'percentErrors' => 0,
+                        'elapsedSeconds' => 0,
+                    ],
+                ],
+            );
+
+        $this->logger
+            ->expects(self::once())
+            ->method('error')
+            ->with('exception', ['exc' => $exc]);
+
+        $executor = new BacIdfExecutor(
+            $this->logger,
+            $this->extractor,
+            $this->transformer,
+            $this->commandBus,
+            $this->regulationOrderRecordRepository,
+            $this->dateUtils,
+        );
+
+        $executor->execute();
+    }
 }

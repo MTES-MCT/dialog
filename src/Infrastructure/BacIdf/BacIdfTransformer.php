@@ -69,6 +69,31 @@ final class BacIdfTransformer
 
         $generalInfo->startDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
 
+        $inseeCode = $row['ARR_COMMUNE']['ARR_INSEE'];
+        $siret = $this->cityProcessor->getSiretFromInseeCode($inseeCode);
+
+        if (!$siret) {
+            $errors[] = [
+                'loc' => [...$loc, 'fieldname' => 'ARR_COMMUNE.ARR_INSEE'],
+                'reason' => 'no_siret_found',
+                'insee_code' => $inseeCode,
+                'impact' => 'skip_regulation',
+            ];
+
+            return new BacIdfTransformerResult(null, $errors);
+        }
+
+        $organization = null;
+        $organizationCommand = null;
+
+        try {
+            $organization = $this->queryBus->handle(new GetOrganizationBySiretQuery($siret));
+        } catch (OrganizationNotFoundException) {
+            $organizationCommand = new CreateOrganizationCommand();
+            $organizationCommand->siret = $siret;
+            $organizationCommand->name = sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
+        }
+
         $measureCommands = [];
         $errors = [];
 
@@ -143,31 +168,6 @@ final class BacIdfTransformer
 
         if (\count($errors) > 0) {
             return new BacIdfTransformerResult(null, $errors);
-        }
-
-        $inseeCode = $row['ARR_COMMUNE']['ARR_INSEE'];
-        $siret = $this->cityProcessor->getSiretFromInseeCode($inseeCode);
-
-        if (!$siret) {
-            $errors[] = [
-                'loc' => $loc,
-                'reason' => 'no_siret_found',
-                'insee_code' => $inseeCode,
-                'impact' => 'skip_regulation',
-            ];
-
-            return new BacIdfTransformerResult(null, $errors);
-        }
-
-        $organization = null;
-        $organizationCommand = null;
-
-        try {
-            $organization = $this->queryBus->handle(new GetOrganizationBySiretQuery($siret));
-        } catch (OrganizationNotFoundException) {
-            $organizationCommand = new CreateOrganizationCommand();
-            $organizationCommand->siret = $siret;
-            $organizationCommand->name = sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
         }
 
         $command = new ImportBacIdfRegulationCommand($generalInfo, $measureCommands);
