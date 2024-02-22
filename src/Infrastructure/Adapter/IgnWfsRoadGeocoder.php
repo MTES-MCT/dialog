@@ -69,7 +69,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
     {
         $normalizedRoadName = str_replace("'", "''", strtolower($roadType));
 
-    // https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:route_numerotee_ou_nommee&cql_filter=type_de_route=%27D%C3%A9partementale%27%20AND%20numero=%27D951%27%20AND%20gestionnaire=%27Charente%27&PropertyName=geometrie
+        // https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:route_numerotee_ou_nommee&cql_filter=type_de_route=%27D%C3%A9partementale%27%20AND%20numero=%27D951%27%20AND%20gestionnaire=%27Charente%27&PropertyName=geometrie
 
         $query = [
             'SERVICE' => 'WFS',
@@ -77,7 +77,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             'VERSION' => '2.0.0',
             'OUTPUTFORMAT' => 'application/json',
             'TYPENAME' => 'BDTOPO_V3:route_numerotee_ou_nommee',
-            'cql_filter' => sprintf("strStripAccents(type_de_route)=strStripAccents('%s') AND numero='%s' AND gestionnaire='%s'", $roadType, $roadNumber,$gestionnaire),
+            'cql_filter' => sprintf("strStripAccents(type_de_route)=strStripAccents('%s') AND numero='%s' AND gestionnaire='%s'", $roadType, $roadNumber, $gestionnaire),
             'PropertyName' => 'geometrie',
         ];
 
@@ -108,7 +108,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             return json_encode($geometry);
         }
 
-        $message = sprintf('could not retrieve geometry for roadName="%s", inseeCode="%s", response was: %s', $roadType, $roadNumber, $gestionnaire,  $body);
+        $message = sprintf('could not retrieve geometry for roadName="%s", inseeCode="%s", response was: %s', $roadType, $roadNumber, $gestionnaire, $body);
         throw new GeocodingFailureException($message);
     }
 }
