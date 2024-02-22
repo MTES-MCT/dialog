@@ -427,6 +427,7 @@
             <trans-unit id="regulation.location.roadNumber.results_label">
                 <source>regulation.location.roadNumber.results_label</source>
                 <target>Numéros des départementales suggérés</target>
+            </trans-unit>
             <trans-unit id="regulation.location.isEntireStreet">
                 <source>regulation.location.isEntireStreet</source>
                 <target>Voie entière</target>

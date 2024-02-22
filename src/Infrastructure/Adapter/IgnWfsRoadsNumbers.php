@@ -19,15 +19,17 @@ final class IgnWfsRoadsNumbers implements RoadsNumbersInterface
 
     public function getRoadsNumbers(string $search, string $gestionnaire, string $roadType): array
     {
+        $normalizedSearch = str_replace("'", "''", strtolower($search));
         $query = [
             'SERVICE' => 'WFS',
             'REQUEST' => 'GetFeature',
             'VERSION' => '2.0.0',
             'OUTPUTFORMAT' => 'application/json',
             'TYPENAME' => 'BDTOPO_V3:route_numerotee_ou_nommee',
-            'cql_filter' => sprintf("gestionnaire='%s' AND type_de_route='%s'", $gestionnaire, $roadType),
+            'cql_filter' => sprintf("strToLowerCase(numero)='%s' AND gestionnaire='%s' AND type_de_route='%s'", $normalizedSearch, $gestionnaire, $roadType),
             'PropertyName' => 'numero',
         ];
+        //AND str_starts_with(numero, '%s')  AND strToLowerCase(numero)= strToLowerCase('%s')
 
         $response = $this->ignWfsClient->request('GET', $this->ignWfsUrl, [
             'headers' => [
@@ -63,18 +65,12 @@ final class IgnWfsRoadsNumbers implements RoadsNumbersInterface
             }
         }
 
-        if (!\is_null($numeros)) {
-            foreach ($numeros as $numero) {
-                $numeroIsTrue = str_starts_with($numero, $search);
-                if ($numeroIsTrue == true) {
-                    $numeros[] = $numero;
-                }
-            }
-
-            return $numeros;
-        }
-
-        $message = sprintf('could not retrieve numero for gestionnaire="%s", type_de_route="%s", response was: %s', $gestionnaire, $roadType, $body);
-        throw new RoadNumberNotFoundException($message);
+        // foreach ($numeros as $numero) {
+        //     $numeroIsTrue = str_starts_with($numero, $search);
+        //     if ($numeroIsTrue == true) {
+        //         $numeros[] = $numero;
+        //     }
+        // }
+        return $numeros;
     }
 }
