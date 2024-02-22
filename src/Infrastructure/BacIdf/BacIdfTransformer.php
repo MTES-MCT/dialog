@@ -315,11 +315,11 @@ final class BacIdfTransformer
 
             foreach ($regExcept as $value) {
                 switch ($value) {
-                    case 'SECOURS':
-                        $exemptedTypes[] = VehicleTypeEnum::EMERGENCY_SERVICES->value;
-                        break;
                     case 'VEHICULES DE SERVICES':
                         $otherExemptedTypes[] = 'Véhicules de services';
+                        break;
+                    case 'POMPIERS':
+                        $otherExemptedTypes[] = 'Pompiers';
                         break;
                     case 'TRANSPORT DE DECHETS':
                         $otherExemptedTypes[] = 'Transport de déchets';
@@ -327,8 +327,8 @@ final class BacIdfTransformer
                     case 'POLICE':
                         $otherExemptedTypes[] = 'Police';
                         break;
-                    case 'POMPIERS':
-                        $otherExemptedTypes[] = 'Pompiers';
+                    case 'SECOURS':
+                        $exemptedTypes[] = VehicleTypeEnum::EMERGENCY_SERVICES->value;
                         break;
                     case 'OTHER':
                         $value = trim($regCirculation['CIRC_REG']['REG_EXCEPT_DESC'], "., \n\r\t\v");
