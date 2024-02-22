@@ -85,7 +85,7 @@ final class SaveLocationNewCommandHandler
         $cityCode = $command->cityCode;
 
         if (!$command->fromHouseNumber && !$command->toHouseNumber && $roadName) {
-            return $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
+            return $command->preComputedRoadGeometry ?? $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
         }
 
         return null;

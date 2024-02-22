@@ -17,6 +17,7 @@ final class SaveLocationNewCommand implements CommandInterface
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
+    public ?string $preComputedRoadGeometry = null;
     public ?string $fromHouseNumber = null;
     public ?string $toHouseNumber = null;
     public ?string $geometry;

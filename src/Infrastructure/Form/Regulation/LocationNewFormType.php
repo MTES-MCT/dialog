@@ -75,6 +75,10 @@ final class LocationNewFormType extends AbstractType
                 ],
             )
             ->add(
+                'preComputedRoadGeometry',
+                HiddenType::class,
+            )
+            ->add(
                 'isEntireStreet',
                 CheckboxType::class,
                 options: [

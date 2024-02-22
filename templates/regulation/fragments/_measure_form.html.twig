@@ -237,11 +237,19 @@
                 </div>
                 <div
                     class="fr-x-autocomplete-wrapper"
-                    data-controller="autocomplete"
+                    data-controller="autocomplete fetch"
                     data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
                     data-autocomplete-query-param-value="search"
                     data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
-                    data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
+                    data-autocomplete-min-length-value="3"
+                    data-autocomplete-delay-value="500"
+                    data-fetch-trigger-value="autocomplete.change"
+                    data-fetch-url-value="{{ path('api_internal_roadGeometry') }}"
+                    data-fetch-query-params-value="{{ {
+                        roadName: '#' ~ form.roadName.vars.id,
+                        cityCode: '#' ~ form.cityCode.vars.id,
+                    }|json_encode }}"
+                    data-fetch-output-outlet="#{{ form.preComputedRoadGeometry.vars.id }}"
                 >
                     {{ form_row(form.roadName, {
                         group_class: 'fr-input-group',
@@ -258,6 +266,12 @@
                         data-autocomplete-target="results"
                     ></ul>
                 </div>
+
+                {{ form_row(form.preComputedRoadGeometry, {
+                    attr: {
+                        'data-controller': 'output',
+                    },
+                }) }}
 
                 <div data-controller="form-reveal">
                     {{ form_row(form.isEntireStreet, {
