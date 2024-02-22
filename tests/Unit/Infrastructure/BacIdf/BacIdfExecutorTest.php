@@ -68,7 +68,7 @@ final class BacIdfExecutorTest extends TestCase
         $result1 = new BacIdfTransformerResult($importCommand1, [], $organization);
 
         $record2 = ['ARR_REF' => 'arr_2'];
-        $result2 = new BacIdfTransformerResult(null, [['reason' => 'no_locations_gathered']]);
+        $result2 = new BacIdfTransformerResult(null, [['reason' => 'no_measures_found']]);
 
         $record3 = ['ARR_REF' => 'arr_3'];
         $importCommand3 = $this->createMock(ImportBacIdfRegulationCommand::class);

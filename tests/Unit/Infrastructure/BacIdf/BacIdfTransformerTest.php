@@ -6,12 +6,12 @@ namespace App\Tests\Unit\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\User\Command\CreateOrganizationCommand;
 use App\Application\User\Query\GetOrganizationBySiretQuery;
@@ -63,17 +63,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2015-08-17 00:00');
         $generalInfoCommand->endDate = null;
 
-        $measureCommand = new SaveMeasureCommand();
-        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $vehicleSet = new SaveVehicleSetCommand();
-        $vehicleSet->allVehicles = false;
-        $vehicleSet->restrictedTypes = [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value];
-        $vehicleSet->heavyweightMaxWeight = 3.5;
-        $vehicleSet->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value];
-        $vehicleSet->otherExemptedTypeText = "Véhicules de déménagement justifiant d'une dérogation, véhicules de services";
-        $measureCommand->vehicleSet = $vehicleSet;
-
-        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand = new SaveLocationNewCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
@@ -96,9 +86,19 @@ final class BacIdfTransformerTest extends TestCase
                 ],
             ],
         );
-        $locationCommand->measures = [$measureCommand];
 
-        $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
+        $measureCommand = new SaveMeasureCommand();
+        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand->locationsNew = [$locationCommand];
+        $vehicleSet = new SaveVehicleSetCommand();
+        $vehicleSet->allVehicles = false;
+        $vehicleSet->restrictedTypes = [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value];
+        $vehicleSet->heavyweightMaxWeight = 3.5;
+        $vehicleSet->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value];
+        $vehicleSet->otherExemptedTypeText = "Véhicules de déménagement justifiant d'une dérogation, véhicules de services";
+        $measureCommand->vehicleSet = $vehicleSet;
+
+        $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
         $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
@@ -168,13 +168,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
         $generalInfoCommand->endDate = null;
 
-        $measureCommand = new SaveMeasureCommand();
-        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $vehicleSet = new SaveVehicleSetCommand();
-        $vehicleSet->allVehicles = true;
-        $measureCommand->vehicleSet = $vehicleSet;
-
-        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand = new SaveLocationNewCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
@@ -195,9 +189,15 @@ final class BacIdfTransformerTest extends TestCase
                 ],
             ],
         );
-        $locationCommand->measures = [$measureCommand];
 
-        $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
+        $measureCommand = new SaveMeasureCommand();
+        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand->locationsNew = [$locationCommand];
+        $vehicleSet = new SaveVehicleSetCommand();
+        $vehicleSet->allVehicles = true;
+        $measureCommand->vehicleSet = $vehicleSet;
+
+        $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], null, $organizationCommand);
 
         $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
@@ -391,7 +391,7 @@ final class BacIdfTransformerTest extends TestCase
                         'loc' => [
                             'regulation_identifier' => 'arr_1',
                         ],
-                        'reason' => 'no_locations_gathered',
+                        'reason' => 'no_measures_found',
                         'impact' => 'skip_regulation',
                     ],
                 ],
@@ -435,7 +435,7 @@ final class BacIdfTransformerTest extends TestCase
                         'loc' => [
                             'regulation_identifier' => 'arr_1',
                         ],
-                        'reason' => 'no_locations_gathered',
+                        'reason' => 'no_measures_found',
                         'impact' => 'skip_regulation',
                     ],
                 ],
@@ -479,8 +479,16 @@ final class BacIdfTransformerTest extends TestCase
                     [
                         'loc' => [
                             'regulation_identifier' => 'arr_1',
+                            'fieldname' => 'measures.0',
                         ],
                         'reason' => 'no_locations_gathered',
+                        'impact' => 'skip_measure',
+                    ],
+                    [
+                        'loc' => [
+                            'regulation_identifier' => 'arr_1',
+                        ],
+                        'reason' => 'no_measures_found',
                         'impact' => 'skip_regulation',
                     ],
                 ],
@@ -548,15 +556,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
         $generalInfoCommand->endDate = null;
 
-        $measureCommand = new SaveMeasureCommand();
-        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $vehicleSetCommand = new SaveVehicleSetCommand();
-        $vehicleSetCommand->allVehicles = true;
-        $measureCommand->vehicleSet = $vehicleSetCommand;
-
-        $callback($regCirculation, $measureCommand);
-
-        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand = new SaveLocationNewCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
@@ -577,7 +577,15 @@ final class BacIdfTransformerTest extends TestCase
                 ],
             ],
         );
-        $locationCommand->measures = [$measureCommand];
+
+        $measureCommand = new SaveMeasureCommand();
+        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand->locationsNew = [$locationCommand];
+        $vehicleSetCommand = new SaveVehicleSetCommand();
+        $vehicleSetCommand->allVehicles = true;
+        $measureCommand->vehicleSet = $vehicleSetCommand;
+
+        $callback($regCirculation, $measureCommand);
 
         $record = [
             'ARR_REF' => 'arr_1',
@@ -599,7 +607,7 @@ final class BacIdfTransformerTest extends TestCase
             ],
         ];
 
-        $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
+        $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
         $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);

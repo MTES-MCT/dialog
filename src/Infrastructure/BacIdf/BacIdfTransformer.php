@@ -6,12 +6,12 @@ namespace App\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\User\Command\CreateOrganizationCommand;
 use App\Application\User\Query\GetOrganizationBySiretQuery;
@@ -69,7 +69,7 @@ final class BacIdfTransformer
 
         $generalInfo->startDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
 
-        $locationCommands = [];
+        $measureCommands = [];
         $errors = [];
 
         foreach ($row['REG_CIRCULATION'] as $index => $regCirculation) {
@@ -111,9 +111,17 @@ final class BacIdfTransformer
                 }
 
                 $locationCommand = $this->parseLocation($row, $regVoie);
-                $locationCommand->measures[] = $measureCommand;
 
-                $locationCommands[] = $locationCommand;
+                $measureCommand->locationsNew[] = $locationCommand;
+            }
+
+            if (\count($measureCommand->locationsNew) === 0) {
+                $errors[] = [
+                    'loc' => [...$loc, 'fieldname' => sprintf('measures.%d', $index)],
+                    'reason' => 'no_locations_gathered',
+                    'impact' => 'skip_measure',
+                ];
+                continue;
             }
 
             $periodCommands = $this->parsePeriods($circReg, startDate: $generalInfo->startDate);
@@ -121,12 +129,14 @@ final class BacIdfTransformer
             foreach ($periodCommands as $periodCommand) {
                 $measureCommand->periods[] = $periodCommand;
             }
+
+            $measureCommands[] = $measureCommand;
         }
 
-        if (\count($locationCommands) === 0) {
+        if (\count($measureCommands) === 0) {
             $errors[] = [
                 'loc' => $loc,
-                'reason' => 'no_locations_gathered',
+                'reason' => 'no_measures_found',
                 'impact' => 'skip_regulation',
             ];
         }
@@ -160,7 +170,7 @@ final class BacIdfTransformer
             $organizationCommand->name = sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
         }
 
-        $command = new ImportBacIdfRegulationCommand($generalInfo, $locationCommands);
+        $command = new ImportBacIdfRegulationCommand($generalInfo, $measureCommands);
 
         return new BacIdfTransformerResult($command, [], $organization, $organizationCommand);
     }
@@ -379,9 +389,9 @@ final class BacIdfTransformer
         return implode(', ', $types);
     }
 
-    private function parseLocation(array $row, array $regVoie): SaveRegulationLocationCommand
+    private function parseLocation(array $row, array $regVoie): SaveLocationNewCommand
     {
-        $locationCommand = new SaveRegulationLocationCommand();
+        $locationCommand = new SaveLocationNewCommand();
 
         $geometries = [];
 
@@ -399,8 +409,6 @@ final class BacIdfTransformer
         $locationCommand->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
         $locationCommand->roadName = $regVoie['VOIE_NAME'];
         $locationCommand->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
-        $locationCommand->fromHouseNumber = null;
-        $locationCommand->toHouseNumber = null;
 
         return $locationCommand;
     }

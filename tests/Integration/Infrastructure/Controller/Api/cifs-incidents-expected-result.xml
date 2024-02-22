@@ -1,21 +1,6 @@
 <?xml version="1.0"?>
 <incidents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://www.gstatic.com/road-incidents/cifsv2.xsd">
-    <incident id="064ca781-da33-7e29-8000-29380bad748e">
-        <creationtime>2022-01-10T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Rue de l'Hôtel de Ville : circulation interdite tous les jours pour tous les véhicles</description>
-        <street>Rue de l'Hôtel de Ville</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>44.016833 1.352126 44.016402 1.353016</polyline>
-        <starttime>2023-03-10T00:00:00+00:00</starttime>
-        <endtime>2023-03-20T00:00:00+00:00</endtime>
-        <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs.xml</url>
-        </source>
-    </incident>
     <incident id="06548f88-56a9-70e2-8000-a06baed6a93d">
         <creationtime>2021-11-02T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
@@ -35,20 +20,5 @@
             <tuesday>08:00-10:00,12:00-14:00,19:00-21:00</tuesday>
             <thursday>08:00-10:00</thursday>
         </schedule>
-    </incident>
-    <incident id="0655b3f8-b3e2-7061-8000-953e3d616153">
-        <creationtime>2022-01-10T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Rue Gamot : circulation interdite tous les jours pour tous les véhicles</description>
-        <street>Rue Gamot</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>44.017412 1.343528 44.017288 1.343510 44.016724 1.343443 44.018275 1.343611 44.018554 1.343633 44.019092 1.343680 44.019640 1.343736 44.020043 1.343764 44.017624 1.343559 44.017412 1.343528 44.018275 1.343611 44.017992 1.343596 44.017624 1.343559</polyline>
-        <starttime>2023-03-10T00:00:00+00:00</starttime>
-        <endtime>2023-03-20T00:00:00+00:00</endtime>
-        <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs.xml</url>
-        </source>
     </incident>
 </incidents>

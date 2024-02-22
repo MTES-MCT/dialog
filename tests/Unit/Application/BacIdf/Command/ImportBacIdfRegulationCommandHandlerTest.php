@@ -10,10 +10,10 @@ use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Regulation\Command\PublishRegulationCommand;
+use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Command\SaveRegulationLocationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use PHPUnit\Framework\TestCase;
@@ -30,10 +30,10 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
     public function testImport(): void
     {
         $generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
-        $locationCommand = $this->createMock(SaveRegulationLocationCommand::class);
+        $measureCommand = $this->createMock(SaveMeasureCommand::class);
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
-        $location = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
 
         $regulationOrderRecord
             ->expects(self::once())
@@ -42,8 +42,8 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
 
         $regulationOrder
             ->expects(self::once())
-            ->method('addLocation')
-            ->with($location);
+            ->method('addMeasure')
+            ->with($measure);
 
         $publishCommand = new PublishRegulationCommand($regulationOrderRecord);
 
@@ -54,13 +54,13 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
             ->willReturnCallback(
                 fn ($command) => match ($matcher->getInvocationCount()) {
                     1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
-                    2 => $this->assertEquals($locationCommand, $command) ?: $location,
+                    2 => $this->assertEquals($measureCommand, $command) ?: $measure,
                     3 => $this->assertEquals($publishCommand, $command),
                 },
             );
 
         $handler = new ImportBacIdfRegulationCommandHandler($this->commandBus);
-        $command = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
+        $command = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
 
         $this->assertEmpty($handler($command));
     }
@@ -96,7 +96,7 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
         $this->expectException(ImportBacIdfRegulationFailedException::class);
 
         $generalInfoCommand = $this->createMock(SaveRegulationGeneralInfoCommand::class);
-        $locationCommand = $this->createMock(SaveRegulationLocationCommand::class);
+        $measureCommand = $this->createMock(SaveMeasureCommand::class);
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
 
         $matcher = self::exactly(2);
@@ -106,12 +106,12 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
             ->willReturnCallback(
                 fn ($command) => match ($matcher->getInvocationCount()) {
                     1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
-                    2 => $this->assertEquals($locationCommand, $command) ?: throw new GeocodingFailureException('Could not geocode'),
+                    2 => $this->assertEquals($measureCommand, $command) ?: throw new GeocodingFailureException('Could not geocode'),
                 },
             );
 
         $handler = new ImportBacIdfRegulationCommandHandler($this->commandBus);
-        $command = new ImportBacIdfRegulationCommand($generalInfoCommand, [$locationCommand]);
+        $command = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
 
         $handler($command);
     }

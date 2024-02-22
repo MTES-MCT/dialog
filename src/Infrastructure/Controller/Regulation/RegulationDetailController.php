@@ -6,14 +6,11 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
-use App\Application\Regulation\Query\Location\GetRegulationLocationsQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
-use App\Application\Regulation\View\RegulationOrderLocationsView;
-use App\Domain\Regulation\Specification\CanDeleteLocations;
+use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
-use App\Infrastructure\FeatureFlagService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +22,8 @@ final class RegulationDetailController extends AbstractRegulationController
     public function __construct(
         private \Twig\Environment $twig,
         protected QueryBusInterface $queryBus,
+        private CanDeleteMeasures $canDeleteMeasures,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
-        private CanDeleteLocations $canDeleteLocations,
-        private FeatureFlagService $featureFlagService,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
     ) {
@@ -47,21 +43,17 @@ final class RegulationDetailController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
-        /** @var RegulationOrderLocationsView */
-        $regulationOrderLocations = $this->queryBus->handle(new GetRegulationLocationsQuery($uuid));
+        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
 
         $context = [
-            'regulationOrderLocations' => $regulationOrderLocations,
             'isDraft' => $generalInfo->isDraft(),
-            'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderLocations),
-            'canDelete' => $this->canDeleteLocations->isSatisfiedBy($regulationOrderLocations),
+            'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
+            'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
             'uuid' => $uuid,
             'generalInfo' => $generalInfo,
+            'measures' => $measures,
         ];
-
-        if ($this->featureFlagService->isFeatureEnabled('loc_inversion', $request)) {
-            $context['measures'] = $this->queryBus->handle(new GetMeasuresQuery($uuid));
-        }
 
         return new Response(
             $this->twig->render(

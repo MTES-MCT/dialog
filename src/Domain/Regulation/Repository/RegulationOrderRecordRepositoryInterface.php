@@ -20,8 +20,6 @@ interface RegulationOrderRecordRepositoryInterface
         bool $isPermanent,
     ): array;
 
-    public function findOneForSummary(string $uuid): ?RegulationOrderRecord;
-
     public function findGeneralInformation(string $uuid): ?array;
 
     public function findRegulationOrdersForDatexFormat(): array;

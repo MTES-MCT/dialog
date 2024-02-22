@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
         $this->assertSame($start, $regulationOrder->getStartDate());
         $this->assertSame($end, $regulationOrder->getEndDate());
-        $this->assertEmpty($regulationOrder->getLocations()); // Automatically set by Doctrine
+        $this->assertEmpty($regulationOrder->getMeasures()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getOtherCategoryText());
     }
@@ -42,8 +42,8 @@ final class RegulationOrderTest extends TestCase
         $start = new \DateTime('2023-03-13');
         $newStart = new \DateTime('2023-03-13');
         $end = new \DateTimeImmutable('2023-03-15');
-        $location1 = $this->createMock(Location::class);
-        $location2 = $this->createMock(Location::class);
+        $measure1 = $this->createMock(Measure::class);
+        $measure2 = $this->createMock(Measure::class);
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
@@ -70,10 +70,10 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame($end, $regulationOrder->getEndDate());
         $this->assertSame('Trou en formation', $regulationOrder->getOtherCategoryText());
 
-        $regulationOrder->addLocation($location1);
-        $regulationOrder->addLocation($location1); // Test duplicate
-        $regulationOrder->addLocation($location2);
+        $regulationOrder->addMeasure($measure1);
+        $regulationOrder->addMeasure($measure2); // Test duplicate
+        $regulationOrder->addMeasure($measure2);
 
-        $this->assertEquals(new ArrayCollection([$location1, $location2]), $regulationOrder->getLocations());
+        $this->assertEquals(new ArrayCollection([$measure1, $measure2]), $regulationOrder->getMeasures());
     }
 }

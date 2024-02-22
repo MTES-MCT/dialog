@@ -23,16 +23,18 @@ final class ImportBacIdfRegulationCommandHandler
         /** @var RegulationOrderRecord */
         $regulationOrderRecord = $this->commandBus->handle($command->generalInfoCommand);
 
-        foreach ($command->locationCommands as $locationCommand) {
-            $locationCommand->regulationOrderRecord = $regulationOrderRecord;
+        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+
+        foreach ($command->measureCommands as $measureCommand) {
+            $measureCommand->regulationOrder = $regulationOrder;
 
             try {
-                $location = $this->commandBus->handle($locationCommand);
+                $measure = $this->commandBus->handle($measureCommand);
             } catch (GeocodingFailureException $exc) {
                 throw new ImportBacIdfRegulationFailedException($exc->getMessage());
             }
 
-            $regulationOrderRecord->getRegulationOrder()->addLocation($location);
+            $regulationOrder->addMeasure($measure);
         }
 
         try {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
-use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
@@ -24,7 +24,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
 
         $generalInfo = $crawler->filter('[data-testid="general_info"]');
-        $location = $crawler->filter('[data-testid="location"]');
+        $measures = $crawler->filter('[data-testid="measure"]');
 
         // General info
         $this->assertSame('Description 1', $generalInfo->filter('h3')->text());
@@ -36,14 +36,28 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL, $editGeneralInfoForm->getUri());
         $this->assertSame('GET', $editGeneralInfoForm->getMethod());
 
-        // Location
-        $this->assertSame('Route du Grand Brossais', $location->filter('h3')->text());
-        $this->assertSame('Savenay (44260)', $location->filter('li')->eq(0)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis', $location->filter('li')->eq(1)->text());
-        $this->assertSame('Circulation interdite du 31/10/2023 à 09h00 au 31/10/2023 à 23h00 pour tous les véhicules', $location->filter('li')->eq(2)->text());
-        $editLocationForm = $location->selectButton('Modifier')->form();
+        // Measure 1
+        $measure1Header = $crawler->filter('[data-testid="measure"]')->eq(0);
+        $measure1Content = $crawler->filter('[data-testid="measure-content"]')->eq(0);
+
+        $this->assertSame('Vitesse limitée à 50 km/h', $measure1Header->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measure1Content->filter('li')->eq(0)->text());
+        $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
+        $this->assertSame('Route du Grand Brossais Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
+
+        // Measure 2
+        $measure2Header = $crawler->filter('[data-testid="measure"]')->eq(1);
+        $measure2Content = $crawler->filter('[data-testid="measure-content"]')->eq(1);
+
+        $this->assertSame('Circulation interdite', $measure2Header->filter('h3')->text());
+        $this->assertSame('pour tous les véhicules', $measure2Content->filter('li')->eq(0)->text());
+        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure2Content->filter('li')->eq(1)->text());
+        $this->assertSame('Route du Lac Savenay (44260)', $measure2Content->filter('li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measure2Content->filter('li')->eq(4)->text());
+
+        $editLocationForm = $measures->eq(1)->selectButton('Modifier')->form();
         $this->assertSame(
-            'http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/location/' . LocationFixture::UUID_TYPICAL . '/form',
+            'http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form',
             $editLocationForm->getUri(),
         );
         $this->assertSame('GET', $editLocationForm->getMethod());
@@ -66,27 +80,6 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         // Go back link
         $goBackLink = $crawler->selectLink('Revenir aux arrêtés');
         $this->assertSame('/regulations?tab=temporary', $goBackLink->extract(['href'])[0]);
-    }
-
-    public function testDraftRegulationWithMeasuresDetail(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '?feature_loc_inversion=true');
-
-        $this->assertSecurityHeaders();
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Arrêté temporaire FO1/2023', $crawler->filter('h2')->text());
-        $this->assertMetaTitle('Arrêté temporaire FO1/2023 - DiaLog', $crawler);
-        $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
-
-        $measureTitle = $crawler->filter('[data-testid="measure"]');
-        $measureDetail = $crawler->filter('[data-testid="measure-detail-items"]');
-
-        // Measures
-        $this->assertSame('Circulation interdite', $measureTitle->filter('h3')->text());
-        $this->assertSame('pour tous les véhicules', $measureDetail->filter('li')->eq(0)->text());
-        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measureDetail->filter('li')->eq(1)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measureDetail->filter('li')->eq(3)->text());
     }
 
     public function testPermanentRegulationDetail(): void
@@ -112,8 +105,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         // Actions
         $saveButton = $crawler->selectButton('Valider');
-        $this->assertSame('Indiquez la voie concernée, par exemple Rue de la République.', $crawler->filter('#location_form_roadName_help')->text());
-        $this->assertSame(1, $saveButton->count()); // Location form
+        $this->assertSame('Indiquez le type de restriction et ses localisations', $crawler->filter('.app-card__content p')->text());
+        $this->assertSame(1, $saveButton->count()); // Measure form
 
         $duplicateButton = $crawler->selectButton('Dupliquer')->form();
         $this->assertSame($duplicateButton->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS . '/duplicate');
