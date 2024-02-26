@@ -298,7 +298,10 @@
                 {{ 'regulation.measure.card.title'|trans }}
             </h3>
         </div>
-        <div class="app-card__content">
+        <div
+            class="app-card__content"
+            style="--card-padding: 0.5rem 1.5rem 1.5rem 1.5rem"
+        >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
             {{ form_start(form, {attr: {id: 'measure-form'}}) }}
                 <div class="app-card">
@@ -316,7 +319,10 @@
                             {% endif %}
                         </h3>
                     </div>
-                    <div class="app-card__content">
+                    <div
+                        class="app-card__content"
+                        style="--card-padding: 1.5rem"
+                    >
                         {{ form_errors(form) }}
 
                         <div data-controller="form-reveal">
@@ -387,7 +393,7 @@
                 </div>
                 <div class="app-card fr-mt-3w">
                     <div class="app-card__header">
-                        <span class="app-card__img fr-icon-map-pin-2-fill fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
+                        <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
                         <div class="app-card__title">
                             <h3 class="fr-h4 fr-mb-0">
                                 {{ 'regulation.locations'|trans }}
@@ -397,7 +403,10 @@
                             </p>
                         </div>
                     </div>
-                    <div class="app-card__content">
+                    <div
+                        class="app-card__content"
+                        style="--card-padding: 1.5rem"
+                    >
                         <div
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
