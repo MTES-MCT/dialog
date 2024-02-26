@@ -29,7 +29,7 @@ final class SaveRegulationGeneralInfoCommandConstraintValidator extends Constrai
         $hasIdentifierChanged = $regulationOrder?->getIdentifier() !== $command->identifier;
         $hasOrganizationChanged = $command->regulationOrderRecord?->getOrganization() !== $command->organization;
 
-        if ($hasIdentifierChanged || $hasOrganizationChanged) {
+        if ($command->identifier && ($hasIdentifierChanged || $hasOrganizationChanged)) {
             if ($this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
                 ->isSatisfiedBy($command->identifier, $command->organization)) {
                 $this->context->buildViolation('regulation.general_info.error.identifier')

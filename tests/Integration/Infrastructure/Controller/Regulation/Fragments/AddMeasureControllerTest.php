@@ -280,12 +280,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['restrictedTypes'] = ['other'];
         $values['measure_form']['vehicleSet']['otherRestrictedTypeText'] = str_repeat('a', 101);
         $values['measure_form']['vehicleSet']['exemptedTypes'] = ['other'];
-        $values['measure_form']['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 101);
+        $values['measure_form']['vehicleSet']['otherExemptedTypeText'] = str_repeat('a', 301);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_vehicleSet_otherRestrictedTypeText_error')->text());
-        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 300 caractères.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testInvalidVehicleSetBlankHeavyweightMaxWeight(): void

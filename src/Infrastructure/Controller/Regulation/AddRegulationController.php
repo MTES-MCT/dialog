@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AddRegulationController
 {
@@ -24,7 +23,6 @@ final class AddRegulationController
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private Security $security,
-        private TranslatorInterface $translator,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private DateUtilsInterface $dateUtils,
