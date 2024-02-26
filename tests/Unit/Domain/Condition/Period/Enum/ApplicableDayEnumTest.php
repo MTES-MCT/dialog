@@ -25,5 +25,11 @@ final class ApplicableDayEnumTest extends TestCase
         $this->assertSame(ApplicableDayEnum::getDayIndex('wednesday'), 2);
         $this->assertSame(ApplicableDayEnum::getDayIndex('sunday'), 6);
         $this->assertNull(ApplicableDayEnum::getDayIndex('wtf'));
+
+        $this->assertSame(ApplicableDayEnum::getByIndex(0), 'monday');
+        $this->assertSame(ApplicableDayEnum::getByIndex(2), 'wednesday');
+        $this->assertSame(ApplicableDayEnum::getByIndex(6), 'sunday');
+        $this->assertNull(ApplicableDayEnum::getByIndex(-1));
+        $this->assertNull(ApplicableDayEnum::getByIndex(7));
     }
 }

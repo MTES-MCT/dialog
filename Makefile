@@ -126,6 +126,12 @@ data/fr_city.sql: data/communes.json
 data/communes.json:
 	curl -L https://unpkg.com/@etalab/decoupage-administratif/data/communes.json > data/communes.json
 
+data_bac_idf_import: # Import BAC-IDF decrees as regulation orders
+	make console CMD="app:bac_idf:import ${ARGS}"
+
+data/bac_idf/decrees.json: ## Create BAC-IDF decrees file
+	./tools/bacidfinstall
+
 ##
 ## ----------------
 ## Executable
