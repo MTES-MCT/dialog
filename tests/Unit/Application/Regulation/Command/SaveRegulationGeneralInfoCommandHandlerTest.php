@@ -14,9 +14,7 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
-use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Domain\User\Organization;
-use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
@@ -25,7 +23,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     private $regulationOrderRecordRepository;
     private $regulationOrderRepository;
     private $organization;
-    private $doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 
     public function setUp(): void
     {
@@ -33,7 +30,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $this->organization = $this->createMock(Organization::class);
-        $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier = $this->createMock(DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier::class);
     }
 
     public function testCreate(): void
@@ -70,12 +66,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             )
             ->willReturn($createdRegulationOrder);
 
-        $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
-            ->expects(self::once())
-            ->method('isSatisfiedBy')
-            ->with('FO2/2023', $this->organization)
-            ->willReturn(false);
-
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('add')
@@ -97,7 +87,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
-            $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
             $now,
         );
 
@@ -114,130 +103,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->assertSame($createdRegulationOrderRecord, $result);
     }
 
-    public function testCreateWithIdentifierThatAlreadyExist(): void
-    {
-        $this->expectException(OrganizationAlreadyHasRegulationOrderWithThisIdentifierException::class);
-        $now = new \DateTimeImmutable('2022-01-09');
-        $start = new \DateTimeImmutable('2023-03-13');
-        $end = new \DateTimeImmutable('2023-03-15');
-
-        $this->idFactory
-            ->expects(self::never())
-            ->method('make')
-        ;
-
-        $this->regulationOrderRepository
-            ->expects(self::never())
-            ->method('add');
-
-        $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
-            ->expects(self::once())
-            ->method('isSatisfiedBy')
-            ->with('FO2/2023', $this->organization)
-            ->willReturn(true);
-
-        $this->regulationOrderRecordRepository
-            ->expects(self::never())
-            ->method('add');
-
-        $handler = new SaveRegulationGeneralInfoCommandHandler(
-            $this->idFactory,
-            $this->regulationOrderRepository,
-            $this->regulationOrderRecordRepository,
-            $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
-            $now,
-        );
-
-        $command = new SaveRegulationGeneralInfoCommand();
-        $command->identifier = 'FO2/2023';
-        $command->description = 'Interdiction de circuler';
-        $command->startDate = $start;
-        $command->endDate = $end;
-        $command->organization = $this->organization;
-        $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-
-        $handler($command);
-    }
-
-    public function testUpdateWithSameIdentifierAndOrganization(): void
-    {
-        $now = new \DateTimeImmutable('2022-01-09');
-        $start = new \DateTimeImmutable('2023-03-13');
-        $end = new \DateTimeImmutable('2023-03-15');
-
-        $this->idFactory
-            ->expects(self::never())
-            ->method('make');
-
-        $createdRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $createdRegulationOrderRecord
-            ->expects(self::never())
-            ->method('getUuid');
-
-        $this->regulationOrderRepository
-            ->expects(self::never())
-            ->method('add');
-
-        $this->regulationOrderRecordRepository
-            ->expects(self::never())
-            ->method('add');
-
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getIdentifier')
-            ->willReturn('FO2/2030');
-        $regulationOrder
-            ->expects(self::once())
-            ->method('update')
-            ->with(
-                'FO2/2030',
-                RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-                'Interdiction de circuler',
-                new \DateTimeImmutable('2023-03-13'),
-                new \DateTimeImmutable('2023-03-15'),
-            );
-
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $regulationOrderRecord
-            ->expects(self::exactly(2))
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($this->organization);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('updateOrganization')
-            ->with($this->organization);
-
-        $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
-            ->expects(self::never())
-            ->method('isSatisfiedBy');
-
-        $handler = new SaveRegulationGeneralInfoCommandHandler(
-            $this->idFactory,
-            $this->regulationOrderRepository,
-            $this->regulationOrderRecordRepository,
-            $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
-            $now,
-        );
-
-        $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
-        $command->identifier = 'FO2/2030';
-        $command->organization = $this->organization;
-        $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $command->description = 'Interdiction de circuler';
-        $command->startDate = $start;
-        $command->endDate = $end;
-
-        $result = $handler($command);
-
-        $this->assertSame($regulationOrderRecord, $result);
-    }
-
-    public function testUpdateWithDifferentIdentifierAndOrganization(): void
+    public function testUpdate(): void
     {
         $now = new \DateTimeImmutable('2022-01-09');
         $start = new \DateTimeImmutable('2023-03-13');
@@ -264,10 +130,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder
             ->expects(self::once())
-            ->method('getIdentifier')
-            ->willReturn('FO2/2031');
-        $regulationOrder
-            ->expects(self::once())
             ->method('update')
             ->with(
                 'FO2/2030',
@@ -280,29 +142,18 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
         $regulationOrderRecord
             ->expects(self::once())
             ->method('updateOrganization')
             ->with($organization);
 
-        $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
-            ->expects(self::once())
-            ->method('isSatisfiedBy')
-            ->with('FO2/2030', $organization)
-            ->willReturn(false);
-
         $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
-            $this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
             $now,
         );
 

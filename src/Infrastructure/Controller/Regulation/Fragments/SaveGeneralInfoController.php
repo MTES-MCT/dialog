@@ -8,12 +8,10 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
-use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,26 +64,16 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         );
 
         $form->handleRequest($request);
-        $hasCommandFailed = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $this->commandBus->handle($command);
+            $this->commandBus->handle($command);
 
-                return new RedirectResponse(
-                    url: $this->router->generate('fragment_regulations_general_info', [
-                        'uuid' => $uuid,
-                    ]),
-                    status: Response::HTTP_SEE_OTHER,
-                );
-            } catch (OrganizationAlreadyHasRegulationOrderWithThisIdentifierException) {
-                $hasCommandFailed = true;
-                $form->get('identifier')->addError(
-                    new FormError(
-                        $this->translator->trans('regulation.general_info.error.identifier', [], 'validators'),
-                    ),
-                );
-            }
+            return new RedirectResponse(
+                url: $this->router->generate('fragment_regulations_general_info', [
+                    'uuid' => $uuid,
+                ]),
+                status: Response::HTTP_SEE_OTHER,
+            );
         }
 
         return new Response(
@@ -96,7 +84,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                     'cancelUrl' => $this->router->generate('fragment_regulations_general_info', ['uuid' => $uuid]),
                 ],
             ),
-            status: ($form->isSubmitted() && !$form->isValid()) || $hasCommandFailed
+            status: ($form->isSubmitted() && !$form->isValid())
                 ? Response::HTTP_UNPROCESSABLE_ENTITY
                 : Response::HTTP_OK,
         );
