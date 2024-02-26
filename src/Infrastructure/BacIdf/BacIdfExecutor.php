@@ -2,89 +2,82 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\EudonetParis;
+namespace App\Infrastructure\BacIdf;
 
+use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
-use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
-use App\Application\QueryBusInterface;
-use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use App\Domain\User\Exception\OrganizationNotFoundException;
-use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
+use App\Infrastructure\BacIdf\Exception\BacIdfException;
 use Psr\Log\LoggerInterface;
 
-final class EudonetParisExecutor
+final class BacIdfExecutor
 {
     public function __construct(
         private LoggerInterface $logger,
-        private EudonetParisExtractor $eudonetParisExtractor,
-        private EudonetParisTransformer $eudonetParisTransformer,
+        private BacIdfExtractor $extractor,
+        private BacIdfTransformer $transformer,
         private CommandBusInterface $commandBus,
-        private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
-        private string $eudonetParisOrgId,
         private DateUtilsInterface $dateUtils,
     ) {
     }
 
-    public function execute(\DateTimeInterface $laterThanUTC): void
+    public function execute(): void
     {
-        if (!$this->eudonetParisOrgId) {
-            throw new EudonetParisException('No target organization ID set. Please set APP_EUDONET_PARIS_ORG_ID in .env.local');
-        }
-
         $numProcessed = 0;
         $numCreated = 0;
         $numSkipped = 0;
-        $numSkippedNoLocationsGathered = 0;
+        $numSkippedNotCirculation = 0;
         $numErrors = 0;
         $startTime = $this->dateUtils->getMicroTime();
 
         $this->logger->info('started');
 
         try {
-            try {
-                $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($this->eudonetParisOrgId));
-            } catch (OrganizationNotFoundException $exc) {
-                throw new EudonetParisException("Organization not found: $this->eudonetParisOrgId");
-            }
-
             $existingIdentifiers = $this->regulationOrderRecordRepository
-                ->findIdentifiersForSource(RegulationOrderRecordSourceEnum::EUDONET_PARIS->value);
+                ->findIdentifiersForSource(RegulationOrderRecordSourceEnum::BAC_IDF->value);
 
-            foreach ($this->eudonetParisExtractor->iterExtract($laterThanUTC, ignoreIDs: $existingIdentifiers) as $record) {
-                $result = $this->eudonetParisTransformer->transform($record, $organization);
+            foreach ($this->extractor->iterExtract(ignoreIDs: $existingIdentifiers) as $record) {
+                $this->logger->debug('before-transform', ['record' => $record]);
+                $result = $this->transformer->transform($record);
 
                 ++$numProcessed;
 
                 if (empty($result->command)) {
                     $this->logger->info('skipped', $result->errors);
-
                     ++$numSkipped;
-
                     foreach ($result->errors as $error) {
-                        if ($error['reason'] == 'no_locations_gathered') {
-                            ++$numSkippedNoLocationsGathered;
+                        if ($error['reason'] == 'value_not_expected' && $error['expected'] === 'CIRCULATION') {
+                            ++$numSkippedNotCirculation;
                             break;
                         }
                     }
                 } else {
+                    if ($result->organizationCommand !== null) {
+                        $organization = $this->commandBus->handle($result->organizationCommand);
+                        $this->logger->info('organization:created', ['command' => $result->organizationCommand]);
+                    } else {
+                        $organization = $result->organization;
+                    }
+
+                    $result->command->generalInfoCommand->organization = $organization;
+
                     try {
                         $this->commandBus->handle($result->command);
                         $this->logger->info('created', ['command' => $result->command]);
                         ++$numCreated;
-                    } catch (ImportEudonetParisRegulationFailedException $exc) {
+                    } catch (ImportBacIdfRegulationFailedException $exc) {
                         $this->logger->error('failed', ['command' => $result->command, 'exc' => $exc]);
                         ++$numErrors;
                     }
                 }
             }
         } catch (\Exception $exc) {
-            $this->logger->error($exc);
+            $this->logger->error('exception', ['exc' => $exc]);
 
-            throw new EudonetParisException($exc->getMessage());
+            throw new BacIdfException($exc->getMessage());
         } finally {
             $endTime = $this->dateUtils->getMicroTime();
             $elapsedSeconds = $endTime - $startTime;
@@ -94,7 +87,7 @@ final class EudonetParisExecutor
                 'numCreated' => $numCreated,
                 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
                 'numSkipped' => $numSkipped,
-                'numSkippedNoLocationsGathered' => $numSkippedNoLocationsGathered,
+                'numSkippedNotCirculation' => $numSkippedNotCirculation,
                 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
                 'numErrors' => $numErrors,
                 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),

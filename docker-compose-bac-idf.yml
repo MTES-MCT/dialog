@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  mongo:
+    build:
+      context: ./docker/bac_idf
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dialog
+      MONGO_INITDB_ROOT_PASSWORD: dialog
+    volumes:
+      - ./docker/bac_idf/data:/etc/bac_idf/data

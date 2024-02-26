@@ -1,0 +1,90 @@
+{
+  "_id": { "$oid": "64ba572ea0fb632b99db0c19" },
+  "ARR_ETAT": "VALIDE",
+  "ARR_COMMUNE": {
+    "ARR_CODE_POSTAL": "93120",
+    "ARR_VILLE": "La Courneuve",
+    "ARR_INSEE": "93027",
+    "CODE_EPCI": "200054781"
+  },
+  "ARR_DUREE": {
+    "PERIODE_DEBUT": { "$date": "2015-08-17T00:00:00Z" },
+    "ARR_TEMPORALITE": "PERMANENT",
+    "ARR_PERIODE": false
+  },
+  "ARR_VU_CODE": [
+    " Vu la loi n° 82-213 du 2 mars 1982 modifiée, relative aux droits et libertés des Communes, des Départements et des Régions,  Vu le code de la route, Articles R 411-8, R 411-25, R 411-26, R 411-27, R411-28, R 417-9, R 417-10  Vu le décret n° 86.475 du 14 mars 1986 relatif à l'exercice du pouvoir de police en matière de circulation routière et modifiant certaines dispositions du Code de la Route, Vu le décret n° 2010-578 du 31 mai 2010 modifiant le décret 2009-615 du 3 juin 2009 fixant la  liste des routes classées à grande circulation, Vu le Code Général des Collectivités Territoriales, notamment les articles L.2213-1 et L.2213- 2, L2521-2 ;  Vu l'arrêté et l'instruction interministériels sur la signalisation routière, modifiés par les textes subséquents, Vu le règlement de voirie départementale adopté par l'Assemblée Départementale le 24  Septembre 1999, Vu l'instruction interministérielle sur la signalisation routière (livre I - signalisation des routes)  approuvée par arrêté interministériel du 6 novembre 1992, Vu l'arrêté municipal définitif n° 13.008 réglementant la circulation dans le périmètre de la zone 30 du quartier de la Gare La Courneuve - Aubervilliers du 16 janvier 2013."
+  ],
+  "ARR_CONSIDERANT": [
+    "CONSIDERANT : que pour des raisons de sécurité, il y a lieu de réglementer la circulation et le stationnement des véhicules à moteur terrestres."
+  ],
+  "ARR_REG_LEGAL": {
+    "ARR_AMENDES_PEINES": "Toutes les infractions au présent arrêté seront constatées par procès-verbaux et les contrevenants poursuivis conformément à la loi.",
+    "ARR_INST_SIGNALISATION": "La signalisation réglementaire est mise en place par le service Voirie et Réseaux de Plaine Commune, Unité Territoriale de La Courneuve.",
+    "ARR_CONTROLE": "Les agents de la voie publique sont chargés de l'application du présent arrêté dont la copie sera adressée à Monsieur le Commissaire de Police de la Courneuve et sera apposée sur les panneaux d'affichage administratif de la Ville de la Courneuve.",
+    "ARR_EXECUTION": "Les agents de la voie publique sont chargés de l'application du présent arrêté dont la copie sera adressée à Monsieur le Commissaire de Police de la Courneuve et sera apposée sur les panneaux d'affichage administratif de la Ville de la Courneuve."
+  },
+  "ARR_CREA_MODALITE": "NOUVEAU",
+  "ARR_FILENAME": "Pierre-Curie-passage-15.248.pdf",
+  "ARR_FILEKEY": "extracts2/prod/superadmin/328a37d5-b311-477b-8e37-75b9675f30ca",
+  "ARR_TYPE": "MUNICIPAL",
+  "ARR_REF": "15.248-circ",
+  "REG_TYPE": "CIRCULATION",
+  "REG_CIRCULATION": [
+    {
+      "CIRC_VEHICULES": { "VEH_POIDS": { "VEH_PTAC_MIN": 3.5 } },
+      "CIRC_REG": {
+        "REG_EXCEPT": ["OTHER", "SECOURS", "VEHICULES DE SERVICES"],
+        "REG_VILLE": false,
+        "PERIODE_JH": [
+          {
+            "JOUR": [1, 2, 3, 4, 5, 6, 0],
+            "HEURE_DEB": "00:00",
+            "HEURE_FIN": "23:59"
+          }
+        ],
+        "REG_RESTRICTION": true,
+        "REG_VOIES": [
+          {
+            "VOIE_NAME": "Passage Pierre Curie",
+            "VOIE_SECTION": false,
+            "VOIE_GEOJSON": {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "properties": {
+                    "place_id": 118288636,
+                    "osm_type": "way",
+                    "osm_id": 47027767,
+                    "display_name": "Passage Pierre Curie, La Gare, La Courneuve, Saint-Denis, Seine-Saint-Denis, Île-de-France, France métropolitaine, 93120, France",
+                    "place_rank": 26,
+                    "category": "highway",
+                    "type": "residential",
+                    "importance": 0.6
+                  },
+                  "bbox": [2.3844267, 48.9207082, 2.3847305, 48.9214627],
+                  "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                      [2.3844267, 48.9207082],
+                      [2.3844462, 48.9207571],
+                      [2.3847146, 48.9214287],
+                      [2.3847305, 48.9214627]
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "VEH_AUTH": false,
+        "MARCH_DANGER": false,
+        "REG_EXCEPT_DESC": "véhicules de déménagement justifiant d'une dérogation"
+      }
+    }
+  ],
+  "ARR_NOM": "Circulation passage Pierre Curie",
+  "ARR_COMPLIANCE": true,
+  "ARR_DATETIME": { "$date": "2023-07-21T10:00:14.075Z" }
+}

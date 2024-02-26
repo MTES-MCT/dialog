@@ -73,7 +73,7 @@
                 </option>
             </constraint>
             <constraint name="Length">
-                <option name="max">100</option>
+                <option name="max">300</option>
             </constraint>
         </property>
         <property name="heavyweightMaxWeight">
