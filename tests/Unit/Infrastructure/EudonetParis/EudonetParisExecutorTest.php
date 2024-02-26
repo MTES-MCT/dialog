@@ -67,7 +67,7 @@ final class EudonetParisExecutorTest extends TestCase
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findIdentifiersForSourceInOrganization')
+            ->method('findIdentifiersForSource')
             ->willReturn(['064ef37c-170f-7737-8000-d6f3b1db7685']);
 
         $record1 = ['fields' => [1101 => '20210104']];
@@ -158,8 +158,8 @@ final class EudonetParisExecutorTest extends TestCase
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findIdentifiersForSourceInOrganization')
-            ->with('eudonet_paris', $organization)
+            ->method('findIdentifiersForSource')
+            ->with('eudonet_paris')
             ->willReturn([]);
 
         $this->extractor
@@ -227,7 +227,7 @@ final class EudonetParisExecutorTest extends TestCase
 
         $this->regulationOrderRecordRepository
             ->expects(self::never())
-            ->method('findIdentifiersForSourceInOrganization');
+            ->method('findIdentifiersForSource');
 
         $this->extractor
             ->expects(self::never())
@@ -356,7 +356,7 @@ final class EudonetParisExecutorTest extends TestCase
 
         $this->regulationOrderRecordRepository
             ->expects(self::never())
-            ->method('findIdentifiersForSourceInOrganization');
+            ->method('findIdentifiersForSource');
 
         $this->extractor
             ->expects(self::never())
