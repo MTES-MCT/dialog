@@ -22,7 +22,7 @@ Récupérez le bundle :
     unzip -d docker/addok/addok-data /path/to/addok-dialog-bundle.zip
     ```
 
-[addok-dialog-bundle]: https://kdrive.infomaniak.com/app/share/184671/0193c893-8b54-48a4-aa4d-5cdf1fbe88a8
+[addok-dialog-bundle]: https://kdrive.infomaniak.com/app/share/184671/f59f2d6a-a11b-4a43-873b-6bc00218f681
 
 Démarrez ensuite l'instance Addok avec :
 
