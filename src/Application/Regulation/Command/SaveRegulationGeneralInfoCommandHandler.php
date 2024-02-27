@@ -10,8 +10,6 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
-use App\Domain\User\Exception\OrganizationAlreadyHasRegulationOrderWithThisIdentifierException;
-use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 
 final class SaveRegulationGeneralInfoCommandHandler
 {
@@ -19,7 +17,6 @@ final class SaveRegulationGeneralInfoCommandHandler
         private IdFactoryInterface $idFactory,
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
-        private DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier $doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
         private \DateTimeInterface $now,
     ) {
     }
@@ -27,18 +24,6 @@ final class SaveRegulationGeneralInfoCommandHandler
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
         $command->cleanOtherCategoryText();
-
-        // Checking the unicity of an regulation order identifier in an organization
-        $regulationOrder = $command->regulationOrderRecord?->getRegulationOrder();
-        $hasIdentifierChanged = $regulationOrder?->getIdentifier() !== $command->identifier;
-        $hasOrganizationChanged = $command->regulationOrderRecord?->getOrganization() !== $command->organization;
-
-        if ($hasIdentifierChanged || $hasOrganizationChanged) {
-            if ($this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
-                ->isSatisfiedBy($command->identifier, $command->organization)) {
-                throw new OrganizationAlreadyHasRegulationOrderWithThisIdentifierException();
-            }
-        }
 
         // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
