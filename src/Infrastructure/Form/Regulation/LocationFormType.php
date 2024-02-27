@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class LocationNewFormType extends AbstractType
+final class LocationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -147,7 +147,7 @@ final class LocationNewFormType extends AbstractType
         $resolver->setDefaults([
             'administrators' => [],
             'feature_road_type' => false,
-            'data_class' => SaveLocationNewCommand::class,
+            'data_class' => SaveLocationCommand::class,
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
     }

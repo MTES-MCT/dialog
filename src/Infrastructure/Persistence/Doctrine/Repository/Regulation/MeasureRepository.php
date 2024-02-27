@@ -45,7 +45,7 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
             ->addSelect('p', 't', 'v', 'l')
             ->innerJoin('m.regulationOrder', 'ro')
             ->innerJoin('ro.regulationOrderRecord', 'roc')
-            ->leftJoin('m.locationsNew', 'l')
+            ->leftJoin('m.locations', 'l')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.timeSlots', 't')
             ->leftJoin('m.vehicleSet', 'v')

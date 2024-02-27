@@ -88,7 +88,7 @@ final class UpdateMeasureController extends AbstractRegulationController
             } catch (GeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locationsNew')->get((string) $exc->getLocationIndex())->get('roadName')->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadName')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),

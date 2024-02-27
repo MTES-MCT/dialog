@@ -6,12 +6,12 @@ namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Location;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-final class LocationNewFixture extends Fixture implements DependentFixtureInterface
+final class LocationFixture extends Fixture implements DependentFixtureInterface
 {
     public const UUID_DOES_NOT_EXIST = '0658c5da-47d6-7d16-8000-ea88577534a4';
 
@@ -26,7 +26,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
 
     public function load(ObjectManager $manager): void
     {
-        $typicalMeasureLocation1 = new LocationNew(
+        $typicalMeasureLocation1 = new Location(
             self::UUID_TYPICAL,
             $this->getReference('typicalMeasure'),
             roadType: 'lane',
@@ -43,7 +43,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ]),
         );
 
-        $typicalMeasureLocation2 = new LocationNew(
+        $typicalMeasureLocation2 = new Location(
             '34247125-38f4-4e69-b5d7-5516a577d149',
             $this->getReference('typicalMeasure'),
             roadType: 'lane',
@@ -63,7 +63,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ),
         );
 
-        $typicalMeasureLocation3 = new LocationNew(
+        $typicalMeasureLocation3 = new Location(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
             $this->getReference('typicalMeasureToRemove'),
             roadType: 'lane',
@@ -83,7 +83,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ),
         );
 
-        $publishedLocation1 = new LocationNew(
+        $publishedLocation1 = new Location(
             self::UUID_PUBLISHED,
             $this->getReference('publishedMeasure'),
             roadType: 'lane',
@@ -100,7 +100,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ]),
         );
 
-        $publishedLocation2 = new LocationNew(
+        $publishedLocation2 = new Location(
             '064ca782-771c-783f-8000-e67473eabea6',
             $this->getReference('publishedMeasure'),
             roadType: 'lane',
@@ -117,7 +117,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ]),
         );
 
-        $publishedLocation3 = new LocationNew(
+        $publishedLocation3 = new Location(
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
             $this->getReference('publishedMeasure'),
             roadType: 'lane',
@@ -137,7 +137,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ),
         );
 
-        $permanentRegulationOrderLocation = new LocationNew(
+        $permanentRegulationOrderLocation = new Location(
             self::UUID_PERMANENT_ONLY_ONE,
             $this->getReference('permanentMeasure'),
             roadType: 'lane',
@@ -157,7 +157,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             ),
         );
 
-        $fullCityLocation = new LocationNew(
+        $fullCityLocation = new Location(
             self::UUID_FULL_CITY,
             $this->getReference('fullCityMeasure'),
             roadType: 'lane',
@@ -171,7 +171,7 @@ final class LocationNewFixture extends Fixture implements DependentFixtureInterf
             geometry: null,
         );
 
-        $cifsLocation = new LocationNew(
+        $cifsLocation = new Location(
             '06548f85-d545-7b45-8000-8a23c45850b3',
             $this->getReference('cifsMeasure'),
             roadType: 'lane',

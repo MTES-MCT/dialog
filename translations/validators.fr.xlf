@@ -30,8 +30,8 @@
                 <source>regulation.general_info.error.identifier</source>
                 <target>Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.</target>
             </trans-unit>
-            <trans-unit id="location.locationsNew.error.not_blank">
-                <source>location.locationsNew.error.not_blank</source>
+            <trans-unit id="measure.locations.error.not_blank">
+                <source>measure.locations.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs localisations.</target>
             </trans-unit>
             <trans-unit id="location.isEntireStreet.error.need_house_numbers">

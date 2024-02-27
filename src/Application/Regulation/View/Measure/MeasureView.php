@@ -48,7 +48,7 @@ readonly class MeasureView
             );
         }
 
-        foreach ($measure->getLocationsNew() as $location) {
+        foreach ($measure->getLocations() as $location) {
             $locations[] = new LocationView(
                 roadType: $location->getRoadType(),
                 cityLabel: $location->getCityLabel(),

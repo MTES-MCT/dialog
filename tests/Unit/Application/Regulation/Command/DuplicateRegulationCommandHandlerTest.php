@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -23,7 +23,7 @@ use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
-use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -57,8 +57,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $timeSlotStartTime = new \DateTimeImmutable('2023-03-13 08:00:00');
         $timeSlotEndTime = new \DateTimeImmutable('2023-03-13 20:00:00');
 
-        $location1 = $this->createMock(LocationNew::class);
-        $location2 = $this->createMock(LocationNew::class);
+        $location1 = $this->createMock(Location::class);
+        $location2 = $this->createMock(Location::class);
 
         $timeSlot = $this->createMock(TimeSlot::class);
         $timeSlot
@@ -123,7 +123,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn($vehicleSet);
         $measure1
             ->expects(self::once())
-            ->method('getLocationsNew')
+            ->method('getLocations')
             ->willReturn([$location1, $location2]);
 
         $measure2 = $this->createMock(Measure::class);
@@ -141,7 +141,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn([]);
         $measure2
             ->expects(self::once())
-            ->method('getLocationsNew')
+            ->method('getLocations')
             ->willReturn([]);
         $measure2
             ->expects(self::once())
@@ -288,7 +288,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             $timeSlotCommand,
         ];
 
-        $locationCommand1 = new SaveLocationNewCommand();
+        $locationCommand1 = new SaveLocationCommand();
         $locationCommand1->cityCode = '44195';
         $locationCommand1->cityLabel = 'Savenay';
         $locationCommand1->roadType = RoadTypeEnum::LANE->value;
@@ -298,7 +298,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1->geometry = null;
         $locationCommand1->measure = $measure1;
 
-        $locationCommand2 = new SaveLocationNewCommand();
+        $locationCommand2 = new SaveLocationCommand();
         $locationCommand2->cityCode = '44195';
         $locationCommand2->cityLabel = 'Savenay';
         $locationCommand2->roadType = RoadTypeEnum::LANE->value;
@@ -314,7 +314,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->periods = [
             $periodCommand1,
         ];
-        $measureCommand1->locationsNew = [
+        $measureCommand1->locations = [
             $locationCommand1,
             $locationCommand2,
         ];
