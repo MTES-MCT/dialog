@@ -197,7 +197,14 @@
                     class="fr-x-autocomplete"
                     data-autocomplete-target="results"
                 ></ul>
-                <div class="fr-x-autocomplete-wrapper" data-controller="autocomplete" data-autocomplete-url-value="{{ path('fragment_roads_numbers_completion') }}" data-autocomplete-query-param-value="search" data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}" data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500">
+                <div
+                    class="fr-x-autocomplete-wrapper"
+                    data-controller="autocomplete"
+                    data-autocomplete-url-value="{{ path('fragment_roads_numbers_completion') }}" data-autocomplete-query-param-value="search"
+                    data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}"
+                    data-autocomplete-min-length-value="3"
+                    data-autocomplete-delay-value="500"
+                >
 					{{ form_row(form.roadNumber, {
                         group_class: 'fr-input-group',
                         widget_class: 'fr-input',
@@ -205,7 +212,13 @@
                             'data-autocomplete-target': 'input',
                         }, 
                     }) }}
-						<ul id="{{ form.roadNumber.vars.id }}-results" role="listbox" aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}" class="fr-x-autocomplete" data-autocomplete-target="results"></ul>
+						<ul
+                            id="{{ form.roadNumber.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results">
+                        </ul>
 				</div>
             </div>
             <div

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetRoadsNumbersCompletionFragmentController
+final class GetDepartmentalRoadCompletionFragmentController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -33,7 +33,7 @@ final class GetRoadsNumbersCompletionFragmentController
         }
 
         $roadType = 'Départementale';
-        $departmentalRoadsNumbers = $this->roadsNumbers->getRoadsNumbers($search, $administrator, $roadType);
+        $departmentalRoadsNumbers = $this->roadsNumbers->getDepartmentalRoad($search, $administrator, $roadType);
 
         return new Response(
             $this->twig->render(

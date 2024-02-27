@@ -6,5 +6,5 @@ namespace App\Application;
 
 interface RoadsNumbersInterface
 {
-    public function getRoadsNumbers(string $search, string $gestionnaire, string $roadType): array;
+    public function getDepartmentalRoad(string $search, string $gestionnaire, string $roadType): array;
 }
