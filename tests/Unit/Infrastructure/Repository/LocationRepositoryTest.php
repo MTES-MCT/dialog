@@ -4,39 +4,39 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Repository;
 
-use App\Domain\Regulation\LocationNew;
-use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\LocationNewRepository;
+use App\Domain\Regulation\Location;
+use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\LocationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 
-final class LocationNewRepositoryTest extends TestCase
+final class LocationRepositoryTest extends TestCase
 {
     // Coverage only
     public function testDelete(): void
     {
-        $locationNew = $this->createMock(LocationNew::class);
+        $location = $this->createMock(Location::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em
             ->expects(self::once())
             ->method('remove')
-            ->with($locationNew);
+            ->with($location);
         $em
             ->expects(self::once())
             ->method('getClassMetadata')
-            ->willReturn(new ClassMetadata(LocationNew::class));
+            ->willReturn(new ClassMetadata(Location::class));
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry
             ->expects(self::once())
             ->method('getManagerForClass')
-            ->with(LocationNew::class)
+            ->with(Location::class)
             ->willReturn($em);
 
-        $repository = new LocationNewRepository($registry);
+        $repository = new LocationRepository($registry);
 
-        $repository->delete($locationNew);
+        $repository->delete($location);
     }
 }

@@ -24,13 +24,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'] = []; // Remove the default empty location form
+        $values['measure_form']['locations'] = []; // Remove the default empty location form
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#measure_form_type_error')->text());
-        $this->assertSame('Veuillez définir une ou plusieurs localisations.', $crawler->filter('#measure_form_locationsNew_error')->text());
+        $this->assertSame('Veuillez définir une ou plusieurs localisations.', $crawler->filter('#measure_form_locations_error')->text());
     }
 
     public function testInvalidBlankDepartmentalRoad(): void
@@ -48,14 +48,14 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locationsNew'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locationsNew'][0]['administrator'] = '';
-        $values['measure_form']['locationsNew'][0]['roadNumber'] = '';
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = '';
+        $values['measure_form']['locations'][0]['roadNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locationsNew_0_administrator_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locationsNew_0_roadNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_administrator_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
     }
 
     public function testInvalidCertainDaysWithoutApplicableDays(): void
@@ -110,12 +110,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '20';
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
 
-        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
-        unset($values['measure_form']['locationsNew'][0]['isEntireStreet']);
-        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '15';
-        $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '37bis';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['isEntireStreet']);
+        $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
+        $values['measure_form']['locations'][0]['toHouseNumber'] = '37bis';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -149,9 +149,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locationsNew'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locationsNew'][0]['administrator'] = 'Ain';
-        $values['measure_form']['locationsNew'][0]['roadNumber'] = 'D1075';
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ain';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D1075';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
 
@@ -231,9 +231,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['measure_form']['vehicleSet']['critairTypes'] = [];
@@ -253,9 +253,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['measure_form']['vehicleSet']['critairTypes'] = ['invalidCritair'];
@@ -371,9 +371,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
@@ -406,9 +406,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Bad period
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
@@ -464,17 +464,17 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locationsNew'][0]['cityCode'] = '44195';
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locationsNew'][0]['roadName'] = 'Route du GEOCODING_FAILURE';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du GEOCODING_FAILURE';
         unset($values['location_form']['isEntireStreet']);
-        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = '15';
-        $values['measure_form']['locationsNew'][0]['toHouseNumber'] = '37bis';
+        $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
+        $values['measure_form']['locations'][0]['toHouseNumber'] = '37bis';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#measure_form_locationsNew_0_roadName_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
@@ -515,21 +515,21 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'][0]['cityCode'] = str_repeat('a', 6);
-        $values['measure_form']['locationsNew'][0]['cityLabel'] = str_repeat('a', 256);
-        $values['measure_form']['locationsNew'][0]['roadName'] = str_repeat('a', 256);
+        $values['measure_form']['locations'][0]['cityCode'] = str_repeat('a', 6);
+        $values['measure_form']['locations'][0]['cityLabel'] = str_repeat('a', 256);
+        $values['measure_form']['locations'][0]['roadName'] = str_repeat('a', 256);
         unset($values['location_form']['isEntireStreet']);
-        $values['measure_form']['locationsNew'][0]['fromHouseNumber'] = str_repeat('a', 9);
-        $values['measure_form']['locationsNew'][0]['toHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['fromHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['toHouseNumber'] = str_repeat('a', 9);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères.', $crawler->filter('#measure_form_locationsNew_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locationsNew_0_cityLabel_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locationsNew_0_roadName_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locationsNew_0_fromHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locationsNew_0_toHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères.', $crawler->filter('#measure_form_locations_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_cityLabel_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_toHouseNumber_error')->text());
     }
 
     public function testFieldsTooLongDepartmentalRoad(): void
@@ -544,14 +544,14 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['locationsNew'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locationsNew'][0]['administrator'] = 'Ain';
-        $values['measure_form']['locationsNew'][0]['roadNumber'] = str_repeat('a', 51);
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ain';
+        $values['measure_form']['locations'][0]['roadNumber'] = str_repeat('a', 51);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locationsNew_0_roadNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

@@ -6,7 +6,7 @@ namespace App\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -137,10 +137,10 @@ final class BacIdfTransformer
 
                 $locationCommand = $this->parseLocation($row, $regVoie);
 
-                $measureCommand->locationsNew[] = $locationCommand;
+                $measureCommand->locations[] = $locationCommand;
             }
 
-            if (\count($measureCommand->locationsNew) === 0) {
+            if (\count($measureCommand->locations) === 0) {
                 $errors[] = [
                     'loc' => [...$loc, 'fieldname' => sprintf('measures.%d', $index)],
                     'reason' => 'no_locations_gathered',
@@ -389,9 +389,9 @@ final class BacIdfTransformer
         return implode(', ', $types);
     }
 
-    private function parseLocation(array $row, array $regVoie): SaveLocationNewCommand
+    private function parseLocation(array $row, array $regVoie): SaveLocationCommand
     {
-        $locationCommand = new SaveLocationNewCommand();
+        $locationCommand = new SaveLocationCommand();
 
         $geometries = [];
 

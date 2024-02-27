@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -87,8 +87,8 @@ final class DuplicateRegulationCommandHandler
                     $periodCommands[] = $cmd;
                 }
 
-                foreach ($measure->getLocationsNew() as $location) {
-                    $cmd = new SaveLocationNewCommand();
+                foreach ($measure->getLocations() as $location) {
+                    $cmd = new SaveLocationCommand();
                     $cmd->roadType = $location->getRoadType();
                     $cmd->administrator = $location->getAdministrator();
                     $cmd->roadNumber = $location->getRoadNumber();
@@ -113,7 +113,7 @@ final class DuplicateRegulationCommandHandler
                 $measureCommand->maxSpeed = $measure->getMaxSpeed();
                 $measureCommand->vehicleSet = $vehicleSetCommand;
                 $measureCommand->periods = $periodCommands;
-                $measureCommand->locationsNew = $locationCommands;
+                $measureCommand->locations = $locationCommands;
 
                 $this->commandBus->handle($measureCommand);
             }
