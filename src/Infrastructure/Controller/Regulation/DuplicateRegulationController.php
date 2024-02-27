@@ -67,8 +67,8 @@ final class DuplicateRegulationController extends AbstractRegulationController
                 ]),
                 status: Response::HTTP_SEE_OTHER,
             );
-        } catch (ValidationFailedException) {
-            $session->getFlashBag()->add('error', $this->translator->trans('regulation.duplicated.identifier_error'));
+        } catch (ValidationFailedException $e) {
+            $session->getFlashBag()->add('error', $e->getViolations()[0]->getMessage());
         }
 
         return new RedirectResponse(
