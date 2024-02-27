@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Validator;
 
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Domain\User\Specification\DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -13,6 +14,7 @@ final class SaveRegulationGeneralInfoCommandConstraintValidator extends Constrai
 {
     public function __construct(
         private string $clientTimezone,
+        private DoesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier $doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier,
     ) {
     }
 
@@ -20,6 +22,20 @@ final class SaveRegulationGeneralInfoCommandConstraintValidator extends Constrai
     {
         if (!$command instanceof SaveRegulationGeneralInfoCommand) {
             throw new UnexpectedValueException($command, SaveRegulationGeneralInfoCommand::class);
+        }
+
+        // Checking the unicity of an regulation order identifier in an organization
+        $regulationOrder = $command->regulationOrderRecord?->getRegulationOrder();
+        $hasIdentifierChanged = $regulationOrder?->getIdentifier() !== $command->identifier;
+        $hasOrganizationChanged = $command->regulationOrderRecord?->getOrganization() !== $command->organization;
+
+        if ($command->identifier && ($hasIdentifierChanged || $hasOrganizationChanged)) {
+            if ($this->doesOrganizationAlreadyHaveRegulationOrderWithThisIdentifier
+                ->isSatisfiedBy($command->identifier, $command->organization)) {
+                $this->context->buildViolation('regulation.general_info.error.identifier')
+                    ->atPath('identifier')
+                    ->addViolation();
+            }
         }
 
         if ($command->endDate !== null && $command->endDate < $command->startDate) {

@@ -67,7 +67,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('L\'identifiant de l\'arrêté est déjà utilisé', $crawler->filter('div.fr-alert--error')->text());
+        $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('div.fr-alert--error')->text());
     }
 
     public function testDuplicateWithNoStartDateYet(): void
