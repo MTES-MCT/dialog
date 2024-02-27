@@ -50,6 +50,7 @@ final class VehicleSetFormType extends AbstractType
                     'label_attr' => [
                         'class' => 'required',
                     ],
+                    'empty_data' => '3,5',
                 ],
             )
             ->add(

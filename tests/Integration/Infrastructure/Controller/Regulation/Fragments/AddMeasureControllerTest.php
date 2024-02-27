@@ -288,27 +288,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 300 caractères.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
-    public function testInvalidVehicleSetBlankHeavyweightMaxWeight(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $values = $form->getPhpValues();
-        $this->assertEquals('3,5', $values['measure_form']['vehicleSet']['heavyweightMaxWeight']);
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
-        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = ''; // Unset default
-
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
-    }
-
     public function testInvalidVehicleSetBlankDimensions(): void
     {
         $client = $this->login();
