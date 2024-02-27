@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-class LocationNew
+class Location
 {
     public function __construct(
         private string $uuid,
