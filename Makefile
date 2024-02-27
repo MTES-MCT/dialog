@@ -267,22 +267,22 @@ ci: ## Run CI steps
 	make check
 	make test_all
 
+ci_eudonet_paris_import: ## Run CI steps for Eudonet Paris Import workflow
+	make composer CMD="install -n --prefer-dist"
+	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel ${EUDONET_PARIS_IMPORT_APP} --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
+	make console CMD="app:eudonet_paris:import"
+
 ##
 ## ----------------
 ## Prod
 ## ----------------
 ##
 
-scalingo-node-postbuild:
+scalingo-node-postbuild: ## Scalingo postbuild hook for the Node buildpack
 	make assets
 	make blog_install
 
-scalingo-postdeploy:
+scalingo-postdeploy: ## Scalingo postdeploy hook
 	@echo 'Executing migrations...'
 	${BIN_CONSOLE} doctrine:migrations:migrate --no-interaction
-
-eudonet_paris_import_ci:
-	make composer CMD="install -n --prefer-dist"
-	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
-	scalingo --app dialog-staging-pr634 db-tunnel -p 10000 DATABASE_URL & ./tools/wait-for-it.sh 127.0.0.1:10000
-	make console CMD="app:eudonet_paris:import"
