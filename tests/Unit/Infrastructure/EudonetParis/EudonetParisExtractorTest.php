@@ -27,15 +27,39 @@ final class EudonetParisExtractorTest extends TestCase
             ['fileId' => 'arrete2', 'fields' => ['...']],
         ];
         $regulationOrder1MeasureRows = [['fileId' => 'mesure1_1', 'fields' => ['...']]];
-        $regulationOrder1Measure1LocationRows = [['fileId' => 'localisation1_1_1', 'fields' => ['...']]];
+        $regulationOrder1Measure1LocationRows = [
+            [
+                'fileId' => 'localisation1_1_1',
+                'fields' => [
+                    EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue du Test',
+                    EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => '7',
+                    EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => '15',
+                ],
+                'geometry' => null,
+            ],
+        ];
+        $regulationOrder1Measure1Location1StartAddressRow = [
+            'fileId' => 'address1_start',
+            'fields' => [
+                3414 => '2,3',
+                3411 => '42,5',
+            ],
+        ];
+        $regulationOrder1Measure1Location1EndAddressRow = [
+            'fileId' => 'address1_end',
+            'fields' => [
+                3414 => '2,5',
+                3411 => '42,7',
+            ],
+        ];
         $regulationOrder2MeasureRows = [
             ['fileId' => 'mesure2_1', 'fields' => ['...']],
             ['fileId' => 'mesure2_2', 'fields' => ['...']],
         ];
-        $regulationOrder2Measure1LocationRows = [['fileId' => 'localisation2_1_1', 'fields' => ['...']]];
+        $regulationOrder2Measure1LocationRows = [['fileId' => 'localisation2_1_1', 'fields' => ['...'], 'geometry' => null]];
         $regulationOrder2Measure2LocationRows = [];
 
-        $matcher = self::exactly(6);
+        $matcher = self::exactly(8);
         $this->client
             ->expects($matcher)
             ->method('search')
@@ -101,6 +125,30 @@ final class EudonetParisExtractorTest extends TestCase
                 ], [$tabId, $listCols, $whereCustom]) ?: $regulationOrder1Measure1LocationRows,
 
                 4 => $this->assertSame([
+                    3400,
+                    [3414, 3411],
+                    [
+                        'Criteria' => [
+                            'Field' => 3401,
+                            'Operator' => 0,
+                            'Value' => '7 Rue du Test',
+                        ],
+                    ],
+                ], [$tabId, $listCols, $whereCustom]) ?: [$regulationOrder1Measure1Location1StartAddressRow],
+
+                5 => $this->assertSame([
+                    3400,
+                    [3414, 3411],
+                    [
+                        'Criteria' => [
+                            'Field' => 3401,
+                            'Operator' => 0,
+                            'Value' => '15 Rue du Test',
+                        ],
+                    ],
+                ], [$tabId, $listCols, $whereCustom]) ?: [$regulationOrder1Measure1Location1EndAddressRow],
+
+                6 => $this->assertSame([
                     1200,
                     [1201, 1202],
                     [
@@ -124,7 +172,7 @@ final class EudonetParisExtractorTest extends TestCase
                     ],
                 ], [$tabId, $listCols, $whereCustom]) ?: $regulationOrder2MeasureRows,
 
-                5 => $this->assertSame([
+                7 => $this->assertSame([
                     2700,
                     [2701, 2705, 2708, 2710, 2730, 2740, 2720, 2737],
                     [
@@ -136,7 +184,7 @@ final class EudonetParisExtractorTest extends TestCase
                     ],
                 ], [$tabId, $listCols, $whereCustom]) ?: $regulationOrder2Measure1LocationRows,
 
-                6 => $this->assertSame([
+                8 => $this->assertSame([
                     2700,
                     [2701, 2705, 2708, 2710, 2730, 2740, 2720, 2737],
                     [
@@ -163,7 +211,12 @@ final class EudonetParisExtractorTest extends TestCase
                             'locations' => [
                                 [
                                     'fileId' => 'localisation1_1_1',
-                                    'fields' => ['...'],
+                                    'fields' => [
+                                        2710 => 'Rue du Test',
+                                        2720 => '7',
+                                        2737 => '15',
+                                    ],
+                                    'geometry' => '{"type":"LineString","coordinates":[[2.3,42.5],[2.5,42.7]]}',
                                 ],
                             ],
                         ],
@@ -180,6 +233,7 @@ final class EudonetParisExtractorTest extends TestCase
                                 [
                                     'fileId' => 'localisation2_1_1',
                                     'fields' => ['...'],
+                                    'geometry' => null,
                                 ],
                             ],
                         ],

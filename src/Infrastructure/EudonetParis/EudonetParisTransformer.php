@@ -204,6 +204,7 @@ final class EudonetParisTransformer
         $toHouseNumber = null;
         $fromRoadName = null;
         $toRoadName = null;
+        $geometry = $row['geometry'] ?? null;
 
         $hasStart = $numAdresseDebut || $libelleVoieDebut;
         $hasEnd = $numAdresseFin || $libelleVoieFin;
@@ -211,7 +212,7 @@ final class EudonetParisTransformer
         try {
             if ($porteSur === 'La totalité de la voie' && $libelleVoie) {
                 $roadName = $libelleVoie;
-                $geometry = $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
+                $geometry = $geometry ?? $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
             } elseif (\in_array($porteSur, ['Une section', 'Une zone', 'Un axe']) && $libelleVoie && $hasStart && $hasEnd) {
                 $roadName = $libelleVoie;
                 $fromHouseNumber = $numAdresseDebut;
@@ -219,21 +220,23 @@ final class EudonetParisTransformer
                 $fromRoadName = $libelleVoieDebut;
                 $toRoadName = $libelleVoieFin;
 
-                if ($fromHouseNumber) {
-                    $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
-                    $fromPoint = $this->geocoder->computeCoordinates($fromAddress, $cityCode);
-                } else {
-                    $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, $cityCode);
-                }
+                if (!$geometry) {
+                    if ($fromHouseNumber) {
+                        $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
+                        $fromPoint = $this->geocoder->computeCoordinates($fromAddress, $cityCode);
+                    } else {
+                        $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, $cityCode);
+                    }
 
-                if ($toHouseNumber) {
-                    $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
-                    $toPoint = $this->geocoder->computeCoordinates($toAddress, $cityCode);
-                } else {
-                    $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, $cityCode);
-                }
+                    if ($toHouseNumber) {
+                        $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
+                        $toPoint = $this->geocoder->computeCoordinates($toAddress, $cityCode);
+                    } else {
+                        $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, $cityCode);
+                    }
 
-                $geometry = GeoJSON::toLineString([$fromPoint, $toPoint]);
+                    $geometry = GeoJSON::toLineString([$fromPoint, $toPoint]);
+                }
             } else {
                 $error = [
                     'loc' => $loc,
