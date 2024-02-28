@@ -58,7 +58,7 @@ Dans cette option, l'import d'arrêtés se fait manuellement à l'aide d'un **ou
 make console CMD="app:eudonet_paris:import"
 ```
 
-Cette commande effectue des requêtes à l'[API JSON d'Eudonet Paris](https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/).
+Cette commande effectue des requêtes à l'[API JSON d'Eudonet Paris](https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/).
 
 Les données de l'API sont traitées pour ajouter les arrêtés à la base DiaLog en mode "Publié" (lecture seule), en réutilisant le code métier existant.
 
@@ -152,8 +152,8 @@ Par exemple, un champ "Adresse DiaLog" pourrait être ajouté. Il correspondrait
 * [#343 Connecteur Eudonet (Ville de Paris)](https://github.com/MTES-MCT/dialog/issues/343)
 * [Pad d'exploration Eudonet Paris](https://pad.incubateur.net/9Z_s_o6bQ76l0SWad6Ryzw#)
 * [Eudonet](https://fr.eudonet.com/)
-* [Documentation Swagger de l'API Eudonet Paris](https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/)
-* [Lexique de l'API Eudonet Paris](https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/lexique_FR.html)
+* [Documentation Swagger de l'API Eudonet Paris](https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/)
+* [Lexique de l'API Eudonet Paris](https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/lexique_FR.html)
 
 ## Annexes
 
@@ -168,7 +168,7 @@ Par exemple :
 * La table "Arrêtés" a un DESC_ID = 1100
 * Le champ "Date de début" de la table "Arrêtés" a un DESC_ID = 1109
 
-Ces champs définis par la configuration Eudonet de la Ville de Paris. L'ensemble des tables et des champs présents dans Eudonet Paris peut être récupérés via l'endpoint [MetaInfos](https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/#!/MetaInfos/post_MetaInfos) de l'API Eudonet. C'est d'ailleurs ainsi que les DESC_ID mentionnés dans ce document ont été identifiés.
+Ces champs définis par la configuration Eudonet de la Ville de Paris. L'ensemble des tables et des champs présents dans Eudonet Paris peut être récupérés via l'endpoint [MetaInfos](https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/#!/MetaInfos/post_MetaInfos) de l'API Eudonet. C'est d'ailleurs ainsi que les DESC_ID mentionnés dans ce document ont été identifiés.
 
 #### Localisations Eudonet Paris
 
