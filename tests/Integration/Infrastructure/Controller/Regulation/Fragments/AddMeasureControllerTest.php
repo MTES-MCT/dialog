@@ -178,6 +178,10 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $this->assertSame($values['measure_form']['vehicleSet']['heavyweightMaxWeight'], '3,5');
         $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#measure_form_vehicleSet_restrictedTypes_error')->text());
     }
 
