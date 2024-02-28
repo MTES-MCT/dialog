@@ -47,9 +47,6 @@ final class VehicleSetFormType extends AbstractType
                     'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
                     'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
                     'required' => false,
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                     'empty_data' => '3,5',
                 ],
             )
