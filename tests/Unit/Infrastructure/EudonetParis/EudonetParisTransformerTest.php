@@ -11,6 +11,7 @@ use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -24,16 +25,34 @@ use PHPUnit\Framework\TestCase;
 final class EudonetParisTransformerTest extends TestCase
 {
     private $geocoder;
+    private $roadGeocoder;
+    private $transformer;
 
     protected function setUp(): void
     {
         $this->geocoder = $this->createMock(GeocoderInterface::class);
+        $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
+        $this->transformer = new EudonetParisTransformer($this->geocoder, $this->roadGeocoder);
     }
 
     public function testTransform(): void
     {
         $roadName = 'Rue Eugène Berthoud';
         $organization = $this->createMock(Organization::class);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($roadName, '75118')
+            ->willReturn('<geometry>');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeJunctionCoordinates');
 
         $record = [
             'fields' => [
@@ -83,7 +102,7 @@ final class EudonetParisTransformerTest extends TestCase
         $locationCommand->roadName = $roadName;
         $locationCommand->fromHouseNumber = null;
         $locationCommand->toHouseNumber = null;
-        $locationCommand->geometry = null;
+        $locationCommand->geometry = '<geometry>';
 
         $vehicleSet = new SaveVehicleSetCommand();
         $vehicleSet->allVehicles = true;
@@ -96,13 +115,7 @@ final class EudonetParisTransformerTest extends TestCase
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new EudonetParisTransformerResult($importCommand, []);
 
-        $this->geocoder
-            ->expects(self::never())
-            ->method('computeJunctionCoordinates');
-
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     private function provideDateParsing(): array
@@ -151,8 +164,7 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-        $result = $transformer->transform($record, $organization);
+        $result = $this->transformer->transform($record, $organization);
 
         $this->assertEquals(
             \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-12-14 00:00:00', new \DateTimeZone('Europe/Paris')),
@@ -280,9 +292,7 @@ final class EudonetParisTransformerTest extends TestCase
                 2 => $this->assertEquals('15 Rue Eugène Berthoud', $address) ?: $rueEugeneBerthoud15,
             });
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $result = $transformer->transform($record, $organization);
+        $result = $this->transformer->transform($record, $organization);
 
         $this->assertEquals([$measureCommand], $result->command->measureCommands);
     }
@@ -318,9 +328,7 @@ final class EudonetParisTransformerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipMeasureTypeUnknown(): void
@@ -369,9 +377,7 @@ final class EudonetParisTransformerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipUnknownPorteSur(): void
@@ -439,9 +445,7 @@ final class EudonetParisTransformerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipStartWithoutEndOrConversely(): void
@@ -563,9 +567,7 @@ final class EudonetParisTransformerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipInvalidArrondissement(): void
@@ -628,9 +630,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = new EudonetParisTransformerResult(null, $errors);
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipGeocodingFailure(): void
@@ -699,9 +699,7 @@ final class EudonetParisTransformerTest extends TestCase
             ->method('computeCoordinates')
             ->willThrowException(new GeocodingFailureException('Could not geocode', locationIndex: 2));
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipInvalidStartDate(): void
@@ -719,7 +717,6 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => ['...'],
         ];
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
         $result = new EudonetParisTransformerResult(
             null,
             [
@@ -732,7 +729,7 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         );
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 
     public function testSkipInvalidEndDate(): void
@@ -750,7 +747,6 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => ['...'],
         ];
 
-        $transformer = new EudonetParisTransformer($this->geocoder);
         $result = new EudonetParisTransformerResult(
             null,
             [
@@ -763,6 +759,6 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         );
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $this->assertEquals($result, $this->transformer->transform($record, $organization));
     }
 }
