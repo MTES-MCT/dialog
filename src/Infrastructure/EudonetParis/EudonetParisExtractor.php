@@ -7,7 +7,8 @@ namespace App\Infrastructure\EudonetParis;
 final class EudonetParisExtractor
 {
     // Eudonet Paris table fields
-    // Values come from Eudonet Paris' MetaInfos, see: https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/#!/MetaInfos/post_MetaInfos
+    // Values come from the "MetaInfos" endpoint
+    // See: https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/swaggerui/#!/MetaInfos/post_MetaInfos
 
     // ARRETE fields
     public const ARRETE_TAB_ID = 1100;
@@ -35,7 +36,7 @@ final class EudonetParisExtractor
     public const LOCALISATION_N_ADRESSE_FIN = 2737;
 
     // Operators
-    // See: https://eudonet.apps.paris.fr/eudoapi/eudoapidoc/lexique_FR.html
+    // See: https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/lexique_FR.html
     public const EQUALS = 0;
     public const AND = 1;
     public const GREATER_THAN = 3;
