@@ -35,12 +35,22 @@ final class DateUtils implements DateUtilsInterface
         return microtime(true);
     }
 
-    public function mergeDateAndTime(\DateTimeInterface $date1, \DateTimeInterface $date2): \DateTimeInterface
+    public function mergeDateAndTime(\DateTimeInterface $date, \DateTimeInterface $time): \DateTimeInterface
     {
-        $hour = (int) $date2->format('H');
-        $min = (int) $date2->format('i');
+        // Need to translate back to the client timezone in which date and time were entered.
+        // For example, if a user has entered this via a form from a browser in UTC+1:
+        // * $date = 2024-02-05 (-> date = 2024-02-04 23:00:00 UTC)
+        // * $time 09:00 (-> time = 2024-02-05 08:00:00 UTC)
+        // Then we want to get 2024-02-05 08:00:00 UTC.
+        // But if merging in UTC, we would get 2024-02-04 08:00:00 UTC (correct hour, wrong day).
+        $clientDate = \DateTimeImmutable::createFromInterface($date)->setTimezone($this->clientTimezone);
+        $clientTime = \DateTimeImmutable::createFromInterface($time)->setTimezone($this->clientTimezone);
 
-        return \DateTime::createFromInterface($date1)
-            ->setTime($hour, $min);
+        $hour = (int) $clientTime->format('H');
+        $min = (int) $clientTime->format('i');
+
+        return $clientDate
+            ->setTime($hour, $min)
+            ->setTimeZone(new \DateTimeZone('UTC'));
     }
 }

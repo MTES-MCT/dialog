@@ -6,11 +6,11 @@ namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\LocationNew;
+use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
 
-final class LocationNewTest extends TestCase
+final class LocationTest extends TestCase
 {
     public function testGetters(): void
     {
@@ -20,7 +20,7 @@ final class LocationNewTest extends TestCase
         ]);
 
         $measure = $this->createMock(Measure::class);
-        $location = new LocationNew(
+        $location = new Location(
             uuid: 'b4812143-c4d8-44e6-8c3a-34688becae6e',
             measure: $measure,
             roadType: 'lane',
@@ -48,7 +48,7 @@ final class LocationNewTest extends TestCase
     {
         $measure = $this->createMock(Measure::class);
 
-        $location = new LocationNew(
+        $location = new Location(
             uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
             measure: $measure,
             roadType: 'lane',
