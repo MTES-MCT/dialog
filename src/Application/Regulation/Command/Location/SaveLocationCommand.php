@@ -14,6 +14,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?string $roadType = null;
     public ?string $administrator = null;
     public ?string $roadNumber = null;
+    public ?string $preComputedDepartmentalRoadGeometry = null;
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
@@ -29,6 +30,7 @@ final class SaveLocationCommand implements CommandInterface
         $this->roadType = $location?->getRoadType();
         $this->administrator = $location?->getAdministrator();
         $this->roadNumber = $location?->getRoadNumber();
+        $this->preComputedDepartmentalRoadGeometry = $location?->getPreComputedDepartmentalRoadGeometry();
         $this->cityCode = $location?->getCityCode();
         $this->cityLabel = $location?->getCityLabel();
         $this->roadName = $location?->getRoadName();
@@ -51,6 +53,7 @@ final class SaveLocationCommand implements CommandInterface
         if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
+            $this->preComputedDepartmentalRoadGeometry = null;
         }
 
         if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreetFormValue) {
