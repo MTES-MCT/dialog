@@ -144,6 +144,13 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
   {% endif %}
 {% endblock form_errors %}
 
+{% block form_widget %}
+  {% if errors|length > 0 %}
+      {%- set attr = attr|merge({'autofocus': null}) -%}
+  {% endif %}
+  {{ parent() }}
+{% endblock form_widget %}
+
 {% block choice_widget %}
   {%- set widget_class = (widget_class|default('') ~ ' ' ~ attr.class|default(''))|trim -%}
   {%- set attr = attr|merge({class: widget_class}) -%}
