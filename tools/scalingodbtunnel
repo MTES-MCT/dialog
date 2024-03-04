@@ -38,7 +38,11 @@ def _popen_terminate_on_exit(*args, **kwargs):
             proc.terminate()
 
 
-def main(app, port):
+def main(
+    app: str,
+    port: int,
+    host_url: bool = False,
+):
     # Ensure Scalingo CLI is authenticated
     result = subprocess.run(["scalingo", "whoami"], capture_output=True)
     if result.returncode:
@@ -100,11 +104,14 @@ def main(app, port):
                 _get_output(["scalingo", "--app", app, "env-get", "DATABASE_URL"])
             )
 
+            # DB tunnel is always available on localhost, so we can show either.
+            displayed_origin = f"127.0.0.1:{port}" if host_url else docker_tunnel_origin
+
             db_tunnel_database_url = database_url._replace(
-                netloc=f"{database_url.username}:{database_url.password}@{docker_tunnel_origin}"
+                netloc=f"{database_url.username}:{database_url.password}@{displayed_origin}"
             )
 
-            print(f"DATABASE_URL={urlunparse(db_tunnel_database_url)}")
+            print(urlunparse(db_tunnel_database_url))
 
             try:
                 db_tunnel_proc.wait()
@@ -123,6 +130,12 @@ if __name__ == "__main__":
         default=10000,
         help="Port of the SSH tunnel (default: 10000)",
     )
+    parser.add_argument(
+        "--host-url",
+        action="store_true",
+        help="Show URL of the tunnel on the host, not Docker",
+    )
+
     args = parser.parse_args()
 
-    sys.exit(main(args.app, args.port))
+    sys.exit(main(args.app, args.port, host_url=args.host_url))

@@ -68,6 +68,10 @@ Cette section explique comment recréer le fichier `addok-dialog-bundle.zip` con
     * Mise à jour du dump Redis
     * Création du bundle ZIP
 
+    > **Attention** : votre mot de passe utilisateur sera demandé lors de la mise à jour du dump Redis.
+
+    Le résultat sera un nouveau fichier `docker/addok/addok-dialog-bundle.zip`.
+
     L'exécution prend typiquement plusieurs dizaines de minutes en raison de la taille des fichiers à télécharger (plusieurs Go).
 
     Il se peut que le téléchargement des données soit plus rapide en passant par votre navigateur. Vous trouverez les URLs à télécharger dans `docker/addok/run.sh`.
@@ -78,9 +82,9 @@ Cette section explique comment recréer le fichier `addok-dialog-bundle.zip` con
     make addok_bundle NO_DOWNLOAD=1
     ```
 
-1. Déposez le nouveau bundle dans le dossier partagé DiaLog sur le kDrive (lien sur le pad général).
-
+1. Déposez le nouveau `docker/addok/addok-dialog-bundle.zip` dans le dossier partagé DiaLog sur le kDrive (lien sur le pad général).
 1. Mettre à jour l'URL du lien [dialog-addok-bundle] dans la présente doc
+1. Suivez les étapes de [mise à jour des données Addok (Eudonet Paris)](./eudonet_paris.md#mise-à-jour-des-données-addok).
 
 ## Mettre à jour les données sources
 

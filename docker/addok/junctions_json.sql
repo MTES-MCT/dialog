@@ -2,7 +2,7 @@
 -- See: run.sh
 SELECT row_to_json(p) FROM
 (
-    SELECT j.*, c.nom as city, cc.code_postal as postcode
+    SELECT j.*, c.nom as city, c.code_insee as citycode, cc.code_postal as postcode
     FROM (SELECT 'junction_' || st_geohash(st_centroid(unnest(ST_ClusterWithin(st_intersection(r1.geometry, r2.geometry),0.0001)))) as id,
         'poi' as type,
         'junction' as poi,
