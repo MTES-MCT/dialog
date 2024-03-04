@@ -12,7 +12,6 @@ class Location
         private string $roadType,
         private ?string $administrator,
         private ?string $roadNumber,
-        private ?string $preComputedDepartmentalRoadGeometry,
         private ?string $cityCode,
         private ?string $cityLabel,
         private ?string $roadName,
@@ -45,11 +44,6 @@ class Location
     public function getRoadNumber(): ?string
     {
         return $this->roadNumber;
-    }
-
-    public function getPreComputedDepartmentalRoadGeometry(): ?string
-    {
-        return $this->preComputedDepartmentalRoadGeometry;
     }
 
     public function getCityCode(): ?string
@@ -86,7 +80,6 @@ class Location
         string $roadType,
         ?string $administrator,
         ?string $roadNumber,
-        ?string $preComputedDepartmentalRoadGeometry,
         ?string $cityCode,
         ?string $cityLabel,
         ?string $roadName,
@@ -97,7 +90,6 @@ class Location
         $this->roadType = $roadType;
         $this->administrator = $administrator;
         $this->roadNumber = $roadNumber;
-        $this->preComputedDepartmentalRoadGeometry = $preComputedDepartmentalRoadGeometry;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
         $this->roadName = $roadName;

@@ -63,13 +63,20 @@
             </constraint>
         </property>
         <property name="cityLabel">
-            <constraint name="Length">
-                <option name="max">255</option>
-            </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'lane' </option>
-                <option
-                    name="constraints">
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">255</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="geometry">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'lane' </option>
+                <option name="constraints">
                     <constraint name="NotBlank" />
                 </option>
             </constraint>

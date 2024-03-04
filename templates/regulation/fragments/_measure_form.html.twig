@@ -210,7 +210,7 @@
                         widget_class: 'fr-input',
                         attr: {
                             'data-autocomplete-target': 'input',
-                        }, 
+                        },
                     }) }}
 						<ul
                             id="{{ form.roadNumber.vars.id }}-results"
@@ -220,7 +220,7 @@
                             data-autocomplete-target="results">
                         </ul>
 
-                    {{ form_row(form.preComputedDepartmentalRoadGeometry, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+                    {{ form_row(form.geometry, { attr: {'data-autocomplete-target': 'hidden'} }) }}
 				</div>
             </div>
             <div

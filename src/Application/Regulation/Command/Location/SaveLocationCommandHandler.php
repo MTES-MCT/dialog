@@ -36,7 +36,6 @@ final class SaveLocationCommandHandler
                     roadType: $command->roadType,
                     administrator: $command->administrator,
                     roadNumber: $command->roadNumber,
-                    preComputedDepartmentalRoadGeometry: $command->preComputedDepartmentalRoadGeometry,
                     cityLabel: $command->cityLabel,
                     cityCode: $command->cityCode,
                     roadName: $command->roadName,
@@ -59,7 +58,6 @@ final class SaveLocationCommandHandler
             roadType: $command->roadType,
             administrator: $command->administrator,
             roadNumber: $command->roadNumber,
-            preComputedDepartmentalRoadGeometry: $command->preComputedDepartmentalRoadGeometry,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,
@@ -91,7 +89,7 @@ final class SaveLocationCommandHandler
         }
 
         if ($command->roadNumber) {
-            return $command->preComputedDepartmentalRoadGeometry;
+            return $command->geometry;
         }
 
         return null;

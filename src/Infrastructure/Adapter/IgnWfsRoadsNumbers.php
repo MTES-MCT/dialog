@@ -51,8 +51,9 @@ final class IgnWfsRoadsNumbers implements RoadsNumbersInterface
             throw new RoadNumberNotFoundException($message);
         }
 
+        $numeros = [];
+
         try {
-            $numeros = [];
             if (isset($data['features']) && !empty($data['features'])) {
                 $i = 0;
                 $totalFeatures = \count($data['features']);
@@ -69,10 +70,10 @@ final class IgnWfsRoadsNumbers implements RoadsNumbersInterface
                     ++$i;
                 }
             }
-
-            return $numeros;
         } catch (\Exception $exc) {
             \Sentry\captureException($exc);
+        } finally {
+            return $numeros;
         }
     }
 }

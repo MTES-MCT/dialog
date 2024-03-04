@@ -40,10 +40,7 @@ final class LocationFormType extends AbstractType
                 ChoiceType::class,
                 options: $this->getAdministratorOptions($options['administrators']),
             )
-            ->add(
-                'preComputedDepartmentalRoadGeometry',
-                HiddenType::class,
-            )
+            ->add('geometry', HiddenType::class)
             ->add(
                 'roadNumber',
                 TextType::class,
@@ -67,6 +64,7 @@ final class LocationFormType extends AbstractType
                     'label_attr' => [
                         'class' => 'required',
                     ],
+                    'required' => false,
                 ],
             )
             ->add(
