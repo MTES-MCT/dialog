@@ -36,23 +36,36 @@ final class PostGisGeometryService implements GeometryServiceInterface
 
     public function clipLine(string $lineGeometry, Coordinates|null $start, Coordinates|null $end): string
     {
+        // Notation: t = Number between 0 (first point) and 1 (last point), aka "curvilinear abscissa"
+        $pointStmt = $this->em->getConnection()->prepare('SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t');
+
+        $tStart = $start
+            ? (float) $pointStmt->execute([
+                'geom' => $lineGeometry,
+                'pt' => GeoJSON::toPoint($start),
+            ])->fetchAssociative()['t']
+            : 0;
+
+        $tEnd = $end
+            ? (float) $pointStmt->execute([
+                'geom' => $lineGeometry,
+                'pt' => GeoJSON::toPoint($end),
+            ])->fetchAssociative()['t']
+            : 1;
+
+        if ($tStart > $tEnd) {
+            [$tStart, $tEnd] = [$tEnd, $tStart];
+        }
+
         $sql = sprintf(
-            'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), %s, %s)) AS result',
-            $start ? 'ST_LineLocatePoint(ST_LineMerge(:geom), :start_pt)' : '0',
-            $end ? 'ST_LineLocatePoint(ST_LineMerge(:geom), :end_pt)' : '1',
+            'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), %.6f, %.6f)) AS result',
+            $tStart,
+            $tEnd,
         );
 
         $params = [
             'geom' => $lineGeometry,
         ];
-
-        if ($start) {
-            $params['start_pt'] = GeoJSON::toPoint($start);
-        }
-
-        if ($end) {
-            $params['end_pt'] = GeoJSON::toPoint($end);
-        }
 
         $stmt = $this->em->getConnection()->prepare($sql);
         $row = $stmt->execute($params)->fetchAssociative();
