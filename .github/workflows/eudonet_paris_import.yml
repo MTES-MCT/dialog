@@ -1,0 +1,86 @@
+name: Eudonet Paris Import
+
+on:
+  schedule:
+    - cron: '30 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h30
+
+jobs:
+  eudonet_paris_import:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - uses: actions/cache@v3
+        id: addok-bundle-cache
+        with:
+          path: docker/addok/addok-data
+          key: ${{ runner.os }}-addok-bundle-${{ vars.EUDONET_PARIS_IMPORT_KDRIVE_FILE_ID }}
+
+      - name: Download and unzip Addok bundle
+        if: steps.addok-bundle-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p tmp
+          bash tools/download_addok_bundle.sh tmp/addok-archive.zip
+          unzip -d tmp/addok-archive tmp/addok-archive.zip
+          unzip -d docker/addok/addok-data tmp/addok-archive/addok-dialog-bundle.zip
+        env:
+          KDRIVE_TOKEN: ${{ secrets.EUDONET_PARIS_IMPORT_KDRIVE_TOKEN }}
+          KDRIVE_FILE_ID: ${{ vars.EUDONET_PARIS_IMPORT_KDRIVE_FILE_ID }}
+
+      - name: Start Addok
+        run: |
+          make addok_start
+          ./tools/wait_for_url.py --interval 5 --max-attempts 10 "http://localhost:7878/search?q=rue+de+la+concertation"
+
+      - name: Init environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.EUDONET_PARIS_IMPORT_DATABASE_URL }}" >> .env.local
+          # Deal with JSON quotes
+          printf "APP_EUDONET_PARIS_CREDENTIALS='%s'\n" '${{ secrets.EUDONET_PARIS_IMPORT_CREDENTIALS }}' >> .env.local
+          echo "APP_EUDONET_PARIS_ORG_ID=${{ vars.EUDONET_PARIS_IMPORT_ORG_ID }}" >> .env.local
+          echo "API_ADRESSE_BASE_URL=http://localhost:7878" >> .env.local
+
+      - name: Run import
+        run: make ci_eudonet_paris_import BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
+        env:
+          EUDONET_PARIS_IMPORT_APP: ${{ vars.EUDONET_PARIS_IMPORT_APP }}
+
+      - name: Get log file path
+        id: logfile
+        if: ${{ !cancelled() }}
+        run:
+          echo "path=$(find log/eudonet_paris -type f -name '*.log' | head -n 1)" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ !cancelled() }}
+        with:
+          name: eudonet_paris_logfile
+          path:  ${{ steps.logfile.outputs.path }}
+          retention-days: 21
