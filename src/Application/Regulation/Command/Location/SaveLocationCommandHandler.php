@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\GeocoderInterface;
+use App\Application\GeometryServiceInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
-use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
@@ -18,6 +18,7 @@ final class SaveLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
+        private GeometryServiceInterface $geometryService,
     ) {
     }
 
@@ -69,26 +70,27 @@ final class SaveLocationCommandHandler
         return $command->location;
     }
 
-    private function computeGeometry(SaveLocationCommand $command): ?string
+    private function computeGeometry(SaveLocationCommand $command): string
     {
-        if ($command->fromHouseNumber && $command->toHouseNumber) {
+        $roadLine = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+
+        $geometry = $roadLine;
+        $startCoords = null;
+        $endCoords = null;
+
+        if ($command->fromHouseNumber) {
             $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
-            $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
-
             $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
+            $startCoords = $this->geometryService->locatePointOnLine($fromCoords, $roadLine);
+        }
+
+        if ($command->toHouseNumber) {
+            $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
             $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
-
-            return GeoJSON::toLineString([$fromCoords, $toCoords]);
+            $endCoords = $this->geometryService->locatePointOnLine($toCoords, $roadLine);
         }
 
-        $roadName = $command->roadName;
-        $cityCode = $command->cityCode;
-
-        if (!$command->fromHouseNumber && !$command->toHouseNumber && $roadName) {
-            return $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
-        }
-
-        return null;
+        return $this->geometryService->clipLine($geometry, $startCoords, $endCoords);
     }
 
     private function shouldRecomputeGeometry(SaveLocationCommand $command): bool

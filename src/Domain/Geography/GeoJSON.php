@@ -24,4 +24,14 @@ class GeoJSON
             ],
         );
     }
+
+    public static function toPoint(Coordinates $point): string
+    {
+        return json_encode(
+            [
+                'type' => 'Point',
+                'coordinates' => [$point->longitude, $point->latitude],
+            ],
+        );
+    }
 }
