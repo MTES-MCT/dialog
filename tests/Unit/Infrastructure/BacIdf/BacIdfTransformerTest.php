@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Infrastructure\BacIdf;
 
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Command\Location\SaveLocationNewCommand;
+use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -65,7 +65,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2015-08-17 00:00');
         $generalInfoCommand->endDate = null;
 
-        $locationCommand = new SaveLocationNewCommand();
+        $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
@@ -91,7 +91,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $measureCommand->locationsNew = [$locationCommand];
+        $measureCommand->locations = [$locationCommand];
         $vehicleSet = new SaveVehicleSetCommand();
         $vehicleSet->allVehicles = false;
         $vehicleSet->restrictedTypes = [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value];
@@ -175,7 +175,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
         $generalInfoCommand->endDate = null;
 
-        $locationCommand = new SaveLocationNewCommand();
+        $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
@@ -199,7 +199,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $measureCommand->locationsNew = [$locationCommand];
+        $measureCommand->locations = [$locationCommand];
         $vehicleSet = new SaveVehicleSetCommand();
         $vehicleSet->allVehicles = true;
         $measureCommand->vehicleSet = $vehicleSet;
@@ -587,7 +587,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
         $generalInfoCommand->endDate = null;
 
-        $locationCommand = new SaveLocationNewCommand();
+        $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->cityCode = $this->cityCode;
         $locationCommand->cityLabel = 'La Courneuve (93120)';
@@ -611,7 +611,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $measureCommand->locationsNew = [$locationCommand];
+        $measureCommand->locations = [$locationCommand];
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = true;
         $measureCommand->vehicleSet = $vehicleSetCommand;

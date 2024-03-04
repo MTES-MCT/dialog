@@ -12,5 +12,5 @@ interface DateUtilsInterface
 
     public function getMicroTime(): float;
 
-    public function mergeDateAndTime(\DateTimeInterface $date1, \DateTimeInterface $date2): \DateTimeInterface;
+    public function mergeDateAndTime(\DateTimeInterface $date, \DateTimeInterface $time): \DateTimeInterface;
 }
