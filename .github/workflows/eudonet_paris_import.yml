@@ -1,13 +1,8 @@
 name: Eudonet Paris Import
 
-# on:
-#   schedule:
-#     - cron: '30 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h30
-
 on:
-  push:
-    branches:
-      - feat/eudonet-auto
+  schedule:
+    - cron: '30 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h30
 
 jobs:
   eudonet_paris_import:
