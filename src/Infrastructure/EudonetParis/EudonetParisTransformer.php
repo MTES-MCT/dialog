@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\EudonetParis;
 
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
-use App\Application\Exception\GeocodingFailureException;
-use App\Application\GeocoderInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -22,11 +19,6 @@ final class EudonetParisTransformer
     private const ARRONDISSEMENT_REGEX = '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i';
     private const CITY_CODE_TEMPLATE = '751%s';
     private const CITY_LABEL = 'Paris';
-
-    public function __construct(
-        private GeocoderInterface $geocoder,
-    ) {
-    }
 
     public function transform(array $row, Organization $organization): EudonetParisTransformerResult
     {
@@ -231,59 +223,10 @@ final class EudonetParisTransformer
         $locationCommand->roadName = $roadName;
         $locationCommand->fromHouseNumber = $fromHouseNumber;
         $locationCommand->toHouseNumber = $toHouseNumber;
-
-        try {
-            $locationCommand->geometry = $this->makeLocationGeometry($locationCommand->roadName, $cityCode, $fromHouseNumber, $fromRoadName, $toHouseNumber, $toRoadName);
-        } catch (GeocodingFailureException $exc) {
-            $error = [
-                'loc' => $loc,
-                'reason' => 'geocoding_failure',
-                'message' => $exc->getMessage(),
-                'index' => $exc->getLocationIndex(),
-                'location_raw' => json_encode($row),
-            ];
-
-            return [null, $error];
-        }
+        $locationCommand->fromRoadName = $fromRoadName;
+        $locationCommand->toRoadName = $toRoadName;
+        $locationCommand->geometry = null; // Will be handled by SaveLocationCommandHandler.
 
         return [$locationCommand, null];
-    }
-
-    private function makeLocationGeometry(
-        string $roadName,
-        string $cityCode,
-        ?string $fromHouseNumber,
-        ?string $fromRoadName,
-        ?string $toHouseNumber,
-        ?string $toRoadName,
-    ): ?string {
-        $hasBothEnds = (
-            ($fromHouseNumber || $fromRoadName)
-            && ($toHouseNumber || $toRoadName)
-        );
-
-        if (!$hasBothEnds) {
-            return null;
-        }
-
-        try {
-            if ($fromHouseNumber) {
-                $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
-                $fromPoint = $this->geocoder->computeCoordinates($fromAddress, $cityCode);
-            } else {
-                $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, $cityCode);
-            }
-
-            if ($toHouseNumber) {
-                $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
-                $toPoint = $this->geocoder->computeCoordinates($toAddress, $cityCode);
-            } else {
-                $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, $cityCode);
-            }
-        } catch (GeocodingFailureException $exc) {
-            throw $exc;
-        }
-
-        return GeoJSON::toLineString([$fromPoint, $toPoint]);
     }
 }
