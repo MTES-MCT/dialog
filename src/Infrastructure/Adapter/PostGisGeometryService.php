@@ -6,70 +6,52 @@ namespace App\Infrastructure\Adapter;
 
 use App\Application\GeometryServiceInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Geography\GeoJSON;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class PostGisGeometryService implements GeometryServiceInterface
 {
+    private $locatePointOnLineStmt;
+    private $clipLineStmt;
+    private $firstPointOfLinestringStmt;
+
     public function __construct(
-        private readonly EntityManagerInterface $em,
+        readonly EntityManagerInterface $em,
     ) {
+        $conn = $em->getConnection();
+
+        // Prepare statements in advance for reuse.
+        $this->locatePointOnLineStmt = $conn->prepare('SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t');
+        $this->clipLineStmt = $conn->prepare('SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line');
+        $this->firstPointOfLinestringStmt = $conn->prepare('SELECT ST_X(ST_StartPoint(ST_LineMerge(:geom))) AS x, ST_Y(ST_StartPoint(ST_LineMerge(:geom))) AS y');
     }
 
-    public function locatePointOnLine(Coordinates $point, string $geometry): Coordinates
+    public function locatePointOnLine(string $line, Coordinates $point): float
     {
-        $sql = 'SELECT
-            ST_X(ST_ClosestPoint(:geom, :pt)) AS x,
-            ST_Y(ST_ClosestPoint(:geom, :pt)) AS y
-        ';
+        $row = $this->locatePointOnLineStmt->execute([
+            'geom' => $line,
+            'pt' => $point->asGeoJSON(),
+        ])->fetchAssociative();
 
-        $params = [
-            'geom' => $geometry,
-            'pt' => GeoJSON::toPoint($point),
-        ];
+        return (float) $row['t'];
+    }
 
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $row = $stmt->execute($params)->fetchAssociative();
+    public function clipLine(string $line, float $startFraction = 0, float $endFraction = 1): string
+    {
+        $row = $this->clipLineStmt->execute([
+            'geom' => $line,
+            'startFraction' => $startFraction,
+            'endFraction' => $endFraction,
+        ])->fetchAssociative();
+
+        return $row['line'];
+    }
+
+    public function getFirstPointOfLinestring(string $line): Coordinates
+    {
+        $row = $this->firstPointOfLinestringStmt->execute([
+            'geom' => $line,
+        ])->fetchAssociative();
 
         return Coordinates::fromLonLat((float) $row['x'], (float) $row['y']);
-    }
-
-    public function clipLine(string $lineGeometry, Coordinates|null $start, Coordinates|null $end): string
-    {
-        // Notation: t = Number between 0 (first point) and 1 (last point), aka "curvilinear abscissa"
-        $pointStmt = $this->em->getConnection()->prepare('SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t');
-
-        $tStart = $start
-            ? (float) $pointStmt->execute([
-                'geom' => $lineGeometry,
-                'pt' => GeoJSON::toPoint($start),
-            ])->fetchAssociative()['t']
-            : 0;
-
-        $tEnd = $end
-            ? (float) $pointStmt->execute([
-                'geom' => $lineGeometry,
-                'pt' => GeoJSON::toPoint($end),
-            ])->fetchAssociative()['t']
-            : 1;
-
-        if ($tStart > $tEnd) {
-            [$tStart, $tEnd] = [$tEnd, $tStart];
-        }
-
-        $sql = sprintf(
-            'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), %.6f, %.6f)) AS result',
-            $tStart,
-            $tEnd,
-        );
-
-        $params = [
-            'geom' => $lineGeometry,
-        ];
-
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $row = $stmt->execute($params)->fetchAssociative();
-
-        return $row['result'];
     }
 }

@@ -185,4 +185,34 @@ final class APIAdresseGeocoder implements GeocoderInterface
             return [];
         }
     }
+
+    public function findHouseNumberOnRoad(string $roadId, Coordinates $point): string
+    {
+        $response = $this->apiAdresseClient->request('GET', '/reverse/', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'query' => [
+                'lon' => $point->longitude,
+                'lat' => $point->latitude,
+                'type' => 'housenumber',
+            ],
+        ]);
+
+        try {
+            $data = $response->toArray(throw: true);
+
+            foreach ($data['features'] as $feature) {
+                // API Adresse's "id" may be '59606_1480' but IGN's "id_pseudo_fpb" may be '596061480', without the '_'.
+                if (str_starts_with(str_replace('_', '', $feature['properties']['id']), str_replace('_', '', $roadId))) {
+                    return $feature['properties']['housenumber'];
+                }
+            }
+
+            throw new GeocodingFailureException(sprintf('No result found on road with ID %s', $roadId));
+        } catch (\Exception $exc) {
+            \Sentry\captureException($exc);
+            throw $exc;
+        }
+    }
 }

@@ -16,4 +16,9 @@ class Coordinates
     {
         return new self($longitude, $latitude);
     }
+
+    public function asGeoJSON(): string
+    {
+        return GeoJSON::toPoint($this);
+    }
 }

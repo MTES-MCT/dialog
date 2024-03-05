@@ -6,6 +6,7 @@ namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadLine;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -17,7 +18,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
     ) {
     }
 
-    public function computeRoadLine(string $roadName, string $inseeCode): string
+    public function computeRoadLine(string $roadName, string $inseeCode): RoadLine
     {
         $normalizedRoadName = str_replace("'", "''", strtolower($roadName));
 
@@ -28,7 +29,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             'OUTPUTFORMAT' => 'application/json',
             'TYPENAME' => 'BDTOPO_V3:voie_nommee',
             'cql_filter' => sprintf("strStripAccents(nom_minuscule)=strStripAccents('%s') AND code_insee='%s'", $normalizedRoadName, $inseeCode),
-            'PropertyName' => 'geometrie',
+            'PropertyName' => 'geometrie,id_pseudo_fpb',
         ];
 
         $response = $this->ignWfsClient->request('GET', $this->ignWfsUrl, [
@@ -58,7 +59,10 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
         $geometry = \array_key_exists('features', $data) ? (\array_key_exists(0, $data['features']) ? ($data['features'][0]['geometry'] ?? null) : null) : null;
 
         if (!\is_null($geometry)) {
-            return json_encode($geometry);
+            return new RoadLine(
+                geometry: json_encode($geometry),
+                id: $data['features'][0]['properties']['id_pseudo_fpb'],
+            );
         }
 
         $message = sprintf('could not retrieve geometry for roadName="%s", inseeCode="%s", response was: %s', $roadName, $inseeCode, $body);

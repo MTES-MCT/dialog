@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\GeocoderInterface;
+use App\Application\GeometryServiceInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadLine;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class SaveLocationCommandHandlerTest extends TestCase
@@ -29,10 +30,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private string $fromHouseNumber;
     private string $toHouseNumber;
     private string $geometry;
-    private MockObject $idFactory;
-    private MockObject $locationRepository;
-    private MockObject $geocoder;
-    private MockObject $roadGeocoder;
+    private $idFactory;
+    private $locationRepository;
+    private $geocoder;
+    private $roadGeocoder;
+    private $geometryService;
 
     public function setUp(): void
     {
@@ -40,6 +42,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->geocoder = $this->createMock(GeocoderInterface::class);
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
+        $this->geometryService = $this->createMock(GeometryServiceInterface::class);
 
         $this->roadType = 'lane';
         $this->administrator = null;
@@ -69,6 +72,23 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             );
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadName, $this->cityCode)
+            ->willReturn(new RoadLine('geometry', 'id'));
+
+        $this->geometryService
+            ->expects(self::exactly(2))
+            ->method('locatePointOnLine')
+            ->willReturnOnConsecutiveCalls(0.2, 0.9);
+
+        $this->geometryService
+            ->expects(self::once())
+            ->method('clipLine')
+            ->with('geometry', 0.2, 0.9)
+            ->willReturn($this->geometry);
 
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
@@ -100,6 +120,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->geocoder,
             $this->roadGeocoder,
+            $this->geometryService,
         );
 
         $command = new SaveLocationCommand();
@@ -136,7 +157,10 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('computeRoadLine')
             ->with('Route du Grand Brossais', '44195')
             ->willReturn(
-                json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
+                new RoadLine(
+                    geometry: json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
+                    id: 'test',
+                ),
             );
 
         $location = new Location(
@@ -170,6 +194,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->geocoder,
             $this->roadGeocoder,
+            $this->geometryService,
         );
 
         $command = new SaveLocationCommand();
@@ -207,8 +232,41 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('make');
 
         $this->geocoder
-            ->expects(self::never())
-            ->method('computeCoordinates');
+            ->expects(self::once())
+            ->method('computeCoordinates')
+            ->willReturn(Coordinates::fromLonLat(-1.935836, 47.347024));
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadName, $this->cityCode)
+            ->willReturn(new RoadLine('geometry', 'id'));
+
+        $firstPoint = Coordinates::fromLonLat(0, 0); // Values don't matter
+
+        $this->geometryService
+            ->expects(self::once())
+            ->method('getFirstPointOfLinestring')
+            ->with('geometry')
+            ->willReturn($firstPoint);
+
+        // (*) Simulate house number ordering opposite to line point ordering
+        $this->geocoder
+            ->expects(self::once())
+            ->method('findHouseNumberOnRoad')
+            ->with('id', $firstPoint)
+            ->willReturn('156'); // (*)
+
+        $this->geometryService
+            ->expects(self::once())
+            ->method('locatePointOnLine')
+            ->willReturn(0.1); // (*) House number 137 is roughly at the beginning of first point is house number 156
+
+        $this->geometryService
+            ->expects(self::once())
+            ->method('clipLine')
+            ->with('geometry', 0, 0.1) // (*) Fraction of house number 156 -> Fraction of house number 137
+            ->willReturn($this->geometry);
 
         $this->locationRepository
             ->expects(self::never())
@@ -219,6 +277,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->geocoder,
             $this->roadGeocoder,
+            $this->geometryService,
         );
 
         $command = new SaveLocationCommand($location);
@@ -306,6 +365,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->geocoder,
             $this->roadGeocoder,
+            $this->geometryService,
         );
 
         $command = new SaveLocationCommand($location);

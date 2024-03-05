@@ -15,4 +15,6 @@ interface GeocoderInterface
     public function findRoadNames(string $search, string $cityCode): array;
 
     public function findCities(string $search): array;
+
+    public function findHouseNumberOnRoad(string $roadId, Coordinates $point): string;
 }

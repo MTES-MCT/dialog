@@ -19,19 +19,20 @@ final class IgnWfsRoadGeocoderTest extends TestCase
 
     public function testComputeRoadLine(): void
     {
-        $body = '{"features": [{"geometry": {"type": "MultiLineString", "coordinates": ["..."]}}]}';
+        $body = '{"features": [{"geometry": {"type": "MultiLineString", "coordinates": ["..."]}, "properties": {"id_pseudo_fpb": "id"}}]}';
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response], $this->baseUrl);
 
         $roadGeocoder = new IgnWfsRoadGeocoder($this->ignWfsUrl, $http);
 
-        $geometry = $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
+        $roadLine = $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
 
-        $this->assertSame('{"type":"MultiLineString","coordinates":["..."]}', $geometry);
+        $this->assertSame('{"type":"MultiLineString","coordinates":["..."]}', $roadLine->geometry);
+        $this->assertSame('id', $roadLine->id);
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(nom_minuscule)%3DstrStripAccents(%27rue%20saint-victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
+            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(nom_minuscule)%3DstrStripAccents(%27rue%20saint-victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie%2Cid_pseudo_fpb',
             $response->getRequestUrl(),
         );
     }
