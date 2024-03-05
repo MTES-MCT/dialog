@@ -19,7 +19,7 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
 
     public function computeRoadLine(string $roadName, string $inseeCode): string
     {
-        $normalizedRoadName = str_replace(["'", '-', '’'], ["''", ' ', "'"], strtolower($roadName));
+        $normalizedRoadName = str_replace(["'", '-', '’'], ["''", ' ', "''"], strtolower($roadName));
 
         $query = [
             'SERVICE' => 'WFS',
