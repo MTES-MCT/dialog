@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-class RoadLine
+readonly class RoadLine
 {
     public function __construct(
-        public readonly string $geometry,
-        public readonly string $id,
-        public readonly string $roadName,
-        public readonly string $cityCode,
+        public string $geometry,
+        public string $id,
+        public string $roadName,
+        public string $cityCode,
     ) {
     }
 }

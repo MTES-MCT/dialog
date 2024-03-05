@@ -21,10 +21,10 @@ final class PostGisRoadLineSectionMaker implements RoadLineSectionMakerInterface
 
     public function computeRoadLineSection(
         RoadLine $roadLine,
-        string|null $fromHouseNumber,
-        string|null $fromRoadName,
-        string|null $toHouseNumber,
-        string|null $toRoadName,
+        ?string $fromHouseNumber,
+        ?string $fromRoadName,
+        ?string $toHouseNumber,
+        ?string $toRoadName,
     ): string {
         if ($fromHouseNumber) {
             $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadLine->roadName);
