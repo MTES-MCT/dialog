@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 cd /data
 mkdir -p download
@@ -6,8 +6,8 @@ mkdir -p download
 # Adapted from: https://gist.github.com/cquest/c0a84e6757d15e66e6ae429e91a74a9e
 
 TEMP_DB=osm_junctions2addok
-ADMIN_EXPRESS_URL=https://wxs.ign.fr/x02uy2aiwjo9bm8ce5plwqmr/telechargement/prepackage/ADMINEXPRESS_SHP_WGS84G_PACK_2023-07-04\$ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2023-07-04/file/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2023-07-04.7z
-CODES_POSTAUX_URL=https://www.data.gouv.fr/fr/datasets/r/5ed9b092-a25d-49e7-bdae-0152797c7577
+ADMIN_EXPRESS_URL=https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2024-01-22/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2024-01-22.7z
+CODES_POSTAUX_URL=https://www.data.gouv.fr/fr/datasets/r/a889d75c-a287-4c8b-a5d4-eba1a7dce648
 OSM_DATA_URL=https://download.geofabrik.de/europe/france/ile-de-france-latest-free.shp.zip
 
 function cleanup() {
@@ -27,8 +27,8 @@ function download() {
     fi
 
     echo "-----> Décompression de ADMIN-EXPRESS..."
-    7z e -aos -odownload download/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2023-07-04.7z "ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2023-07-04/ADMIN-EXPRESS/1_DONNEES_LIVRAISON_2023-07-04/ADE_3-2_SHP_WGS84G_FRA/COMMUNE.*"
-    7z e -aos -odownload download/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2023-07-04.7z "ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2023-07-04/ADMIN-EXPRESS/1_DONNEES_LIVRAISON_2023-07-04/ADE_3-2_SHP_WGS84G_FRA/ARRONDISSEMENT_MUNICIPAL.*"
+    7zr e -aos -odownload download/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2024-01-22.7z "ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2024-01-22/ADMIN-EXPRESS/1_DONNEES_LIVRAISON_2024-01-00184/ADE_3-2_SHP_WGS84G_FRA-ED2024-01-22/COMMUNE.*"
+    7zr e -aos -odownload download/ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2024-01-22.7z "ADMIN-EXPRESS_3-2__SHP_WGS84G_FRA_2024-01-22/ADMIN-EXPRESS/1_DONNEES_LIVRAISON_2024-01-00184/ADE_3-2_SHP_WGS84G_FRA-ED2024-01-22/ARRONDISSEMENT_MUNICIPAL.*"
 
     if [ -z $NO_DOWNLOAD ]; then
         echo "-----> Téléchargement du fichier des codes postaux..."
@@ -53,12 +53,12 @@ function make_junctions_json() {
     echo "-----> Import de la classe COMMUNE..."
     # Docs on ogr2ogr: https://gdal.org/programs/ogr2ogr.html
     # Docs on the 'pgdump' format for ogr2ogr: https://gdal.org/drivers/vector/pgdump.html
-    ogr2ogr -f pgdump /vsistdout/ download/COMMUNE.shp -nln communes -nlt MULTIPOLYGON --config PG_USE_COPY YES -lco GEOMETRY_NAME=geometry | psql -d $TEMP_DB
+    ogr2ogr -s_srs EPSG:2154 -t_srs EPSG:4326 -f pgdump /vsistdout/ download/COMMUNE.shp -nln communes -nlt MULTIPOLYGON --config PG_USE_COPY YES -lco GEOMETRY_NAME=geometry | psql -d $TEMP_DB
 
     echo "-----> Import de la classe ARRONDISSEMENT_MUNICIPAL..."
     # Docs on ogr2ogr: https://gdal.org/programs/ogr2ogr.html
     # Docs on the 'pgdump' format for ogr2ogr: https://gdal.org/drivers/vector/pgdump.html
-    ogr2ogr -f pgdump /vsistdout/ download/ARRONDISSEMENT_MUNICIPAL.shp -nln arrondissements_municipaux -nlt MULTIPOLYGON --config PG_USE_COPY YES -lco GEOMETRY_NAME=geometry | psql -d $TEMP_DB
+    ogr2ogr -s_srs EPSG:2154 -t_srs EPSG:4326 -f pgdump /vsistdout/ download/ARRONDISSEMENT_MUNICIPAL.shp -nln arrondissements_municipaux -nlt MULTIPOLYGON --config PG_USE_COPY YES -lco GEOMETRY_NAME=geometry | psql -d $TEMP_DB
 
     ###
     ###
@@ -66,12 +66,6 @@ function make_junctions_json() {
 
     echo "-----> Préparation de la table codes_communes..."
     psql -d $TEMP_DB -c "CREATE TABLE codes_communes (code_insee CHAR(5) PRIMARY KEY, code_postal CHAR(5) NOT NULL);"
-
-    echo "-----> Téléchargement du fichier des codes postaux..."
-    # See: https://www.data.gouv.fr/fr/datasets/base-officielle-des-codes-postaux/
-    pushd download
-    wget -N -nv --show-progress https://www.data.gouv.fr/fr/datasets/r/5ed9b092-a25d-49e7-bdae-0152797c7577
-    popd
 
     echo "-----> Préparation du fichier des codes postaux..."
     cat download/019HexaSmal.csv |

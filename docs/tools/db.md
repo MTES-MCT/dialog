@@ -64,7 +64,7 @@ Remplacez `APP` par l'application Scalingo cible.
 
 Cette commande démarre un tunnel SSH vers la base de données, et le relaie à Docker pour que le conteneur PHP/Doctrine puisse y accéder.
 
-La commande affiche ensuite une ligne `DATABASE_URL=...`. **Reportez cette ligne** dans `.env.local` pour utiliser la base de données distante. Accédez à http://localhost:8000 comme d'habitude.
+La commande affiche ensuite la `DATABASE_URL`. **Reportez cette valeur** dans `.env.local` pour utiliser la base de données distante. Accédez à http://localhost:8000 comme d'habitude.
 
 Laissez la commande tourner pour garder le tunnel ouvert.
 
