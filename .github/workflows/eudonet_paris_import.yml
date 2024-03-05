@@ -34,8 +34,13 @@ jobs:
       - name: Install SSH key
         # Credit: https://stackoverflow.com/a/69234389
         run: |
+          mkdir -p ~/.ssh
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
 
       - uses: actions/cache@v3
         id: addok-bundle-cache
