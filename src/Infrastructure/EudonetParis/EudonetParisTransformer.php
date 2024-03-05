@@ -53,8 +53,9 @@ final class EudonetParisTransformer
             [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow);
 
             if (empty($measureCommand)) {
-                $errors[] = ['loc' => $loc, 'impact' => 'skip_measure', 'reason' => 'measure_errors', 'errors' => $measureErrors];
-                continue;
+                $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'measure_errors', 'errors' => $measureErrors];
+
+                return new EudonetParisTransformerResult(null, $errors);
             }
 
             $measureCommands[] = $measureCommand;
@@ -135,31 +136,18 @@ final class EudonetParisTransformer
         $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
         $errors = [];
 
-        $name = $row['fields'][EudonetParisExtractor::MESURE_NOM];
-
-        if (strtolower($name) !== 'circulation interdite') {
-            $errors[] = ['loc' => [...$loc, 'fieldname' => 'NOM'], 'reason' => 'value_not_in_enum', 'value' => $name, 'enum' => ['circulation interdite']];
-
-            return [null, $errors];
-        }
-
         $locationCommands = [];
 
         foreach ($row['locations'] as $locationRow) {
             [$locationCommand, $error] = $this->buildLocationCommand($locationRow);
 
             if (empty($locationCommand)) {
-                $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_location'];
-                continue;
+                $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_measure'];
+
+                return [null, $errors];
             }
 
             $locationCommands[] = $locationCommand;
-        }
-
-        if (\count($locationCommands) === 0) {
-            $errors[] = ['loc' => [...$loc, 'fieldname' => 'locations'], 'impact' => 'skip_measure', 'reason' => 'no_locations_gathered'];
-
-            return [null, $errors];
         }
 
         $vehicleSet = new SaveVehicleSetCommand();
