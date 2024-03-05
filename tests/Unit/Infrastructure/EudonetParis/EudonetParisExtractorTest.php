@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
+use App\Domain\Geography\Coordinates;
 use App\Infrastructure\EudonetParis\EudonetParisClient;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +36,8 @@ final class EudonetParisExtractorTest extends TestCase
                     EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => '7',
                     EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => '15',
                 ],
-                'geometry' => null,
+                'fromCoords' => null,
+                'toCoords' => null,
             ],
         ];
         $regulationOrder1Measure1Location1StartAddressRow = [
@@ -56,7 +58,7 @@ final class EudonetParisExtractorTest extends TestCase
             ['fileId' => 'mesure2_1', 'fields' => ['...']],
             ['fileId' => 'mesure2_2', 'fields' => ['...']],
         ];
-        $regulationOrder2Measure1LocationRows = [['fileId' => 'localisation2_1_1', 'fields' => ['...'], 'geometry' => null]];
+        $regulationOrder2Measure1LocationRows = [['fileId' => 'localisation2_1_1', 'fields' => ['...'], 'fromCoords' => null, 'toCoords' => null]];
         $regulationOrder2Measure2LocationRows = [];
 
         $matcher = self::exactly(8);
@@ -216,7 +218,8 @@ final class EudonetParisExtractorTest extends TestCase
                                         2720 => '7',
                                         2737 => '15',
                                     ],
-                                    'geometry' => '{"type":"LineString","coordinates":[[2.3,42.5],[2.5,42.7]]}',
+                                    'fromCoords' => Coordinates::fromLonLat(2.3, 42.5),
+                                    'toCoords' => Coordinates::fromLonLat(2.5, 42.7),
                                 ],
                             ],
                         ],
@@ -233,7 +236,8 @@ final class EudonetParisExtractorTest extends TestCase
                                 [
                                     'fileId' => 'localisation2_1_1',
                                     'fields' => ['...'],
-                                    'geometry' => null,
+                                    'fromCoords' => null,
+                                    'toCoords' => null,
                                 ],
                             ],
                         ],

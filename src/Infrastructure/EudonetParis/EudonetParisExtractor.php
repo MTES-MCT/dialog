@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\EudonetParis;
 
 use App\Domain\Geography\Coordinates;
-use App\Domain\Geography\GeoJSON;
 
 final class EudonetParisExtractor
 {
@@ -160,7 +159,14 @@ final class EudonetParisExtractor
                     $measureRow['locations'][] = [
                         'fileId' => $locationRow['fileId'],
                         'fields' => $locationRow['fields'],
-                        'geometry' => $this->getLocationGeometry($locationRow),
+                        'fromCoords' => empty($locationRow['fields'][$this::LOCALISATION_N_ADRESSE_DEBUT]) ? null : $this->getAddressCoords(
+                            $locationRow['fields'][$this::LOCALISATION_N_ADRESSE_DEBUT],
+                            $locationRow['fields'][$this::LOCALISATION_LIBELLE_VOIE],
+                        ),
+                        'toCoords' => empty($locationRow['fields'][$this::LOCALISATION_N_ADRESSE_FIN]) ? null : $this->getAddressCoords(
+                            $locationRow['fields'][$this::LOCALISATION_N_ADRESSE_FIN],
+                            $locationRow['fields'][$this::LOCALISATION_LIBELLE_VOIE],
+                        ),
                     ];
                 }
 
@@ -171,34 +177,12 @@ final class EudonetParisExtractor
         }
     }
 
-    private function getLocationGeometry(array $locationRow): ?string
+    private function getAddressCoords(string|null $numero, string $libelleVoie): ?Coordinates
     {
-        // Eudonet Paris contains X/Y coordinates for addresses.
-        // If the location is defined by BOTH a start house number and an end house number,
-        // we derive the geometry at this stage.
-
-        $fields = $locationRow['fields'];
-
-        if (
-            empty($fields[$this::LOCALISATION_LIBELLE_VOIE])
-            || empty($fields[$this::LOCALISATION_N_ADRESSE_DEBUT])
-            || empty($fields[$this::LOCALISATION_N_ADRESSE_FIN])
-        ) {
+        if (!$numero) {
             return null;
         }
 
-        $libelleVoie = $fields[$this::LOCALISATION_LIBELLE_VOIE];
-        $nAdresseDebut = $fields[$this::LOCALISATION_N_ADRESSE_DEBUT];
-        $nAdresseFin = $fields[$this::LOCALISATION_N_ADRESSE_FIN];
-
-        $startCoords = $this->getAddressCoords($nAdresseDebut, $libelleVoie);
-        $endCoords = $startCoords ? $this->getAddressCoords($nAdresseFin, $libelleVoie) : null;
-
-        return $startCoords && $endCoords ? GeoJSON::toLineString([$startCoords, $endCoords]) : null;
-    }
-
-    private function getAddressCoords(string $numero, string $libelleVoie): ?Coordinates
-    {
         $rows = $this->eudonetParisClient->search(
             tabId: $this::ADRESSE_TAB_ID,
             listCols: [

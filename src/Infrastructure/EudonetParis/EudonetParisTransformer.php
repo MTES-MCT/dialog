@@ -182,54 +182,22 @@ final class EudonetParisTransformer
         $toHouseNumber = null;
         $fromRoadName = null;
         $toRoadName = null;
-        $geometry = $row['geometry'] ?? null;
 
         $hasStart = $numAdresseDebut || $libelleVoieDebut;
         $hasEnd = $numAdresseFin || $libelleVoieFin;
 
-        try {
-            if ($porteSur === 'La totalité de la voie' && $libelleVoie) {
-                $roadName = $libelleVoie;
-                $geometry = $geometry ?? $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
-            } elseif (\in_array($porteSur, ['Une section', 'Une zone', 'Un axe']) && $libelleVoie && $hasStart && $hasEnd) {
-                $roadName = $libelleVoie;
-                $fromHouseNumber = $numAdresseDebut;
-                $toHouseNumber = $numAdresseFin;
-                $fromRoadName = $libelleVoieDebut;
-                $toRoadName = $libelleVoieFin;
-
-                if (!$geometry) {
-                    if ($fromHouseNumber) {
-                        $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadName);
-                        $fromPoint = $this->geocoder->computeCoordinates($fromAddress, $cityCode);
-                    } else {
-                        $fromPoint = $this->geocoder->computeJunctionCoordinates($roadName, $fromRoadName, $cityCode);
-                    }
-
-                    if ($toHouseNumber) {
-                        $toAddress = sprintf('%s %s', $toHouseNumber, $roadName);
-                        $toPoint = $this->geocoder->computeCoordinates($toAddress, $cityCode);
-                    } else {
-                        $toPoint = $this->geocoder->computeJunctionCoordinates($roadName, $toRoadName, $cityCode);
-                    }
-
-                    $geometry = GeoJSON::toLineString([$fromPoint, $toPoint]);
-                }
-            } else {
-                $error = [
-                    'loc' => $loc,
-                    'reason' => 'unsupported_location_fieldset',
-                    'location_raw' => json_encode($row),
-                ];
-
-                return [null, $error];
-            }
-        } catch (GeocodingFailureException $exc) {
+        if ($porteSur === 'La totalité de la voie' && $libelleVoie) {
+            $roadName = $libelleVoie;
+        } elseif (\in_array($porteSur, ['Une section', 'Une zone', 'Un axe']) && $libelleVoie && $hasStart && $hasEnd) {
+            $roadName = $libelleVoie;
+            $fromHouseNumber = $numAdresseDebut;
+            $toHouseNumber = $numAdresseFin;
+            $fromRoadName = $libelleVoieDebut;
+            $toRoadName = $libelleVoieFin;
+        } else {
             $error = [
                 'loc' => $loc,
-                'reason' => 'geocoding_failure',
-                'message' => $exc->getMessage(),
-                'index' => $exc->getLocationIndex(),
+                'reason' => 'unsupported_location_fieldset',
                 'location_raw' => json_encode($row),
             ];
 
@@ -242,9 +210,11 @@ final class EudonetParisTransformer
         $locationCommand->cityLabel = self::CITY_LABEL;
         $locationCommand->roadName = $roadName;
         $locationCommand->fromHouseNumber = $fromHouseNumber;
-        $locationCommand->toHouseNumber = $toHouseNumber;
         $locationCommand->fromRoadName = $fromRoadName;
+        $locationCommand->fromCoords = empty($row['fromCoords']) ? null : $row['fromCoords'];
+        $locationCommand->toHouseNumber = $toHouseNumber;
         $locationCommand->toRoadName = $toRoadName;
+        $locationCommand->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
         $locationCommand->geometry = null; // Will be handled by SaveLocationCommandHandler.
 
         return [$locationCommand, null];

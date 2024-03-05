@@ -72,19 +72,23 @@ final class SaveLocationCommandHandler
     private function computeGeometry(SaveLocationCommand $command): ?string
     {
         $hasBothEnds = (
-            ($command->fromHouseNumber || $command->fromRoadName)
-            && ($command->toHouseNumber || $command->toRoadName)
+            ($command->fromCoords || $command->fromHouseNumber || $command->fromRoadName)
+            && ($command->toCoords || $command->toHouseNumber || $command->toRoadName)
         );
 
         if ($hasBothEnds) {
-            if ($command->fromHouseNumber) {
+            if ($command->fromCoords) {
+                $fromCoords = $command->fromCoords;
+            } elseif ($command->fromHouseNumber) {
                 $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
                 $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
             } else {
                 $fromCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->fromRoadName, $command->cityCode);
             }
 
-            if ($command->toHouseNumber) {
+            if ($command->toCoords) {
+                $toCoords = $command->toCoords;
+            } elseif ($command->toHouseNumber) {
                 $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
                 $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
             } else {
@@ -95,8 +99,10 @@ final class SaveLocationCommandHandler
         }
 
         $hasNoEnds = (
-            !$command->fromHouseNumber
+            !$command->fromCoords
+            && !$command->fromHouseNumber
             && !$command->fromRoadName
+            && !$command->toCoords
             && !$command->toHouseNumber
             && !$command->toRoadName
         );
