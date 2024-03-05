@@ -10,7 +10,7 @@ interface GeometryServiceInterface
 {
     public function locatePointOnLine(string $line, Coordinates $point): float;
 
-    public function clipLine(string $line, float $startFraction, float $endFraction): string;
-
     public function getFirstPointOfLinestring(string $line): Coordinates;
+
+    public function clipLine(string $line, float $startFraction = 0, float $endFraction = 1): string;
 }

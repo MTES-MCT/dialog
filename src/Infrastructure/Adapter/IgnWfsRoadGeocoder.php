@@ -62,6 +62,8 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
             return new RoadLine(
                 geometry: json_encode($geometry),
                 id: $data['features'][0]['properties']['id_pseudo_fpb'],
+                roadName: $roadName,
+                cityCode: $inseeCode,
             );
         }
 
