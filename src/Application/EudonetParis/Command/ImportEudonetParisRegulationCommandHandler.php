@@ -31,7 +31,7 @@ final class ImportEudonetParisRegulationCommandHandler
             try {
                 $measure = $this->commandBus->handle($measureCommand);
             } catch (GeocodingFailureException $exc) {
-                throw new ImportEudonetParisRegulationFailedException($exc->getMessage());
+                throw new ImportEudonetParisRegulationFailedException($exc->getMessage(), previous: $exc);
             }
 
             $regulationOrder->addMeasure($measure);
@@ -40,7 +40,7 @@ final class ImportEudonetParisRegulationCommandHandler
         try {
             $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
         } catch (RegulationOrderRecordCannotBePublishedException $exc) {
-            throw new ImportEudonetParisRegulationFailedException($exc->getMessage());
+            throw new ImportEudonetParisRegulationFailedException($exc->getMessage(), previous: $exc);
         }
     }
 }
