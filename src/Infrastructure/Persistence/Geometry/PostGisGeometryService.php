@@ -22,9 +22,19 @@ final class PostGisGeometryService implements GeometryServiceInterface
         $conn = $em->getConnection();
 
         // Prepare statements in advance for reuse.
-        $this->locatePointOnLineStmt = $conn->prepare('SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t');
-        $this->firstPointOfLinestringStmt = $conn->prepare('SELECT ST_X(ST_StartPoint(ST_LineMerge(:geom))) AS x, ST_Y(ST_StartPoint(ST_LineMerge(:geom))) AS y');
-        $this->clipLineStmt = $conn->prepare('SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line');
+        $this->locatePointOnLineStmt = $conn->prepare(
+            'SELECT
+                ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t',
+        );
+        $this->firstPointOfLinestringStmt = $conn->prepare(
+            'SELECT
+                ST_X(ST_StartPoint(ST_LineMerge(:geom))) AS x,
+                ST_Y(ST_StartPoint(ST_LineMerge(:geom))) AS y',
+        );
+        $this->clipLineStmt = $conn->prepare(
+            'SELECT
+                ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line',
+        );
     }
 
     public function locatePointOnLine(string $lineGeometry, Coordinates $point): float
@@ -45,7 +55,8 @@ final class PostGisGeometryService implements GeometryServiceInterface
                     $pointGeoJson,
                     $lineGeometry,
                 ),
-                previous: $exc);
+                previous: $exc,
+            );
         }
     }
 

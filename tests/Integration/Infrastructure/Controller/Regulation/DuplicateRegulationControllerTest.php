@@ -9,6 +9,7 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
+/** @group only */
 final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 {
     use SessionHelper;

@@ -9,9 +9,10 @@ use App\Application\GeocoderInterface;
 use App\Application\GeometryServiceInterface;
 use App\Application\RoadLine;
 use App\Application\RoadLineSectionMakerInterface;
+use App\Domain\Geography\Exception\InvalidHouseNumberException;
 use App\Domain\Geography\HouseNumber;
 
-final class PostGisRoadLineSectionMaker implements RoadLineSectionMakerInterface
+final class RoadLineSectionMaker implements RoadLineSectionMakerInterface
 {
     public function __construct(
         private GeocoderInterface $geocoder,
@@ -19,6 +20,9 @@ final class PostGisRoadLineSectionMaker implements RoadLineSectionMakerInterface
     ) {
     }
 
+    /**
+     * @throws GeocodingFailureException
+     */
     public function computeRoadLineSection(
         RoadLine $roadLine,
         ?string $fromHouseNumber,
@@ -26,6 +30,10 @@ final class PostGisRoadLineSectionMaker implements RoadLineSectionMakerInterface
         ?string $toHouseNumber,
         ?string $toRoadName,
     ): string {
+        if (!$fromHouseNumber && !$fromRoadName && !$toHouseNumber && !$toRoadName) {
+            return $roadLine->geometry;
+        }
+
         if ($fromHouseNumber) {
             $fromAddress = sprintf('%s %s', $fromHouseNumber, $roadLine->roadName);
             $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $roadLine->cityCode);
@@ -94,16 +102,13 @@ final class PostGisRoadLineSectionMaker implements RoadLineSectionMakerInterface
             // The same swapping rule must be applied if only a toHouseNumber was requested.
 
             $firstPoint = $this->geometryService->getFirstPointOfLinestring($roadLine->geometry);
+            $houseNumberOfFirstLinePoint = $this->geocoder->findHouseNumberOnRoad($roadLine->id, $firstPoint);
 
             try {
-                $houseNumberOfFirstLinePoint = $this->geocoder->findHouseNumberOnRoad($roadLine->id, $firstPoint);
-            } catch (GeocodingFailureException $exc) {
-                // For some reason the house number of the first point could not be found.
-                // There's probably something very wrong. Let the exception bubble up...
-                throw $exc;
+                $houseNumberOrderingMatchesLinePointsOrdering = HouseNumber::compare($houseNumberOfFirstLinePoint, $fromHouseNumber ?: $toHouseNumber);
+            } catch (InvalidHouseNumberException $exc) {
+                throw new GeocodingFailureException('Invalid house number', previous: $exc);
             }
-
-            $houseNumberOrderingMatchesLinePointsOrdering = HouseNumber::compare($houseNumberOfFirstLinePoint, $fromHouseNumber ?: $toHouseNumber);
         }
 
         [$startFraction, $endFraction] = $houseNumberOrderingMatchesLinePointsOrdering

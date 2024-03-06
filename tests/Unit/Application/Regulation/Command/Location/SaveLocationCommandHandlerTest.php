@@ -25,7 +25,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private string $cityCode;
     private string $cityLabel;
     private string $roadName;
-    private bool $isEntireStreet;
     private string $fromHouseNumber;
     private string $toHouseNumber;
     private string $geometry;
@@ -61,14 +60,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
-
-        // $this->geocoder
-        //     ->expects(self::exactly(2))
-        //     ->method('computeCoordinates')
-        //     ->willReturnOnConsecutiveCalls(
-        //         Coordinates::fromLonLat(-1.935836, 47.347024),
-        //         Coordinates::fromLonLat(-1.930973, 47.347917),
-        //     );
 
         $roadLine = new RoadLine('geometry', 'id', $this->roadName, $this->cityCode);
 
@@ -199,94 +190,12 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
+        $command->setIsEntireStreet(true);
         $command->fromHouseNumber = null;
         $command->toHouseNumber = null;
 
         $this->assertSame($createdLocation, $handler($command));
     }
-
-    // public function testHouseNumberOnOneSideOnly(): void
-    // {
-    //     $location = $this->createMock(Location::class);
-    //     $location
-    //         ->expects(self::once())
-    //         ->method('update')
-    //         ->with(
-    //             $this->roadType,
-    //             $this->administrator,
-    //             $this->roadNumber,
-    //             $this->cityCode,
-    //             $this->cityLabel,
-    //             $this->roadName,
-    //             '137',
-    //         );
-
-    //     $this->idFactory
-    //         ->expects(self::never())
-    //         ->method('make');
-
-    //     $this->geocoder
-    //         ->expects(self::once())
-    //         ->method('computeCoordinates')
-    //         ->willReturn(Coordinates::fromLonLat(-1.935836, 47.347024));
-
-    //     $this->roadGeocoder
-    //         ->expects(self::once())
-    //         ->method('computeRoadLine')
-    //         ->with($this->roadName, $this->cityCode)
-    //         ->willReturn(new RoadLine('geometry', 'id'));
-
-    //     $firstPoint = Coordinates::fromLonLat(0, 0); // Values don't matter
-
-    //     $this->geometryService
-    //         ->expects(self::once())
-    //         ->method('getFirstPointOfLinestring')
-    //         ->with('geometry')
-    //         ->willReturn($firstPoint);
-
-    //     // (*) Simulate house number ordering opposite to line point ordering
-    //     $this->geocoder
-    //         ->expects(self::once())
-    //         ->method('findHouseNumberOnRoad')
-    //         ->with('id', $firstPoint)
-    //         ->willReturn('156'); // (*)
-
-    //     $this->geometryService
-    //         ->expects(self::once())
-    //         ->method('locatePointOnLine')
-    //         ->willReturn(0.1); // (*) House number 137 is roughly at the beginning of first point is house number 156
-
-    //     $this->geometryService
-    //         ->expects(self::once())
-    //         ->method('clipLine')
-    //         ->with('geometry', 0, 0.1) // (*) Fraction of house number 156 -> Fraction of house number 137
-    //         ->willReturn($this->geometry);
-
-    //     $this->locationRepository
-    //         ->expects(self::never())
-    //         ->method('add');
-
-    //     $handler = new SaveLocationCommandHandler(
-    //         $this->idFactory,
-    //         $this->locationRepository,
-    //         $this->geocoder,
-    //         $this->roadGeocoder,
-    //         $this->geometryService,
-    //     );
-
-    //     $command = new SaveLocationCommand($location);
-    //     $command->roadType = $this->roadType;
-    //     $command->administrator = $this->administrator;
-    //     $command->roadNumber = $this->roadNumber;
-    //     $command->cityCode = $this->cityCode;
-    //     $command->cityLabel = $this->cityLabel;
-    //     $command->roadName = $this->roadName;
-    //     $command->setIsEntireStreet(false); // Need to switch explicitly
-    //     $command->fromHouseNumber = '137';
-    //     $command->toHouseNumber = null;
-
-    //     $this->assertSame($location, $handler($command));
-    // }
 
     public function testUpdateNoChangeDoesNotRecomputePoints(): void
     {
@@ -330,7 +239,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('getToHouseNumber')
             ->willReturn($this->toHouseNumber);
         $location
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('getRoadLine')
             ->willReturn($roadLine);
         $location
@@ -377,72 +286,4 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $this->assertSame($location, $handler($command));
     }
-
-    // public function testCreateWithJunctions(): void
-    // {
-    //     $this->idFactory
-    //         ->expects(self::once())
-    //         ->method('make')
-    //         ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
-
-    //     $this->geocoder
-    //         ->expects(self::exactly(2))
-    //         ->method('computeJunctionCoordinates')
-    //         ->willReturnOnConsecutiveCalls(
-    //             Coordinates::fromLonLat(-1.935836, 47.347024),
-    //             Coordinates::fromLonLat(-1.930973, 47.347917),
-    //         );
-
-    //     $this->geocoder
-    //         ->expects(self::never())
-    //         ->method('computeCoordinates');
-
-    //     $createdLocation = $this->createMock(Location::class);
-    //     $measure = $this->createMock(Measure::class);
-
-    //     $this->locationRepository
-    //         ->expects(self::once())
-    //         ->method('add')
-    //         ->with(
-    //             $this->equalTo(
-    //                 new Location(
-    //                     uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
-    //                     measure: $measure,
-    //                     roadType: $this->roadType,
-    //                     administrator: $this->administrator,
-    //                     roadNumber: $this->roadNumber,
-    //                     cityCode: $this->cityCode,
-    //                     cityLabel: $this->cityLabel,
-    //                     roadName: $this->roadName,
-    //                     fromHouseNumber: null,
-    //                     toHouseNumber: null,
-    //                     geometry: $this->geometry,
-    //                 ),
-    //             ),
-    //         )
-    //         ->willReturn($createdLocation);
-
-    //     $handler = new SaveLocationCommandHandler(
-    //         $this->idFactory,
-    //         $this->locationRepository,
-    //         $this->geocoder,
-    //         $this->roadGeocoder,
-    //         $this->geometryService,
-    //     );
-
-    //     $command = new SaveLocationCommand();
-    //     $command->measure = $measure;
-    //     $command->roadType = $this->roadType;
-    //     $command->administrator = $this->administrator;
-    //     $command->roadNumber = $this->roadNumber;
-    //     $command->cityCode = $this->cityCode;
-    //     $command->cityLabel = $this->cityLabel;
-    //     $command->roadName = $this->roadName;
-    //     $command->fromRoadName = 'Route du début';
-    //     $command->toRoadName = 'Route de la fin';
-
-    //     $result = $handler($command);
-
-    //     $this->assertSame($createdLocation, $result);
-    // }
 }

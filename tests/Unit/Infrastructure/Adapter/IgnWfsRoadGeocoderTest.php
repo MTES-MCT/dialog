@@ -27,8 +27,11 @@ final class IgnWfsRoadGeocoderTest extends TestCase
 
         $roadLine = $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
 
-        $this->assertSame('{"type":"MultiLineString","coordinates":["..."]}', $roadLine->geometry);
+        $this->assertSame('{"type":"MultiLineString","coordinates":["..."],"crs":{"type":"name","properties":{"name":"EPSG:2154"}}}', $roadLine->geometry);
         $this->assertSame('id', $roadLine->id);
+        $this->assertSame($this->address, $roadLine->roadName);
+        $this->assertSame($this->inseeCode, $roadLine->cityCode);
+
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
             'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(strReplace(nom_minuscule%2C%20%27-%27%2C%20%27%20%27%2C%20true))%3DstrStripAccents(strReplace(%27rue%20de%20l%27%27eglise%20saint%20victor%2059110%20la%20madeleine%27%2C%20%27-%27%2C%20%27%20%27%2C%20true))%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie%2Cid_pseudo_fpb',
