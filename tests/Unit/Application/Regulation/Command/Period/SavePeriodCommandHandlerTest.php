@@ -129,6 +129,93 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $this->assertSame($createdPeriod, $result);
     }
 
+    public function testCreateWithoutEndDate(): void
+    {
+        $startDateTime = new \DateTimeImmutable('2023-05-22');
+        $startTime = new \DateTimeImmutable('2023-05-22 10:00:00');
+
+        $mergedStartDateTime = new \DateTimeImmutable('2023-05-22 10:00:00');
+
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('mergeDateAndTime')
+            ->withConsecutive([$startDateTime, $startTime])
+            ->willReturnOnConsecutiveCalls($mergedStartDateTime);
+
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $createdPeriod = $this->createMock(Period::class);
+        $createdDailyRange = $this->createMock(DailyRange::class);
+        $createdTimeSlot = $this->createMock(TimeSlot::class);
+        $measure = $this->createMock(Measure::class);
+
+        $this->dailyRangeRepository
+            ->expects(self::never())
+            ->method('delete');
+
+        $this->periodRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Period(
+                        uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                        measure: $measure,
+                        startDateTime: $mergedStartDateTime,
+                        endDateTime: null,
+                        recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
+                    ),
+                ),
+            )
+            ->willReturn($createdPeriod);
+
+        $createdPeriod
+            ->expects(self::once())
+            ->method('setDailyRange')
+            ->with($createdDailyRange);
+
+        $createdPeriod
+            ->expects(self::once())
+            ->method('addTimeSlot')
+            ->with($createdTimeSlot);
+
+        $dailyRangeCommand = new SaveDailyRangeCommand();
+        $dailyRangeCommand->period = $createdPeriod;
+
+        $handler = new SavePeriodCommandHandler(
+            $this->idFactory,
+            $this->periodRepository,
+            $this->dailyRangeRepository,
+            $this->dateUtils,
+            $this->commandBus,
+        );
+
+        $timeSlotCommand = new SaveTimeSlotCommand();
+        $timeSlotCommand->period = $createdPeriod;
+
+        $this->commandBus
+            ->expects(self::exactly(2))
+            ->method('handle')
+            ->withConsecutive([$this->equalTo($timeSlotCommand)], [$this->equalTo($dailyRangeCommand)])
+            ->willReturnOnConsecutiveCalls($createdTimeSlot, $createdDailyRange);
+
+        $command = new SavePeriodCommand();
+        $command->measure = $measure;
+        $command->startDate = $startDateTime;
+        $command->endDate = null;
+        $command->startTime = $startTime;
+        $command->endTime = null;
+        $command->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
+        $command->dailyRange = $dailyRangeCommand;
+        $command->timeSlots = [$timeSlotCommand];
+        $result = $handler($command);
+
+        $this->assertSame($createdPeriod, $result);
+    }
+
     public function testUpdate(): void
     {
         $startDateTime = new \DateTimeImmutable('2023-05-22');
@@ -173,7 +260,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $period
             ->expects(self::once())
             ->method('update')
-            ->with($mergedStartDateTime, $mergedEndDateTime, PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value);
+            ->with($mergedStartDateTime, PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value, $mergedEndDateTime);
 
         $period
             ->expects(self::exactly(3))
@@ -259,7 +346,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $period
             ->expects(self::once())
             ->method('update')
-            ->with($mergedStartDateTime, $mergedEndDateTime, PeriodRecurrenceTypeEnum::EVERY_DAY->value);
+            ->with($mergedStartDateTime, PeriodRecurrenceTypeEnum::EVERY_DAY->value, $mergedEndDateTime);
         $period
             ->expects(self::exactly(3))
             ->method('getDailyRange')
