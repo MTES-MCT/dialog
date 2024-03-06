@@ -36,11 +36,6 @@ final class RoadLineSectionMakerTest extends TestCase
             $this->geometryService,
         );
     }
-    // Tous champs vides
-    // fromHouseNumber seulement (toCoords=null)
-    // toHouseNumber seulement (fromCoords=null)
-    // fromRoadName et toRoadName (même sens que la ligne)
-    // fromHouseNumber et toHouseNumber (sens opposé à la ligne)
 
     public function testFullRoad(): void
     {

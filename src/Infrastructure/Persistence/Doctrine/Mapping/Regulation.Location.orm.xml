@@ -26,7 +26,7 @@
         <option name="srid">2154</option>
       </options>
     </field>
-    <field name="roadLineId" type="string" column="road_line_id" nullable="true" lenght="64" />
+    <field name="roadLineId" type="string" column="road_line_id" nullable="true" length="64" />
     <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="locations">
         <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>
