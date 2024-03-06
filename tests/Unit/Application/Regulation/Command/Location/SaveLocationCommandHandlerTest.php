@@ -320,4 +320,71 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $this->assertSame($location, $handler($command));
     }
+
+    public function testCreateWithJunctions(): void
+    {
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->geocoder
+            ->expects(self::exactly(2))
+            ->method('computeJunctionCoordinates')
+            ->willReturnOnConsecutiveCalls(
+                Coordinates::fromLonLat(-1.935836, 47.347024),
+                Coordinates::fromLonLat(-1.930973, 47.347917),
+            );
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $createdLocation = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Location(
+                        uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                        measure: $measure,
+                        roadType: $this->roadType,
+                        administrator: $this->administrator,
+                        roadNumber: $this->roadNumber,
+                        cityCode: $this->cityCode,
+                        cityLabel: $this->cityLabel,
+                        roadName: $this->roadName,
+                        fromHouseNumber: null,
+                        toHouseNumber: null,
+                        geometry: $this->geometry,
+                    ),
+                ),
+            )
+            ->willReturn($createdLocation);
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = $this->roadType;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
+        $command->roadName = $this->roadName;
+        $command->fromRoadName = 'Route du début';
+        $command->toRoadName = 'Route de la fin';
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
 }
