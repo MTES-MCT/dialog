@@ -59,6 +59,17 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
         $geometry = \array_key_exists('features', $data) ? (\array_key_exists(0, $data['features']) ? ($data['features'][0]['geometry'] ?? null) : null) : null;
 
         if (!\is_null($geometry)) {
+            if (empty($geometry['crs'])) {
+                // Ensure the coordinate system is defined.
+                // BD-TOPO uses Lambert 93 which is EPSG:2154.
+                $geometry['crs'] = [
+                    'type' => 'name',
+                    'properties' => [
+                        'name' => 'EPSG:2154',
+                    ],
+                ];
+            }
+
             return new RoadLine(
                 geometry: json_encode($geometry),
                 id: $data['features'][0]['properties']['id_pseudo_fpb'],
