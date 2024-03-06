@@ -18,7 +18,9 @@ final class SaveLocationCommand implements CommandInterface
     public ?string $cityLabel = null;
     public ?string $roadName = null;
     public ?string $fromHouseNumber = null;
+    public ?string $fromRoadName = null;
     public ?string $toHouseNumber = null;
+    public ?string $toRoadName = null;
     public ?string $geometry;
     public ?Measure $measure;
     private ?bool $isEntireStreetFormValue = null;

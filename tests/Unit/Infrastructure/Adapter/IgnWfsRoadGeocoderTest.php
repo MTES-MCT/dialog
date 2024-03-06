@@ -11,7 +11,7 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 
 final class IgnWfsRoadGeocoderTest extends TestCase
 {
-    private string $address = 'Rue Saint-Victor 59110 La Madeleine';
+    private string $address = 'Rue de l’Eglise Saint-Victor 59110 La Madeleine';
     private string $inseeCode = '59368';
     private string $baseUrl = 'http://testserver';
     private string $ignWfsUrl = 'http://testserver/wfs/ows';
@@ -27,10 +27,9 @@ final class IgnWfsRoadGeocoderTest extends TestCase
         $geometry = $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
 
         $this->assertSame('{"type":"MultiLineString","coordinates":["..."]}', $geometry);
-
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(nom_minuscule)%3DstrStripAccents(%27rue%20saint-victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
+            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(strReplace(nom_minuscule%2C%20%27-%27%2C%20%27%20%27%2C%20true))%3DstrStripAccents(strReplace(%27rue%20de%20l%27%27eglise%20saint%20victor%2059110%20la%20madeleine%27%2C%20%27-%27%2C%20%27%20%27%2C%20true))%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
             $response->getRequestUrl(),
         );
     }

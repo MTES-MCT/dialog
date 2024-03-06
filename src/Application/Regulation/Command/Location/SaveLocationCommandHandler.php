@@ -71,21 +71,38 @@ final class SaveLocationCommandHandler
 
     private function computeGeometry(SaveLocationCommand $command): ?string
     {
-        if ($command->fromHouseNumber && $command->toHouseNumber) {
-            $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
-            $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
+        $hasBothEnds = (
+            ($command->fromHouseNumber || $command->fromRoadName)
+            && ($command->toHouseNumber || $command->toRoadName)
+        );
 
-            $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
-            $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
+        if ($hasBothEnds) {
+            if ($command->fromHouseNumber) {
+                $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
+                $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
+            } else {
+                $fromCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->fromRoadName, $command->cityCode);
+            }
+
+            if ($command->toHouseNumber) {
+                $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
+                $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
+            } else {
+                $toCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->toRoadName, $command->cityCode);
+            }
 
             return GeoJSON::toLineString([$fromCoords, $toCoords]);
         }
 
-        $roadName = $command->roadName;
-        $cityCode = $command->cityCode;
+        $hasNoEnds = (
+            !$command->fromHouseNumber
+            && !$command->fromRoadName
+            && !$command->toHouseNumber
+            && !$command->toRoadName
+        );
 
-        if (!$command->fromHouseNumber && !$command->toHouseNumber && $roadName) {
-            return $this->roadGeocoder->computeRoadLine($roadName, $cityCode);
+        if ($hasNoEnds && $command->roadName) {
+            return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
         }
 
         if ($command->roadNumber) {
