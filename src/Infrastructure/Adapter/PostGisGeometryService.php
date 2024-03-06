@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeometryServiceInterface;
 use App\Domain\Geography\Coordinates;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class PostGisGeometryService implements GeometryServiceInterface
@@ -25,29 +27,41 @@ final class PostGisGeometryService implements GeometryServiceInterface
         $this->clipLineStmt = $conn->prepare('SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line');
     }
 
-    public function locatePointOnLine(string $line, Coordinates $point): float
+    public function locatePointOnLine(string $lineGeometry, Coordinates $point): float
     {
-        $row = $this->locatePointOnLineStmt->execute([
-            'geom' => $line,
-            'pt' => $point->asGeoJSON(),
-        ])->fetchAssociative();
+        $pointGeoJson = $point->asGeoJSON();
 
-        return (float) $row['t'];
+        try {
+            $row = $this->locatePointOnLineStmt->execute([
+                'geom' => $lineGeometry,
+                'pt' => $pointGeoJson,
+            ])->fetchAssociative();
+
+            return (float) $row['t'];
+        } catch (DriverException $exc) {
+            throw new GeocodingFailureException(
+                sprintf(
+                    'Failed to locate point %s on line %s: is line a MultiLineString not mergeable into a single LineString?',
+                    $pointGeoJson,
+                    $lineGeometry,
+                ),
+                previous: $exc);
+        }
     }
 
-    public function getFirstPointOfLinestring(string $line): Coordinates
+    public function getFirstPointOfLinestring(string $lineGeometry): Coordinates
     {
         $row = $this->firstPointOfLinestringStmt->execute([
-            'geom' => $line,
+            'geom' => $lineGeometry,
         ])->fetchAssociative();
 
         return Coordinates::fromLonLat((float) $row['x'], (float) $row['y']);
     }
 
-    public function clipLine(string $line, float $startFraction = 0, float $endFraction = 1): string
+    public function clipLine(string $lineGeometry, float $startFraction = 0, float $endFraction = 1): string
     {
         $row = $this->clipLineStmt->execute([
-            'geom' => $line,
+            'geom' => $lineGeometry,
             'startFraction' => $startFraction,
             'endFraction' => $endFraction,
         ])->fetchAssociative();

@@ -104,6 +104,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         fromHouseNumber: $this->fromHouseNumber,
                         toHouseNumber: $this->toHouseNumber,
                         geometry: $this->geometry,
+                        roadLineGeometry: $roadLine->geometry,
+                        roadLineId: $roadLine->id,
                     ),
                 ),
             )
@@ -136,6 +138,13 @@ final class SaveLocationCommandHandlerTest extends TestCase
     {
         $measure = $this->createMock(Measure::class);
 
+        $roadLine = new RoadLine(
+            json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
+            'test',
+            $this->roadName,
+            $this->cityCode,
+        );
+
         $this->idFactory
             ->expects(self::once())
             ->method('make')
@@ -145,14 +154,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('computeRoadLine')
             ->with('Route du Grand Brossais', '44195')
-            ->willReturn(
-                new RoadLine(
-                    json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
-                    'test',
-                    $this->roadName,
-                    $this->cityCode,
-                ),
-            );
+            ->willReturn($roadLine);
 
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
@@ -166,6 +168,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
             fromHouseNumber: null,
             toHouseNumber: null,
             geometry: json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
+            roadLineGeometry: $roadLine->geometry,
+            roadLineId: $roadLine->id,
         );
 
         $createdLocation = $this->createMock(Location::class);
@@ -286,6 +290,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testUpdateNoChangeDoesNotRecomputePoints(): void
     {
+        $roadLine = new RoadLine('geometry', 'id', $this->roadName, $this->cityCode);
+
         $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())
@@ -304,11 +310,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('getCityLabel')
             ->willReturn($this->cityLabel);
         $location
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('getCityCode')
             ->willReturn($this->cityCode);
         $location
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('getRoadName')
             ->willReturn($this->roadName);
         $location
@@ -324,6 +330,10 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('getToHouseNumber')
             ->willReturn($this->toHouseNumber);
         $location
+            ->expects(self::exactly(2))
+            ->method('getRoadLine')
+            ->willReturn($roadLine);
+        $location
             ->expects(self::once())
             ->method('update')
             ->with(
@@ -336,6 +346,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
                 $this->geometry,
+                $roadLine->geometry,
+                $roadLine->id,
             );
 
         $this->idFactory

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation;
 
+use App\Application\RoadLine;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
@@ -32,6 +33,8 @@ final class LocationTest extends TestCase
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
             geometry: $geometry,
+            roadLineGeometry: 'geometry',
+            roadLineId: 'id',
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
@@ -42,6 +45,7 @@ final class LocationTest extends TestCase
         $this->assertSame('15', $location->getFromHouseNumber());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame($geometry, $location->getGeometry());
+        $this->assertEquals(new RoadLine('geometry', 'id', 'Route du Grand Brossais', '44195'), $location->getRoadLine());
     }
 
     public function testUpdate(): void
@@ -65,6 +69,8 @@ final class LocationTest extends TestCase
             ]),
         );
 
+        $this->assertNull($location->getRoadline());
+
         $newRoadType = 'lane';
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
@@ -77,6 +83,8 @@ final class LocationTest extends TestCase
             Coordinates::fromLonLat(-1.938727, 47.358454),
             Coordinates::fromLonLat(-1.940304, 47.388473),
         ]);
+        $newRoadLineGeometry = 'geometry';
+        $newRoadLineId = 'id';
 
         $location->update(
             $newRoadType,
@@ -88,6 +96,8 @@ final class LocationTest extends TestCase
             $newFromHouseNumber,
             $newToHouseNumber,
             $newGeometry,
+            $newRoadLineGeometry,
+            $newRoadLineId,
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
@@ -100,5 +110,6 @@ final class LocationTest extends TestCase
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
         $this->assertSame($newGeometry, $location->getGeometry());
+        $this->assertEquals(new RoadLine('geometry', 'id', $newRoadName, $newCityCode), $location->getRoadLine());
     }
 }

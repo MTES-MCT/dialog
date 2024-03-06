@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use App\Application\RoadLine;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
+
 class Location
 {
     public function __construct(
@@ -18,6 +21,8 @@ class Location
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
         private ?string $geometry,
+        private ?string $roadLineGeometry = null,
+        private ?string $roadLineId = null,
     ) {
     }
 
@@ -76,6 +81,20 @@ class Location
         return $this->geometry;
     }
 
+    public function getRoadLine(): ?RoadLine
+    {
+        if ($this->roadType === RoadTypeEnum::LANE->value) {
+            return $this->roadLineGeometry ? new RoadLine(
+                $this->roadLineGeometry,
+                $this->roadLineId,
+                $this->roadName,
+                $this->cityCode,
+            ) : null;
+        }
+
+        return null;
+    }
+
     public function update(
         string $roadType,
         ?string $administrator,
@@ -86,6 +105,8 @@ class Location
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
         ?string $geometry,
+        ?string $roadLineGeometry,
+        ?string $roadLineId,
     ): void {
         $this->roadType = $roadType;
         $this->administrator = $administrator;
@@ -96,5 +117,7 @@ class Location
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
         $this->geometry = $geometry;
+        $this->roadLineGeometry = $roadLineGeometry;
+        $this->roadLineId = $roadLineId;
     }
 }

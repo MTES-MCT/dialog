@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Command\Location;
 
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadLine;
 use App\Application\RoadLineSectionMakerInterface;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -26,7 +27,8 @@ final class SaveLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
+            $roadLine = $this->computeRoadLine($command);
+            $geometry = empty($command->geometry) ? $this->computeGeometry($command, $roadLine) : $command->geometry;
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -41,6 +43,8 @@ final class SaveLocationCommandHandler
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
                     geometry: $geometry,
+                    roadLineGeometry: $roadLine->geometry,
+                    roadLineId: $roadLine->id,
                 ),
             );
 
@@ -49,8 +53,12 @@ final class SaveLocationCommandHandler
             return $location;
         }
 
+        $roadLine = $this->shouldRecomputeRoadLine($command)
+            ? $this->computeRoadLine($command)
+            : $command->location->getRoadLine();
+
         $geometry = $this->shouldRecomputeGeometry($command)
-            ? $this->computeGeometry($command)
+            ? $this->computeGeometry($command, $roadLine)
             : $command->location->getGeometry();
 
         $command->location->update(
@@ -63,15 +71,27 @@ final class SaveLocationCommandHandler
             fromHouseNumber: $command->fromHouseNumber,
             toHouseNumber: $command->toHouseNumber,
             geometry: $geometry,
+            roadLineGeometry: $roadLine->geometry,
+            roadLineId: $roadLine->id,
         );
 
         return $command->location;
     }
 
-    private function computeGeometry(SaveLocationCommand $command): string
+    private function computeRoadLine(SaveLocationCommand $command): RoadLine
     {
-        $roadLine = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+        return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+    }
 
+    private function shouldRecomputeRoadLine(SaveLocationCommand $command): bool
+    {
+        return !$command->location->getRoadLine()
+            || $command->cityCode !== $command->location->getCityCode()
+            || $command->roadName !== $command->location->getRoadName();
+    }
+
+    private function computeGeometry(SaveLocationCommand $command, RoadLine $roadLine): string
+    {
         $hasNoEnds = (
             !$command->fromHouseNumber
             && !$command->fromRoadName
