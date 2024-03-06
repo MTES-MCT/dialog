@@ -20,3 +20,9 @@ legend.required > .fr-x-label-content::after {
     align-items: flex-end;
     column-gap: 0.5rem;
 }
+
+.fr-btn-load:disabled::after {
+    content: url('../../../public/images/icons/spinner.svg');
+    margin-left: 0.5rem;
+    display: block;
+}
