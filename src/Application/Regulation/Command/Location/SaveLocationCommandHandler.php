@@ -96,7 +96,7 @@ final class SaveLocationCommandHandler
 
     private function shouldRecomputeRoadLine(SaveLocationCommand $command): bool
     {
-        return !$command->location->getRoadLine()
+        return !$command->location->getRoadLine() // For migration
             || $command->cityCode !== $command->location->getCityCode()
             || $command->roadName !== $command->location->getRoadName();
     }
@@ -125,7 +125,8 @@ final class SaveLocationCommandHandler
 
     private function shouldRecomputeLaneGeometry(SaveLocationCommand $command): bool
     {
-        return $command->cityCode !== $command->location->getCityCode()
+        return !$command->location->getRoadLine() // For migration
+            || $command->cityCode !== $command->location->getCityCode()
             || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
