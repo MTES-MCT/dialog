@@ -15,13 +15,13 @@
             </constraint>
         </property>
         <property name="roadNumber">
-            <constraint name="Length">
-                <option name="max">50</option>
-            </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'departmentalRoad' </option>
                 <option name="constraints">
                     <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">50</option>
+                    </constraint>
                 </option>
             </constraint>
         </property>

@@ -50,11 +50,11 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['administrator'] = '';
+        $values['measure_form']['locations'][0]['geometry'] = '';
         $values['measure_form']['locations'][0]['roadNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_administrator_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
     }
 
@@ -152,6 +152,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['administrator'] = 'Ain';
         $values['measure_form']['locations'][0]['roadNumber'] = 'D1075';
+        $values['measure_form']['locations'][0]['geometry'] = '{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
 

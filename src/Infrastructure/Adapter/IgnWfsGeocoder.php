@@ -32,7 +32,6 @@ final class IgnWfsGeocoder implements RoadGeocoderInterface
                 'PropertyName' => $propertyName,
             ],
         ]);
-
         try {
             $body = $response->getContent(throw: true);
         } catch (\Exception $exc) {
