@@ -456,7 +456,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.355,44.0163],[1.35419,44.01665]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.354885586,44.016343822],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -592,7 +592,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352126,44.016833],[1.353016,44.016402]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352105256,44.016810494],[1.35213207,44.01678578],[1.35216909,44.01675663],[1.35221741,44.01672495],[1.35226814,44.01669601],[1.35232384,44.01666804],[1.35272189,44.0164913],[1.35280254,44.01646281],[1.35301215,44.016390795]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>

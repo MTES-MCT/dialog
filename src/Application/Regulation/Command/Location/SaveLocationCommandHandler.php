@@ -29,7 +29,7 @@ final class SaveLocationCommandHandler
         // Create location if needed
         if (!$command->location instanceof Location) {
             if ($command->roadType === RoadTypeEnum::LANE->value) {
-                $roadLine = $this->computeRoadLine($command);
+                $roadLine = empty($command->roadLine) ? $this->computeRoadLine($command) : $command->roadLine;
                 $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command, $roadLine) : $command->geometry;
             } else {
                 $roadLine = null;

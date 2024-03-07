@@ -7,7 +7,7 @@
         <description>Rue de la République : circulation interdite tous les jours pour tous les véhicles</description>
         <street>Rue de la République</street>
         <direction>BOTH_DIRECTIONS</direction>
-        <polyline>44.016300 1.355000 44.016650 1.354190</polyline>
+        <polyline>44.016344 1.354886 44.016396 1.354760 44.016603 1.354312 44.016629 1.354256</polyline>
         <starttime>2021-11-02T00:00:00+00:00</starttime>
         <endtime>2021-11-06T00:00:00+00:00</endtime>
         <source>

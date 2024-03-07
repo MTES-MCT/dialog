@@ -98,6 +98,7 @@ final class DuplicateRegulationCommandHandler
                     $cmd->fromHouseNumber = $location->getFromHouseNumber();
                     $cmd->toHouseNumber = $location->getToHouseNumber();
                     $cmd->geometry = $location->getGeometry();
+                    $cmd->roadLine = $location?->getRoadLine();
                     $cmd->measure = $measure;
 
                     $locationCommands[] = $cmd;

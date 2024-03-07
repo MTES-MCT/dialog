@@ -88,6 +88,10 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                 ],
             ];
+        } elseif ($type === 'housenumber' && str_contains($query, '15 Route du Grand Brossais')) {
+            $body = ['features' => [['geometry' => ['coordinates' => [-1.935843, 47.347026]]]]];
+        } elseif ($type === 'housenumber' && str_contains($query, '37bis Route du Grand Brossais')) {
+            $body = ['features' => [['geometry' => ['coordinates' => [-1.935843, 47.347026]]]]];
         } else {
             $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
         }
