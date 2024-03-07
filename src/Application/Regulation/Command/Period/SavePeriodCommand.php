@@ -19,7 +19,7 @@ final class SavePeriodCommand implements CommandInterface
     public ?Measure $measure;
     public ?SaveDailyRangeCommand $dailyRange = null;
     public ?array $timeSlots;
-    public bool $isPermanent = false;
+    public ?bool $isPermanent = false;
 
     public function __construct(
         public readonly ?Period $period = null,
