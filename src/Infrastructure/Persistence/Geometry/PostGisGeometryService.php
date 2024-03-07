@@ -12,37 +12,21 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class PostGisGeometryService implements GeometryServiceInterface
 {
-    private $locatePointOnLineStmt;
-    private $clipLineStmt;
-    private $firstPointOfLinestringStmt;
-
     public function __construct(
-        EntityManagerInterface $em,
+        private readonly EntityManagerInterface $em,
     ) {
-        $conn = $em->getConnection();
-
-        // Prepare statements in advance for reuse.
-        $this->locatePointOnLineStmt = $conn->prepare(
-            'SELECT
-                ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t',
-        );
-        $this->firstPointOfLinestringStmt = $conn->prepare(
-            'SELECT
-                ST_X(ST_StartPoint(ST_LineMerge(:geom))) AS x,
-                ST_Y(ST_StartPoint(ST_LineMerge(:geom))) AS y',
-        );
-        $this->clipLineStmt = $conn->prepare(
-            'SELECT
-                ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line',
-        );
     }
 
     public function locatePointOnLine(string $lineGeometry, Coordinates $point): float
     {
+        $stmt = $this->em->getConnection()->prepare(
+            'SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :pt) AS t',
+        );
+
         $pointGeoJson = $point->asGeoJSON();
 
         try {
-            $row = $this->locatePointOnLineStmt->execute([
+            $row = $stmt->executeQuery([
                 'geom' => $lineGeometry,
                 'pt' => $pointGeoJson,
             ])->fetchAssociative();
@@ -62,7 +46,13 @@ final class PostGisGeometryService implements GeometryServiceInterface
 
     public function getFirstPointOfLinestring(string $lineGeometry): Coordinates
     {
-        $row = $this->firstPointOfLinestringStmt->execute([
+        $stmt = $this->em->getConnection()->prepare(
+            'SELECT
+                ST_X(ST_StartPoint(ST_LineMerge(:geom))) AS x,
+                ST_Y(ST_StartPoint(ST_LineMerge(:geom))) AS y',
+        );
+
+        $row = $stmt->executeQuery([
             'geom' => $lineGeometry,
         ])->fetchAssociative();
 
@@ -71,7 +61,11 @@ final class PostGisGeometryService implements GeometryServiceInterface
 
     public function clipLine(string $lineGeometry, float $startFraction = 0, float $endFraction = 1): string
     {
-        $row = $this->clipLineStmt->execute([
+        $stmt = $this->em->getConnection()->prepare(
+            'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line',
+        );
+
+        $row = $stmt->executeQuery([
             'geom' => $lineGeometry,
             'startFraction' => $startFraction,
             'endFraction' => $endFraction,

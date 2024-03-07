@@ -240,6 +240,25 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
     }
 
+    public function testUpdateLocationSingleEndSection(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['measure_form[locations][0][cityCode]'] = '82121';
+        $form['measure_form[locations][0][cityLabel]'] = 'Montauban (82000)';
+        $form['measure_form[locations][0][roadName]'] = 'Rue de la République';
+        unset($form['measure_form[locations][0][isEntireStreet]']);
+        $form['measure_form[locations][0][fromHouseNumber]'] = '';
+        $form['measure_form[locations][0][toHouseNumber]'] = '33';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+    }
+
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();

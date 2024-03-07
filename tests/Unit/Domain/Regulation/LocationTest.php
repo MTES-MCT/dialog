@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Domain\Regulation;
 use App\Application\RoadLine;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
@@ -111,5 +112,28 @@ final class LocationTest extends TestCase
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
         $this->assertSame($newGeometry, $location->getGeometry());
         $this->assertEquals(new RoadLine('geometry', 'id', $newRoadName, $newCityCode), $location->getRoadLine());
+    }
+
+    public function testRoadTypeDepartmentalRoad(): void
+    {
+        $measure = $this->createMock(Measure::class);
+
+        $location = new Location(
+            uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
+            measure: $measure,
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+            cityCode: null,
+            cityLabel: null,
+            administrator: 'Département du Nord',
+            roadNumber: 'D590',
+            roadName: null,
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: 'geometry',
+            roadLineGeometry: null,
+            roadLineId: null,
+        );
+
+        $this->assertNull($location->getRoadline());
     }
 }

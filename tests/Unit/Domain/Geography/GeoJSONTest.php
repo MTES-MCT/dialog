@@ -27,4 +27,25 @@ final class GeoJSONTest extends TestCase
             $result,
         );
     }
+
+    public function testToPoint(): void
+    {
+        $result = GeoJSON::toPoint(Coordinates::fromLonLat(-1.9, 43.6));
+
+        $this->assertSame(
+            json_encode(
+                [
+                    'type' => 'Point',
+                    'coordinates' => [-1.9, 43.6],
+                    'crs' => [
+                        'type' => 'name',
+                        'properties' => [
+                            'name' => 'EPSG:2154',
+                        ],
+                    ],
+                ],
+            ),
+            $result,
+        );
+    }
 }

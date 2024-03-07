@@ -12,6 +12,7 @@ use App\Application\RoadLine;
 use App\Application\RoadLineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -19,7 +20,6 @@ use PHPUnit\Framework\TestCase;
 
 final class SaveLocationCommandHandlerTest extends TestCase
 {
-    private string $roadType;
     private ?string $administrator;
     private ?string $roadNumber;
     private string $cityCode;
@@ -40,9 +40,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->roadLineSectionMaker = $this->createMock(RoadLineSectionMakerInterface::class);
 
-        $this->roadType = 'lane';
-        $this->administrator = null;
-        $this->roadNumber = null;
+        $this->administrator = 'Département de Loire-Atlantique';
+        $this->roadNumber = 'D12';
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
         $this->roadName = 'Route du Grand Brossais';
@@ -86,9 +85,9 @@ final class SaveLocationCommandHandlerTest extends TestCase
                     new Location(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        roadType: $this->roadType,
-                        administrator: $this->administrator,
-                        roadNumber: $this->roadNumber,
+                        roadType: RoadTypeEnum::LANE->value,
+                        administrator: null,
+                        roadNumber: null,
                         cityCode: $this->cityCode,
                         cityLabel: $this->cityLabel,
                         roadName: $this->roadName,
@@ -111,9 +110,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $command = new SaveLocationCommand();
         $command->measure = $measure;
-        $command->roadType = $this->roadType;
-        $command->administrator = $this->administrator;
-        $command->roadNumber = $this->roadNumber;
+        $command->roadType = RoadTypeEnum::LANE->value;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -150,9 +147,9 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
             measure: $measure,
-            roadType: $this->roadType,
-            administrator: $this->administrator,
-            roadNumber: $this->roadNumber,
+            roadType: RoadTypeEnum::LANE->value,
+            administrator: null,
+            roadNumber: null,
             cityCode: $this->cityCode,
             cityLabel: $this->cityLabel,
             roadName: $this->roadName,
@@ -184,9 +181,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $command = new SaveLocationCommand();
         $command->measure = $measure;
-        $command->roadType = $this->roadType;
-        $command->administrator = $this->administrator;
-        $command->roadNumber = $this->roadNumber;
+        $command->roadType = RoadTypeEnum::LANE->value;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
@@ -205,15 +200,15 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $location
             ->expects(self::once())
             ->method('getRoadType')
-            ->willReturn($this->roadType);
+            ->willReturn(RoadTypeEnum::LANE->value);
         $location
             ->expects(self::once())
             ->method('getAdministrator')
-            ->willReturn($this->administrator);
+            ->willReturn(null);
         $location
             ->expects(self::once())
             ->method('getRoadNumber')
-            ->willReturn($this->roadNumber);
+            ->willReturn(null);
         $location
             ->expects(self::once())
             ->method('getCityLabel')
@@ -246,9 +241,9 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
-                $this->roadType,
-                $this->administrator,
-                $this->roadNumber,
+                RoadTypeEnum::LANE->value,
+                null,
+                null,
                 $this->cityCode,
                 $this->cityLabel,
                 $this->roadName,
@@ -275,7 +270,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         );
 
         $command = new SaveLocationCommand($location);
-        $command->roadType = $this->roadType;
+        $command->roadType = RoadTypeEnum::LANE->value;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->cityCode = $this->cityCode;
@@ -285,5 +280,102 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $command->toHouseNumber = $this->toHouseNumber;
 
         $this->assertSame($location, $handler($command));
+    }
+
+    public function testCreateDepartmentalRoad(): void
+    {
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->roadGeocoder
+            ->expects(self::never())
+            ->method('computeRoadLine');
+
+        $this->roadLineSectionMaker
+            ->expects(self::never())
+            ->method('computeRoadLineSection');
+
+        $createdLocation = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Location(
+                        uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                        measure: $measure,
+                        roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                        administrator: $this->administrator,
+                        roadNumber: $this->roadNumber,
+                        cityCode: null,
+                        cityLabel: null,
+                        roadName: null,
+                        fromHouseNumber: null,
+                        toHouseNumber: null,
+                        geometry: null,
+                        roadLineGeometry: null,
+                        roadLineId: null,
+                    ),
+                ),
+            )
+            ->willReturn($createdLocation);
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->roadGeocoder,
+            $this->roadLineSectionMaker,
+        );
+
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
+
+    public function testUpdateDepartmentalRoad(): void
+    {
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->roadGeocoder
+            ->expects(self::never())
+            ->method('computeRoadLine');
+
+        $this->roadLineSectionMaker
+            ->expects(self::never())
+            ->method('computeRoadLineSection');
+
+        $location = $this->createMock(Location::class);
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->roadGeocoder,
+            $this->roadLineSectionMaker,
+        );
+
+        $command = new SaveLocationCommand($location);
+        $command->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $command->administrator = $this->administrator;
+        $command->roadNumber = $this->roadNumber;
+
+        $result = $handler($command);
+
+        $this->assertSame($location, $result);
     }
 }

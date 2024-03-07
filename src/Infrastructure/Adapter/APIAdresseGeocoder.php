@@ -193,8 +193,8 @@ final class APIAdresseGeocoder implements GeocoderInterface
                 'Accept' => 'application/json',
             ],
             'query' => [
-                'lon' => $point->longitude,
-                'lat' => $point->latitude,
+                'lon' => (string) $point->longitude,
+                'lat' => (string) $point->latitude,
                 'type' => 'housenumber',
             ],
         ]);

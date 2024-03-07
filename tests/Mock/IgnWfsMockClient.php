@@ -63,6 +63,19 @@ final class IgnWfsMockClient extends MockHttpClient
                     ],
                 ],
             ];
+        } elseif ($options['query']['TYPENAME'] === 'BDTOPO_V3:voie_nommee' && str_contains($options['query']['cql_filter'], 'rue de la république')) {
+            $body = [
+                'features' => [
+                    [
+                        // Source: https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=nom_minuscule=%27rue%20de%20la%20r%C3%A9publique%27%20AND%20code_insee=82121&PropertyName=geometrie,id_pseudo_fpb
+                        // Reworked to use a single part (road line returned by IGN appears fragmented in 2 parts)
+                        'geometry' => json_decode('{"type":"MultiLineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.35418135,44.0166645],[1.35375252,44.01687049],[1.35354078,44.01698883],[1.35332393,44.01711159],[1.35325547,44.01714927],[1.35275247,44.01741806],[1.3527081,44.0174426],[1.35249763,44.01756005],[1.35244427,44.01759346],[1.35218587,44.01777231],[1.35197056,44.0179275],[1.35183958,44.01801374],[1.35155475,44.01820029]]]}'),
+                        'properties' => [
+                            'id_pseudo_fpb' => '821216800',
+                        ],
+                    ],
+                ],
+            ];
         } else {
             $body = [
                 'features' => [],

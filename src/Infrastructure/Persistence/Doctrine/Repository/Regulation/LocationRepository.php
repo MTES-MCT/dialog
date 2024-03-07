@@ -27,4 +27,12 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     {
         $this->getEntityManager()->remove($location);
     }
+
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select()
+            ->getQuery()
+            ->getResult();
+    }
 }
