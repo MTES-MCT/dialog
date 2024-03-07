@@ -13,8 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class PeriodFormType extends AbstractType
@@ -64,15 +62,10 @@ final class PeriodFormType extends AbstractType
                 'error_bubbling' => false,
             ])
             ->add('dailyRange', DailyRangeFormType::class)
-            ->add('isPermanent', HiddenType::class)
+            ->add('isPermanent', HiddenType::class, [
+                'data' => (int) $options['isPermanent'],
+            ])
         ;
-
-        $builder
-            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options): void {
-                $data = $event->getData();
-                $data['isPermanent'] = $options['isPermanent'];
-                $event->setData($data);
-            });
     }
 
     private function getRecurrenceTypeOptions(): array
@@ -95,6 +88,7 @@ final class PeriodFormType extends AbstractType
             'data_class' => SavePeriodCommand::class,
             'isPermanent' => false,
         ]);
+
         $resolver->setAllowedTypes('isPermanent', 'boolean');
     }
 }

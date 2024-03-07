@@ -17,7 +17,7 @@
         </property>
         <property name="endDate">
             <constraint name="When">
-                <option name="expression"> this.isPermanent === false </option>
+                <option name="expression"> !this.isPermanent </option>
                 <option name="constraints">
                     <constraint name="NotBlank"/>
                     <constraint name="Type">
@@ -34,7 +34,7 @@
         </property>
         <property name="endTime">
             <constraint name="When">
-                <option name="expression"> this.isPermanent === false </option>
+                <option name="expression"> !this.isPermanent </option>
                 <option name="constraints">
                     <constraint name="NotBlank"/>
                     <constraint name="Type">
