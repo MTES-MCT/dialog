@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 use App\Application\Exception\GeocodingFailureException;
 use App\Infrastructure\Adapter\IgnWfsRoadGeocoder;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -78,6 +79,18 @@ final class IgnWfsRoadGeocoderTest extends TestCase
         $this->expectExceptionMessageMatches($pattern);
 
         $response = new MockResponse($body, ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $roadGeocoder = new IgnWfsRoadGeocoder($this->ignWfsUrl, $http);
+        $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
+    }
+
+    public function testNetworkError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+        $this->expectExceptionMessageMatches('/Idle timeout reached/i');
+
+        $response = new MockResponse([new TransportException('Idle timeout reached')]);
         $http = new MockHttpClient([$response]);
 
         $roadGeocoder = new IgnWfsRoadGeocoder($this->ignWfsUrl, $http);
