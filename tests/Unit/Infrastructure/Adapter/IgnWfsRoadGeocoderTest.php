@@ -88,7 +88,7 @@ final class IgnWfsRoadGeocoderTest extends TestCase
     public function testNetworkError(): void
     {
         $this->expectException(GeocodingFailureException::class);
-        $this->expectExceptionMessageMatches('/^network error:/i');
+        $this->expectExceptionMessageMatches('/Idle timeout reached/i');
 
         $response = new MockResponse([new TransportException('Idle timeout reached')]);
         $http = new MockHttpClient([$response]);
