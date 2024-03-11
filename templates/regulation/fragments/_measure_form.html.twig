@@ -3,8 +3,9 @@
     ? path('fragment_regulations_measure', {regulationOrderRecordUuid: regulationOrderRecord.uuid, uuid: measure.uuid})
     : path('fragment_regulation_measure_add_link', {regulationOrderRecordUuid: regulationOrderRecord.uuid})
 %}
+{% set isPermanent = regulationOrderRecord.regulationOrder.isPermanent %}
 
-{% macro periods_list_item(form, index) %}
+{% macro periods_list_item(form, index, isPermanent) %}
     <li
         class="app-card"
         data-controller="remove"
@@ -29,11 +30,14 @@
                     {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
                     {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
-                </div>
+                {% if not isPermanent %}
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
+                        {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
+                    </div>
+                {% endif %}
             </div>
+            {{ form_row(form.isPermanent) }}
 
             <div data-controller="form-reveal">
                 <hr/>
@@ -359,7 +363,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="period"
                             data-form-collection-next-index-value="{{ form.periods|length > 0 ? form.periods|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__')|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__', isPermanent)|e('html_attr') }}"
                         >
                             <fieldset
                                 class="fr-fieldset"
@@ -374,7 +378,7 @@
                                     aria-label="{{ form.periods.vars.label|trans }}"
                                 >
                                     {% for item in form.periods %}
-                                        {{ _self.periods_list_item(item, loop.index) }}
+                                        {{ _self.periods_list_item(item, loop.index, isPermanent) }}
                                     {% else %}
                                         {% do form.periods.setRendered %}
                                     {% endfor %}
