@@ -23,8 +23,8 @@ final class SyncLocationsCommandTest extends TestCase
 
         $locationRepository
             ->expects(self::once())
-            ->method('findAll')
-            ->willReturn([$location1, $location2]);
+            ->method('iterFindAll')
+            ->willReturn((fn () => yield from [$location1, $location2])());
 
         $commandBus
             ->expects(self::exactly(2))
@@ -34,6 +34,10 @@ final class SyncLocationsCommandTest extends TestCase
         $command = new SyncLocationsCommand($locationRepository, $commandBus);
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
+
         $commandTester->assertCommandIsSuccessful();
+        $lines = array_filter(explode(PHP_EOL, $commandTester->getDisplay()));
+        $errorLines = array_filter($lines, fn ($line) => json_decode($line)->status === 'error');
+        $this->assertEmpty($errorLines);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -28,10 +29,23 @@ class SyncLocationsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $locations = $this->locationRepository->findAll();
+        foreach ($this->locationRepository->iterFindAll() as $location) {
+            $output->writeln(json_encode([
+                'status' => 'info',
+                'message' => 'syncing',
+                'cityLabel' => $location->getCityLabel(),
+                'roadName' => $location->getRoadName(),
+            ]));
 
-        foreach ($locations as $location) {
-            $this->commandBus->handle(new SaveLocationCommand($location));
+            try {
+                $this->commandBus->handle(new SaveLocationCommand($location));
+            } catch (GeocodingFailureException $exc) {
+                $output->writeln(json_encode([
+                    'status' => 'error',
+                    'message' => 'geocoding_error',
+                    'error' => $exc->getMessage(),
+                ]));
+            }
         }
 
         return Command::SUCCESS;

@@ -12,5 +12,5 @@ interface LocationRepositoryInterface
 
     public function delete(Location $location): void;
 
-    public function findAll(): array;
+    public function iterFindAll(): iterable;
 }
