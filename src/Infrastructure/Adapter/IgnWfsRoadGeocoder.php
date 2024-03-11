@@ -7,6 +7,7 @@ namespace App\Infrastructure\Adapter;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
@@ -43,6 +44,9 @@ final class IgnWfsRoadGeocoder implements RoadGeocoderInterface
         } catch (HttpExceptionInterface $exc) {
             $message = sprintf('invalid response: %s', $exc->getMessage());
             throw new GeocodingFailureException($message);
+        } catch (TransportExceptionInterface $exc) {
+            $message = sprintf('network error: %s', $exc->getMessage());
+            throw new GeocodingFailureException($message, previous: $exc);
         }
 
         try {
