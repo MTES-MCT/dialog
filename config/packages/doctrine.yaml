@@ -1,8 +1,13 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
-        platform_service: App\Infrastructure\Persistence\Doctrine\DBAL\CustomPostgreSQLPlatformService
-        schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
+        default_connection: default
+        connections:
+            default:
+                url: '%env(resolve:DATABASE_URL)%'
+                platform_service: App\Infrastructure\Persistence\Doctrine\DBAL\CustomPostgreSQLPlatformService
+                schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
+            bdtopo:
+                url: '%env(resolve:APP_BDTOPO_DATABASE_URL)%'
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
