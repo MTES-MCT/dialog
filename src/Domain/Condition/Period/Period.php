@@ -83,8 +83,8 @@ class Period
 
     public function update(
         \DateTimeInterface $startDateTime,
-        \DateTimeInterface $endDateTime,
         string $recurrenceType,
+        ?\DateTimeInterface $endDateTime,
     ): void {
         $this->startDateTime = $startDateTime;
         $this->endDateTime = $endDateTime;

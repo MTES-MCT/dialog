@@ -55,8 +55,8 @@ final class PeriodTest extends TestCase
         $newEnd = new \DateTimeImmutable('2022-12-20 18:00:00');
         $period->update(
             $newStart,
-            $newEnd,
             PeriodRecurrenceTypeEnum::EVERY_DAY->value,
+            $newEnd,
         );
 
         $this->assertSame($newStart, $period->getStartDateTime());

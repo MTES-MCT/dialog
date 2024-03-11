@@ -97,13 +97,11 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['maxWidth'] = 0.0; // Zero OK
         $values['measure_form']['vehicleSet']['maxLength'] = -0; // Zero OK
         $values['measure_form']['vehicleSet']['maxHeight'] = '2.50';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
         $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['endDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['endTime']['hour'] = '16';
-        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
         $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
         $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
         $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
@@ -363,7 +361,37 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());
     }
 
-    public function testInvalidBlankPeriod(): void
+    public function testPermanentInvalidBlankPeriod(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = '';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '';
+        $values['measure_form']['periods'][0]['startDate'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startTime_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
+    }
+
+    public function testTemporaryInvalidBlankPeriod(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
@@ -379,8 +407,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '0';
         $values['measure_form']['periods'][0]['recurrenceType'] = '';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '';

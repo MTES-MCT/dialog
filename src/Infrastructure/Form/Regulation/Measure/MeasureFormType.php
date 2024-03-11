@@ -41,7 +41,10 @@ final class MeasureFormType extends AbstractType
             ->add('vehicleSet', VehicleSetFormType::class)
             ->add('periods', CollectionType::class, [
                 'entry_type' => PeriodFormType::class,
-                'entry_options' => ['label' => false],
+                'entry_options' => [
+                    'label' => false,
+                    'isPermanent' => $options['isPermanent'],
+                ],
                 'prototype_name' => '__period_name__',
                 'label' => 'regulation.period_list',
                 'help' => 'regulation.period_list.help',
@@ -95,9 +98,11 @@ final class MeasureFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SaveMeasureCommand::class,
             'administrators' => [],
+            'isPermanent' => false,
             'feature_road_type' => false,
             'validation_groups' => ['Default', 'html_form'],
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
+        $resolver->setAllowedTypes('isPermanent', 'boolean');
     }
 }

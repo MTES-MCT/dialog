@@ -35,6 +35,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertEmpty($regulationOrder->getMeasures()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getOtherCategoryText());
+        $this->assertFalse($regulationOrder->isPermanent());
     }
 
     public function testUpdate(): void

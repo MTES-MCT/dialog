@@ -56,6 +56,7 @@ final class AddMeasureController extends AbstractRegulationController
         $form = $this->formFactory->create(MeasureFormType::class, $command, [
             'action' => $this->router->generate('fragment_regulations_measure_add', ['uuid' => $uuid]),
             'administrators' => $administrators,
+            'isPermanent' => $regulationOrder->isPermanent(),
             'feature_road_type' => $this->featureFlagService->isFeatureEnabled('road_type', $request),
         ]);
         $form->handleRequest($request);

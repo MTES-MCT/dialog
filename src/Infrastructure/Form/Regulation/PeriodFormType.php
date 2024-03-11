@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,6 +24,20 @@ final class PeriodFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if (!$options['isPermanent']) {
+            $builder
+                ->add('endDate', DateType::class, [
+                    'label' => 'regulation.period.endDate',
+                    'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
+                ])
+                ->add('endTime', TimeType::class, [
+                    'label' => 'regulation.period.endTime',
+                    'widget' => 'choice',
+                    'view_timezone' => $this->clientTimezone,
+                ]);
+        }
+
         $builder
             ->add('startDate', DateType::class, [
                 'label' => 'regulation.period.startDate',
@@ -31,16 +46,6 @@ final class PeriodFormType extends AbstractType
             ])
             ->add('startTime', TimeType::class, [
                 'label' => 'regulation.period.startTime',
-                'widget' => 'choice',
-                'view_timezone' => $this->clientTimezone,
-            ])
-            ->add('endDate', DateType::class, [
-                'label' => 'regulation.period.endDate',
-                'widget' => 'single_text',
-                'view_timezone' => $this->clientTimezone,
-            ])
-            ->add('endTime', TimeType::class, [
-                'label' => 'regulation.period.endTime',
                 'widget' => 'choice',
                 'view_timezone' => $this->clientTimezone,
             ])
@@ -57,6 +62,9 @@ final class PeriodFormType extends AbstractType
                 'error_bubbling' => false,
             ])
             ->add('dailyRange', DailyRangeFormType::class)
+            ->add('isPermanent', HiddenType::class, [
+                'data' => (int) $options['isPermanent'],
+            ])
         ;
     }
 
@@ -78,6 +86,9 @@ final class PeriodFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SavePeriodCommand::class,
+            'isPermanent' => false,
         ]);
+
+        $resolver->setAllowedTypes('isPermanent', 'boolean');
     }
 }

@@ -26,7 +26,9 @@ final class SavePeriodCommandHandler
     {
         $command->clean();
         $command->startDate = $this->dateUtils->mergeDateAndTime($command->startDate, $command->startTime);
-        $command->endDate = $this->dateUtils->mergeDateAndTime($command->endDate, $command->endTime);
+        $command->endDate = $command->endDate && $command->endTime
+            ? $this->dateUtils->mergeDateAndTime($command->endDate, $command->endTime)
+            : null;
 
         if ($command->period) {
             $dailyRange = $command->period->getDailyRange();
@@ -61,8 +63,8 @@ final class SavePeriodCommandHandler
 
             $command->period->update(
                 startDateTime: $command->startDate,
-                endDateTime: $command->endDate,
                 recurrenceType: $command->recurrenceType,
+                endDateTime: $command->endDate,
             );
 
             return $command->period;

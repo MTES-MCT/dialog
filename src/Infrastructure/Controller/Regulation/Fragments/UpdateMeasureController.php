@@ -50,6 +50,7 @@ final class UpdateMeasureController extends AbstractRegulationController
     public function __invoke(Request $request, string $regulationOrderRecordUuid, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
         if (!$measure) {
@@ -68,6 +69,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                     'uuid' => $uuid,
                 ]),
                 'administrators' => $administrators,
+                'isPermanent' => $regulationOrder->isPermanent(),
                 'feature_road_type' => $this->featureFlagService->isFeatureEnabled('road_type', $request),
             ],
         );
