@@ -391,7 +391,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
     }
 
-    public function testTemporarlyInvalidBlankPeriod(): void
+    public function testTemporaryInvalidBlankPeriod(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
