@@ -76,6 +76,11 @@ class RegulationOrder
         return $this->regulationOrderRecord;
     }
 
+    public function isPermanent(): bool
+    {
+        return !$this->endDate;
+    }
+
     public function update(
         string $identifier,
         string $category,
