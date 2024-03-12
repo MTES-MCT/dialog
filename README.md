@@ -29,6 +29,8 @@ ou lancez la commande suivante si le projet avait déjà été installé :
 make start
 ```
 
+Demandez à un membre de l'équipe la valeur de la variable d'environnement `BDTOPO_DATABASE_URL` pour l'environnement staging, et ajoutez-la à `.env.local` (fichier à créer si besoin).
+
 ## Environnements
 
 ### 🚀 Production
