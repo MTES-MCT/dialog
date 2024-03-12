@@ -28,15 +28,15 @@ La BD TOPO est mise à jour environ une fois par an.
 
 Pour mettre à jour les données dans sur staging puis en production :
 
-1. Télécharger la nouvelle version du [Thème Transports](https://geoservices.ign.fr/bdtopo#telechargementtransportter) pour la "France métropolitaine" ainsi que pour chaque DROM-COM (Guadeleoupe, etc) et les placer dans un même dossier, appelé ci-dessous `/path/to/theme_transport`. (Environ 5 Go)
+1. Télécharger la nouvelle version du [Thème Transports](https://geoservices.ign.fr/bdtopo#telechargementtransportter) pour la "France métropolitaine" ainsi que pour chaque DROM-COM (Guadeleoupe, etc) et les placer dans un même dossier, appelé ci-dessous `/path/to/bdtopo_transport`. (Environ 5 Go)
 2. Lancer le script suivant :
     ```bash
-    ./tools/bdtopo_update /path/to/theme_transport dialog-staging
+    ./tools/bdtopo_update /path/to/bdtopo_transport dialog-staging
     ```
 3. Une fois l'exécution réussie, vérifier le bon fonctionnement en se connectant à staging et en modifiant par exemple la voie nommée d'une localisation.
 4. Lancer le script sur la production
     ```bash
-    ./tools/bdtopo_update.sh /path/to/theme_transport dialog
+    ./tools/bdtopo_update /path/to/theme_transport dialog
     ```
 
 Le script `bdtopo_update` intègre à l'environnement indiqué les tables configurées dans `cotools/bdtopo_update.config.json`. Pour cela, il crée un schéma de base de données temporaire et y intègre les nouvelles tables, puis remplace les anciennes tables par les nouvelles.

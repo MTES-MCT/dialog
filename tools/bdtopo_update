@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import signal
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass
+class Config:
+    tables: list[str]
+
+
+def main(config: Config, transport_dir: Path, app: str) -> int:
+    if not transport_dir.exists():
+        print(f"ERROR: directory {transport_dir} does not exist", file=sys.stderr)
+        return 1
+
+    geopackage_paths = [
+        path
+        for path in transport_dir.glob("*/BDTOPO/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*")
+        if path.stem in config.tables
+    ]
+
+    if not geopackage_paths:
+        print("WARNING: no geopackages found", file=sys.stderr)
+        return 2
+
+    print("---> Opening DB tunnel...")
+
+    with subprocess.Popen(
+        ["./tools/scalingodbtunnel", app, "--env-var", "BDTOPO_DATABASE_URL"],
+        stdout=subprocess.PIPE,
+    ) as tunnel_proc:
+        print("---> Tunnel open.")
+
+        print("---> Importing BD TOPO content...")
+
+        temp_tables_to_drop = set()
+
+        try:
+            # TODO use real database url
+            # database_url = tunnel_proc.stdout.readline().decode()
+            database_url = "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo"
+
+            tables_to_rename = {}
+
+            for path in geopackage_paths:
+                print(f"------> Import package: {path}")
+
+                # Import into temporary tables, we'll rename everything at once if
+                # all imports were successful, otherwise we'll drop all temp tables.
+
+                target_table = path.stem  # e.g. voie_nommee
+                temp_table = f"{target_table}_temp"  # e.g. voie_nommee_temp
+
+                temp_tables_to_drop.add(temp_table)
+
+                result = subprocess.run(
+                    [
+                        "ogr2ogr",
+                        "-f",
+                        "PostgreSQL",
+                        f"PG:{database_url}",
+                        str(path),
+                        "-nln",
+                        temp_table,
+                    ],
+                )
+
+                if result.returncode:
+                    print(
+                        "ERROR: ogr2ogr command failed, see output above",
+                        file=sys.stderr,
+                    )
+                    return 1
+
+                tables_to_rename[temp_table] = target_table
+                temp_tables_to_drop.add(temp_table)
+
+            print("------> Import successful!")
+            print("------> Renaming tables...")
+
+            # Now we replace all existing tables with their temporary equivalent
+            # where the data has just been successfully imported.
+
+            statements = []
+
+            for temp_table, target_table in tables_to_rename.items():
+                statements += [
+                    # NOTE: need to rename indices and sequences explicitly because they are not renamed automatically when tables are renamed.
+                    f"""
+                    DO $$ BEGIN
+                        IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename = '{target_table}') THEN
+                            EXECUTE '
+                                ALTER TABLE {target_table} RENAME TO {target_table}_old;
+                                ALTER SEQUENCE {target_table}_fid_seq RENAME TO {target_table}_old_fid_seq;
+                                ALTER INDEX {target_table}_pkey RENAME TO {target_table}_old_pkey;
+                                ALTER INDEX {target_table}_geometrie_geom_idx RENAME TO {target_table}_old_geometrie_geom_idx;
+                            ';
+                        END IF;
+                    END$$;""",
+                    f"ALTER TABLE {temp_table} RENAME TO {target_table};",
+                    f"ALTER SEQUENCE {temp_table}_fid_seq RENAME TO {target_table}_fid_seq;",
+                    f"ALTER INDEX {temp_table}_pkey RENAME TO {target_table}_pkey;",
+                    f"ALTER INDEX {temp_table}_geometrie_geom_idx RENAME TO {target_table}_geometrie_geom_idx;",
+                    f"DROP TABLE IF EXISTS {target_table}_old;",
+                ]
+
+            # Wrap in a transaction to make sure we rename everything, or do nothing.
+            sql = "".join(["BEGIN;", *statements, "COMMIT;"])
+
+            # If an error occurs here, the database will rollback the transaction,
+            # undoing any RENAME's or DROP TABLE's, and we'll proceed to cleaning up
+            # temporary tables through the 'finally' clause below.
+            result = subprocess.run(["psql", database_url, "-c", sql])
+            result.check_returncode()
+
+            for temp_table in tables_to_rename:
+                temp_tables_to_drop.remove(temp_table)  # It was renamed.
+
+            print("------> Tables successfully renamed")
+        except KeyboardInterrupt:
+            # Stop everything, we'll proceed to clean up in the 'finally' block.
+            return 3
+        finally:
+            if temp_tables_to_drop:
+                print("---> Cleaning up temporary tables...")
+
+                for table in temp_tables_to_drop:
+                    sql = f"DROP TABLE IF EXISTS {table};"
+                    print(f"------> Executing: {sql}")
+
+                    result = subprocess.run(["psql", database_url, "-c", sql])
+
+                    if result.returncode:
+                        print(
+                            f"WARNING: there was an issue while dropping temporary table {table}, see output above",
+                            file=sys.stderr,
+                        )
+
+            print("---> Stopping tunnel...")
+            tunnel_proc.send_signal(signal.SIGINT)
+            tunnel_proc.wait()
+
+    return 0
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("transport_dir", type=Path)
+    parser.add_argument("app", choices=["dialog", "dialog-staging"])
+    parser.add_argument("--prod", action="store_true")
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=Path,
+        default=Path(__file__).parent / "bdtopo_update.config.json",
+    )
+    args = parser.parse_args()
+
+    if args.app == "dialog" and not args.prod:
+        print(
+            "ERROR: please pass --prod when targetting the production environment",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    config = Config(**json.loads(args.config.read_text()))
+
+    sys.exit(
+        main(
+            config,
+            transport_dir=args.transport_dir,
+            app=args.app,
+        )
+    )

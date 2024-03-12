@@ -26,7 +26,7 @@ Conséquences :
 * Un utilisateur `dialog_bdtopo` sera créé avec accès "read-only" à la base de données.
 * La connexion entre DiaLog et les données BD TOPO se feront par une connexion PostgreSQL utilisant l'utilisateur `dialog_bdtopo`.
 * Un script sera réalisé pour l'ingestion des tables souhaitées de la BD TOPO (création initiale ou mise à jour). Ce script intègrera la création des indexes pertinents.
-* Un espace de stockage suffisant devra être prévu dans la base de données de production : au moins 10 Go. Le cas échéant, le plan Scalingo devra être augmenté.
+* Un espace de stockage suffisant devra être prévu dans la base de données de production : au moins 2 x 5 Go = 10 Go rien que pour la BD TOPO (la mise à jour "tout ou rien" implique l'existence temporaire des données en double). Le cas échéant, le plan Scalingo devra être augmenté.
 * De la documentation sera ajoutée pour le fonctionnement de l'intégration BD TOPO et la mise à jour des données.
 
 ## Options envisagées
@@ -119,15 +119,13 @@ Une mise à jour semi-manuelle (déclenchement manuel à l'aide de scripts) est 
 
 La mise à jour des données BD TOPO pourra se faire par l'équipe de développement comme suit :
 
-* Télécharger en local la nouvelle version du thème Transports ;
-* Créer un schéma temporaire dans la base de données hébergée sur Scalingo, par exemple `bdtopo_migration` ;
-* Y intégrer les données avec `ogr2ogr` en spécifiant le schéma `bdtopo_migration`.
-* Renommer temporairement les tables dans le schéma `public`, puis déplacer les nouvelles tables de `bdtopo_migration` vers `public`.
-* Supprimer les anciennes tables du schéma `public`.
+* Télécharger en local la nouvelle version du thème Transports
+* Exécuter un script utilitaire qui fera les opérations suivantes :
+  * Importer les données avec `ogr2ogr` dans des tables temporaires
+  * Une fois l'import entièrement réussi, remplacer les tables précédentes par les nouvelles tables
+  * Faire en sorte que le processus soit "atomique" : soit la mise à jour réussit entièrement, soit rien ne change
 
-Cette approche minimise les risques de rupture de service, comparativement à la suppression des tables préalable à leur ingestion. En effet, l'ingestion des tables pourrait prendre plusieurs dizaines de secondes, alors qu'un renommage final sera très rapide.
-
-Un script utilitaire permettra de faciliter l'exécution par l'équipe de développement.
+Cette approche minimise les risques de rupture de service, comparativement à la suppression des tables préalable à leur ingestion. En effet, l'ingestion des tables pourrait prendre plusieurs dizaines de secondes, alors qu'un renommage final sera très rapide. Néanmoins, elle implique une petite complexité supplémentaire pour le renommage, et nécessite de stocker temporairement dans PostgreSQL l'ancienne version ET la nouvelle version des données, ce qui implique un surdimensionnement du stockage de la base par rapport aux besoins au runtime.
 
 ## Références
 
