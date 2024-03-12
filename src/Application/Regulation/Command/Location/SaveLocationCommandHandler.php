@@ -8,6 +8,7 @@ use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
@@ -27,7 +28,11 @@ final class SaveLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
+            if ($command->departmentalRoadGeometry) {
+                $geometry = $command->departmentalRoadGeometry;
+            } else {
+                $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
+            }
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -50,9 +55,13 @@ final class SaveLocationCommandHandler
             return $location;
         }
 
-        $geometry = $this->shouldRecomputeGeometry($command)
-            ? $this->computeGeometry($command)
-            : $command->location->getGeometry();
+        if ($command->departmentalRoadGeometry) {
+            $geometry = $command->departmentalRoadGeometry;
+        } else {
+            $geometry = $this->shouldRecomputeGeometry($command)
+                ? $this->computeGeometry($command)
+                : $command->location->getGeometry();
+        }
 
         $command->location->update(
             roadType: $command->roadType,
@@ -105,8 +114,8 @@ final class SaveLocationCommandHandler
             return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
         }
 
-        if ($command->roadNumber) {
-            return $command->geometry;
+        if ($command->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value && $command->departmentalRoadGeometry) {
+            return $command->departmentalRoadGeometry;
         }
 
         return null;

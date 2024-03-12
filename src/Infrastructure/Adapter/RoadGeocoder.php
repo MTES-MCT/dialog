@@ -8,7 +8,7 @@ use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class IgnWfsGeocoder implements RoadGeocoderInterface
+final class RoadGeocoder implements RoadGeocoderInterface
 {
     public function __construct(
         private string $ignWfsUrl,
@@ -49,7 +49,7 @@ final class IgnWfsGeocoder implements RoadGeocoderInterface
 
     public function computeRoadLine(string $roadName, string $inseeCode): string
     {
-        $normalizedRoadName = str_replace("'", "''", strtolower($roadName));
+        $normalizedRoadName = strtolower($roadName);
 
         $data = $this->fetch(
             typeName: 'BDTOPO_V3:voie_nommee',
@@ -70,31 +70,24 @@ final class IgnWfsGeocoder implements RoadGeocoderInterface
         throw new GeocodingFailureException($message);
     }
 
-    public function getDepartmentalRoad(string $search, string $gestionnaire, string $roadType): array
+    public function getDepartmentalRoad(string $search, string $administrator): array
     {
         $normalizedSearch = str_replace("'", "''", strtoupper($search));
 
         $data = $this->fetch(
             typeName: 'BDTOPO_V3:route_numerotee_ou_nommee',
-            cqlFilter: sprintf("strStartsWith(numero, '%s')=true AND gestionnaire='%s' AND type_de_route='%s'", $normalizedSearch, $gestionnaire, $roadType),
+            cqlFilter: sprintf("strStartsWith(numero, '%s')=true AND gestionnaire='%s' AND type_de_route='Départementale'", $normalizedSearch, $administrator),
             propertyName: 'numero,geometrie',
         );
+
         $numeros = [];
 
-        if (isset($data['features']) && !empty($data['features'])) {
-            $i = 0;
-            $totalFeatures = \count($data['features']);
-            while ($i < $totalFeatures) {
-                $feature = $data['features'][$i];
-                if (isset($feature['properties']['numero'])) {
-                    $numero = $feature['properties']['numero'];
-                    $geometry = json_encode($feature['geometry']);
-                    $numeros[] = [
-                        'numero' => $numero,
-                        'geometry' => $geometry,
-                    ];
-                }
-                ++$i;
+        if (isset($data['features'])) {
+            foreach ($data['features'] as $feature) {
+                $numeros[] = [
+                    'numero' => $feature['properties']['numero'],
+                    'geometry' => json_encode($feature['geometry']),
+                ];
             }
         }
 

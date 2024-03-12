@@ -27,31 +27,14 @@ final class IgnWfsMockClient extends MockHttpClient
     private function getWfsMock($options): MockResponse
     {
         if ($options['query']['TYPENAME'] === 'BDTOPO_V3:route_numerotee_ou_nommee') {
-            if (str_contains($options['query']['cql_filter'], "strStartsWith(numero, 'D32')=true AND gestionnaire='Ardennes' AND type_de_route='Départementale'")) {
+            if (str_contains($options['query']['cql_filter'], 'D32')) {
                 $body = [
                     'features' => [
                         [
                             'properties' => [
                                 'numero' => 'D322',
                             ],
-                            'geometry' => [
-                                'type' => 'MultiLineString',
-                                'coordinates' => [
-                                    [
-                                        [4.66349228, 49.8207711],
-                                        [4.66356107, 49.82070816],
-                                        [4.6636232, 49.8206543],
-                                        [4.66372513, 49.82058551],
-                                        [4.66385317, 49.82050828],
-                                        [4.66399657, 49.82043354],
-                                        [4.66415639, 49.82035139],
-                                        [4.6643028, 49.82028379],
-                                        [4.66443686, 49.82022086],
-                                        [4.66459579, 49.82015399],
-                                        [4.6647601, 49.82008166],
-                                    ],
-                                ],
-                            ],
+                            'geometry' => json_decode('{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}', associative: true),
                         ],
                     ],
                 ];

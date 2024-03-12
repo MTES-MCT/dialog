@@ -4,9 +4,7 @@
         <body>
             <trans-unit id="common.javascript_required">
                 <source>common.javascript_required</source>
-                <target>Pour accéder à toutes les fonctionnalités de DiaLog, vous devez activer
-                    JavaScript. Voici les <![CDATA[<a href="https://www.enable-javascript.com/fr/" target="_blank" rel="noreferrer">]]>instructions pour activer JavaScript dans votre navigateur<![CDATA[</a>]]>
-                    .</target>
+                <target>Pour accéder à toutes les fonctionnalités de DiaLog, vous devez activer JavaScript. Voici les <![CDATA[<a href="https://www.enable-javascript.com/fr/" target="_blank" rel="noreferrer">]]>instructions pour activer JavaScript dans votre navigateur<![CDATA[</a>]]>.</target>
             </trans-unit>
             <trans-unit id="common.results">
                 <source>common.results</source>

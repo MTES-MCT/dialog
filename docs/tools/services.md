@@ -33,7 +33,7 @@ POINT(1.386715 44.049081)
 
 ## API Geopf
 
-DiaLog s'interface avec l'[API geoservices de l'IGN] (https://data.geopf.fr/wfs/ows) pour récupérer dynamiquement les géometries des voies et routes.
+DiaLog s'interface avec l'[API WFS de l'IGN](https://geoservices.ign.fr/documentation/services/services-geoplateforme/diffusion#70070) pour récupérer dynamiquement les géometries des voies et routes.
 
 ### Liens utiles
 

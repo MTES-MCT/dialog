@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
-use App\Infrastructure\Adapter\IgnWfsGeocoder;
+use App\Infrastructure\Adapter\RoadGeocoder;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class IgnWfsGeocoderTest extends TestCase
+final class RoadGeocoderTest extends TestCase
 {
     private string $address = 'Rue Saint-Victor 59110 La Madeleine';
     private string $inseeCode = '59368';
     private string $departmentalRoadNumber = 'D32';
     private string $gestionnaire = 'Ardennes';
-    private string $roadType = 'Départementale';
     private string $baseUrl = 'http://testserver';
     private string $ignWfsUrl = 'http://testserver/wfs/ows';
 
@@ -26,7 +25,7 @@ final class IgnWfsGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response], $this->baseUrl);
 
-        $roadGeocoder = new IgnWfsGeocoder($this->ignWfsUrl, $http);
+        $roadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
 
         $geometry = $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
 
@@ -35,25 +34,6 @@ final class IgnWfsGeocoderTest extends TestCase
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
             'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(nom_minuscule)%3DstrStripAccents(%27rue%20saint-victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
-            $response->getRequestUrl(),
-        );
-    }
-
-    public function testGetDepartmentalRoad(): void
-    {
-        $body = '{"type":"FeatureCollection","features":[{"type":"Feature","id":"route_numerotee_ou_nommee.48154","geometry":{"type":"MultiLineString","coordinates":[]},"geometry_name":"geometrie","properties":{"numero":"D32"},"bbox":[4.37161876,49.78157612,4.44694714,49.94114102]}],"totalFeatures":1,"numberMatched":1,"numberReturned":1,"timeStamp":"2024-03-05T10:05:03.145Z","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::4326"}},"bbox":[4.37161876,49.56433173,4.89664925,49.94114102]}';
-
-        $response = new MockResponse($body, ['http_code' => 200]);
-        $http = new MockHttpClient([$response], $this->baseUrl);
-
-        $IgnWfsGeocoder = new IgnWfsGeocoder($this->ignWfsUrl, $http);
-
-        $geometry = $IgnWfsGeocoder->getDepartmentalRoad($this->departmentalRoadNumber, $this->gestionnaire, $this->roadType);
-        $this->assertSame('D32', $geometry[0]['numero']);
-        $this->assertSame('{"type":"MultiLineString","coordinates":[]}', $geometry[0]['geometry']);
-        $this->assertSame('GET', $response->getRequestMethod());
-        $this->assertSame(
-            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:route_numerotee_ou_nommee&cql_filter=strStartsWith(numero%2C%20%27D32%27)%3Dtrue%20AND%20gestionnaire%3D%27Ardennes%27%20AND%20type_de_route%3D%27D%C3%A9partementale%27&PropertyName=numero%2Cgeometrie',
             $response->getRequestUrl(),
         );
     }
@@ -78,7 +58,7 @@ final class IgnWfsGeocoderTest extends TestCase
         $response = new MockResponse('...', ['http_code' => $statusCode]);
         $http = new MockHttpClient([$response]);
 
-        $roadGeocoder = new IgnWfsGeocoder($this->ignWfsUrl, $http);
+        $roadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
         $roadGeocoder->computeRoadLine($this->address, $this->inseeCode);
     }
 
@@ -103,9 +83,9 @@ final class IgnWfsGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $IgnWfsGeocoder = new IgnWfsGeocoder($this->ignWfsUrl, $http);
+        $RoadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
 
-        $IgnWfsGeocoder->computeRoadLine($this->address, $this->inseeCode);
+        $RoadGeocoder->computeRoadLine($this->address, $this->inseeCode);
     }
 
     private function provideDecodeErrorDataForDepartmental(): array
@@ -126,8 +106,27 @@ final class IgnWfsGeocoderTest extends TestCase
         $response = new MockResponse($body, ['http_code' => 200]);
         $http = new MockHttpClient([$response]);
 
-        $IgnWfsGeocoder = new IgnWfsGeocoder($this->ignWfsUrl, $http);
+        $RoadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
 
-        $IgnWfsGeocoder->getDepartmentalRoad($this->departmentalRoadNumber, $this->gestionnaire, $this->roadType);
+        $RoadGeocoder->getDepartmentalRoad($this->departmentalRoadNumber, $this->gestionnaire);
+    }
+
+    public function testGetDepartmentalRoad(): void
+    {
+        $body = '{"type":"FeatureCollection","features":[{"type":"Feature","id":"route_numerotee_ou_nommee.48154","geometry":{"type":"MultiLineString","coordinates":[]},"geometry_name":"geometrie","properties":{"numero":"D32"},"bbox":[4.37161876,49.78157612,4.44694714,49.94114102]}],"totalFeatures":1,"numberMatched":1,"numberReturned":1,"timeStamp":"2024-03-05T10:05:03.145Z","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::4326"}},"bbox":[4.37161876,49.56433173,4.89664925,49.94114102]}';
+
+        $response = new MockResponse($body, ['http_code' => 200]);
+        $http = new MockHttpClient([$response], $this->baseUrl);
+
+        $RoadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
+
+        $geometry = $RoadGeocoder->getDepartmentalRoad($this->departmentalRoadNumber, $this->gestionnaire);
+        $this->assertSame('D32', $geometry[0]['numero']);
+        $this->assertSame('{"type":"MultiLineString","coordinates":[]}', $geometry[0]['geometry']);
+        $this->assertSame('GET', $response->getRequestMethod());
+        $this->assertSame(
+            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:route_numerotee_ou_nommee&cql_filter=strStartsWith(numero%2C%20%27D32%27)%3Dtrue%20AND%20gestionnaire%3D%27Ardennes%27%20AND%20type_de_route%3D%27D%C3%A9partementale%27&PropertyName=numero%2Cgeometrie',
+            $response->getRequestUrl(),
+        );
     }
 }

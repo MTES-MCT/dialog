@@ -19,9 +19,9 @@ final class GetDepartmentalRoadCompletionFragmentController
     }
 
     #[Route(
-        '/_fragment/roads_numbers-completions',
+        '/_fragment/road-number-completions',
         methods: 'GET',
-        name: 'fragment_roads_numbers_completion',
+        name: 'fragment_road_number_completion',
     )]
     public function __invoke(Request $request): Response
     {
@@ -32,14 +32,13 @@ final class GetDepartmentalRoadCompletionFragmentController
             throw new BadRequestHttpException();
         }
 
-        $roadType = 'Départementale';
-        $departmentalRoadsNumbers = $this->roadGeocoder->getDepartmentalRoad($search, $administrator, $roadType);
+        $departmentalRoadNumbers = $this->roadGeocoder->getDepartmentalRoad($search, $administrator);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_roads_numbers_completions.html.twig',
+                name: 'regulation/fragments/_road_numbers_completions.html.twig',
                 context: [
-                    'departmentalRoadsNumbers' => $departmentalRoadsNumbers,
+                    'departmentalRoadNumbers' => $departmentalRoadNumbers,
                 ],
             ),
         );

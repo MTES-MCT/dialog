@@ -11,7 +11,7 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
     public function testDepartmentalRoadAutoComplete(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/roads_numbers-completions?search=d32&administrator=Ardennes');
+        $crawler = $client->request('GET', '/_fragment/road-number-completions?search=d32&administrator=Ardennes');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -27,7 +27,7 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
     public function testBadRequest(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/roads_numbers-completions');
+        $client->request('GET', '/_fragment/road-number-completions');
         $client->getResponse();
 
         $this->assertResponseStatusCodeSame(400);
@@ -36,7 +36,7 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/roads_numbers-completions?search=Test&administrator=Test');
+        $client->request('GET', '/_fragment/road-number-completions?search=Test&administrator=Test');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

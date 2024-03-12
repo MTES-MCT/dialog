@@ -267,7 +267,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('getFromHouseNumber')
             ->willReturn($this->fromHouseNumber);
         $location
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('getGeometry')
             ->willReturn($this->geometry);
         $location

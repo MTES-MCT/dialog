@@ -73,7 +73,7 @@
                 </option>
             </constraint>
         </property>
-        <property name="geometry">
+        <property name="departmentalRoadGeometry">
             <constraint name="When">
                 <option name="expression"> this.roadType === 'departmentalRoad' </option>
                 <option name="constraints">
