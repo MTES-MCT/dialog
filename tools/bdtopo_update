@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
 import signal
 import subprocess
 import sys
+from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -14,7 +14,7 @@ class Config:
     tables: list[str]
 
 
-def main(config: Config, transport_dir: Path, app: str) -> int:
+def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
     if not transport_dir.exists():
         print(f"ERROR: directory {transport_dir} does not exist", file=sys.stderr)
         return 1
@@ -29,33 +29,67 @@ def main(config: Config, transport_dir: Path, app: str) -> int:
         print("WARNING: no geopackages found", file=sys.stderr)
         return 2
 
-    print("---> Opening DB tunnel...")
+    with ExitStack() as exit_stack:
+        if target.startswith(("postgresql://", "postgres://")):
+            database_url = target
+        else:
+            app = target
 
-    with subprocess.Popen(
-        ["./tools/scalingodbtunnel", app, "--env-var", "BDTOPO_DATABASE_URL"],
-        stdout=subprocess.PIPE,
-    ) as tunnel_proc:
-        print("---> Tunnel open.")
+            print(f"===> Opening DB tunnel to app {app}...")
 
-        print("---> Importing BD TOPO content...")
+            tunnel_proc = exit_stack.enter_context(
+                subprocess.Popen(
+                    [
+                        "./tools/scalingodbtunnel",
+                        app,
+                        "--env-var",
+                        "BDTOPO_DATABASE_URL",
+                    ],
+                    stdout=subprocess.PIPE,
+                )
+            )
+
+            def _close_tunnel():
+                print("---> Stopping tunnel...")
+                tunnel_proc.send_signal(signal.SIGINT)
+                tunnel_proc.wait()
+
+            exit_stack.callback(_close_tunnel)
+
+            database_url = tunnel_proc.stdout.readline().decode()
+
+            if not database_url:
+                print(
+                    "ERROR: failed to open DB tunnel, see output above",
+                    file=sys.stderr,
+                )
+                return 1
+
+            print("---> Tunnel open.")
+
+            # TODO remove
+            database_url = "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo"
+
+        print("===> Will import into")
+        print(database_url)
+
+        if not yes and input("------> Proceed? (y/N) ") != "y":
+            return 1
+
+        print("===> Importing BD TOPO content...")
 
         temp_tables_to_drop = set()
 
         try:
-            # TODO use real database url
-            # database_url = tunnel_proc.stdout.readline().decode()
-            database_url = "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo"
-
             tables_to_rename = {}
 
             for path in geopackage_paths:
-                print(f"------> Import package: {path}")
-
                 # Import into temporary tables, we'll rename everything at once if
                 # all imports were successful, otherwise we'll drop all temp tables.
 
                 target_table = path.stem  # e.g. voie_nommee
                 temp_table = f"{target_table}_temp"  # e.g. voie_nommee_temp
+                print(f"------> Import into {temp_table}: {path}")
 
                 temp_tables_to_drop.add(temp_table)
 
@@ -63,21 +97,29 @@ def main(config: Config, transport_dir: Path, app: str) -> int:
                     [
                         # See general ogr2ogr options here:
                         # https://gdal.org/programs/ogr2ogr.html
-                        # See PostgreSQL specific options here:
-                        # https://gdal.org/drivers/vector/pg.html
                         "ogr2ogr",
                         "-progress",
+                        # Append to existing table (for subsequent runs of this command)
+                        "-append",
+                        # Import into the temporary table
+                        "-nln",  # nln = New layer name
+                        temp_table,
+                        # Use explicit primary key column name for renaming
+                        "-lco",
+                        "FID=fid",
+                        # Setup connection to the PostgreSQL database
+                        # See specific PostgreSQL options here:
+                        # https://gdal.org/drivers/vector/pg.html
                         "-f",
                         "PostgreSQL",
                         f"PG:{database_url}",
-                        str(path),
-                        "-nln", # New layer name
-                        temp_table,
                         # Enable slightly faster ingestion
                         # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
                         "--config",
                         "PG_USE_COPY",
                         "YES",
+                        # Path to source geopackage
+                        str(path),
                     ],
                 )
 
@@ -91,6 +133,7 @@ def main(config: Config, transport_dir: Path, app: str) -> int:
                 tables_to_rename[temp_table] = target_table
 
             print("------> Import successful!")
+
             print("------> Renaming tables...")
 
             # Now we replace all existing tables with their temporary equivalent
@@ -100,7 +143,7 @@ def main(config: Config, transport_dir: Path, app: str) -> int:
 
             for temp_table, target_table in tables_to_rename.items():
                 statements += [
-                    # NOTE: need to rename indices and sequences explicitly because they are not renamed automatically when tables are renamed.
+                    # Need to rename indices and sequences explicitly because they are not renamed automatically when tables are renamed.
                     f"""
                     DO $$ BEGIN
                         IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename = '{target_table}') THEN
@@ -147,22 +190,28 @@ def main(config: Config, transport_dir: Path, app: str) -> int:
 
                     if result.returncode:
                         print(
-                            f"WARNING: there was an issue while dropping temporary table {table}, see output above",
+                            "WARNING: there was an issue while dropping "
+                            f"temporary table {table}, see output above",
                             file=sys.stderr,
                         )
-
-            print("---> Stopping tunnel...")
-            tunnel_proc.send_signal(signal.SIGINT)
-            tunnel_proc.wait()
 
     return 0
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("transport_dir", type=Path)
-    parser.add_argument("app", choices=["dialog", "dialog-staging"])
-    parser.add_argument("--prod", action="store_true")
+    parser.add_argument(
+        "transport_dir",
+        type=Path,
+        help="Path to directory of BD TOPO Transport Theme data",
+    )
+    parser.add_argument(
+        "target", help="Name of Scalingo app, or a PostgreSQL database URL"
+    )
+    parser.add_argument(
+        "--prod", action="store_true", help="Required if targetting 'dialog' app"
+    )
+    parser.add_argument("-y", "--yes", action="store_true", help="Accept all prompts")
     parser.add_argument(
         "-c",
         "--config",
@@ -171,7 +220,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.app == "dialog" and not args.prod:
+    if args.target == "dialog" and not args.prod:
         print(
             "ERROR: please pass --prod when targetting the production environment",
             file=sys.stderr,
@@ -184,6 +233,7 @@ if __name__ == "__main__":
         main(
             config,
             transport_dir=args.transport_dir,
-            app=args.app,
+            target=args.target,
+            yes=args.yes,
         )
     )
