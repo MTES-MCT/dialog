@@ -2,7 +2,7 @@
 
 * Création : 2024-03-12
 * Personnes impliquées : Florimond Manca (auteur principal), Mathieu Marchois, équipe DiaLog
-* Statut : Brouillon
+* Statut : Accepté
 
 ## Contexte
 
@@ -17,7 +17,7 @@ Il a été jugé que la qualité de service de l'API de l'IGN est insufissante p
 
 Même dans le cas où les comportements extrêmes possiblement liés à la migration Géoplateforme s'amélioraient, les temps de réponse élevés et les lenteurs occasionnées rendaient pertinents l'étude d'une solution alternative.
 
-## Décision - _(Proposition)_
+## Décision
 
 Les tables de la BD TOPO nécessaires à DiaLog seront intégrées à la base de production, selon l'approche détaillée dans l'option 2.
 
@@ -41,9 +41,9 @@ Inconvénients
 
 * Les lenteurs et perturbations persistent, impactant à la fois l'expérience utilisateur et la productivité lors du développement.
 
-### Option 2 - Interfaçage direct avec la BD TOPO
+### Option 2 - Hébergement partiel de la BD TOPO
 
-Cette option consisterait à intégrer directement la [BD TOPO](https://geoservices.ign.fr/bdtopo#telechargementtransportter), dont l'API WFS fournit essentiellement une interface HTTP, dans la base de données DiaLog, afin de réaliser les .
+Cette option consisterait à intégrer directement dans la base de données DiaLog les tables de la [BD TOPO](https://geoservices.ign.fr/bdtopo#telechargementtransportter) utilisées par DiaLog pour les calculs nécessitant des données BD TOPO, tels que les linéaires de voies ou de routes.
 
 ### Approche détaillée
 
@@ -51,21 +51,24 @@ Cette option consisterait à intégrer directement la [BD TOPO](https://geoservi
 
 Il s'agirait de **télécharger le thème "Transports" de la BD TOPO** (environ 4.5 Go) et d'**ingérer dans la base de données de production les tables qui nous intéressent** telles que `voie_nommee` (1.8 Go), `route_numerotee_ou_nommee` (400 Mo) ou encore `troncon_de_route`.
 
-Les tables sont fournies au format GeoPackage et peuvent être ingérées avec l'outil [**`ogr2ogr`**](https://gdal.org/programs/ogr2ogr.html) fourni par la librairie de référence [GDAL](https://gdal.org/index.html) :
+Les tables sont fournies au format GeoPackage et peuvent être ingérées avec l'outil [**`ogr2ogr`**](https://gdal.org/programs/ogr2ogr.html) fourni par la librairie de référence [GDAL](https://gdal.org/index.html), laquelle [supporte PostgreSQL / PostGIS](https://gdal.org/drivers/vector/pg.html#driver-capabilities) :
 
 ```bash
-ogr2ogr -f PostgreSQL "PG:user=dialog password=dialog host=localhost port=5432 dbname=dialog_bdtopo" /path/to/voie_nommee.gpkg
+ogr2ogr -f PostgreSQL "PG:postgresql://dialog_bdtopo:password@localhost:5432/dialog" /path/to/voie_nommee.gpkg
 ```
 
-Pour assurer une **portabilité** maximum parmi l'équipe de développement (Linux, Windows...), on pourra envisager l'utilisation des commandes GDAL via son [image Docker](https://github.com/OSGeo/gdal/pkgs/container/gdal). Sinon, des binaires Windows et Debian sont aussi disponibles.
+Pour assurer une **portabilité** maximum parmi l'équipe de développement (Linux, Windows...), on pourra envisager l'utilisation d'ogr2ogr via l'[image Docker de GDAL](https://github.com/OSGeo/gdal/pkgs/container/gdal). Des binaires Windows et Debian sont aussi disponibles.
 
 Suite à une ingestion, les **indexes** judicieux seront créés pour accélérer l'exécution des requêtes.
 
 #### Hébergement
 
-Dans un premier temps, il est supposé que la charge devrait pouvoir être absorbée par une seule instance.
+Les tables de la BD TOPO seraient hébergées sur deux instances :
 
-Les tables BD TOPO seraient donc intégrées à la base de données de production pour requêtage par tous les environnements : production, développement local, staging, environnements de branche...
+* Dans la base de production : pour la production ;
+* Dans la base de staging : pour l'environnement de staging, les environnements de branche, et le développement local.
+
+Cette séparation évite l'accès aux données de production depuis un poste local qui, du fait les limitations de la gestion des droits PostgreSQL sur Scalingo (voir [Sécurisation des accès](#sécurisation-des-accès)), serait possible si on utilisait uniquement la base de production comme hôte des données BD TOPO.
 
 #### Performance attendue
 
@@ -102,16 +105,13 @@ Ces requêtes pourront être réalisées avec l'infrastructure existante, à sav
 
 Idéalement, les données BD TOPO seraient hébergées dans une base de données indépendante de la base de données applicative, et configurée avec un utilisateur en lecture seule.
 
-En pratique, l'hébergement Scalingo impose quelques limitations, notamment le fait de n'avoir accès qu'à une seule `DATABASE` sans pouvoir en créer d'autres, ainsi qu'une gestion limitée des droits utilisateurs via l'interface web (création avec option "lecture seule", suppression).
+En pratique, l'hébergement Scalingo impose quelques limitations, notamment le fait de n'avoir accès qu'à une seule `DATABASE` sans pouvoir en créer d'autres, ainsi qu'une gestion limitée des droits utilisateurs via l'interface web (création (avec option "lecture seule"), suppression).
 
-La proposition est donc d'**héberger les tables de la BD TOPO au même endroit que les données applications**, à savoir dans la `DATABASE` fournie par Scalingo et sous le schéma `public`.
+La proposition est donc d'**héberger les tables de la BD TOPO au même endroit que les données applicatives**, à savoir dans la `DATABASE` fournie par Scalingo et sous le schéma `public`.
 
 Pour cela, un utilisateur BD TOPO "read-only" sera créé via l'interface web Scalingo pour la connexion entre DiaLog et les tables de la BD TOPO.
 
-Remarques :
-
-* Cette approche permettrait, en cas de fuite des identifiants de l'utilisateur BD TOPO, d'avoir accès en lecture seule aux données personnelles des utilisateurs (nom et prénom, adresse email) via la table `user`, même si les mots de passe restent inaccessibles car hachés. Cette réserve est jugée acceptable par compromis avec la complexité opérationnelle d'une séparation complète via Scalingo. Cependant, **les identifiants à la BD TOPO devront être considérés tout aussi sensibles**. Un accès public est à proscrire.
-* Une autre option aurait été de migrer les données de DiaLog dans un autre schéma que `public`, afin de n'y garder que la BD TOPO et d'exclure l'utilisateur BD TOPO de l'accès aux données applicatives. Cette option est écartée en raison du trop grand acroissement de complexité de gestion de la base de données, notamment en matière de gestion des droits.
+Ces identifiants BD TOPO doivent être considérés comme tout aussi sensibles que pour la base de données de production. A fortiori, un accès public est à proscrire. En effet, cette approche permettrait quand même, en cas de fuite des identifiants de l'utilisateur BD TOPO, d'avoir accès en lecture seule à l'ensemble des données, en particulier les données utilisateur (nom, prénom, adresse mail) de la table `user`. Cela justifie également l'hébergement double (en production d'une part, sur staging d'autre part) indiqué dans [Hébergement](#hébergement) pour ne pas élargir la surface d'accès aux données de production.
 
 #### Mise à jour
 
@@ -127,7 +127,13 @@ La mise à jour des données BD TOPO pourra se faire par l'équipe de développe
 
 Cette approche minimise les risques de rupture de service, comparativement à la suppression des tables préalable à leur ingestion. En effet, l'ingestion des tables pourrait prendre plusieurs dizaines de secondes, alors qu'un renommage final sera très rapide. Néanmoins, elle implique une petite complexité supplémentaire pour le renommage, et nécessite de stocker temporairement dans PostgreSQL l'ancienne version ET la nouvelle version des données, ce qui implique un surdimensionnement du stockage de la base par rapport aux besoins au runtime.
 
+### Réversibilité
+
+Si la qualité du service de l'API WFS de l'IGN s'améliore au point que le surcoût opérationnel (modeste mais non-nul) de gestion de notre hébergement BD TOPO n'est plus justifié, il sera toujours possible de récupérer le code de l'ancien géocodeur basé sur l'API WFS.
+
+Les données étant les mêmes puisque toutes deux issues de la BD TOPO, on ne devrait pas observer d'incohérences.
+
 ## Références
 
 * [BD TOPO](https://geoservices.ign.fr/bdtopo) (documentation, téléchargements)
-* [GDAL](https://gdal.org/index.html) et [ogr2ogr](https://gdal.org/programs/ogr2ogr.html)
+* [GDAL](https://gdal.org/index.html), [Driver PostgreSQL / PostGIS pour GDAL](https://gdal.org/drivers/vector/pg.html), [ogr2ogr](https://gdal.org/programs/ogr2ogr.html)
