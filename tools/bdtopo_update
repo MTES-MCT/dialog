@@ -56,7 +56,11 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
 
             exit_stack.callback(_close_tunnel)
 
-            database_url = tunnel_proc.stdout.readline().decode()
+            database_url = (
+                tunnel_proc.stdout.readline()
+                .decode()
+                .strip()  # Remove any final newline
+            )
 
             if not database_url:
                 print(
@@ -69,6 +73,10 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
 
             # TODO remove
             database_url = "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo"
+
+        # ogr2ogr only seems to support postgresql://, especially when query parameters
+        # are provided, such as '?sslmode=prefer' by Scalingo.
+        database_url = database_url.replace("postgres://", "postgresql://")
 
         print("===> Will import into")
         print(database_url)
