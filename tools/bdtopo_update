@@ -7,6 +7,42 @@ import sys
 from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlparse
+
+
+def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: list):
+    # Access database connection open on the host
+    # https://stackoverflow.com/a/43541732
+    urlobj = urlparse(database_url)
+    database_url_from_container = urlobj._replace(
+        netloc=f"{urlobj.username}:{urlobj.password}@host.docker.internal:{urlobj.port}"
+    ).geturl()
+
+    command = [
+        "docker",
+        "compose",
+        "-f",
+        "docker-compose.yml",
+        "--profile",
+        "gdal",
+        "run",
+        "--rm",  # Do not leave dead containers
+        "-it",  # Transmit Ctrl+C, etc
+        "-v",
+        f"{directory}:/home/data",
+        "gdal",
+        "ogr2ogr",
+        # Setup connection to the PostgreSQL database
+        # See specific PostgreSQL options here:
+        # https://gdal.org/drivers/vector/pg.html
+        "-f",
+        "PostgreSQL",
+        f"PG:{database_url_from_container}",
+        *options,
+        str(Path("/home/data") / path.relative_to(directory)),
+    ]
+
+    return subprocess.run(command)
 
 
 @dataclass
@@ -101,11 +137,13 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
 
                 temp_tables_to_drop.add(temp_table)
 
-                result = subprocess.run(
-                    [
+                result = _run_dockerized_ogr2ogr(
+                    database_url,
+                    directory=transport_dir,
+                    path=path,
+                    options=[
                         # See general ogr2ogr options here:
                         # https://gdal.org/programs/ogr2ogr.html
-                        "ogr2ogr",
                         "-progress",
                         # Append to existing table (for subsequent runs of this command)
                         "-append",
@@ -115,19 +153,11 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
                         # Use explicit primary key column name for renaming
                         "-lco",
                         "FID=fid",
-                        # Setup connection to the PostgreSQL database
-                        # See specific PostgreSQL options here:
-                        # https://gdal.org/drivers/vector/pg.html
-                        "-f",
-                        "PostgreSQL",
-                        f"PG:{database_url}",
                         # Enable slightly faster ingestion
                         # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
                         "--config",
                         "PG_USE_COPY",
                         "YES",
-                        # Path to source geopackage
-                        str(path),
                     ],
                 )
 

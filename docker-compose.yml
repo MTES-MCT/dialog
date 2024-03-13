@@ -63,3 +63,12 @@ services:
     ports:
       - 6379:6379
 
+  gdal:
+    # https://github.com/OSGeo/gdal/tree/master/docker
+    image: ghcr.io/osgeo/gdal:alpine-small-latest
+    container_name: gdal
+    profiles: [gdal]
+    extra_hosts:
+      # Allow accessing host ports from this container via host.docker.internal on Linux
+      # https://stackoverflow.com/a/43541732
+      - host.docker.internal:host-gateway
