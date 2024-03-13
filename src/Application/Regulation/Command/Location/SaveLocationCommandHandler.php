@@ -28,11 +28,7 @@ final class SaveLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            if ($command->departmentalRoadGeometry) {
-                $geometry = $command->departmentalRoadGeometry;
-            } else {
-                $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
-            }
+            $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -55,13 +51,9 @@ final class SaveLocationCommandHandler
             return $location;
         }
 
-        if ($command->departmentalRoadGeometry) {
-            $geometry = $command->departmentalRoadGeometry;
-        } else {
-            $geometry = $this->shouldRecomputeGeometry($command)
-                ? $this->computeGeometry($command)
-                : $command->location->getGeometry();
-        }
+        $geometry = $this->shouldRecomputeGeometry($command)
+            ? $this->computeGeometry($command)
+            : $command->location->getGeometry();
 
         $command->location->update(
             roadType: $command->roadType,
@@ -80,6 +72,10 @@ final class SaveLocationCommandHandler
 
     private function computeGeometry(SaveLocationCommand $command): ?string
     {
+        if ($command->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value && $command->departmentalRoadGeometry) {
+            return $command->departmentalRoadGeometry;
+        }
+
         $hasBothEnds = (
             ($command->fromHouseNumber || $command->fromRoadName)
             && ($command->toHouseNumber || $command->toRoadName)
@@ -114,15 +110,15 @@ final class SaveLocationCommandHandler
             return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
         }
 
-        if ($command->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value && $command->departmentalRoadGeometry) {
-            return $command->departmentalRoadGeometry;
-        }
-
         return null;
     }
 
     private function shouldRecomputeGeometry(SaveLocationCommand $command): bool
     {
+        if ($command->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value && $command->departmentalRoadGeometry) {
+            return false;
+        }
+
         return $command->cityCode !== $command->location->getCityCode()
             || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
