@@ -123,4 +123,9 @@ Encore
     })
 ;
 
+if (process.env.WEBPACK_DUMP_CONFIG) {
+    config.module = {};
+    config.plugins = config.plugins.filter((plugin) => (plugin instanceof AssetsPlugin || plugin instanceof ManifestPlugin));
+}
+
 module.exports = Encore.getWebpackConfig();
