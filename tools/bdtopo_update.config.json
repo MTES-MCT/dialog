@@ -1,5 +1,8 @@
 {
     "tables": [
         "voie_nommee"
+    ],
+    "custom_index_statements": [
+        "CREATE INDEX voie_nommee_nom_minuscule_code_insee_idx ON voie_nommee (nom_minuscule, code_insee);"
     ]
 }

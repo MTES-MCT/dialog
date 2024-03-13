@@ -5,7 +5,7 @@ import signal
 import subprocess
 import sys
 from contextlib import ExitStack
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -27,7 +27,6 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
         "gdal",
         "run",
         "--rm",  # Do not leave dead containers
-        "-it",  # Transmit Ctrl+C, etc
         "-v",
         f"{directory}:/home/data",
         "gdal",
@@ -48,6 +47,7 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
 @dataclass
 class Config:
     tables: list[str]
+    custom_index_statements: dict[str, str] = field(default_factory=dict)
 
 
 def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
@@ -145,14 +145,14 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
                         # See general ogr2ogr options here:
                         # https://gdal.org/programs/ogr2ogr.html
                         "-progress",
-                        # Append to existing table (for subsequent runs of this command)
-                        "-append",
+                        # # Append to existing table (for subsequent runs of this command)
+                        # "-append",
                         # Import into the temporary table
                         "-nln",  # nln = New layer name
                         temp_table,
-                        # Use explicit primary key column name for renaming
-                        "-lco",
-                        "FID=fid",
+                        # # Use explicit primary key column name for renaming
+                        # "-lco",
+                        # "FID=fid",
                         # Enable slightly faster ingestion
                         # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
                         "--config",
@@ -172,7 +172,7 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
 
             print("------> Import successful!")
 
-            print("------> Renaming tables...")
+            print("===> Renaming tables...")
 
             # Now we replace all existing tables with their temporary equivalent
             # where the data has just been successfully imported.
@@ -213,6 +213,18 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
                 temp_tables_to_drop.remove(temp_table)  # It was renamed.
 
             print("------> Tables successfully renamed")
+
+            if config.custom_index_statements:
+                print("===> Configuring custom indexes...")
+
+                # No need to check for index name conflicts: existing custom indexes on
+                # old tables were deleted when we ran "DROP TABLE {target_table}_old".
+
+                sql = "".join(["BEGIN;", *config.custom_index_statements, "COMMIT;"])
+                result = subprocess.run(["psql", database_url, "-c", sql])
+                result.check_returncode()
+
+                print("-----> Indexes successfully configured")
         except KeyboardInterrupt:
             # Stop everything, we'll proceed to clean up in the 'finally' block.
             return 3
