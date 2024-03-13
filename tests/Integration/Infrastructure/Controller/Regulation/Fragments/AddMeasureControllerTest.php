@@ -56,6 +56,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
+        $this->assertSame('Cette départementale n\'est pas reconnue. Veuillez sélectionner une départementale parmi les choix proposés.', $crawler->filter('#measure_form_locations_error')->text());
     }
 
     public function testInvalidCertainDaysWithoutApplicableDays(): void
