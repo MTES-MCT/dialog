@@ -32,6 +32,7 @@ final class LocationTest extends TestCase
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
             geometry: $geometry,
+            departmentalRoadGeometry: null,
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
@@ -42,6 +43,7 @@ final class LocationTest extends TestCase
         $this->assertSame('15', $location->getFromHouseNumber());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame($geometry, $location->getGeometry());
+        $this->assertNull($location->getDepartmentalRoadGeometry());
     }
 
     public function testUpdate(): void
@@ -87,6 +89,7 @@ final class LocationTest extends TestCase
             $newRoadName,
             $newFromHouseNumber,
             $newToHouseNumber,
+            null,
             $newGeometry,
         );
 
@@ -99,6 +102,7 @@ final class LocationTest extends TestCase
         $this->assertSame($newRoadName, $location->getRoadName());
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
-        $this->assertSame($newGeometry, $location->getGeometry());
+        $this->assertNull($location->getGeometry());
+        $this->assertSame($newGeometry, $location->getDepartmentalRoadGeometry());
     }
 }

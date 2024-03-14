@@ -20,6 +20,12 @@
         <option name="srid">2154</option>
       </options>
     </field>
+    <field name="departmentalRoadGeometry" type="geometry" column="departmentalRoadGeometry" nullable="true">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">2154</option>
+      </options>
+    </field>
     <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="locations">
         <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>

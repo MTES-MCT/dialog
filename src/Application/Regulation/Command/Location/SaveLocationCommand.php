@@ -38,7 +38,7 @@ final class SaveLocationCommand implements CommandInterface
         $this->fromHouseNumber = $location?->getFromHouseNumber();
         $this->toHouseNumber = $location?->getToHouseNumber();
         $this->geometry = $location?->getGeometry();
-        $this->departmentalRoadGeometry = $location?->getGeometry();
+        $this->departmentalRoadGeometry = $location?->getDepartmentalRoadGeometry();
         $this->isEntireStreetFormValue = $location ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
     }
 

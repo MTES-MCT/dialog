@@ -32,7 +32,7 @@ final class GetDepartmentalRoadCompletionFragmentController
             throw new BadRequestHttpException();
         }
 
-        $departmentalRoadNumbers = $this->roadGeocoder->getDepartmentalRoad($search, $administrator);
+        $departmentalRoadNumbers = $this->roadGeocoder->findDepartmentalRoads($search, $administrator);
 
         return new Response(
             $this->twig->render(

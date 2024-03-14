@@ -70,7 +70,7 @@ final class RoadGeocoder implements RoadGeocoderInterface
         throw new GeocodingFailureException($message);
     }
 
-    public function getDepartmentalRoad(string $search, string $administrator): array
+    public function findDepartmentalRoads(string $search, string $administrator): array
     {
         $normalizedSearch = str_replace("'", "''", strtoupper($search));
 

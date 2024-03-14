@@ -108,7 +108,7 @@ final class RoadGeocoderTest extends TestCase
 
         $RoadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
 
-        $RoadGeocoder->getDepartmentalRoad($this->departmentalRoadNumber, $this->gestionnaire);
+        $RoadGeocoder->findDepartmentalRoads($this->departmentalRoadNumber, $this->gestionnaire);
     }
 
     public function testGetDepartmentalRoad(): void
@@ -120,7 +120,7 @@ final class RoadGeocoderTest extends TestCase
 
         $RoadGeocoder = new RoadGeocoder($this->ignWfsUrl, $http);
 
-        $geometry = $RoadGeocoder->getDepartmentalRoad($this->departmentalRoadNumber, $this->gestionnaire);
+        $geometry = $RoadGeocoder->findDepartmentalRoads($this->departmentalRoadNumber, $this->gestionnaire);
         $this->assertSame('D32', $geometry[0]['numero']);
         $this->assertSame('{"type":"MultiLineString","coordinates":[]}', $geometry[0]['geometry']);
         $this->assertSame('GET', $response->getRequestMethod());

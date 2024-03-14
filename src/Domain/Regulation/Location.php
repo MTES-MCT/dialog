@@ -18,6 +18,7 @@ class Location
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
         private ?string $geometry,
+        private ?string $departmentalRoadGeometry = null,
     ) {
     }
 
@@ -76,6 +77,11 @@ class Location
         return $this->geometry;
     }
 
+    public function getDepartmentalRoadGeometry(): ?string
+    {
+        return $this->departmentalRoadGeometry;
+    }
+
     public function update(
         string $roadType,
         ?string $administrator,
@@ -86,6 +92,7 @@ class Location
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
         ?string $geometry,
+        ?string $departmentalRoadGeometry,
     ): void {
         $this->roadType = $roadType;
         $this->administrator = $administrator;
@@ -96,5 +103,6 @@ class Location
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
         $this->geometry = $geometry;
+        $this->departmentalRoadGeometry = $departmentalRoadGeometry;
     }
 }
