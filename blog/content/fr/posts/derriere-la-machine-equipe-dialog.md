@@ -30,12 +30,11 @@ Débute alors une phase d’investigation durant laquelle l’intrapreneur est a
 
 DiaLog achève en ce moment la phase de construction et débute la phase de déploiement (on recrute !), qui va s’accélérer dans le cadre des Jeux Olympiques de Paris puisque les communes concernées par les jeux verront leurs arrêtés saisis sous DiaLog et leurs données transmises aux services numériques.
 
-Mais revenons à l’équipe (au 1er février 2024) : 
+**Mais revenons à l’équipe (au 1er février 2024) :** 
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src="./img/PhotoMFV.png" alt="photo_Mathieu_FV"/>
-
+            <img class="photo" src="https://dialog.beta.gouv.fr/blog/img/PhotoMFV.png" alt="photo_Mathieu_FV"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
