@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux pipefail
+set -euxo pipefail
 
 DRIVE_ID=184671
 
