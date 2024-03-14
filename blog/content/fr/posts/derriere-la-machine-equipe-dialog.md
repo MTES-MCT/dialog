@@ -63,12 +63,14 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
         </div>
         <div class="photo_membre">
             <img class="photo" src="../../img/PhotoMM.png" alt="photo_Mathieu_M"/>
+            {% image "./img/PhotoMM.png", "Photo Mathieu Marchois", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
             <img class="photo" src="./img/PhotoAB.png" alt="photo_Aurelie_B"/>
+            {% image "./img/PhotoAB.png", "Photo Aurelie Baton", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -98,12 +100,13 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
         </div>
         <div class="photo_membre">
             <img class="photo" src="./img/Lea.png" alt="placeholder_photo"/>
+            {% image "./img/Lea.png", "Placeholder", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src="./img/PhotoFM.png" alt="photo_Florimond_M"/>
+            {% image "./img/PhotoFM.png", "Photo Florimond Manca", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -131,13 +134,13 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src="./img/PhotoJR.png" alt="photo_Johan_R"/>
+            {% image "./img/PhotoJR.png", "Photo Johan Richer", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src="./img/PhotoSS.png" alt="photo_Stéphane_S"/>
+            {% image "./img/PhotoSS.png", "Photo Stephane Schultz", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
