@@ -34,16 +34,14 @@ Mais revenons à l’équipe (au 1er février 2024) :
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoMFV.png" alt="photo_Mathieu_FV">
+            <img class="photo" src=".img/PhotoMFV.png" alt="photo_Mathieu_FV"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
                 Mathieu Fernandez-Vandewalle - L’intrapreneur
             </div>
             <div class="texte_membre">
-                Un intrapreneur partage son temps entre des missions liées à son poste au Ministère et la direction de la startup. Il prend en charge les relations entre l’administration et l’équipe de la startup, l’apport de connaissances réglementaires et sur l’écosystème public, la gestion du budget, les recrutements et le reporting hiérarchique.
-                
-                Depuis 2016 au Ministère de la Transition Écologique en tant que Chef de Projets Innovation sur des projets comme CORIFER ou les services en free floating.  
+                Un intrapreneur partage son temps entre des missions liées à son poste au Ministère et la direction de la startup. Il prend en charge les relations entre l’administration et l’équipe de la startup, l’apport de connaissances réglementaires et sur l’écosystème public, la gestion du budget, les recrutements et le reporting hiérarchique. Depuis 2016 au Ministère de la Transition Écologique en tant que Chef de Projets Innovation sur des projets comme CORIFER ou les services en free floating.  
             </div>
             <div class="formation_membre">
                 Formation : ENTPE et Mastère en Ingénierie INSA Lyon
@@ -57,22 +55,20 @@ Mais revenons à l’équipe (au 1er février 2024) :
                 Mathieu Marchois - L’architecte logiciel
             </div>
             <div class="texte_membre">
-                Un architecte logiciel est charge de la structure du code applicatif et de la base de données. Au début du projet il met en place de l’architecture et les interfaces afin de garantir leur bon fonctionnement lors du passage à l’échelle. En charge également de la transmission des savoir-faire.
-
-                Co-fondateur de Fairness, une coopérative de services numériques qui existe depuis 2019. Notre mission est de concevoir des applications qui ont un impact positif pour la planète et les utilisateurs, applis plus performantes. La coopérative compte aujourd’hui 8 développeurs et 1 product manager.
+                Un architecte logiciel est charge de la structure du code applicatif et de la base de données. Au début du projet il met en place de l’architecture et les interfaces afin de garantir leur bon fonctionnement lors du passage à l’échelle. En charge également de la transmission des savoir-faire. Co-fondateur de Fairness, une coopérative de services numériques qui existe depuis 2019. Notre mission est de concevoir des applications qui ont un impact positif pour la planète et les utilisateurs, applis plus performantes. La coopérative compte aujourd’hui 8 développeurs et 1 product manager.
             </div>
             <div class="formation_membre">
                 Formation : Master architecte logiciel INSTA après un BTS en informatique
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoMM.png" alt="photo_Mathieu_M">
+            <img class="photo" src=".img/PhotoMM.png" alt="photo_Mathieu_M"/>
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoAB.png" alt="photo_Aurelie_B">
+            <img class="photo" src=".img/PhotoAB.png" alt="photo_Aurelie_B"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -80,10 +76,7 @@ Mais revenons à l’équipe (au 1er février 2024) :
             </div>
             <div class="texte_membre">
                 Une designer UX fait de la recherche utilisateur et de la conception UX (expérience utilisateur) et UI (interfaces utilisateurs), des maquettes, de l’éco-conception. Je fais également de la formation et j’enseigne à Rouen. Je travaille avec Beta Gouv depuis octobre 2022.
-
-                Aurélie est également membre de Designer Éthiques, une association qui favorise l’éco-conception par la recherche, l’organisation d’évènements, la publication d’un guide. 
-
-                Auparavant : 12 ans chez IBM en tant qu’UX designer.
+                Aurélie est également membre de Designer Éthiques, une association qui favorise l’éco-conception par la recherche, l’organisation d’évènements, la publication d’un guide. Auparavant : 12 ans chez IBM en tant qu’UX designer.
             </div>
             <div class="formation_membre">
                 Formation : Master 2 à Paris en design de documentation
@@ -104,20 +97,20 @@ Mais revenons à l’équipe (au 1er février 2024) :
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src=".img/Lea.png" alt="placeholder_photo">
+            <img class="photo" src=".img/Lea.png" alt="placeholder_photo"/>
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoFM.png" alt="photo_Florimond_M">
+            <img class="photo" src=".img/PhotoFM.png" alt="photo_Florimond_M"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
                 Florimond Manca - L’ingénieur logiciel et éco-concepteur web
             </div>
             <div class="texte_membre">
-                Je développe le numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux des solutions numériques. Au quotidien je traite des tickets et j’aide à les écrire ;-) Je définis les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe. Chez Fairness depuis 2021 après une première expérience comme ingénieur logiciel
+                Je développe le numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux des solutions numériques. Au quotidien je traite des tickets et j’aide à les écrire ;-) Je définis les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe. Chez Fairness depuis 2021 après une première expérience comme ingénieur logiciel.
             </div>
             <div class="formation_membre">
                 Formation : Ingénieur Centralien - 3ème année de spécialisation en informatique
@@ -138,13 +131,13 @@ Mais revenons à l’équipe (au 1er février 2024) :
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoJR.png" alt="photo_Johan_R">
+            <img class="photo" src=".img/PhotoJR.png" alt="photo_Johan_R"/>
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoSS.png" alt="photo_Stéphane_S">
+            <img class="photo" src=".img/PhotoSS.png" alt="photo_Stéphane_S"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
