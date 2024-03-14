@@ -80,17 +80,17 @@ final class RoadGeocoder implements RoadGeocoderInterface
             propertyName: 'numero,geometrie',
         );
 
-        $numeros = [];
+        $departmentalRoads = [];
 
         if (isset($data['features'])) {
             foreach ($data['features'] as $feature) {
-                $numeros[] = [
-                    'numero' => $feature['properties']['numero'],
+                $departmentalRoads[] = [
+                    'roadNumber' => $feature['properties']['numero'],
                     'geometry' => json_encode($feature['geometry']),
                 ];
             }
         }
 
-        return $numeros;
+        return $departmentalRoads;
     }
 }
