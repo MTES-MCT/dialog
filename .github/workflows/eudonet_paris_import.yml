@@ -1,6 +1,7 @@
 name: Eudonet Paris Import
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '30 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h30
 
