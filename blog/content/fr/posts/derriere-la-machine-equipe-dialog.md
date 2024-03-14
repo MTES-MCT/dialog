@@ -34,7 +34,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src="https://dialog.beta.gouv.fr/blog/img/PhotoMFV.png" alt="photo_Mathieu_FV"/>
+            {% image "./img/PhotoMFV.png", "Photo Mathieu Fernandez", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -62,7 +62,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src="./img/PhotoMM.png" alt="photo_Mathieu_M"/>
+            <img class="photo" src="../../img/PhotoMM.png" alt="photo_Mathieu_M"/>
         </div>
     </div>
 
