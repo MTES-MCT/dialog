@@ -214,7 +214,6 @@ div.fr-callout__text p {
     margin : 5px;
 }
 .bloc_texte{
-    height : 150px;
     display : flex;
     align-items: flex-start;
     flex-direction: column;
