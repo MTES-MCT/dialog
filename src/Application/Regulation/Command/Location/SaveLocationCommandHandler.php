@@ -29,13 +29,10 @@ final class SaveLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $geometry = null;
-            $departmentalRoadGeometry = null;
-
             if ($command->roadType === RoadTypeEnum::LANE->value) {
                 $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command) : $command->geometry;
             } else {
-                $departmentalRoadGeometry = empty($command->departmentalRoadGeometry) ? $this->computeDepartmentalRoadGeometry($command) : $command->departmentalRoadGeometry;
+                $geometry = empty($command->departmentalRoadGeometry) ? $this->computeDepartmentalRoadGeometry($command) : $command->departmentalRoadGeometry;
             }
 
             $location = $this->locationRepository->add(
@@ -51,7 +48,6 @@ final class SaveLocationCommandHandler
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
                     geometry: $geometry,
-                    departmentalRoadGeometry: $departmentalRoadGeometry,
                 ),
             );
 
@@ -60,17 +56,14 @@ final class SaveLocationCommandHandler
             return $location;
         }
 
-        $geometry = null;
-        $departmentalRoadGeometry = null;
-
         if ($command->roadType === RoadTypeEnum::LANE->value) {
             $geometry = $this->shouldRecomputeLaneGeometry($command)
                 ? $this->computeLaneGeometry($command)
                 : $command->location->getGeometry();
         } else {
-            $departmentalRoadGeometry = $this->shouldRecomputeDepartmentalRoadGeometry($command)
+            $geometry = $this->shouldRecomputeDepartmentalRoadGeometry($command)
                 ? $this->computeDepartmentalRoadGeometry($command)
-                : $command->location->getDepartmentalRoadGeometry();
+                : $command->location->getGeometry();
         }
 
         $command->location->update(
@@ -83,7 +76,6 @@ final class SaveLocationCommandHandler
             fromHouseNumber: $command->fromHouseNumber,
             toHouseNumber: $command->toHouseNumber,
             geometry: $geometry,
-            departmentalRoadGeometry: $departmentalRoadGeometry,
         );
 
         return $command->location;
@@ -152,8 +144,7 @@ final class SaveLocationCommandHandler
 
     private function shouldRecomputeDepartmentalRoadGeometry(SaveLocationCommand $command): bool
     {
-        return $command->departmentalRoadGeometry !== $command->location->getDepartmentalRoadGeometry()
-            || $command->roadNumber !== $command->location->getRoadNumber()
+        return $command->roadNumber !== $command->location->getRoadNumber()
             || $command->administrator !== $command->location->getAdministrator();
     }
 }

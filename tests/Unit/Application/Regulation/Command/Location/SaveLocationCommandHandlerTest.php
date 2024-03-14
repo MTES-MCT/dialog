@@ -12,6 +12,7 @@ use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -391,7 +392,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testUpdateDepartmentalRoad(): void
     {
-        $roadType = 'departmentalRoad';
+        $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $roadNumber = 'D12';
         $administrator = 'Ain';
         $departmentalRoadGeometry = GeoJSON::toLineString([
@@ -417,8 +418,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('getRoadNumber')
             ->willReturn($roadNumber);
         $location
-            ->expects(self::exactly(3))
-            ->method('getDepartmentalRoadGeometry')
+            ->expects(self::exactly(2))
+            ->method('getGeometry')
             ->willReturn($departmentalRoadGeometry);
 
         $location
@@ -428,7 +429,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 $roadType,
                 $administrator,
                 $roadNumber,
-                null,
                 null,
                 null,
                 null,
@@ -503,8 +503,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         roadName: null,
                         fromHouseNumber: null,
                         toHouseNumber: null,
-                        geometry: null,
-                        departmentalRoadGeometry: $departmentalRoadGeometry,
+                        geometry: $departmentalRoadGeometry,
                     ),
                 ),
             )
@@ -574,8 +573,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         roadName: null,
                         fromHouseNumber: null,
                         toHouseNumber: null,
-                        geometry: null,
-                        departmentalRoadGeometry: $departmentalRoadGeometry,
+                        geometry: $departmentalRoadGeometry,
                     ),
                 ),
             )
