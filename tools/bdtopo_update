@@ -267,6 +267,7 @@ if __name__ == "__main__":
         "--config",
         type=Path,
         default=Path(__file__).parent / "bdtopo_update.config.json",
+        help="Path to config file. Default: ./bdtopo_update.config.json",
     )
     args = parser.parse_args()
 
