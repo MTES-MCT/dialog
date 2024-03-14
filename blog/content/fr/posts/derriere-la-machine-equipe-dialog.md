@@ -119,7 +119,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
                 [Florimond Manca](https://www.linkedin.com/in/florimondmanca/) - L’ingénieur logiciel et éco-concepteur web
             </div>
             <div class="texte_membre">
-                Je développe le numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux des solutions numériques. Au quotidien je traite des tickets (NDLR : les tickets définissent les tâches à traiter et sont le support des réflexions de l'équipe sur le projet, ils sont d'ailleurs publics et consultable sur notre [repository Git](https://github.com/MTES-MCT/dialog)) et j’aide à les écrire ;-) Je définis les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe. Chez Fairness depuis 2021 après une première expérience comme ingénieur logiciel.
+                Après une première expérience comme développeur dans le domaine du monitoring cloud, j'ai rejoint la coopérative Fairness en 2021. J'intègre dans ma pratique les enjeux du Numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux et sociaux du numérique. Au quotidien, je définis et mets en oeuvre les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe et dans une approche d'écoconception.
             </div>
             <div class="formation_membre">
                 Formation : Ingénieur Centralien - 3ème année de spécialisation en informatique
