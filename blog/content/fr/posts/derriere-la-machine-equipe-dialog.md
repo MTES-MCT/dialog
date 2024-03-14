@@ -40,7 +40,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
-                Mathieu Fernandez-Vandewalle - L’intrapreneur
+                [Mathieu Fernandez-Vandewalle](https://www.linkedin.com/in/mathieu-fernandez-vandewalle-4a1928142/) - L’intrapreneur
             </div>
             <div class="texte_membre">
                 Un intrapreneur partage son temps entre des missions liées à son poste au Ministère et la direction de la startup. Il prend en charge les relations entre l’administration et l’équipe de la startup, l’apport de connaissances métier et réglementaires et sur l’écosystème public, la gestion du budget, les recrutements et le reporting hiérarchique. 
@@ -56,7 +56,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
     <div class="fiche_membre">
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
-                Mathieu Marchois - L’architecte logiciel
+                [Mathieu Marchois](https://www.linkedin.com/in/mathieu-marchois-11606961/) - L’architecte logiciel
             </div>
             <div class="texte_membre">
                 Un architecte logiciel est en charge de la structure du code applicatif et de la base de données. Au début du projet il met en place l’architecture et les interfaces afin de garantir leur bon fonctionnement lors du passage à l’échelle. Je me charge également de la transmission des savoir-faire. 
@@ -74,7 +74,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            {% image "./img/PhotoAB.png", "Photo Aurelie Baton", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
+            {% image "./img/PhotoAB.png", "Photo [Aurelie Baton](https://www.linkedin.com/in/aureliebaton/)", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -114,7 +114,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
-                Florimond Manca - L’ingénieur logiciel et éco-concepteur web
+                [Florimond Manca](https://www.linkedin.com/in/florimondmanca/) - L’ingénieur logiciel et éco-concepteur web
             </div>
             <div class="texte_membre">
                 Je développe le numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux des solutions numériques. Au quotidien je traite des tickets (NDLR : les tickets définissent les tâches à traiter et sont le support des réflexions de l'équipe sur le projet, ils sont d'ailleurs publics et consultable sur notre [repository Git](https://github.com/MTES-MCT/dialog)) et j’aide à les écrire ;-) Je définis les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe. Chez Fairness depuis 2021 après une première expérience comme ingénieur logiciel.
@@ -128,7 +128,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
     <div class="fiche_membre">
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
-                Johan Richer - Le product manager
+                [Johan Richer](https://www.linkedin.com/in/johanricher/) - Le product manager
             </div>
             <div class="texte_membre">
                 Mon rôle est de comprendre les besoins de l’utilisateur pour aider à orienter les produits dans la bonne direction. Au quotidien, je discute avec tous les membres de l’équipe pour synthétiser les inputs, prioriser et suivre le réalisé. Je ne code pas. Depuis 7 ans chez [Multi](https://www.multi.coop/) (anciennement Jailbreak) qui rassemble 8 personnes développeurs et product owners dans une coopérative qui conçoit et développe des services publics numériques. 
@@ -150,7 +150,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
-                Stéphane Schultz - le coach produit
+                [Stéphane Schultz](https://www.linkedin.com/in/stefschultz/) - le coach produit
             </div>
             <div class="texte_membre">
                 Le coach produit accompagne l’intrapreneur depuis le jour 1 jusqu’à la mise en orbite de la solution : il garantit le bon déroulement de la phase d’investigation, aide à la définition de priorités et au maintien des objectifs en matière de satisfaction usager et impacts environnementaux. Il prépare la stratégie de déploiement. 
