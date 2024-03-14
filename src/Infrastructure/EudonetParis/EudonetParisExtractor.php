@@ -159,14 +159,14 @@ final class EudonetParisExtractor
                     $measureRow['locations'][] = [
                         'fileId' => $locationRow['fileId'],
                         'fields' => $locationRow['fields'],
-                        'fromCoords' => empty($locationRow['fields'][$this::LOCALISATION_N_ADRESSE_DEBUT]) ? null : $this->getAddressCoords(
-                            $locationRow['fields'][$this::LOCALISATION_N_ADRESSE_DEBUT],
-                            $locationRow['fields'][$this::LOCALISATION_LIBELLE_VOIE],
-                        ),
-                        'toCoords' => empty($locationRow['fields'][$this::LOCALISATION_N_ADRESSE_FIN]) ? null : $this->getAddressCoords(
-                            $locationRow['fields'][$this::LOCALISATION_N_ADRESSE_FIN],
-                            $locationRow['fields'][$this::LOCALISATION_LIBELLE_VOIE],
-                        ),
+                        'fromCoords' => !empty($locationRow['fields'][$this::LOCALISATION_N_ADRESSE_DEBUT]) ? $this->getAddressCoords(
+                            houseNumber: $locationRow['fields'][$this::LOCALISATION_N_ADRESSE_DEBUT],
+                            roadName: $locationRow['fields'][$this::LOCALISATION_LIBELLE_VOIE],
+                        ) : null,
+                        'toCoords' => !empty($locationRow['fields'][$this::LOCALISATION_N_ADRESSE_FIN]) ? $this->getAddressCoords(
+                            houseNumber: $locationRow['fields'][$this::LOCALISATION_N_ADRESSE_FIN],
+                            roadName: $locationRow['fields'][$this::LOCALISATION_LIBELLE_VOIE],
+                        ) : null,
                     ];
                 }
 
@@ -177,12 +177,8 @@ final class EudonetParisExtractor
         }
     }
 
-    private function getAddressCoords(string|null $numero, string $libelleVoie): ?Coordinates
+    private function getAddressCoords(string $houseNumber, string $roadName): ?Coordinates
     {
-        if (!$numero) {
-            return null;
-        }
-
         $rows = $this->eudonetParisClient->search(
             tabId: $this::ADRESSE_TAB_ID,
             listCols: [
@@ -193,18 +189,18 @@ final class EudonetParisExtractor
                 'Criteria' => [
                     'Field' => $this::ADRESSE_LIBELLE,
                     'Operator' => $this::EQUALS,
-                    'Value' => sprintf('%s %s', $numero, $libelleVoie),
+                    'Value' => sprintf('%s %s', $houseNumber, $roadName),
                 ],
             ],
         );
 
         return $rows ? Coordinates::fromLonLat(
-            $this->parseCoordinate($rows[0]['fields'][$this::ADRESSE_X_WGS84]),
-            $this->parseCoordinate($rows[0]['fields'][$this::ADRESSE_Y_WGS84]),
+            self::parseCoordinate($rows[0]['fields'][$this::ADRESSE_X_WGS84]),
+            self::parseCoordinate($rows[0]['fields'][$this::ADRESSE_Y_WGS84]),
         ) : null;
     }
 
-    private function parseCoordinate(string $value): float
+    private static function parseCoordinate(string $value): float
     {
         // '45,12345' -> 45.12345
         return (float) str_replace(',', '.', $value);

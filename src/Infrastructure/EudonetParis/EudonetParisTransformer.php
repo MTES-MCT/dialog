@@ -53,10 +53,6 @@ final class EudonetParisTransformer
             $measureCommands[] = $measureCommand;
         }
 
-        if (\count($measureCommands) === 0) {
-            return new EudonetParisTransformerResult(null, $errors);
-        }
-
         $command = new ImportEudonetParisRegulationCommand(
             $generalInfoCommand,
             $measureCommands,
