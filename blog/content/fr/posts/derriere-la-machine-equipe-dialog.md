@@ -34,7 +34,8 @@ Mais revenons à l’équipe (au 1er février 2024) :
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoMFV.png" alt="photo_Mathieu_FV"/>
+            <img class="photo" src="./img/PhotoMFV.png" alt="photo_Mathieu_FV"/>
+
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -62,13 +63,13 @@ Mais revenons à l’équipe (au 1er février 2024) :
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoMM.png" alt="photo_Mathieu_M"/>
+            <img class="photo" src="./img/PhotoMM.png" alt="photo_Mathieu_M"/>
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoAB.png" alt="photo_Aurelie_B"/>
+            <img class="photo" src="./img/PhotoAB.png" alt="photo_Aurelie_B"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -97,13 +98,13 @@ Mais revenons à l’équipe (au 1er février 2024) :
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src=".img/Lea.png" alt="placeholder_photo"/>
+            <img class="photo" src="./img/Lea.png" alt="placeholder_photo"/>
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoFM.png" alt="photo_Florimond_M"/>
+            <img class="photo" src="./img/PhotoFM.png" alt="photo_Florimond_M"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
@@ -131,13 +132,13 @@ Mais revenons à l’équipe (au 1er février 2024) :
             </div>
         </div>
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoJR.png" alt="photo_Johan_R"/>
+            <img class="photo" src="./img/PhotoJR.png" alt="photo_Johan_R"/>
         </div>
     </div>
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            <img class="photo" src=".img/PhotoSS.png" alt="photo_Stéphane_S"/>
+            <img class="photo" src="./img/PhotoSS.png" alt="photo_Stéphane_S"/>
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
