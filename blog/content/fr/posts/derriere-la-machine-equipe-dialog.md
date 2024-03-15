@@ -22,7 +22,7 @@ Cela fait un an que nous essayons de vous familiariser avec l’univers de DiaLo
 
 Aujourd’hui exceptionnellement nous allons vous parler de nous. Celles et ceux qui conçoivent DiaLog et s’assurent de sa prise en main par les utilisateurs. Comme cela nous espérons que vous comprendrez mieux ce que nous faisons et ce qui nous anime. 
 
-{% image "./img/Logo.png", "Logo DiaLog.beta.gouv.fr", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/Logo_HD.png", "Logo DiaLog.beta.gouv.fr", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 
 Si vous avez raté le début, DiaLog est une startup d’État qui vise à intégrer les données de réglementation routière dans les services numériques (GPS, logiciel de transport,...).
 
