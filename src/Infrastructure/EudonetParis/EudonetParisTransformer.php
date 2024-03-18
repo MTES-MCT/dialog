@@ -53,10 +53,6 @@ final class EudonetParisTransformer
             $measureCommands[] = $measureCommand;
         }
 
-        if (\count($measureCommands) === 0) {
-            return new EudonetParisTransformerResult(null, $errors);
-        }
-
         $command = new ImportEudonetParisRegulationCommand(
             $generalInfoCommand,
             $measureCommands,
@@ -210,9 +206,11 @@ final class EudonetParisTransformer
         $locationCommand->cityLabel = self::CITY_LABEL;
         $locationCommand->roadName = $roadName;
         $locationCommand->fromHouseNumber = $fromHouseNumber;
-        $locationCommand->toHouseNumber = $toHouseNumber;
         $locationCommand->fromRoadName = $fromRoadName;
+        $locationCommand->fromCoords = empty($row['fromCoords']) ? null : $row['fromCoords'];
+        $locationCommand->toHouseNumber = $toHouseNumber;
         $locationCommand->toRoadName = $toRoadName;
+        $locationCommand->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
         $locationCommand->geometry = null; // Will be handled by SaveLocationCommandHandler.
 
         return [$locationCommand, null];

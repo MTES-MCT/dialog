@@ -1,0 +1,117 @@
+{
+    "ResultInfos": {
+      "ApiMessage": "",
+      "ErrorDetail": null,
+      "ErrorMessage": "",
+      "ErrorNumber": 0,
+      "Success": true
+    },
+    "ResultData": {
+      "Rows": [
+        {
+          "DelAllowed": false,
+          "Fields": [
+            {
+              "DbValue": "2,36162443877365",
+              "DescId": 3414,
+              "Mandatory": false,
+              "UpdateAllowed": false,
+              "Value": "2,36162443877365",
+              "ViewAllowed": true
+            },
+            {
+              "DbValue": "48,8401794988895",
+              "DescId": 3411,
+              "Mandatory": false,
+              "UpdateAllowed": false,
+              "Value": "48,8401794988895",
+              "ViewAllowed": true
+            }
+          ],
+          "FileId": 244917,
+          "Tab": 3400,
+          "UpdateAllowed": false
+        }
+      ]
+    },
+    "ResultMetaData": {
+      "NumPage": 1,
+      "RowsByPage": 50,
+      "Tables": [
+        {
+          "AddAllowed": false,
+          "CalendarEnabled": false,
+          "DescId": 3400,
+          "EdnType": 0,
+          "Fields": [
+            {
+              "DescId": 3414,
+              "Disporder": 12,
+              "EdnFormat": 1,
+              "IconInfo": null,
+              "ImgStorage": 0,
+              "IsHtml": false,
+              "IsLink": false,
+              "Label": "X_WGS84",
+              "Length": 100,
+              "Mandatory": false,
+              "Multiple": false,
+              "PopupDescId": 0,
+              "PopupType": 0,
+              "SocialNetworkRootUrl": null,
+              "UpdateAllowed": false,
+              "ViewAllowed": true
+            },
+            {
+              "DescId": 3411,
+              "Disporder": 13,
+              "EdnFormat": 1,
+              "IconInfo": null,
+              "ImgStorage": 0,
+              "IsHtml": false,
+              "IsLink": false,
+              "Label": "Y_WGS84",
+              "Length": 100,
+              "Mandatory": false,
+              "Multiple": false,
+              "PopupDescId": 0,
+              "PopupType": 0,
+              "SocialNetworkRootUrl": null,
+              "UpdateAllowed": false,
+              "ViewAllowed": true
+            }
+          ],
+          "Icon": "f072",
+          "IconDescription": {
+            "Address": "f0c5",
+            "Color": null,
+            "Css": "icon-files-o",
+            "Name": "Description"
+          },
+          "IconInfo": {
+            "Address": "f072",
+            "Color": "",
+            "Css": "icon-plane",
+            "Name": "Avion"
+          },
+          "IconNote": {
+            "Address": "f0c5",
+            "Color": null,
+            "Css": "icon-files-o",
+            "Name": "Notes"
+          },
+          "IconPj": {
+            "Address": "f0c6",
+            "Color": null,
+            "Css": "icon-paperclip",
+            "Name": "Annexes"
+          },
+          "Label": "Liste des Adresses",
+          "Links": [],
+          "LinksInfo": []
+        }
+      ],
+      "TotalPages": 1,
+      "TotalRows": 1
+    }
+  }
