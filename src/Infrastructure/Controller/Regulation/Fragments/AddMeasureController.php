@@ -13,7 +13,6 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\FeatureFlagService;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -33,7 +32,6 @@ final class AddMeasureController extends AbstractRegulationController
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
-        private FeatureFlagService $featureFlagService,
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -57,7 +55,6 @@ final class AddMeasureController extends AbstractRegulationController
             'action' => $this->router->generate('fragment_regulations_measure_add', ['uuid' => $uuid]),
             'administrators' => $administrators,
             'isPermanent' => $regulationOrder->isPermanent(),
-            'feature_road_type' => $this->featureFlagService->isFeatureEnabled('road_type', $request),
         ]);
         $form->handleRequest($request);
         $commandFailed = false;

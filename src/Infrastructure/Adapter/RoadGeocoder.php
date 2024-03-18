@@ -49,11 +49,11 @@ final class RoadGeocoder implements RoadGeocoderInterface
 
     public function computeRoadLine(string $roadName, string $inseeCode): string
     {
-        $normalizedRoadName = strtolower($roadName);
+        $normalizedRoadName = str_replace(["'", '-', '’'], ["''", ' ', "''"], strtolower($roadName));
 
         $data = $this->fetch(
             typeName: 'BDTOPO_V3:voie_nommee',
-            cqlFilter: sprintf("strStripAccents(nom_minuscule)=strStripAccents('%s') AND code_insee='%s'", $normalizedRoadName, $inseeCode),
+            cqlFilter: sprintf("strStripAccents(strReplace(nom_minuscule, '-', ' ', true))=strStripAccents('%s') AND code_insee='%s'", $normalizedRoadName, $inseeCode),
             propertyName: 'geometrie',
         );
 

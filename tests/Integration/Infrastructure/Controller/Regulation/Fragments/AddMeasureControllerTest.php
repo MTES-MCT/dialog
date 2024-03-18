@@ -50,13 +50,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['administrator'] = '';
-        $values['measure_form']['locations'][0]['departmentalRoadGeometry'] = '';
         $values['measure_form']['locations'][0]['roadNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
-        $this->assertSame('Cette départementale n\'est pas reconnue. Veuillez sélectionner une départementale parmi les choix proposés.', $crawler->filter('#measure_form_locations_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_administrator_error')->text());
     }
 
     public function testInvalidCertainDaysWithoutApplicableDays(): void
@@ -109,6 +108,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '20';
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
 
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
@@ -498,6 +498,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['roadName'] = 'Route du GEOCODING_FAILURE';
@@ -549,6 +550,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['cityCode'] = str_repeat('a', 6);
         $values['measure_form']['locations'][0]['cityLabel'] = str_repeat('a', 256);
         $values['measure_form']['locations'][0]['roadName'] = str_repeat('a', 256);
