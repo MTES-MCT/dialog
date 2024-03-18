@@ -39,6 +39,15 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             WHERE _ro2.uuid = ro.uuid
         )";
 
+    private const GET_LOCATION_DEPARTMENTAL_ROAD_QUERY = "
+            FIRST(
+                SELECT CONCAT(_loc3.roadNumber, '#', _loc3.administrator)
+                FROM App\Domain\Regulation\Location _loc3
+                INNER JOIN _loc3.measure _m3
+                INNER JOIN _m3.regulationOrder _ro3
+                WHERE _ro3.uuid = ro.uuid
+            )";
+
     public function findRegulationsByOrganizations(
         array $organizationUuids,
         int $maxItemsPerPage,
@@ -49,6 +58,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, ro.startDate, ro.endDate')
             ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(sprintf('(%s) as location', self::GET_LOCATION_QUERY))
+            ->addSelect(sprintf('(%s) as departmentalRoad', self::GET_LOCATION_DEPARTMENTAL_ROAD_QUERY))
             ->where('roc.organization IN (:organizationUuids)')
             ->setParameter('organizationUuids', $organizationUuids)
             ->innerJoin('roc.organization', 'o')
