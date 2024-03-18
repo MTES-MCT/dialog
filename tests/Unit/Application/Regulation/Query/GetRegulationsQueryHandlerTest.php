@@ -28,6 +28,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'endDate' => null,
                 'nbLocations' => 0,
                 'location' => null,
+                'departmentalRoad' => null,
                 'organizationName' => 'DiaLog',
             ],
             [
@@ -38,6 +39,18 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'endDate' => null,
                 'nbLocations' => 2,
                 'location' => 'Avenue de Fonneuve#Montauban#82121',
+                'departmentalRoad' => null,
+                'organizationName' => 'DiaLog',
+            ],
+            [
+                'uuid' => 'ef5b3632-8525-41b5-9e84-3116d9089610',
+                'identifier' => 'F01/2024',
+                'status' => 'draft',
+                'startDate' => $startDate2,
+                'endDate' => null,
+                'nbLocations' => 1,
+                'location' => null,
+                'departmentalRoad' => 'D123#Ardennes',
                 'organizationName' => 'DiaLog',
             ],
         ];
@@ -49,7 +62,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->method('findRegulationsByOrganizations')
             ->with(['dcab837f-4460-4355-99d5-bf4891c35f8f'], 20, 1, true)
             ->willReturn([
-                'count' => 2,
+                'count' => 3,
                 'items' => $rows,
             ]);
 
@@ -83,11 +96,29 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                         cityCode: '82121',
                         cityLabel: 'Montauban',
                         roadName: 'Avenue de Fonneuve',
+                        roadNumber: null,
+                        administrator: null,
                     ),
                     $startDate2,
                     null,
                 ),
-            ], 2, 1, 20,
+                new RegulationOrderListItemView(
+                    'ef5b3632-8525-41b5-9e84-3116d9089610',
+                    'F01/2024',
+                    'draft',
+                    1,
+                    'DiaLog',
+                    new LocationView(
+                        cityCode: null,
+                        cityLabel: null,
+                        roadName: null,
+                        administrator: 'Ardennes',
+                        roadNumber: 'D123',
+                    ),
+                    $startDate2,
+                    null,
+                ),
+            ], 3, 1, 20,
         );
 
         $this->assertEquals($pagination, $regulationOrders);
