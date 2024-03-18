@@ -20,7 +20,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 implode(' ', [
-                    'SELECT ST_AsGeoJSON(geometrie) AS geometry',
+                    'SELECT ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry',
                     'FROM voie_nommee',
                     'WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)',
                     'AND code_insee = :code_insee',
@@ -48,7 +48,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 implode(' ', [
-                    'SELECT numero, ST_AsGeoJSON(geometrie) AS geometry',
+                    'SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry',
                     'FROM route_numerotee_ou_nommee',
                     'WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
                 ]),

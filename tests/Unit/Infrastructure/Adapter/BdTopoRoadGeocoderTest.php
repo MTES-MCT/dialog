@@ -26,7 +26,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->with(
-                'SELECT ST_AsGeoJSON(geometrie) AS geometry FROM voie_nommee WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule) AND code_insee = :code_insee LIMIT 1',
+                'SELECT ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry FROM voie_nommee WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule) AND code_insee = :code_insee LIMIT 1',
                 ['nom_minuscule' => 'Rue du Test', 'code_insee' => '01234'],
             )
             ->willReturn([['geometry' => 'test']]);
@@ -64,7 +64,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->with(
-                'SELECT numero, ST_AsGeoJSON(geometrie) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
+                'SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
                 ['numero_pattern' => 'D32%', 'gestionnaire' => 'Ardennes'],
             )
             ->willReturn([['numero' => 'D321', 'geometry' => 'test']]);
