@@ -10,6 +10,10 @@
                 <source>regulation.location.error.geocoding_failed</source>
                 <target>Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.error.departmental_road_geocoding_failed">
+                <source>regulation.location.error.departmental_road_geocoding_failed</source>
+                <target>Cette départementale n'est pas reconnue. Veuillez sélectionner une départementale parmi les choix proposés.</target>
+            </trans-unit>
             <trans-unit id="invalid.page_or_page_size">
                 <source>invalid.page_or_page_size</source>
                 <target>Le nombre d'éléments par page et/ou le numéro de la page doivent être supérieur à 0.</target>

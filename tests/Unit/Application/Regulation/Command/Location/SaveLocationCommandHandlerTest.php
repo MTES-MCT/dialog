@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
@@ -11,6 +12,7 @@ use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -386,5 +388,253 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $result = $handler($command);
 
         $this->assertSame($createdLocation, $result);
+    }
+
+    public function testUpdateDepartmentalRoad(): void
+    {
+        $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $roadNumber = 'D12';
+        $administrator = 'Ain';
+        $departmentalRoadGeometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.935836, 47.347024),
+            Coordinates::fromLonLat(-1.930973, 47.347917),
+        ]);
+
+        $this->roadGeocoder
+            ->expects(self::never())
+            ->method('findDepartmentalRoads');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn($roadType);
+        $location
+            ->expects(self::exactly(2))
+            ->method('getAdministrator')
+            ->willReturn($administrator);
+        $location
+            ->expects(self::exactly(2))
+            ->method('getRoadNumber')
+            ->willReturn($roadNumber);
+        $location
+            ->expects(self::exactly(2))
+            ->method('getGeometry')
+            ->willReturn($departmentalRoadGeometry);
+
+        $location
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                $roadType,
+                $administrator,
+                $roadNumber,
+                null,
+                null,
+                null,
+                null,
+                null,
+                $departmentalRoadGeometry,
+            );
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveLocationCommand($location);
+        $command->roadType = $roadType;
+        $command->administrator = $administrator;
+        $command->roadNumber = $roadNumber;
+        $command->departmentalRoadGeometry = $departmentalRoadGeometry;
+
+        $this->assertSame($location, $handler($command));
+    }
+
+    public function testCreateDepartmentalRoad(): void
+    {
+        $roadType = 'departmentalRoad';
+        $roadNumber = 'D12';
+        $administrator = 'Ain';
+        $departmentalRoadGeometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.935836, 47.347024),
+            Coordinates::fromLonLat(-1.930973, 47.347917),
+        ]);
+
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $createdLocation = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Location(
+                        uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                        measure: $measure,
+                        roadType: $roadType,
+                        administrator: $administrator,
+                        roadNumber: $roadNumber,
+                        cityCode: null,
+                        cityLabel: null,
+                        roadName: null,
+                        fromHouseNumber: null,
+                        toHouseNumber: null,
+                        geometry: $departmentalRoadGeometry,
+                    ),
+                ),
+            )
+            ->willReturn($createdLocation);
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = $roadType;
+        $command->administrator = $administrator;
+        $command->roadNumber = $roadNumber;
+        $command->departmentalRoadGeometry = $departmentalRoadGeometry;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
+
+    public function testCreateDepartmentalRoadWithoutGeometry(): void
+    {
+        $roadType = 'departmentalRoad';
+        $roadNumber = 'D12';
+        $administrator = 'Ain';
+        $departmentalRoadGeometry = GeoJSON::toLineString([
+            Coordinates::fromLonLat(-1.935836, 47.347024),
+            Coordinates::fromLonLat(-1.930973, 47.347917),
+        ]);
+
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('findDepartmentalRoads')
+            ->with($roadNumber, $administrator)
+            ->willReturn([
+                [
+                    'roadNumber' => $roadNumber,
+                    'geometry' => $departmentalRoadGeometry,
+                ],
+            ]);
+
+        $createdLocation = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Location(
+                        uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                        measure: $measure,
+                        roadType: $roadType,
+                        administrator: $administrator,
+                        roadNumber: $roadNumber,
+                        cityCode: null,
+                        cityLabel: null,
+                        roadName: null,
+                        fromHouseNumber: null,
+                        toHouseNumber: null,
+                        geometry: $departmentalRoadGeometry,
+                    ),
+                ),
+            )
+            ->willReturn($createdLocation);
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = $roadType;
+        $command->administrator = $administrator;
+        $command->roadNumber = $roadNumber;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
+
+    public function testCreateDepartmentalRoadWithGeocodingFailureException(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $roadType = 'departmentalRoad';
+        $roadNumber = 'D12';
+        $administrator = 'Ain';
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('findDepartmentalRoads')
+            ->with($roadNumber, $administrator)
+            ->willReturn([]);
+
+        $measure = $this->createMock(Measure::class);
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = $roadType;
+        $command->administrator = $administrator;
+        $command->roadNumber = $roadNumber;
+
+        $handler($command);
     }
 }

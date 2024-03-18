@@ -23,6 +23,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?string $toRoadName = null;
     public ?string $geometry;
     public ?Measure $measure;
+    public ?string $departmentalRoadGeometry = null;
     private ?bool $isEntireStreetFormValue = null;
 
     public function __construct(
@@ -53,6 +54,7 @@ final class SaveLocationCommand implements CommandInterface
         if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
+            $this->departmentalRoadGeometry = null;
         }
 
         if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreetFormValue) {

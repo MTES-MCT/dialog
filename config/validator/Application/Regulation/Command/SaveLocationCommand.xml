@@ -15,13 +15,13 @@
             </constraint>
         </property>
         <property name="roadNumber">
-            <constraint name="Length">
-                <option name="max">50</option>
-            </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'departmentalRoad' </option>
                 <option name="constraints">
                     <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">50</option>
+                    </constraint>
                 </option>
             </constraint>
         </property>
@@ -30,7 +30,7 @@
                 <option name="type">boolean</option>
             </constraint>
             <constraint name="When">
-                <option name="expression">!value</option>
+                <option name="expression">this.roadType === 'lane' and !value</option>
                 <option name="constraints">
                     <constraint name="AtLeastOneOf">
                         <option name="constraints">
@@ -63,14 +63,23 @@
             </constraint>
         </property>
         <property name="cityLabel">
-            <constraint name="Length">
-                <option name="max">255</option>
-            </constraint>
             <constraint name="When">
                 <option name="expression"> this.roadType === 'lane' </option>
-                <option
-                    name="constraints">
+                <option name="constraints">
                     <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">255</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="departmentalRoadGeometry">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'departmentalRoad' </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.error.departmental_road_geocoding_failed</option>
+                    </constraint>
                 </option>
             </constraint>
         </property>

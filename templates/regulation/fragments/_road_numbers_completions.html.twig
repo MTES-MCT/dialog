@@ -1,0 +1,3 @@
+{% for roadNumber in departmentalRoadNumbers %}
+    <li role="option" data-autocomplete-value="{{ roadNumber.geometry }}">{{ roadNumber.roadNumber }}</li>
+{% endfor %}

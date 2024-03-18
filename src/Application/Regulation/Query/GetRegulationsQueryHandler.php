@@ -32,6 +32,9 @@ final class GetRegulationsQueryHandler
             if ($row['location']) {
                 [$roadName, $cityLabel, $cityCode] = explode('#', $row['location']);
                 $locationView = new LocationView($cityCode, $cityLabel, $roadName);
+            } elseif ($row['departmentalRoad']) {
+                [$roadNumber, $administrator] = explode('#', $row['departmentalRoad']);
+                $locationView = new LocationView(null, null, null, $roadNumber, $administrator);
             }
 
             $regulationOrderViews[] = new RegulationOrderListItemView(
