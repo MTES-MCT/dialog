@@ -84,7 +84,6 @@ services:
 
     bdtopo.road_geocoder:
         class: App\Infrastructure\Adapter\BdTopoRoadGeocoder
-        autowire: false
 
     App\Application\RoadGeocoderInterface: '@bdtopo.road_geocoder'
 
