@@ -73,16 +73,6 @@
                 </option>
             </constraint>
         </property>
-        <property name="departmentalRoadGeometry">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank">
-                        <option name="message">regulation.location.error.departmental_road_geocoding_failed</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
         <property name="roadName">
             <constraint name="Length">
                 <option name="max">255</option>
