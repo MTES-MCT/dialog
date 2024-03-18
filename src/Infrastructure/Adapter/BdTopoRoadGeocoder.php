@@ -19,9 +19,15 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                'SELECT ST_AsGeoJSON(geometrie) AS geometry FROM voie_nommee WHERE nom_minuscule=:nom_minuscule AND code_insee = :code_insee LIMIT 1',
+                implode(' ', [
+                    'SELECT ST_AsGeoJSON(geometrie) AS geometry',
+                    'FROM voie_nommee',
+                    'WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)',
+                    'AND code_insee = :code_insee',
+                    'LIMIT 1',
+                ]),
                 [
-                    'nom_minuscule' => strtolower($roadName),
+                    'nom_minuscule' => $roadName,
                     'code_insee' => $inseeCode,
                 ],
             );
@@ -41,8 +47,15 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                'SELECT numero, ST_AsGeoJSON(geometrie) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
-                ['numero_pattern' => sprintf('%s%%', strtoupper($search)), 'gestionnaire' => $administrator],
+                implode(' ', [
+                    'SELECT numero, ST_AsGeoJSON(geometrie) AS geometry',
+                    'FROM route_numerotee_ou_nommee',
+                    'WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
+                ]),
+                [
+                    'numero_pattern' => sprintf('%s%%', strtoupper($search)),
+                    'gestionnaire' => $administrator,
+                ],
             );
         } catch (\Exception $exc) {
             throw new GeocodingFailureException(sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);

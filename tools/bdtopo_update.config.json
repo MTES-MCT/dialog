@@ -1,8 +1,10 @@
 {
     "tables": [
-        "voie_nommee"
+        "voie_nommee",
+        "route_numerotee_ou_nommee"
     ],
     "custom_index_statements": [
-        "CREATE INDEX voie_nommee_nom_minuscule_code_insee_idx ON voie_nommee (nom_minuscule, code_insee);"
+        "CREATE INDEX voie_nommee_normalized_nom_minuscule_code_insee_idx ON voie_nommee (f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), code_insee);",
+        "CREATE INDEX route_numerotee_ou_nommee_numero_gestionnaire_idx ON route_numerotee_ou_nommee (numero, gestionnaire);"
     ]
 }

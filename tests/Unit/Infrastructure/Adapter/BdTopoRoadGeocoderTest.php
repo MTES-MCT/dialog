@@ -26,8 +26,8 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->with(
-                'SELECT ST_AsGeoJSON(geometrie) AS geometry FROM voie_nommee WHERE nom_minuscule=:nom_minuscule AND code_insee = :code_insee LIMIT 1',
-                ['nom_minuscule' => 'rue du test', 'code_insee' => '01234'],
+                'SELECT ST_AsGeoJSON(geometrie) AS geometry FROM voie_nommee WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule) AND code_insee = :code_insee LIMIT 1',
+                ['nom_minuscule' => 'Rue du Test', 'code_insee' => '01234'],
             )
             ->willReturn([['geometry' => 'test']]);
 
