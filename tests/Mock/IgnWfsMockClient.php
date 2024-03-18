@@ -40,7 +40,7 @@ final class IgnWfsMockClient extends MockHttpClient
                 ];
             }
         } else {
-            if (str_contains($options['query']['cql_filter'], 'rue saint-victor')) {
+            if (str_contains($options['query']['cql_filter'], 'rue saint victor')) {
                 $body = [
                     'features' => [
                         [
