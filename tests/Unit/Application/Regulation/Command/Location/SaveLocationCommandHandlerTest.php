@@ -637,4 +637,65 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $handler($command);
     }
+
+    public function testCreateWithCoords(): void
+    {
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeCoordinates');
+
+        $this->geocoder
+            ->expects(self::never())
+            ->method('computeJunctionCoordinates');
+
+        $createdLocation = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $this->equalTo(
+                    new Location(
+                        uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                        measure: $measure,
+                        roadType: $this->roadType,
+                        administrator: $this->administrator,
+                        roadNumber: $this->roadNumber,
+                        cityCode: $this->cityCode,
+                        cityLabel: $this->cityLabel,
+                        roadName: $this->roadName,
+                        fromHouseNumber: null,
+                        toHouseNumber: null,
+                        geometry: $this->geometry,
+                    ),
+                ),
+            )
+            ->willReturn($createdLocation);
+
+        $handler = new SaveLocationCommandHandler(
+            $this->idFactory,
+            $this->locationRepository,
+            $this->geocoder,
+            $this->roadGeocoder,
+        );
+
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = 'lane';
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
+        $command->roadName = $this->roadName;
+        $command->fromCoords = Coordinates::fromLonLat(-1.935836, 47.347024);
+        $command->toCoords = Coordinates::fromLonLat(-1.930973, 47.347917);
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
 }

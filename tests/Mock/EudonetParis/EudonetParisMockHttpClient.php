@@ -30,16 +30,8 @@ final class EudonetParisMockHttpClient extends MockHttpClient
             return new MockResponse(json_encode($body), ['http_code' => 200]);
         }
 
-        if ($method === 'POST' && $url === $this->baseUri . '/EudoAPI/Search/1100') {
-            return new MockResponse($this->getMockJSON('1100'), ['http_code' => 200]);
-        }
-
-        if ($method === 'POST' && $url === $this->baseUri . '/EudoAPI/Search/1200') {
-            return new MockResponse($this->getMockJSON('1200'), ['http_code' => 200]);
-        }
-
-        if ($method === 'POST' && $url === $this->baseUri . '/EudoAPI/Search/2700') {
-            return new MockResponse($this->getMockJSON('2700'), ['http_code' => 200]);
+        if (preg_match('/\/EudoAPI\/Search\/(?P<fileId>\d+)$/i', $url, $matches)) {
+            return new MockResponse($this->getMockJSON($matches['fileId']), ['http_code' => 200]);
         }
 
         throw new \UnexpectedValueException("Mock not implemented: $method $url");
@@ -52,7 +44,7 @@ final class EudonetParisMockHttpClient extends MockHttpClient
 
     public function assertExpectedRequestsMade(): void
     {
-        Assert::assertCount(5, $this->requests);
+        Assert::assertCount(13, $this->requests);
 
         // Auth
         Assert::assertSame($this->baseUri . '/EudoAPI/Authenticate/Token', $this->requests[0]['url']);
@@ -124,8 +116,58 @@ final class EudonetParisMockHttpClient extends MockHttpClient
             json_decode($this->requests[3]['options']['body'], true)['WhereCustom'],
         );
 
+        // Start and end addresses of locations of measure 1
+
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/3400', $this->requests[4]['url']);
+        Assert::assertEquals(
+            [
+                'Criteria' => [
+                    'Field' => 3401,
+                    'Operator' => 0,
+                    'Value' => "40 Boulevard de l'Hôpital",
+                ],
+            ],
+            json_decode($this->requests[4]['options']['body'], true)['WhereCustom'],
+        );
+
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/3400', $this->requests[5]['url']);
+        Assert::assertEquals(
+            [
+                'Criteria' => [
+                    'Field' => 3401,
+                    'Operator' => 0,
+                    'Value' => "47 Boulevard de l'Hôpital",
+                ],
+            ],
+            json_decode($this->requests[5]['options']['body'], true)['WhereCustom'],
+        );
+
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/3400', $this->requests[6]['url']);
+        Assert::assertEquals(
+            [
+                'Criteria' => [
+                    'Field' => 3401,
+                    'Operator' => 0,
+                    'Value' => "47 Boulevard de l'Hôpital",
+                ],
+            ],
+            json_decode($this->requests[6]['options']['body'], true)['WhereCustom'],
+        );
+
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/3400', $this->requests[7]['url']);
+        Assert::assertEquals(
+            [
+                'Criteria' => [
+                    'Field' => 3401,
+                    'Operator' => 0,
+                    'Value' => "29 Boulevard de l'Hôpital",
+                ],
+            ],
+            json_decode($this->requests[7]['options']['body'], true)['WhereCustom'],
+        );
+
         // Locations of measure 2
-        Assert::assertSame($this->baseUri . '/EudoAPI/Search/2700', $this->requests[4]['url']);
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/2700', $this->requests[8]['url']);
         Assert::assertEquals(
             [
                 'Criteria' => [
@@ -134,7 +176,9 @@ final class EudonetParisMockHttpClient extends MockHttpClient
                     'Value' => 363227,
                 ],
             ],
-            json_decode($this->requests[4]['options']['body'], true)['WhereCustom'],
+            json_decode($this->requests[8]['options']['body'], true)['WhereCustom'],
         );
+
+        // Requests 9 to 13 are the same address requests as for location 1.
     }
 }
