@@ -33,7 +33,7 @@ final class RoadGeocoderTest extends TestCase
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(nom_minuscule)%3DstrStripAccents(%27rue%20saint-victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
+            'http://testserver/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=strStripAccents(strReplace(nom_minuscule%2C%20%27-%27%2C%20%27%20%27%2C%20true))%3DstrStripAccents(%27rue%20saint%20victor%2059110%20la%20madeleine%27)%20AND%20code_insee%3D%2759368%27&PropertyName=geometrie',
             $response->getRequestUrl(),
         );
     }

@@ -82,6 +82,7 @@ export class RegulationOrderPage {
         await expect(this.page.getByLabel('Types de véhicules concernés', { exact: true })).not.toBeVisible(); // Restricted
         await expect(this.page.getByLabel('Indiquez les exceptions à la restriction', { exact: true })).not.toBeVisible(); // Exempted
 
+        await this.page.getByRole('combobox', { name: 'Type de route ou voie' }).selectOption({ label: 'Voie'});
         await this.page.getByLabel('Ville ou commune').fill(cityLabel);
         await this.page.getByRole('listbox', {name: 'Noms de communes suggérés'}).getByRole('option').first().click();
         await this.page.getByRole('textbox', {name: 'Voie'}).fill(roadName);
