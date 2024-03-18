@@ -57,4 +57,30 @@ final class BdTopoRoadGeocoderTest extends TestCase
 
         $this->roadGeocoder->computeRoadLine('Rue du Test', '01234');
     }
+
+    public function testFindDepartmentalRoads(): void
+    {
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->with(
+                'SELECT numero, ST_AsGeoJSON(geometrie) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
+                ['numero_pattern' => 'D32%', 'gestionnaire' => 'Ardennes'],
+            )
+            ->willReturn([['numero' => 'D321', 'geometry' => 'test']]);
+
+        $this->assertSame([['roadNumber' => 'D321', 'geometry' => 'test']], $this->roadGeocoder->findDepartmentalRoads('d32', 'Ardennes'));
+    }
+
+    public function testFindDepartmentalRoadsUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->findDepartmentalRoads('D32', 'Ardennes');
+    }
 }

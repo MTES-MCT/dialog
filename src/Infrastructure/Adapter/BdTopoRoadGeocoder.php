@@ -36,4 +36,27 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         $message = sprintf('no result found in voie_nommee for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
         throw new GeocodingFailureException($message);
     }
+
+    public function findDepartmentalRoads(string $search, string $administrator): array
+    {
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                'SELECT numero, ST_AsGeoJSON(geometrie) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
+                ['numero_pattern' => sprintf('%s%%', strtoupper($search)), 'gestionnaire' => $administrator],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $departmentalRoads = [];
+
+        foreach ($rows as $row) {
+            $departmentalRoads[] = [
+                'roadNumber' => $row['numero'],
+                'geometry' => $row['geometry'],
+            ];
+        }
+
+        return $departmentalRoads;
+    }
 }

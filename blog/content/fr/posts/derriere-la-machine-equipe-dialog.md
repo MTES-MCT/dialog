@@ -22,9 +22,11 @@ Cela fait un an que nous essayons de vous familiariser avec l’univers de DiaLo
 
 Aujourd’hui exceptionnellement nous allons vous parler de nous. Celles et ceux qui conçoivent DiaLog et s’assurent de sa prise en main par les utilisateurs. Comme cela nous espérons que vous comprendrez mieux ce que nous faisons et ce qui nous anime. 
 
+{% image "./img/Logo_HD.png", "Logo DiaLog.beta.gouv.fr", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+
 Si vous avez raté le début, DiaLog est une startup d’État qui vise à intégrer les données de réglementation routière dans les services numériques (GPS, logiciel de transport,...).
 
-Une startup d’État est comme son nom l’indique une startup créée dans le giron de [Beta Gouv](https://beta.gouv.fr/), l’incubateur de services numériques de l’État. Comment nait et grandit une startup d’État ? Un intrapreneur, en l’occurence ici un ingénieur du Ministère de la Transition Écologique ([DGITM](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm), décide de consacrer temps et moyen à la création d’une solution numérique pour régler un problème d’intérêt général. Pour DiaLog le problème était : “comment s’assurer que la réglementation de circulation est bien accessible sur les services numériques utilisés par les professionnels et les particuliers ?”.
+Une startup d’État est comme son nom l’indique une startup créée dans le giron de [Beta Gouv](https://beta.gouv.fr/), l’incubateur de services numériques de l’État. Comment nait et grandit une startup d’État ? Un intrapreneur, en l’occurence ici un ingénieur du Ministère de la Transition Écologique ([DGITM](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm)), décide de consacrer temps et moyen à la création d’une solution numérique pour régler un problème d’intérêt général. Pour DiaLog le problème était : “comment s’assurer que la réglementation de circulation est bien accessible sur les services numériques utilisés par les professionnels et les particuliers ?”.
 
 Débute alors une phase d’investigation durant laquelle l’intrapreneur est accompagné par un coach produit qui va l’aider à “valider que le problème peut être résolu par le numérique en rencontrant des utilisateurs pour qualifier le problème et imaginer des ébauches de solutions”. En l’occurence nous avons travaillé avec les services de Rennes Métropole, de la Ville de Savenay et l’entreprise de transport IDEA en Loire-Atlantique, que nous remercions encore.
 
@@ -74,11 +76,11 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
 
     <div class="fiche_membre">
         <div class="photo_membre">
-            {% image "./img/PhotoAB.png", "Photo [Aurelie Baton](https://www.linkedin.com/in/aureliebaton/)", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
+            {% image "./img/PhotoAB.png", "Photo Aurelie Baton", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
         <div class="bloc_texte">
             <div class="titre_fiche_membre">
-                Aurélie Baton - L’UX Designer
+                [Aurélie Baton](https://www.linkedin.com/in/aureliebaton/) - L’UX Designer
             </div>
             <div class="texte_membre">
                 Une designer UX fait de la [recherche utilisateur](https://openclassrooms.com/fr/courses/5192236-menez-une-recherche-utilisateur/5446851-pourquoi-mener-une-recherche-utilisateur) et de la conception UX (expérience utilisateur) et UI (interfaces utilisateurs), des maquettes, de l’éco-conception. Je fais également de la formation et j’enseigne à Rouen. Je travaille avec Beta Gouv depuis octobre 2022.
@@ -117,7 +119,7 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
                 [Florimond Manca](https://www.linkedin.com/in/florimondmanca/) - L’ingénieur logiciel et éco-concepteur web
             </div>
             <div class="texte_membre">
-                Je développe le numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux des solutions numériques. Au quotidien je traite des tickets (NDLR : les tickets définissent les tâches à traiter et sont le support des réflexions de l'équipe sur le projet, ils sont d'ailleurs publics et consultable sur notre [repository Git](https://github.com/MTES-MCT/dialog)) et j’aide à les écrire ;-) Je définis les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe. Chez Fairness depuis 2021 après une première expérience comme ingénieur logiciel.
+                Après une première expérience comme développeur dans le domaine du monitoring cloud, j'ai rejoint la coopérative Fairness en 2021. J'intègre dans ma pratique les enjeux du Numérique responsable : code, design et choix fonctionnels visant à réduire les impacts environnementaux et sociaux du numérique. Au quotidien, je définis et mets en oeuvre les meilleures solutions techniques en lien avec les objectifs définis avec le reste de l’équipe et dans une approche d'écoconception.
             </div>
             <div class="formation_membre">
                 Formation : Ingénieur Centralien - 3ème année de spécialisation en informatique
