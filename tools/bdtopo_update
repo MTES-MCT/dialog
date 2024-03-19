@@ -228,6 +228,7 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
             # Update table statistics so that COUNT, indexes, etc work immediately.
             # NOTE: VACUUM will run automatically later thanks to Scalingo's autovacuum.
             print("===> Running ANALYZE...")
+            # TODO: need VACUUM too
             analyze_stmt = f"ANALYZE VERBOSE {', '.join(tables_seen)};"
             print("------>", analyze_stmt)
             result = subprocess.run(["psql", database_url, "-c", analyze_stmt])
