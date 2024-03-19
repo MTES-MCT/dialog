@@ -19,12 +19,13 @@ Même dans le cas où les comportements extrêmes possiblement liés à la migra
 
 ## Décision
 
-Les tables de la BD TOPO nécessaires à DiaLog seront intégrées à la base de production, selon l'approche détaillée dans l'option 2.
+Les tables de la BD TOPO nécessaires à DiaLog seront intégrées à la base de production et à la base de staging, selon l'approche détaillée dans l'option 2.
 
 Conséquences :
 
-* Un utilisateur `dialog_bdtopo` sera créé avec accès "read-only" à la base de données.
+* Un utilisateur `dialog_bdtopo` sera créé en prod et sur staging avec accès "read-only" à la base de données.
 * La connexion entre DiaLog et les données BD TOPO se feront par une connexion PostgreSQL utilisant l'utilisateur `dialog_bdtopo`.
+* La base de staging sera [ouverte à Internet](https://doc.scalingo.com/platform/databases/access#internet-accessibility) pour permettre l'accès à ses tables BD TOPO en développement sans avoir besoin d'outillage Scalingo.
 * Un script sera réalisé pour l'ingestion des tables souhaitées de la BD TOPO (création initiale ou mise à jour). Ce script intègrera la création des indexes pertinents.
 * Un espace de stockage suffisant devra être prévu dans la base de données de production : au moins 2 x 5 Go = 10 Go rien que pour la BD TOPO (la mise à jour "tout ou rien" implique l'existence temporaire des données en double). Le cas échéant, le plan Scalingo devra être augmenté.
 * De la documentation sera ajoutée pour le fonctionnement de l'intégration BD TOPO et la mise à jour des données.
@@ -40,10 +41,23 @@ Avantages
 Inconvénients
 
 * Les lenteurs et perturbations persistent, impactant à la fois l'expérience utilisateur et la productivité lors du développement.
+* Divers cas d'erreurs à gérer : ruptures réseau, timeouts, erreurs HTTP inattendues, changement de format...
 
 ### Option 2 - Hébergement partiel de la BD TOPO
 
 Cette option consisterait à intégrer directement dans la base de données DiaLog les tables de la [BD TOPO](https://geoservices.ign.fr/bdtopo#telechargementtransportter) utilisées par DiaLog pour les calculs nécessitant des données BD TOPO, tels que les linéaires de voies ou de routes.
+
+Avantages
+
+* Maîtrise complète des données
+* Permet d'atteindre des temps de réponse inférieurs à 100 ms et de façon beaucoup plus fiable
+* Permet l'optimisation des requêtes faites spécifiquement par DiaLog, notamment par la création d'indexes (impossible avec l'API)
+* Moins de cas d'erreurs possibles
+
+Inconvénients
+
+* Coût opérationnel pour la gestion des tables de la BD TOPO : hébergement (prod, staging), mise à jour (~ annuelle), utilisation en développement, documentation...
+* Coût financier d'hébergement : passage de la DB staging du plan Sandbox à Starter 512M, soit +7€/mois.
 
 ### Approche détaillée
 
@@ -111,7 +125,9 @@ La proposition est donc d'**héberger les tables de la BD TOPO au même endroit 
 
 Pour cela, un utilisateur BD TOPO "read-only" sera créé via l'interface web Scalingo pour la connexion entre DiaLog et les tables de la BD TOPO.
 
-Ces identifiants BD TOPO doivent être considérés comme tout aussi sensibles que pour la base de données de production. A fortiori, un accès public est à proscrire. En effet, cette approche permettrait quand même, en cas de fuite des identifiants de l'utilisateur BD TOPO, d'avoir accès en lecture seule à l'ensemble des données, en particulier les données utilisateur (nom, prénom, adresse mail) de la table `user`. Cela justifie également l'hébergement double (en production d'une part, sur staging d'autre part) indiqué dans [Hébergement](#hébergement) pour ne pas élargir la surface d'accès aux données de production.
+Ces identifiants BD TOPO doivent être considérés comme tout aussi sensibles que pour la base de données de production. En effet, cette approche permettrait quand même, en cas de fuite des identifiants de l'utilisateur BD TOPO, d'avoir accès en lecture seule à l'ensemble des données, en particulier les données utilisateur (nom, prénom, adresse mail) de la table `user`. Cela justifie également l'hébergement double (en production d'une part, sur staging d'autre part) indiqué dans [Hébergement](#hébergement) pour ne pas élargir la surface d'accès aux données de production.
+
+La protection de l'URL BD TOPO est toute aussi importante sur staging car la base devra être [ouverte à Internet](https://doc.scalingo.com/platform/databases/access#internet-accessibility) pour y accéder en local, ce qui retirera la couche de sécurisation SSH de Scalingo.
 
 #### Mise à jour
 
