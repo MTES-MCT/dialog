@@ -143,6 +143,12 @@ La mise à jour des données BD TOPO pourra se faire par l'équipe de développe
 
 Cette approche minimise les risques de rupture de service, comparativement à la suppression des tables préalable à leur ingestion. En effet, l'ingestion des tables pourrait prendre plusieurs dizaines de secondes, alors qu'un renommage final sera très rapide. Néanmoins, elle implique une petite complexité supplémentaire pour le renommage, et nécessite de stocker temporairement dans PostgreSQL l'ancienne version ET la nouvelle version des données, ce qui implique un surdimensionnement du stockage de la base par rapport aux besoins au runtime.
 
+**Vitesse de transfert**
+
+La mise à jour prend typiquement plusieurs minutes, en raison de l'upload du contenu des tables la BD TOPO vers Scalingo.
+
+Lors de l'upload initial vers staging, sur une connexion à 375 Mbps, la mise à jour a duré environ 5 minutes, pour une vitesse de transfert effective d'environ 60 Mbps à travers le tunnel SSH.
+
 ### Réversibilité
 
 Si la qualité du service de l'API WFS de l'IGN s'améliore au point que le surcoût opérationnel (modeste mais non-nul) de gestion de notre hébergement BD TOPO n'est plus justifié, il sera toujours possible de récupérer le code de l'ancien géocodeur basé sur l'API WFS.

@@ -65,6 +65,8 @@ Pour mettre à jour les données dans sur staging et en production :
     ./tools/bdtopo_update ~/path/to/theme_transport dialog
     ```
 
+L'exécution du script de mise à jour prendra typiquement plusieurs minutes (temps de transfert des données vers Scalingo, variable selon la qualité de la connexion).
+
 ### (Avancé) Utiliser une BD TOPO locale
 
 Il est possible de télécharger la BD TOPO et de l'ingérer dans votre base de données PostgreSQL de développement.

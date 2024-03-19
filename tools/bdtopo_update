@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 
 def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: list):
-    # Access database connection open on the host
+    # Make ogr2ogr access database tunnel connection open on the host
     # https://stackoverflow.com/a/43541732
     urlobj = urlparse(database_url)
     database_url_from_container = urlobj._replace(
@@ -67,6 +67,13 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
 
     with ExitStack() as exit_stack:
         if target.startswith(("postgresql://", "postgres://")):
+            hostname = urlparse(target).hostname
+
+            if hostname not in ("localhost", "127.0.0.1"):
+                print(
+                    f"ERROR: database URL target must be on localhost, received: {hostname}"
+                )
+
             database_url = target
         else:
             app = target
@@ -75,12 +82,7 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
 
             tunnel_proc = exit_stack.enter_context(
                 subprocess.Popen(
-                    [
-                        "./tools/scalingodbtunnel",
-                        app,
-                        "--env-var",
-                        "DATABASE_URL",
-                    ],
+                    ["./tools/scalingodbtunnel", app, "--host-url"],
                     stdout=subprocess.PIPE,
                 )
             )
