@@ -736,6 +736,92 @@
                     </conditions>
                 </condition>
             </trafficRegulation>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ValidityCondition">
+                        <negate>false</negate>
+                        <validityByOrder>
+                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                            <com:validityTimeSpecification>
+                                <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                                <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                            </com:validityTimeSpecification>
+                        </validityByOrder>
+                    </conditions>
+
+                    <conditions xsi:type="LocationCondition">
+                        <locationByOrder xsi:type="loc:LinearLocation">
+                            <loc:supplementaryPositionalDescription>
+                                <loc:roadInformation>
+                                    <loc:roadNumber>D322</loc:roadNumber>
+                                </loc:roadInformation>
+                            </loc:supplementaryPositionalDescription>
+                            <loc:_linearLocationExtension>
+                                <loc:linearLocationExtended>
+                                    <locdx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[4.663492283,49.820771105],[4.663561067,49.820708163],[4.663623202,49.820654298],[4.663725129,49.820585513],[4.66385317,49.820508284],[4.663996569,49.820433542],[4.664156393,49.820351386],[4.664302802,49.820283791],[4.664436862,49.820220858],[4.664595794,49.82015399],[4.664760103,49.820081657],[4.664970675,49.819979937],[4.66510358,49.819924207],[4.66516665,49.819899084],[4.665248891,49.819865612],[4.665391601,49.819812444],[4.665544028,49.819759143],[4.665691049,49.819710408],[4.665836593,49.819658998],[4.66598766,49.819606614],[4.666138405,49.819544349],[4.66630138,49.819473829]]]}</locdx:geoJsonGeometry>
+                                </loc:linearLocationExtended>
+                            </loc:_linearLocationExtension>
+                        </locationByOrder>
+                    </conditions>
+
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleType>heavyGoodsVehicle</com:vehicleType>
+                            <com:grossWeightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:grossVehicleWeight>3.5</com:grossVehicleWeight>
+                                <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                            </com:grossWeightCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:heightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleHeight>2.4</com:vehicleHeight>
+                            </com:heightCharacteristic>
+                            <com:lengthCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleLength>12</com:vehicleLength>
+                            </com:lengthCharacteristic>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair4</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>false</negate>
+                        <vehicleCharacteristics>
+                            <com:emissions>
+                                <com:emissionClassificationOther>critair5</com:emissionClassificationOther>
+                            </com:emissions>
+                        </vehicleCharacteristics>
+                    </conditions>
+                    <conditions xsi:type="NonVehicularRoadUserCondition">
+                        <negate>true</negate>
+                        <nonVehicularRoadUser>pedestrians</nonVehicularRoadUser>
+                    </conditions>
+                    <conditions xsi:type="VehicleCondition">
+                        <negate>true</negate>
+                        <vehicleCharacteristics>
+                            <com:vehicleUsage>emergencyServices</com:vehicleUsage>
+                        </vehicleCharacteristics>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
         </trafficRegulationOrder>
     </trafficRegulationsFromCompetentAuthorities>
 </d2:payload>

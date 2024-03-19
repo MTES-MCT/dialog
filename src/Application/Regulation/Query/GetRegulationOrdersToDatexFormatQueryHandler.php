@@ -82,7 +82,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             }
 
             $location = new DatexLocationView(
+                roadType: $row['roadType'],
                 roadName: $row['roadName'],
+                roadNumber: $row['roadNumber'],
                 geometry: $row['geometry'],
             );
 

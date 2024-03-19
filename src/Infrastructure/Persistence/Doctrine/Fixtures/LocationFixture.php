@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -29,7 +30,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalMeasureLocation1 = new Location(
             self::UUID_TYPICAL,
             $this->getReference('typicalMeasure'),
-            roadType: 'lane',
+            roadType: RoadTypeEnum::LANE->value,
             administrator: null,
             roadNumber: null,
             cityCode: '44195',
@@ -66,7 +67,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $typicalMeasureLocation3 = new Location(
             '0b5d0ddf-f7aa-4f0a-af12-1f654a505200',
             $this->getReference('typicalMeasureToRemove'),
-            roadType: 'lane',
+            roadType: RoadTypeEnum::LANE->value,
             administrator: null,
             roadNumber: null,
             cityCode: '44195',
@@ -86,7 +87,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation1 = new Location(
             self::UUID_PUBLISHED,
             $this->getReference('publishedMeasure'),
-            roadType: 'lane',
+            roadType: RoadTypeEnum::LANE->value,
             administrator: null,
             roadNumber: null,
             cityCode: '82121',
@@ -103,7 +104,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation2 = new Location(
             '064ca782-771c-783f-8000-e67473eabea6',
             $this->getReference('publishedMeasure'),
-            roadType: 'lane',
+            roadType: RoadTypeEnum::LANE->value,
             administrator: null,
             roadNumber: null,
             cityCode: '82121',
@@ -120,7 +121,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $publishedLocation3 = new Location(
             '0655b3f6-124a-7f8d-8000-7c747883d40d',
             $this->getReference('publishedMeasure'),
-            roadType: 'lane',
+            roadType: RoadTypeEnum::LANE->value,
             administrator: null,
             roadNumber: null,
             cityCode: '82121',
@@ -135,6 +136,20 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
                     'coordinates' => [[[1.34352783, 44.01741201], [1.34351021, 44.01728842], [1.34344305, 44.01672388]], [[1.34361127, 44.01827476], [1.34363309, 44.01855416], [1.34367982, 44.01909228], [1.34373623, 44.01964046], [1.34376444, 44.02004327]], [[1.34355908, 44.01762403], [1.34352783, 44.01741201]], [[1.34361127, 44.01827476], [1.34359579, 44.01799187], [1.34355908, 44.01762403]]],
                 ],
             ),
+        );
+
+        $publishedLocation4DepartmentalRoad = new Location(
+            '065f9436-0ff3-74e3-8000-d9ac9b5a16ad',
+            $this->getReference('publishedMeasure'),
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+            administrator: 'Ardennes',
+            roadNumber: 'D322',
+            cityCode: null,
+            cityLabel: null,
+            roadName: null,
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            geometry: '{"type":"MultiLineString","coordinates":[[[4.663492283,49.820771105],[4.663561067,49.820708163],[4.663623202,49.820654298],[4.663725129,49.820585513],[4.66385317,49.820508284],[4.663996569,49.820433542],[4.664156393,49.820351386],[4.664302802,49.820283791],[4.664436862,49.820220858],[4.664595794,49.82015399],[4.664760103,49.820081657],[4.664970675,49.819979937],[4.66510358,49.819924207],[4.66516665,49.819899084],[4.665248891,49.819865612],[4.665391601,49.819812444],[4.665544028,49.819759143],[4.665691049,49.819710408],[4.665836593,49.819658998],[4.66598766,49.819606614],[4.666138405,49.819544349],[4.66630138,49.819473829]]]}',
         );
 
         $permanentRegulationOrderLocation = new Location(
@@ -194,6 +209,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($publishedLocation1);
         $manager->persist($publishedLocation2);
         $manager->persist($publishedLocation3);
+        $manager->persist($publishedLocation4DepartmentalRoad);
         $manager->persist($permanentRegulationOrderLocation);
         $manager->persist($fullCityLocation);
         $manager->persist($cifsLocation);
