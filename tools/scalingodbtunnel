@@ -41,7 +41,6 @@ def _popen_terminate_on_exit(*args, **kwargs):
 def main(
     app: str,
     port: int,
-    database_url_env_var: str,
     host_url: bool = False,
 ):
     # Ensure Scalingo CLI is authenticated
@@ -66,7 +65,7 @@ def main(
         "db-tunnel",
         "-p",
         str(port),
-        database_url_env_var,
+        "DATABASE_URL",
     ]
 
     with _popen_terminate_on_exit(
@@ -102,7 +101,7 @@ def main(
             # The tunnel database URL uses the same credentials, so we grab them
             # from the configured DATABASE_URL.
             database_url = urlparse(
-                _get_output(["scalingo", "--app", app, "env-get", database_url_env_var])
+                _get_output(["scalingo", "--app", app, "env-get", "DATABASE_URL"])
             )
 
             # DB tunnel is always available on localhost, so we can show either.
@@ -143,4 +142,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    sys.exit(main(args.app, args.port, database_url_env_var=args.env_var, host_url=args.host_url))
+    sys.exit(main(args.app, args.port, host_url=args.host_url))

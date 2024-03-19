@@ -79,7 +79,7 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
                         "./tools/scalingodbtunnel",
                         app,
                         "--env-var",
-                        "BDTOPO_DATABASE_URL",
+                        "DATABASE_URL",
                     ],
                     stdout=subprocess.PIPE,
                 )
@@ -106,9 +106,6 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
                 return 1
 
             print("---> Tunnel open.")
-
-            # TODO remove
-            database_url = "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo"
 
         # ogr2ogr only seems to support postgresql://, especially when query parameters
         # are provided, such as '?sslmode=prefer' by Scalingo.
