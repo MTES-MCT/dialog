@@ -21,6 +21,9 @@ def _sizeof_fmt(num: float, suffix: str = "B") -> str:
 
 
 def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: list):
+    assert directory.is_absolute()
+    assert path.is_absolute()
+
     # Make ogr2ogr access database tunnel connection open on the host
     # https://stackoverflow.com/a/43541732
     urlobj = urlparse(database_url)
@@ -280,10 +283,13 @@ if __name__ == "__main__":
         ],
     )
 
+    # Relative paths are OK but ogr2ogr volume will require an absolute path.
+    transport_dir = args.transport_dir.absolute()
+
     sys.exit(
         main(
             config,
-            transport_dir=args.transport_dir,
+            transport_dir=transport_dir,
             target=args.target,
             yes=args.yes,
         )
