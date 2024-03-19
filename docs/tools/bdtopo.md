@@ -125,7 +125,8 @@ options:
   --prod                Required if targetting 'dialog' app
   -y, --yes             Accept all prompts
   -c CONFIG, --config CONFIG
-                        Path to config file. Default: ./bdtopo_update.config.json
+                        Path to config file. Default:
+                        ./bdtopo_update.config.json
 ```
 
 #### Configuration
@@ -134,8 +135,11 @@ Le fichier de configuration du script, par défaut `tools/bdtopo_update.config.j
 
 * `tables` - Type `string[]` :
   * La liste des tables de la BD TOPO à intégrer. Les tables possibles sont référencées dans le document [Descrpitif de contenu BD TOPO](https://geoservices.ign.fr/documentation/donnees/vecteur/bdtopo).
-* `custom_index_statements` _(Optionnel)_ - Type `string[]` :
-  * Une liste de statements SQL exécutés en fin de déploiement pour configurer des indexes personnalisés.
+* `custom_indexes` _(Optionnel)_ - Type `array` :
+  * Une liste de définitions d'indexes personnalisés à configurer en fin de déploiement.
+  * Définition d'un index :
+    * `name` - Type `string` : le nom de l'index
+    * `create` - Type `string` : la commande SQL à utiliser pour créer l'index. Utilisez `$name` pour faire référence au nom de l'index.
 
 ## Liens utiles
 

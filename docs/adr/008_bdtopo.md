@@ -24,10 +24,10 @@ Les tables de la BD TOPO nécessaires à DiaLog seront intégrées à la base de
 Conséquences :
 
 * Un utilisateur `dialog_bdtopo` sera créé en prod et sur staging avec accès "read-only" à la base de données.
-* La connexion entre DiaLog et les données BD TOPO se feront par une connexion PostgreSQL utilisant l'utilisateur `dialog_bdtopo`.
+* La connexion entre DiaLog et les données BD TOPO se fera par une connexion PostgreSQL sous l'utilisateur `dialog_bdtopo`.
 * La base de staging sera [ouverte à Internet](https://doc.scalingo.com/platform/databases/access#internet-accessibility) pour permettre l'accès à ses tables BD TOPO en développement sans avoir besoin d'outillage Scalingo.
-* Un script sera réalisé pour l'ingestion des tables souhaitées de la BD TOPO (création initiale ou mise à jour). Ce script intègrera la création des indexes pertinents.
-* Un espace de stockage suffisant devra être prévu dans la base de données de production : au moins 2 x 5 Go = 10 Go rien que pour la BD TOPO (la mise à jour "tout ou rien" implique l'existence temporaire des données en double). Le cas échéant, le plan Scalingo devra être augmenté.
+* Un script sera réalisé pour l'ingestion des tables souhaitées de la BD TOPO (création initiale ou mise à jour). Ce script permettra de configurer les indexes pertinents.
+* Un espace de stockage suffisant devra être prévu dans les bases de prod et de staging : au moins 4 Go (incluant tables et indexes). Le cas échéant, le plan Scalingo devra être augmenté. L'espace de stockage devra être revu en cas d'import de nouvelles tables.
 * De la documentation sera ajoutée pour le fonctionnement de l'intégration BD TOPO et la mise à jour des données.
 
 ## Options envisagées
@@ -133,21 +133,25 @@ La protection de l'URL BD TOPO est toute aussi importante sur staging car la bas
 
 Une mise à jour semi-manuelle (déclenchement manuel à l'aide de scripts) est envisageable puisque la BD TOPO est mise à jour peu fréquemment (une publication par an environ).
 
-La mise à jour des données BD TOPO pourra se faire par l'équipe de développement comme suit :
+La mise à jour des données BD TOPO pourrait se faire par l'équipe de développement comme suit :
 
-* Télécharger en local la nouvelle version du thème Transports
-* Exécuter un script utilitaire qui fera les opérations suivantes :
-  * Importer les données avec `ogr2ogr` dans des tables temporaires
-  * Une fois l'import entièrement réussi, remplacer les tables précédentes par les nouvelles tables
-  * Faire en sorte que le processus soit "atomique" : soit la mise à jour réussit entièrement, soit rien ne change
+* Télécharger en local la nouvelle version du thème Transports ;
+* Exécuter un script utilitaire qui mettre à jour les tables au fur et à mesure avec `ogr2ogr`.
 
-Cette approche minimise les risques de rupture de service, comparativement à la suppression des tables préalable à leur ingestion. En effet, l'ingestion des tables pourrait prendre plusieurs dizaines de secondes, alors qu'un renommage final sera très rapide. Néanmoins, elle implique une petite complexité supplémentaire pour le renommage, et nécessite de stocker temporairement dans PostgreSQL l'ancienne version ET la nouvelle version des données, ce qui implique un surdimensionnement du stockage de la base par rapport aux besoins au runtime.
+Cette approche a des avantages et inconvénients par rapport au chargement complet des tables avant de remplacer les données existantes :
+
+* Avantages :
+  * Elle est plus simple, car le renommage d'une table n'est pas trivial (il faut penser à renommer ses indexes, séquences, et autres objets PostgreSQL associés).
+  * Elle permet une économise de stockage significative, car le serveur n'a pas besoin d'être capable de stocker la table en double.
+  * Elle facilite la maintenance du serveur car le TRUNCATE lancé par ogr2ogr déclenchera un AUTOVACUUM (déjà configuré par Scalingo), contrairement au remplacement d'une table.
+* Inconvénients :
+  * Cette approche n'est pas atomique. Si l'import d'un GeoPackage échoue, alors la table concernée n'aura que des données partielles. Cela peut produire des échecs de géocodage en production.
 
 **Vitesse de transfert**
 
 La mise à jour prend typiquement plusieurs minutes, en raison de l'upload du contenu des tables la BD TOPO vers Scalingo.
 
-Lors de l'upload initial vers staging, sur une connexion à 375 Mbps, la mise à jour a duré environ 5 minutes, pour une vitesse de transfert effective d'environ 60 Mbps à travers le tunnel SSH.
+Lors de l'upload initial vers staging des tables `voie_nommee` et `route_numerotee_ou_nommee`, sur une connexion à 375 Mbps, la mise à jour a duré environ 5 minutes, pour une vitesse de transfert effective d'environ 60 Mbps à travers le tunnel SSH.
 
 ### Réversibilité
 

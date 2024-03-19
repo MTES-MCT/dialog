@@ -2,12 +2,22 @@
 import argparse
 import json
 import signal
+import string
 import subprocess
 import sys
 from contextlib import ExitStack
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
+
+
+# Credit: https://stackoverflow.com/a/1094933
+def _sizeof_fmt(num: float, suffix: str = "B") -> str:
+    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
+        if abs(num) < 1024.0:
+            return f"{num:3.1f} {unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f} Yi{suffix}"
 
 
 def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: list):
@@ -45,9 +55,15 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
 
 
 @dataclass
+class CustomIndex:
+    name: str
+    create_statement: str
+
+
+@dataclass
 class Config:
     tables: list[str]
-    custom_index_statements: dict[str, str] = field(default_factory=dict)
+    custom_indexes: list[CustomIndex] = field(default_factory=list)
 
 
 def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
@@ -62,8 +78,12 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
     ]
 
     if not geopackage_paths:
-        print("WARNING: no geopackages found", file=sys.stderr)
-        return 2
+        print("ERROR: no geopackages found", file=sys.stderr)
+        return 1
+
+    # Improve disk usage by importing smallest packages first.
+    # Reason: initial TRUNCATE only runs *after* importing the 1st package.
+    geopackage_paths = sorted(geopackage_paths, key=lambda p: p.stat().st_size)
 
     with ExitStack() as exit_stack:
         if target.startswith(("postgresql://", "postgres://")):
@@ -120,44 +140,52 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
             return 1
 
         print("===> Importing BD TOPO content...")
-
-        temp_tables_to_drop = set()
+        tables_seen = set()
 
         try:
-            tables_to_rename = {}
-
             for path in geopackage_paths:
-                # Import into temporary tables, we'll rename everything at once if
-                # all imports were successful, otherwise we'll drop all temp tables.
+                tablename = path.stem  # e.g. voie_nommee
 
-                target_table = path.stem  # e.g. voie_nommee
-                temp_table = f"{target_table}_temp"  # e.g. voie_nommee_temp
-                print(f"------> Import into {temp_table}: {path}")
+                pretty_size = _sizeof_fmt(path.stat().st_size)
+                print(f"------> Import into {tablename}: {path} ({pretty_size})")
 
-                temp_tables_to_drop.add(temp_table)
+                options = [
+                    # See general ogr2ogr options here:
+                    # https://gdal.org/programs/ogr2ogr.html
+                    "-progress",
+                    # Define the table name on initial import
+                    "-nln",
+                    tablename,
+                    # Append on subsequent calls
+                    "-append",
+                    # Enable slightly faster ingestion
+                    # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
+                    "--config",
+                    "PG_USE_COPY",
+                    "YES",
+                ]
+
+                if tablename not in tables_seen:
+                    options.extend(
+                        [
+                            # Remove existing tuples before importing (saves disk space
+                            # at the cost of some unavailability during execution)
+                            # https://gis.stackexchange.com/a/357040
+                            # This should only run once per table so that all packages
+                            # are effectively appended.
+                            "--config",
+                            "OGR_TRUNCATE",
+                            "YES",
+                        ]
+                    )
+
+                    tables_seen.add(tablename)
 
                 result = _run_dockerized_ogr2ogr(
                     database_url,
                     directory=transport_dir,
                     path=path,
-                    options=[
-                        # See general ogr2ogr options here:
-                        # https://gdal.org/programs/ogr2ogr.html
-                        "-progress",
-                        # # Append to existing table (for subsequent runs of this command)
-                        # "-append",
-                        # Import into the temporary table
-                        "-nln",  # nln = New layer name
-                        temp_table,
-                        # # Use explicit primary key column name for renaming
-                        # "-lco",
-                        # "FID=fid",
-                        # Enable slightly faster ingestion
-                        # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
-                        "--config",
-                        "PG_USE_COPY",
-                        "YES",
-                    ],
+                    options=options,
                 )
 
                 if result.returncode:
@@ -167,82 +195,47 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
                     )
                     return 1
 
-                tables_to_rename[temp_table] = target_table
-
             print("------> Import successful!")
 
-            print("===> Renaming tables...")
-
-            # Now we replace all existing tables with their temporary equivalent
-            # where the data has just been successfully imported.
-
-            statements = []
-
-            for temp_table, target_table in tables_to_rename.items():
-                statements += [
-                    # Need to rename indices and sequences explicitly because they are not renamed automatically when tables are renamed.
-                    f"""
-                    DO $$ BEGIN
-                        IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename = '{target_table}') THEN
-                            EXECUTE '
-                                ALTER TABLE {target_table} RENAME TO {target_table}_old;
-                                ALTER SEQUENCE {target_table}_fid_seq RENAME TO {target_table}_old_fid_seq;
-                                ALTER INDEX {target_table}_pkey RENAME TO {target_table}_old_pkey;
-                                ALTER INDEX {target_table}_geometrie_geom_idx RENAME TO {target_table}_old_geometrie_geom_idx;
-                            ';
-                        END IF;
-                    END$$;""",
-                    f"ALTER TABLE {temp_table} RENAME TO {target_table};",
-                    f"ALTER SEQUENCE {temp_table}_fid_seq RENAME TO {target_table}_fid_seq;",
-                    f"ALTER INDEX {temp_table}_pkey RENAME TO {target_table}_pkey;",
-                    f"ALTER INDEX {temp_table}_geometrie_geom_idx RENAME TO {target_table}_geometrie_geom_idx;",
-                    f"DROP TABLE IF EXISTS {target_table}_old;",
-                ]
-
-            # Wrap in a transaction to make sure we rename everything, or do nothing.
-            sql = "".join(["BEGIN;", *statements, "COMMIT;"])
-
-            # If an error occurs here, the database will rollback the transaction,
-            # undoing any RENAME's or DROP TABLE's, and we'll proceed to cleaning up
-            # temporary tables through the 'finally' clause below.
-            result = subprocess.run(["psql", database_url, "-c", sql])
-            result.check_returncode()
-
-            for temp_table in tables_to_rename:
-                temp_tables_to_drop.remove(temp_table)  # It was renamed.
-
-            print("------> Tables successfully renamed")
-
-            if config.custom_index_statements:
+            if config.custom_indexes:
                 print("===> Configuring custom indexes...")
 
-                # No need to check for index name conflicts: existing custom indexes on
-                # old tables were deleted when we ran "DROP TABLE {target_table}_old".
+                statements = []
 
-                sql = "".join(["BEGIN;", *config.custom_index_statements, "COMMIT;"])
-                result = subprocess.run(["psql", database_url, "-c", sql])
-                result.check_returncode()
+                for custom_index in config.custom_indexes:
+                    # Drop indexes in case their definition has changed.
+                    drop_stmt = f"DROP INDEX IF EXISTS {custom_index.name};"
 
-                print("-----> Indexes successfully configured")
+                    create_stmt = string.Template(
+                        custom_index.create_statement
+                    ).substitute(name=custom_index.name)
+
+                    statements += [drop_stmt, create_stmt]
+
+                for analyze_stmt in statements:
+                    analyze_stmt += "" if analyze_stmt.endswith(";") else ";"
+
+                    print("------>", analyze_stmt)
+
+                    result = subprocess.run(
+                        ["psql", database_url, "-c", analyze_stmt],
+                        stdout=subprocess.DEVNULL,
+                    )
+                    result.check_returncode()
+
+                print("------> Indexes successfully configured!")
+
+            # Update table statistics so that COUNT, indexes, etc work immediately.
+            # NOTE: VACUUM will run automatically later thanks to Scalingo's autovacuum.
+            print("===> Running ANALYZE...")
+            analyze_stmt = f"ANALYZE VERBOSE {', '.join(tables_seen)};"
+            print("------>", analyze_stmt)
+            result = subprocess.run(["psql", database_url, "-c", analyze_stmt])
+            result.check_returncode()
+            print("------> ANALYZE ran successfully!")
         except KeyboardInterrupt:
-            # Stop everything, we'll proceed to clean up in the 'finally' block.
-            return 3
-        finally:
-            if temp_tables_to_drop:
-                print("---> Cleaning up temporary tables...")
-
-                for table in temp_tables_to_drop:
-                    sql = f"DROP TABLE IF EXISTS {table};"
-                    print(f"------> Executing: {sql}")
-
-                    result = subprocess.run(["psql", database_url, "-c", sql])
-
-                    if result.returncode:
-                        print(
-                            "WARNING: there was an issue while dropping "
-                            f"temporary table {table}, see output above",
-                            file=sys.stderr,
-                        )
+            # ogr2ogr already manages most of the cleanup for us, nothing to do.
+            return 2
 
     return 0
 
@@ -277,7 +270,14 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    config = Config(**json.loads(args.config.read_text()))
+    configdata = json.loads(args.config.read_text())
+
+    config = Config(
+        tables=configdata["tables"],
+        custom_indexes=[
+            CustomIndex(**fields) for fields in configdata.get("custom_indexes", [])
+        ],
+    )
 
     sys.exit(
         main(
