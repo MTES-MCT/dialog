@@ -64,8 +64,8 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->with(
-                'SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
-                ['numero_pattern' => 'D32%', 'gestionnaire' => 'Ardennes'],
+                'SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry FROM route_numerotee_ou_nommee WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire AND type_de_route = :type_de_route',
+                ['numero_pattern' => 'D32%', 'gestionnaire' => 'Ardennes', 'type_de_route' => 'Départementale'],
             )
             ->willReturn([['numero' => 'D321', 'geometry' => 'test']]);
 

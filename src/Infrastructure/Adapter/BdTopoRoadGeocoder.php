@@ -50,11 +50,14 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
                 implode(' ', [
                     'SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry',
                     'FROM route_numerotee_ou_nommee',
-                    'WHERE numero LIKE :numero_pattern AND gestionnaire = :gestionnaire',
+                    'WHERE numero LIKE :numero_pattern',
+                    'AND gestionnaire = :gestionnaire',
+                    'AND type_de_route = :type_de_route',
                 ]),
                 [
                     'numero_pattern' => sprintf('%s%%', strtoupper($search)),
                     'gestionnaire' => $administrator,
+                    'type_de_route' => 'Départementale',
                 ],
             );
         } catch (\Exception $exc) {
