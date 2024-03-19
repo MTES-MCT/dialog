@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
@@ -154,8 +155,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
-            ->where('roc.status = :status')
-            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->where(
+                'roc.status = :status',
+                'loc.roadType = :roadType',
+            )
+            ->setParameters([
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'roadType' => RoadTypeEnum::LANE->value,
+            ])
             ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
             ->getQuery()
@@ -193,12 +200,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where(
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
+                'loc.roadType = :roadType',
                 'loc.geometry IS NOT NULL',
                 'm.type = :measureType',
                 'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )
             ->setParameters([
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'roadType' => RoadTypeEnum::LANE->value,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
             ])
             ->orderBy('m.uuid')
