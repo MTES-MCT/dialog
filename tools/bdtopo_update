@@ -167,6 +167,10 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
                     # Define the table name on initial import
                     "-nln",
                     tablename,
+                    # Reproject all geometries to standard WGS 84 projection, aka EPSG 4326
+                    # (Geopackages in BD TOPO may not all use the same projection)
+                    "-t_srs",
+                    "EPSG:4326",
                     # Append on subsequent calls
                     "-append",
                     # Enable slightly faster ingestion

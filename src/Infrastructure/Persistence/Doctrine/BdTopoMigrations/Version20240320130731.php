@@ -45,10 +45,10 @@ final class Version20240320130731 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP INDEX route_numerotee_ou_nommee_numero_gestionnaire_idx');
-        $this->addSql('DROP INDEX voie_nommee_normalized_nom_minuscule_code_insee_idx');
-        $this->addSql('DROP FUNCTION public.f_bdtopo_voie_nommee_normalize_nom_minuscule');
-        $this->addSql('DROP FUNCTION public.f_unaccent');
-        $this->addSql('DROP EXTENSION unaccent');
+        $this->addSql('DROP INDEX IF EXISTS route_numerotee_ou_nommee_numero_gestionnaire_idx');
+        $this->addSql('DROP INDEX IF EXISTS voie_nommee_normalized_nom_minuscule_code_insee_idx');
+        $this->addSql('DROP FUNCTION IF EXISTS public.f_bdtopo_voie_nommee_normalize_nom_minuscule');
+        $this->addSql('DROP FUNCTION IF EXISTS public.f_unaccent');
+        $this->addSql('DROP EXTENSION IF EXISTS unaccent');
     }
 }
