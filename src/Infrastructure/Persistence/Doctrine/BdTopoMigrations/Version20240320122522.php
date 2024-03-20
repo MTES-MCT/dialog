@@ -11,7 +11,7 @@ final class Version20240320122522 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Initial BD TOPO configuration (ran manually w/ the main user)';
+        return 'Initial BD TOPO configuration';
     }
 
     public function up(Schema $schema): void
