@@ -19,13 +19,13 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                implode(' ', [
-                    'SELECT ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry',
-                    'FROM voie_nommee',
-                    'WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)',
-                    'AND code_insee = :code_insee',
-                    'LIMIT 1',
-                ]),
+                '
+                    SELECT ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry
+                    FROM voie_nommee
+                    WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
+                    AND code_insee = :code_insee
+                    LIMIT 1
+                ',
                 [
                     'nom_minuscule' => $roadName,
                     'code_insee' => $inseeCode,
@@ -47,13 +47,13 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                implode(' ', [
-                    'SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry',
-                    'FROM route_numerotee_ou_nommee',
-                    'WHERE numero LIKE :numero_pattern',
-                    'AND gestionnaire = :gestionnaire',
-                    'AND type_de_route = :type_de_route',
-                ]),
+                '
+                    SELECT numero, ST_AsGeoJSON(ST_Transform(geometrie, \'EPSG:4326\')) AS geometry
+                    FROM route_numerotee_ou_nommee
+                    WHERE numero LIKE :numero_pattern
+                    AND gestionnaire = :gestionnaire
+                    AND type_de_route = :type_de_route
+                ',
                 [
                     'numero_pattern' => sprintf('%s%%', strtoupper($search)),
                     'gestionnaire' => $administrator,

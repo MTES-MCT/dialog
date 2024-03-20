@@ -78,15 +78,6 @@ services:
         class: DateTimeImmutable
 
     # --------------
-    # BDTOPO
-    # --------------
-
-    bdtopo.road_geocoder:
-        class: App\Infrastructure\Adapter\BdTopoRoadGeocoder
-
-    App\Application\RoadGeocoderInterface: '@bdtopo.road_geocoder'
-
-    # --------------
     # Eudonet Paris
     # --------------
 
@@ -115,8 +106,7 @@ when@test:
             decorates: 'api.adresse.client'
             decoration_inner_name: 'App\Tests\Mock\APIAdresseMockClient::api.adresse.client'
         App\Tests\Mock\BdTopoRoadGeocoderMock:
-            decorates: 'bdtopo.road_geocoder'
-            decoration_inner_name: 'App\Tests\Mock\BdTopoRoadGeocoderMock::bdtopo.road_geocoder'
+            decorates: 'App\Infrastructure\Adapter\BdTopoRoadGeocoder'
         App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient:
             decorates: 'eudonet_paris.http.client'
             decoration_inner_name: 'App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient::eudonet_paris.http.client'
