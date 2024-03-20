@@ -157,54 +157,54 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
             for path in geopackage_paths:
                 tablename = path.stem  # e.g. voie_nommee
 
-                # pretty_size = _sizeof_fmt(path.stat().st_size)
-                # print(f"------> Import into {tablename}: {path} ({pretty_size})")
+                pretty_size = _sizeof_fmt(path.stat().st_size)
+                print(f"------> Import into {tablename}: {path} ({pretty_size})")
 
-                # options = [
-                #     # See general ogr2ogr options here:
-                #     # https://gdal.org/programs/ogr2ogr.html
-                #     "-progress",
-                #     # Define the table name on initial import
-                #     "-nln",
-                #     tablename,
-                #     # Append on subsequent calls
-                #     "-append",
-                #     # Enable slightly faster ingestion
-                #     # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
-                #     "--config",
-                #     "PG_USE_COPY",
-                #     "YES",
-                # ]
+                options = [
+                    # See general ogr2ogr options here:
+                    # https://gdal.org/programs/ogr2ogr.html
+                    "-progress",
+                    # Define the table name on initial import
+                    "-nln",
+                    tablename,
+                    # Append on subsequent calls
+                    "-append",
+                    # Enable slightly faster ingestion
+                    # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
+                    "--config",
+                    "PG_USE_COPY",
+                    "YES",
+                ]
 
                 if tablename not in tables_seen:
-                    # options.extend(
-                    #     [
-                    #         # Remove existing tuples before importing (saves disk space
-                    #         # at the cost of some unavailability during execution)
-                    #         # https://gis.stackexchange.com/a/357040
-                    #         # This should only run once per table so that all packages
-                    #         # are effectively appended.
-                    #         "--config",
-                    #         "OGR_TRUNCATE",
-                    #         "YES",
-                    #     ]
-                    # )
+                    options.extend(
+                        [
+                            # Remove existing tuples before importing (saves disk space
+                            # at the cost of some unavailability during execution)
+                            # https://gis.stackexchange.com/a/357040
+                            # This should only run once per table so that all packages
+                            # are effectively appended.
+                            "--config",
+                            "OGR_TRUNCATE",
+                            "YES",
+                        ]
+                    )
 
                     tables_seen.add(tablename)
 
-                # result = _run_dockerized_ogr2ogr(
-                #     database_url,
-                #     directory=directory,
-                #     path=path,
-                #     options=options,
-                # )
+                result = _run_dockerized_ogr2ogr(
+                    database_url,
+                    directory=directory,
+                    path=path,
+                    options=options,
+                )
 
-                # if result.returncode:
-                #     print(
-                #         "ERROR: ogr2ogr command failed, see output above",
-                #         file=sys.stderr,
-                #     )
-                #     return 1
+                if result.returncode:
+                    print(
+                        "ERROR: ogr2ogr command failed, see output above",
+                        file=sys.stderr,
+                    )
+                    return 1
 
             print("------> Import successful!")
 
@@ -229,6 +229,8 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
         except KeyboardInterrupt:
             # ogr2ogr already manages most of the cleanup for us, nothing to do.
             return 2
+        else:
+            print("===> Done")
 
     return 0
 
