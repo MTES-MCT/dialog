@@ -77,6 +77,12 @@ dbmigration: ## Generate new db migration
 dbmigrate: ## Run db migration
 	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing ${ARGS}
 
+bdtopo_migration: ## Generate new db migration for bdtopo
+	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/bdtopo/doctrine_migrations.yaml
+
+bdtopo_migrate: ## Run db migrations for bdtopo
+	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing --configuration ./config/packages/bdtopo/doctrine_migrations.yaml ${ARGS}
+
 dbshell: ## Connect to the database
 	docker-compose exec database psql postgresql://dialog:dialog@database:5432/dialog
 
@@ -272,6 +278,10 @@ ci_eudonet_paris_import: ## Run CI steps for Eudonet Paris Import workflow
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
 	./tools/scalingodbtunnel ${EUDONET_PARIS_IMPORT_APP} --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
 	make console CMD="app:eudonet_paris:import"
+
+ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
+	make composer CMD="install -n --prefer-dist"
+	make bdtopo-migrate
 
 ##
 ## ----------------

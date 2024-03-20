@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import re
 import signal
 import string
 import subprocess
@@ -58,50 +59,57 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
 
 
 @dataclass
-class CustomIndex:
-    name: str
-    create_statement: str
-
-
-@dataclass
 class Config:
     tables: list[str]
-    custom_indexes: list[CustomIndex] = field(default_factory=list)
 
 
-def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
-    if not transport_dir.exists():
-        print(f"ERROR: directory {transport_dir} does not exist", file=sys.stderr)
+def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
+    if not directory.exists():
+        print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
         return 1
 
+    search_pattern = "*/BDTOPO/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*"
+
     geopackage_paths = [
-        path
-        for path in transport_dir.glob("*/BDTOPO/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*")
-        if path.stem in config.tables
+        path for path in directory.glob(search_pattern) if path.stem in config.tables
     ]
 
     if not geopackage_paths:
-        print("ERROR: no geopackages found", file=sys.stderr)
+        print(
+            f"ERROR: no geopackages found at {directory} "
+            f"using pattern {search_pattern!r}",
+            file=sys.stderr,
+        )
         return 1
 
-    # Improve disk usage by importing smallest packages first.
-    # Reason: initial TRUNCATE only runs *after* importing the 1st package.
+    # Improve pg disk usage by importing smallest packages first.
+    # Reason: ogr2ogr runs TRUNCATE *after* importing the 1st package.
     geopackage_paths = sorted(geopackage_paths, key=lambda p: p.stat().st_size)
 
     with ExitStack() as exit_stack:
-        if target.startswith(("postgresql://", "postgres://")):
-            hostname = urlparse(target).hostname
+        if url is not None:
+            urlobj = urlparse(url)
 
-            if hostname not in ("localhost", "127.0.0.1"):
+            if urlobj.scheme not in ("postgres", "postgresql"):
                 print(
-                    f"ERROR: database URL target must be on localhost, received: {hostname}"
+                    f"ERROR: invalid database URL: {url}: "
+                    f"unexpected scheme: {urlobj.scheme} "
+                    "(expected postgres:// or postgresql://)"
                 )
+                return 1
 
-            database_url = target
+            if urlobj.hostname not in ("localhost", "127.0.0.1"):
+                print(
+                    "ERROR: expected url to be on localhost, "
+                    f"received: {urlobj.hostname}"
+                )
+                return 1
+
+            database_url = url
         else:
-            app = target
+            app = "dialog-bdtopo"
 
-            print(f"===> Opening DB tunnel to app {app}...")
+            print(f"===> Opening DB tunnel to {app}...")
 
             tunnel_proc = exit_stack.enter_context(
                 subprocess.Popen(
@@ -136,7 +144,7 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
         # are provided, such as '?sslmode=prefer' by Scalingo.
         database_url = database_url.replace("postgres://", "postgresql://")
 
-        print("===> Will import into")
+        print("===> Will import into:")
         print(database_url)
 
         if not yes and input("------> Proceed? (y/N) ") != "y":
@@ -149,94 +157,75 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
             for path in geopackage_paths:
                 tablename = path.stem  # e.g. voie_nommee
 
-                pretty_size = _sizeof_fmt(path.stat().st_size)
-                print(f"------> Import into {tablename}: {path} ({pretty_size})")
+                # pretty_size = _sizeof_fmt(path.stat().st_size)
+                # print(f"------> Import into {tablename}: {path} ({pretty_size})")
 
-                options = [
-                    # See general ogr2ogr options here:
-                    # https://gdal.org/programs/ogr2ogr.html
-                    "-progress",
-                    # Define the table name on initial import
-                    "-nln",
-                    tablename,
-                    # Append on subsequent calls
-                    "-append",
-                    # Enable slightly faster ingestion
-                    # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
-                    "--config",
-                    "PG_USE_COPY",
-                    "YES",
-                ]
+                # options = [
+                #     # See general ogr2ogr options here:
+                #     # https://gdal.org/programs/ogr2ogr.html
+                #     "-progress",
+                #     # Define the table name on initial import
+                #     "-nln",
+                #     tablename,
+                #     # Append on subsequent calls
+                #     "-append",
+                #     # Enable slightly faster ingestion
+                #     # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
+                #     "--config",
+                #     "PG_USE_COPY",
+                #     "YES",
+                # ]
 
                 if tablename not in tables_seen:
-                    options.extend(
-                        [
-                            # Remove existing tuples before importing (saves disk space
-                            # at the cost of some unavailability during execution)
-                            # https://gis.stackexchange.com/a/357040
-                            # This should only run once per table so that all packages
-                            # are effectively appended.
-                            "--config",
-                            "OGR_TRUNCATE",
-                            "YES",
-                        ]
-                    )
+                    # options.extend(
+                    #     [
+                    #         # Remove existing tuples before importing (saves disk space
+                    #         # at the cost of some unavailability during execution)
+                    #         # https://gis.stackexchange.com/a/357040
+                    #         # This should only run once per table so that all packages
+                    #         # are effectively appended.
+                    #         "--config",
+                    #         "OGR_TRUNCATE",
+                    #         "YES",
+                    #     ]
+                    # )
 
                     tables_seen.add(tablename)
 
-                result = _run_dockerized_ogr2ogr(
-                    database_url,
-                    directory=transport_dir,
-                    path=path,
-                    options=options,
-                )
+                # result = _run_dockerized_ogr2ogr(
+                #     database_url,
+                #     directory=directory,
+                #     path=path,
+                #     options=options,
+                # )
 
-                if result.returncode:
-                    print(
-                        "ERROR: ogr2ogr command failed, see output above",
-                        file=sys.stderr,
-                    )
-                    return 1
+                # if result.returncode:
+                #     print(
+                #         "ERROR: ogr2ogr command failed, see output above",
+                #         file=sys.stderr,
+                #     )
+                #     return 1
 
             print("------> Import successful!")
 
-            if config.custom_indexes:
-                print("===> Configuring custom indexes...")
-
-                statements = []
-
-                for custom_index in config.custom_indexes:
-                    # Drop indexes in case their definition has changed.
-                    drop_stmt = f"DROP INDEX IF EXISTS {custom_index.name};"
-
-                    create_stmt = string.Template(
-                        custom_index.create_statement
-                    ).substitute(name=custom_index.name)
-
-                    statements += [drop_stmt, create_stmt]
-
-                for analyze_stmt in statements:
-                    analyze_stmt += "" if analyze_stmt.endswith(";") else ";"
-
-                    print("------>", analyze_stmt)
-
-                    result = subprocess.run(
-                        ["psql", database_url, "-c", analyze_stmt],
-                        stdout=subprocess.DEVNULL,
-                    )
-                    result.check_returncode()
-
-                print("------> Indexes successfully configured!")
-
-            # Update table statistics so that COUNT, indexes, etc work immediately.
-            # NOTE: VACUUM will run automatically later thanks to Scalingo's autovacuum.
-            print("===> Running ANALYZE...")
-            # TODO: need VACUUM too
-            analyze_stmt = f"ANALYZE VERBOSE {', '.join(tables_seen)};"
+            # Clear up dead tuples and update table statistics so that the
+            # tables can be queried immediately.
+            print("===> Running VACUUM ANALYZE...")
+            analyze_stmt = f"VACUUM (ANALYZE, VERBOSE) {', '.join(tables_seen)};"
             print("------>", analyze_stmt)
-            result = subprocess.run(["psql", database_url, "-c", analyze_stmt])
+            result = subprocess.run(
+                [
+                    "psql",
+                    database_url,
+                    # Avoid 'No space left on device' error when available RAM is short
+                    "-c",
+                    "SET max_parallel_maintenance_workers = 0;",
+                    "-c",
+                    analyze_stmt,
+                ]
+            )
             result.check_returncode()
-            print("------> ANALYZE ran successfully!")
+            print("------> VACUUM ANALYZE ran successfully!")
         except KeyboardInterrupt:
             # ogr2ogr already manages most of the cleanup for us, nothing to do.
             return 2
@@ -244,32 +233,44 @@ def main(config: Config, transport_dir: Path, target: str, yes: bool) -> int:
     return 0
 
 
+def _path_check_exists(value: str) -> Path:
+    path = Path(value)
+
+    if not path.exists():
+        raise argparse.ArgumentTypeError(f"file or directory not found: {value}")
+
+    return path
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "transport_dir",
-        type=Path,
-        help="Path to directory of BD TOPO Transport Theme data",
+        "directory",
+        type=_path_check_exists,
+        help="Path to directory containing BD TOPO data",
     )
     parser.add_argument(
-        "target", help="Name of Scalingo app, or a PostgreSQL database URL"
+        "--prod", action="store_true", help="Confirm deployment to 'dialog-bdtopo' app"
     )
     parser.add_argument(
-        "--prod", action="store_true", help="Required if targetting 'dialog' app"
+        "--url",
+        help="Deploy to a PostgreSQL database identified by this database URL",
+        default=None,
     )
     parser.add_argument("-y", "--yes", action="store_true", help="Accept all prompts")
     parser.add_argument(
         "-c",
         "--config",
-        type=Path,
+        type=_path_check_exists,
         default=Path(__file__).parent / "bdtopo_update.config.json",
         help="Path to config file. Default: ./bdtopo_update.config.json",
     )
     args = parser.parse_args()
 
-    if args.target == "dialog" and not args.prod:
+    if args.url is None and not args.prod:
         print(
-            "ERROR: please pass --prod when targetting the production environment",
+            "ERROR: please pass --prod to deploy to 'dialog-bdtopo' environment, "
+            "or --url to target a specific PostgreSQL database",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -278,19 +279,16 @@ if __name__ == "__main__":
 
     config = Config(
         tables=configdata["tables"],
-        custom_indexes=[
-            CustomIndex(**fields) for fields in configdata.get("custom_indexes", [])
-        ],
     )
 
     # Relative paths are OK but ogr2ogr volume will require an absolute path.
-    transport_dir = args.transport_dir.absolute()
+    directory = args.directory.absolute()
 
     sys.exit(
         main(
             config,
-            transport_dir=transport_dir,
-            target=args.target,
+            directory=directory,
+            url=args.url,
             yes=args.yes,
         )
     )

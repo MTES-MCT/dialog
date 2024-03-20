@@ -10,18 +10,24 @@ doctrine:
                 url: '%env(resolve:BDTOPO_DATABASE_URL)%'
     orm:
         auto_generate_proxy_classes: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
-        dql:
-            string_functions:
-                FIRST: App\Infrastructure\Persistence\Doctrine\DBAL\FirstFunction
-        mappings:
-            Domain:
-                is_bundle: false
-                type: xml
-                dir: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine/Mapping'
-                prefix: 'App\Domain'
-                alias: 'App\Domain'
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                auto_mapping: true
+                dql:
+                    string_functions:
+                        FIRST: App\Infrastructure\Persistence\Doctrine\DBAL\FirstFunction
+                mappings:
+                    Domain:
+                        is_bundle: false
+                        type: xml
+                        dir: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine/Mapping'
+                        prefix: 'App\Domain'
+                        alias: 'App\Domain'
+            bdtopo:
+                connection: bdtopo
 
 when@test:
     doctrine:

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Doctrine\Migrations;
+namespace App\Infrastructure\Persistence\Doctrine\BdTopoMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20240318140810 extends AbstractMigration
+final class Version20240320130731 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Set up initial BD TOPO indexes';
+        return 'Configure indexes on voie_nommee and route_numerotee_ou_nommee';
     }
 
     public function up(Schema $schema): void
@@ -38,12 +38,17 @@ final class Version20240318140810 extends AbstractMigration
                 SELECT lower(translate(f_unaccent($1), \'-’\', \' \'\'\'));
             $func$;
         ');
+
+        $this->addSql('CREATE INDEX voie_nommee_normalized_nom_minuscule_code_insee_idx ON voie_nommee (f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), code_insee);');
+        $this->addSql('CREATE INDEX route_numerotee_ou_nommee_numero_gestionnaire_idx ON route_numerotee_ou_nommee (numero, gestionnaire);');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP FUNCTION IF EXISTS public.f_bdtopo_voie_nommee_normalize_nom_minuscule');
-        $this->addSql('DROP FUNCTION IF EXISTS public.f_unaccent');
+        $this->addSql('DROP INDEX route_numerotee_ou_nommee_numero_gestionnaire_idx');
+        $this->addSql('DROP INDEX voie_nommee_normalized_nom_minuscule_code_insee_idx');
+        $this->addSql('DROP FUNCTION public.f_bdtopo_voie_nommee_normalize_nom_minuscule');
+        $this->addSql('DROP FUNCTION public.f_unaccent');
         $this->addSql('DROP EXTENSION unaccent');
     }
 }

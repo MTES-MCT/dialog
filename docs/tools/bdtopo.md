@@ -1,14 +1,20 @@
 # BD TOPO
 
-DiaLog intègre une partie de la [BD TOPO](https://geoservices.ign.fr/bdtopo) pour les besoins des calculs sur les localisations, tels que le géocodage de linéaires de voies.
+DiaLog héberge une partie de la [BD TOPO](https://geoservices.ign.fr/bdtopo) pour les besoins des calculs sur les localisations, tels que le géocodage de linéaires de voies.
 
 ## Démarrage rapide
 
-La variable d'environnement obligatoire `BDTOPO_DATABASE_URL` configure la connexion entre DiaLog et la base PostgreSQL qui contient les tables BD TOPO. (Cette connexion est différente de la connexion applicative habituelle pour des raisons de sécurité.)
+La connexion à la base PostgreSQL qui contient les tables BD TOPO doit être configurée par la variable d'environnement `BDTOPO_DATABASE_URL`.
 
-Pour le développement local, vous pouvez utiliser la base de staging. Demandez la `BDTOPO_DATABASE_URL` correspondante à un membre de l'équipe.
+Pour le développement local, demandez la `BDTOPO_DATABASE_URL` à un membre de l'équipe et ajoutez-là à votre `.env.local` (créer ce fichier à la racine du projet si nécessaire).
 
 Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voir [Mettre à jour les données](#mettre-à-jour-les-données).
+
+## Fonctionnement général
+
+Les requêtes à la BD TOPO se font par une connexion dédiée, configurée dans la configuration doctrine (`config/packages/doctrine.yaml`).
+
+Cette connexion dispose de ses propres migrations, séparées des migrations applicatives de DiaLog. Cela permet de [configurer des indexes], fonctions et autres objets PostgreSQL spécifiquement dédiés à l'optimisation des requêtes adressées aux tables BD TOPO.
 
 ## Guides
 
@@ -36,15 +42,25 @@ class ExampleService {
 }
 ```
 
-Pour information, cette connexion est configurée dans la configuration doctrine (`config/packages/doctrine.yaml`).
-
-Pour plus d'informations, voir [Autowiring multiple Connections](https://symfony.com/bundles/DoctrineBundle/current/configuration.html#autowiring-multiple-connections) dans la documentation Symfony.
-
 ### Modifier les tables de la BD TOPO utilisées par DiaLog
 
-Pour intégrer une nouvelle table, mettez à jour le fichier `tools/bdtopo_update.config.json` puis suivez le guide [Mettre à jour les données](#mettre-à-jour-les) pour ajouter la table à staging et à la production.
+Pour intégrer une nouvelle table, mettez à jour le fichier `tools/bdtopo_update.config.json` puis suivez le guide [Mettre à jour les données](#mettre-à-jour-les-données) pour ajouter la table à notre hébergement de la BD TOPO.
 
-De même, pour retirer une table qui n'est plus utilisée, retirez-la du fichier de configuration puis mettez à jour les données sur staging et en production.
+De même, pour retirer une table qui n'est plus utilisée, retirez-la du fichier de configuration puis mettez à jour les données.
+
+### Configurer des indexes
+
+La création d'indexes judicieux sur les tables BD TOPO peut permettre d'accélérer les requêtes.
+
+Pour configurer des indexes, créez une migration qui s'appliquera à notre instance BD TOPO :
+
+```bash
+make bdtopo_migration
+```
+
+Le fichier de migration doit être ajouté à `main` via une PR, comme n'importe quel autre code.
+
+Une fois la PR mergée, les migrations seront exécutées par GitHub Actions grâce au workflow `bdtopo_migrate`.
 
 ### Mettre à jour les données
 
@@ -52,31 +68,52 @@ De même, pour retirer une table qui n'est plus utilisée, retirez-la du fichier
 
 La BD TOPO est millésimée, c'est-à-dire qu'une nouvelle version sort environ une fois par an.
 
-Pour mettre à jour les données dans sur staging et en production :
+Pour mettre à jour les données, suivez ces étapes :
 
-1. Télécharger la nouvelle version du [Thème Transports](https://geoservices.ign.fr/bdtopo#telechargementtransportter) pour la "France métropolitaine" ainsi que pour chaque DROM-COM (Guadeleoupe, etc), les décompresser et les placer dans un même dossier, appelé ci-dessous `~/path/to/bdtopo_transport`. (Environ 5 Go)
-2. Lancer le script suivant :
-    ```bash
-    ./tools/bdtopo_update ~/path/to/bdtopo_transport dialog-staging
-    ```
-3. Une fois l'exécution réussie, vérifier le bon fonctionnement en se connectant à staging et en modifiant par exemple la voie nommée d'une localisation.
-4. Lancer le script sur la production :
-    ```bash
-    ./tools/bdtopo_update ~/path/to/theme_transport dialog
+1. Téléchargez chaque partie du [Thème transport par territoire format Geopackage projection légale](https://geoservices.ign.fr/bdtopo#telechargementtransportter) 
+    * 1 fichier zip "France Métropolitaine"
+    * 1 fichier zip par DROM-COM (Guadeleoupe, etc),
+
+2. Décompressez l'entièreté de chaque fichier zip et regroupez-les dans un même dossier, appelé ci-dessous `~/path/to/bdtopo`.
+
+    Exemple de structure du dossier :
+
+    ```console
+    $ tree ~/path/to/bdtopo
+    /home/user/path/to/bdtopo
+    ├── BDTOPO_3-3_TRANSPORT_GPKG_LAMB93_FXX_2023-12-15
+    │   └── BDTOPO
+    │       └── ...
+    ├── BDTOPO_3-3_TRANSPORT_GPKG_RGAF09UTM20_BLM_2023-12-15
+    │   └── BDTOPO
+    │       └── ...
+    └── ...
     ```
 
-L'exécution du script de mise à jour prendra typiquement plusieurs minutes (temps de transfert des données vers Scalingo, variable selon la qualité de la connexion).
+3. Lancez le script suivant :
+
+    ```bash
+    ./tools/bdtopo_update ~/path/to/bdtopo --prod
+    ```
+
+    Ce script va mettre à jour le contenu de notre hébergement BD TOPO à partir des fichiers locaux.
+
+    L'exécution prend typiquement plusieurs minutes (temps de transfert des données vers Scalingo, variable selon la qualité de la connexion).
+
+4. Une fois l'exécution réussie, vérifiez le bon fonctionnement en se connectant à staging et en modifiant par exemple la voie nommée d'une localisation.
+
+5. (Optionnel) Si des indexes doivent être ajoutés aux tables, suivez la section [Configurer des indexes](#configurer-des-indexes).
 
 ### (Avancé) Utiliser une BD TOPO locale
 
-Il est possible de télécharger la BD TOPO et de l'ingérer dans votre base de données PostgreSQL de développement.
+Il est possible de télécharger la BD TOPO et de l'ingérer dans une base de données PostgreSQL locale.
 
-Cette approche peut par exemple être utile pour tester une nouvelle version de la BD TOPO.
+Cela peut être utile pour tester une nouvelle version de la BD TOPO par exemple.
 
 Pour cela, téléchargez les fichiers BD TOPO comme indiqué dans [Mettre à jour les données](#mettre-à-jour-les-données), puis lancez le script de mise à jour en pointant sur votre base locale :
 
 ```bash
-./tools/bdtopo_update ~/path/to/bdtopo_transport postgresql://dialog:dialog@localhost:5432/dialog
+./tools/bdtopo_update ~/path/to/bdtopo --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
 ```
 
 ## Référence
@@ -85,10 +122,9 @@ Pour cela, téléchargez les fichiers BD TOPO comme indiqué dans [Mettre à jou
 
 On entend par "déploiement" une base de données PostgreSQL où sont ingérées les [tables BD TOPO utilisées par DiaLog](#liste-des-tables-bd-topo-utilisées-par-dialog).
 
-| Déploiement | Dédié à | Utilisateur de connexion | `BDTOPO_DATABASE_URL` |
+| App Scalingo | Utilisateur | Utilisable par | URL de connexion |
 |---|---|---|---|
-| production (dialog.beta.gouv.fr) | production | Utilisateur `dialog_bdtopo` en lecture seule créé sur Scalingo | Secret (configurés sur Scalingo) |
-| staging (dialog.incubateur.net) | staging, dev local | _idem_ | Demander à un membre de l'équipe |
+| `dialog-bdtopo` | `dialog_app` (utilisateur avec accès en lecture seule créé sur Scalingo) | Tous les environnements | Secret, demander à un membre de l'équipe |
 
 ### Liste des tables BD TOPO utilisées par DiaLog
 
@@ -96,33 +132,36 @@ Voir la liste `"tables"` dans [`tools/bdtopo_update.config.json`](../../tools/bd
 
 ### Script `tools/bdtopo_update`
 
-Ce script écrit en Python permet de déployer les tables de la BD TOPO sur une base PostgreSQL.
+Ce script Python permet de déployer les tables de la BD TOPO sur une base PostgreSQL.
 
-Fonctionnement : Ce script intègre à la base PostgreSQL cible les tables configurées dans le fichier de configuration `tools/bdtopo_update.config.json`. Pour cela, il ingère les données BD TOPO (format GeoPackage) à l'aide de `ogr2ogr` dans des tables temporaires, puis remplace les éventuelles anciennes tables par ces nouvelles.
+Fonctionnement : ce script intègre à la base PostgreSQL cible les tables configurées dans le fichier de configuration `tools/bdtopo_update.config.json`. Pour cela, il ingère les données BD TOPO (format GeoPackage) à l'aide de `ogr2ogr` dans des tables temporaires, puis remplace les éventuelles anciennes tables par ces nouvelles.
+
+Par défaut le script pointe sur notre hébergement de la BD TOPO, mais peut aussi importer dans une base locale avec l'option `--url`.
 
 Utilisation typique :
 
 ```bash
-# Pour déployer les tables sur staging
-./tools/bdtopo_update ~/path/to/bdtopo_transport dialog-staging
+# Pour déployer les tables en production (dialog-bdtopo)
+./tools/bdtopo_update ~/path/to/bdtopo_transport --prod
 
-# Pour déployer les tables en prod
-./tools/bdtopo_update ~/path/to/bdtopo_transport dialog --prod
+# Pour déployer les tables dans une base locale
+./tools/bdtopo_update ~/path/to/bdtopo_transport --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
 ```
 
 Documentation :
 
 ```console
 $ ./tools/bdtopo_update --help
-usage: bdtopo_update [-h] [--prod] [-y] [-c CONFIG] transport_dir target
+usage: bdtopo_update [-h] [--prod] [--url URL] [-y] [-c CONFIG] directory
 
 positional arguments:
-  transport_dir         Path to directory of BD TOPO Transport Theme data
-  target                Name of Scalingo app, or a PostgreSQL database URL
+  directory             Path to directory containing BD TOPO data
 
 options:
   -h, --help            show this help message and exit
-  --prod                Required if targetting 'dialog' app
+  --prod                Confirm deployment to 'dialog-bdtopo' app
+  --url URL             Deploy to a PostgreSQL database identified by this
+                        database URL
   -y, --yes             Accept all prompts
   -c CONFIG, --config CONFIG
                         Path to config file. Default:

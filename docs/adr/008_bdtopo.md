@@ -19,16 +19,16 @@ Même dans le cas où les comportements extrêmes possiblement liés à la migra
 
 ## Décision
 
-Les tables de la BD TOPO nécessaires à DiaLog seront intégrées à la base de production et à la base de staging, selon l'approche détaillée dans l'option 2.
+Les tables de la BD TOPO nécessaires à DiaLog seront intégrées dans une base de données déployée dans une nouvelle application Scalingo, selon l'approche détaillée dans l'option 2.
 
 Conséquences :
 
-* Un utilisateur `dialog_bdtopo` sera créé en prod et sur staging avec accès "read-only" à la base de données.
-* La connexion entre DiaLog et les données BD TOPO se fera par une connexion PostgreSQL sous l'utilisateur `dialog_bdtopo`.
-* La base de staging sera [ouverte à Internet](https://doc.scalingo.com/platform/databases/access#internet-accessibility) pour permettre l'accès à ses tables BD TOPO en développement sans avoir besoin d'outillage Scalingo.
+* Une application `dialog-bdtopo` sera créée sur Scalingo avec un add-on PostgreSQL sous le plan Starter 1G (1 GB RAM, 20 GB Disque).
+* Cette base sera utilisée par tous les environnements (production, staging, branches, local...).
+* Un utilisateur `dialog_app` avec accès "read-only" y sera créé. Il sera utilisé pour la connexion PostgreSQL entre DiaLog et notre hébergement de la BD TOPO. L'utilisateur principal créé par Scalingo sera conservé et servira à l'administration (mise à jour des données, etc).
+* La base sera [ouverte à Internet](https://doc.scalingo.com/platform/databases/access#internet-accessibility) pour permettre l'accès en développement sans avoir besoin d'outillage Scalingo.
 * Un script sera réalisé pour l'ingestion des tables souhaitées de la BD TOPO (création initiale ou mise à jour). Ce script permettra de configurer les indexes pertinents.
-* Un espace de stockage suffisant devra être prévu dans les bases de prod et de staging : au moins 4 Go (incluant tables et indexes). Le cas échéant, le plan Scalingo devra être augmenté. L'espace de stockage devra être revu en cas d'import de nouvelles tables.
-* De la documentation sera ajoutée pour le fonctionnement de l'intégration BD TOPO et la mise à jour des données.
+* De la documentation sera créée pour le fonctionnement de l'intégration BD TOPO et la mise à jour des données.
 
 ## Options envisagées
 
@@ -43,9 +43,9 @@ Inconvénients
 * Les lenteurs et perturbations persistent, impactant à la fois l'expérience utilisateur et la productivité lors du développement.
 * Divers cas d'erreurs à gérer : ruptures réseau, timeouts, erreurs HTTP inattendues, changement de format...
 
-### Option 2 - Hébergement partiel de la BD TOPO
+### Option 2 - Hébergement de certaines tables de la BD TOPO
 
-Cette option consisterait à intégrer directement dans la base de données DiaLog les tables de la [BD TOPO](https://geoservices.ign.fr/bdtopo#telechargementtransportter) utilisées par DiaLog pour les calculs nécessitant des données BD TOPO, tels que les linéaires de voies ou de routes.
+Cette option consisterait à héberger nous-mêmes une instance PostgreSQL contenant les tables de la [BD TOPO](https://geoservices.ign.fr/bdtopo#telechargementtransportter) utilisées par DiaLog.
 
 Avantages
 
@@ -56,14 +56,14 @@ Avantages
 
 Inconvénients
 
-* Coût opérationnel pour la gestion des tables de la BD TOPO : hébergement (prod, staging), mise à jour (~ annuelle), utilisation en développement, documentation...
-* Coût financier d'hébergement : passage de la DB staging du plan Sandbox à Starter 512M, soit +7€/mois.
+* Coût opérationnel pour la gestion des tables de la BD TOPO : hébergement, mise à jour (~ annuelle), utilisation en développement, documentation...
+* Coût financier d'hébergement : 14,40€ / mois pour le plan Start 1G.
 
 ### Approche détaillée
 
 #### Mise en place
 
-Il s'agirait de **télécharger le thème "Transports" de la BD TOPO** (environ 4.5 Go) et d'**ingérer dans la base de données de production les tables qui nous intéressent** telles que `voie_nommee` (1.8 Go), `route_numerotee_ou_nommee` (400 Mo) ou encore `troncon_de_route`.
+Il s'agirait de **télécharger le thème "Transports" de la BD TOPO** (environ 4.5 Go) et d'**ingérer dans la base les tables qui nous intéressent** telles que `voie_nommee` (1.8 Go), `route_numerotee_ou_nommee` (400 Mo) ou encore `troncon_de_route`.
 
 Les tables sont fournies au format GeoPackage et peuvent être ingérées avec l'outil [**`ogr2ogr`**](https://gdal.org/programs/ogr2ogr.html) fourni par la librairie de référence [GDAL](https://gdal.org/index.html), laquelle [supporte PostgreSQL / PostGIS](https://gdal.org/drivers/vector/pg.html#driver-capabilities) :
 
@@ -71,18 +71,15 @@ Les tables sont fournies au format GeoPackage et peuvent être ingérées avec l
 ogr2ogr -f PostgreSQL "PG:postgresql://dialog_bdtopo:password@localhost:5432/dialog" /path/to/voie_nommee.gpkg
 ```
 
-Pour assurer une **portabilité** maximum parmi l'équipe de développement (Linux, Windows...), on pourra envisager l'utilisation d'ogr2ogr via l'[image Docker de GDAL](https://github.com/OSGeo/gdal/pkgs/container/gdal). Des binaires Windows et Debian sont aussi disponibles.
+Pour assurer une **portabilité** maximum parmi l'équipe de développement (Linux, Windows...), on pourra appeler ogr2ogr via l'[image Docker de GDAL](https://github.com/OSGeo/gdal/pkgs/container/gdal).
 
-Suite à une ingestion, les **indexes** judicieux seront créés pour accélérer l'exécution des requêtes.
+Suite à une ingestion, des **indexes** judicieux seront créés pour accélérer l'exécution des requêtes.
 
 #### Hébergement
 
-Les tables de la BD TOPO seraient hébergées sur deux instances :
+Les tables de la BD TOPO seront hébergées sur une instance PostgreSQL dédiée.
 
-* Dans la base de production : pour la production ;
-* Dans la base de staging : pour l'environnement de staging, les environnements de branche, et le développement local.
-
-Cette séparation évite l'accès aux données de production depuis un poste local qui, du fait les limitations de la gestion des droits PostgreSQL sur Scalingo (voir [Sécurisation des accès](#sécurisation-des-accès)), serait possible si on utilisait uniquement la base de production comme hôte des données BD TOPO.
+Cette séparation entre données applicatives et BD TOPO qui s'accompagne d'identifiants distincts facilite la maintenance différenciée et participe des bonnes pratiques de sécurité (par ex, principe de moindre privilège).
 
 #### Performance attendue
 
@@ -93,15 +90,15 @@ Des premiers tests via la [PR #677](https://github.com/MTES-MCT/dialog/pull/677)
 | Temps de réponse, latence comprise (min, typique, max) | ~500ms, ~ 1-2s, > 10s (estimations) | Avec indexes : ~20ms, ~ 100ms, < 200 ms (estimations) ; Sans indexes : ~300ms, ~1s, < 2s (estimations) | > 20x plus rapide, moindre variabilité |
 | Disponibilité (timeouts compris) | < 90% (estimation) | > 98% (garanti par le [SLA Scalingo](https://scalingo.com/service-level-agreement)) | Meilleure disponibilité |
 
-D'une part le requêtage direct à PostgreSQL permet de bénéficier de l'excellent performance de ce SGBD, notamment combiné à des indexes conçus judicieusement (ce que l'API IGN ne permet pas de faire).
+D'une part le requêtage direct à PostgreSQL permet de bénéficier de l'excellente performance de ce SGBD, notamment combiné à des indexes conçus judicieusement (ce que l'API IGN ne permet pas de faire).
 
-D'autre part, nous bénéficions par extension de la qualité de service de l'hébergeur Scalingo, au même niveau que pour la base de données de production puisque la BD TOPO y sera hébergée.
+D'autre part, nous bénéficierons par extension de la qualité de service de l'hébergeur Scalingo.
 
 #### Transformation des requêtes API WFS en requêtes aux tables BD TOPO
 
-Les requêtes actuellement réalisées à l'API WFS peuvent être facilement traduites en SQL adressé aux ables BD TOPO.
+Les requêtes actuellement réalisées à l'API WFS peuvent être facilement traduites en SQL.
 
-Par exemple, cette requête [GetFeature](https://docs.geoserver.org/stable/en/user/services/wfs/reference.html#wfs-getfeature) permettant d'interroger la table `voie_nommee` ...
+Par exemple, cette requête [GetFeature](https://docs.geoserver.org/stable/en/user/services/wfs/reference.html#wfs-getfeature) qui interroge la table `voie_nommee` ...
 
 ```http
 GET https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&Version=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=code_insee='01234' HTTP/1.1
@@ -113,45 +110,36 @@ GET https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&Version=2.0.0&O
 SELECT * FROM voie_nommee WHERE code_insee = '01234';
 ```
 
-Ces requêtes pourront être réalisées avec l'infrastructure existante, à savoir Symfony avec l'ORM Doctrine. Ce dernier permet notamment de faire des requêtes SQL directement et de configurer plusieurs connexions de base de données (nécessaire pour la configuration d'identifiants différents pour les données applicatives et les données BD TOPO, voir [Sécurisation des accès](#sécurisation-des-accès)).
+Ces requêtes pourront être réalisées avec l'infrastructure existante, à savoir Symfony avec l'ORM Doctrine. Ce dernier permet notamment de faire des requêtes SQL directement et de configurer une connexion distincte pour la BD TOPO.
 
 #### Sécurisation des accès
 
-Idéalement, les données BD TOPO seraient hébergées dans une base de données indépendante de la base de données applicative, et configurée avec un utilisateur en lecture seule.
+L'hébergement de la BD TOPO dans une application Scalingo séparée permet une meilleure sécurisation que si la BD TOPO était hébergée directement au sein de la base DiaLog de production (par exemple), notamment du fait de limitations de Scalingo (l'option "read only" donnant accès à la base de données entières et non pas à seulement certaines tables).
 
-En pratique, l'hébergement Scalingo impose quelques limitations, notamment le fait de n'avoir accès qu'à une seule `DATABASE` sans pouvoir en créer d'autres, ainsi qu'une gestion limitée des droits utilisateurs via l'interface web (création (avec option "lecture seule"), suppression).
-
-La proposition est donc d'**héberger les tables de la BD TOPO au même endroit que les données applicatives**, à savoir dans la `DATABASE` fournie par Scalingo et sous le schéma `public`.
-
-Pour cela, un utilisateur BD TOPO "read-only" sera créé via l'interface web Scalingo pour la connexion entre DiaLog et les tables de la BD TOPO.
-
-Ces identifiants BD TOPO doivent être considérés comme tout aussi sensibles que pour la base de données de production. En effet, cette approche permettrait quand même, en cas de fuite des identifiants de l'utilisateur BD TOPO, d'avoir accès en lecture seule à l'ensemble des données, en particulier les données utilisateur (nom, prénom, adresse mail) de la table `user`. Cela justifie également l'hébergement double (en production d'une part, sur staging d'autre part) indiqué dans [Hébergement](#hébergement) pour ne pas élargir la surface d'accès aux données de production.
-
-La protection de l'URL BD TOPO est toute aussi importante sur staging car la base devra être [ouverte à Internet](https://doc.scalingo.com/platform/databases/access#internet-accessibility) pour y accéder en local, ce qui retirera la couche de sécurisation SSH de Scalingo.
+Bien que les données BD TOPO soient d'ordre public, les identifiants BD TOPO devront être considérés comme sensibles pour réduire par exemple les risques d'attaques DDoS (surcharge en lecture de la BD TOPO par un acteur malveillant en ayant acquis les identifiants).
 
 #### Mise à jour
 
-Une mise à jour semi-manuelle (déclenchement manuel à l'aide de scripts) est envisageable puisque la BD TOPO est mise à jour peu fréquemment (une publication par an environ).
+Une mise à jour semi-manuelle (déclenchement manuel, exécution automatique) est envisageable puisque la BD TOPO est mise à jour peu fréquemment (une publication par an environ).
 
 La mise à jour des données BD TOPO pourrait se faire par l'équipe de développement comme suit :
 
 * Télécharger en local la nouvelle version du thème Transports ;
-* Exécuter un script utilitaire qui mettre à jour les tables au fur et à mesure avec `ogr2ogr`.
+* Exécuter un script utilitaire qui mettra à jour les tables au fur et à mesure avec `ogr2ogr`.
 
 Cette approche a des avantages et inconvénients par rapport au chargement complet des tables avant de remplacer les données existantes :
 
 * Avantages :
   * Elle est plus simple, car le renommage d'une table n'est pas trivial (il faut penser à renommer ses indexes, séquences, et autres objets PostgreSQL associés).
-  * Elle permet une économise de stockage significative, car le serveur n'a pas besoin d'être capable de stocker la table en double.
-  * Elle facilite la maintenance du serveur car le TRUNCATE lancé par ogr2ogr déclenchera un AUTOVACUUM (déjà configuré par Scalingo), contrairement au remplacement d'une table.
+  * Elle permet une économise de stockage significative, car le serveur n'a pas besoin d'être capable de stocker temporairement les tables en double (et donc d'être surdimensionné en temps normal).
 * Inconvénients :
   * Cette approche n'est pas atomique. Si l'import d'un GeoPackage échoue, alors la table concernée n'aura que des données partielles. Cela peut produire des échecs de géocodage en production.
 
+Les opérations de type VACUUM et/ou ANALYZE pertinentes seront effectuées après la mise à jour pour préparer le nouveau contenu à être requêté (mise à jour des statistiques utilisées par le planificateur de requête PostgreSQL).
+
 **Vitesse de transfert**
 
-La mise à jour prend typiquement plusieurs minutes, en raison de l'upload du contenu des tables la BD TOPO vers Scalingo.
-
-Lors de l'upload initial vers staging des tables `voie_nommee` et `route_numerotee_ou_nommee`, sur une connexion à 375 Mbps, la mise à jour a duré environ 5 minutes, pour une vitesse de transfert effective d'environ 60 Mbps à travers le tunnel SSH.
+La mise à jour prendra typiquement plusieurs minutes, en raison de l'upload du contenu des tables la BD TOPO vers Scalingo.
 
 ### Réversibilité
 

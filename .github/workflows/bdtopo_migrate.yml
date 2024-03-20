@@ -1,0 +1,58 @@
+name: BD TOPO Migrate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgresql:
+        image: postgis/postgis:14-3.3-alpine
+        env:
+          POSTGRES_USER: dialog
+          POSTGRES_PASSWORD: dialog
+          POSTGRES_DB: dialog
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Symfony CLI
+        # Required for E2E testing
+        run: |
+          curl -sS https://get.symfony.com/cli/installer > installer.sh
+          # v5.8+ is buggy with Playwright
+          # See: https://github.com/MTES-MCT/dialog/pull/591
+          sed -i 's/releases\/latest\/download/releases\/download\/v5.7.7/g' installer.sh
+          sudo bash installer.sh
+          sudo mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+
+      - name: Init environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.BDTOPO_MIGRATIONS_DATABASE_URL }}" >> .env.local
+
+      - name: CI
+        run: make ci_bdtopo_migrate BIN_CONSOLE="php bin/console"
