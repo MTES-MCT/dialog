@@ -4,8 +4,6 @@ DiaLog héberge une partie de la [BD TOPO](https://geoservices.ign.fr/bdtopo) po
 
 ## Démarrage rapide
 
-La connexion à la base PostgreSQL qui contient les tables BD TOPO doit être configurée par la variable d'environnement `BDTOPO_DATABASE_URL`.
-
 Pour le développement local, demandez la `BDTOPO_DATABASE_URL` à un membre de l'équipe et ajoutez-là à votre `.env.local` (créer ce fichier à la racine du projet si nécessaire).
 
 Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voir [Mettre à jour les données](#mettre-à-jour-les-données).
@@ -13,6 +11,8 @@ Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voi
 ## Fonctionnement général
 
 Les requêtes à la BD TOPO se font par une connexion dédiée, configurée dans la configuration doctrine (`config/packages/doctrine.yaml`).
+
+L'URL de connexion est configurée par la variable d'environnement `BDTOPO_DATABASE_URL`.
 
 Cette connexion dispose de ses propres migrations, séparées des migrations applicatives de DiaLog. Cela permet de [configurer des indexes], fonctions et autres objets PostgreSQL spécifiquement dédiés à l'optimisation des requêtes adressées aux tables BD TOPO.
 
