@@ -24,9 +24,7 @@ make data_install # Pour recharger dans la base de données
 
 ## Liste des gestionnaires de routes départementales
 
-Pour le type de localisation "Route départementale", DiaLog récupère la liste auprès de la BD TOPO.
-
-Malheureusement cette liste ne peut pas être récupérée dynamiquement avec l'API WFS de l'IGN. La seule source existante est la documentation PDF de la BD TOPO.
+Pour le type de localisation "Route départementale", DiaLog récupère la liste dans la documentation PDF de la BD TOPO. (Il n'existe pas de table BD TOPO des gestionnaires de routes.)
 
 On stocke un copier-coller de la liste dans un fichier `data/gestionnaires.txt` qui est ensuite traité en PHP. Cela réduit le besoin de formatage manuel.
 

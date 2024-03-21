@@ -68,6 +68,7 @@ jobs:
       - name: Init environment variables
         run: |
           echo "DATABASE_URL=${{ secrets.EUDONET_PARIS_IMPORT_DATABASE_URL }}" >> .env.local
+          echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_DATABASE_URL }}" >> .env.local
           # Deal with JSON quotes
           printf "APP_EUDONET_PARIS_CREDENTIALS='%s'\n" '${{ secrets.EUDONET_PARIS_IMPORT_CREDENTIALS }}' >> .env.local
           echo "APP_EUDONET_PARIS_ORG_ID=${{ vars.EUDONET_PARIS_IMPORT_ORG_ID }}" >> .env.local
