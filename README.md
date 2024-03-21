@@ -17,6 +17,13 @@ Digitaliser, diagnostiquer, diffuser l’information réglementaire de logistiqu
 
 ℹ️ Vous devez avoir **[Docker](https://www.docker.com/)** et **[Docker Compose](https://docs.docker.com/compose/)** d'installés sur votre machine.
 
+Tout d'abord, demandez à un membre de l'équipe la valeur de la variable d'environnement `BDTOPO_DATABASE_URL`, et ajoutez-la à `.env.local` (créez le fichier si besoin) :
+
+```bash
+# .env.local
+BDTOPO_DATABASE_URL=postgres://dialog_app:...
+```
+
 Pour démarrer l'application (http://localhost:8000) :
 
 ```bash
