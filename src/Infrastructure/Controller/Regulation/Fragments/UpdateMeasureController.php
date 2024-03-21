@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
@@ -86,10 +87,16 @@ final class UpdateMeasureController extends AbstractRegulationController
                 );
             } catch (GeocodingFailureException $exc) {
                 $commandFailed = true;
-                \Sentry\captureException($exc);
                 $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadName')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
+                    ),
+                );
+            } catch (DepartmentalRoadGeocodingFailureException $exc) {
+                $commandFailed = true;
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('fromPointNumber')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.departmental_road_geocoding_failed', [], 'validators'),
                     ),
                 );
             }

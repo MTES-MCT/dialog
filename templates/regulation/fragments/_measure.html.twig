@@ -43,7 +43,10 @@
                                 {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
                                 {{ location.cityLabel }}
                             {% else %}
-                                {{ location.roadNumber }}  ({{ location.administrator }})
+                                {{ location.roadNumber }} ({{ location.administrator }})
+                                {% if location.fromPointNumber and location.toPointNumber  %}
+                                    {{ 'regulation.location.reference_point'|trans({ '%fromPointNumber%': location.fromPointNumber, '%fromAbscissa%': location.fromAbscissa, '%toPointNumber%': location.toPointNumber, '%toAbscissa%': location.toAbscissa }) }}
+                                {% endif %}
                             {% endif %}
                         </li>
                     {% endfor %}

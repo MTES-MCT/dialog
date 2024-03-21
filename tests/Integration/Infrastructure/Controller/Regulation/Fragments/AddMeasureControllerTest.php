@@ -51,11 +51,21 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['administrator'] = '';
         $values['measure_form']['locations'][0]['roadNumber'] = '';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '';
+        $values['measure_form']['locations'][0]['fromSide'] = '';
+        $values['measure_form']['locations'][0]['toSide'] = '';
+        $values['measure_form']['locations'][0]['fromAbscissa'] = 'A';
+        $values['measure_form']['locations'][0]['toAbscissa'] = 'A';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_administrator_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_fromPointNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_toPointNumber_error')->text());
+        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_fromAbscissa_error')->text());
+        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_toAbscissa_error')->text());
     }
 
     public function testInvalidCertainDaysWithoutApplicableDays(): void
@@ -70,7 +80,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_dailyRange_applicableDays_error')->text());
     }
@@ -149,18 +159,54 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ain';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D1075';
-        $values['measure_form']['locations'][0]['departmentalRoadGeometry'] = '{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '1';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '5';
+        $values['measure_form']['locations'][0]['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+        $values['measure_form']['locations'][0]['fullDepartmentalRoadGeometry'] = '{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}';
 
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles(), ['feature_road_type' => true]);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(200);
 
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('D1075 (Ain)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('D110 (Ardèche) du PR 1+100 au PR 5+650', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+    }
+
+    public function testAddDepartmentalRoadWithUnknownPointNumbers(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add?feature_road_type=true');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '6';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '15';
+        $values['measure_form']['locations'][0]['fromSide'] = 'D';
+        $values['measure_form']['locations'][0]['toSide'] = 'D';
+        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échouée. Veuillez vérifier que ces PR appartiennent bien à une même portion de voie.', $crawler->filter('#measure_form_locations_0_fromPointNumber_error')->text());
     }
 
     public function testInvalidVehicleSetBlankRestrictedTypes(): void

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Domain\Regulation\Enum\RoadSideEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,7 +31,7 @@ final class LocationFormType extends AbstractType
                 ChoiceType::class,
                 options: $this->getAdministratorOptions($options['administrators']),
             )
-            ->add('departmentalRoadGeometry', HiddenType::class)
+            ->add('fullDepartmentalRoadGeometry', HiddenType::class)
             ->add(
                 'roadNumber',
                 TextType::class,
@@ -39,6 +41,58 @@ final class LocationFormType extends AbstractType
                     'label_attr' => [
                         'class' => 'required',
                     ],
+                ],
+            )
+            ->add(
+                'fromPointNumber',
+                TextType::class,
+                options: [
+                    'label' => 'regulation.location.referencePoint.pointNumber',
+                    'help' => 'regulation.location.referencePoint.pointNumber.help',
+                    'required' => false,
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
+                ],
+            )
+            ->add(
+                'fromSide',
+                ChoiceType::class,
+                options: $this->getRoadSideOptions(),
+            )
+            ->add(
+                'toPointNumber',
+                TextType::class,
+                options: [
+                    'label' => 'regulation.location.referencePoint.pointNumber',
+                    'help' => 'regulation.location.referencePoint.pointNumber.help',
+                    'required' => false,
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
+                ],
+            )
+            ->add(
+                'toSide',
+                ChoiceType::class,
+                options: $this->getRoadSideOptions(),
+            )
+            ->add(
+                'fromAbscissa',
+                IntegerType::class,
+                options: [
+                    'required' => false,
+                    'label' => 'regulation.location.referencePoint.abscissa',
+                    'help' => 'regulation.location.referencePoint.abscissa.help',
+                ],
+            )
+            ->add(
+                'toAbscissa',
+                IntegerType::class,
+                options: [
+                    'required' => false,
+                    'label' => 'regulation.location.referencePoint.abscissa',
+                    'help' => 'regulation.location.referencePoint.abscissa.help',
                 ],
             )
             ->add(
@@ -105,6 +159,26 @@ final class LocationFormType extends AbstractType
                 $choices,
             ),
             'label' => 'regulation.location.type',
+            'label_attr' => [
+                'class' => 'required',
+            ],
+        ];
+    }
+
+    private function getRoadSideOptions(): array
+    {
+        $choices = [];
+
+        foreach (RoadSideEnum::cases() as $case) {
+            $choices[sprintf('regulation.location.road.side.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => array_merge(
+                $choices,
+            ),
+            'label' => 'regulation.location.road.side',
+            'help' => 'regulation.location.road.side.help',
             'label_attr' => [
                 'class' => 'required',
             ],

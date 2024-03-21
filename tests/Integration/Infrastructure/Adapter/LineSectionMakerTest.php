@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
+use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\LineSectionMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -123,7 +125,7 @@ final class LineSectionMakerTest extends KernelTestCase
      */
     public function testComputeSection(Coordinates $fromCoords, Coordinates $toCoords, string $section): void
     {
-        $this->assertSame($section, $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords));
+        $this->assertSame($section, $this->lineSectionMaker->computeSection(RoadTypeEnum::LANE, $this->lineGeometry, $fromCoords, $toCoords));
     }
 
     private function provideComputeSectionError(): array
@@ -143,6 +145,16 @@ final class LineSectionMakerTest extends KernelTestCase
     {
         $this->expectException(GeocodingFailureException::class);
 
-        $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords);
+        $this->lineSectionMaker->computeSection(RoadTypeEnum::LANE, $this->lineGeometry, $fromCoords, $toCoords);
+    }
+
+    /**
+     * @dataProvider provideComputeSectionError
+     */
+    public function testComputeDepartmentalRoadSectionError(Coordinates $fromCoords, Coordinates $toCoords): void
+    {
+        $this->expectException(DepartmentalRoadGeocodingFailureException::class);
+
+        $this->lineSectionMaker->computeSection(RoadTypeEnum::DEPARTMENTAL_ROAD, $this->lineGeometry, $fromCoords, $toCoords);
     }
 }
