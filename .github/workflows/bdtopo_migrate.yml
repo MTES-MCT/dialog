@@ -5,9 +5,8 @@ on:
   push:
     branches:
       - main
-      - fix/bdtopo-ci
-    # paths:
-    #   - 'src/Infrastructure/Persistence/Doctrine/BdTopoMigrations/**'
+    paths:
+      - 'src/Infrastructure/Persistence/Doctrine/BdTopoMigrations/**'
 
 jobs:
   build:
