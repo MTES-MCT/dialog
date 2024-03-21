@@ -31,12 +31,6 @@ class GeoJSON
             [
                 'type' => 'Point',
                 'coordinates' => [$point->longitude, $point->latitude],
-                'crs' => [
-                    'type' => 'name',
-                    'properties' => [
-                        'name' => 'EPSG:2154',
-                    ],
-                ],
             ],
         );
     }

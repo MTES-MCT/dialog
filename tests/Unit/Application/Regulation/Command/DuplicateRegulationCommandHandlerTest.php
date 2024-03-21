@@ -14,7 +14,6 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\RoadLine;
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
@@ -186,8 +185,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('15');
         $location1
             ->expects(self::once())
-            ->method('getRoadLine')
-            ->willReturn(new RoadLine('geometry1', 'roadLine1', 'Route du Lac', '44195'));
+            ->method('getBaseLaneGeometry')
+            ->willReturn('geometry1');
 
         $location2
             ->expects(self::once())
@@ -215,7 +214,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn(null);
         $location2
             ->expects(self::once())
-            ->method('getRoadLine')
+            ->method('getBaseLaneGeometry')
             ->willReturn(null);
 
         $this->originalRegulationOrder
@@ -305,7 +304,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
         $locationCommand1->geometry = null;
-        $locationCommand1->roadLine = new RoadLine('geometry1', 'roadLine1', 'Route du Lac', '44195');
+        $locationCommand1->baseLaneGeometry = 'geometry1';
         $locationCommand1->measure = $measure1;
 
         $locationCommand2 = new SaveLocationCommand();
@@ -316,7 +315,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
         $locationCommand2->geometry = null;
-        $locationCommand2->roadLine = null;
+        $locationCommand2->baseLaneGeometry = null;
         $locationCommand2->measure = $measure1;
 
         $measureCommand1 = new SaveMeasureCommand($duplicatedRegulationOrder);

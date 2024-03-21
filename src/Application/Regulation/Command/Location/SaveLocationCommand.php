@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandInterface;
-use App\Application\RoadLine;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
@@ -27,7 +26,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?Coordinates $toCoords = null;
     public ?string $geometry;
     public ?Measure $measure;
-    public ?RoadLine $roadLine = null;
+    public ?string $baseLaneGeometry = null;
     public ?string $departmentalRoadGeometry = null;
     private ?bool $isEntireStreetFormValue = null;
 

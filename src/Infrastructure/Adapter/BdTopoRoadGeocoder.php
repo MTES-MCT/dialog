@@ -6,7 +6,6 @@ namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
-use App\Application\RoadLine;
 use Doctrine\DBAL\Connection;
 
 final class BdTopoRoadGeocoder implements RoadGeocoderInterface
@@ -16,12 +15,12 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
     ) {
     }
 
-    public function computeRoadLine(string $roadName, string $inseeCode): RoadLine
+    public function computeRoadLine(string $roadName, string $inseeCode): string
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
-                    SELECT id_pseudo_fpb, ST_AsGeoJSON(geometrie) AS geometry
+                    SELECT ST_AsGeoJSON(geometrie) AS geometry
                     FROM voie_nommee
                     WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
                     AND code_insee = :code_insee
@@ -37,12 +36,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         }
 
         if ($rows) {
-            return new RoadLine(
-                geometry: $rows[0]['geometry'],
-                id: $rows[0]['id_pseudo_fpb'],
-                roadName: $roadName,
-                cityCode: $inseeCode,
-            );
+            return $rows[0]['geometry'];
         }
 
         $message = sprintf('no result found in voie_nommee for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);

@@ -37,12 +37,6 @@ final class GeoJSONTest extends TestCase
                 [
                     'type' => 'Point',
                     'coordinates' => [-1.9, 43.6],
-                    'crs' => [
-                        'type' => 'name',
-                        'properties' => [
-                            'name' => 'EPSG:2154',
-                        ],
-                    ],
                 ],
             ),
             $result,

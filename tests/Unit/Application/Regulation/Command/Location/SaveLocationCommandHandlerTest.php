@@ -6,11 +6,10 @@ namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
+use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\RoadGeocoderInterface;
-use App\Application\RoadLine;
-use App\Application\RoadLineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -29,17 +28,18 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private string $fromHouseNumber;
     private string $toHouseNumber;
     private string $geometry;
+    private string $baseLaneGeometry;
     private $idFactory;
     private $locationRepository;
     private $roadGeocoder;
-    private $roadLineSectionMaker;
+    private $laneSectionMaker;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
-        $this->roadLineSectionMaker = $this->createMock(RoadLineSectionMakerInterface::class);
+        $this->laneSectionMaker = $this->createMock(LaneSectionMakerInterface::class);
 
         $this->administrator = 'Département de Loire-Atlantique';
         $this->roadNumber = 'D12';
@@ -52,6 +52,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             Coordinates::fromLonLat(-1.935836, 47.347024),
             Coordinates::fromLonLat(-1.930973, 47.347917),
         ]);
+        $this->baseLaneGeometry = 'baseLaneGeometry';
     }
 
     public function testCreateRoadSection(): void
@@ -61,18 +62,16 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
 
-        $roadLine = new RoadLine('geometry', 'id', $this->roadName, $this->cityCode);
-
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
             ->with($this->roadName, $this->cityCode)
-            ->willReturn($roadLine);
+            ->willReturn($this->baseLaneGeometry);
 
-        $this->roadLineSectionMaker
+        $this->laneSectionMaker
             ->expects(self::once())
-            ->method('computeRoadLineSection')
-            ->with($roadLine, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
+            ->method('computeSection')
+            ->with($this->baseLaneGeometry, $this->roadName, $this->cityCode, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
             ->willReturn($this->geometry);
 
         $createdLocation = $this->createMock(Location::class);
@@ -95,8 +94,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         fromHouseNumber: $this->fromHouseNumber,
                         toHouseNumber: $this->toHouseNumber,
                         geometry: $this->geometry,
-                        roadLineGeometry: $roadLine->geometry,
-                        roadLineId: $roadLine->id,
+                        baseLaneGeometry: $this->baseLaneGeometry,
                     ),
                 ),
             )
@@ -106,7 +104,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -123,16 +121,55 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->assertSame($createdLocation, $result);
     }
 
-    public function testCreateFullRoad(): void
+    /**
+     * public function testFullLane(): void
+     * {
+     * $this->assertSame($this->baseLaneGeometry, $this->laneSectionMaker->computeSection(
+     * $this->baseLaneGeometry,
+     * $this->roadName,
+     * $this->cityCode,
+     * fromCoords: null,
+     * fromHouseNumber: null,
+     * fromRoadName: null,
+     * toCoords: null,
+     * toHouseNumber: null,
+     * toRoadName: null,
+     * ));
+     * }
+     *
+     * public function testNoStart(): void {
+     * $this->assertNull($this->laneSectionMaker->computeSection(
+     * $this->baseLaneGeometry,
+     * $this->roadName,
+     * $this->cityCode,
+     * fromCoords: null,
+     * fromHouseNumber: null,
+     * fromRoadName: null,
+     * toCoords: null,
+     * toHouseNumber: '40',
+     * toRoadName: null,
+     * ));
+     * }
+     *
+     * public function testNoEnd(): void {
+     * $this->assertNull($this->laneSectionMaker->computeSection(
+     * $this->baseLaneGeometry,
+     * $this->roadName,
+     * $this->cityCode,
+     * fromCoords: null,
+     * fromHouseNumber: '1',
+     * fromRoadName: null,
+     * toCoords: null,
+     * toHouseNumber: null,
+     * toRoadName: null,
+     * ));
+     * }
+     */
+    public function testCreateFullLane(): void
     {
         $measure = $this->createMock(Measure::class);
 
-        $roadLine = new RoadLine(
-            json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
-            'test',
-            $this->roadName,
-            $this->cityCode,
-        );
+        $baseLaneGeometry = json_encode(['type' => 'LineString', 'coordinates' => ['...']]);
 
         $this->idFactory
             ->expects(self::once())
@@ -143,7 +180,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('computeRoadLine')
             ->with('Route du Grand Brossais', '44195')
-            ->willReturn($roadLine);
+            ->willReturn($baseLaneGeometry);
 
         $location = new Location(
             uuid: '4430a28a-f9ad-4c4b-ba66-ce9cc9adb7d8',
@@ -156,9 +193,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
             roadName: $this->roadName,
             fromHouseNumber: null,
             toHouseNumber: null,
-            geometry: json_encode(['type' => 'LineString', 'coordinates' => ['...']]),
-            roadLineGeometry: $roadLine->geometry,
-            roadLineId: $roadLine->id,
+            geometry: $baseLaneGeometry,
+            baseLaneGeometry: $baseLaneGeometry,
         );
 
         $createdLocation = $this->createMock(Location::class);
@@ -177,7 +213,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -195,8 +231,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testUpdateNoChangeDoesNotRecomputePoints(): void
     {
-        $roadLine = new RoadLine('geometry', 'id', $this->roadName, $this->cityCode);
-
         $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())
@@ -236,8 +270,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->willReturn($this->toHouseNumber);
         $location
             ->expects(self::exactly(3))
-            ->method('getRoadLine')
-            ->willReturn($roadLine);
+            ->method('getBaseLaneGeometry')
+            ->willReturn($this->baseLaneGeometry);
         $location
             ->expects(self::once())
             ->method('update')
@@ -251,8 +285,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 $this->fromHouseNumber,
                 $this->toHouseNumber,
                 $this->geometry,
-                $roadLine->geometry,
-                $roadLine->id,
+                $this->baseLaneGeometry,
             );
 
         $this->idFactory
@@ -267,7 +300,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand($location);
@@ -297,9 +330,9 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('computeRoadLine');
 
-        $this->roadLineSectionMaker
+        $this->laneSectionMaker
             ->expects(self::never())
-            ->method('computeRoadLineSection');
+            ->method('computeSection');
 
         $this->roadGeocoder
             ->expects(self::never())
@@ -350,7 +383,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand($location);
@@ -405,7 +438,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -475,7 +508,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -518,7 +551,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -543,18 +576,16 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $fromCoords = Coordinates::fromLonLat(-1.935836, 47.347024);
         $toCoords = Coordinates::fromLonLat(-1.930973, 47.347917);
 
-        $roadLine = new RoadLine('geometry', 'id', $this->roadName, $this->cityCode);
-
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
             ->with($this->roadName, $this->cityCode)
-            ->willReturn($roadLine);
+            ->willReturn($this->baseLaneGeometry);
 
-        $this->roadLineSectionMaker
+        $this->laneSectionMaker
             ->expects(self::once())
-            ->method('computeRoadLineSection')
-            ->with($roadLine, $fromCoords, null, null, $toCoords, null, null)
+            ->method('computeSection')
+            ->with($this->baseLaneGeometry, $this->roadName, $this->cityCode, $fromCoords, null, null, $toCoords, null, null)
             ->willReturn($this->geometry);
 
         $this->locationRepository
@@ -574,8 +605,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         fromHouseNumber: null,
                         toHouseNumber: null,
                         geometry: $this->geometry,
-                        roadLineGeometry: $roadLine->geometry,
-                        roadLineId: $roadLine->id,
+                        baseLaneGeometry: $this->baseLaneGeometry,
                     ),
                 ),
             )
@@ -585,12 +615,12 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->locationRepository,
             $this->roadGeocoder,
-            $this->roadLineSectionMaker,
+            $this->laneSectionMaker,
         );
 
         $command = new SaveLocationCommand();
         $command->measure = $measure;
-        $command->roadType = 'lane';
+        $command->roadType = RoadTypeEnum::LANE->value;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;

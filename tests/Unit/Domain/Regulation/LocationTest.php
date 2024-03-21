@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation;
 
-use App\Application\RoadLine;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
@@ -34,8 +32,7 @@ final class LocationTest extends TestCase
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
             geometry: $geometry,
-            roadLineGeometry: 'geometry',
-            roadLineId: 'id',
+            baseLaneGeometry: 'baseLaneGeometry',
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
@@ -46,7 +43,7 @@ final class LocationTest extends TestCase
         $this->assertSame('15', $location->getFromHouseNumber());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame($geometry, $location->getGeometry());
-        $this->assertEquals(new RoadLine('geometry', 'id', 'Route du Grand Brossais', '44195'), $location->getRoadLine());
+        $this->assertEquals('baseLaneGeometry', $location->getBaseLaneGeometry());
     }
 
     public function testUpdate(): void
@@ -70,7 +67,7 @@ final class LocationTest extends TestCase
             ]),
         );
 
-        $this->assertNull($location->getRoadline());
+        $this->assertNull($location->getBaseLaneGeometry());
 
         $newRoadType = 'lane';
         $newCityCode = '44025';
@@ -84,8 +81,7 @@ final class LocationTest extends TestCase
             Coordinates::fromLonLat(-1.938727, 47.358454),
             Coordinates::fromLonLat(-1.940304, 47.388473),
         ]);
-        $newRoadLineGeometry = 'geometry';
-        $newRoadLineId = 'id';
+        $newBaseLaneGeometry = 'baseLaneGeometry';
 
         $location->update(
             $newRoadType,
@@ -97,8 +93,7 @@ final class LocationTest extends TestCase
             $newFromHouseNumber,
             $newToHouseNumber,
             $newGeometry,
-            $newRoadLineGeometry,
-            $newRoadLineId,
+            $newBaseLaneGeometry,
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
@@ -111,29 +106,6 @@ final class LocationTest extends TestCase
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
         $this->assertSame($newGeometry, $location->getGeometry());
-        $this->assertEquals(new RoadLine('geometry', 'id', $newRoadName, $newCityCode), $location->getRoadLine());
-    }
-
-    public function testRoadTypeDepartmentalRoad(): void
-    {
-        $measure = $this->createMock(Measure::class);
-
-        $location = new Location(
-            uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            measure: $measure,
-            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
-            cityCode: null,
-            cityLabel: null,
-            administrator: 'Département du Nord',
-            roadNumber: 'D590',
-            roadName: null,
-            fromHouseNumber: null,
-            toHouseNumber: null,
-            geometry: 'geometry',
-            roadLineGeometry: null,
-            roadLineId: null,
-        );
-
-        $this->assertNull($location->getRoadline());
+        $this->assertEquals($newBaseLaneGeometry, $location->getBaseLaneGeometry());
     }
 }

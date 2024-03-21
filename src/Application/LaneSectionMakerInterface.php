@@ -6,10 +6,12 @@ namespace App\Application;
 
 use App\Domain\Geography\Coordinates;
 
-interface RoadLineSectionMakerInterface
+interface LaneSectionMakerInterface
 {
-    public function computeRoadLineSection(
-        RoadLine $roadLine,
+    public function computeSection(
+        string $baseLaneGeometry,
+        string $roadName,
+        string $cityCode,
         ?Coordinates $fromCoords,
         ?string $fromHouseNumber,
         ?string $fromRoadName,
