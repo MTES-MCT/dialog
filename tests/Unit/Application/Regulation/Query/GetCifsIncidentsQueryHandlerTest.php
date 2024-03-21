@@ -32,7 +32,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     public function testGetAll(): void
     {
         $incident1 = new CifsIncidentView(
-            id: '065490cc-45ad-71ad-8000-9196b66c1ba2',
+            id: '02d5eb61-9ca3-4e67-aacd-726f124382d0',
             creationTime: '2023-11-01T00:00:00+00:00',
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_HAZARD',
@@ -45,7 +45,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident2 = new CifsIncidentView(
-            id: '065490e7-1738-7b0e-8000-93b5ff772d94',
+            id: '9698b212-705c-4c46-8968-63b5a55a4d66',
             creationTime: '2023-11-01T00:00:00+00:00',
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_CONSTRUCTION',
@@ -66,6 +66,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
         $measure1 = [
+            'locationId' => '02d5eb61-9ca3-4e67-aacd-726f124382d0',
             'measureId' => '065490cc-45ad-71ad-8000-9196b66c1ba2',
             'description' => 'Description 1',
             'category' => RegulationOrderCategoryEnum::INCIDENT->value,
@@ -87,6 +88,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         ];
 
         $measure2Fields = [
+            'locationId' => '9698b212-705c-4c46-8968-63b5a55a4d66',
             'measureId' => '065490e7-1738-7b0e-8000-93b5ff772d94',
             'description' => 'Description 1',
             'category' => RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
