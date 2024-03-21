@@ -75,4 +75,43 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
 
         return $departmentalRoads;
     }
+
+    public function findReferencePointAbscisse(string $administrator, string $roadNumber, string $direction, int $pointNumber, int $abscissa): int
+    {
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                '
+                    SELECT abscisse + :abscisse as abscisse
+                    FROM point_de_repere
+                    WHERE route = :route
+                    AND gestionnaire = :gestionnaire
+                    AND numero = :numero
+                    AND cote = :cote
+                ',
+                [
+                    'route' => $roadNumber,
+                    'gestionnaire' => $administrator,
+                    'cote' => $direction,
+                    'numero' => $pointNumber,
+                    'abscisse' => $abscissa,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(sprintf('Reference point query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if ($rows) {
+            return $rows[0]['abscisse'];
+        }
+
+        throw new GeocodingFailureException(
+            sprintf(
+                'no result found in point_de_repere for gestionnaire="%s", route="%s", numero="%s", cote="%s"',
+                $administrator,
+                $roadNumber,
+                $pointNumber,
+                $direction,
+            )
+        );
+    }
 }

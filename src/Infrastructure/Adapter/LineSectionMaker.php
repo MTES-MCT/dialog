@@ -41,6 +41,39 @@ final class LineSectionMaker implements LineSectionMakerInterface
         }
     }
 
+    private function locateReferencePointOnLine(string $lineGeometry, int $abscissa): string
+    {
+        try {
+            $row = $this->em->getConnection()->fetchAssociative(
+                '
+                    SELECT ST_AsGeoJSON(
+                        ST_LocateAlong(
+                            ST_AddMeasure(
+                                :geom,
+                                0,
+                                :abscissa
+                            ),
+                            6
+                        )
+                    ) as point
+                ',
+                ['geom' => $lineGeometry, 'abscissa' => $abscissa],
+            );
+
+            return $row['point'];
+        } catch (DriverException $exc) {
+            throw new GeocodingFailureException(
+                sprintf(
+                    'Failed to locate abscissa %s on line %s: %s',
+                    $abscissa,
+                    $lineGeometry,
+                    $exc->getMessage(),
+                ),
+                previous: $exc,
+            );
+        }
+    }
+
     private function clipLine(string $lineGeometry, float $startFraction = 0, float $endFraction = 1): string
     {
         $row = $this->em->getConnection()->fetchAssociative(
@@ -58,18 +91,33 @@ final class LineSectionMaker implements LineSectionMakerInterface
     /**
      * @throws GeocodingFailureException
      */
+    public function computeDepartmentalSection(
+        string $lineGeometry,
+        int $abscissaA,
+        int $abscissaB,
+    ): string {
+        $fromMeasure = $this->locateReferencePointOnLine($lineGeometry, $abscissaA);
+        $toMeasure = $this->locateReferencePointOnLine($lineGeometry, $abscissaB);
+dd($fromMeasure, $toMeasure);
+        if ($fromMeasure > $toMeasure) {
+            [$fromMeasure, $toMeasure] = [$toMeasure, $fromMeasure];
+        }
+
+        return $this->clipLine($lineGeometry, $fromMeasure, $toMeasure);
+    }
+
     public function computeSection(
         string $lineGeometry,
         Coordinates $fromCoords,
         Coordinates $toCoords,
     ): string {
-        $fromFraction = $this->locatePointOnLine($lineGeometry, $fromCoords);
-        $toFraction = $this->locatePointOnLine($lineGeometry, $toCoords);
+        $fromMeasure = $this->locatePointOnLine($lineGeometry, $fromCoords);
+        $toMeasure = $this->locatePointOnLine($lineGeometry, $toCoords);
 
-        if ($fromFraction > $toFraction) {
-            [$fromFraction, $toFraction] = [$toFraction, $fromFraction];
+        if ($fromMeasure > $toMeasure) {
+            [$fromMeasure, $toMeasure] = [$toMeasure, $fromMeasure];
         }
 
-        return $this->clipLine($lineGeometry, $fromFraction, $toFraction);
+        return $this->clipLine($lineGeometry, $fromMeasure, $toMeasure);
     }
 }
