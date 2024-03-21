@@ -456,7 +456,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -506,7 +506,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -592,7 +592,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"LineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[1.352105256,44.016810494],[1.35213207,44.01678578],[1.35216909,44.01675663],[1.35221741,44.01672495],[1.35226814,44.01669601],[1.35232384,44.01666804],[1.35272189,44.0164913],[1.35280254,44.01646281],[1.35301215,44.016390795]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.352105256,44.016810494],[1.35213207,44.01678578],[1.35216909,44.01675663],[1.35221741,44.01672495],[1.35226814,44.01669601],[1.35232384,44.01666804],[1.35272189,44.0164913],[1.35280254,44.01646281],[1.35301215,44.016390795]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>
@@ -678,7 +678,7 @@
                             </loc:supplementaryPositionalDescription>
                             <loc:_linearLocationExtension>
                                 <loc:linearLocationExtended>
-                                    <locdx:geoJsonGeometry>{"type":"MultiLineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</locdx:geoJsonGeometry>
+                                    <locdx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</locdx:geoJsonGeometry>
                                 </loc:linearLocationExtended>
                             </loc:_linearLocationExtension>
                         </locationByOrder>

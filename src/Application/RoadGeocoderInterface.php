@@ -7,4 +7,6 @@ namespace App\Application;
 interface RoadGeocoderInterface
 {
     public function computeRoadLine(string $roadName, string $inseeCode): RoadLine;
+
+    public function findDepartmentalRoads(string $search, string $administrator): array;
 }

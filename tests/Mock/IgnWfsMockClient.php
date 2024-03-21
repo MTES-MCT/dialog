@@ -38,19 +38,30 @@ final class IgnWfsMockClient extends MockHttpClient
                     ],
                 ],
             ];
-        } elseif (str_contains($options['query']['cql_filter'], "strStripAccents(strReplace(nom_minuscule, '-', ' ', true))=strStripAccents(strReplace('rue saint victor', '-', ' ', true))")) {
+        } elseif ($options['query']['TYPENAME'] === 'BDTOPO_V3:route_numerotee_ou_nommee' && str_contains($options['query']['cql_filter'], 'D32')) {
             $body = [
                 'features' => [
                     [
-                        // Source: https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=nom_minuscule=%27rue%20saint-victor%27%20AND%20code_insee=59368&PropertyName=geometrie,id_pseudo_fpb
-                        'geometry' => json_decode('{"type":"MultiLineString","coordinates":[[[3.06773711,50.65302845],[3.06770772,50.65320974],[3.0676489,50.65356155],[3.06761116,50.65383438],[3.06756215,50.65413324],[3.06756371,50.65424093]]]}'),
                         'properties' => [
-                            'id_pseudo_fpb' => '593681470',
+                            'numero' => 'D322',
                         ],
+                        'geometry' => json_decode('{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}', associative: true),
                     ],
                 ],
             ];
-        } elseif ($options['query']['TYPENAME'] === 'BDTOPO_V3:voie_nommee' && str_contains($options['query']['cql_filter'], 'rue monge')) {
+        } elseif (str_contains($options['query']['cql_filter'], 'rue saint victor')) {
+            $body = [
+            'features' => [
+                [
+                    // Source: https://data.geopf.fr/wfs/ows?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&OUTPUTFORMAT=application/json&TYPENAME=BDTOPO_V3:voie_nommee&cql_filter=nom_minuscule=%27rue%20saint-victor%27%20AND%20code_insee=59368&PropertyName=geometrie,id_pseudo_fpb
+                    'geometry' => json_decode('{"type":"MultiLineString","coordinates":[[[3.06773711,50.65302845],[3.06770772,50.65320974],[3.0676489,50.65356155],[3.06761116,50.65383438],[3.06756215,50.65413324],[3.06756371,50.65424093]]]}'),
+                    'properties' => [
+                        'id_pseudo_fpb' => '593681470',
+                    ],
+                ],
+            ],
+            ];
+        } elseif (str_contains($options['query']['cql_filter'], 'rue monge')) {
             // E2E tests
             $body = [
                 'features' => [
@@ -72,6 +83,17 @@ final class IgnWfsMockClient extends MockHttpClient
                         'geometry' => json_decode('{"type":"MultiLineString","crs":{"type":"name","properties":{"name":"EPSG:2154"}},"coordinates":[[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.35418135,44.0166645],[1.35375252,44.01687049],[1.35354078,44.01698883],[1.35332393,44.01711159],[1.35325547,44.01714927],[1.35275247,44.01741806],[1.3527081,44.0174426],[1.35249763,44.01756005],[1.35244427,44.01759346],[1.35218587,44.01777231],[1.35197056,44.0179275],[1.35183958,44.01801374],[1.35155475,44.01820029]]]}'),
                         'properties' => [
                             'id_pseudo_fpb' => '821216800',
+                        ],
+                    ],
+                ],
+            ];
+        } elseif (str_contains($options['query']['cql_filter'], 'rue du simplon')) {
+            $body = [
+                'features' => [
+                    [
+                        'geometry' => [
+                            'type' => 'MultiLineString',
+                            'coordinates' => [[[5.03168932, 47.31771662], [5.03177572, 47.31772501], [5.03185628, 47.31775422], [5.03193864, 47.317796], [5.03200397, 47.31784259]], [[5.03200397, 47.31784259], [5.03190919, 47.31782264], [5.03181621, 47.31781526], [5.03173705, 47.31782295], [5.03169758, 47.31782994], [5.03165551, 47.31783788]], [[5.03213156, 47.31788989], [5.03200397, 47.31784259]], [[5.03256244, 47.31811288], [5.03232346, 47.31799189], [5.03213156, 47.31788989]], [[5.03256244, 47.31811288], [5.03277057, 47.3182236]], [[5.03413544, 47.31891111], [5.03421187, 47.31893589], [5.03454423, 47.31903993], [5.0346421, 47.31907154], [5.03473071, 47.3191033], [5.03485994, 47.31915867]], [[5.03485994, 47.31915867], [5.03496222, 47.31920191], [5.03510435, 47.31928316]], [[5.03510435, 47.31928316], [5.03521143, 47.31934793], [5.03530781, 47.31941017]], [[5.03530781, 47.31941017], [5.03581835, 47.31974252], [5.03588215, 47.31978373], [5.03622198, 47.31997949]], [[5.03277057, 47.3182236], [5.03291609, 47.31832461], [5.03328019, 47.31853256], [5.03346836, 47.31860581], [5.03364517, 47.31869367]], [[5.03364517, 47.31869367], [5.03376968, 47.31876443], [5.03385727, 47.31880432], [5.03393536, 47.31883807], [5.03402271, 47.31887167], [5.03413544, 47.31891111]]],
                         ],
                     ],
                 ],

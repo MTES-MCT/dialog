@@ -17,7 +17,7 @@
     <field name="geometry" type="geometry" column="geometry" nullable="true">
       <options>
         <option name="geometry_type">GEOMETRY</option>
-        <option name="srid">2154</option>
+        <option name="srid">4326</option>
       </options>
     </field>
     <field name="roadLineGeometry" type="geometry" column="road_line_geometry" nullable="true">
