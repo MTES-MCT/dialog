@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\RoadLine;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAllAssociative')
             ->with(
                 '
-                    SELECT ST_AsGeoJSON(geometrie) AS geometry
+                    SELECT id_pseudo_fpb, ST_AsGeoJSON(geometrie) AS geometry
                     FROM voie_nommee
                     WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
                     AND code_insee = :code_insee
@@ -35,9 +36,9 @@ final class BdTopoRoadGeocoderTest extends TestCase
                 ',
                 ['nom_minuscule' => 'Rue du Test', 'code_insee' => '01234'],
             )
-            ->willReturn([['geometry' => 'test']]);
+            ->willReturn([['geometry' => 'test', 'id_pseudo_fpb' => 'id']]);
 
-        $this->assertSame('test', $this->roadGeocoder->computeRoadLine('Rue du Test', '01234'));
+        $this->assertEquals(new RoadLine('test', 'id', 'Rue du Test', '01234'), $this->roadGeocoder->computeRoadLine('Rue du Test', '01234'));
     }
 
     public function testComputeRoadLineNoResult(): void

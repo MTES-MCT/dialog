@@ -9,6 +9,7 @@ use App\Application\GeocoderInterface;
 use App\Application\GeometryServiceInterface;
 use App\Application\RoadLine;
 use App\Application\RoadLineSectionMakerInterface;
+use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\Exception\InvalidHouseNumberException;
 use App\Domain\Geography\HouseNumber;
 
@@ -25,12 +26,14 @@ final class RoadLineSectionMaker implements RoadLineSectionMakerInterface
      */
     public function computeRoadLineSection(
         RoadLine $roadLine,
+        ?Coordinates $fromCoords,
         ?string $fromHouseNumber,
         ?string $fromRoadName,
+        ?Coordinates $toCoords,
         ?string $toHouseNumber,
         ?string $toRoadName,
     ): string {
-        if (!$fromHouseNumber && !$fromRoadName && !$toHouseNumber && !$toRoadName) {
+        if (!$fromHouseNumber && !$fromRoadName && !$fromCoords && !$toHouseNumber && !$toRoadName && !$toCoords) {
             return $roadLine->geometry;
         }
 
@@ -39,8 +42,6 @@ final class RoadLineSectionMaker implements RoadLineSectionMakerInterface
             $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $roadLine->cityCode);
         } elseif ($fromRoadName) {
             $fromCoords = $this->geocoder->computeJunctionCoordinates($roadLine->roadName, $fromRoadName, $roadLine->cityCode);
-        } else {
-            $fromCoords = null;
         }
 
         if ($toHouseNumber) {
@@ -48,8 +49,6 @@ final class RoadLineSectionMaker implements RoadLineSectionMakerInterface
             $toCoords = $this->geocoder->computeCoordinates($toAddress, $roadLine->cityCode);
         } elseif ($toRoadName) {
             $toCoords = $this->geocoder->computeJunctionCoordinates($roadLine->roadName, $toRoadName, $roadLine->cityCode);
-        } else {
-            $toCoords = null;
         }
 
         // Compute the "fraction" position (a number between 0 and 1, as per https://postgis.net/docs/ST_LineLocatePoint.html)

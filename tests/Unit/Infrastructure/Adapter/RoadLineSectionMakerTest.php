@@ -39,7 +39,15 @@ final class RoadLineSectionMakerTest extends TestCase
 
     public function testFullRoad(): void
     {
-        $this->assertSame($this->roadLine->geometry, $this->roadLineSectionMaker->computeRoadLineSection($this->roadLine, null, null, null, null));
+        $this->assertSame($this->roadLine->geometry, $this->roadLineSectionMaker->computeRoadLineSection(
+            $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            fromRoadName: null,
+            toRoadName: null,
+        ));
     }
 
     public function testStartOnly(): void
@@ -76,6 +84,8 @@ final class RoadLineSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->roadLineSectionMaker->computeRoadLineSection(
             $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
             fromHouseNumber: '20',
             toHouseNumber: null,
             fromRoadName: null,
@@ -117,6 +127,8 @@ final class RoadLineSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->roadLineSectionMaker->computeRoadLineSection(
             $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
             fromHouseNumber: null,
             toHouseNumber: '20',
             fromRoadName: null,
@@ -163,6 +175,8 @@ final class RoadLineSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->roadLineSectionMaker->computeRoadLineSection(
             $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
             fromHouseNumber: null,
             toHouseNumber: null,
             fromRoadName: 'Rue du Début',
@@ -209,6 +223,8 @@ final class RoadLineSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->roadLineSectionMaker->computeRoadLineSection(
             $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
             fromHouseNumber: '3',
             toHouseNumber: '20',
             fromRoadName: null,
@@ -250,6 +266,8 @@ final class RoadLineSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->roadLineSectionMaker->computeRoadLineSection(
             $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
             fromHouseNumber: '20',
             toHouseNumber: null,
             fromRoadName: null,
@@ -295,6 +313,8 @@ final class RoadLineSectionMakerTest extends TestCase
 
         $this->roadLineSectionMaker->computeRoadLineSection(
             $this->roadLine,
+            fromCoords: null,
+            toCoords: null,
             fromHouseNumber: 'abc',
             toHouseNumber: null,
             fromRoadName: null,

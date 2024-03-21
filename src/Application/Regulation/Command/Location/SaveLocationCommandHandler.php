@@ -115,8 +115,10 @@ final class SaveLocationCommandHandler
 
         return $this->roadLineSectionMaker->computeRoadLineSection(
             $roadLine,
+            $command->fromCoords,
             $command->fromHouseNumber,
             $command->fromRoadName,
+            $command->toCoords,
             $command->toHouseNumber,
             $command->toRoadName,
         );

@@ -72,7 +72,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->roadLineSectionMaker
             ->expects(self::once())
             ->method('computeRoadLineSection')
-            ->with($roadLine, $this->fromHouseNumber, null, $this->toHouseNumber, null)
+            ->with($roadLine, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
             ->willReturn($this->geometry);
 
         $createdLocation = $this->createMock(Location::class);
@@ -342,10 +342,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
-        $this->geocoder
-            ->expects(self::never())
-            ->method('computeCoordinates');
-
         $this->locationRepository
             ->expects(self::never())
             ->method('add');
@@ -380,10 +376,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
 
-        $this->geocoder
-            ->expects(self::never())
-            ->method('computeCoordinates');
-
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
 
@@ -412,8 +404,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $handler = new SaveLocationCommandHandler(
             $this->idFactory,
             $this->locationRepository,
-            $this->geocoder,
             $this->roadGeocoder,
+            $this->roadLineSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -482,8 +474,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $handler = new SaveLocationCommandHandler(
             $this->idFactory,
             $this->locationRepository,
-            $this->geocoder,
             $this->roadGeocoder,
+            $this->roadLineSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -525,8 +517,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $handler = new SaveLocationCommandHandler(
             $this->idFactory,
             $this->locationRepository,
-            $this->geocoder,
             $this->roadGeocoder,
+            $this->roadLineSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -545,16 +537,25 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
 
-        $this->geocoder
-            ->expects(self::never())
-            ->method('computeCoordinates');
-
-        $this->geocoder
-            ->expects(self::never())
-            ->method('computeJunctionCoordinates');
-
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
+
+        $fromCoords = Coordinates::fromLonLat(-1.935836, 47.347024);
+        $toCoords = Coordinates::fromLonLat(-1.930973, 47.347917);
+
+        $roadLine = new RoadLine('geometry', 'id', $this->roadName, $this->cityCode);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadName, $this->cityCode)
+            ->willReturn($roadLine);
+
+        $this->roadLineSectionMaker
+            ->expects(self::once())
+            ->method('computeRoadLineSection')
+            ->with($roadLine, $fromCoords, null, null, $toCoords, null, null)
+            ->willReturn($this->geometry);
 
         $this->locationRepository
             ->expects(self::once())
@@ -564,15 +565,17 @@ final class SaveLocationCommandHandlerTest extends TestCase
                     new Location(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        roadType: $this->roadType,
-                        administrator: $this->administrator,
-                        roadNumber: $this->roadNumber,
+                        roadType: RoadTypeEnum::LANE->value,
+                        administrator: null,
+                        roadNumber: null,
                         cityCode: $this->cityCode,
                         cityLabel: $this->cityLabel,
                         roadName: $this->roadName,
                         fromHouseNumber: null,
                         toHouseNumber: null,
                         geometry: $this->geometry,
+                        roadLineGeometry: $roadLine->geometry,
+                        roadLineId: $roadLine->id,
                     ),
                 ),
             )
@@ -581,8 +584,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $handler = new SaveLocationCommandHandler(
             $this->idFactory,
             $this->locationRepository,
-            $this->geocoder,
             $this->roadGeocoder,
+            $this->roadLineSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -591,8 +594,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
-        $command->fromCoords = Coordinates::fromLonLat(-1.935836, 47.347024);
-        $command->toCoords = Coordinates::fromLonLat(-1.930973, 47.347917);
+        $command->fromCoords = $fromCoords;
+        $command->toCoords = $toCoords;
 
         $result = $handler($command);
 
