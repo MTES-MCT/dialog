@@ -1,0 +1,3 @@
+migrations_paths:
+    App\Infrastructure\Persistence\Doctrine\BdTopoMigrations: 'src/Infrastructure/Persistence/Doctrine/BdTopoMigrations'
+em: bdtopo
