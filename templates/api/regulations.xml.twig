@@ -78,7 +78,11 @@
                                 <locationByOrder xsi:type="loc:LinearLocation">
                                     <loc:supplementaryPositionalDescription>
                                         <loc:roadInformation>
-                                            <loc:roadName>{{ location.roadName }}</loc:roadName>
+                                            {% if location.roadType == 'lane' %}
+                                                <loc:roadName>{{ location.roadName }}</loc:roadName>
+                                            {% else %}
+                                                <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
+                                            {% endif %}
                                         </loc:roadInformation>
                                     </loc:supplementaryPositionalDescription>
                                     <loc:_linearLocationExtension>
