@@ -281,7 +281,7 @@ ci_eudonet_paris_import: ## Run CI steps for Eudonet Paris Import workflow
 
 ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
-	make bdtopo-migrate
+	make bdtopo_migrate
 
 ##
 ## ----------------
