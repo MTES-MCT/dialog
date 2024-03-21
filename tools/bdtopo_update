@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import re
 import signal
-import string
 import subprocess
 import sys
 from contextlib import ExitStack
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -59,8 +57,14 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
 
 
 @dataclass
+class Table:
+    name: str
+    columns: list[str]
+
+
+@dataclass
 class Config:
-    tables: list[str]
+    tables: list[Table]
 
 
 def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
@@ -70,8 +74,11 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
 
     search_pattern = "*/BDTOPO/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*"
 
+    tablenames = set(table.name for table in config.tables)
+    columns_by_table = {table.name: table.columns for table in config.tables}
+
     geopackage_paths = [
-        path for path in directory.glob(search_pattern) if path.stem in config.tables
+        path for path in directory.glob(search_pattern) if path.stem in tablenames
     ]
 
     if not geopackage_paths:
@@ -171,8 +178,11 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
                     # (Geopackages in BD TOPO may not all use the same projection)
                     "-t_srs",
                     "EPSG:4326",
-                    # Append on subsequent calls
-                    "-append",
+                    # Append on subsequent calls, adding any new fields
+                    "-addfields",
+                    # Select columns as configured
+                    "-sql",
+                    f"SELECT {', '.join(columns_by_table[tablename])} FROM {tablename}",
                     # Enable slightly faster ingestion
                     # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
                     "--config",
@@ -284,7 +294,7 @@ if __name__ == "__main__":
     configdata = json.loads(args.config.read_text())
 
     config = Config(
-        tables=configdata["tables"],
+        tables=[Table(**tabledata) for tabledata in configdata["tables"]],
     )
 
     # Relative paths are OK but ogr2ogr volume will require an absolute path.

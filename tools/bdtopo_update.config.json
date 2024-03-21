@@ -1,6 +1,19 @@
 {
     "tables": [
-        "voie_nommee",
-        "route_numerotee_ou_nommee"
+        {
+            "name": "voie_nommee",
+            "columns": [
+                "nom_minuscule",
+                "code_insee"
+            ]
+        },
+        {
+            "name": "route_numerotee_ou_nommee",
+            "columns": [
+                "numero",
+                "gestionnaire",
+                "type_de_route"
+            ]
+        }
     ]
 }
