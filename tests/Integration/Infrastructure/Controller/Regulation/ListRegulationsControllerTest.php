@@ -83,7 +83,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $row0 = $rows->eq(0)->filter('td');
         $this->assertSame('FO2/2023', $row0->eq(0)->text());
-        $this->assertSame('Montauban (82000) Avenue de Fonneuve + 2 localisations', $row0->eq(1)->text());
+        $this->assertSame('Montauban (82000) Avenue de Fonneuve + 3 localisations', $row0->eq(1)->text());
         $this->assertSame('du 10/03/2023 au 20/03/2023 passé', $row0->eq(2)->text());
         $this->assertSame('Publié', $row0->eq(3)->text());
 
