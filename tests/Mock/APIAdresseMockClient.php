@@ -24,10 +24,6 @@ final class APIAdresseMockClient extends MockHttpClient
             return $this->getSearchMock($options);
         }
 
-        if ($method === 'GET' && str_starts_with($url, $this->baseUri . '/reverse/')) {
-            return $this->getReverseMock($options);
-        }
-
         throw new \UnexpectedValueException("Mock not implemented: $method $url");
     }
 
@@ -36,7 +32,7 @@ final class APIAdresseMockClient extends MockHttpClient
         $type = $options['query']['type'];
         $query = $options['query']['q'];
 
-        if ($type === 'housenumber' && str_contains($query, 'GEOCODING_FAILURE')) {
+        if ($type === 'housenumber' && str_contains($query, 'HOUSENUMBER_GEOCODING_FAILURE')) {
             throw new GeocodingFailureException();
         }
 
@@ -92,46 +88,24 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                 ],
             ];
-        } elseif ($type === 'housenumber' && $query === '33 Rue de la République') {
+        } elseif ($type === 'housenumber' && $query === '15 Route du Grand Brossais') {
             $body = [
                 'features' => [
                     [
-                        'geometry' => [
-                            'coordinates' => [1.3542, 44.0166],
-                        ],
+                        'geometry' => json_decode('{"type":"Point","coordinates":[-1.935828977,47.34702398]}', true),
+                    ],
+                ],
+            ];
+        } elseif ($type === 'housenumber' && $query === '37bis Route du Grand Brossais') {
+            $body = [
+                'features' => [
+                    [
+                        'geometry' => json_decode('{"type":"Point","coordinates":[-1.930970945,47.347922986]}', true),
                     ],
                 ],
             ];
         } else {
             $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
-        }
-
-        return new MockResponse(
-            json_encode($body, JSON_THROW_ON_ERROR),
-            ['http_code' => 200],
-        );
-    }
-
-    private function getReverseMock(array $options): MockResponse
-    {
-        $type = $options['query']['type'];
-        $lon = $options['query']['lon'];
-        $lat = $options['query']['lat'];
-
-        if ($type === 'housenumber' && $lon === '1.35643852' && $lat === '44.01573612') {
-            // Response to reverse-geocoding of first point of Rue de la République, Montauban (82000)
-            $body = [
-                'features' => [
-                    [
-                        'properties' => [
-                            'id' => '82121_6800',
-                            'housenumber' => '1',
-                        ],
-                    ],
-                ],
-            ];
-        } else {
-            throw new \UnexpectedValueException("Mock for /reverse/ not implemented: type=$type, lon=$lon, lat=$lat");
         }
 
         return new MockResponse(

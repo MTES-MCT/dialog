@@ -98,7 +98,7 @@ final class DuplicateRegulationCommandHandler
                     $cmd->fromHouseNumber = $location->getFromHouseNumber();
                     $cmd->toHouseNumber = $location->getToHouseNumber();
                     $cmd->geometry = $location->getGeometry();
-                    $cmd->baseLaneGeometry = $location?->getBaseLaneGeometry();
+                    $cmd->fullLaneGeometry = $location?->getFullLaneGeometry();
                     $cmd->measure = $measure;
 
                     $locationCommands[] = $cmd;

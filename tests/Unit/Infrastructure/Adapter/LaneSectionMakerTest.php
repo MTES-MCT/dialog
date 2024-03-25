@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 final class LaneSectionMakerTest extends TestCase
 {
-    private $baseLaneGeometry;
+    private $fullLaneGeometry;
     private $roadName;
     private $cityCode;
     private $fromCoords;
@@ -23,7 +23,7 @@ final class LaneSectionMakerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->baseLaneGeometry = 'geometry';
+        $this->fullLaneGeometry = 'geometry';
         $this->roadName = 'Rue du Test';
         $this->cityCode = '01010';
         $this->fromCoords = Coordinates::fromLonLat(1, 41);
@@ -55,11 +55,11 @@ final class LaneSectionMakerTest extends TestCase
         $this->lineSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with($this->baseLaneGeometry, $this->fromCoords, $this->toCoords)
+            ->with($this->fullLaneGeometry, $this->fromCoords, $this->toCoords)
             ->willReturn('section');
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(
-            $this->baseLaneGeometry,
+            $this->fullLaneGeometry,
             $this->roadName,
             $this->cityCode,
             fromCoords: null,
@@ -84,11 +84,11 @@ final class LaneSectionMakerTest extends TestCase
         $this->lineSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with($this->baseLaneGeometry, $this->fromCoords, $this->toCoords)
+            ->with($this->fullLaneGeometry, $this->fromCoords, $this->toCoords)
             ->willReturn('section');
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(
-            $this->baseLaneGeometry,
+            $this->fullLaneGeometry,
             $this->roadName,
             $this->cityCode,
             fromCoords: $this->fromCoords,

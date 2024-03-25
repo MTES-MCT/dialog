@@ -33,7 +33,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
      * @throws GeocodingFailureException
      */
     public function computeSection(
-        string $baseLaneGeometry,
+        string $fullLaneGeometry,
         string $roadName,
         string $cityCode,
         ?Coordinates $fromCoords,
@@ -51,6 +51,6 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
             $toCoords = $this->resolvePoint($roadName, $cityCode, $toHouseNumber, $toRoadName);
         }
 
-        return $this->lineSectionMaker->computeSection($baseLaneGeometry, $fromCoords, $toCoords);
+        return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
     }
 }

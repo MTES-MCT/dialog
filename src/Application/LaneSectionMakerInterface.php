@@ -9,7 +9,7 @@ use App\Domain\Geography\Coordinates;
 interface LaneSectionMakerInterface
 {
     public function computeSection(
-        string $baseLaneGeometry,
+        string $fullLaneGeometry,
         string $roadName,
         string $cityCode,
         ?Coordinates $fromCoords,

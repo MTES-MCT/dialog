@@ -32,7 +32,7 @@ final class LocationTest extends TestCase
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
             geometry: $geometry,
-            baseLaneGeometry: 'baseLaneGeometry',
+            fullLaneGeometry: 'fullLaneGeometry',
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
@@ -43,7 +43,7 @@ final class LocationTest extends TestCase
         $this->assertSame('15', $location->getFromHouseNumber());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame($geometry, $location->getGeometry());
-        $this->assertEquals('baseLaneGeometry', $location->getBaseLaneGeometry());
+        $this->assertEquals('fullLaneGeometry', $location->getFullLaneGeometry());
     }
 
     public function testUpdate(): void
@@ -67,7 +67,7 @@ final class LocationTest extends TestCase
             ]),
         );
 
-        $this->assertNull($location->getBaseLaneGeometry());
+        $this->assertNull($location->getFullLaneGeometry());
 
         $newRoadType = 'lane';
         $newCityCode = '44025';
@@ -81,7 +81,7 @@ final class LocationTest extends TestCase
             Coordinates::fromLonLat(-1.938727, 47.358454),
             Coordinates::fromLonLat(-1.940304, 47.388473),
         ]);
-        $newBaseLaneGeometry = 'baseLaneGeometry';
+        $newFullLaneGeometry = 'fullLaneGeometry';
 
         $location->update(
             $newRoadType,
@@ -93,7 +93,7 @@ final class LocationTest extends TestCase
             $newFromHouseNumber,
             $newToHouseNumber,
             $newGeometry,
-            $newBaseLaneGeometry,
+            $newFullLaneGeometry,
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
@@ -106,6 +106,6 @@ final class LocationTest extends TestCase
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
         $this->assertSame($newGeometry, $location->getGeometry());
-        $this->assertEquals($newBaseLaneGeometry, $location->getBaseLaneGeometry());
+        $this->assertEquals($newFullLaneGeometry, $location->getFullLaneGeometry());
     }
 }

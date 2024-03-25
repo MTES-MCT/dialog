@@ -20,7 +20,7 @@
         <option name="srid">4326</option>
       </options>
     </field>
-    <field name="baseLaneGeometry" type="geometry" column="base_lane_geometry" nullable="true">
+    <field name="fullLaneGeometry" type="geometry" column="full_lane_geometry" nullable="true">
       <options>
         <option name="geometry_type">GEOMETRY</option>
         <option name="srid">4326</option>

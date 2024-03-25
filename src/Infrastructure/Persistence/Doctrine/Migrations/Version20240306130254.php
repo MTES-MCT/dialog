@@ -16,11 +16,11 @@ final class Version20240306130254 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE location ADD base_lane_geometry geometry(GEOMETRY, 4326) DEFAULT NULL');
+        $this->addSql('ALTER TABLE location ADD full_lane_geometry geometry(GEOMETRY, 4326) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE location DROP base_lane_geometry');
+        $this->addSql('ALTER TABLE location DROP full_lane_geometry');
     }
 }

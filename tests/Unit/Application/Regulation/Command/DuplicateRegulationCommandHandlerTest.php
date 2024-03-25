@@ -185,7 +185,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn('15');
         $location1
             ->expects(self::once())
-            ->method('getBaseLaneGeometry')
+            ->method('getFullLaneGeometry')
             ->willReturn('geometry1');
 
         $location2
@@ -214,7 +214,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn(null);
         $location2
             ->expects(self::once())
-            ->method('getBaseLaneGeometry')
+            ->method('getFullLaneGeometry')
             ->willReturn(null);
 
         $this->originalRegulationOrder
@@ -304,7 +304,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand1->fromHouseNumber = '11';
         $locationCommand1->toHouseNumber = '15';
         $locationCommand1->geometry = null;
-        $locationCommand1->baseLaneGeometry = 'geometry1';
+        $locationCommand1->fullLaneGeometry = 'geometry1';
         $locationCommand1->measure = $measure1;
 
         $locationCommand2 = new SaveLocationCommand();
@@ -315,7 +315,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2->fromHouseNumber = null;
         $locationCommand2->toHouseNumber = null;
         $locationCommand2->geometry = null;
-        $locationCommand2->baseLaneGeometry = null;
+        $locationCommand2->fullLaneGeometry = null;
         $locationCommand2->measure = $measure1;
 
         $measureCommand1 = new SaveMeasureCommand($duplicatedRegulationOrder);
