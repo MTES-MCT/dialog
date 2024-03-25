@@ -37,4 +37,4 @@ jobs:
           echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_MIGRATIONS_DATABASE_URL }}" >> .env
 
       - name: CI
-        run: make ci_bdtopo_migrate BIN_CONSOLE="php bin/console"
+        run: make ci_bdtopo_migrate BIN_COMPOSER="composer" BIN_CONSOLE="php bin/console"
