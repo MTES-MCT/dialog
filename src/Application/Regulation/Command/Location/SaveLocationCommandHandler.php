@@ -29,10 +29,8 @@ final class SaveLocationCommandHandler
         // Create location if needed
         if (!$command->location instanceof Location) {
             if ($command->roadType === RoadTypeEnum::LANE->value) {
-                $fullLaneGeometry = empty($command->fullLaneGeometry) ? $this->computeFullLaneGeometry($command) : $command->fullLaneGeometry;
-                $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command, $fullLaneGeometry) : $command->geometry;
+                $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command) : $command->geometry;
             } else {
-                $fullLaneGeometry = null;
                 $geometry = empty($command->departmentalRoadGeometry) ? $this->computeDepartmentalRoadGeometry($command) : $command->departmentalRoadGeometry;
             }
 
@@ -49,7 +47,6 @@ final class SaveLocationCommandHandler
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
                     geometry: $geometry,
-                    fullLaneGeometry: $fullLaneGeometry,
                 ),
             );
 
@@ -59,16 +56,10 @@ final class SaveLocationCommandHandler
         }
 
         if ($command->roadType === RoadTypeEnum::LANE->value) {
-            $fullLaneGeometry = $this->shouldRecomputeFullLaneGeometry($command)
-                ? $this->computeFullLaneGeometry($command)
-                : $command->location->getFullLaneGeometry();
-
             $geometry = $this->shouldRecomputeLaneGeometry($command)
-                ? $this->computeLaneGeometry($command, $fullLaneGeometry)
+                ? $this->computeLaneGeometry($command)
                 : $command->location->getGeometry();
         } else {
-            $fullLaneGeometry = null;
-
             $geometry = $this->shouldRecomputeDepartmentalRoadGeometry($command)
                 ? $this->computeDepartmentalRoadGeometry($command)
                 : $command->location->getGeometry();
@@ -84,29 +75,25 @@ final class SaveLocationCommandHandler
             fromHouseNumber: $command->fromHouseNumber,
             toHouseNumber: $command->toHouseNumber,
             geometry: $geometry,
-            fullLaneGeometry: $fullLaneGeometry,
         );
 
         return $command->location;
     }
 
-    private function computeFullLaneGeometry(SaveLocationCommand $command): string
-    {
-        return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
-    }
-
-    private function computeLaneGeometry(SaveLocationCommand $command, string $fullLaneGeometry): ?string
+    private function computeLaneGeometry(SaveLocationCommand $command): ?string
     {
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
-        if ($hasNoStart && $hasNoEnd) {
-            return $fullLaneGeometry;
-        }
-
-        if ($hasNoStart || $hasNoEnd) {
+        if ($hasNoStart xor $hasNoEnd) {
             // Not supported yet.
             return null;
+        }
+
+        $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+
+        if ($hasNoStart && $hasNoEnd) {
+            return $fullLaneGeometry;
         }
 
         return $this->laneSectionMaker->computeSection(
@@ -136,17 +123,9 @@ final class SaveLocationCommandHandler
         return $departmentalRoadNumbers[0]['geometry'];
     }
 
-    private function shouldRecomputeFullLaneGeometry(SaveLocationCommand $command): bool
-    {
-        return !$command->location->getFullLaneGeometry()
-            || $command->cityCode !== $command->location->getCityCode()
-            || $command->roadName !== $command->location->getRoadName();
-    }
-
     private function shouldRecomputeLaneGeometry(SaveLocationCommand $command): bool
     {
-        return !$command->location->getFullLaneGeometry()
-            || $command->cityCode !== $command->location->getCityCode()
+        return $command->cityCode !== $command->location->getCityCode()
             || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());

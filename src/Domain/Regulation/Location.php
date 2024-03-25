@@ -18,7 +18,6 @@ class Location
         private ?string $fromHouseNumber,
         private ?string $toHouseNumber,
         private ?string $geometry,
-        private ?string $fullLaneGeometry = null,
     ) {
     }
 
@@ -77,11 +76,6 @@ class Location
         return $this->geometry;
     }
 
-    public function getFullLaneGeometry(): ?string
-    {
-        return $this->fullLaneGeometry;
-    }
-
     public function update(
         string $roadType,
         ?string $administrator,
@@ -92,7 +86,6 @@ class Location
         ?string $fromHouseNumber,
         ?string $toHouseNumber,
         ?string $geometry,
-        ?string $fullLaneGeometry,
     ): void {
         $this->roadType = $roadType;
         $this->administrator = $administrator;
@@ -103,6 +96,5 @@ class Location
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
         $this->geometry = $geometry;
-        $this->fullLaneGeometry = $fullLaneGeometry;
     }
 }
