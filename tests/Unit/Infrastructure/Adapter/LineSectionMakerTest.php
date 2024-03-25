@@ -49,11 +49,11 @@ final class LineSectionMakerTest extends TestCase
             ->withConsecutive(
                 [
                     'SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :point) AS t',
-                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[1,41],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}'],
+                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[1,41]}'],
                 ],
                 [
                     'SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :point) AS t',
-                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[9,49],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}'],
+                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[9,49]}'],
                 ],
                 [
                     'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line',
@@ -88,11 +88,11 @@ final class LineSectionMakerTest extends TestCase
             ->withConsecutive(
                 [
                     'SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :point) AS t',
-                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[1,41],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}'],
+                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[1,41]}'],
                 ],
                 [
                     'SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :point) AS t',
-                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[9,49],"crs":{"type":"name","properties":{"name":"EPSG:4326"}}}'],
+                    ['geom' => $this->lineGeometry, 'point' => '{"type":"Point","coordinates":[9,49]}'],
                 ],
                 [
                     'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line',

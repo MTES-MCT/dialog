@@ -19,7 +19,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
 
     private function locatePointOnLine(string $lineGeometry, Coordinates $point): float
     {
-        $pointGeoJson = $point->asGeoJSON();
+        $pointGeoJson = $point->asGeoJSON(includeCrs: str_contains($lineGeometry, '"crs"'));
 
         try {
             $row = $this->em->getConnection()->fetchAssociative(
@@ -31,9 +31,10 @@ final class LineSectionMaker implements LineSectionMakerInterface
         } catch (DriverException $exc) {
             throw new GeocodingFailureException(
                 sprintf(
-                    'Failed to locate point %s on line %s: is this a MultiLineString not mergeable into a single LineString?',
+                    'Failed to locate point %s on line %s: %s',
                     $pointGeoJson,
                     $lineGeometry,
+                    $exc->getMessage(),
                 ),
                 previous: $exc,
             );
