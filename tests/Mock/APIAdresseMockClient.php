@@ -32,7 +32,7 @@ final class APIAdresseMockClient extends MockHttpClient
         $type = $options['query']['type'];
         $query = $options['query']['q'];
 
-        if ($type === 'housenumber' && str_contains($query, 'GEOCODING_FAILURE')) {
+        if ($type === 'housenumber' && str_contains($query, 'HOUSENUMBER_GEOCODING_FAILURE')) {
             throw new GeocodingFailureException();
         }
 
@@ -85,6 +85,22 @@ final class APIAdresseMockClient extends MockHttpClient
                             'postcode' => '78600',
                             'citycode' => '78396',
                         ],
+                    ],
+                ],
+            ];
+        } elseif ($type === 'housenumber' && $query === '15 Route du Grand Brossais') {
+            $body = [
+                'features' => [
+                    [
+                        'geometry' => json_decode('{"type":"Point","coordinates":[-1.935828977,47.34702398]}', true),
+                    ],
+                ],
+            ];
+        } elseif ($type === 'housenumber' && $query === '37bis Route du Grand Brossais') {
+            $body = [
+                'features' => [
+                    [
+                        'geometry' => json_decode('{"type":"Point","coordinates":[-1.930970945,47.347922986]}', true),
                     ],
                 ],
             ];

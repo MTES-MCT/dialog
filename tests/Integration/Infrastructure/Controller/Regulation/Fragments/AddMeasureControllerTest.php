@@ -501,7 +501,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du GEOCODING_FAILURE';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du HOUSENUMBER_GEOCODING_FAILURE';
         unset($values['location_form']['isEntireStreet']);
         $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
         $values['measure_form']['locations'][0]['toHouseNumber'] = '37bis';
