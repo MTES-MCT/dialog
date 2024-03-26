@@ -52,7 +52,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measure2Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure2Content->filter('li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure2Content->filter('li')->eq(1)->text());
-        $this->assertSame('Route du Lac Savenay (44260)', $measure2Content->filter('li')->eq(3)->text());
+        $this->assertSame('Rue Victor Hugo Savenay (44260)', $measure2Content->filter('li')->eq(3)->text());
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measure2Content->filter('li')->eq(4)->text());
 
         $editLocationForm = $measures->eq(1)->selectButton('Modifier')->form();

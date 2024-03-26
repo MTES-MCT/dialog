@@ -27,4 +27,17 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     {
         $this->getEntityManager()->remove($location);
     }
+
+    public function iterFindAll(): iterable
+    {
+        // See: https://www.doctrine-project.org/projects/doctrine-orm/en/3.1/reference/batch-processing.html#iterating-large-results-for-data-processing
+        $q = $this->createQueryBuilder('l')
+            ->select()
+            ->getQuery();
+
+        foreach ($q->toIterable() as $row) {
+            yield $row;
+            $this->_em->detach($row);
+        }
+    }
 }

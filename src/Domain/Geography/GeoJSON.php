@@ -24,4 +24,21 @@ class GeoJSON
             ],
         );
     }
+
+    public static function toPoint(Coordinates $point, bool $includeCrs = false): string
+    {
+        $geometry = [
+            'type' => 'Point',
+            'coordinates' => [$point->longitude, $point->latitude],
+        ];
+
+        if ($includeCrs) {
+            $geometry['crs'] = [
+                'type' => 'name',
+                'properties' => ['name' => 'EPSG:4326'],
+            ];
+        }
+
+        return json_encode($geometry);
+    }
 }

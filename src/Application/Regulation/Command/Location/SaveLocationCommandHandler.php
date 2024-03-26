@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\Exception\GeocodingFailureException;
-use App\Application\GeocoderInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\LaneSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
-use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -18,8 +17,8 @@ final class SaveLocationCommandHandler
     public function __construct(
         private IdFactoryInterface $idFactory,
         private LocationRepositoryInterface $locationRepository,
-        private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
+        private LaneSectionMakerInterface $laneSectionMaker,
     ) {
     }
 
@@ -83,47 +82,31 @@ final class SaveLocationCommandHandler
 
     private function computeLaneGeometry(SaveLocationCommand $command): ?string
     {
-        $hasBothEnds = (
-            ($command->fromCoords || $command->fromHouseNumber || $command->fromRoadName)
-            && ($command->toCoords || $command->toHouseNumber || $command->toRoadName)
-        );
+        $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
+        $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
-        if ($hasBothEnds) {
-            if ($command->fromCoords) {
-                $fromCoords = $command->fromCoords;
-            } elseif ($command->fromHouseNumber) {
-                $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
-                $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
-            } else {
-                $fromCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->fromRoadName, $command->cityCode);
-            }
-
-            if ($command->toCoords) {
-                $toCoords = $command->toCoords;
-            } elseif ($command->toHouseNumber) {
-                $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
-                $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
-            } else {
-                $toCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->toRoadName, $command->cityCode);
-            }
-
-            return GeoJSON::toLineString([$fromCoords, $toCoords]);
+        if ($hasNoStart xor $hasNoEnd) {
+            // Not supported yet.
+            return null;
         }
 
-        $hasNoEnds = (
-            !$command->fromCoords
-            && !$command->fromHouseNumber
-            && !$command->fromRoadName
-            && !$command->toCoords
-            && !$command->toHouseNumber
-            && !$command->toRoadName
-        );
+        $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
 
-        if ($hasNoEnds && $command->roadName) {
-            return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+        if ($hasNoStart && $hasNoEnd) {
+            return $fullLaneGeometry;
         }
 
-        return null;
+        return $this->laneSectionMaker->computeSection(
+            $fullLaneGeometry,
+            $command->roadName,
+            $command->cityCode,
+            $command->fromCoords,
+            $command->fromHouseNumber,
+            $command->fromRoadName,
+            $command->toCoords,
+            $command->toHouseNumber,
+            $command->toRoadName,
+        );
     }
 
     private function computeDepartmentalRoadGeometry(SaveLocationCommand $command): ?string
