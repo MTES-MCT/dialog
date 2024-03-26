@@ -24,20 +24,6 @@ final class PeriodFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if (!$options['isPermanent']) {
-            $builder
-                ->add('endDate', DateType::class, [
-                    'label' => 'regulation.period.endDate',
-                    'widget' => 'single_text',
-                    'view_timezone' => $this->clientTimezone,
-                ])
-                ->add('endTime', TimeType::class, [
-                    'label' => 'regulation.period.endTime',
-                    'widget' => 'choice',
-                    'view_timezone' => $this->clientTimezone,
-                ]);
-        }
-
         $builder
             ->add('startDate', DateType::class, [
                 'label' => 'regulation.period.startDate',
@@ -48,6 +34,18 @@ final class PeriodFormType extends AbstractType
                 'label' => 'regulation.period.startTime',
                 'widget' => 'choice',
                 'view_timezone' => $this->clientTimezone,
+            ])
+            ->add('endDate', DateType::class, [
+                'label' => 'regulation.period.endDate',
+                'widget' => 'single_text',
+                'view_timezone' => $this->clientTimezone,
+                'required' => !$options['isPermanent'],
+            ])
+            ->add('endTime', TimeType::class, [
+                'label' => 'regulation.period.endTime',
+                'widget' => 'choice',
+                'view_timezone' => $this->clientTimezone,
+                'required' => !$options['isPermanent'],
             ])
             ->add('recurrenceType', ChoiceType::class,
                 options: $this->getRecurrenceTypeOptions(),

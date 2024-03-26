@@ -152,6 +152,10 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($this->originalRegulationOrder);
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('isPermanent')
+            ->willReturn(false);
 
         $originalOrganization = $this->createMock(Organization::class);
         $this->originalRegulationOrderRecord
@@ -282,6 +286,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $periodCommand1->endTime = $endTime;
         $periodCommand1->startDate = $startTime;
         $periodCommand1->endDate = $endTime;
+        $periodCommand1->isPermanent = false;
         $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $periodCommand1->dailyRange = $dailyRangeCommand;
         $periodCommand1->timeSlots = [
