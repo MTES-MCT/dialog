@@ -150,12 +150,20 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'v.maxWidth',
                 'v.maxLength',
                 'v.maxHeight',
+                'p.startDateTime',
+                'p.endDateTime',
+                'd.applicableDays',
+                't.startTime as timeSlotStartTime',
+                't.endTime as timeSlotEndTime',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
+            ->leftJoin('m.periods', 'p')
+            ->leftJoin('p.dailyRange', 'd')
+            ->leftJoin('p.timeSlots', 't')
             ->where('roc.status = :status')
             ->setParameters([
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,

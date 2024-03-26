@@ -27,4 +27,8 @@ final class PeriodRepository extends ServiceEntityRepository implements PeriodRe
     {
         $this->getEntityManager()->remove($period);
     }
+
+    public function findAllByMeasureForDatexFormat(string $measureId): array {
+        return [];
+    }
 }

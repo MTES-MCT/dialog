@@ -6,15 +6,18 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
+use App\Application\Regulation\View\DatexValidityConditionView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use App\Domain\Regulation\Repository\PeriodRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
+        private PeriodRepositoryInterface $periodRepository,
     ) {
     }
 
@@ -22,11 +25,13 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
     {
         $rows = $this->repository->findRegulationOrdersForDatexFormat();
 
+        dd($rows);
+
         if (empty($rows)) {
             return [];
         }
 
-        // There is one row per unique combination of (regulationOrder, location, measure).
+        // There is one row per unique combination of (regulationOrder, measure, location, period, timeSlot).
         // Rows are sorted by regulationOrder uuid.
         // So we iterate over rows, pushing a new regulation order view when the row's regulationOrder uuid changes.
         $regulationOrderViews = [];
@@ -81,6 +86,9 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
             }
 
+            $periods = $this->periodRepository->findAllByMeasureForDatexFormat($row['measureId']);
+            $validityConditions = DatexValidityConditionView::fromPeriods($periods);
+
             $location = new DatexLocationView(
                 roadType: $row['roadType'],
                 roadName: $row['roadName'],
@@ -92,6 +100,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 $row['type'],
                 $location,
                 $vehicleConditions,
+                $validityConditions,
                 $row['maxSpeed'],
             );
         }

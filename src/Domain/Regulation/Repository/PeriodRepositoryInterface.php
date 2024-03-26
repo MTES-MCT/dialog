@@ -11,4 +11,6 @@ interface PeriodRepositoryInterface
     public function add(Period $period): Period;
 
     public function delete(Period $period): void;
+
+    public function findAllByMeasureForDatexFormat(string $measureId): array;
 }
