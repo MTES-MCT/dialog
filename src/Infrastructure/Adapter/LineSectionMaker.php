@@ -7,7 +7,6 @@ namespace App\Infrastructure\Adapter;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
-use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class LineSectionMaker implements LineSectionMakerInterface
@@ -17,44 +16,6 @@ final class LineSectionMaker implements LineSectionMakerInterface
     ) {
     }
 
-    private function locatePointOnLine(string $lineGeometry, Coordinates $point): float
-    {
-        $pointGeoJson = $point->asGeoJSON(includeCrs: str_contains($lineGeometry, '"crs"'));
-
-        try {
-            $row = $this->em->getConnection()->fetchAssociative(
-                'SELECT ST_LineLocatePoint(ST_LineMerge(:geom), :point) AS t',
-                ['geom' => $lineGeometry, 'point' => $pointGeoJson],
-            );
-
-            return (float) $row['t'];
-        } catch (DriverException $exc) {
-            throw new GeocodingFailureException(
-                sprintf(
-                    'Failed to locate point %s on line %s: %s',
-                    $pointGeoJson,
-                    $lineGeometry,
-                    $exc->getMessage(),
-                ),
-                previous: $exc,
-            );
-        }
-    }
-
-    private function clipLine(string $lineGeometry, float $startFraction = 0, float $endFraction = 1): string
-    {
-        $row = $this->em->getConnection()->fetchAssociative(
-            'SELECT ST_AsGeoJSON(ST_LineSubstring(ST_LineMerge(:geom), :startFraction, :endFraction)) AS line',
-            [
-                'geom' => $lineGeometry,
-                'startFraction' => $startFraction,
-                'endFraction' => $endFraction,
-            ],
-        );
-
-        return $row['line'];
-    }
-
     /**
      * @throws GeocodingFailureException
      */
@@ -62,14 +23,51 @@ final class LineSectionMaker implements LineSectionMakerInterface
         string $lineGeometry,
         Coordinates $fromCoords,
         Coordinates $toCoords,
-    ): string {
-        $fromFraction = $this->locatePointOnLine($lineGeometry, $fromCoords);
-        $toFraction = $this->locatePointOnLine($lineGeometry, $toCoords);
+    ): ?string {
+        $includeCrs = str_contains($lineGeometry, '"crs"');
 
-        if ($fromFraction > $toFraction) {
-            [$fromFraction, $toFraction] = [$toFraction, $fromFraction];
-        }
+        $pointA = $fromCoords->asGeoJSON($includeCrs);
+        $pointB = $toCoords->asGeoJSON($includeCrs);
 
-        return $this->clipLine($lineGeometry, $fromFraction, $toFraction);
+        $row = $this->em->getConnection()->fetchAssociative(
+            'WITH linestring AS (
+                -- Split the line geometry into its individual LINESTRING components
+                SELECT (components.dump).geom AS geom FROM (
+                    SELECT ST_Dump(ST_LineMerge(:geom)) AS dump
+                ) AS components
+            ),
+            -- For each endpoint, find the individual LINESTRING it is closest to
+            linestring_a AS (
+                SELECT l.geom
+                FROM linestring AS l
+                ORDER BY ST_Distance(:point_a, l.geom)
+                LIMIT 1
+            ),
+            linestring_b AS (
+                SELECT l.geom
+                FROM linestring AS l
+                ORDER BY ST_Distance(:point_b, l.geom)
+                LIMIT 1
+            )
+            -- Compute the line substring if and only if both endpoints are on the same LINESTRING,
+            -- otherwise return nothing.
+            SELECT ST_AsGeoJSON(
+                ST_LineSubstring(
+                    l.geom,
+                    LEAST(ST_LineLocatePoint(l.geom, :point_a), ST_LineLocatePoint(l.geom, :point_b)),
+                    GREATEST(ST_LineLocatePoint(l.geom, :point_a), ST_LineLocatePoint(l.geom, :point_b))
+                )
+            ) AS section
+            FROM linestring_a AS l
+            INNER JOIN linestring_b ON l.geom = linestring_b.geom
+            ',
+            [
+                'geom' => $lineGeometry,
+                'point_a' => $pointA,
+                'point_b' => $pointB,
+            ],
+        );
+
+        return $row ? $row['section'] : null;
     }
 }
