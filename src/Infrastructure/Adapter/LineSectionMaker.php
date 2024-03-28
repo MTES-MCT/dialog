@@ -23,7 +23,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
         string $lineGeometry,
         Coordinates $fromCoords,
         Coordinates $toCoords,
-    ): ?string {
+    ): string {
         $includeCrs = str_contains($lineGeometry, '"crs"');
 
         $pointA = $fromCoords->asGeoJSON($includeCrs);
@@ -36,21 +36,18 @@ final class LineSectionMaker implements LineSectionMakerInterface
                     SELECT ST_Dump(ST_LineMerge(:geom)) AS dump
                 ) AS components
             ),
-            -- For each endpoint, find the individual LINESTRING it is closest to
+            -- For each point, find the LINESTRING(s) it is closest to (multiple closest line strings is a mostly theoretical case)
             linestring_a AS (
                 SELECT l.geom
                 FROM linestring AS l
-                ORDER BY ST_Distance(:point_a, l.geom)
-                LIMIT 1
+                WHERE ST_Distance(:point_a, l.geom) = (SELECT MIN(ST_Distance(:point_a, geom)) FROM linestring)
             ),
             linestring_b AS (
                 SELECT l.geom
                 FROM linestring AS l
-                ORDER BY ST_Distance(:point_b, l.geom)
-                LIMIT 1
+                WHERE ST_Distance(:point_b, l.geom) = (SELECT MIN(ST_Distance(:point_b, geom)) FROM linestring)
             )
-            -- Compute the line substring if and only if both endpoints are on the same LINESTRING,
-            -- otherwise return nothing.
+            -- Compute the section on the LINESTRING to which both points belong to.
             SELECT ST_AsGeoJSON(
                 ST_LineSubstring(
                     l.geom,
@@ -59,7 +56,9 @@ final class LineSectionMaker implements LineSectionMakerInterface
                 )
             ) AS section
             FROM linestring_a AS l
+            -- If the points belong to different LINESTRINGs, this join will be empty.
             INNER JOIN linestring_b ON l.geom = linestring_b.geom
+            LIMIT 1
             ',
             [
                 'geom' => $lineGeometry,
@@ -68,6 +67,17 @@ final class LineSectionMaker implements LineSectionMakerInterface
             ],
         );
 
-        return $row ? $row['section'] : null;
+        if (!$row) {
+            $msg = sprintf(
+                'failed to find common linestring for points %s and %s on line %s',
+                $pointA,
+                $pointB,
+                $lineGeometry,
+            );
+
+            throw new GeocodingFailureException($msg);
+        }
+
+        return $row['section'];
     }
 }
