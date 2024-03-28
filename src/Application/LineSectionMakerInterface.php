@@ -12,5 +12,5 @@ interface LineSectionMakerInterface
         string $geometry,
         Coordinates $fromCoords,
         Coordinates $toCoords,
-    ): ?string;
+    ): string;
 }
