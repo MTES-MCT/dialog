@@ -16,7 +16,7 @@ final class DatexValidityConditionView
     }
 
     /** @return self[] */
-    public static function fromPeriods(/** @var Period[] */ array $periods): array
+    public static function fromPeriods(/* @var Period[] */ array $periods): array
     {
         $validityConditions = [];
 
