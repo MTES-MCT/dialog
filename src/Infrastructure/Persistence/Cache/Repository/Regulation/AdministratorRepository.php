@@ -23,10 +23,11 @@ final class AdministratorRepository implements AdministratorRepositoryInterface
             $content = file_get_contents(__DIR__ . '/../../../../../../data/gestionnaires.txt');
             $administrators = [];
 
-            foreach (explode('|', $content) as $value) {
+            foreach (explode('|', $content) as $values) {
+                [$value, $key] = explode(':', $values);
                 $value = trim($value); // ' Bas-\nRhin ' => 'Bas-\nRhin'
                 $value = str_replace('-' . PHP_EOL, '', $value); // => 'Bas-Rhin'
-                $administrators[] = str_replace(PHP_EOL, ' ', $value); // 'Toulouse\nMétropole' => 'Toulouse Métropole'
+                $administrators[trim($key)] = str_replace(PHP_EOL, ' ', $value); // 'Toulouse\nMétropole' => 'Toulouse Métropole'
             }
 
             return $administrators;

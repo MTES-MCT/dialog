@@ -13,4 +13,10 @@ interface LineSectionMakerInterface
         Coordinates $fromCoords,
         Coordinates $toCoords,
     ): string;
+
+    public function computeDepartmentalSection(
+        string $lineGeometry,
+        int $abscissaA,
+        int $abscissaB,
+    ): string;
 }

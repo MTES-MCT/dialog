@@ -18,6 +18,17 @@ final class LocationTest extends TestCase
             Coordinates::fromLonLat(-1.935836, 47.347024),
             Coordinates::fromLonLat(-1.930973, 47.347917),
         ]);
+        $referencePoints = [
+            'pointA' => [
+                'pointNumber' => 14,
+                'abscissa' => 650,
+            ],
+            'pointB' => [
+                'pointNumber' => 16,
+                'abscissa' => 250,
+            ],
+            'direction' => 'U',
+        ];
 
         $measure = $this->createMock(Measure::class);
         $location = new Location(
@@ -32,6 +43,7 @@ final class LocationTest extends TestCase
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
             geometry: $geometry,
+            referencePoints: $referencePoints,
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
@@ -42,6 +54,9 @@ final class LocationTest extends TestCase
         $this->assertSame('15', $location->getFromHouseNumber());
         $this->assertSame('37bis', $location->getToHouseNumber());
         $this->assertSame($geometry, $location->getGeometry());
+        $this->assertSame('U', $location->getDirection());
+        $this->assertSame(['pointNumber' => 14, 'abscissa' => 650], $location->getPointA());
+        $this->assertSame(['pointNumber' => 16, 'abscissa' => 250], $location->getPointB());
     }
 
     public function testUpdate(): void
@@ -63,6 +78,7 @@ final class LocationTest extends TestCase
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             ]),
+            referencePoints: null,
         );
 
         $newRoadType = 'lane';
@@ -73,6 +89,17 @@ final class LocationTest extends TestCase
         $newRoadName = 'La Forge Hervé';
         $newFromHouseNumber = '1';
         $newToHouseNumber = '4';
+        $newReferencePoints = [
+            'pointA' => [
+                'pointNumber' => 14,
+                'abscissa' => 650,
+            ],
+            'pointB' => [
+                'pointNumber' => 16,
+                'abscissa' => 250,
+            ],
+            'direction' => 'U',
+        ];
         $newGeometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.938727, 47.358454),
             Coordinates::fromLonLat(-1.940304, 47.388473),
@@ -88,6 +115,7 @@ final class LocationTest extends TestCase
             $newFromHouseNumber,
             $newToHouseNumber,
             $newGeometry,
+            $newReferencePoints,
         );
 
         $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
@@ -100,5 +128,8 @@ final class LocationTest extends TestCase
         $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
         $this->assertSame($newGeometry, $location->getGeometry());
+        $this->assertSame('U', $location->getDirection());
+        $this->assertSame(['pointNumber' => 14, 'abscissa' => 650], $location->getPointA());
+        $this->assertSame(['pointNumber' => 16, 'abscissa' => 250], $location->getPointB());
     }
 }

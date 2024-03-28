@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Domain\Regulation\Enum\ReferencePointDirectionType;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,6 +19,12 @@ final class LocationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $choices = [];
+
+        foreach (ReferencePointDirectionType::cases() as $case) {
+            $choices[sprintf('regulation.location.referencePoint.direction.%s', $case->value)] = $case->value;
+        }
+
         $builder
             ->add(
                 'roadType',
@@ -29,7 +36,7 @@ final class LocationFormType extends AbstractType
                 ChoiceType::class,
                 options: $this->getAdministratorOptions($options['administrators']),
             )
-            ->add('departmentalRoadGeometry', HiddenType::class)
+            ->add('fullDepartmentalRoadGeometry', HiddenType::class)
             ->add(
                 'roadNumber',
                 TextType::class,
@@ -41,6 +48,20 @@ final class LocationFormType extends AbstractType
                     ],
                 ],
             )
+            ->add(
+                'direction',
+                ChoiceType::class,
+                options: [
+                    'choices' => $choices,
+                    'label' => 'regulation.location.referencePoint.direction',
+                    'help' => 'regulation.location.referencePoint.direction.help',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
+                ],
+            )
+            ->add('pointA', ReferencePointFormType::class)
+            ->add('pointB', ReferencePointFormType::class)
             ->add(
                 'cityCode',
                 HiddenType::class,

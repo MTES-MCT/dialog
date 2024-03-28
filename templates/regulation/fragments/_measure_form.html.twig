@@ -191,7 +191,7 @@
                 {{ form_row(form.administrator, {
                     group_class: 'fr-input-group',
                     widget_class: 'fr-input',
-                    }) }}
+                }) }}
                 <ul
                     id="{{ form.administrator.vars.id }}-results"
                     role="listbox"
@@ -221,9 +221,31 @@
                             class="fr-x-autocomplete"
                             data-autocomplete-target="results">
                         </ul>
-                    {{ form_row(form.departmentalRoadGeometry, { attr: {'data-autocomplete-target': 'hidden'} }) }}
-                    {{ form_errors(form.departmentalRoadGeometry) }}
+                    {{ form_row(form.fullDepartmentalRoadGeometry, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+                    {{ form_errors(form.fullDepartmentalRoadGeometry) }}
                 </div>
+
+                <fieldset
+                    class="fr-input-group fr-fieldset fr-grid-row fr-grid-row--gutters"
+                    aria-labelledby="regulation-location-reference-point-a-legend"
+                >
+                    <legend id="regulation-location-reference-point-a-legend">
+                        {{ 'regulation.location.referencePoint.A'|trans }}
+                    </legend>
+                    {{ form_row(form.pointA.pointNumber, { row_attr: {class:'fr-col-12 fr-col-sm-6'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.pointA.abscissa, { row_attr: {class:'fr-col-12 fr-col-sm-6'}, attr: {class: 'fr-input'}}) }}
+                </fieldset>
+                <fieldset
+                    class="fr-fieldset fr-input-group fr-grid-row fr-grid-row--gutters"
+                    aria-labelledby="regulation-location-reference-point-b-legend"
+                >
+                    <legend id="regulation-location-reference-point-a-legend">
+                        {{ 'regulation.location.referencePoint.B'|trans }}
+                    </legend>
+                    {{ form_row(form.pointB.pointNumber, { row_attr: {class:'fr-col-12 fr-col-sm-6'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form.pointB.abscissa, { row_attr: {class:'fr-col-12 fr-col-sm-6'}, attr: {class: 'fr-input'}}) }}
+                </fieldset>
+                {{ form_row(form.direction, {group_class: 'fr-select-group', attr: {class: 'fr-select'}}) }}
             </div>
             <div
                 data-form-reveal-target="section"
