@@ -141,6 +141,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.roadName',
                 'loc.roadNumber',
                 'ST_AsGeoJSON(loc.geometry) as geometry',
+                'm.uuid as measureId',
                 'm.maxSpeed',
                 'm.type',
                 'v.restrictedTypes as restrictedVehicleTypes',
@@ -150,18 +151,30 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'v.maxWidth',
                 'v.maxLength',
                 'v.maxHeight',
+                'p.uuid as periodId',
+                'p.startDateTime',
+                'p.endDateTime',
+                'd.applicableDays',
+                't.startTime as timeSlotStartTime',
+                't.endTime as timeSlotEndTime',
             )
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
+            ->leftJoin('m.periods', 'p')
+            ->leftJoin('p.dailyRange', 'd')
+            ->leftJoin('p.timeSlots', 't')
             ->where('roc.status = :status')
             ->setParameters([
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
             ])
             ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
+            ->addOrderBy('m.uuid')
+            ->addOrderBy('p.uuid')
+            ->addOrderBy('loc.uuid')
             ->getQuery()
             ->getResult()
         ;
