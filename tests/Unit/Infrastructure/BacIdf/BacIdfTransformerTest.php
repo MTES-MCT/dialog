@@ -842,8 +842,8 @@ final class BacIdfTransformerTest extends TestCase
         $periodCommand1->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
         $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
         $timeSlot = new SaveTimeSlotCommand();
-        $timeSlot->startTime = new \DateTimeImmutable('07:00');
-        $timeSlot->endTime = new \DateTimeImmutable('21:00');
+        $timeSlot->startTime = new \DateTimeImmutable('07:00', new \DateTimeZone('Etc/GMT-1'));
+        $timeSlot->endTime = new \DateTimeImmutable('21:00', new \DateTimeZone('Etc/GMT-1'));
         $periodCommand1->timeSlots = [$timeSlot];
 
         $periodCommand2 = new SavePeriodCommand();
@@ -867,8 +867,8 @@ final class BacIdfTransformerTest extends TestCase
         $dailyRange->applicableDays = [ApplicableDayEnum::WEDNESDAY->value, ApplicableDayEnum::SUNDAY->value];
         $periodCommand3->dailyRange = $dailyRange;
         $timeSlot = new SaveTimeSlotCommand();
-        $timeSlot->startTime = new \DateTimeImmutable('07:00');
-        $timeSlot->endTime = new \DateTimeImmutable('15:00');
+        $timeSlot->startTime = new \DateTimeImmutable('07:00', new \DateTimeZone('Etc/GMT-1'));
+        $timeSlot->endTime = new \DateTimeImmutable('15:00', new \DateTimeZone('Etc/GMT-1'));
         $periodCommand3->timeSlots = [$timeSlot];
 
         yield [
