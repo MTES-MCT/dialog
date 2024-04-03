@@ -69,6 +69,7 @@ final class DuplicateRegulationCommandHandler
                     $cmd->endDate = $period->getEndDateTime();
                     $cmd->endTime = $period->getEndDateTime();
                     $cmd->recurrenceType = $period->getRecurrenceType();
+                    $cmd->isPermanent = $originalRegulationOrder->isPermanent();
 
                     $dailyRange = $period->getDailyRange();
                     if ($dailyRange) {
