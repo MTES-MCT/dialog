@@ -22,6 +22,7 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findGeneralInformation(string $uuid): ?array;
 
+    /** @return RegulationOrderRecord[] */
     public function findRegulationOrdersForDatexFormat(): array;
 
     public function findRegulationOrdersForCifsIncidentFormat(): array;
