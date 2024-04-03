@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
+use App\Application\Regulation\View\DatexValidityConditionView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -83,10 +84,39 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     );
                 }
 
+                $validityConditions = [];
+
+                foreach ($measure->getPeriods() as $period) {
+                    $overallStartTime = $period->getStartDateTime();
+                    $overallEndTime = $period->getEndDateTime();
+
+                    $validPeriods = [];
+
+                    if ($period->getDailyRange() || $period->getTimeSlots()) {
+                        $recurringTimePeriods = [];
+
+                        foreach ($period->getTimeSlots() ?? [] as $timeSlot) {
+                            $recurringTimePeriods[] = ['startTime' => $timeSlot->getStartTime(), 'endTime' => $timeSlot->getEndTime()];
+                        }
+
+                        $validPeriods[] = [
+                            'recurringTimePeriods' => $recurringTimePeriods,
+                            'recurringDayWeekMonthPeriods' => $period->getDailyRange() ? [$period->getDailyRange()->getApplicableDays()] : [],
+                        ];
+                    }
+
+                    $validityConditions[] = new DatexValidityConditionView(
+                        $overallStartTime,
+                        $overallEndTime,
+                        $validPeriods,
+                    );
+                }
+
                 $trafficRegulations[] = new DatexTrafficRegulationView(
                     $measureType,
                     $locationConditions,
                     $vehicleConditions,
+                    $validityConditions,
                     $maxSpeed,
                 );
             }

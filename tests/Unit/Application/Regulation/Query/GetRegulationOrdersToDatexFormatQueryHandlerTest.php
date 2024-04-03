@@ -435,6 +435,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::NO_ENTRY->value,
                             locationConditions: [$locationView1],
+                            validityConditions: [], // TODO
                             vehicleConditions: [
                                 new DatexVehicleConditionView('critair3'),
                                 new DatexVehicleConditionView('critair4'),
@@ -443,6 +444,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::NO_ENTRY->value,
                             locationConditions: [$locationView2],
+                            validityConditions: [], // TODO
                             vehicleConditions: [],
                         ),
                     ],
@@ -457,6 +459,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: 'noEntry',
                             locationConditions: [$locationView3],
+                            validityConditions: [], // TODO
                             vehicleConditions: [
                                 new DatexVehicleConditionView(
                                     'heavyGoodsVehicle',
@@ -483,6 +486,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::SPEED_LIMITATION->value,
                             locationConditions: [$locationView4],
+                            validityConditions: [], // TODO
                             vehicleConditions: [
                                 new DatexVehicleConditionView(VehicleTypeEnum::HAZARDOUS_MATERIALS->value),
                             ],
