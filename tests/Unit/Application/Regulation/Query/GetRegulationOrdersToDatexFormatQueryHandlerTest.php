@@ -434,7 +434,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::NO_ENTRY->value,
-                            location: $locationView1,
+                            locationConditions: [$locationView1],
                             vehicleConditions: [
                                 new DatexVehicleConditionView('critair3'),
                                 new DatexVehicleConditionView('critair4'),
@@ -442,7 +442,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         ),
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::NO_ENTRY->value,
-                            location: $locationView2,
+                            locationConditions: [$locationView2],
                             vehicleConditions: [],
                         ),
                     ],
@@ -456,7 +456,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
                             type: 'noEntry',
-                            location: $locationView3,
+                            locationConditions: [$locationView3],
                             vehicleConditions: [
                                 new DatexVehicleConditionView(
                                     'heavyGoodsVehicle',
@@ -482,7 +482,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::SPEED_LIMITATION->value,
-                            location: $locationView4,
+                            locationConditions: [$locationView4],
                             vehicleConditions: [
                                 new DatexVehicleConditionView(VehicleTypeEnum::HAZARDOUS_MATERIALS->value),
                             ],

@@ -71,22 +71,24 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     }
                 }
 
+                $locationConditions = [];
+
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
-                    $locationView = new DatexLocationView(
+                    $locationConditions[] = new DatexLocationView(
                         roadType: $location->getRoadType(),
                         roadName: $location->getRoadName(),
                         roadNumber: $location->getRoadNumber(),
                         geometry: $location->getGeometry(),
                     );
-
-                    $trafficRegulations[] = new DatexTrafficRegulationView(
-                        $measureType,
-                        $locationView,
-                        $vehicleConditions,
-                        $maxSpeed,
-                    );
                 }
+
+                $trafficRegulations[] = new DatexTrafficRegulationView(
+                    $measureType,
+                    $locationConditions,
+                    $vehicleConditions,
+                    $maxSpeed,
+                );
             }
 
             $regulationOrderViews[] = new RegulationOrderDatexListItemView(

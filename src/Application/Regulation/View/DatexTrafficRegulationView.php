@@ -8,7 +8,7 @@ final class DatexTrafficRegulationView
 {
     public function __construct(
         public readonly string $type,
-        public readonly DatexLocationView $location,
+        public readonly array $locationConditions,
         public readonly array $vehicleConditions,
         public readonly ?int $maxSpeed = null,
     ) {

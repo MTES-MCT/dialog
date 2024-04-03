@@ -20,7 +20,7 @@ class GeoJSONGeometryType extends GeometryType
         return ['geojson_geometry'];
     }
 
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }

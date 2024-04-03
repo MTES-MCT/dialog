@@ -41,15 +41,12 @@
                 <status>madeAndImplemented</status>
 
                 {% for trafficRegulation in regulationOrder.trafficRegulations %}
-                    {% set location = trafficRegulation.location %}
-                    {% set vehicleConditions = trafficRegulation.vehicleConditions %}
-                    {% set speed = trafficRegulation.maxSpeed %}
                     <trafficRegulation>
                         <status>active</status>
                         {% if trafficRegulation.type == 'speedLimitation' %}
                             <typeOfRegulation xsi:type="SpeedLimit">
                                 <maxValue>
-                                    <numericValue>{{ speed }}</numericValue>
+                                    <numericValue>{{ trafficRegulation.maxSpeed }}</numericValue>
                                     <unitOfMeasure>kilometresPerHour</unitOfMeasure>
                                 </maxValue>
                             </typeOfRegulation>
@@ -74,78 +71,90 @@
                                 </validityByOrder>
                             </conditions>
 
-                            <conditions xsi:type="LocationCondition">
-                                <locationByOrder xsi:type="loc:LinearLocation">
-                                    <loc:supplementaryPositionalDescription>
-                                        <loc:roadInformation>
-                                            {% if location.roadType == 'lane' %}
-                                                <loc:roadName>{{ location.roadName }}</loc:roadName>
-                                            {% else %}
-                                                <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
-                                            {% endif %}
-                                        </loc:roadInformation>
-                                    </loc:supplementaryPositionalDescription>
-                                    <loc:_linearLocationExtension>
-                                        <loc:linearLocationExtended>
-                                            <locdx:geoJsonGeometry>{{ location.geometry }}</locdx:geoJsonGeometry>
-                                        </loc:linearLocationExtended>
-                                    </loc:_linearLocationExtension>
-                                </locationByOrder>
+                            <conditions xsi:type="ConditionSet">
+                                <operator>or</operator>
+                                {% for location in trafficRegulation.locationConditions %}
+                                    <conditions xsi:type="LocationCondition">
+                                        <locationByOrder xsi:type="loc:LinearLocation">
+                                            <loc:supplementaryPositionalDescription>
+                                                <loc:roadInformation>
+                                                    {% if location.roadType == 'lane' %}
+                                                        <loc:roadName>{{ location.roadName }}</loc:roadName>
+                                                    {% else %}
+                                                        <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
+                                                    {% endif %}
+                                                </loc:roadInformation>
+                                            </loc:supplementaryPositionalDescription>
+                                            <loc:_linearLocationExtension>
+                                                <loc:linearLocationExtended>
+                                                    <locdx:geoJsonGeometry>{{ location.geometry }}</locdx:geoJsonGeometry>
+                                                </loc:linearLocationExtended>
+                                            </loc:_linearLocationExtension>
+                                        </locationByOrder>
+                                    </conditions>
+                                {% endfor %}
                             </conditions>
 
-                            {% for vehicle in vehicleConditions|filter(v => not v.isOther) %}
-                                {% if vehicle.nonVehicularRoadUser %}
-                                    <conditions xsi:type="NonVehicularRoadUserCondition">
-                                        <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                        <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
-                                    </conditions>
-                                {% else %}
-                                    <conditions xsi:type="VehicleCondition">
-                                        <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                        <vehicleCharacteristics>
-                                            {% if vehicle.vehicleUsage %}
-                                                <com:vehicleUsage>{{ vehicle.vehicleUsage }}</com:vehicleUsage>
-                                            {% elseif vehicle.emissionClassificationOther %}
-                                                <com:emissions>
-                                                    <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
-                                                </com:emissions>
-                                            {% else %}
-                                                {% if vehicle.type == 'dimensions' %}
-                                                    {% if vehicle.maxHeight %}
-                                                        <com:heightCharacteristic>
-                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
-                                                        </com:heightCharacteristic>
+                            {% set vehicles = trafficRegulation.vehicleConditions|filter(v => not v.isOther) %}
+
+                            {% if vehicles|length > 0 %}
+                                <conditions xsi:type="ConditionSet">
+                                    <operator>or</operator>
+                                    {% for vehicle in vehicles %}
+                                        {% if vehicle.nonVehicularRoadUser %}
+                                            <conditions xsi:type="NonVehicularRoadUserCondition">
+                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                                <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
+                                            </conditions>
+                                        {% else %}
+                                            <conditions xsi:type="VehicleCondition">
+                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                                <vehicleCharacteristics>
+                                                    {% if vehicle.vehicleUsage %}
+                                                        <com:vehicleUsage>{{ vehicle.vehicleUsage }}</com:vehicleUsage>
+                                                    {% elseif vehicle.emissionClassificationOther %}
+                                                        <com:emissions>
+                                                            <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
+                                                        </com:emissions>
+                                                    {% else %}
+                                                        {% if vehicle.type == 'dimensions' %}
+                                                            {% if vehicle.maxHeight %}
+                                                                <com:heightCharacteristic>
+                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                                    <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
+                                                                </com:heightCharacteristic>
+                                                            {% endif %}
+                                                            {% if vehicle.maxLength %}
+                                                                <com:lengthCharacteristic>
+                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                                    <com:vehicleLength>{{ vehicle.maxLength }}</com:vehicleLength>
+                                                                </com:lengthCharacteristic>
+                                                            {% endif %}
+                                                            {% if vehicle.maxWidth %}
+                                                                <com:widthCharacteristic>
+                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                                    <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
+                                                                </com:widthCharacteristic>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                                                        {% endif %}
+                                                        {% if vehicle.type == 'heavyGoodsVehicle' %}
+                                                            {% if vehicle.maxWeight %}
+                                                                <com:grossWeightCharacteristic>
+                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                                                    <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
+                                                                    <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                                                                </com:grossWeightCharacteristic>
+                                                            {% endif %}
+                                                        {% endif %}
                                                     {% endif %}
-                                                    {% if vehicle.maxLength %}
-                                                        <com:lengthCharacteristic>
-                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:vehicleLength>{{ vehicle.maxLength }}</com:vehicleLength>
-                                                        </com:lengthCharacteristic>
-                                                    {% endif %}
-                                                    {% if vehicle.maxWidth %}
-                                                        <com:widthCharacteristic>
-                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
-                                                        </com:widthCharacteristic>
-                                                    {% endif %}
-                                                {% else %}
-                                                    <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
-                                                {% endif %}
-                                                {% if vehicle.type == 'heavyGoodsVehicle' %}
-                                                    {% if vehicle.maxWeight %}
-                                                        <com:grossWeightCharacteristic>
-                                                            <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                            <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
-                                                            <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
-                                                        </com:grossWeightCharacteristic>
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endif %}
-                                        </vehicleCharacteristics>
-                                    </conditions>
-                                {% endif %}
-                            {% endfor %}
+                                                </vehicleCharacteristics>
+                                            </conditions>
+                                        {% endif %}
+                                    {% endfor %}
+                                </conditions>
+                            {% endif %}
                         </condition>
                     </trafficRegulation>
                 {% endfor %}
