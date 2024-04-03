@@ -1,5 +1,5 @@
 services:
-    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
+    App\Infrastructure\Persistence\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
@@ -10,6 +10,9 @@ doctrine:
             geometry: 
                 class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
                 commented: false
+            geojson_geometry:
+                class: 'App\Infrastructure\Persistence\Doctrine\DBAL\Types\GeoJSONGeometryType'
+                commented: true
     orm:
         dql:
             string_functions:

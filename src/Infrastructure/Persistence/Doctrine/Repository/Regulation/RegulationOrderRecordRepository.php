@@ -11,7 +11,6 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -133,7 +132,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     public function findRegulationOrdersForDatexFormat(): array
     {
-        $regulationOrderRecords = $this->createQueryBuilder('roc')
+        return $this->createQueryBuilder('roc')
             ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
@@ -152,39 +151,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getQuery()
             ->getResult()
         ;
-
-        $this->reassignGeometriesAsGeoJSON($regulationOrderRecords);
-
-        return $regulationOrderRecords;
-    }
-
-    private function reassignGeometriesAsGeoJSON(iterable $regulationOrderRecords): void
-    {
-        // By default jsor/doctrine-postgis spits out EWKT
-        // See: https://github.com/jsor/doctrine-postgis/blob/8690f4ce7a371686634d3bfe40178f668005ab5a/src/Types/PostGISType.php#L27
-        // We use PostGIS to convert to GeoJSON, using a single query for efficiency.
-        // Better would be to use a proper GeoJsonType, see: https://github.com/jsor/doctrine-postgis/issues/36
-
-        $locations = [];
-
-        foreach ($regulationOrderRecords as $regulationOrderRecord) {
-            foreach ($regulationOrderRecord->getRegulationOrder()->getMeasures() as $measure) {
-                foreach ($measure->getLocations() as $location) {
-                    $locations[] = $location;
-                }
-            }
-        }
-
-        $geoJsonGeometries = $this->getEntityManager()->getConnection()->fetchAllAssociative(
-            'SELECT ST_AsGeoJSON(geom) AS geojson
-            FROM unnest(array[:geometries]) AS geom',
-            ['geometries' => array_map(fn ($loc) => $loc->getGeometry(), $locations)],
-            ['geometries' => ArrayParameterType::STRING],
-        );
-
-        foreach ($locations as $index => $location) {
-            $location->setGeometry($geoJsonGeometries[$index]['geojson']);
-        }
     }
 
     public function findRegulationOrdersForCifsIncidentFormat(): array
@@ -199,7 +165,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.uuid as locationId',
                 'loc.roadNumber',
                 'loc.roadName',
-                'ST_AsGeoJSON(loc.geometry) as geometry',
+                'loc.geometry as geometry',
                 'm.uuid as measureId',
                 'm.type as measureType',
                 'p.startDateTime as periodStartDateTime',
