@@ -11,6 +11,7 @@ use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandler
@@ -26,6 +27,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
         $regulationOrderViews = [];
 
+        /** @var RegulationOrderRecord $regulationOrderRecord */
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
@@ -39,32 +41,34 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
                 $vehicleConditions = [];
 
-                foreach ($vehicleSet->getRestrictedTypes() as $restrictedVehicleType) {
-                    if (VehicleTypeEnum::CRITAIR->value === $restrictedVehicleType) {
-                        foreach ($vehicleSet->getCritairTypes() as $restrictedCritairTypes) {
-                            $vehicleConditions[] = new DatexVehicleConditionView($restrictedCritairTypes);
+                if ($vehicleSet) {
+                    foreach ($vehicleSet->getRestrictedTypes() as $restrictedVehicleType) {
+                        if (VehicleTypeEnum::CRITAIR->value === $restrictedVehicleType) {
+                            foreach ($vehicleSet->getCritairTypes() as $restrictedCritairTypes) {
+                                $vehicleConditions[] = new DatexVehicleConditionView($restrictedCritairTypes);
+                            }
+                        } elseif (VehicleTypeEnum::DIMENSIONS->value === $restrictedVehicleType) {
+                            $vehicleConditions[] = new DatexVehicleConditionView(
+                                vehicleType: $restrictedVehicleType,
+                                maxWidth: $vehicleSet->getMaxWidth(),
+                                maxLength: $vehicleSet->getMaxLength(),
+                                maxHeight: $vehicleSet->getMaxHeight(),
+                            );
+                        } elseif (VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value === $restrictedVehicleType) {
+                            $vehicleConditions[] = new DatexVehicleConditionView(
+                                vehicleType: $restrictedVehicleType,
+                                maxWeight: $vehicleSet->getHeavyweightMaxWeight(),
+                            );
+                        } else {
+                            $vehicleConditions[] = new DatexVehicleConditionView(
+                                vehicleType: $restrictedVehicleType,
+                            );
                         }
-                    } elseif (VehicleTypeEnum::DIMENSIONS->value === $restrictedVehicleType) {
-                        $vehicleConditions[] = new DatexVehicleConditionView(
-                            vehicleType: $restrictedVehicleType,
-                            maxWidth: $vehicleSet->getMaxWidth(),
-                            maxLength: $vehicleSet->getMaxLength(),
-                            maxHeight: $vehicleSet->getMaxHeight(),
-                        );
-                    } elseif (VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value === $restrictedVehicleType) {
-                        $vehicleConditions[] = new DatexVehicleConditionView(
-                            vehicleType: $restrictedVehicleType,
-                            maxWeight: $vehicleSet->getHeavyweightMaxWeight(),
-                        );
-                    } else {
-                        $vehicleConditions[] = new DatexVehicleConditionView(
-                            vehicleType: $restrictedVehicleType,
-                        );
                     }
-                }
 
-                foreach ($vehicleSet->getExemptedTypes() as $exemptedVehicleType) {
-                    $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
+                    foreach ($vehicleSet->getExemptedTypes() as $exemptedVehicleType) {
+                        $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
+                    }
                 }
 
                 /** @var Location $location */

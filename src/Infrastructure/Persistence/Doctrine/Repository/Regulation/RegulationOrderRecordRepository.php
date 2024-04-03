@@ -11,6 +11,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -104,8 +105,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findGeneralInformation(string $uuid): ?array
     {
         return $this->createQueryBuilder('roc')
-            ->select(sprintf(
-                'NEW %s(
+            ->select(
+                sprintf(
+                    'NEW %s(
                     roc.uuid,
                     ro.identifier,
                     org.name,
@@ -117,8 +119,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     ro.startDate,
                     ro.endDate
                 )',
-                GeneralInfoView::class,
-            ))
+                    GeneralInfoView::class,
+                ),
+            )
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.organization', 'org')
@@ -130,7 +133,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     public function findRegulationOrdersForDatexFormat(): array
     {
-        return $this->createQueryBuilder('roc')
+        $regulationOrderRecords = $this->createQueryBuilder('roc')
             ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
@@ -149,6 +152,39 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getQuery()
             ->getResult()
         ;
+
+        $this->reassignGeometriesAsGeoJSON($regulationOrderRecords);
+
+        return $regulationOrderRecords;
+    }
+
+    private function reassignGeometriesAsGeoJSON(iterable $regulationOrderRecords): void
+    {
+        // By default jsor/doctrine-postgis spits out EWKT
+        // See: https://github.com/jsor/doctrine-postgis/blob/8690f4ce7a371686634d3bfe40178f668005ab5a/src/Types/PostGISType.php#L27
+        // We use PostGIS to convert to GeoJSON, using a single query for efficiency.
+        // Better would be to use a proper GeoJsonType, see: https://github.com/jsor/doctrine-postgis/issues/36
+
+        $locations = [];
+
+        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            foreach ($regulationOrderRecord->getRegulationOrder()->getMeasures() as $measure) {
+                foreach ($measure->getLocations() as $location) {
+                    $locations[] = $location;
+                }
+            }
+        }
+
+        $geoJsonGeometries = $this->getEntityManager()->getConnection()->fetchAllAssociative(
+            'SELECT ST_AsGeoJSON(geom) AS geojson
+            FROM unnest(array[:geometries]) AS geom',
+            ['geometries' => array_map(fn ($loc) => $loc->getGeometry(), $locations)],
+            ['geometries' => ArrayParameterType::STRING],
+        );
+
+        foreach ($locations as $index => $location) {
+            $location->setGeometry($geoJsonGeometries[$index]['geojson']);
+        }
     }
 
     public function findRegulationOrdersForCifsIncidentFormat(): array

@@ -163,34 +163,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->method('getMaxSpeed')
             ->willReturn(null);
 
-        $vehicleSet2 = $this->createMock(VehicleSet::class);
         $measure2
             ->expects(self::once())
             ->method('getVehicleSet')
-            ->willReturn($vehicleSet2);
-        $vehicleSet2
-            ->expects(self::once())
-            ->method('getRestrictedTypes')
-            ->willReturn([]);
-        $vehicleSet2
-            ->expects(self::never())
-            ->method('getCritairTypes');
-        $vehicleSet2
-            ->expects(self::never())
-            ->method('getMaxHeight');
-        $vehicleSet2
-            ->expects(self::never())
-            ->method('getMaxWidth');
-        $vehicleSet2
-            ->expects(self::never())
-            ->method('getMaxLength');
-        $vehicleSet2
-            ->expects(self::never())
-            ->method('getHeavyweightMaxWeight');
-        $vehicleSet2
-            ->expects(self::once())
-            ->method('getExemptedTypes')
-            ->willReturn([]);
+            ->willReturn(null);
 
         $locationView2 = new DatexLocationView(
             roadType: RoadTypeEnum::LANE->value,
