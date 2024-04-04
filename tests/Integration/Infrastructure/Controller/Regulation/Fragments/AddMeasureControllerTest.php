@@ -170,6 +170,87 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
     }
 
+    public function testAddLaneWithBlankHouseNumbers(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['isEntireStreet']);
+        $values['measure_form']['locations'][0]['fromHouseNumber'] = '';
+        $values['measure_form']['locations'][0]['toHouseNumber'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+    }
+
+    public function testAddLaneWithUnknownHouseNumbers(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['isEntireStreet']);
+        $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
+        $values['measure_form']['locations'][0]['toHouseNumber'] = '999'; // Mock will return no result
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+    }
+
+    public function testAddLaneWithHouseNumbersOnMultipleSections(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['cityCode'] = '59606';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Valenciennes (59300)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Rue du Faubourg de Paris';
+        unset($values['measure_form']['locations'][0]['isEntireStreet']);
+        $values['measure_form']['locations'][0]['fromHouseNumber'] = '80';
+        $values['measure_form']['locations'][0]['toHouseNumber'] = '44'; // Not on same section than 80
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+    }
+
     public function testAddDepartmentalRoad(): void
     {
         $client = $this->login();

@@ -104,6 +104,27 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                 ],
             ];
+        } elseif ($type === 'housenumber' && $query === '999 Route du Grand Brossais') {
+            $body = [
+                // Simulate an address that does not exist (no results)
+                'features' => [],
+            ];
+        } elseif ($type === 'housenumber' && $query === '80 Rue du Faubourg de Paris') {
+            $body = [
+                'features' => [
+                    [
+                        'geometry' => json_decode('{"type":"Point","coordinates":[3.512442952,50.353245966]}', true),
+                    ],
+                ],
+            ];
+        } elseif ($type === 'housenumber' && $query === '44 Rue du Faubourg de Paris') {
+            $body = [
+                'features' => [
+                    [
+                        'geometry' => json_decode('{"type":"Point","coordinates":[3.514232943,50.353508042]}', true),
+                    ],
+                ],
+            ];
         } else {
             $body = ['features' => [['geometry' => ['coordinates' => [0.4, 44.5]]]]];
         }
