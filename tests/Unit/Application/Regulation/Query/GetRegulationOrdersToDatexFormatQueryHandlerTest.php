@@ -8,8 +8,12 @@ use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
+use App\Application\Regulation\View\DatexValidityConditionView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\Condition\Period\DailyRange;
+use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
@@ -26,6 +30,13 @@ use PHPUnit\Framework\TestCase;
 
 final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 {
+    private $tz;
+
+    protected function setUp(): void
+    {
+        $this->tz = new \DateTimeZone('Etc/GMT-1');
+    }
+
     public function testGetAllEmpty(): void
     {
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
@@ -43,11 +54,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
     public function testGetAll(): void
     {
-        $startDate1 = new \DateTime('2022-12-07');
-        $endDate1 = new \DateTime('2022-12-17');
-        $startDate2 = new \DateTime('2022-12-10');
-        $startDate3 = new \DateTime('2023-12-12');
-        $endDate3 = new \DateTime('2023-12-17');
+        $startDate1 = new \DateTime('2022-12-07', $this->tz);
+        $endDate1 = new \DateTime('2022-12-17', $this->tz);
+        $startDate2 = new \DateTime('2022-12-10', $this->tz);
+        $startDate3 = new \DateTime('2023-12-12', $this->tz);
+        $endDate3 = new \DateTime('2023-12-17', $this->tz);
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
@@ -152,6 +163,54 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->method('getLocations')
             ->willReturn([$location1]);
 
+        $validityView1 = new DatexValidityConditionView(
+            new \DateTimeImmutable('2024-01-03 08:00', $this->tz),
+            new \DateTimeImmutable('2024-01-10 16:00', $this->tz),
+            [
+                [
+                    'recurringTimePeriods' => [
+                        [
+                            'startTime' => new \DateTimeImmutable('08:00', $this->tz),
+                            'endTime' => new \DateTimeImmutable('16:00', $this->tz),
+                        ],
+                    ],
+                    'recurringDayWeekMonthPeriods' => [],
+                ],
+            ],
+        );
+
+        $period1 = $this->createMock(Period::class);
+        $period1
+            ->expects(self::once())
+            ->method('getStartDateTime')
+            ->willReturn($validityView1->overallStartTime);
+        $period1
+            ->expects(self::once())
+            ->method('getEndDateTime')
+            ->willReturn($validityView1->overallEndTime);
+        $period1
+            ->expects(self::once())
+            ->method('getDailyRange')
+            ->willReturn(null);
+        $timeSlot1 = $this->createMock(TimeSlot::class);
+        $timeSlot1
+            ->expects(self::once())
+            ->method('getStartTime')
+            ->willReturn($validityView1->validPeriods[0]['recurringTimePeriods'][0]['startTime']);
+        $timeSlot1
+            ->expects(self::once())
+            ->method('getEndTime')
+            ->willReturn($validityView1->validPeriods[0]['recurringTimePeriods'][0]['endTime']);
+        $period1
+            ->expects(self::once())
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot1]);
+
+        $measure1
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([$period1]);
+
         $measure2 = $this->createMock(Measure::class);
 
         $measure2
@@ -200,6 +259,45 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getLocations')
             ->willReturn([$location2]);
+
+        $validityView2 = new DatexValidityConditionView(
+            new \DateTimeImmutable('2024-03-01 00:00:00', $this->tz),
+            new \DateTimeImmutable('2024-03-10 23:59:00', $this->tz),
+            [
+                [
+                    'recurringTimePeriods' => [],
+                    'recurringDayWeekMonthPeriods' => [['monday', 'tuesday']],
+                ],
+            ],
+        );
+
+        $period2 = $this->createMock(Period::class);
+        $period2
+            ->expects(self::once())
+            ->method('getStartDateTime')
+            ->willReturn($validityView2->overallStartTime);
+        $period2
+            ->expects(self::once())
+            ->method('getEndDateTime')
+            ->willReturn($validityView2->overallEndTime);
+        $dailyRange = $this->createMock(DailyRange::class);
+        $dailyRange
+            ->expects(self::once())
+            ->method('getApplicableDays')
+            ->willReturn($validityView2->validPeriods[0]['recurringDayWeekMonthPeriods'][0]);
+        $period2
+            ->expects(self::once())
+            ->method('getDailyRange')
+            ->willReturn($dailyRange);
+        $period2
+            ->expects(self::once())
+            ->method('getTimeSlots')
+            ->willReturn([]);
+
+        $measure2
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([$period2]);
 
         $regulationOrder1
             ->expects(self::once())
@@ -435,6 +533,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::NO_ENTRY->value,
                             locationConditions: [$locationView1],
+                            validityConditions: [$validityView1],
                             vehicleConditions: [
                                 new DatexVehicleConditionView('critair3'),
                                 new DatexVehicleConditionView('critair4'),
@@ -443,6 +542,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::NO_ENTRY->value,
                             locationConditions: [$locationView2],
+                            validityConditions: [$validityView2],
                             vehicleConditions: [],
                         ),
                     ],
@@ -457,6 +557,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: 'noEntry',
                             locationConditions: [$locationView3],
+                            validityConditions: [],
                             vehicleConditions: [
                                 new DatexVehicleConditionView(
                                     'heavyGoodsVehicle',
@@ -483,6 +584,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                         new DatexTrafficRegulationView(
                             type: MeasureTypeEnum::SPEED_LIMITATION->value,
                             locationConditions: [$locationView4],
+                            validityConditions: [],
                             vehicleConditions: [
                                 new DatexVehicleConditionView(VehicleTypeEnum::HAZARDOUS_MATERIALS->value),
                             ],
