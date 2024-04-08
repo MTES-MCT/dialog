@@ -45,7 +45,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         throw new GeocodingFailureException($message);
     }
 
-    public function findDepartmentalRoads(string $search, string $administrator): array
+    public function findRoads(string $search, string $administrator): array
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(

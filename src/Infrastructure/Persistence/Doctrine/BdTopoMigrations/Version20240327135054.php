@@ -24,6 +24,6 @@ final class Version20240327135054 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP INDEX IF EXISTS point_de_repere_route_numero_gestionnaire_idx');
+        $this->addSql('DROP INDEX IF EXISTS point_de_repere_route_numero_gestionnaire_cote_idx');
     }
 }

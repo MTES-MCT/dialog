@@ -226,17 +226,17 @@
                 </div>
 
                 <fieldset
-                    aria-labelledby="regulation-location-reference-point"
+                    aria-labelledby="regulation-location-{{ index }}-reference-point"
                 >
-                    <legend id="regulation-location-{{ index }}-reference-point-a-legend" class="required">
+                    <legend id="regulation-location-{{ index }}-reference-point" class="required">
                         <span class="fr-x-label-content">{{ 'regulation.location.referencePoint'|trans }}</span>
                     </legend>
                     <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
                     <fieldset
                         class="fr-mt-2w"
-                        aria-labelledby="regulation-location-{{ index }}-reference-point-a-legend"
+                        aria-labelledby="regulation-location-{{ index }}-reference-point-start-legend"
                     >
-                        <legend id="regulation-location-{{ index }}-reference-point-a-legend">
+                        <legend id="regulation-location-{{ index }}-reference-point-start-legend">
                             {{ 'regulation.location.referencePoint.from'|trans }}
                         </legend>
                         <div class="fr-grid-row fr-grid-row--gutters">
@@ -247,9 +247,9 @@
                     </fieldset>
                     <fieldset
                         class="fr-mt-2w fr-mb-2w"
-                        aria-labelledby="regulation-location-{{ index }}-reference-point-b-legend"
+                        aria-labelledby="regulation-location-{{ index }}-reference-point-end-legend"
                     >
-                        <legend id="regulation-location-{{ index }}-reference-point-a-legend">
+                        <legend id="regulation-location-{{ index }}-reference-point-end-legend">
                             {{ 'regulation.location.referencePoint.to'|trans }}
                         </legend>
                         <div class="fr-grid-row fr-grid-row--gutters">

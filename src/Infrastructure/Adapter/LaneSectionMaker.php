@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
-use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 
 final class LaneSectionMaker implements LaneSectionMakerInterface
 {
@@ -32,7 +30,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
     }
 
     /**
-     * @throws GeocodingFailureException|RoadGeocodingFailureException
+     * @throws GeocodingFailureException
      */
     public function computeSection(
         string $fullLaneGeometry,
@@ -53,6 +51,6 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
             $toCoords = $this->resolvePoint($roadName, $cityCode, $toHouseNumber, $toRoadName);
         }
 
-        return $this->lineSectionMaker->computeSection(RoadTypeEnum::LANE, $fullLaneGeometry, $fromCoords, $toCoords);
+        return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
     }
 }

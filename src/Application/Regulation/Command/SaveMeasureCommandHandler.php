@@ -72,9 +72,7 @@ final class SaveMeasureCommandHandler
                     $locationCommand->measure = $command->measure;
                     $location = $this->commandBus->handle($locationCommand);
                     $locationsStillPresentUuids[] = $location->getUuid();
-                } catch (GeocodingFailureException $e) {
-                    throw new GeocodingFailureException(sprintf('Geocoding of location #%d has failed', $index), locationIndex: $index, previous: $e);
-                } catch (RoadGeocodingFailureException $e) {
+                } catch (GeocodingFailureException|RoadGeocodingFailureException $e) {
                     $e->setLocationIndex($index);
                     throw $e;
                 }
@@ -119,13 +117,7 @@ final class SaveMeasureCommandHandler
             try {
                 $location = $this->commandBus->handle($locationCommand);
                 $measure->addLocation($location);
-            } catch (GeocodingFailureException $e) {
-                throw new GeocodingFailureException(
-                    sprintf('Geocoding of location #%d has failed', $index),
-                    locationIndex: $index,
-                    previous: $e,
-                );
-            } catch (RoadGeocodingFailureException $e) {
+            } catch (GeocodingFailureException|RoadGeocodingFailureException $e) {
                 $e->setLocationIndex($index);
                 throw $e;
             }

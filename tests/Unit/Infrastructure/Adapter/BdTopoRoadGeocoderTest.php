@@ -66,7 +66,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->roadGeocoder->computeRoadLine('Rue du Test', '01234');
     }
 
-    public function testFindDepartmentalRoads(): void
+    public function testfindRoads(): void
     {
         $this->conn
             ->expects(self::once())
@@ -83,10 +83,10 @@ final class BdTopoRoadGeocoderTest extends TestCase
             )
             ->willReturn([['numero' => 'D321', 'geometry' => 'test']]);
 
-        $this->assertSame([['roadNumber' => 'D321', 'geometry' => 'test']], $this->roadGeocoder->findDepartmentalRoads('d32', 'Ardennes'));
+        $this->assertSame([['roadNumber' => 'D321', 'geometry' => 'test']], $this->roadGeocoder->findRoads('d32', 'Ardennes'));
     }
 
-    public function testFindDepartmentalRoadsUnexpectedError(): void
+    public function testfindRoadsUnexpectedError(): void
     {
         $this->expectException(GeocodingFailureException::class);
 
@@ -95,7 +95,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAllAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->findDepartmentalRoads('D32', 'Ardennes');
+        $this->roadGeocoder->findRoads('D32', 'Ardennes');
     }
 
     public function testcomputeRoad(): void

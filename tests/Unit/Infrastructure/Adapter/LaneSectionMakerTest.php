@@ -58,7 +58,7 @@ final class LaneSectionMakerTest extends TestCase
         $this->lineSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with($this->roadType, $this->fullLaneGeometry, $this->fromCoords, $this->toCoords)
+            ->with($this->fullLaneGeometry, $this->fromCoords, $this->toCoords)
             ->willReturn('section');
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(
@@ -87,7 +87,7 @@ final class LaneSectionMakerTest extends TestCase
         $this->lineSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with($this->roadType, $this->fullLaneGeometry, $this->fromCoords, $this->toCoords)
+            ->with($this->fullLaneGeometry, $this->fromCoords, $this->toCoords)
             ->willReturn('section');
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(

@@ -50,7 +50,7 @@ final class BdTopoRoadGeocoderMock implements RoadGeocoderInterface
         };
     }
 
-    public function findDepartmentalRoads(string $search, string $administrator): array
+    public function findRoads(string $search, string $administrator): array
     {
         return match ($search) {
             'd32' => [

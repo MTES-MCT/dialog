@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\RoadSectionMaker;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +46,7 @@ final class RoadSectionMakerTest extends TestCase
         $lineSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with(RoadTypeEnum::DEPARTMENTAL_ROAD, $fullDepartmentalRoadGeometry, $fromCoords, $toCoords)
+            ->with($fullDepartmentalRoadGeometry, $fromCoords, $toCoords)
             ->willReturn('section');
 
         $this->assertSame(

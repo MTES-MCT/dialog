@@ -10,7 +10,7 @@ interface RoadGeocoderInterface
 {
     public function computeRoadLine(string $roadName, string $inseeCode): string;
 
-    public function findDepartmentalRoads(string $search, string $administrator): array;
+    public function findRoads(string $search, string $administrator): array;
 
     public function computeRoad(string $roadNumber, string $administrator): string;
 

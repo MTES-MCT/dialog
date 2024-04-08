@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
-use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class LineSectionMaker implements LineSectionMakerInterface
@@ -19,10 +17,9 @@ final class LineSectionMaker implements LineSectionMakerInterface
     }
 
     /**
-     * @throws GeocodingFailureException|RoadGeocodingFailureException
+     * @throws GeocodingFailureException
      */
     public function computeSection(
-        RoadTypeEnum $roadType,
         string $lineGeometry,
         Coordinates $fromCoords,
         Coordinates $toCoords,
@@ -78,11 +75,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
                 $lineGeometry,
             );
 
-            if (RoadTypeEnum::DEPARTMENTAL_ROAD === $roadType) {
-                throw new RoadGeocodingFailureException($msg);
-            } else {
-                throw new GeocodingFailureException($msg);
-            }
+            throw new GeocodingFailureException($msg);
         }
 
         return $row['section'];

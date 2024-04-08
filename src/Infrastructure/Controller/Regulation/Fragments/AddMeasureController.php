@@ -80,18 +80,18 @@ final class AddMeasureController extends AbstractRegulationController
                         ],
                     ),
                 );
-            } catch (GeocodingFailureException $exc) {
-                $commandFailed = true;
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadName')->addError(
-                    new FormError(
-                        $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
-                    ),
-                );
             } catch (RoadGeocodingFailureException $exc) {
                 $commandFailed = true;
                 $form->get('locations')->get((string) $exc->getLocationIndex())->get('fromPointNumber')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.departmental_road_geocoding_failed', [], 'validators'),
+                    ),
+                );
+            } catch (GeocodingFailureException $exc) {
+                $commandFailed = true;
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadName')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),
                 );
             }

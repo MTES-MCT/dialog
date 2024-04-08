@@ -179,9 +179,6 @@ final class LocationFormType extends AbstractType
             ),
             'label' => 'regulation.location.road.side',
             'help' => 'regulation.location.road.side.help',
-            'label_attr' => [
-                'class' => 'required',
-            ],
         ];
     }
 

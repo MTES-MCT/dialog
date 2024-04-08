@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 
 final class RoadSectionMaker implements RoadSectionMakerInterface
 {
@@ -18,9 +18,6 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
     ) {
     }
 
-    /**
-     * @throws RoadGeocodingFailureException
-     */
     public function computeSection(
         string $fullDepartmentalRoadGeometry,
         string $administrator,
@@ -32,16 +29,19 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
         string $toSide,
         ?int $toAbscissa,
     ): string {
-        $fromCoords = $this->roadGeocoder
+        try {
+            $fromCoords = $this->roadGeocoder
             ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa);
-        $toCoords = $this->roadGeocoder
-            ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa);
+            $toCoords = $this->roadGeocoder
+                ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa);
 
-        return $this->lineSectionMaker->computeSection(
-            RoadTypeEnum::DEPARTMENTAL_ROAD,
-            $fullDepartmentalRoadGeometry,
-            $fromCoords,
-            $toCoords,
-        );
+            return $this->lineSectionMaker->computeSection(
+                $fullDepartmentalRoadGeometry,
+                $fromCoords,
+                $toCoords,
+            );
+        } catch (GeocodingFailureException $e) {
+            throw new RoadGeocodingFailureException('', null, $e);
+        }
     }
 }
