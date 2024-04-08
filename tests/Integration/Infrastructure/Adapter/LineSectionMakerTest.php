@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
-use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\LineSectionMaker;
@@ -151,9 +151,9 @@ final class LineSectionMakerTest extends KernelTestCase
     /**
      * @dataProvider provideComputeSectionError
      */
-    public function testComputeDepartmentalRoadSectionError(Coordinates $fromCoords, Coordinates $toCoords): void
+    public function testcomputeRoadSectionError(Coordinates $fromCoords, Coordinates $toCoords): void
     {
-        $this->expectException(DepartmentalRoadGeocodingFailureException::class);
+        $this->expectException(RoadGeocodingFailureException::class);
 
         $this->lineSectionMaker->computeSection(RoadTypeEnum::DEPARTMENTAL_ROAD, $this->lineGeometry, $fromCoords, $toCoords);
     }

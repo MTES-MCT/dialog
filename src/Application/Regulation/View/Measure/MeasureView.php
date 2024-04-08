@@ -58,9 +58,9 @@ readonly class MeasureView
                 administrator: $location->getAdministrator(),
                 roadNumber: $location->getRoadNumber(),
                 fromPointNumber: $location->getFromPointNumber(),
-                fromAbscissa: $location->getFromAbscissa(),
+                fromAbscissa: $location->getFromAbscissa() ?? 0,
                 toPointNumber: $location->getToPointNumber(),
-                toAbscissa: $location->getToAbscissa(),
+                toAbscissa: $location->getToAbscissa() ?? 0,
             );
         }
 

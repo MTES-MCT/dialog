@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
-use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineSectionMakerInterface;
@@ -32,7 +32,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
     }
 
     /**
-     * @throws GeocodingFailureException|DepartmentalRoadGeocodingFailureException
+     * @throws GeocodingFailureException|RoadGeocodingFailureException
      */
     public function computeSection(
         string $fullLaneGeometry,

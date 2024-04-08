@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
-use App\Application\DepartmentalRoadSectionMakerInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -40,7 +40,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private MockObject $locationRepository;
     private MockObject $roadGeocoder;
     private MockObject $laneSectionMaker;
-    private MockObject $departmentalRoadSectionMaker;
+    private MockObject $roadSectionMaker;
 
     public function setUp(): void
     {
@@ -48,7 +48,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->laneSectionMaker = $this->createMock(LaneSectionMakerInterface::class);
-        $this->departmentalRoadSectionMaker = $this->createMock(DepartmentalRoadSectionMakerInterface::class);
+        $this->roadSectionMaker = $this->createMock(RoadSectionMakerInterface::class);
 
         $this->administrator = 'Département de Loire-Atlantique';
         $this->roadNumber = 'D12';
@@ -126,7 +126,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -195,7 +195,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -285,7 +285,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand($location);
@@ -309,13 +309,13 @@ final class SaveLocationCommandHandlerTest extends TestCase
             Coordinates::fromLonLat(-1.930973, 47.347917),
         ]);
 
-        $this->departmentalRoadSectionMaker
+        $this->roadSectionMaker
             ->expects(self::never())
             ->method('computeSection');
 
         $this->roadGeocoder
             ->expects(self::never())
-            ->method('computeDepartmentalRoad');
+            ->method('computeRoad');
 
         $location = $this->createMock(Location::class);
         $location
@@ -393,7 +393,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand($location);
@@ -422,7 +422,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $newToSide = 'D';
         $newToAbscissa = 200;
 
-        $this->departmentalRoadSectionMaker
+        $this->roadSectionMaker
             ->expects(self::once())
             ->method('computeSection')
             ->with(
@@ -440,7 +440,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $this->roadGeocoder
             ->expects(self::never())
-            ->method('computeDepartmentalRoad');
+            ->method('computeRoad');
 
         $location = $this->createMock(Location::class);
         $location
@@ -518,7 +518,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand($location);
@@ -549,7 +549,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
 
-        $this->departmentalRoadSectionMaker
+        $this->roadSectionMaker
             ->expects(self::once())
             ->method('computeSection')
             ->with(
@@ -567,7 +567,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $this->roadGeocoder
             ->expects(self::never())
-            ->method('computeDepartmentalRoad');
+            ->method('computeRoad');
 
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
@@ -605,7 +605,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -640,11 +640,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $this->roadGeocoder
             ->expects(self::once())
-            ->method('computeDepartmentalRoad')
+            ->method('computeRoad')
             ->with($this->roadNumber, $this->administrator)
             ->willReturn($fullDepartmentalRoadGeometry);
 
-        $this->departmentalRoadSectionMaker
+        $this->roadSectionMaker
             ->expects(self::once())
             ->method('computeSection')
             ->with(
@@ -696,7 +696,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand();
@@ -774,7 +774,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->locationRepository,
             $this->roadGeocoder,
             $this->laneSectionMaker,
-            $this->departmentalRoadSectionMaker,
+            $this->roadSectionMaker,
         );
 
         $command = new SaveLocationCommand();

@@ -8,10 +8,10 @@ use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
-use App\Infrastructure\Adapter\DepartmentalRoadSectionMaker;
+use App\Infrastructure\Adapter\RoadSectionMaker;
 use PHPUnit\Framework\TestCase;
 
-final class DepartmentalRoadSectionMakerTest extends TestCase
+final class RoadSectionMakerTest extends TestCase
 {
     public function testComputeSection(): void
     {
@@ -30,7 +30,7 @@ final class DepartmentalRoadSectionMakerTest extends TestCase
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
-        $departmentalRoadSectionMaker = new DepartmentalRoadSectionMaker(
+        $roadSectionMaker = new RoadSectionMaker(
             $lineSectionMaker,
             $geocoder,
         );
@@ -52,7 +52,7 @@ final class DepartmentalRoadSectionMakerTest extends TestCase
 
         $this->assertSame(
             'section',
-            $departmentalRoadSectionMaker->computeSection(
+            $roadSectionMaker->computeSection(
                 $fullDepartmentalRoadGeometry,
                 $administrator,
                 $roadNumber,

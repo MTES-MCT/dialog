@@ -12,7 +12,7 @@ interface RoadGeocoderInterface
 
     public function findDepartmentalRoads(string $search, string $administrator): array;
 
-    public function computeDepartmentalRoad(string $roadNumber, string $administrator): string;
+    public function computeRoad(string $roadNumber, string $administrator): string;
 
     public function computeReferencePoint(
         string $lineGeometry,

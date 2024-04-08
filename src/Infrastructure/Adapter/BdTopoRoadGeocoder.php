@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
-use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use Doctrine\DBAL\Connection;
@@ -78,7 +78,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         return $departmentalRoads;
     }
 
-    public function computeDepartmentalRoad(string $roadNumber, string $administrator): string
+    public function computeRoad(string $roadNumber, string $administrator): string
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
@@ -97,7 +97,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
                 ],
             );
         } catch (\Exception $exc) {
-            throw new DepartmentalRoadGeocodingFailureException(sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new RoadGeocodingFailureException(sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         if ($rows) {
@@ -105,7 +105,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         }
 
         $message = sprintf('no result found in route_numerotee_ou_nommee for roadNumber="%s", administrator="%s"', $roadNumber, $administrator);
-        throw new DepartmentalRoadGeocodingFailureException($message);
+        throw new RoadGeocodingFailureException($message);
     }
 
     public function computeReferencePoint(

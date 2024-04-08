@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command\Location;
 
-use App\Application\DepartmentalRoadSectionMakerInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadSectionMakerInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -19,7 +19,7 @@ final class SaveLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private RoadGeocoderInterface $roadGeocoder,
         private LaneSectionMakerInterface $laneSectionMaker,
-        private DepartmentalRoadSectionMakerInterface $departmentalRoadSectionMaker,
+        private RoadSectionMakerInterface $roadSectionMaker,
     ) {
     }
 
@@ -32,7 +32,7 @@ final class SaveLocationCommandHandler
             if ($command->roadType === RoadTypeEnum::LANE->value) {
                 $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command) : $command->geometry;
             } else {
-                $geometry = $this->computeDepartmentalRoadSectionGeometry($command);
+                $geometry = $this->computeRoadSectionGeometry($command);
             }
 
             $location = $this->locationRepository->add(
@@ -67,8 +67,8 @@ final class SaveLocationCommandHandler
                 ? $this->computeLaneGeometry($command)
                 : $command->location->getGeometry();
         } else {
-            $geometry = $this->shouldRecomputeDepartmentalRoadSectionGeometry($command)
-                ? $this->computeDepartmentalRoadSectionGeometry($command)
+            $geometry = $this->shouldRecomputeRoadSectionGeometry($command)
+                ? $this->computeRoadSectionGeometry($command)
                 : $command->location->getGeometry();
         }
 
@@ -122,15 +122,15 @@ final class SaveLocationCommandHandler
         );
     }
 
-    private function computeDepartmentalRoadSectionGeometry(SaveLocationCommand $command): string
+    private function computeRoadSectionGeometry(SaveLocationCommand $command): string
     {
         $fullDepartmentalRoadGeometry = $command->fullDepartmentalRoadGeometry;
 
         if (!$fullDepartmentalRoadGeometry) {
-            $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeDepartmentalRoad($command->roadNumber, $command->administrator);
+            $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
         }
 
-        return $this->departmentalRoadSectionMaker->computeSection(
+        return $this->roadSectionMaker->computeSection(
             $fullDepartmentalRoadGeometry,
             $command->administrator,
             $command->roadNumber,
@@ -151,7 +151,7 @@ final class SaveLocationCommandHandler
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
     }
 
-    private function shouldRecomputeDepartmentalRoadSectionGeometry(SaveLocationCommand $command): bool
+    private function shouldRecomputeRoadSectionGeometry(SaveLocationCommand $command): bool
     {
         return $command->roadNumber !== $command->location->getRoadNumber()
             || $command->administrator !== $command->location->getAdministrator()

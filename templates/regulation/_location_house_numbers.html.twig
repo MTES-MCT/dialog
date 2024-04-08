@@ -1,7 +1,7 @@
-{% if location.fromHouseNumber and location.toHouseNumber %}
+{%- if location.fromHouseNumber and location.toHouseNumber -%}
     {{ 'regulation.location.house_number_from_to'|trans({ '%from%': location.fromHouseNumber, '%to%': location.toHouseNumber }) }}
-{% elseif location.fromHouseNumber %}
+{%- elseif location.fromHouseNumber -%}
     {{ 'regulation.location.house_number_from'|trans({ '%from%': location.fromHouseNumber }) }}
-{% elseif location.toHouseNumber %}
+{%- elseif location.toHouseNumber -%}
     {{ 'regulation.location.house_number_to'|trans({ '%to%': location.toHouseNumber }) }}
-{% endif %}
+{%- endif -%}

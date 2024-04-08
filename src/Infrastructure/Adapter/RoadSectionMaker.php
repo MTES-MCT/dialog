@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
-use App\Application\DepartmentalRoadSectionMakerInterface;
-use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadSectionMakerInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 
-final class DepartmentalRoadSectionMaker implements DepartmentalRoadSectionMakerInterface
+final class RoadSectionMaker implements RoadSectionMakerInterface
 {
     public function __construct(
         private LineSectionMakerInterface $lineSectionMaker,
@@ -19,7 +19,7 @@ final class DepartmentalRoadSectionMaker implements DepartmentalRoadSectionMaker
     }
 
     /**
-     * @throws DepartmentalRoadGeocodingFailureException
+     * @throws RoadGeocodingFailureException
      */
     public function computeSection(
         string $fullDepartmentalRoadGeometry,

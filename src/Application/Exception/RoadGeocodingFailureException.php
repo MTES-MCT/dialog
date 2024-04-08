@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Exception;
 
-final class DepartmentalRoadGeocodingFailureException extends \Exception
+final class RoadGeocodingFailureException extends \Exception
 {
     public function __construct(
         string $message = '',

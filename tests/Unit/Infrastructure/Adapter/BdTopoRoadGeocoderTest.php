@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
-use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Domain\Geography\Coordinates;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
 use Doctrine\DBAL\Connection;
@@ -98,7 +98,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->roadGeocoder->findDepartmentalRoads('D32', 'Ardennes');
     }
 
-    public function testComputeDepartmentalRoad(): void
+    public function testcomputeRoad(): void
     {
         $this->conn
             ->expects(self::once())
@@ -120,31 +120,31 @@ final class BdTopoRoadGeocoderTest extends TestCase
             )
             ->willReturn([['geometry' => 'test']]);
 
-        $this->assertSame('test', $this->roadGeocoder->computeDepartmentalRoad('D110', 'Ardèche'));
+        $this->assertSame('test', $this->roadGeocoder->computeRoad('D110', 'Ardèche'));
     }
 
-    public function testComputeDepartmentalRoadNoResults(): void
+    public function testcomputeRoadNoResults(): void
     {
-        $this->expectException(DepartmentalRoadGeocodingFailureException::class);
+        $this->expectException(RoadGeocodingFailureException::class);
 
         $this->conn
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->willReturn([]);
 
-        $this->assertSame('test', $this->roadGeocoder->computeDepartmentalRoad('D110', 'Ardèche'));
+        $this->assertSame('test', $this->roadGeocoder->computeRoad('D110', 'Ardèche'));
     }
 
-    public function testComputeDepartmentalRoadUnexpectedError(): void
+    public function testcomputeRoadUnexpectedError(): void
     {
-        $this->expectException(DepartmentalRoadGeocodingFailureException::class);
+        $this->expectException(RoadGeocodingFailureException::class);
 
         $this->conn
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->computeDepartmentalRoad('D32', 'Ardennes');
+        $this->roadGeocoder->computeRoad('D32', 'Ardennes');
     }
 
     public function testComputeReferencePoint(): void

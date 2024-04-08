@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
-use App\Application\Exception\DepartmentalRoadGeocodingFailureException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
@@ -87,7 +87,7 @@ final class AddMeasureController extends AbstractRegulationController
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),
                 );
-            } catch (DepartmentalRoadGeocodingFailureException $exc) {
+            } catch (RoadGeocodingFailureException $exc) {
                 $commandFailed = true;
                 $form->get('locations')->get((string) $exc->getLocationIndex())->get('fromPointNumber')->addError(
                     new FormError(
