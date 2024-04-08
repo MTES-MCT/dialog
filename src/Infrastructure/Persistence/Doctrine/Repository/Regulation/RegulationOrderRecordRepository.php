@@ -104,8 +104,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findGeneralInformation(string $uuid): ?array
     {
         return $this->createQueryBuilder('roc')
-            ->select(sprintf(
-                'NEW %s(
+            ->select(
+                sprintf(
+                    'NEW %s(
                     roc.uuid,
                     ro.identifier,
                     org.name,
@@ -117,8 +118,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     ro.startDate,
                     ro.endDate
                 )',
-                GeneralInfoView::class,
-            ))
+                    GeneralInfoView::class,
+                ),
+            )
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.organization', 'org')
@@ -131,31 +133,15 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
-            ->select(
-                'ro.uuid',
-                'o.name as organizationName',
-                'ro.description',
-                'ro.startDate',
-                'ro.endDate',
-                'loc.roadType',
-                'loc.roadName',
-                'loc.roadNumber',
-                'ST_AsGeoJSON(loc.geometry) as geometry',
-                'm.maxSpeed',
-                'm.type',
-                'v.restrictedTypes as restrictedVehicleTypes',
-                'v.critairTypes as restrictedCritairTypes',
-                'v.exemptedTypes as exemptedVehicleTypes',
-                'v.heavyweightMaxWeight',
-                'v.maxWidth',
-                'v.maxLength',
-                'v.maxHeight',
-            )
+            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
+            ->leftJoin('m.periods', 'p')
+            ->leftJoin('p.dailyRange', 'd')
+            ->leftJoin('p.timeSlots', 't')
             ->where('roc.status = :status')
             ->setParameters([
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
@@ -179,7 +165,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'loc.uuid as locationId',
                 'loc.roadNumber',
                 'loc.roadName',
-                'ST_AsGeoJSON(loc.geometry) as geometry',
+                'loc.geometry as geometry',
                 'm.uuid as measureId',
                 'm.type as measureType',
                 'p.startDateTime as periodStartDateTime',

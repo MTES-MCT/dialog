@@ -14,7 +14,7 @@
     <field name="roadName" type="string" column="road_name" nullable="true" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />
     <field name="toHouseNumber" type="string" column="to_house_number" nullable="true" length="8" />
-    <field name="geometry" type="geometry" column="geometry" nullable="true">
+    <field name="geometry" type="geojson_geometry" column="geometry" nullable="true">
       <options>
         <option name="geometry_type">GEOMETRY</option>
         <option name="srid">4326</option>
