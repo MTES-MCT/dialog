@@ -6,7 +6,6 @@ namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-/** @group only */
 final class GetRegulationsControllerTest extends AbstractWebTestCase
 {
     public function testGetRegulationsToDatexFormat(): void

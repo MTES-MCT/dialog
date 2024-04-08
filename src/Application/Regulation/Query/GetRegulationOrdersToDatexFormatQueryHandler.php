@@ -91,17 +91,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     $overallEndTime = $period->getEndDateTime();
 
                     $validPeriods = [];
+                    $dailyRange = $period->getDailyRange();
+                    $timeSlots = $period->getTimeSlots() ?? [];
 
-                    if ($period->getDailyRange() || $period->getTimeSlots()) {
+                    if ($dailyRange || $timeSlots) {
                         $recurringTimePeriods = [];
 
-                        foreach ($period->getTimeSlots() ?? [] as $timeSlot) {
+                        foreach ($timeSlots as $timeSlot) {
                             $recurringTimePeriods[] = ['startTime' => $timeSlot->getStartTime(), 'endTime' => $timeSlot->getEndTime()];
                         }
 
                         $validPeriods[] = [
                             'recurringTimePeriods' => $recurringTimePeriods,
-                            'recurringDayWeekMonthPeriods' => $period->getDailyRange() ? [$period->getDailyRange()->getApplicableDays()] : [],
+                            'recurringDayWeekMonthPeriods' => $dailyRange ? [$dailyRange->getApplicableDays()] : [],
                         ];
                     }
 

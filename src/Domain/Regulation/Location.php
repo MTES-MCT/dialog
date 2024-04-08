@@ -76,11 +76,6 @@ class Location
         return $this->geometry;
     }
 
-    public function setGeometry(string $geometry): void
-    {
-        $this->geometry = $geometry;
-    }
-
     public function update(
         string $roadType,
         ?string $administrator,
