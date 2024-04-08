@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
-final class DatexTrafficRegulationView
+final readonly class DatexTrafficRegulationView
 {
     public function __construct(
-        public readonly string $type,
-        public readonly array $locationConditions,
-        public readonly array $vehicleConditions,
-        public readonly array $validityConditions,
-        public readonly ?int $maxSpeed = null,
+        public string $type,
+        public array $locationConditions,
+        public array $vehicleConditions,
+        public array $validityConditions,
+        public ?int $maxSpeed = null,
     ) {
     }
 }
