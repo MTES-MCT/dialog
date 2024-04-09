@@ -132,10 +132,10 @@ final class SaveLocationCommandHandler
             $command->roadNumber,
             $command->fromPointNumber,
             $command->fromSide,
-            $command->fromAbscissa,
+            $command->fromAbscissa ?? 0,
             $command->toPointNumber,
             $command->toSide,
-            $command->toAbscissa,
+            $command->toAbscissa ?? 0,
         );
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
@@ -113,7 +114,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         string $roadNumber,
         string $pointNumber,
         string $side,
-        int $abscissa = 0,
+        int $abscissa,
     ): Coordinates {
         try {
             $rows = $this->bdtopoConnection->fetchAssociative(
@@ -154,17 +155,22 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
                     'cote' => $side,
                 ],
             );
-
-            if (!$rows) {
-                throw new GeocodingFailureException(sprintf('no result found for roadNumber="%s", administrator="%s"', $roadNumber, $administrator));
-            }
-
-            $lonLat = json_decode($rows['point'], associative: true);
-            $cordinates = current($lonLat['coordinates']);
-
-            return Coordinates::fromLonLat($cordinates[0], $cordinates[1]);
         } catch (\Exception $exc) {
             throw new GeocodingFailureException(sprintf('Reference point query has failed: %s', $exc->getMessage()), previous: $exc);
         }
+
+        if (!$rows) {
+            throw new GeocodingFailureException(sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
+        }
+
+        $lonLat = json_decode($rows['point'], associative: true);
+
+        if (empty($lonLat['coordinates'])) {
+            throw new AbscissaOutOfRangeException();
+        }
+
+        $cordinates = current($lonLat['coordinates']);
+
+        return Coordinates::fromLonLat($cordinates[0], $cordinates[1]);
     }
 }

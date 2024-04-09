@@ -146,7 +146,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
     }
 
-    /** @group only */
     public function testAddDepartmentalRoad(): void
     {
         $client = $this->login();
@@ -209,6 +208,66 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
+    }
+
+    public function testAddDepartmentalRoadWithStartAbscissaOutOfRange(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add?feature_road_type=true');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '1';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '5';
+        $values['measure_form']['locations'][0]['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['fromAbscissa'] = 100000000;
+        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_fromAbscissa_error')->text());
+    }
+
+    public function testAddDepartmentalRoadWithEndAbscissaOutOfRange(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add?feature_road_type=true');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '1';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '5';
+        $values['measure_form']['locations'][0]['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['toAbscissa'] = 100000000;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_toAbscissa_error')->text());
     }
 
     public function testInvalidVehicleSetBlankRestrictedTypes(): void

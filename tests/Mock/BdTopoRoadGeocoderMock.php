@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Mock;
 
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
@@ -70,11 +71,13 @@ final class BdTopoRoadGeocoderMock implements RoadGeocoderInterface
         };
     }
 
-    public function computeReferencePoint(string $lineGeometry, string $administrator, string $roadNumber, string $pointNumber, string $side, int $abscissa = 0): Coordinates
+    public function computeReferencePoint(string $lineGeometry, string $administrator, string $roadNumber, string $pointNumber, string $side, int $abscissa): Coordinates
     {
-        return match ([$administrator, $roadNumber, $pointNumber, $side]) {
-            ['Ardèche', 'D110', '1', 'U'] => Coordinates::fromLonLat(3.162075419, 48.510493704),
-            ['Ardèche', 'D110', '5', 'U'] => Coordinates::fromLonLat(3.201738314, 48.530088505),
+        return match ([$administrator, $roadNumber, $pointNumber, $side, $abscissa]) {
+            ['Ardèche', 'D110', '1', 'U', 100] => Coordinates::fromLonLat(3.162075419, 48.510493704),
+            ['Ardèche', 'D110', '5', 'U', 650] => Coordinates::fromLonLat(3.201738314, 48.530088505),
+            ['Ardèche', 'D110', '1', 'U', 100000000] => throw new AbscissaOutOfRangeException(),
+            ['Ardèche', 'D110', '5', 'U', 100000000] => throw new AbscissaOutOfRangeException(),
             default => throw new RoadGeocodingFailureException(),
         };
     }

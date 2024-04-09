@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
+use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
@@ -78,6 +80,14 @@ final class AddMeasureController extends AbstractRegulationController
                             'canDelete' => ($regulationOrderRecord->countMeasures() + 1) > 1,
                             'preExistingMeasureUuids' => $preExistingMeasureUuids,
                         ],
+                    ),
+                );
+            } catch (AbscissaOutOfRangeException $exc) {
+                $commandFailed = true;
+                $field = $exc instanceof StartAbscissaOutOfRangeException ? 'fromAbscissa' : 'toAbscissa';
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get($field)->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators'),
                     ),
                 );
             } catch (RoadGeocodingFailureException $exc) {

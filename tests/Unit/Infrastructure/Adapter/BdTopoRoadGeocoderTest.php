@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Domain\Geography\Coordinates;
@@ -98,7 +99,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->roadGeocoder->findRoads('D32', 'Ardennes');
     }
 
-    public function testcomputeRoad(): void
+    public function testComputeRoad(): void
     {
         $this->conn
             ->expects(self::once())
@@ -123,7 +124,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->assertSame('test', $this->roadGeocoder->computeRoad('D110', 'Ardèche'));
     }
 
-    public function testcomputeRoadNoResults(): void
+    public function testComputeRoadNoResults(): void
     {
         $this->expectException(RoadGeocodingFailureException::class);
 
@@ -135,7 +136,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->assertSame('test', $this->roadGeocoder->computeRoad('D110', 'Ardèche'));
     }
 
-    public function testcomputeRoadUnexpectedError(): void
+    public function testComputeRoadUnexpectedError(): void
     {
         $this->expectException(RoadGeocodingFailureException::class);
 
@@ -193,6 +194,18 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->willReturn(['point' => '{"type":"MultiPoint","coordinates":[[3.953779408,44.771647561]]}']);
 
         $this->assertEquals(Coordinates::fromLonLat(3.953779408, 44.771647561), $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 100));
+    }
+
+    public function testComputeReferencePointAbscissaOutOfRange(): void
+    {
+        $this->expectException(AbscissaOutOfRangeException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willReturn(['point' => '{"type":"MultiPoint","coordinates":[]}']);
+
+        $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 1000000);
     }
 
     public function testComputeReferencePointNoResults(): void
