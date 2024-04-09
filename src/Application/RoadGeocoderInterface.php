@@ -20,6 +20,6 @@ interface RoadGeocoderInterface
         string $roadNumber,
         string $pointNumber,
         string $side,
-        ?int $abscissa,
+        int $abscissa = 0,
     ): Coordinates;
 }

@@ -31,12 +31,12 @@ final class LocationFormType extends AbstractType
                 ChoiceType::class,
                 options: $this->getAdministratorOptions($options['administrators']),
             )
-            ->add('fullDepartmentalRoadGeometry', HiddenType::class)
             ->add(
                 'roadNumber',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.roadNumber',
+                    'help' => 'regulation.location.roadNumber.help',
                     'required' => false, // Due to error "An invalid form control with name='x' is not focusable"
                     'label_attr' => [
                         'class' => 'required',

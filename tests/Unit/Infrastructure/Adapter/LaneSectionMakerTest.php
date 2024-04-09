@@ -7,14 +7,12 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 use App\Application\GeocoderInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\LaneSectionMaker;
 use PHPUnit\Framework\TestCase;
 
 final class LaneSectionMakerTest extends TestCase
 {
     private $fullLaneGeometry;
-    private $roadType;
     private $roadName;
     private $cityCode;
     private $fromCoords;
@@ -26,7 +24,6 @@ final class LaneSectionMakerTest extends TestCase
     protected function setUp(): void
     {
         $this->fullLaneGeometry = 'geometry';
-        $this->roadType = RoadTypeEnum::LANE;
         $this->roadName = 'Rue du Test';
         $this->cityCode = '01010';
         $this->fromCoords = Coordinates::fromLonLat(1, 41);

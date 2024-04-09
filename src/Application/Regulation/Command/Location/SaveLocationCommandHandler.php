@@ -124,11 +124,7 @@ final class SaveLocationCommandHandler
 
     private function computeRoadSectionGeometry(SaveLocationCommand $command): string
     {
-        $fullDepartmentalRoadGeometry = $command->fullDepartmentalRoadGeometry;
-
-        if (!$fullDepartmentalRoadGeometry) {
-            $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
-        }
+        $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
 
         return $this->roadSectionMaker->computeSection(
             $fullDepartmentalRoadGeometry,

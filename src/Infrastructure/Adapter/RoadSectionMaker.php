@@ -31,9 +31,9 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
     ): string {
         try {
             $fromCoords = $this->roadGeocoder
-            ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa);
+                ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa ?? 0);
             $toCoords = $this->roadGeocoder
-                ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa);
+                ->computeReferencePoint($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa ?? 0);
 
             return $this->lineSectionMaker->computeSection(
                 $fullDepartmentalRoadGeometry,
@@ -41,7 +41,7 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
                 $toCoords,
             );
         } catch (GeocodingFailureException $e) {
-            throw new RoadGeocodingFailureException('', null, $e);
+            throw new RoadGeocodingFailureException(previous: $e);
         }
     }
 }

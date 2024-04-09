@@ -73,7 +73,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAllAssociative')
             ->with(
                 '
-                    SELECT numero, ST_AsGeoJSON(geometrie) AS geometry
+                    SELECT numero
                     FROM route_numerotee_ou_nommee
                     WHERE numero LIKE :numero_pattern
                     AND gestionnaire = :gestionnaire
@@ -81,9 +81,9 @@ final class BdTopoRoadGeocoderTest extends TestCase
                 ',
                 ['numero_pattern' => 'D32%', 'gestionnaire' => 'Ardennes', 'type_de_route' => 'Départementale'],
             )
-            ->willReturn([['numero' => 'D321', 'geometry' => 'test']]);
+            ->willReturn([['numero' => 'D321']]);
 
-        $this->assertSame([['roadNumber' => 'D321', 'geometry' => 'test']], $this->roadGeocoder->findRoads('d32', 'Ardennes'));
+        $this->assertSame([['roadNumber' => 'D321']], $this->roadGeocoder->findRoads('d32', 'Ardennes'));
     }
 
     public function testfindRoadsUnexpectedError(): void
@@ -195,6 +195,18 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->assertEquals(Coordinates::fromLonLat(3.953779408, 44.771647561), $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 100));
     }
 
+    public function testComputeReferencePointNoResults(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willReturn(false);
+
+        $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 100);
+    }
+
     public function testComputeReferencePointUnexpectedError(): void
     {
         $this->expectException(GeocodingFailureException::class);
@@ -204,6 +216,6 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', null);
+        $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 0);
     }
 }

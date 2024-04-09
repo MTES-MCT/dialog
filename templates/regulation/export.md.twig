@@ -71,7 +71,7 @@ Arrête
     {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
     {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
     {%- for location in measure.locations %}
-        {% if location.roadType == 'lane' %}{{ location.roadName }} à {{ location.cityLabel }}{% include 'regulation/_location_house_numbers.html.twig' with { location } only %}{% else %}{{ location.roadNumber }} ({{ location.administrator }}) du PR {{ location.fromPointNumber}}+{{ location.fromAbscissa}} (côté {{ location.fromSide }}) au PR {{ location.toPointNumber}}+{{ location.toAbscissa}} (côté {{ location.toSide }}){% endif %}{% if not loop.last%}, {% endif %}
+        {% if location.roadType == 'lane' %}{{ location.roadName }} à {{ location.cityLabel }}{% include 'regulation/_location_house_numbers.html.twig' with { location } only %}{% else %}{{ location.roadNumber }} ({{ location.administrator }}) {% include 'regulation/_reference_points.html.twig' with { location } only %}{% endif %}{% if not loop.last%}, {% endif %}
     {%- endfor %}
     {# New line #}
 

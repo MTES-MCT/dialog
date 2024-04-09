@@ -44,16 +44,7 @@
                                 {{ location.cityLabel }}
                             {% else %}
                                 {{ location.roadNumber }} ({{ location.administrator }})
-                                {% if location.fromPointNumber and location.toPointNumber  %}
-                                    {{ 'regulation.location.reference_point'|trans({
-                                        '%fromPointNumber%': location.fromPointNumber,
-                                        '%fromAbscissa%': location.fromAbscissa,
-                                        '%fromSide%': location.fromSide,
-                                        '%toPointNumber%': location.toPointNumber,
-                                        '%toAbscissa%': location.toAbscissa,
-                                        '%toSide%': location.toSide
-                                    }) }}
-                                {% endif %}
+                                {% include 'regulation/_reference_points.html.twig' with { location } only %}
                             {% endif %}
                         </li>
                     {% endfor %}

@@ -87,7 +87,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 );
             } catch (RoadGeocodingFailureException $exc) {
                 $commandFailed = true;
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('fromPointNumber')->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadNumber')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.departmental_road_geocoding_failed', [], 'validators'),
                     ),

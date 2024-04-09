@@ -33,7 +33,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Veuillez définir une ou plusieurs localisations.', $crawler->filter('#measure_form_locations_error')->text());
     }
 
-    public function testInvalidBlankDepartmentalRoad(): void
+    public function testInvalidDepartmentalRoad(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
@@ -53,8 +53,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['roadNumber'] = '';
         $values['measure_form']['locations'][0]['fromPointNumber'] = '';
         $values['measure_form']['locations'][0]['toPointNumber'] = '';
-        $values['measure_form']['locations'][0]['fromSide'] = '';
-        $values['measure_form']['locations'][0]['toSide'] = '';
+        $values['measure_form']['locations'][0]['fromSide'] = 'A';
+        $values['measure_form']['locations'][0]['toSide'] = 'A';
         $values['measure_form']['locations'][0]['fromAbscissa'] = 'A';
         $values['measure_form']['locations'][0]['toAbscissa'] = 'A';
 
@@ -64,6 +64,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_administrator_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_fromPointNumber_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_toPointNumber_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_fromSide_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_toSide_error')->text());
         $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_fromAbscissa_error')->text());
         $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_toAbscissa_error')->text());
     }
@@ -144,6 +146,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
     }
 
+    /** @group only */
     public function testAddDepartmentalRoad(): void
     {
         $client = $this->login();
@@ -167,7 +170,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['toSide'] = 'U';
         $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['toAbscissa'] = 650;
-        $values['measure_form']['locations'][0]['fullDepartmentalRoadGeometry'] = '{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -206,7 +208,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échouée. Veuillez vérifier que ces PR appartiennent bien à une même portion de voie.', $crawler->filter('#measure_form_locations_0_fromPointNumber_error')->text());
+        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
     }
 
     public function testInvalidVehicleSetBlankRestrictedTypes(): void

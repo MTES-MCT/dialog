@@ -50,7 +50,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
-                    SELECT numero, ST_AsGeoJSON(geometrie) AS geometry
+                    SELECT numero
                     FROM route_numerotee_ou_nommee
                     WHERE numero LIKE :numero_pattern
                     AND gestionnaire = :gestionnaire
@@ -71,7 +71,6 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         foreach ($rows as $row) {
             $departmentalRoads[] = [
                 'roadNumber' => $row['numero'],
-                'geometry' => $row['geometry'],
             ];
         }
 
@@ -114,7 +113,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         string $roadNumber,
         string $pointNumber,
         string $side,
-        ?int $abscissa,
+        int $abscissa = 0,
     ): Coordinates {
         try {
             $rows = $this->bdtopoConnection->fetchAssociative(
@@ -151,10 +150,14 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
                     'route' => $roadNumber,
                     'gestionnaire' => $administrator,
                     'numero' => $pointNumber,
-                    'abscisse' => $abscissa ?? 0,
+                    'abscisse' => $abscissa,
                     'cote' => $side,
                 ],
             );
+
+            if (!$rows) {
+                throw new GeocodingFailureException(sprintf('no result found for roadNumber="%s", administrator="%s"', $roadNumber, $administrator));
+            }
 
             $lonLat = json_decode($rows['point'], associative: true);
             $cordinates = current($lonLat['coordinates']);

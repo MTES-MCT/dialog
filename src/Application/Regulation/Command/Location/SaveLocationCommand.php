@@ -24,7 +24,6 @@ final class SaveLocationCommand implements CommandInterface
     public ?Coordinates $toCoords = null;
     public ?string $geometry;
     public ?Measure $measure;
-    public ?string $fullDepartmentalRoadGeometry = null;
     private ?bool $isEntireStreetFormValue = null;
     public ?string $administrator = null;
     public ?string $roadNumber = null;
@@ -69,7 +68,6 @@ final class SaveLocationCommand implements CommandInterface
         if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
-            $this->fullDepartmentalRoadGeometry = null;
             $this->fromPointNumber = null;
             $this->toPointNumber = null;
             $this->fromAbscissa = null;

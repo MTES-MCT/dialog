@@ -7,7 +7,6 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Exception\GeocodingFailureException;
-use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -72,7 +71,7 @@ final class SaveMeasureCommandHandler
                     $locationCommand->measure = $command->measure;
                     $location = $this->commandBus->handle($locationCommand);
                     $locationsStillPresentUuids[] = $location->getUuid();
-                } catch (GeocodingFailureException|RoadGeocodingFailureException $e) {
+                } catch (GeocodingFailureException $e) {
                     $e->setLocationIndex($index);
                     throw $e;
                 }
@@ -117,7 +116,7 @@ final class SaveMeasureCommandHandler
             try {
                 $location = $this->commandBus->handle($locationCommand);
                 $measure->addLocation($location);
-            } catch (GeocodingFailureException|RoadGeocodingFailureException $e) {
+            } catch (GeocodingFailureException $e) {
                 $e->setLocationIndex($index);
                 throw $e;
             }

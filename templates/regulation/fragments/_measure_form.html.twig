@@ -221,14 +221,12 @@
                             class="fr-x-autocomplete"
                             data-autocomplete-target="results">
                         </ul>
-                    {{ form_row(form.fullDepartmentalRoadGeometry, { attr: {'data-autocomplete-target': 'hidden'} }) }}
-                    {{ form_errors(form.fullDepartmentalRoadGeometry) }}
                 </div>
 
                 <fieldset
                     aria-labelledby="regulation-location-{{ index }}-reference-point"
                 >
-                    <legend id="regulation-location-{{ index }}-reference-point" class="required">
+                    <legend id="regulation-location-{{ index }}-reference-point">
                         <span class="fr-x-label-content">{{ 'regulation.location.referencePoint'|trans }}</span>
                     </legend>
                     <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
@@ -240,9 +238,9 @@
                             {{ 'regulation.location.referencePoint.from'|trans }}
                         </legend>
                         <div class="fr-grid-row fr-grid-row--gutters">
-                            {{ form_row(form.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
-                            {{ form_row(form.fromSide, { row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-select'}}) }}
-                            {{ form_row(form.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
+                            {{ form_row(form.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                            {{ form_row(form.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                            {{ form_row(form.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                         </div>
                     </fieldset>
                     <fieldset
@@ -253,9 +251,9 @@
                             {{ 'regulation.location.referencePoint.to'|trans }}
                         </legend>
                         <div class="fr-grid-row fr-grid-row--gutters">
-                            {{ form_row(form.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
-                            {{ form_row(form.toSide, { row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-select'}}) }}
-                            {{ form_row(form.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
+                            {{ form_row(form.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                            {{ form_row(form.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                            {{ form_row(form.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                         </div>
                     </fieldset>
                 </fieldset>

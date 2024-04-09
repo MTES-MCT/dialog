@@ -474,6 +474,10 @@
                 <source>regulation.location.roadNumber</source>
                 <target>Numéro de la départementale</target>
             </trans-unit>
+            <trans-unit id="regulation.location.roadNumber.help">
+                <source>regulation.location.roadNumber.help</source>
+                <target>Indiquez le numéro de la départementale, par exemple D905</target>
+            </trans-unit>
             <trans-unit id="regulation.location.roadNumber.results_label">
                 <source>regulation.location.roadNumber.results_label</source>
                 <target>Numéros des départementales suggérés</target>

@@ -286,7 +286,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échouée. Veuillez vérifier que ces PR appartiennent bien à une même portion de voie.', $crawler->filter('#measure_form_locations_0_fromPointNumber_error')->text());
+        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
