@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Twig;
 
-use App\Application\DateUtilsInterface;
 use App\Application\StringUtilsInterface;
 use App\Infrastructure\FeatureFlagService;
 use Symfony\Component\Form\FormError;
@@ -16,7 +15,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function __construct(
         string $clientTimezone,
-        private DateUtilsInterface $dateUtils,
         private StringUtilsInterface $stringUtils,
         private FeatureFlagService $featureFlagService,
     ) {
@@ -26,7 +24,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new \Twig\TwigFunction('app_now', [$this, 'getNow']),
             new \Twig\TwigFunction('app_datetime', [$this, 'formatDateTime']),
             new \Twig\TwigFunction('app_time', [$this, 'formatTime']),
             new \Twig\TwigFunction('app_number', [$this, 'formatNumber']),
@@ -36,11 +33,6 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             new \Twig\TwigFunction('app_is_fieldset_error', [$this, 'isFieldsetError']),
             new \Twig\TwigFunction('app_is_feature_enabled', [$this, 'isFeatureEnabled']),
         ];
-    }
-
-    public function getNow(): \DateTimeInterface
-    {
-        return $this->dateUtils->getNow();
     }
 
     /**

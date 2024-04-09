@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Api;
 
+use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,7 @@ final class GetRegulationsController
 {
     public function __construct(
         private \Twig\Environment $twig,
+        private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
     ) {
     }
@@ -29,6 +31,7 @@ final class GetRegulationsController
 
         return new Response(
             $this->twig->render('api/regulations.xml.twig', [
+                'publicationTime' => $this->dateUtils->getNow(),
                 'regulationOrders' => $regulationOrders,
             ]),
         );
