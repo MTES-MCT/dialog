@@ -9,6 +9,7 @@ use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Infrastructure\Adapter\StringUtils;
 use App\Infrastructure\FeatureFlagService;
 use App\Infrastructure\Twig\AppExtension;
+use App\Tests\Mock\DateUtilsMock;
 use App\Tests\TimezoneHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormError;
@@ -20,13 +21,16 @@ class AppExtensionTest extends TestCase
     use TimezoneHelper;
 
     private AppExtension $extension;
+    private $dateUtils;
     private $featureFlagService;
 
     protected function setUp(): void
     {
+        $this->dateUtils = new DateUtilsMock();
         $this->featureFlagService = $this->createMock(FeatureFlagService::class);
         $this->extension = new AppExtension(
             'Etc/GMT-1', // Independent of Daylight Saving Time (DST).
+            $this->dateUtils,
             new StringUtils(),
             $this->featureFlagService,
         );
@@ -34,7 +38,12 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(8, $this->extension->getFunctions());
+        $this->assertCount(9, $this->extension->getFunctions());
+    }
+
+    public function testNow(): void
+    {
+        $this->assertEquals($this->dateUtils->getNow(), $this->extension->getNow());
     }
 
     public function testFormatDateTimeDateOnly(): void
