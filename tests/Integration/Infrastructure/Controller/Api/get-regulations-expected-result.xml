@@ -427,6 +427,13 @@
             </issuingAuthority>
             <regulationId>06549047-db9d-74bb-8000-754a6f2ff4c3</regulationId>
             <status>madeAndImplemented</status>
+            <validityByOrder>
+                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                <com:validityTimeSpecification>
+                    <com:overallStartTime>2021-11-02T00:00:00.000Z</com:overallStartTime>
+                    <com:overallEndTime>2021-11-06T23:59:59.000Z</com:overallEndTime>
+                </com:validityTimeSpecification>
+            </validityByOrder>
 
             <trafficRegulation>
                 <status>active</status>
@@ -436,15 +443,74 @@
 
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-                    <conditions xsi:type="ValidityCondition">
-                        <negate>false</negate>
-                        <validityByOrder>
-                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                            <com:validityTimeSpecification>
-                                <com:overallStartTime>2021-11-02T00:00:00.000Z</com:overallStartTime>
-                                <com:overallEndTime>2021-11-06T23:59:59.000Z</com:overallEndTime>
-                            </com:validityTimeSpecification>
-                        </validityByOrder>
+
+                    <conditions xsi:type="ConditionSet">
+                        <operator>or</operator>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:validPeriod>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>18:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>22:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringDayWeekMonthPeriod>
+                                            <com:applicableDay>monday</com:applicableDay>
+                                            <com:applicableDay>tuesday</com:applicableDay>
+                                            <com:applicableDay>wednesday</com:applicableDay>
+                                            <com:applicableDay>thursday</com:applicableDay>
+                                            <com:applicableDay>friday</com:applicableDay>
+                                            <com:applicableDay>saturday</com:applicableDay>
+                                            <com:applicableDay>sunday</com:applicableDay>
+                                        </com:recurringDayWeekMonthPeriod>
+                                    </com:validPeriod>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:validPeriod>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringDayWeekMonthPeriod>
+                                            <com:applicableDay>tuesday</com:applicableDay>
+                                            <com:applicableDay>thursday</com:applicableDay>
+                                        </com:recurringDayWeekMonthPeriod>
+                                    </com:validPeriod>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:validPeriod>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringDayWeekMonthPeriod>
+                                            <com:applicableDay>tuesday</com:applicableDay>
+                                        </com:recurringDayWeekMonthPeriod>
+                                    </com:validPeriod>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>                        
                     </conditions>
 
                     <conditions xsi:type="ConditionSet">
@@ -494,6 +560,13 @@
             </issuingAuthority>
             <regulationId>2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c</regulationId>
             <status>madeAndImplemented</status>
+            <validityByOrder>
+                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                <com:validityTimeSpecification>
+                    <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
+                    <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
+                </com:validityTimeSpecification>
+            </validityByOrder>
 
             <trafficRegulation>
                 <status>active</status>
@@ -503,16 +576,6 @@
 
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-                    <conditions xsi:type="ValidityCondition">
-                        <negate>false</negate>
-                        <validityByOrder>
-                            <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                            <com:validityTimeSpecification>
-                                <com:overallStartTime>2023-03-10T00:00:00.000Z</com:overallStartTime>
-                                <com:overallEndTime>2023-03-20T23:59:59.000Z</com:overallEndTime>
-                            </com:validityTimeSpecification>
-                        </validityByOrder>
-                    </conditions>
 
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
