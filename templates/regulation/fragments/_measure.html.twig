@@ -45,7 +45,14 @@
                             {% else %}
                                 {{ location.roadNumber }} ({{ location.administrator }})
                                 {% if location.fromPointNumber and location.toPointNumber  %}
-                                    {{ 'regulation.location.reference_point'|trans({ '%fromPointNumber%': location.fromPointNumber, '%fromAbscissa%': location.fromAbscissa, '%toPointNumber%': location.toPointNumber, '%toAbscissa%': location.toAbscissa }) }}
+                                    {{ 'regulation.location.reference_point'|trans({
+                                        '%fromPointNumber%': location.fromPointNumber,
+                                        '%fromAbscissa%': location.fromAbscissa,
+                                        '%fromSide%': location.fromSide,
+                                        '%toPointNumber%': location.toPointNumber,
+                                        '%toAbscissa%': location.toAbscissa,
+                                        '%toSide%': location.toSide
+                                    }) }}
                                 {% endif %}
                             {% endif %}
                         </li>

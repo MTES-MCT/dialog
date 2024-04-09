@@ -16,8 +16,10 @@ final readonly class LocationView
         public ?string $roadNumber,
         public ?string $fromPointNumber,
         public ?int $fromAbscissa,
+        public ?string $fromSide,
         public ?string $toPointNumber,
         public ?int $toAbscissa,
+        public ?string $toSide,
     ) {
     }
 }

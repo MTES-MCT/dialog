@@ -176,7 +176,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('D110 (Ardèche) du PR 1+100 au PR 5+650', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('D110 (Ardèche) du PR 1+100 (côté U) au PR 5+650 (côté U)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testAddDepartmentalRoadWithUnknownPointNumbers(): void

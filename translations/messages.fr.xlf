@@ -516,7 +516,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.reference_point">
                 <source>regulation.location.reference_point</source>
-                <target>du PR %fromPointNumber%+%fromAbscissa% au PR %toPointNumber%+%toAbscissa%</target>
+                <target>du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)</target>
             </trans-unit>
             <trans-unit id="regulation.location.house_number_from_to">
                 <source>regulation.location.house_number_from_to</source>

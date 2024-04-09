@@ -59,8 +59,10 @@ readonly class MeasureView
                 roadNumber: $location->getRoadNumber(),
                 fromPointNumber: $location->getFromPointNumber(),
                 fromAbscissa: $location->getFromAbscissa() ?? 0,
+                fromSide: $location->getFromSide(),
                 toPointNumber: $location->getToPointNumber(),
                 toAbscissa: $location->getToAbscissa() ?? 0,
+                toSide: $location->getToSide(),
             );
         }
 
