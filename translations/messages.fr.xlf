@@ -1210,7 +1210,7 @@
             <trans-unit id="landing.road_users.road_network.city.description.part2">
                 <source>landing.road_users.road_network.city.description.part2</source>
                 <target>Dans certains cas, cette responsabilité est confiée à une Métropole ou une
-                    communauté de communes, d'agglomération ou urbaine. On compte prprès de 700 000 km
+                    communauté de communes, d'agglomération ou urbaine. On compte près de 700 000 km
                     de ces routes sur l'ensemble du territoire, gérées par plus de 36 000 communes.</target>
             </trans-unit>
             <trans-unit id="landing.road_users.road_network.departement.title">
