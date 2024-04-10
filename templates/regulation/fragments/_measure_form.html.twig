@@ -12,7 +12,7 @@
         data-remove-target="this"
         data-form-collection-target="collectionItem"
     >
-        <div class ="app-card__header">
+        <div class="app-card__header">
             <div class="app-card__title fr-text--heavy">
                 {{ 'regulation.period.title'|trans }}
             </div>
@@ -119,25 +119,26 @@
 
 {% macro timeSlots_list_item(form, index) %}
     <li
+        class="fr-mt-3w"
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
     >
-        <div class="fr-container--fluid">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
-                {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4'}, attr: {class: 'fr-input'}}) }}
-                <div class="fr-col-12 fr-col-sm-4">
+        <div class="fr-x-container--fluid">
+            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4 fr-mb-0'}, attr: {class: 'fr-input'}}) }}
+                {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class:'fr-col-12 fr-col-sm-4 fr-mb-0'}, attr: {class: 'fr-input'}}) }}
+                <div class="fr-col">
                     <button
                         type="button"
-                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line fr-mt-5w"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
                         data-action="remove#removeElement"
                         aria-label="{{ 'regulation.timeSlots.remove'|trans }}"
                     >
                     </button>
                     <button
                         type="button"
-                        class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line fr-mt-5w"
+                        class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line"
                         data-action="form-collection#addCollectionElement"
                         aria-controls="period-list"
                         aria-label="{{ 'regulation.timeSlots.add'|trans }}"
@@ -421,7 +422,7 @@
                                 {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
                                 <ul
                                     id="period-list"
-                                    class="fr-raw-list"
+                                    class="fr-raw-list fr-fieldset__element"
                                     data-testid="period-list"
                                     data-form-collection-target="collectionContainer"
                                     aria-label="{{ form.periods.vars.label|trans }}"

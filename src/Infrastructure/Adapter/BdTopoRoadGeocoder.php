@@ -164,13 +164,17 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         }
 
         $lonLat = json_decode($row['point'], associative: true);
+        $coordinates = $lonLat['coordinates'];
 
-        if (empty($lonLat['coordinates'])) {
+        if (empty($coordinates)) {
             throw new AbscissaOutOfRangeException();
         }
 
-        $cordinates = current($lonLat['coordinates']);
-
-        return Coordinates::fromLonLat($cordinates[0], $cordinates[1]);
+        // Coordinates can be a POINT [1, 2] or a MULTIPOINT [[1, 2], [3, 4]]
+        if (\is_array($coordinates[0])) {
+            return Coordinates::fromLonLat($coordinates[0][0], $coordinates[0][1]);
+        } else {
+            return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
+        }
     }
 }
