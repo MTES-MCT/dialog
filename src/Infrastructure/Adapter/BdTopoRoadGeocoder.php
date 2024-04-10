@@ -117,7 +117,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         int $abscissa,
     ): Coordinates {
         try {
-            $rows = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopoConnection->fetchAssociative(
                 '
                     WITH pr as (
                         SELECT abscisse + :abscisse as abscisse
@@ -159,11 +159,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
             throw new GeocodingFailureException(sprintf('Reference point query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        if (!$rows) {
+        if (!$row) {
             throw new GeocodingFailureException(sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
         }
 
-        $lonLat = json_decode($rows['point'], associative: true);
+        $lonLat = json_decode($row['point'], associative: true);
 
         if (empty($lonLat['coordinates'])) {
             throw new AbscissaOutOfRangeException();
