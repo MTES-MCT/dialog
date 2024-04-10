@@ -156,26 +156,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulationOrdersForCifsIncidentFormat(): array
     {
         return $this->createQueryBuilder('roc')
-            ->select(
-                'roc.createdAt',
-                'ro.description',
-                'ro.category',
-                'ro.startDate as regulationOrderStartDate',
-                'ro.endDate as regulationOrderEndDate',
-                'loc.uuid as locationId',
-                'loc.roadNumber',
-                'loc.roadName',
-                'loc.geometry as geometry',
-                'm.uuid as measureId',
-                'm.type as measureType',
-                'p.startDateTime as periodStartDateTime',
-                'p.endDateTime as periodEndDateTime',
-                'd.applicableDays',
-                't.startTime',
-                't.endTime',
-            )
+            ->addSelect('ro', 'loc', 'm', 'p', 'd', 't')
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('m.vehicleSet', 'v')
@@ -193,11 +175,34 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
             ])
-            ->orderBy('m.uuid')
-            ->orderBy('loc.uuid')
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function convertToCifsPolylines(string $geometry): array
+    {
+        $rows = $this->getEntityManager()
+            ->getConnection()
+            ->fetchAllAssociative(
+                'WITH linestring AS (
+                    -- Split the geometry into its individual LINESTRING components
+                    SELECT (components.dump).geom AS geom FROM (
+                        SELECT ST_Dump(ST_LineMerge(:geom)) AS dump
+                    ) AS components
+                )
+                SELECT array_to_string(
+                    array(
+                        SELECT ST_Y(d.geom) || \' \' || ST_X(d.geom)
+                        FROM ST_DumpPoints(linestring.geom) AS d
+                    ),
+                    \' \'
+                ) AS polyline
+                FROM linestring',
+                ['geom' => $geometry],
+            );
+
+        return array_map(fn ($row) => $row['polyline'], $rows);
     }
 
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord

@@ -26,6 +26,8 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findRegulationOrdersForCifsIncidentFormat(): array;
 
+    public function convertToCifsPolylines(string $geometry): array;
+
     public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 
     public function findIdentifiersForSource(string $source): array;
