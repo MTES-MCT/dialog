@@ -1318,14 +1318,6 @@
                 <source>regulation.measure.type.noEntry</source>
                 <target>Circulation interdite</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.type.alternateRoad">
-                <source>regulation.measure.type.alternateRoad</source>
-                <target>Circulation alternée</target>
-            </trans-unit>
-            <trans-unit id="regulation.measure.type.oneWayTraffic">
-                <source>regulation.measure.type.oneWayTraffic</source>
-                <target>Circulation à sens unique</target>
-            </trans-unit>
             <trans-unit id="regulation.measure.type.speedLimitation">
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>

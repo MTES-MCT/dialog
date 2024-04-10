@@ -171,7 +171,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $values = $form->getPhpValues();
         // Add complete dailyRange
-        $values['measure_form']['type'] = 'alternateRoad';
+        $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
