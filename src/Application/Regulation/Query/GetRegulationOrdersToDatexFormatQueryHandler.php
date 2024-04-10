@@ -37,7 +37,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
                 $measureType = $measure->getType();
-                $maxSpeed = $measure->getMaxSpeed();
                 $vehicleSet = $measure->getVehicleSet();
 
                 $vehicleConditions = [];
@@ -119,7 +118,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     $locationConditions,
                     $vehicleConditions,
                     $validityConditions,
-                    $maxSpeed,
                 );
             }
 

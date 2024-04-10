@@ -17,7 +17,6 @@ readonly class MeasureView
         public string $type,
         public ?iterable $periods = null,
         public ?VehicleSetView $vehicleSet = null,
-        public ?int $maxSpeed = null,
         public array $locations = [],
     ) {
     }
@@ -65,7 +64,6 @@ readonly class MeasureView
             $measure->getType(),
             $periods,
             VehicleSetView::fromEntity($measure->getVehicleSet()),
-            $measure->getMaxSpeed(),
             $locations,
         );
     }

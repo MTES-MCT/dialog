@@ -111,7 +111,6 @@ final class DuplicateRegulationCommandHandler
                 $measureCommand = new SaveMeasureCommand($duplicatedRegulationOrderRecord->getRegulationOrder());
                 $measureCommand->type = $measure->getType();
                 $measureCommand->createdAt = $measure->getCreatedAt();
-                $measureCommand->maxSpeed = $measure->getMaxSpeed();
                 $measureCommand->vehicleSet = $vehicleSetCommand;
                 $measureCommand->periods = $periodCommands;
                 $measureCommand->locations = $locationCommands;

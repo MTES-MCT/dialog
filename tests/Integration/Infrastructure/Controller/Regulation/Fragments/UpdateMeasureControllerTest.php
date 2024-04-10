@@ -29,40 +29,6 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#measure_form_type_error')->text());
     }
 
-    public function testWithNegativeMaxSpeed(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $form['measure_form[type]'] = 'speedLimitation';
-        $form['measure_form[maxSpeed]'] = '-10';
-
-        $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#measure_form_maxSpeed_error')->text());
-    }
-
-    public function testWithoutMaxSpeed(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $form['measure_form[type]'] = 'speedLimitation';
-        $form['measure_form[maxSpeed]'] = '';
-
-        $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_maxSpeed_error')->text());
-    }
-
     public function testAddAndRemoveLocation(): void
     {
         $client = $this->login();

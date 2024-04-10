@@ -10,7 +10,6 @@ use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
-use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
 
@@ -26,12 +25,8 @@ final class SaveMeasureCommandHandler
 
     public function __invoke(SaveMeasureCommand $command): Measure
     {
-        if ($command->type != MeasureTypeEnum::SPEED_LIMITATION->value) {
-            $command->maxSpeed = null;
-        }
-
         if ($command->measure) {
-            $command->measure->update($command->type, $command->maxSpeed);
+            $command->measure->update($command->type);
 
             if ($command->vehicleSet) {
                 $command->vehicleSet->measure = $command->measure;
@@ -93,7 +88,6 @@ final class SaveMeasureCommandHandler
                 regulationOrder: $command->regulationOrder,
                 type: $command->type,
                 createdAt: $command->createdAt ?? $this->dateUtils->getNow(),
-                maxSpeed: $command->maxSpeed,
             ),
         );
 

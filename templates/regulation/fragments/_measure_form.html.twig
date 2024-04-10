@@ -329,11 +329,7 @@
                         <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
                         <h3 class="app-card__title fr-h4 fr-mb-0">
                             {% if measure %}
-                                {% if measure.type == 'speedLimitation' %}
-                                    {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
-                                {% else %}
-                                    {{ ('regulation.measure.type.' ~ measure.type)|trans }}
-                                {% endif %}
+                                {{ ('regulation.measure.type.' ~ measure.type)|trans }}
                             {% else %}
                                 {{ 'regulation.measure'|trans}}
                             {% endif %}
@@ -345,33 +341,10 @@
                     >
                         {{ form_errors(form) }}
 
-                        <div data-controller="form-reveal">
-                            {{ form_row(form.type, {
-                                group_class: 'fr-select-group',
-                                widget_class: 'fr-select',
-                                row_attr: {
-                                    'data-controller': 'condition',
-                                    'data-condition-equals-value': 'speedLimitation',
-                                    'data-action':
-                                    'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
-                                },
-                            }) }}
-
-                            {{ form_row(form.maxSpeed, {
-                                group_class: 'fr-input-group',
-                                widget_class: 'fr-input',
-                                row_attr: {
-                                    'data-form-reveal-target': 'section',
-                                    hidden: form.type.vars.value != 'speedLimitation',
-                                    'class': 'fr-pb-3w',
-                                },
-                                attr: {
-                                    'class': 'fr-x-max-w-32w fr-mt-1w',
-                                    'data-form-reveal-target': 'form-control',
-                                },
-                                widget_suffix: 'regulation.measure.maxSpeed.unit'|trans
-                            }) }}
-                        </div>
+                        {{ form_row(form.type, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                        }) }}
 
                         {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index: 0 } only %}
 

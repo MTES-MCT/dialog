@@ -1322,14 +1322,6 @@
                 <source>regulation.measure.type.alternateRoad</source>
                 <target>Circulation alternée</target>
             </trans-unit>
-            <trans-unit id="regulation.measure.type.oneWayTraffic">
-                <source>regulation.measure.type.oneWayTraffic</source>
-                <target>Circulation à sens unique</target>
-            </trans-unit>
-            <trans-unit id="regulation.measure.type.speedLimitation">
-                <source>regulation.measure.type.speedLimitation</source>
-                <target>Limitation de vitesse</target>
-            </trans-unit>
             <trans-unit id="regulation.measure.card.title">
                 <source>regulation.measure.card.title</source>
                 <target>Mesure</target>
@@ -1337,18 +1329,6 @@
             <trans-unit id="regulation.measure.card.description">
                 <source>regulation.measure.card.description</source>
                 <target>Indiquez le type de restriction et ses localisations</target>
-            </trans-unit>
-            <trans-unit id="regulation.measure.maxSpeed">
-                <source>regulation.measure.maxSpeed</source>
-                <target>Vitesse limitée à %maxSpeed% km/h</target>
-            </trans-unit>
-            <trans-unit id="regulation.measure.maxSpeed.title">
-                <source>regulation.measure.maxSpeed.title</source>
-                <target>Vitesse maximale autorisée</target>
-            </trans-unit>
-            <trans-unit id="regulation.measure.maxSpeed.unit">
-                <source>regulation.measure.maxSpeed.unit</source>
-                <target> Km/h</target>
             </trans-unit>
             <trans-unit id="regulation.period.days.monday">
                 <source>regulation.period.days.monday</source>

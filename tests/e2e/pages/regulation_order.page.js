@@ -58,12 +58,12 @@ export class RegulationOrderPage {
     }
 
     /**
-     * @param {{maxSpeed?: string, cityLabel: string, roadName: string, expectedIndex: number, restrictionType: string}} args
+     * @param {{cityLabel: string, roadName: string, expectedIndex: number, restrictionType: string}} args
      * @param {{doBegin: boolean}} options
      *
      * @returns Locator
      */
-    async addMeasureWithLocation({ cityLabel, roadName, maxSpeed, restrictionType, expectedIndex }, { doBegin } = { doBegin: true }) {
+    async addMeasureWithLocation({ cityLabel, roadName, restrictionType, expectedIndex }, { doBegin } = { doBegin: true }) {
         if (doBegin) {
             await this.beginNewMeasure();
         }
@@ -71,10 +71,6 @@ export class RegulationOrderPage {
         const restrictionTypeField = this.page.getByRole('combobox', { name: 'Type de restriction' });
         expect(await restrictionTypeField.getAttribute('name')).toBe(`measure_form[type]`);
         await restrictionTypeField.selectOption({ label: restrictionType });
-
-        if (maxSpeed) {
-            await this.page.getByLabel('Vitesse maximale autorisée').fill(maxSpeed);
-        }
 
         await this.page.getByTestId(/allVehicles-\d+-yes/i).click();
 

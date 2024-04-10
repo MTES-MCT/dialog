@@ -14,7 +14,6 @@ use App\Domain\Regulation\RegulationOrder;
 final class SaveMeasureCommand implements CommandInterface
 {
     public ?string $type;
-    public ?int $maxSpeed = null;
     /** @var SaveLocationCommand[] */
     public array $locations = [];
     public array $periods = [];
@@ -35,7 +34,6 @@ final class SaveMeasureCommand implements CommandInterface
 
         $command->type = $measure?->getType();
         $command->createdAt = $measure?->getCreatedAt();
-        $command->maxSpeed = $measure?->getMaxSpeed();
 
         if ($measure) {
             $vehicleSet = $measure->getVehicleSet();

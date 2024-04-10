@@ -11,7 +11,6 @@ final readonly class DatexTrafficRegulationView
         public array $locationConditions,
         public array $vehicleConditions,
         public array $validityConditions,
-        public ?int $maxSpeed = null,
     ) {
     }
 }

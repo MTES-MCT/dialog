@@ -12,7 +12,6 @@ use App\Infrastructure\Form\Regulation\VehicleSetFormType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,17 +25,6 @@ final class MeasureFormType extends AbstractType
                 'type',
                 ChoiceType::class,
                 options: $this->getTypeOptions(),
-            )
-            ->add(
-                'maxSpeed',
-                NumberType::class,
-                options: [
-                    'required' => false,
-                    'label' => 'regulation.measure.maxSpeed.title',
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
-                ],
             )
             ->add('vehicleSet', VehicleSetFormType::class)
             ->add('periods', CollectionType::class, [

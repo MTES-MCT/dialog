@@ -29,14 +29,6 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2023-05-11'),
         );
 
-        $typicalMeasureToRemove = new Measure(
-            '0658d836-de22-75f2-8000-bb36c98113a5',
-            $this->getReference('typicalRegulationOrder'),
-            MeasureTypeEnum::SPEED_LIMITATION->value,
-            new \DateTime('2023-05-11'),
-            maxSpeed: 50,
-        );
-
         $publishedMeasure = new Measure(
             self::UUID_PUBLISHED,
             $this->getReference('publishedRegulationOrder'),
@@ -66,14 +58,12 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         );
 
         $manager->persist($typicalMeasure);
-        $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
         $manager->persist($permanentMeasure);
         $manager->persist($fullCityMeasure);
         $manager->persist($cifsMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
-        $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
         $this->addReference('publishedMeasure', $publishedMeasure);
         $this->addReference('permanentMeasure', $permanentMeasure);
         $this->addReference('fullCityMeasure', $fullCityMeasure);

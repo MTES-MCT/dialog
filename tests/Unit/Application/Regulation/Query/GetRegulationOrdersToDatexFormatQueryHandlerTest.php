@@ -95,10 +95,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
-        $measure1
-            ->expects(self::once())
-            ->method('getMaxSpeed')
-            ->willReturn(null);
 
         $vehicleSet1 = $this->createMock(VehicleSet::class);
         $measure1
@@ -217,10 +213,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
-        $measure2
-            ->expects(self::once())
-            ->method('getMaxSpeed')
-            ->willReturn(null);
 
         $measure2
             ->expects(self::once())
@@ -336,10 +328,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
-        $measure3
-            ->expects(self::once())
-            ->method('getMaxSpeed')
-            ->willReturn(null);
 
         $vehicleSet3 = $this->createMock(VehicleSet::class);
         $measure3
@@ -412,111 +400,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->method('getMeasures')
             ->willReturn([$measure3]);
 
-        $regulationOrderRecord3 = $this->createMock(RegulationOrderRecord::class);
-        $regulationOrder3 = $this->createMock(RegulationOrder::class);
-        $regulationOrderRecord3
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder3);
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('12410fb8-a2b9-4449-a7d5-a4f409807f99');
-        $regulationOrderRecord3
-            ->expects(self::once())
-            ->method('getOrganizationName')
-            ->willReturn('Autorité 3');
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getDescription')
-            ->willReturn('Description 3');
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate3);
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($endDate3);
-
-        $measure4 = $this->createMock(Measure::class);
-        $measure4
-            ->expects(self::once())
-            ->method('getType')
-            ->willReturn(MeasureTypeEnum::SPEED_LIMITATION->value);
-        $measure4
-            ->expects(self::once())
-            ->method('getMaxSpeed')
-            ->willReturn(50);
-
-        $vehicleSet4 = $this->createMock(VehicleSet::class);
-        $measure4
-            ->expects(self::once())
-            ->method('getVehicleSet')
-            ->willReturn($vehicleSet4);
-        $vehicleSet4
-            ->expects(self::once())
-            ->method('getRestrictedTypes')
-            ->willReturn([VehicleTypeEnum::HAZARDOUS_MATERIALS->value]);
-        $vehicleSet4
-            ->expects(self::never())
-            ->method('getCritairTypes');
-        $vehicleSet4
-            ->expects(self::never())
-            ->method('getMaxHeight');
-        $vehicleSet4
-            ->expects(self::never())
-            ->method('getMaxWidth');
-        $vehicleSet4
-            ->expects(self::never())
-            ->method('getMaxLength');
-        $vehicleSet4
-            ->expects(self::never())
-            ->method('getHeavyweightMaxWeight');
-        $vehicleSet4
-            ->expects(self::once())
-            ->method('getExemptedTypes')
-            ->willReturn([]);
-
-        $locationView4 = new DatexLocationView(
-            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
-            roadName: 'D303',
-            roadNumber: null,
-            geometry: '{"type":"MultiLineString","coordinates":[[[-1.252483043,43.167928836],[-1.252508262,43.168020621],[-1.252512651,43.168130343],[-1.252507561,43.168211614]],[[-1.252488731,43.168340267],[-1.252486756,43.168430423],[-1.252503915,43.168529732],[-1.25252801,43.168606249],[-1.25258819,43.168671432]]]}',
-        );
-
-        $location4 = $this->createMock(Location::class);
-        $location4
-            ->expects(self::once())
-            ->method('getRoadType')
-            ->willReturn($locationView4->roadType);
-        $location4
-            ->expects(self::once())
-            ->method('getRoadName')
-            ->willReturn($locationView4->roadName);
-        $location4
-            ->expects(self::once())
-            ->method('getRoadNumber')
-            ->willReturn($locationView4->roadNumber);
-        $location4
-            ->expects(self::once())
-            ->method('getGeometry')
-            ->willReturn($locationView4->geometry);
-
-        $measure4
-            ->expects(self::once())
-            ->method('getLocations')
-            ->willReturn([$location4]);
-
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getMeasures')
-            ->willReturn([$measure4]);
-
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForDatexFormat')
-            ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2, $regulationOrderRecord3]);
+            ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2]);
 
         $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
@@ -571,24 +458,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                 ),
                                 new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
                             ],
-                        ),
-                    ],
-                ),
-                new RegulationOrderDatexListItemView(
-                    uuid: '12410fb8-a2b9-4449-a7d5-a4f409807f99',
-                    organization: 'Autorité 3',
-                    description: 'Description 3',
-                    startDate: $startDate3,
-                    endDate: $endDate3,
-                    trafficRegulations: [
-                        new DatexTrafficRegulationView(
-                            type: MeasureTypeEnum::SPEED_LIMITATION->value,
-                            locationConditions: [$locationView4],
-                            validityConditions: [],
-                            vehicleConditions: [
-                                new DatexVehicleConditionView(VehicleTypeEnum::HAZARDOUS_MATERIALS->value),
-                            ],
-                            maxSpeed: 50,
                         ),
                     ],
                 ),
