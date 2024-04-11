@@ -25,6 +25,42 @@
                 </option>
             </constraint>
         </property>
+        <property name="fromPointNumber">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'departmentalRoad' </option>
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                </option>
+            </constraint>
+        </property>
+        <property name="toPointNumber">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'departmentalRoad' </option>
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                </option>
+            </constraint>
+        </property>
+        <property name="fromAbscissa">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'departmentalRoad' </option>
+                <option name="constraints">
+                    <constraint name="Type">
+                        <option name="type">integer</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="toAbscissa">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'departmentalRoad' </option>
+                <option name="constraints">
+                    <constraint name="Type">
+                        <option name="type">integer</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
         <getter property="isEntireStreet">
             <constraint name="Type">
                 <option name="type">boolean</option>

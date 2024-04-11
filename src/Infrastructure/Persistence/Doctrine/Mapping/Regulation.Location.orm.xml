@@ -14,6 +14,20 @@
     <field name="roadName" type="string" column="road_name" nullable="true" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />
     <field name="toHouseNumber" type="string" column="to_house_number" nullable="true" length="8" />
+    <field name="fromPointNumber" type="string" column="from_point_number" length="5"  nullable="true"/>
+    <field name="fromSide" type="string" column="from_side" nullable="true" length="1" />
+    <field name="fromAbscissa" type="integer" column="from_abscissa" nullable="true">
+      <options>
+            <option name="default">0</option>
+      </options>
+    </field>
+    <field name="toPointNumber" type="string" column="to_point_number" length="5" nullable="true"/>
+    <field name="toSide" type="string" column="to_side" nullable="true" length="1" />
+    <field name="toAbscissa" type="integer" column="to_abscissa" nullable="true">
+      <options>
+            <option name="default">0</option>
+      </options>
+    </field>
     <field name="geometry" type="geojson_geometry" column="geometry" nullable="true">
       <options>
         <option name="geometry_type">GEOMETRY</option>

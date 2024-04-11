@@ -393,6 +393,58 @@
                 <source>regulation.location.type</source>
                 <target>Type de route ou voie</target>
             </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.from">
+                <source>regulation.location.referencePoint.from</source>
+                <target>Point de début</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.to">
+                <source>regulation.location.referencePoint.to</source>
+                <target>Point de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.side">
+                <source>regulation.location.road.side</source>
+                <target>Côté</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.side.help">
+                <source>regulation.location.road.side.help</source>
+                <target>Côté de la route où se situe le PR</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint">
+                <source>regulation.location.referencePoint</source>
+                <target>Section concernée</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.help">
+                <source>regulation.location.referencePoint.help</source>
+                <target>Indiquez la section de route concernée par la mesure. La restriction s'applique à toutes les voies de la chaussée</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.side.D">
+                <source>regulation.location.road.side.D</source>
+                <target>Chaussée droite (D)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.side.G">
+                <source>regulation.location.road.side.G</source>
+                <target>Chaussée gauche (G)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.side.U">
+                <source>regulation.location.road.side.U</source>
+                <target>Chaussée unique (U)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.pointNumber">
+                <source>regulation.location.referencePoint.pointNumber</source>
+                <target>PR</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.pointNumber.help">
+                <source>regulation.location.referencePoint.pointNumber.help</source>
+                <target>Indiquez le numéro du point</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.abscissa">
+                <source>regulation.location.referencePoint.abscissa</source>
+                <target>Abscisse</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.referencePoint.abscissa.help">
+                <source>regulation.location.referencePoint.abscissa.help</source>
+                <target>Distance en mètres à partir du PR</target>
+            </trans-unit>
             <trans-unit id="regulation.location.type.placeholder">
                 <source>regulation.location.type.placeholder</source>
                 <target>Sélectionner un type de route...</target>
@@ -421,6 +473,10 @@
             <trans-unit id="regulation.location.roadNumber">
                 <source>regulation.location.roadNumber</source>
                 <target>Numéro de la départementale</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.roadNumber.help">
+                <source>regulation.location.roadNumber.help</source>
+                <target>Indiquez le numéro de la départementale, par exemple D905</target>
             </trans-unit>
             <trans-unit id="regulation.location.roadNumber.results_label">
                 <source>regulation.location.roadNumber.results_label</source>
@@ -461,6 +517,10 @@
             <trans-unit id="regulation.location.to_house_number">
                 <source>regulation.location.to_house_number</source>
                 <target>Numéro de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.reference_point">
+                <source>regulation.location.reference_point</source>
+                <target>du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)</target>
             </trans-unit>
             <trans-unit id="regulation.location.house_number_from_to">
                 <source>regulation.location.house_number_from_to</source>

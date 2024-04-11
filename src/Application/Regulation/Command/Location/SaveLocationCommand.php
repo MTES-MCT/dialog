@@ -13,8 +13,6 @@ use App\Domain\Regulation\Measure;
 final class SaveLocationCommand implements CommandInterface
 {
     public ?string $roadType = null;
-    public ?string $administrator = null;
-    public ?string $roadNumber = null;
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
@@ -26,8 +24,15 @@ final class SaveLocationCommand implements CommandInterface
     public ?Coordinates $toCoords = null;
     public ?string $geometry;
     public ?Measure $measure;
-    public ?string $departmentalRoadGeometry = null;
     private ?bool $isEntireStreetFormValue = null;
+    public ?string $administrator = null;
+    public ?string $roadNumber = null;
+    public ?string $fromPointNumber = null;
+    public ?int $fromAbscissa = null;
+    public ?string $fromSide = null;
+    public ?string $toPointNumber = null;
+    public ?int $toAbscissa = null;
+    public ?string $toSide = null;
 
     public function __construct(
         public readonly ?Location $location = null,
@@ -42,6 +47,12 @@ final class SaveLocationCommand implements CommandInterface
         $this->toHouseNumber = $location?->getToHouseNumber();
         $this->geometry = $location?->getGeometry();
         $this->isEntireStreetFormValue = $location ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
+        $this->fromPointNumber = $location?->getFromPointNumber();
+        $this->fromSide = $location?->getFromSide();
+        $this->fromAbscissa = $location?->getFromAbscissa();
+        $this->toPointNumber = $location?->getToPointNumber();
+        $this->toAbscissa = $location?->getToAbscissa();
+        $this->toSide = $location?->getToSide();
     }
 
     public function clean(): void
@@ -57,7 +68,12 @@ final class SaveLocationCommand implements CommandInterface
         if ($this->roadType === RoadTypeEnum::LANE->value || $this->roadType === null) {
             $this->administrator = null;
             $this->roadNumber = null;
-            $this->departmentalRoadGeometry = null;
+            $this->fromPointNumber = null;
+            $this->toPointNumber = null;
+            $this->fromAbscissa = null;
+            $this->toAbscissa = null;
+            $this->fromSide = null;
+            $this->toSide = null;
         }
 
         if ($this->roadType === RoadTypeEnum::LANE->value && $this->isEntireStreetFormValue) {
