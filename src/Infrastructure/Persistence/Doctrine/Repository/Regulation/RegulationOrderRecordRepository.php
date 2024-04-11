@@ -175,6 +175,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
             ])
+            ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
             ->getResult()
         ;
