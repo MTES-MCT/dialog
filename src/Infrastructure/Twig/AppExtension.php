@@ -38,7 +38,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     /**
      * Format a $date with an optional $time
      */
-    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface|bool $time = null): string
+    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface|bool|null $time = null): string
     {
         $dateTime = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
         $format = 'd/m/Y';
@@ -57,7 +57,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return \DateTimeImmutable::createFromInterface($time)->setTimeZone($this->clientTimezone)->format('H\hi');
     }
 
-    public function formatNumber(float $value, int $decimals = null): string
+    public function formatNumber(float $value, ?int $decimals = null): string
     {
         if ($decimals === null) {
             if (filter_var($value, FILTER_VALIDATE_INT)) {
@@ -74,7 +74,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return number_format($value, $decimals, ',', ' ');
     }
 
-    public function isClientPastDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
+    public function isClientPastDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool
     {
         $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
         $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
@@ -84,7 +84,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return $day < $today;
     }
 
-    public function isClientFutureDay(\DateTimeInterface $date, \DateTimeInterface $today = null): bool
+    public function isClientFutureDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool
     {
         $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
         $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
@@ -114,7 +114,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return $payload && \array_key_exists('fieldset', $payload) && $payload['fieldset'] === $fieldset;
     }
 
-    public function isFeatureEnabled(string $featureName, Request $request = null): bool
+    public function isFeatureEnabled(string $featureName, ?Request $request = null): bool
     {
         return $this->featureFlagService->isFeatureEnabled($featureName, $request);
     }

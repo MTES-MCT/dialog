@@ -9,7 +9,7 @@ class GeocodingFailureException extends \Exception
     public function __construct(
         string $message = '',
         private ?int $locationIndex = null,
-        \Exception $previous = null,
+        ?\Exception $previous = null,
     ) {
         parent::__construct($message, 0, $previous);
     }

@@ -18,7 +18,7 @@
             <option name="default">dialog</option>
         </options>
     </field>
-    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" fetch="EAGER" inversed-by="regulationOrderRecord">
+    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="regulationOrderRecord">
         <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
     </one-to-one>
     <many-to-one field="organization" target-entity="App\Domain\User\Organization">

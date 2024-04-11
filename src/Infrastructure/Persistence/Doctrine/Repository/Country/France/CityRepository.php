@@ -21,9 +21,9 @@ final class CityRepository extends ServiceEntityRepository implements CityReposi
         return $this->createQueryBuilder('c')
            ->where('c.name = :name and c.departement = :departement')
            ->setParameters([
-            'name' => $name,
-            'departement' => $departement,
-            ])
+               'name' => $name,
+               'departement' => $departement,
+           ])
            ->setMaxResults(1)
            ->getQuery()
            ->getOneOrNullResult()

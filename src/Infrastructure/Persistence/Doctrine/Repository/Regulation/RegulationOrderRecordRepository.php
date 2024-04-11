@@ -83,7 +83,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $result;
     }
 
-    public function findOneByUuid(string $uuid): RegulationOrderRecord|null
+    public function findOneByUuid(string $uuid): ?RegulationOrderRecord
     {
         return $this->createQueryBuilder('roc')
             ->where('roc.uuid = :uuid')

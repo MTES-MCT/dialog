@@ -273,17 +273,17 @@ final class EudonetParisTransformerTest extends TestCase
         return [
             [
                 'location' => [
-                        'fields' => [
-                            EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
-                            EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
-                            EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
-                            EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
-                            EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => 'Start road',
-                            EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
-                            EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
-                            EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
-                        ],
+                    'fields' => [
+                        EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                        EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                        EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
+                        EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
+                        EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => 'Start road',
+                        EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                        EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                        EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
                     ],
+                ],
                 'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',

@@ -89,15 +89,15 @@ class VehicleSet
     }
 
     public function update(
-        array $restrictedTypes = null,
-        string $otherRestrictedTypeText = null,
-        array $exemptedTypes = null,
-        string $otherExemptedTypeText = null,
-        float $heavyweightMaxWeight = null,
-        float $maxWidth = null,
-        float $maxLength = null,
-        float $maxHeight = null,
-        array $critairTypes = null,
+        ?array $restrictedTypes = null,
+        ?string $otherRestrictedTypeText = null,
+        ?array $exemptedTypes = null,
+        ?string $otherExemptedTypeText = null,
+        ?float $heavyweightMaxWeight = null,
+        ?float $maxWidth = null,
+        ?float $maxLength = null,
+        ?float $maxHeight = null,
+        ?array $critairTypes = null,
     ): void {
         $this->restrictedTypes = $restrictedTypes ?: [];
         $this->otherRestrictedTypeText = $otherRestrictedTypeText;
