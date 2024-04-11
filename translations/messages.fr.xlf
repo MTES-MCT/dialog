@@ -1637,10 +1637,6 @@
                 <source>regulation.vehicle_set.type.dimensions</source>
                 <target>Gabarit</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.type.hazardousmaterials">
-                <source>regulation.vehicle_set.type.hazardousmaterials</source>
-                <target>Matières dangereuses</target>
-            </trans-unit>
             <trans-unit id="regulation.vehicle_set.critair">
                 <source>regulation.vehicle_set.critair</source>
                 <target>Catégorie Crit'Air</target>
