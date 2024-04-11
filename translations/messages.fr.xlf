@@ -1639,7 +1639,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.hazardousmaterials">
                 <source>regulation.vehicle_set.type.hazardousmaterials</source>
-                <target>Matières dangeureuses</target>
+                <target>Matières dangereuses</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.critair">
                 <source>regulation.vehicle_set.critair</source>
@@ -1672,7 +1672,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.hazardousMaterials">
                 <source>regulation.vehicle_set.type.hazardousMaterials</source>
-                <target>Matières dangeureuses</target>
+                <target>Matières dangereuses</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.pedestrians">
                 <source>regulation.vehicle_set.type.pedestrians</source>
