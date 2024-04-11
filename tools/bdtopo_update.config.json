@@ -1,6 +1,7 @@
 {
     "tables": [
         "voie_nommee",
-        "route_numerotee_ou_nommee"
+        "route_numerotee_ou_nommee",
+        "point_de_repere"
     ]
 }

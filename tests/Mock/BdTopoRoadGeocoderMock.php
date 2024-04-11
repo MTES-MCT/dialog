@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Mock;
 
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
+use App\Domain\Geography\Coordinates;
 
 final class BdTopoRoadGeocoderMock implements RoadGeocoderInterface
 {
@@ -48,16 +51,34 @@ final class BdTopoRoadGeocoderMock implements RoadGeocoderInterface
         };
     }
 
-    public function findDepartmentalRoads(string $search, string $administrator): array
+    public function findRoads(string $search, string $administrator): array
     {
         return match ($search) {
             'd32' => [
                 [
                     'roadNumber' => 'D322',
-                    'geometry' => '{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}',
                 ],
             ],
             default => [],
+        };
+    }
+
+    public function computeRoad(string $roadNumber, string $administrator): string
+    {
+        return match ([$administrator, $roadNumber]) {
+            ['Ardèche', 'D110'] => '{"type":"MultiLineString","coordinates":[[[4.66349228,49.8207711],[4.66356107,49.82070816],[4.6636232,49.8206543],[4.66372513,49.82058551],[4.66385317,49.82050828],[4.66399657,49.82043354],[4.66415639,49.82035139],[4.6643028,49.82028379],[4.66443686,49.82022086],[4.66459579,49.82015399],[4.6647601,49.82008166]]]}',
+            default => '',
+        };
+    }
+
+    public function computeReferencePoint(string $lineGeometry, string $administrator, string $roadNumber, string $pointNumber, string $side, int $abscissa): Coordinates
+    {
+        return match ([$administrator, $roadNumber, $pointNumber, $side, $abscissa]) {
+            ['Ardèche', 'D110', '1', 'U', 100] => Coordinates::fromLonLat(3.162075419, 48.510493704),
+            ['Ardèche', 'D110', '5', 'U', 650] => Coordinates::fromLonLat(3.201738314, 48.530088505),
+            ['Ardèche', 'D110', '1', 'U', 100000000] => throw new AbscissaOutOfRangeException(),
+            ['Ardèche', 'D110', '5', 'U', 100000000] => throw new AbscissaOutOfRangeException(),
+            default => throw new RoadGeocodingFailureException(),
         };
     }
 }
