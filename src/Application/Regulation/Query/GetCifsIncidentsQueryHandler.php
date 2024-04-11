@@ -39,77 +39,92 @@ final class GetCifsIncidentsQueryHandler
                 default => null,
             };
 
-            $incidentCreationTime = $regulationOrderRecord->getCreatedAt()->format('Y-m-d\TH:i:sP');
-            $incidentStartTime = $regulationOrder->getStartDate()->format('Y-m-d\TH:i:sP');
-            $incidentEndTime = $regulationOrder->getEndDate()->format('Y-m-d\TH:i:sP');
+            $incidentCreationTime = $regulationOrderRecord->getCreatedAt();
+            $regulationStart = $regulationOrder->getStartDate();
+            $regulationEnd = $regulationOrder->getEndDate();
 
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
-                $schedule = [];
+                /** @var Period[] $periods */
+                $periods = $measure->getPeriods();
 
-                /** @var Period $period */
-                foreach ($measure->getPeriods() as $period) {
-                    $applicableDays = $period->getDailyRange()?->getApplicableDays() ?? [];
+                $incidentPeriods = [];
 
-                    if (ApplicableDayEnum::hasAllValues($applicableDays)) {
-                        $applicableDays = ['everyday'];
-                    }
+                if ($periods) {
+                    foreach ($periods as $period) {
+                        $applicableDays = $period->getDailyRange()?->getApplicableDays() ?? [];
 
-                    /** @var TimeSlot[] $timeSlots */
-                    $timeSlots = $period->getTimeSlots();
-
-                    if ($timeSlots) {
-                        $timeSpans = [];
-
-                        foreach ($timeSlots as $timeSlot) {
-                            $timeSpans[] = [
-                                'startTime' => $timeSlot->getStartTime(),
-                                'endTime' => $timeSlot->getEndTime(),
-                            ];
-                        }
-                    } else {
-                        $timeSpans = [['startTime' => new \DateTimeImmutable('00:00'), 'endTime' => new \DateTimeImmutable('23:59')]];
-                    }
-
-                    foreach ($applicableDays as $day) {
-                        if (!isset($schedule[$day])) {
-                            $schedule[$day] = [];
+                        if (ApplicableDayEnum::hasAllValues($applicableDays)) {
+                            $applicableDays = ['everyday'];
                         }
 
-                        foreach ($timeSpans as $timeSpan) {
-                            $schedule[$day][] = $timeSpan;
+                        /** @var TimeSlot[] $timeSlots */
+                        $timeSlots = $period->getTimeSlots();
+
+                        if ($timeSlots) {
+                            $timeSpans = [];
+
+                            foreach ($timeSlots as $timeSlot) {
+                                $timeSpans[] = [
+                                    'startTime' => $timeSlot->getStartTime(),
+                                    'endTime' => $timeSlot->getEndTime(),
+                                ];
+                            }
+                        } else {
+                            $timeSpans = [['startTime' => new \DateTimeImmutable('00:00'), 'endTime' => new \DateTimeImmutable('23:59')]];
                         }
+
+                        $schedule = [];
+
+                        foreach ($applicableDays as $day) {
+                            $schedule[$day] = $timeSpans;
+                        }
+
+                        // Adhere to key order in CIFS <schedule> XML element
+                        $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
+                        uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
+
+                        // Sort time spans by start time as per CIFS examples
+                        foreach ($schedule as $day => $timeSpans) {
+                            usort($timeSpans, fn ($a, $b) => $a['startTime'] === $b['startTime'] ? 0 : ($a['startTime'] < $b['startTime'] ? -1 : 1));
+                            $schedule[$day] = $timeSpans;
+                        }
+
+                        $incidentPeriods[] = [
+                            'start' => $period->getStartDateTime(),
+                            'end' => $period->getEndDateTime(),
+                            'schedule' => $schedule,
+                        ];
                     }
-                }
-
-                // Adhere to key order in CIFS <schedule> XML element
-                $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
-                uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
-
-                // Sort time spans by start time as per CIFS examples
-                foreach ($schedule as $day => $timeSpans) {
-                    usort($timeSpans, fn ($a, $b) => $a['startTime'] === $b['startTime'] ? 0 : ($a['startTime'] < $b['startTime'] ? -1 : 1));
-                    $schedule[$day] = $timeSpans;
+                } else {
+                    $incidentPeriods[] = [
+                        'start' => $regulationStart,
+                        'end' => $regulationEnd,
+                        'schedule' => [],
+                    ];
                 }
 
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
+                    $locationId = $location->getUuid();
                     $street = $location->getRoadName() ?? $location->getRoadNumber();
                     $polylines = $this->repository->convertToCifsPolylines($location->getGeometry());
 
-                    foreach ($polylines as $index => $polyline) {
-                        $incidents[] = new CifsIncidentView(
-                            id: $location->getUuid() . '#' . $index,
-                            creationTime: $incidentCreationTime,
-                            type: 'ROAD_CLOSED',
-                            subType: $subType,
-                            street: $street,
-                            direction: 'BOTH_DIRECTIONS',
-                            polyline: $polyline,
-                            startTime: $incidentStartTime,
-                            endTime: $incidentEndTime,
-                            schedule: $schedule,
-                        );
+                    foreach ($incidentPeriods as $periodIndex => $incidentPeriod) {
+                        foreach ($polylines as $polylineIndex => $polyline) {
+                            $incidents[] = new CifsIncidentView(
+                                id: $locationId . '#' . $periodIndex . '#' . $polylineIndex,
+                                creationTime: $incidentCreationTime,
+                                type: 'ROAD_CLOSED',
+                                subType: $subType,
+                                street: $street,
+                                direction: 'BOTH_DIRECTIONS',
+                                polyline: $polyline,
+                                startTime: $incidentPeriod['start'],
+                                endTime: $incidentPeriod['end'],
+                                schedule: $incidentPeriod['schedule'],
+                            );
+                        }
                     }
                 }
             }
