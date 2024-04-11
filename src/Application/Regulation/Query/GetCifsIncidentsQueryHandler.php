@@ -25,6 +25,9 @@ final class GetCifsIncidentsQueryHandler
     {
         $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat();
 
+        // Reference: https://developers.google.com/waze/data-feed/cifs-specification?hl=fr
+        $incidents = [];
+
         /** @var RegulationOrderRecord $regulationOrderRecord */
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
@@ -55,22 +58,22 @@ final class GetCifsIncidentsQueryHandler
                     /** @var TimeSlot[] $timeSlots */
                     $timeSlots = $period->getTimeSlots();
 
+                    if ($timeSlots) {
+                        $timeSpans = [];
+
+                        foreach ($timeSlots as $timeSlot) {
+                            $timeSpans[] = [
+                                'startTime' => $timeSlot->getStartTime(),
+                                'endTime' => $timeSlot->getEndTime(),
+                            ];
+                        }
+                    } else {
+                        $timeSpans = [['startTime' => new \DateTimeImmutable('00:00'), 'endTime' => new \DateTimeImmutable('23:59')]];
+                    }
+
                     foreach ($applicableDays as $day) {
                         if (!isset($schedule[$day])) {
                             $schedule[$day] = [];
-                        }
-
-                        if ($timeSlots) {
-                            $timeSpans = [];
-
-                            foreach ($timeSlots as $timeSlot) {
-                                $timeSpans[] = [
-                                    'startTime' => $timeSlot->getStartTime(),
-                                    'endTime' => $timeSlot->getEndTime(),
-                                ];
-                            }
-                        } else {
-                            $timeSpans = [['startTime' => new \DateTimeImmutable('00:00'), 'endTime' => new \DateTimeImmutable('23:59')]];
                         }
 
                         foreach ($timeSpans as $timeSpan) {
@@ -79,11 +82,11 @@ final class GetCifsIncidentsQueryHandler
                     }
                 }
 
-                // Adhere to CIFS schedule key order
+                // Adhere to key order in CIFS <schedule> XML element
                 $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
                 uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
 
-                // Sort time spans by start time
+                // Sort time spans by start time as per CIFS examples
                 foreach ($schedule as $day => $timeSpans) {
                     usort($timeSpans, fn ($a, $b) => $a['startTime'] === $b['startTime'] ? 0 : ($a['startTime'] < $b['startTime'] ? -1 : 1));
                     $schedule[$day] = $timeSpans;
@@ -91,14 +94,12 @@ final class GetCifsIncidentsQueryHandler
 
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
-                    $locationId = $location->getUuid();
-
                     $street = $location->getRoadName() ?? $location->getRoadNumber();
                     $polylines = $this->repository->convertToCifsPolylines($location->getGeometry());
 
-                    foreach ($polylines as $polyline) {
-                        $incidentViews[] = new CifsIncidentView(
-                            id: $locationId,
+                    foreach ($polylines as $index => $polyline) {
+                        $incidents[] = new CifsIncidentView(
+                            id: $location->getUuid() . '#' . $index,
                             creationTime: $incidentCreationTime,
                             type: 'ROAD_CLOSED',
                             subType: $subType,
@@ -114,6 +115,6 @@ final class GetCifsIncidentsQueryHandler
             }
         }
 
-        return $incidentViews;
+        return $incidents;
     }
 }

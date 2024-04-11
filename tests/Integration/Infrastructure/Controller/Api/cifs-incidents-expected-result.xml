@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <incidents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://www.gstatic.com/road-incidents/cifsv2.xsd">
-    <incident id="06548f85-d545-7b45-8000-8a23c45850b3">
+    <incident id="06548f85-d545-7b45-8000-8a23c45850b3#0">
         <creationtime>2021-11-02T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Rue de la République : circulation interdite tous les jours pour tous les véhicles</description>
@@ -21,7 +21,7 @@
             <thursday>08:00-10:00</thursday>
         </schedule>
     </incident>
-    <incident id="065f94ef-ea0a-7ab5-8000-bd5686102151">
+    <incident id="065f94ef-ea0a-7ab5-8000-bd5686102151#0">
         <creationtime>2021-11-02T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>D324 : circulation interdite tous les jours pour tous les véhicles</description>
