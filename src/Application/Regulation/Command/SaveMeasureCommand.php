@@ -29,7 +29,7 @@ final class SaveMeasureCommand implements CommandInterface
 
     public static function create(
         ?RegulationOrder $regulationOrder,
-        Measure $measure = null,
+        ?Measure $measure = null,
     ): self {
         $command = new self($regulationOrder, $measure);
 

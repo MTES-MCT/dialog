@@ -13,7 +13,7 @@ class FeatureFlagService
     ) {
     }
 
-    public function isFeatureEnabled(string $featureName, Request $request = null): bool
+    public function isFeatureEnabled(string $featureName, ?Request $request = null): bool
     {
         $queryParam = 'feature_' . $featureName;
 

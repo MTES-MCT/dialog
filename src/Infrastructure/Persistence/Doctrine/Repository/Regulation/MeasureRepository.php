@@ -20,8 +20,10 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
     {
         return $this->createQueryBuilder('m')
             ->where('m.uuid = :uuid')
+            ->addSelect('p', 'l')
             ->setParameter('uuid', $uuid)
-            ->setMaxResults(1)
+            ->leftJoin('m.periods', 'p')
+            ->leftJoin('m.locations', 'l')
             ->getQuery()
             ->getOneOrNullResult()
         ;
