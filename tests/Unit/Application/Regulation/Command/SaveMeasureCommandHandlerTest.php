@@ -74,7 +74,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                     new Measure(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         regulationOrder: $regulationOrder,
-                        type: MeasureTypeEnum::ALTERNATE_ROAD->value,
+                        type: MeasureTypeEnum::NO_ENTRY->value,
                         createdAt: $now,
                     ),
                 ),
@@ -103,7 +103,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         );
 
         $command = new SaveMeasureCommand($regulationOrder);
-        $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->periods = [$periodCommand];
         $command->locations = [$locationCommand];
 
@@ -141,7 +141,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                     new Measure(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         regulationOrder: $regulationOrder,
-                        type: MeasureTypeEnum::ALTERNATE_ROAD->value,
+                        type: MeasureTypeEnum::NO_ENTRY->value,
                         createdAt: $createdAt,
                     ),
                 ),
@@ -165,7 +165,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         );
 
         $command = new SaveMeasureCommand($regulationOrder);
-        $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->createdAt = $createdAt;
         $command->periods = [$periodCommand];
 
@@ -204,7 +204,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                     new Measure(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         regulationOrder: $regulationOrder,
-                        type: MeasureTypeEnum::ALTERNATE_ROAD->value,
+                        type: MeasureTypeEnum::NO_ENTRY->value,
                         createdAt: $now,
                     ),
                 ),
@@ -228,7 +228,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         );
 
         $command = new SaveMeasureCommand($regulationOrder);
-        $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->vehicleSet = $vehicleSetCommand;
 
         $result = $handler($command);
@@ -281,7 +281,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $measure
             ->expects(self::once())
             ->method('update')
-            ->with(MeasureTypeEnum::ALTERNATE_ROAD->value);
+            ->with(MeasureTypeEnum::NO_ENTRY->value);
 
         $measure
             ->expects(self::exactly(2))
@@ -334,7 +334,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         );
 
         $command = SaveMeasureCommand::create($regulationOrder, $measure);
-        $command->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->vehicleSet = null; // Removes vehicle set
         $command->periods = [$periodCommand1]; // Removes period2.
         $command->locations = [$locationCommand2]; // Removes location1.
