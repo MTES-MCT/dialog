@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Exception;
 
-final class GeocodingFailureException extends \Exception
+class GeocodingFailureException extends \Exception
 {
     public function __construct(
         string $message = '',
@@ -17,5 +17,10 @@ final class GeocodingFailureException extends \Exception
     public function getLocationIndex(): ?int
     {
         return $this->locationIndex;
+    }
+
+    public function setLocationIndex(int $index): void
+    {
+        $this->locationIndex = $index;
     }
 }

@@ -8,63 +8,88 @@ use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class LocationTest extends TestCase
 {
-    public function testGetters(): void
+    private Location $location;
+    private Location $departmentalRoad;
+    private string $geometry;
+    private MockObject $measure;
+
+    public function setUp(): void
     {
-        $geometry = GeoJSON::toLineString([
+        $this->geometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.935836, 47.347024),
             Coordinates::fromLonLat(-1.930973, 47.347917),
         ]);
+        $this->measure = $this->createMock(Measure::class);
 
-        $measure = $this->createMock(Measure::class);
-        $location = new Location(
+        $this->location = new Location(
             uuid: 'b4812143-c4d8-44e6-8c3a-34688becae6e',
-            measure: $measure,
+            measure: $this->measure,
             roadType: 'lane',
             cityCode: '44195',
             cityLabel: 'Savenay',
-            administrator: null,
-            roadNumber: null,
             roadName: 'Route du Grand Brossais',
             fromHouseNumber: '15',
             toHouseNumber: '37bis',
-            geometry: $geometry,
+            administrator: null,
+            roadNumber: null,
+            fromPointNumber: null,
+            fromAbscissa: null,
+            fromSide: null,
+            toPointNumber: null,
+            toAbscissa: null,
+            toSide: null,
+            geometry: $this->geometry,
         );
 
-        $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $location->getUuid());
-        $this->assertSame($measure, $location->getMeasure());
-        $this->assertSame('44195', $location->getCityCode());
-        $this->assertSame('Savenay', $location->getCityLabel());
-        $this->assertSame('Route du Grand Brossais', $location->getRoadName());
-        $this->assertSame('15', $location->getFromHouseNumber());
-        $this->assertSame('37bis', $location->getToHouseNumber());
-        $this->assertSame($geometry, $location->getGeometry());
+        $this->departmentalRoad = new Location(
+            uuid: '8785a4c2-8f0d-423e-bd5b-641f228df23b',
+            measure: $this->measure,
+            roadType: 'departmentalRoad',
+            cityCode: null,
+            cityLabel: null,
+            roadName: null,
+            fromHouseNumber: null,
+            toHouseNumber: null,
+            administrator: 'Ardèche',
+            roadNumber: 'D110',
+            fromPointNumber: '14',
+            fromAbscissa: 650,
+            fromSide: 'U',
+            toPointNumber: '16',
+            toAbscissa: 250,
+            toSide: 'U',
+            geometry: 'sectionGeometry',
+        );
+    }
+
+    public function testGetters(): void
+    {
+        $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $this->location->getUuid());
+        $this->assertSame($this->measure, $this->location->getMeasure());
+        $this->assertSame('44195', $this->location->getCityCode());
+        $this->assertSame('Savenay', $this->location->getCityLabel());
+        $this->assertSame('Route du Grand Brossais', $this->location->getRoadName());
+        $this->assertSame('15', $this->location->getFromHouseNumber());
+        $this->assertSame('37bis', $this->location->getToHouseNumber());
+        $this->assertSame($this->geometry, $this->location->getGeometry());
+
+        $this->assertSame('Ardèche', $this->departmentalRoad->getAdministrator());
+        $this->assertSame('D110', $this->departmentalRoad->getRoadNumber());
+        $this->assertSame('14', $this->departmentalRoad->getFromPointNumber());
+        $this->assertSame(650, $this->departmentalRoad->getFromAbscissa());
+        $this->assertSame('U', $this->departmentalRoad->getFromSide());
+        $this->assertSame('16', $this->departmentalRoad->getToPointNumber());
+        $this->assertSame(250, $this->departmentalRoad->getToAbscissa());
+        $this->assertSame('U', $this->departmentalRoad->getToSide());
     }
 
     public function testUpdate(): void
     {
-        $measure = $this->createMock(Measure::class);
-
-        $location = new Location(
-            uuid: '9f3cbc01-8dbe-4306-9912-91c8d88e194f',
-            measure: $measure,
-            roadType: 'lane',
-            cityCode: '44195',
-            cityLabel: 'Savenay',
-            administrator: null,
-            roadNumber: null,
-            roadName: 'Route du Grand Brossais',
-            fromHouseNumber: '15',
-            toHouseNumber: '37bis',
-            geometry: GeoJSON::toLineString([
-                Coordinates::fromLonLat(-1.935836, 47.347024),
-                Coordinates::fromLonLat(-1.930973, 47.347917),
-            ]),
-        );
-
         $newRoadType = 'lane';
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
@@ -78,27 +103,60 @@ final class LocationTest extends TestCase
             Coordinates::fromLonLat(-1.940304, 47.388473),
         ]);
 
-        $location->update(
+        $this->location->update(
             $newRoadType,
-            $newAdministrator,
-            $newRoadNumber,
             $newCityCode,
             $newCityLabel,
             $newRoadName,
             $newFromHouseNumber,
             $newToHouseNumber,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
             $newGeometry,
         );
 
-        $this->assertSame('9f3cbc01-8dbe-4306-9912-91c8d88e194f', $location->getUuid());
-        $this->assertSame($newRoadType, $location->getRoadType());
-        $this->assertSame($newAdministrator, $location->getAdministrator());
-        $this->assertSame($newRoadNumber, $location->getRoadNumber());
-        $this->assertSame($newCityCode, $location->getCityCode());
-        $this->assertSame($newCityLabel, $location->getCityLabel());
-        $this->assertSame($newRoadName, $location->getRoadName());
-        $this->assertSame($newFromHouseNumber, $location->getFromHouseNumber());
-        $this->assertSame($newToHouseNumber, $location->getToHouseNumber());
-        $this->assertSame($newGeometry, $location->getGeometry());
+        $this->departmentalRoad->update(
+            'departmentalRoad',
+            null,
+            null,
+            null,
+            null,
+            null,
+            'Ain',
+            'D16',
+            '10',
+            'D',
+            0,
+            '12',
+            'D',
+            0,
+            $newGeometry,
+        );
+
+        $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $this->location->getUuid());
+        $this->assertSame($newRoadType, $this->location->getRoadType());
+        $this->assertSame($newAdministrator, $this->location->getAdministrator());
+        $this->assertSame($newRoadNumber, $this->location->getRoadNumber());
+        $this->assertSame($newCityCode, $this->location->getCityCode());
+        $this->assertSame($newCityLabel, $this->location->getCityLabel());
+        $this->assertSame($newRoadName, $this->location->getRoadName());
+        $this->assertSame($newFromHouseNumber, $this->location->getFromHouseNumber());
+        $this->assertSame($newToHouseNumber, $this->location->getToHouseNumber());
+        $this->assertSame($newGeometry, $this->location->getGeometry());
+
+        $this->assertSame('Ain', $this->departmentalRoad->getAdministrator());
+        $this->assertSame('D16', $this->departmentalRoad->getRoadNumber());
+        $this->assertSame('10', $this->departmentalRoad->getFromPointNumber());
+        $this->assertSame('D', $this->departmentalRoad->getFromSide());
+        $this->assertSame(0, $this->departmentalRoad->getFromAbscissa());
+        $this->assertSame('12', $this->departmentalRoad->getToPointNumber());
+        $this->assertSame(0, $this->departmentalRoad->getToAbscissa());
+        $this->assertSame('D', $this->departmentalRoad->getToSide());
     }
 }
