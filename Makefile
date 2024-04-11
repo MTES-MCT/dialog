@@ -32,7 +32,6 @@ install: build start install_deps dbinstall assets blog_install ## Bootstrap pro
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
 	$(BIN_NPM) ci
-	$(BIN_NPX) playwright install firefox chromium
 
 update_deps:
 	make composer CMD="update"
@@ -231,18 +230,8 @@ test_unit: ## Run unit tests only
 test_integration: ## Run integration tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
 
-test_e2e: ## Run end-to-end tests only
-	make dbfixtures
-	$(BIN_NPX) playwright test --project desktop-firefox ${ARGS}
-	make dbfixtures
-	$(BIN_NPX) playwright test --project mobile-chromium ${ARGS}
-
-test_all: ## Run the test suite (with coverage) and E2E tests
+test_all: ## Run the test suite (with coverage)
 	make test_cov
-	make test_e2e ARGS="${PLAYWRIGHT_ARGS}"
-
-report_e2e: ## Open the Playwright HTML report
-	xdg-open playwright-report/index.html
 
 ##
 ## ----------------
