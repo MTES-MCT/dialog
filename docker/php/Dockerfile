@@ -46,9 +46,6 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
    mv composer.phar /usr/local/bin/composer
 
-# Install Playwright browser dependencies
-RUN npx playwright install-deps firefox chromium
-
 # Install pandoc
 RUN apt-get install -y wget && \
     mkdir -p /usr/src/pandoc && \
