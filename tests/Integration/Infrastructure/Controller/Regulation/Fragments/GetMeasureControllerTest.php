@@ -45,7 +45,7 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $measure1Content = $crawler->filter('[data-testid="measure-content"]')->eq(0);
 
         $this->assertSame('Circulation interdite', $measure1Header->filter('h3')->text());
-        $this->assertSame('pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels', $measure1Content->filter('li')->eq(0)->text());
+        $this->assertSame('pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, matières dangereuses, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels', $measure1Content->filter('li')->eq(0)->text());
         $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue de l\'Hôtel de Ville du n° 30 au n° 12 Montauban (82000)', $measure1Content->filter('li')->eq(3)->text());
         $this->assertSame('Rue Gamot Montauban (82000)', $measure1Content->filter('li')->eq(4)->text());

@@ -679,6 +679,12 @@
                                 </com:emissions>
                             </vehicleCharacteristics>
                         </conditions>
+                        <conditions xsi:type="VehicleCondition">
+                            <negate>false</negate>
+                            <vehicleCharacteristics>
+                                <com:loadType>hazardousMaterials</com:loadType>
+                            </vehicleCharacteristics>
+                        </conditions>
                         <conditions xsi:type="NonVehicularRoadUserCondition">
                             <negate>true</negate>
                             <nonVehicularRoadUser>pedestrians</nonVehicularRoadUser>
