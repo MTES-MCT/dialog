@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command\Location;
 
-use App\Application\GeocoderInterface;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
+use App\Application\LaneSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
-use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
@@ -16,8 +17,8 @@ final class SaveLocationCommandHandler
     public function __construct(
         private IdFactoryInterface $idFactory,
         private LocationRepositoryInterface $locationRepository,
-        private GeocoderInterface $geocoder,
         private RoadGeocoderInterface $roadGeocoder,
+        private LaneSectionMakerInterface $laneSectionMaker,
     ) {
     }
 
@@ -27,7 +28,11 @@ final class SaveLocationCommandHandler
 
         // Create location if needed
         if (!$command->location instanceof Location) {
-            $geometry = empty($command->geometry) ? $this->computeGeometry($command) : $command->geometry;
+            if ($command->roadType === RoadTypeEnum::LANE->value) {
+                $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command) : $command->geometry;
+            } else {
+                $geometry = empty($command->departmentalRoadGeometry) ? $this->computeDepartmentalRoadGeometry($command) : $command->departmentalRoadGeometry;
+            }
 
             $location = $this->locationRepository->add(
                 new Location(
@@ -50,9 +55,15 @@ final class SaveLocationCommandHandler
             return $location;
         }
 
-        $geometry = $this->shouldRecomputeGeometry($command)
-            ? $this->computeGeometry($command)
-            : $command->location->getGeometry();
+        if ($command->roadType === RoadTypeEnum::LANE->value) {
+            $geometry = $this->shouldRecomputeLaneGeometry($command)
+                ? $this->computeLaneGeometry($command)
+                : $command->location->getGeometry();
+        } else {
+            $geometry = $this->shouldRecomputeDepartmentalRoadGeometry($command)
+                ? $this->computeDepartmentalRoadGeometry($command)
+                : $command->location->getGeometry();
+        }
 
         $command->location->update(
             roadType: $command->roadType,
@@ -69,50 +80,60 @@ final class SaveLocationCommandHandler
         return $command->location;
     }
 
-    private function computeGeometry(SaveLocationCommand $command): ?string
+    private function computeLaneGeometry(SaveLocationCommand $command): ?string
     {
-        $hasBothEnds = (
-            ($command->fromHouseNumber || $command->fromRoadName)
-            && ($command->toHouseNumber || $command->toRoadName)
-        );
+        $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
+        $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
-        if ($hasBothEnds) {
-            if ($command->fromHouseNumber) {
-                $fromAddress = sprintf('%s %s', $command->fromHouseNumber, $command->roadName);
-                $fromCoords = $this->geocoder->computeCoordinates($fromAddress, $command->cityCode);
-            } else {
-                $fromCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->fromRoadName, $command->cityCode);
-            }
-
-            if ($command->toHouseNumber) {
-                $toAddress = sprintf('%s %s', $command->toHouseNumber, $command->roadName);
-                $toCoords = $this->geocoder->computeCoordinates($toAddress, $command->cityCode);
-            } else {
-                $toCoords = $this->geocoder->computeJunctionCoordinates($command->roadName, $command->toRoadName, $command->cityCode);
-            }
-
-            return GeoJSON::toLineString([$fromCoords, $toCoords]);
+        if ($hasNoStart xor $hasNoEnd) {
+            // Not supported yet.
+            return null;
         }
 
-        $hasNoEnds = (
-            !$command->fromHouseNumber
-            && !$command->fromRoadName
-            && !$command->toHouseNumber
-            && !$command->toRoadName
-        );
+        $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
 
-        if ($hasNoEnds && $command->roadName) {
-            return $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+        if ($hasNoStart && $hasNoEnd) {
+            return $fullLaneGeometry;
         }
 
-        return null;
+        return $this->laneSectionMaker->computeSection(
+            $fullLaneGeometry,
+            $command->roadName,
+            $command->cityCode,
+            $command->fromCoords,
+            $command->fromHouseNumber,
+            $command->fromRoadName,
+            $command->toCoords,
+            $command->toHouseNumber,
+            $command->toRoadName,
+        );
     }
 
-    private function shouldRecomputeGeometry(SaveLocationCommand $command): bool
+    private function computeDepartmentalRoadGeometry(SaveLocationCommand $command): ?string
+    {
+        if ($command->departmentalRoadGeometry) {
+            return $command->departmentalRoadGeometry;
+        }
+
+        $departmentalRoadNumbers = $this->roadGeocoder->findDepartmentalRoads($command->roadNumber, $command->administrator);
+        if (!$departmentalRoadNumbers) {
+            throw new GeocodingFailureException(sprintf('could not retrieve geometry for roadNumber="%s", administrator="%s"', $command->roadNumber, $command->administrator));
+        }
+
+        return $departmentalRoadNumbers[0]['geometry'];
+    }
+
+    private function shouldRecomputeLaneGeometry(SaveLocationCommand $command): bool
     {
         return $command->cityCode !== $command->location->getCityCode()
             || $command->roadName !== $command->location->getRoadName()
             || ($command->fromHouseNumber !== $command->location->getFromHouseNumber())
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
+    }
+
+    private function shouldRecomputeDepartmentalRoadGeometry(SaveLocationCommand $command): bool
+    {
+        return $command->roadNumber !== $command->location->getRoadNumber()
+            || $command->administrator !== $command->location->getAdministrator();
     }
 }

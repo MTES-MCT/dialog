@@ -7,8 +7,7 @@ parameters:
     server_timezone: '%env(APP_SERVER_TIMEZONE)%'
     client_timezone: '%env(APP_CLIENT_TIMEZONE)%'
     admin_email: '%env(ADMIN_EMAIL)%'
-    features:
-        road_type: '%env(bool:FEATURE_ROAD_TYPE_ENABLED)%'
+    features: []
 
 services:
     # default configuration for services in *this* file
@@ -21,7 +20,6 @@ services:
             $adminEmail: '%admin_email%'
             $eudonetParisOrgId: '%env(APP_EUDONET_PARIS_ORG_ID)%'
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
-            $ignWfsUrl: '%env(APP_IGN_WFS_URL)%'
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
             $bacIdfCitiesFile: '%env(APP_BAC_IDF_CITIES_FILE)%'
             $featureMap: '%features%'
@@ -107,9 +105,8 @@ when@test:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
             decorates: 'api.adresse.client'
             decoration_inner_name: 'App\Tests\Mock\APIAdresseMockClient::api.adresse.client'
-        App\Tests\Mock\IgnWfsMockClient:
-            decorates: 'ign.wfs.client'
-            decoration_inner_name: 'App\Tests\Mock\IgnWfsMockClient::ign.wfs.client'
+        App\Tests\Mock\BdTopoRoadGeocoderMock:
+            decorates: 'App\Infrastructure\Adapter\BdTopoRoadGeocoder'
         App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient:
             decorates: 'eudonet_paris.http.client'
             decoration_inner_name: 'App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient::eudonet_paris.http.client'

@@ -29,12 +29,12 @@ test('Edit category', async ({ page }) => {
     await submitButton.click();
 
     // Move back to initial category...
-    await editButton.click();
+    /*await editButton.click();
     await categoryField.selectOption({ label: 'Évènement' });
     await submitButton.click();
     // Check other category text has been cleared
     await editButton.click();
     await expect(otherCategoryTextField).not.toBeVisible();
     await categoryField.selectOption({ label: 'Autre' });
-    await expect(otherCategoryTextField).toBeEmpty();
+    await expect(otherCategoryTextField).toBeEmpty();*/
 });

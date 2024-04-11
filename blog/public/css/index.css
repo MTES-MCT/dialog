@@ -202,3 +202,38 @@ div.fr-callout__text p {
         margin: 0;
     }
 }
+
+.fiche_membre{
+    display : flex;
+    align-items : flex-start;
+    justify-content: space-between;
+    margin-top : 10px;
+    margin-bottom : 10px;
+}
+.photo_membre{
+    margin : 5px;
+}
+.bloc_texte{
+    display : flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content : space-between;
+    margin : 5px;
+}
+.photo{
+    border : 2px solid black;
+    border-radius : 50%;
+    width : 150px;
+}
+.titre_fiche_membre{
+    font-weight : bold;
+    font-size : large;
+    margin : 5px;
+}
+.texte_membre{
+    margin : 5px;
+}
+.formation_membre{
+    font-style : italic;
+    margin : 5px;
+}

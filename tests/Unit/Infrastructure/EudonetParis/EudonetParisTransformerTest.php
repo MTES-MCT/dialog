@@ -9,6 +9,7 @@ use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
@@ -51,6 +52,21 @@ final class EudonetParisTransformerTest extends TestCase
                                 EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
                             ],
                         ],
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation2',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => $roadName,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => '12',
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => '26',
+                            ],
+                            // Simulate coordinates obtained directly from Eudonet Paris
+                            'fromCoords' => Coordinates::fromLonLat(3, 45),
+                            'toCoords' => Coordinates::fromLonLat(3, 45.5),
+                        ],
                     ],
                 ],
             ],
@@ -65,21 +81,28 @@ final class EudonetParisTransformerTest extends TestCase
         $generalInfoCommand->startDate = new \DateTimeImmutable('2023-06-05 14:30:00 Europe/Paris');
         $generalInfoCommand->endDate = new \DateTimeImmutable('2023-07-12 18:00:00 Europe/Paris');
 
-        $locationCommand = new SaveLocationCommand();
-        $locationCommand->roadType = 'lane';
-        $locationCommand->cityCode = '75118';
-        $locationCommand->cityLabel = 'Paris';
-        $locationCommand->roadName = $roadName;
-        $locationCommand->fromHouseNumber = null;
-        $locationCommand->toHouseNumber = null;
-        $locationCommand->geometry = null;
+        $locationCommand1 = new SaveLocationCommand();
+        $locationCommand1->roadType = 'lane';
+        $locationCommand1->cityCode = '75118';
+        $locationCommand1->cityLabel = 'Paris';
+        $locationCommand1->roadName = $roadName;
+
+        $locationCommand2 = new SaveLocationCommand();
+        $locationCommand2->roadType = 'lane';
+        $locationCommand2->cityCode = '75118';
+        $locationCommand2->cityLabel = 'Paris';
+        $locationCommand2->roadName = $roadName;
+        $locationCommand2->fromHouseNumber = '12';
+        $locationCommand2->fromCoords = Coordinates::fromLonLat(3, 45);
+        $locationCommand2->toHouseNumber = '26';
+        $locationCommand2->toCoords = Coordinates::fromLonLat(3, 45.5);
 
         $vehicleSet = new SaveVehicleSetCommand();
         $vehicleSet->allVehicles = true;
 
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
-        $measureCommand->locations[] = $locationCommand;
+        $measureCommand->locations = [$locationCommand1, $locationCommand2];
         $measureCommand->vehicleSet = $vehicleSet;
 
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
@@ -250,17 +273,17 @@ final class EudonetParisTransformerTest extends TestCase
         return [
             [
                 'location' => [
-                        'fields' => [
-                            EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
-                            EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
-                            EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
-                            EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
-                            EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => 'Start road',
-                            EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
-                            EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
-                            EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
-                        ],
+                    'fields' => [
+                        EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                        EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'Une section',
+                        EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
+                        EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => '...',
+                        EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => 'Start road',
+                        EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                        EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                        EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
                     ],
+                ],
                 'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',

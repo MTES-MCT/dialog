@@ -111,7 +111,7 @@ def main(
                 netloc=f"{database_url.username}:{database_url.password}@{displayed_origin}"
             )
 
-            print(urlunparse(db_tunnel_database_url))
+            print(urlunparse(db_tunnel_database_url), flush=True)
 
             try:
                 db_tunnel_proc.wait()

@@ -25,7 +25,7 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measure1Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure1Content->filter('li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure1Content->filter('li')->eq(1)->text());
-        $this->assertSame('Route du Lac Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
+        $this->assertSame('Rue Victor Hugo Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measure1Content->filter('.app-card__content li')->eq(4)->text());
 
         $editForm = $crawler->selectButton('Modifier')->form();
@@ -49,7 +49,8 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue de l\'Hôtel de Ville du n° 30 au n° 12 Montauban (82000)', $measure1Content->filter('li')->eq(3)->text());
         $this->assertSame('Rue Gamot Montauban (82000)', $measure1Content->filter('li')->eq(4)->text());
-        $this->assertSame('Avenue de Fonneuve du n° 695 au n° 253 Montauban (82000)', $measure1Content->filter('li')->eq(5)->text());
+        $this->assertSame('D322 (Ardennes)', $measure1Content->filter('li')->eq(5)->text());
+        $this->assertSame('Avenue de Fonneuve du n° 695 au n° 253 Montauban (82000)', $measure1Content->filter('li')->eq(6)->text());
     }
 
     public function testGetLocationFromOtherRegulationOrderRecord(): void

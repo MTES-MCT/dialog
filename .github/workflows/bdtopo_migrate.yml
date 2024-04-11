@@ -1,0 +1,40 @@
+name: BD TOPO Migrate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Infrastructure/Persistence/Doctrine/BdTopoMigrations/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Init environment variables
+        run: |
+          echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_MIGRATIONS_DATABASE_URL }}" >> .env
+
+      - name: CI
+        run: make ci_bdtopo_migrate BIN_COMPOSER="composer" BIN_CONSOLE="php bin/console"
