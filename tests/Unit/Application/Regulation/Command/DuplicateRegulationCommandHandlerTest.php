@@ -130,7 +130,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measure2
             ->expects(self::once())
             ->method('getType')
-            ->willReturn(MeasureTypeEnum::ALTERNATE_ROAD->value);
+            ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
         $measure2
             ->expects(self::once())
             ->method('getCreatedAt')
@@ -326,7 +326,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->vehicleSet = $vehicleSetCommand;
 
         $measureCommand2 = new SaveMeasureCommand($duplicatedRegulationOrder);
-        $measureCommand2->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $measureCommand2->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand2->createdAt = $startDate;
 
         $this->commandBus

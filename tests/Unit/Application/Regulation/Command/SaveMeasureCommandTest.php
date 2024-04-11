@@ -56,7 +56,7 @@ final class SaveMeasureCommandTest extends TestCase
         $measure
             ->expects(self::once())
             ->method('getType')
-            ->willReturn(MeasureTypeEnum::ALTERNATE_ROAD->value);
+            ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
 
         $measure
             ->expects(self::once())
@@ -66,7 +66,7 @@ final class SaveMeasureCommandTest extends TestCase
         $command = SaveMeasureCommand::create($regulationOrder, $measure);
 
         $this->assertSame($measure, $command->measure);
-        $this->assertSame(MeasureTypeEnum::ALTERNATE_ROAD->value, $command->type);
+        $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $command->type);
         $this->assertSame($regulationOrder, $command->regulationOrder);
         $this->assertEquals(new SaveVehicleSetCommand($vehicleSet), $command->vehicleSet);
         $this->assertEquals([new SavePeriodCommand($period)], $command->periods);
