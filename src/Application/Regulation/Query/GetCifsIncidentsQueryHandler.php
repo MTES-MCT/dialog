@@ -50,7 +50,7 @@ final class GetCifsIncidentsQueryHandler
 
                 $incidentPeriods = [];
 
-                if ($periods) {
+                if (\count($periods) > 0) {
                     foreach ($periods as $period) {
                         $applicableDays = $period->getDailyRange()?->getApplicableDays() ?? [];
 
