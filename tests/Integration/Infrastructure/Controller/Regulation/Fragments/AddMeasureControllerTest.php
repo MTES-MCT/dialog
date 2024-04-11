@@ -668,8 +668,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères.', $crawler->filter('#measure_form_locations_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_cityLabel_error')->text());
+        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_cityLabel_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_toHouseNumber_error')->text());

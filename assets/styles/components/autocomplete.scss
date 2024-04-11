@@ -20,7 +20,7 @@
             background: var(--background-default-grey);
         }
 
-        li[role="option"]:hover, li[role="option"].active {
+        li[role="option"]:hover, li[role="option"].active, li[role="option"][aria-selected="true"] {
             background-color: var(--background-contrast-grey);
         }
     }
