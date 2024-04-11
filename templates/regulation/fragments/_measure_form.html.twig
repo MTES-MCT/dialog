@@ -192,7 +192,7 @@
                 {{ form_row(form.administrator, {
                     group_class: 'fr-input-group',
                     widget_class: 'fr-input',
-                    }) }}
+                }) }}
                 <ul
                     id="{{ form.administrator.vars.id }}-results"
                     role="listbox"
@@ -222,9 +222,42 @@
                             class="fr-x-autocomplete"
                             data-autocomplete-target="results">
                         </ul>
-                    {{ form_row(form.departmentalRoadGeometry, { attr: {'data-autocomplete-target': 'hidden'} }) }}
-                    {{ form_errors(form.departmentalRoadGeometry) }}
                 </div>
+
+                <fieldset
+                    aria-labelledby="regulation-location-{{ index }}-reference-point"
+                >
+                    <legend id="regulation-location-{{ index }}-reference-point">
+                        <span class="fr-x-label-content">{{ 'regulation.location.referencePoint'|trans }}</span>
+                    </legend>
+                    <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
+                    <fieldset
+                        class="fr-mt-2w"
+                        aria-labelledby="regulation-location-{{ index }}-reference-point-start-legend"
+                    >
+                        <legend id="regulation-location-{{ index }}-reference-point-start-legend">
+                            {{ 'regulation.location.referencePoint.from'|trans }}
+                        </legend>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            {{ form_row(form.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                            {{ form_row(form.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                            {{ form_row(form.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                        </div>
+                    </fieldset>
+                    <fieldset
+                        class="fr-mt-2w fr-mb-2w"
+                        aria-labelledby="regulation-location-{{ index }}-reference-point-end-legend"
+                    >
+                        <legend id="regulation-location-{{ index }}-reference-point-end-legend">
+                            {{ 'regulation.location.referencePoint.to'|trans }}
+                        </legend>
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            {{ form_row(form.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                            {{ form_row(form.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                            {{ form_row(form.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                        </div>
+                    </fieldset>
+                </fieldset>
             </div>
             <div
                 data-form-reveal-target="section"

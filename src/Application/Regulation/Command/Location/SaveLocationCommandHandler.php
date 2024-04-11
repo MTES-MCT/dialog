@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command\Location;
 
-use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Application\RoadSectionMakerInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -19,6 +19,7 @@ final class SaveLocationCommandHandler
         private LocationRepositoryInterface $locationRepository,
         private RoadGeocoderInterface $roadGeocoder,
         private LaneSectionMakerInterface $laneSectionMaker,
+        private RoadSectionMakerInterface $roadSectionMaker,
     ) {
     }
 
@@ -31,7 +32,7 @@ final class SaveLocationCommandHandler
             if ($command->roadType === RoadTypeEnum::LANE->value) {
                 $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command) : $command->geometry;
             } else {
-                $geometry = empty($command->departmentalRoadGeometry) ? $this->computeDepartmentalRoadGeometry($command) : $command->departmentalRoadGeometry;
+                $geometry = $this->computeRoadSectionGeometry($command);
             }
 
             $location = $this->locationRepository->add(
@@ -39,13 +40,19 @@ final class SaveLocationCommandHandler
                     uuid: $this->idFactory->make(),
                     measure: $command->measure,
                     roadType: $command->roadType,
-                    administrator: $command->administrator,
                     roadNumber: $command->roadNumber,
                     cityLabel: $command->cityLabel,
                     cityCode: $command->cityCode,
                     roadName: $command->roadName,
                     fromHouseNumber: $command->fromHouseNumber,
                     toHouseNumber: $command->toHouseNumber,
+                    administrator: $command->administrator,
+                    fromPointNumber: $command->fromPointNumber,
+                    fromAbscissa: $command->fromAbscissa,
+                    fromSide: $command->fromSide,
+                    toPointNumber: $command->toPointNumber,
+                    toAbscissa: $command->toAbscissa,
+                    toSide: $command->toSide,
                     geometry: $geometry,
                 ),
             );
@@ -60,20 +67,26 @@ final class SaveLocationCommandHandler
                 ? $this->computeLaneGeometry($command)
                 : $command->location->getGeometry();
         } else {
-            $geometry = $this->shouldRecomputeDepartmentalRoadGeometry($command)
-                ? $this->computeDepartmentalRoadGeometry($command)
+            $geometry = $this->shouldRecomputeRoadSectionGeometry($command)
+                ? $this->computeRoadSectionGeometry($command)
                 : $command->location->getGeometry();
         }
 
         $command->location->update(
             roadType: $command->roadType,
-            administrator: $command->administrator,
-            roadNumber: $command->roadNumber,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,
             fromHouseNumber: $command->fromHouseNumber,
             toHouseNumber: $command->toHouseNumber,
+            administrator: $command->administrator,
+            roadNumber: $command->roadNumber,
+            fromPointNumber: $command->fromPointNumber,
+            fromAbscissa: $command->fromAbscissa,
+            fromSide: $command->fromSide,
+            toPointNumber: $command->toPointNumber,
+            toAbscissa: $command->toAbscissa,
+            toSide: $command->toSide,
             geometry: $geometry,
         );
 
@@ -109,18 +122,21 @@ final class SaveLocationCommandHandler
         );
     }
 
-    private function computeDepartmentalRoadGeometry(SaveLocationCommand $command): ?string
+    private function computeRoadSectionGeometry(SaveLocationCommand $command): string
     {
-        if ($command->departmentalRoadGeometry) {
-            return $command->departmentalRoadGeometry;
-        }
+        $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
 
-        $departmentalRoadNumbers = $this->roadGeocoder->findDepartmentalRoads($command->roadNumber, $command->administrator);
-        if (!$departmentalRoadNumbers) {
-            throw new GeocodingFailureException(sprintf('could not retrieve geometry for roadNumber="%s", administrator="%s"', $command->roadNumber, $command->administrator));
-        }
-
-        return $departmentalRoadNumbers[0]['geometry'];
+        return $this->roadSectionMaker->computeSection(
+            $fullDepartmentalRoadGeometry,
+            $command->administrator,
+            $command->roadNumber,
+            $command->fromPointNumber,
+            $command->fromSide,
+            $command->fromAbscissa ?? 0,
+            $command->toPointNumber,
+            $command->toSide,
+            $command->toAbscissa ?? 0,
+        );
     }
 
     private function shouldRecomputeLaneGeometry(SaveLocationCommand $command): bool
@@ -131,9 +147,15 @@ final class SaveLocationCommandHandler
             || ($command->toHouseNumber !== $command->location->getToHouseNumber());
     }
 
-    private function shouldRecomputeDepartmentalRoadGeometry(SaveLocationCommand $command): bool
+    private function shouldRecomputeRoadSectionGeometry(SaveLocationCommand $command): bool
     {
         return $command->roadNumber !== $command->location->getRoadNumber()
-            || $command->administrator !== $command->location->getAdministrator();
+            || $command->administrator !== $command->location->getAdministrator()
+            || $command->fromPointNumber !== $command->location->getFromPointNumber()
+            || $command->toPointNumber !== $command->location->getToPointNumber()
+            || $command->fromAbscissa !== $command->location->getFromAbscissa()
+            || $command->toAbscissa !== $command->location->getToAbscissa()
+            || $command->fromSide !== $command->location->getFromSide()
+            || $command->toSide !== $command->location->getToSide();
     }
 }

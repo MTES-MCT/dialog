@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\RoadGeocodingFailureException;
+use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
@@ -84,9 +87,23 @@ final class UpdateMeasureController extends AbstractRegulationController
                     ]),
                     status: Response::HTTP_SEE_OTHER,
                 );
+            } catch (AbscissaOutOfRangeException $exc) {
+                $commandFailed = true;
+                $field = $exc instanceof StartAbscissaOutOfRangeException ? 'fromAbscissa' : 'toAbscissa';
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get($field)->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators'),
+                    ),
+                );
+            } catch (RoadGeocodingFailureException $exc) {
+                $commandFailed = true;
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadNumber')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.departmental_road_geocoding_failed', [], 'validators'),
+                    ),
+                );
             } catch (GeocodingFailureException $exc) {
                 $commandFailed = true;
-                \Sentry\captureException($exc);
                 $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadName')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),

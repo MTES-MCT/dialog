@@ -99,6 +99,12 @@ final class DuplicateRegulationCommandHandler
                     $cmd->fromHouseNumber = $location->getFromHouseNumber();
                     $cmd->toHouseNumber = $location->getToHouseNumber();
                     $cmd->geometry = $location->getGeometry();
+                    $cmd->fromPointNumber = $location->getFromPointNumber();
+                    $cmd->toPointNumber = $location->getToPointNumber();
+                    $cmd->toAbscissa = $location->getToAbscissa();
+                    $cmd->fromAbscissa = $location->getFromAbscissa();
+                    $cmd->fromSide = $location->getFromSide();
+                    $cmd->toSide = $location->getToSide();
                     $cmd->measure = $measure;
 
                     $locationCommands[] = $cmd;

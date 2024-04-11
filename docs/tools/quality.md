@@ -2,7 +2,7 @@
 
 ## Tests
 
-Nous utilisons le framework [PHPUnit](https://phpunit.de/) pour faire nos tests, ainsi que [Playwright](https://playwright.dev) pour les tests end-to-end (E2E).
+Nous utilisons le framework [PHPUnit](https://phpunit.de/) pour faire nos tests.
 
 Exécuter tous les tests :
 
@@ -20,26 +20,6 @@ Exécuter les tests d'intégration uniquement :
 
 ```bash
 make test_integration
-```
-
-Exécuter les tests E2E uniquement :
-
-```bash
-make test_e2e
-```
-
-Passez des arguments Playwright supplémentaires à l'aide de `ARGS="..."`. Par exemple, pour lancer un unique test :
-
-```bash
-make test_e2e ARGS="tests/e2e/list.spec.js"
-```
-
-Voir la [documentation Playwright](https://playwright.dev/docs/debug#playwright-inspector) pour toutes les options de débogage disponibles.
-
-Pour visualiser le rapport de tests E2E :
-
-```bash
-make report_e2e
 ```
 
 ## Formatage

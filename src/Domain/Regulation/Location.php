@@ -10,14 +10,20 @@ class Location
         private string $uuid,
         private Measure $measure,
         private string $roadType,
-        private ?string $administrator,
-        private ?string $roadNumber,
-        private ?string $cityCode,
-        private ?string $cityLabel,
-        private ?string $roadName,
-        private ?string $fromHouseNumber,
-        private ?string $toHouseNumber,
-        private ?string $geometry,
+        private ?string $cityCode = null,
+        private ?string $cityLabel = null,
+        private ?string $roadName = null,
+        private ?string $fromHouseNumber = null,
+        private ?string $toHouseNumber = null,
+        private ?string $administrator = null,
+        private ?string $roadNumber = null,
+        private ?string $fromPointNumber = null,
+        private ?string $fromSide = null,
+        private ?int $fromAbscissa = null,
+        private ?string $toPointNumber = null,
+        private ?string $toSide = null,
+        private ?int $toAbscissa = null,
+        private ?string $geometry = null,
     ) {
     }
 
@@ -76,25 +82,67 @@ class Location
         return $this->geometry;
     }
 
+    public function getFromPointNumber(): ?string
+    {
+        return $this->fromPointNumber;
+    }
+
+    public function getToPointNumber(): ?string
+    {
+        return $this->toPointNumber;
+    }
+
+    public function getFromSide(): ?string
+    {
+        return $this->fromSide;
+    }
+
+    public function getFromAbscissa(): ?int
+    {
+        return $this->fromAbscissa;
+    }
+
+    public function getToAbscissa(): ?int
+    {
+        return $this->toAbscissa;
+    }
+
+    public function getToSide(): ?string
+    {
+        return $this->toSide;
+    }
+
     public function update(
         string $roadType,
-        ?string $administrator,
-        ?string $roadNumber,
-        ?string $cityCode,
-        ?string $cityLabel,
-        ?string $roadName,
-        ?string $fromHouseNumber,
-        ?string $toHouseNumber,
-        ?string $geometry,
+        string $cityCode = null,
+        string $cityLabel = null,
+        string $roadName = null,
+        string $fromHouseNumber = null,
+        string $toHouseNumber = null,
+        string $administrator = null,
+        string $roadNumber = null,
+        string $fromPointNumber = null,
+        string $fromSide = null,
+        int $fromAbscissa = null,
+        string $toPointNumber = null,
+        string $toSide = null,
+        int $toAbscissa = null,
+        string $geometry = null,
     ): void {
         $this->roadType = $roadType;
-        $this->administrator = $administrator;
-        $this->roadNumber = $roadNumber;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
         $this->geometry = $geometry;
+        $this->administrator = $administrator;
+        $this->roadNumber = $roadNumber;
+        $this->fromPointNumber = $fromPointNumber;
+        $this->fromSide = $fromSide;
+        $this->toPointNumber = $toPointNumber;
+        $this->fromAbscissa = $fromAbscissa;
+        $this->toAbscissa = $toAbscissa;
+        $this->toSide = $toSide;
     }
 }

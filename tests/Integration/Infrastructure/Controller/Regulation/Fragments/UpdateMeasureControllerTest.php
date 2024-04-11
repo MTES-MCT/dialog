@@ -171,7 +171,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $values = $form->getPhpValues();
         // Add complete dailyRange
-        $values['measure_form']['type'] = 'alternateRoad';
+        $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
@@ -257,6 +257,36 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
+    }
+
+    public function testDepartmentalRoadWithUnknownPointNumbers(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '6';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '15';
+        $values['measure_form']['locations'][0]['fromSide'] = 'D';
+        $values['measure_form']['locations'][0]['toSide'] = 'D';
+        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
