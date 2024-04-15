@@ -203,7 +203,8 @@
                 <div
                     class="fr-x-autocomplete-wrapper"
                     data-controller="autocomplete"
-                    data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}" data-autocomplete-query-param-value="search"
+                    data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
+                    data-autocomplete-query-param-value="search"
                     data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}"
                     data-autocomplete-min-length-value="2"
                     data-autocomplete-delay-value="500"

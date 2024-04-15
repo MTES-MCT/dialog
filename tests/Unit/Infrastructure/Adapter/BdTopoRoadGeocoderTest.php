@@ -231,4 +231,33 @@ final class BdTopoRoadGeocoderTest extends TestCase
 
         $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 0);
     }
+
+    public function testFindRoadNames(): void
+    {
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willReturn([[
+                'road_name' => 'Rue Eugène Berthoud',
+            ]]);
+
+        $this->assertEquals([
+            [
+                'value' => 'Rue Eugène Berthoud',
+                'label' => 'Rue Eugène Berthoud',
+            ],
+        ], $this->roadGeocoder->findRoadNames('Rue Eugène Berthoud', '93070'));
+    }
+
+    public function testFindRoadNamesUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->findRoadNames('Rue Eugène Berthoud', '93070');
+    }
 }

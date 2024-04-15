@@ -81,4 +81,17 @@ final class BdTopoRoadGeocoderMock implements RoadGeocoderInterface
             default => throw new RoadGeocodingFailureException(),
         };
     }
+
+    public function findRoadNames(string $search, string $cityCode): array
+    {
+        return match ($search) {
+            'Rue Eugène Berthoud' => [
+                [
+                    'value' => 'Rue Eugène Berthoud',
+                    'label' => 'Rue Eugène Berthoud, 93400 Saint-Ouen-sur-Seine',
+                ],
+            ],
+            default => [],
+        };
+    }
 }

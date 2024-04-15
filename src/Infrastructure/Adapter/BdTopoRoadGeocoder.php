@@ -177,4 +177,50 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
             return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
         }
     }
+
+    public function findRoadNames(string $search, string $cityCode): array
+    {
+        // Build search query
+        // https://www.postgresql.org/docs/current/datatype-textsearch.html#DATATYPE-TSQUERY
+        $query = str_replace(' ', ' & ', trim($search)) . ':*';
+
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                "
+                    SELECT array_to_string(
+                        -- BD TOPO contains lowercase road names. We capitalize non-stopwords.
+                        -- Example: 'rue de france' -> 'Rue de France'. (Better than INITCAP('rue de france') -> 'Rue De France')
+                        array(
+                            SELECT CASE WHEN cardinality(t.lexemes) > 0 THEN INITCAP(t.token) ELSE t.token END
+                            FROM ts_debug('french', nom_minuscule) AS t
+                            WHERE t.alias NOT IN ('asciihword')
+                        ),
+                        ''
+                    ) AS road_name
+                    FROM voie_nommee
+                    WHERE nom_minuscule_search @@ to_tsquery('french', :query::text)
+                    AND code_insee = :cityCode
+                    ORDER BY ts_rank(nom_minuscule_search, to_tsquery('french', :query::text)) DESC
+                    LIMIT 7
+                ",
+                [
+                    'cityCode' => $cityCode,
+                    'query' => $query,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(sprintf('Road names query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $roadNames = [];
+
+        foreach ($rows as $row) {
+            $roadNames[] = [
+                'value' => $row['road_name'],
+                'label' => $row['road_name'],
+            ];
+        }
+
+        return $roadNames;
+    }
 }
