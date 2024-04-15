@@ -45,6 +45,18 @@ final class PolylineMakerTest extends WebTestCase
                 'geometry' => '{"type": "LineString", "coordinates": [[0, 1]]}',
                 'polylines' => [],
             ],
+            'point-road-buffer' => [
+                // Use realistic EPSG:4326 points
+                'geometry' => '{"type": "Point", "coordinates": [2, 45]}',
+                'polylines' => ['44.999997719 1.999746211 45.00000398899917 2.0004441302650258'],
+                // -20m West, +50m East
+                'roadGeometry' => '{"type": "LineString", "coordinates": [[1.999746211,44.999997719], [2.000634472,45.000005699]]}',
+            ],
+            'line-actually-duplicate-point-road-buffer' => [
+                'geometry' => '{"type": "LineString", "coordinates": [[2, 45], [2, 45]]}',
+                'polylines' => ['44.999997719 1.999746211 45.00000398899917 2.0004441302650258'],
+                'roadGeometry' => '{"type": "LineString", "coordinates": [[1.999746211,44.999997719], [2.000634472,45.000005699]]}',
+            ],
         ];
     }
 

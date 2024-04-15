@@ -6,5 +6,9 @@ namespace App\Application\Cifs;
 
 interface PolylineMakerInterface
 {
-    public function getPolylines(string $geometry): array;
+    public function getPolylines(
+        string $geometry,
+        ?string $roadGeometry = null,
+        int $pointBufferSize = 35,
+    ): array;
 }
