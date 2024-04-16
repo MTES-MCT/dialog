@@ -47,8 +47,11 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     public function testGetAll(): void
     {
         $polyline1 = '44.0289961 1.362275 44.0256652 1.359310';
+        $polyline1Hash = md5($polyline1);
         $polyline2 = '44.0256652 1.359310 44.1545432 1.34541242';
+        $polyline2Hash = md5($polyline2);
         $polyline3 = '44.028996 1.3622753 44.025665 1.3593105';
+        $polyline3Hash = md5($polyline3);
 
         $geometry1 = json_encode([
             'type' => 'MultiLineString',
@@ -74,8 +77,13 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ],
         ]);
 
+        $period1Id = '0661e7da-0639-7e7a-8000-153b4c23b48b';
+        $period2Id = '0661e7ed-1a09-7c77-8000-17281ececeba';
+        $period3Id = '0661e7ed-806d-75f0-8000-7107c838edb5';
+        $period4Id = '0661e7ed-e549-7e4b-8000-945882a092c4';
+
         $incident1 = new CifsIncidentView(
-            id: '02d5eb61-9ca3-4e67-aacd-726f124382d0#0#0',
+            id: sprintf('02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_HAZARD',
@@ -88,7 +96,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident2 = new CifsIncidentView(
-            id: '02d5eb61-9ca3-4e67-aacd-726f124382d0#0#1',
+            id: sprintf('02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline2Hash),
             creationTime: $incident1->creationTime,
             type: $incident1->type,
             subType: $incident1->subType,
@@ -101,7 +109,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident3 = new CifsIncidentView(
-            id: '9698b212-705c-4c46-8968-63b5a55a4d66#0#0',
+            id: sprintf('9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_CONSTRUCTION',
@@ -135,7 +143,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident4 = new CifsIncidentView(
-            id: '9698b212-705c-4c46-8968-63b5a55a4d66#1#0',
+            id: sprintf('9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period2Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -161,7 +169,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident5 = new CifsIncidentView(
-            id: '9698b212-705c-4c46-8968-63b5a55a4d66#2#0',
+            id: sprintf('9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period3Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -181,7 +189,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident6 = new CifsIncidentView(
-            id: '9698b212-705c-4c46-8968-63b5a55a4d66#3#0',
+            id: sprintf('9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -283,6 +291,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period1 = $this->createMock(Period::class);
         $period1
             ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn($period1Id);
+        $period1
+            ->expects(self::once())
             ->method('getStartDateTime')
             ->willReturn(new \DateTimeImmutable('2023-11-02 00:00:00'));
         $period1
@@ -328,6 +340,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period2 = $this->createMock(Period::class);
         $period2
             ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn($period2Id);
+        $period2
+            ->expects(self::once())
             ->method('getStartDateTime')
             ->willReturn(new \DateTimeImmutable('2023-11-03 00:00:00'));
         $period2
@@ -363,6 +379,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period3 = $this->createMock(Period::class);
         $period3
             ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn($period3Id);
+        $period3
+            ->expects(self::once())
             ->method('getStartDateTime')
             ->willReturn(new \DateTimeImmutable('2023-11-03 00:00:00'));
         $period3
@@ -385,6 +405,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn([]); // Whole day
 
         $period4 = $this->createMock(Period::class);
+        $period4
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn($period4Id);
         $period4
             ->expects(self::once())
             ->method('getStartDateTime')

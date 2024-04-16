@@ -93,6 +93,7 @@ final class GetCifsIncidentsQueryHandler
                         }
 
                         $incidentPeriods[] = [
+                            'id' => $period->getUuid(),
                             'start' => $period->getStartDateTime(),
                             'end' => $period->getEndDateTime(),
                             'schedule' => $schedule,
@@ -100,6 +101,7 @@ final class GetCifsIncidentsQueryHandler
                     }
                 } else {
                     $incidentPeriods[] = [
+                        'id' => '0',
                         'start' => $regulationStart,
                         'end' => $regulationEnd,
                         'schedule' => [],
@@ -112,10 +114,15 @@ final class GetCifsIncidentsQueryHandler
                     $street = $location->getRoadName() ?? $location->getRoadNumber();
                     $polylines = $this->polylineMaker->getPolylines($location->getGeometry());
 
-                    foreach ($incidentPeriods as $periodIndex => $incidentPeriod) {
-                        foreach ($polylines as $polylineIndex => $polyline) {
+                    foreach ($incidentPeriods as $incidentPeriod) {
+                        foreach ($polylines as $polyline) {
+                            // The ID of a CIFS incident is opaque to Waze, we can define it as we want.
+                            // But it must be "unique inside the feed and remain stable over an incident's lifetime".
+                            // For the ID to be unique, it should contain the location ID, a hash of the polyline, and the period ID.
+                            $id = $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
+
                             $incidents[] = new CifsIncidentView(
-                                id: $locationId . '#' . $periodIndex . '#' . $polylineIndex,
+                                id: $id,
                                 creationTime: $incidentCreationTime,
                                 type: 'ROAD_CLOSED',
                                 subType: $subType,
