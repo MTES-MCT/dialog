@@ -36,6 +36,12 @@ final class PolylineMaker implements PolylineMakerInterface
                 ['geom' => $geometry],
             );
 
-        return array_map(fn ($row) => $row['polyline'], $rows);
+        $polylines = [];
+
+        foreach ($rows as $row) {
+            $polylines[] = $row['polyline'];
+        }
+
+        return $polylines;
     }
 }
