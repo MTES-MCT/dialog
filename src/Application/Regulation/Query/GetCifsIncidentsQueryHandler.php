@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
+use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
@@ -18,6 +19,7 @@ final class GetCifsIncidentsQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
+        private PolylineMakerInterface $polylineMaker,
     ) {
     }
 
@@ -108,7 +110,7 @@ final class GetCifsIncidentsQueryHandler
                 foreach ($measure->getLocations() as $location) {
                     $locationId = $location->getUuid();
                     $street = $location->getRoadName() ?? $location->getRoadNumber();
-                    $polylines = $this->repository->convertToCifsPolylines($location->getGeometry());
+                    $polylines = $this->polylineMaker->getPolylines($location->getGeometry());
 
                     foreach ($incidentPeriods as $periodIndex => $incidentPeriod) {
                         foreach ($polylines as $polylineIndex => $polyline) {

@@ -181,31 +181,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function convertToCifsPolylines(string $geometry): array
-    {
-        $rows = $this->getEntityManager()
-            ->getConnection()
-            ->fetchAllAssociative(
-                'WITH linestring AS (
-                    -- Split the geometry into its individual LINESTRING components
-                    SELECT (components.dump).geom AS geom FROM (
-                        SELECT ST_Dump(ST_LineMerge(:geom)) AS dump
-                    ) AS components
-                )
-                SELECT array_to_string(
-                    array(
-                        SELECT ST_Y(d.geom) || \' \' || ST_X(d.geom)
-                        FROM ST_DumpPoints(linestring.geom) AS d
-                    ),
-                    \' \'
-                ) AS polyline
-                FROM linestring',
-                ['geom' => $geometry],
-            );
-
-        return array_map(fn ($row) => $row['polyline'], $rows);
-    }
-
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord
     {
         $this->getEntityManager()->persist($regulationOrderRecord);

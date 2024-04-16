@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
+use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
@@ -21,6 +22,13 @@ use PHPUnit\Framework\TestCase;
 
 final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
+    private $polylineMaker;
+
+    protected function setUp(): void
+    {
+        $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
+    }
+
     public function testGetAllEmpty(): void
     {
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
@@ -30,7 +38,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository, $this->polylineMaker);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -452,9 +460,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder2);
 
-        $regulationOrderRecordRepository
+        $this->polylineMaker
             ->expects(self::exactly(2))
-            ->method('convertToCifsPolylines')
+            ->method('getPolylines')
             ->withConsecutive([$geometry1], [$geometry2])
             ->willReturnOnConsecutiveCalls([$polyline1, $polyline2], [$polyline3]);
 
@@ -463,7 +471,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2]);
 
-        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository, $this->polylineMaker);
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
