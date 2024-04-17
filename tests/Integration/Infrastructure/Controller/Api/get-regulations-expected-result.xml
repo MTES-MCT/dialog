@@ -474,8 +474,8 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
-                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2021-11-03T08:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2021-11-05T10:00:00+00:00</com:overallEndTime>
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
                                             <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>

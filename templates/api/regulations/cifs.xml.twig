@@ -2,14 +2,14 @@
 <incidents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.gstatic.com/road-incidents/cifsv2.xsd">
     {% for incident in incidents %}
         <incident id="{{ incident.id }}">
-            <creationtime>{{ incident.creationTime }}</creationtime>
+            <creationtime>{{ incident.creationTime|date('Y-m-d\\TH:i:sP') }}</creationtime>
             <type>{{ incident.type }}</type>
             <description>{{ 'api.cifs.incident.description'|trans({'%street%': incident.street}) }}</description>
             <street>{{ incident.street }}</street>
             <direction>{{ incident.direction }}</direction>
             <polyline>{{ incident.polyline }}</polyline>
-            <starttime>{{ incident.startTime }}</starttime>
-            <endtime>{{ incident.endTime }}</endtime>
+            <starttime>{{ incident.startTime|date('Y-m-d\\TH:i:sP') }}</starttime>
+            <endtime>{{ incident.endTime|date('Y-m-d\\TH:i:sP') }}</endtime>
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
