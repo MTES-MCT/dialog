@@ -6,6 +6,37 @@ export default class Autocomplete extends StimulusAutocomplete {
     extraQueryParams: { type: String, default: undefined },
   };
 
+  connect() {
+    super.connect();
+
+    this.inputTarget.addEventListener('input', this.#onInput);
+    this.inputTarget.addEventListener('focus', this.#onInputFocus);
+  }
+
+  disconnect() {
+    super.disconnect();
+
+    if (this.hasInputTarget) {
+      this.inputTarget.removeEventListener('input', this.#onInput);
+      this.inputTarget.removeEventListener('focus', this.#onInputFocus);
+    }
+  }
+
+  #onInput = () => {
+    if (this.hasHiddenTarget) {
+      // By default this is debounced, which can lead to submitting a hidden
+      // value that's out of date because we began to type something new.
+      this.hiddenTarget.value = '';
+    }
+  }
+
+  #onInputFocus = () => {
+    // Show any existing results when entering the input
+    if (this.resultsTarget.innerHTML) {
+      super.open();
+    }
+  };
+
   buildURL(query) {
     const url = new URL(super.buildURL(query));
 

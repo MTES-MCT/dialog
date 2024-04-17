@@ -117,6 +117,9 @@ final class LocationFormType extends AbstractType
                     'label' => 'regulation.location.roadName',
                     'help' => 'regulation.location.roadName.help',
                     'required' => false,
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(
@@ -209,6 +212,9 @@ final class LocationFormType extends AbstractType
         $resolver->setDefaults([
             'administrators' => [],
             'data_class' => SaveLocationCommand::class,
+            'error_mapping' => [
+                'cityCode' => 'cityLabel',
+            ],
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
     }

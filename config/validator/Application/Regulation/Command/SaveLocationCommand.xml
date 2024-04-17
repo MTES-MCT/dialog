@@ -94,7 +94,9 @@
             <constraint name="When">
                 <option name="expression"> this.roadType === 'lane'</option>
                 <option name="constraints">
-                    <constraint name="NotBlank" />
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.cityCode.error.blank</option>
+                    </constraint>
                 </option>
             </constraint>
         </property>
@@ -110,8 +112,14 @@
             </constraint>
         </property>
         <property name="roadName">
-            <constraint name="Length">
-                <option name="max">255</option>
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'lane' </option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">255</option>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="fromHouseNumber">

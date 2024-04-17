@@ -10,6 +10,10 @@
                 <source>regulation.location.error.geocoding_failed</source>
                 <target>Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.cityCode.error.blank">
+                <source>regulation.location.cityCode.error.blank</source>
+                <target>Veuillez choisir une ville ou commune parmi la liste.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.abscissa_out_of_range">
                 <source>regulation.location.error.abscissa_out_of_range</source>
                 <target>Cette abscisse n'est pas située sur la route. Veuillez vérifier votre saisie.</target>
