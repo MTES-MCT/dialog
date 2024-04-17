@@ -86,12 +86,6 @@ final class GetCifsIncidentsQueryHandler
                         $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
                         uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
 
-                        // Sort time spans by start time as per CIFS examples
-                        foreach ($schedule as $day => $timeSpans) {
-                            usort($timeSpans, fn ($a, $b) => $a['startTime'] === $b['startTime'] ? 0 : ($a['startTime'] < $b['startTime'] ? -1 : 1));
-                            $schedule[$day] = $timeSpans;
-                        }
-
                         $incidentPeriods[] = [
                             'id' => $period->getUuid(),
                             'start' => $period->getStartDateTime(),
