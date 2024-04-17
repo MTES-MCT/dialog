@@ -68,3 +68,15 @@ services:
       # Allow accessing host ports from this container via host.docker.internal on Linux
       # https://stackoverflow.com/a/43541732
       - host.docker.internal:host-gateway
+  
+  martin:
+    # https://maplibre.org/martin/run-with-docker-compose.html
+    # TODO : make it wait for database with a shell script
+    image: ghcr.io/maplibre/martin:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://dialog:dialog@database/dialog
+    depends_on:
+      - database
