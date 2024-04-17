@@ -836,10 +836,11 @@ final class BacIdfTransformerTest extends TestCase
         ];
 
         $periodCommand1 = new SavePeriodCommand();
+        $periodCommand1->isPermanent = true;
         $periodCommand1->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
         $periodCommand1->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
-        $periodCommand1->endDate = new \DateTimeImmutable('2100-01-01T00:00:00+01');
-        $periodCommand1->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand1->endDate = null;
+        $periodCommand1->endTime = null;
         $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
         $timeSlot = new SaveTimeSlotCommand();
         $timeSlot->startTime = new \DateTimeImmutable('07:00', new \DateTimeZone('Etc/GMT-1'));
@@ -847,10 +848,11 @@ final class BacIdfTransformerTest extends TestCase
         $periodCommand1->timeSlots = [$timeSlot];
 
         $periodCommand2 = new SavePeriodCommand();
+        $periodCommand2->isPermanent = true;
         $periodCommand2->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
         $periodCommand2->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
-        $periodCommand2->endDate = new \DateTimeImmutable('2100-01-01T00:00:00+01');
-        $periodCommand2->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand2->endDate = null;
+        $periodCommand2->endTime = null;
         $periodCommand2->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $dailyRange = new SaveDailyRangeCommand();
         $dailyRange->applicableDays = [ApplicableDayEnum::MONDAY->value, ApplicableDayEnum::TUESDAY->value];
@@ -858,10 +860,11 @@ final class BacIdfTransformerTest extends TestCase
         $periodCommand2->timeSlots = [];
 
         $periodCommand3 = new SavePeriodCommand();
+        $periodCommand3->isPermanent = true;
         $periodCommand3->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
         $periodCommand3->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
-        $periodCommand3->endDate = new \DateTimeImmutable('2100-01-01T00:00:00+01');
-        $periodCommand3->endTime = new \DateTimeImmutable('2100-01-01T00:00:00+01');
+        $periodCommand3->endDate = null;
+        $periodCommand3->endTime = null;
         $periodCommand3->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $dailyRange = new SaveDailyRangeCommand();
         $dailyRange->applicableDays = [ApplicableDayEnum::WEDNESDAY->value, ApplicableDayEnum::SUNDAY->value];

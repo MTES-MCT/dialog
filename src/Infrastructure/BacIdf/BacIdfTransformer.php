@@ -432,14 +432,11 @@ final class BacIdfTransformer
             }
 
             $periodCommand = new SavePeriodCommand();
-
+            $periodCommand->isPermanent = true;
             $periodCommand->startDate = $startDate;
             $periodCommand->startTime = $startDate;
-
-            // Workaround for https://github.com/MTES-MCT/dialog/issues/622
-            $endDate = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2100-01-01 00:00:00', new \DateTimeZone('Europe/Paris'));
-            $periodCommand->endDate = $endDate;
-            $periodCommand->endTime = $endDate;
+            $periodCommand->endDate = null;
+            $periodCommand->endTime = null;
 
             $days = $periodItem['JOUR'];
 
