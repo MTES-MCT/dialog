@@ -33,6 +33,30 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Veuillez définir une ou plusieurs localisations.', $crawler->filter('#measure_form_locations_error')->text());
     }
 
+    public function testInvalidLaneBlankCityCode(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Mesure', $crawler->filter('h3')->text());
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['cityCode'] = ''; // Blank
+        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay';
+        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Manual Input';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Veuillez choisir une ville ou commune parmi la liste.', $crawler->filter('#measure_form_locations_0_cityLabel_error')->text());
+    }
+
     public function testInvalidDepartmentalRoad(): void
     {
         $client = $this->login();
