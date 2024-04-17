@@ -80,3 +80,6 @@ services:
       - DATABASE_URL=postgresql://dialog:dialog@database/dialog
     depends_on:
       - database
+    volumes:
+      - './config/martin_tile_server.yaml:/etc/martin_tile_server_config.yaml:r'
+    command: ["--config", "/etc/martin_tile_server_config.yaml"]
