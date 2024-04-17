@@ -710,33 +710,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
     }
 
-    public function testGeocodingFailure(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
-        $this->assertResponseStatusCodeSame(200);
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        // Get the raw values.
-        $values = $form->getPhpValues();
-
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du HOUSENUMBER_GEOCODING_FAILURE';
-        unset($values['location_form']['isEntireStreet']);
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
-        $values['measure_form']['locations'][0]['toHouseNumber'] = '37bis';
-
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
-    }
-
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();

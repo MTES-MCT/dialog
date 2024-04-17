@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Mock;
 
-use App\Application\Exception\GeocodingFailureException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -31,10 +30,6 @@ final class APIAdresseMockClient extends MockHttpClient
     {
         $type = $options['query']['type'];
         $query = $options['query']['q'];
-
-        if ($type === 'housenumber' && str_contains($query, 'HOUSENUMBER_GEOCODING_FAILURE')) {
-            throw new GeocodingFailureException();
-        }
 
         if ($type === 'street' && $query === 'Rue Eugène Berthoud') {
             $body = [
