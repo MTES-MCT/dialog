@@ -7,15 +7,15 @@ const map = new maplibregl.Map({
 });
 
 map.on('load', () => {
-    map.addSource('regulations', {
+    map.addSource('regulations-source', {
         type: 'vector',
         url:
         'http://localhost:3000/location'
     });
     map.addLayer({
-        'id': 'terrain-data',
+        'id': 'regulations-layer',
         'type': 'line',
-        'source': 'regulations',
+        'source': 'regulations-source',
         'source-layer': 'location',
         'layout': {
             'line-join': 'round',
