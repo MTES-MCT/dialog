@@ -198,7 +198,10 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
                         ''
                     ) AS road_name
                     FROM voie_nommee
-                    WHERE nom_minuscule_search @@ to_tsquery('french', :query::text)
+                    WHERE (
+                        nom_minuscule_search @@ to_tsquery('french', :query::text)
+                        OR :search % ANY(STRING_TO_ARRAY(f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), ' '))
+                    )
                     AND code_insee = :cityCode
                     ORDER BY ts_rank(nom_minuscule_search, to_tsquery('french', :query::text)) DESC
                     LIMIT 7
@@ -206,6 +209,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
                 [
                     'cityCode' => $cityCode,
                     'query' => $query,
+                    'search' => $search,
                 ],
             );
         } catch (\Exception $exc) {
