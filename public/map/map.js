@@ -26,5 +26,18 @@ map.on('load', () => {
             'line-width': 10
         }
     });
+    map.on('click', 'regulations-layer', (e) => {
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].properties.road_name + " [" + e.features[0].properties.road_number + "]")
+            .addTo(map);
+    });
+    // change the cursor when the mouse is over the regulations layer
+    map.on('mouseenter', 'regulations-layer', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'regulations-layer', () => {
+        map.getCanvas().style.cursor = '';
+    });
 });
 
