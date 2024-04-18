@@ -25,7 +25,7 @@ final class AdministratorRepository implements AdministratorRepositoryInterface
 
             foreach (explode('|', $content) as $value) {
                 $value = trim($value); // ' Bas-\nRhin ' => 'Bas-\nRhin'
-                $value = str_replace('-' . PHP_EOL, '', $value); // => 'Bas-Rhin'
+                $value = str_replace('-' . PHP_EOL, '-', $value); // => 'Bas-Rhin'
                 $administrators[] = str_replace(PHP_EOL, ' ', $value); // 'Toulouse\nMétropole' => 'Toulouse Métropole'
             }
 
