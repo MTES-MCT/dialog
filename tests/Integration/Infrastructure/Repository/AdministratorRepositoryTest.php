@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Integration\Infrastructure\Templates;
+namespace App\Test\Integration\Infrastructure\Repository;
 
 use App\Domain\Regulation\Repository\AdministratorRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
