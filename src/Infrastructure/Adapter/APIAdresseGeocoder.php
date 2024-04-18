@@ -107,45 +107,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
         return $this->computeCoordinates($roadName . ' / ' . $address, $cityCode, type: 'poi');
     }
 
-    public function findRoadNames(string $search, string $cityCode): array
-    {
-        if (\strlen($search) < 3) {
-            // APIAdresse returns error if search string has length strictly less than 3.
-            return [];
-        }
-
-        $response = $this->apiAdresseClient->request('GET', '/search/', [
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-            'query' => [
-                'q' => $search,
-                'autocomplete' => '1',
-                'limit' => 7,
-                'type' => 'street',
-                'citycode' => $cityCode,
-            ],
-        ]);
-
-        try {
-            $data = $response->toArray(throw: true);
-            $roadNames = [];
-
-            foreach ($data['features'] as $feature) {
-                $roadNames[] = [
-                    'value' => $feature['properties']['name'],
-                    'label' => $feature['properties']['label'],
-                ];
-            }
-
-            return $roadNames;
-        } catch (\Exception $exc) {
-            \Sentry\captureException($exc);
-
-            return [];
-        }
-    }
-
     public function findCities(string $search): array
     {
         if (\strlen($search) < 3) {

@@ -22,4 +22,6 @@ interface RoadGeocoderInterface
         string $side,
         int $abscissa,
     ): Coordinates;
+
+    public function findRoadNames(string $search, string $cityCode): array;
 }
