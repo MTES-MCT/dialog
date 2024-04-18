@@ -589,6 +589,19 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('La date de fin doit être supérieure à la date de début.', $crawler->filter('#measure_form_periods_0_endDate_error')->text());
 
+        // Bad period time
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-29';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '10';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-29';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('L\'heure de fin doit être supérieure à l\'heure de début.', $crawler->filter('#measure_form_periods_0_endTime_error')->text());
+
         // Bad values
         $values['measure_form']['periods'][0]['recurrenceType'] = 'test';
         $values['measure_form']['periods'][0]['startDate'] = 'test';
