@@ -17,21 +17,24 @@ map.on('load', () => {
             url: 'http://localhost:3000/location'
 	}
     );
-    // layers (i.e. styles) : 
-    map.addLayer({
-        'id': 'regulations-layer',
-        'type': 'line',
-        'source': 'regulations-source',
-        'source-layer': 'location',
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#ff69b4',
-            'line-width': 10
-        }
-    });
+    // layers (i.e. styles) :
+    map.addLayer(
+	{
+            'id': 'regulations-layer',
+            'type': 'line',
+            'source': 'regulations-source',
+            'source-layer': 'location',
+            'layout': {
+		'line-join': 'round',
+		'line-cap': 'round'
+            },
+            'paint': {
+		'line-color': '#ff69b4',
+		'line-width': 10
+            }
+	},
+	"toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
+    );
     // popup when clicking on a feature of the regulation layer
     map.on('click', 'regulations-layer', (e) => {
         new maplibregl.Popup()
@@ -50,8 +53,8 @@ map.on('load', () => {
 
 map.on('idle', () => {
     // automatically pan and zoom on the regulation layer
-    // "map.getSource("regulations-source").bounds" is not defined inside "map.on('load', () => {", before the map is fully loaded
-    // but do that only one time
+    // "map.getSource("regulations-source").bounds" is not defined inside "map.on('load', () => {", i.e. before the map is fully loaded
+    // we must do that only one time
     if (first_map_load) {
 	map.fitBounds(
 	    map.getSource("regulations-source").bounds,
