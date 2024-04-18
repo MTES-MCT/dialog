@@ -26,6 +26,7 @@ map.on('load', () => {
             'line-width': 10
         }
     });
+    // popup when clicking on a feature of the regulation layer
     map.on('click', 'regulations-layer', (e) => {
         new maplibregl.Popup()
             .setLngLat(e.lngLat)
@@ -41,3 +42,15 @@ map.on('load', () => {
     });
 });
 
+map.on('idle', () => {
+    // automatically pan and zoom on the regulation layer
+    // "map.getSource("regulations-source").bounds" is not defined inside "map.on('load', () => {", before the map is fully loaded
+    map.fitBounds(
+	map.getSource("regulations-source").bounds,
+	{
+	    padding: 100,
+	    animate: true,
+	    duration: 500  // duration in ms
+	}
+    );
+});
