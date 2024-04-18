@@ -8,7 +8,6 @@ use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class LocationTest extends TestCase
@@ -16,7 +15,7 @@ final class LocationTest extends TestCase
     private Location $location;
     private Location $departmentalRoad;
     private string $geometry;
-    private MockObject $measure;
+    private $measure;
 
     public function setUp(): void
     {
@@ -43,6 +42,7 @@ final class LocationTest extends TestCase
             toPointNumber: null,
             toAbscissa: null,
             toSide: null,
+            roadGeometry: 'laneGeometry',
             geometry: $this->geometry,
         );
 
@@ -63,6 +63,7 @@ final class LocationTest extends TestCase
             toPointNumber: '16',
             toAbscissa: 250,
             toSide: 'U',
+            roadGeometry: 'departmentalRoadGeometry',
             geometry: 'sectionGeometry',
         );
     }
@@ -76,6 +77,7 @@ final class LocationTest extends TestCase
         $this->assertSame('Route du Grand Brossais', $this->location->getRoadName());
         $this->assertSame('15', $this->location->getFromHouseNumber());
         $this->assertSame('37bis', $this->location->getToHouseNumber());
+        $this->assertSame('laneGeometry', $this->location->getRoadGeometry());
         $this->assertSame($this->geometry, $this->location->getGeometry());
 
         $this->assertSame('Ardèche', $this->departmentalRoad->getAdministrator());
@@ -86,6 +88,8 @@ final class LocationTest extends TestCase
         $this->assertSame('16', $this->departmentalRoad->getToPointNumber());
         $this->assertSame(250, $this->departmentalRoad->getToAbscissa());
         $this->assertSame('U', $this->departmentalRoad->getToSide());
+        $this->assertSame('departmentalRoadGeometry', $this->departmentalRoad->getRoadGeometry());
+        $this->assertSame('sectionGeometry', $this->departmentalRoad->getGeometry());
     }
 
     public function testUpdate(): void
@@ -98,6 +102,7 @@ final class LocationTest extends TestCase
         $newRoadName = 'La Forge Hervé';
         $newFromHouseNumber = '1';
         $newToHouseNumber = '4';
+        $newRoadGeometry = 'newRoadGeometry';
         $newGeometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.938727, 47.358454),
             Coordinates::fromLonLat(-1.940304, 47.388473),
@@ -118,6 +123,7 @@ final class LocationTest extends TestCase
             null,
             null,
             null,
+            $newRoadGeometry,
             $newGeometry,
         );
 
@@ -136,6 +142,7 @@ final class LocationTest extends TestCase
             '12',
             'D',
             0,
+            $newRoadGeometry,
             $newGeometry,
         );
 
@@ -148,6 +155,7 @@ final class LocationTest extends TestCase
         $this->assertSame($newRoadName, $this->location->getRoadName());
         $this->assertSame($newFromHouseNumber, $this->location->getFromHouseNumber());
         $this->assertSame($newToHouseNumber, $this->location->getToHouseNumber());
+        $this->assertSame($newRoadGeometry, $this->location->getRoadGeometry());
         $this->assertSame($newGeometry, $this->location->getGeometry());
 
         $this->assertSame('Ain', $this->departmentalRoad->getAdministrator());

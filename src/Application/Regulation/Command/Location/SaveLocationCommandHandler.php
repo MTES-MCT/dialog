@@ -30,9 +30,11 @@ final class SaveLocationCommandHandler
         // Create location if needed
         if (!$command->location instanceof Location) {
             if ($command->roadType === RoadTypeEnum::LANE->value) {
-                $geometry = empty($command->geometry) ? $this->computeLaneGeometry($command) : $command->geometry;
+                [$roadGeometry, $geometry] = $command->roadGeometry && $command->geometry
+                    ? [$command->roadGeometry, $command->geometry]
+                    : $this->computeLaneGeometry($command);
             } else {
-                $geometry = $this->computeRoadSectionGeometry($command);
+                [$roadGeometry, $geometry] = $this->computeRoadSectionGeometry($command);
             }
 
             $location = $this->locationRepository->add(
@@ -53,6 +55,7 @@ final class SaveLocationCommandHandler
                     toPointNumber: $command->toPointNumber,
                     toAbscissa: $command->toAbscissa,
                     toSide: $command->toSide,
+                    roadGeometry: $roadGeometry,
                     geometry: $geometry,
                 ),
             );
@@ -63,13 +66,13 @@ final class SaveLocationCommandHandler
         }
 
         if ($command->roadType === RoadTypeEnum::LANE->value) {
-            $geometry = $this->shouldRecomputeLaneGeometry($command)
+            [$roadGeometry, $geometry] = $this->shouldRecomputeLaneGeometry($command)
                 ? $this->computeLaneGeometry($command)
-                : $command->location->getGeometry();
+                : [$command->location->getRoadGeometry(), $command->location->getGeometry()];
         } else {
-            $geometry = $this->shouldRecomputeRoadSectionGeometry($command)
+            [$roadGeometry, $geometry] = $this->shouldRecomputeRoadSectionGeometry($command)
                 ? $this->computeRoadSectionGeometry($command)
-                : $command->location->getGeometry();
+                : [$command->location->getRoadGeometry(), $command->location->getGeometry()];
         }
 
         $command->location->update(
@@ -87,29 +90,30 @@ final class SaveLocationCommandHandler
             toPointNumber: $command->toPointNumber,
             toAbscissa: $command->toAbscissa,
             toSide: $command->toSide,
+            roadGeometry: $roadGeometry,
             geometry: $geometry,
         );
 
         return $command->location;
     }
 
-    private function computeLaneGeometry(SaveLocationCommand $command): ?string
+    private function computeLaneGeometry(SaveLocationCommand $command): array
     {
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
         if ($hasNoStart xor $hasNoEnd) {
             // Not supported yet.
-            return null;
+            return [null, null];
         }
 
         $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
 
         if ($hasNoStart && $hasNoEnd) {
-            return $fullLaneGeometry;
+            return [$fullLaneGeometry, $fullLaneGeometry];
         }
 
-        return $this->laneSectionMaker->computeSection(
+        $geometry = $this->laneSectionMaker->computeSection(
             $fullLaneGeometry,
             $command->roadName,
             $command->cityCode,
@@ -120,13 +124,15 @@ final class SaveLocationCommandHandler
             $command->toHouseNumber,
             $command->toRoadName,
         );
+
+        return [$fullLaneGeometry, $geometry];
     }
 
-    private function computeRoadSectionGeometry(SaveLocationCommand $command): string
+    private function computeRoadSectionGeometry(SaveLocationCommand $command): array
     {
         $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
 
-        return $this->roadSectionMaker->computeSection(
+        $geometry = $this->roadSectionMaker->computeSection(
             $fullDepartmentalRoadGeometry,
             $command->administrator,
             $command->roadNumber,
@@ -137,6 +143,8 @@ final class SaveLocationCommandHandler
             $command->toSide,
             $command->toAbscissa ?? 0,
         );
+
+        return [$fullDepartmentalRoadGeometry, $geometry];
     }
 
     private function shouldRecomputeLaneGeometry(SaveLocationCommand $command): bool

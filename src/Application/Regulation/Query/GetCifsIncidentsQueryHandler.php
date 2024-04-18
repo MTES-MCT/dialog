@@ -106,7 +106,7 @@ final class GetCifsIncidentsQueryHandler
                 foreach ($measure->getLocations() as $location) {
                     $locationId = $location->getUuid();
                     $street = $location->getRoadName() ?? $location->getRoadNumber();
-                    $polylines = $this->polylineMaker->getPolylines($location->getGeometry());
+                    $polylines = $this->polylineMaker->getPolylines($location->getGeometry(), $location->getRoadGeometry());
 
                     foreach ($incidentPeriods as $incidentPeriod) {
                         foreach ($polylines as $polyline) {

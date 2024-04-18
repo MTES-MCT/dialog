@@ -23,6 +23,7 @@ class Location
         private ?string $toPointNumber = null,
         private ?string $toSide = null,
         private ?int $toAbscissa = null,
+        private ?string $roadGeometry = null,
         private ?string $geometry = null,
     ) {
     }
@@ -77,6 +78,11 @@ class Location
         return $this->toHouseNumber;
     }
 
+    public function getRoadGeometry(): ?string
+    {
+        return $this->roadGeometry;
+    }
+
     public function getGeometry(): ?string
     {
         return $this->geometry;
@@ -127,6 +133,7 @@ class Location
         ?string $toPointNumber = null,
         ?string $toSide = null,
         ?int $toAbscissa = null,
+        ?string $roadGeometry = null,
         ?string $geometry = null,
     ): void {
         $this->roadType = $roadType;
@@ -135,6 +142,7 @@ class Location
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->toHouseNumber = $toHouseNumber;
+        $this->roadGeometry = $roadGeometry;
         $this->geometry = $geometry;
         $this->administrator = $administrator;
         $this->roadNumber = $roadNumber;

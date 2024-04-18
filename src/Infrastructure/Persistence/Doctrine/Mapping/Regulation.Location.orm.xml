@@ -28,6 +28,12 @@
             <option name="default">0</option>
       </options>
     </field>
+    <field name="roadGeometry" type="geojson_geometry" column="road_geometry" nullable="true">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
     <field name="geometry" type="geojson_geometry" column="geometry" nullable="true">
       <options>
         <option name="geometry_type">GEOMETRY</option>

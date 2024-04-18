@@ -16,7 +16,6 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class SaveLocationCommandHandlerTest extends TestCase
@@ -36,11 +35,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private string $toSide;
     private int $toAbscissa;
 
-    private MockObject $idFactory;
-    private MockObject $locationRepository;
-    private MockObject $roadGeocoder;
-    private MockObject $laneSectionMaker;
-    private MockObject $roadSectionMaker;
+    private $idFactory;
+    private $locationRepository;
+    private $roadGeocoder;
+    private $laneSectionMaker;
+    private $roadSectionMaker;
 
     public function setUp(): void
     {
@@ -115,6 +114,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         toPointNumber: null,
                         toSide: null,
                         toAbscissa: null,
+                        roadGeometry: 'fullLaneGeometry',
                         geometry: $this->geometry,
                     ),
                 ),
@@ -175,6 +175,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             toPointNumber: null,
             toSide: null,
             toAbscissa: null,
+            roadGeometry: $this->geometry,
             geometry: $this->geometry,
         );
 
@@ -244,6 +245,10 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->willReturn($this->fromHouseNumber);
         $location
             ->expects(self::exactly(2))
+            ->method('getRoadGeometry')
+            ->willReturn('roadGeometry');
+        $location
+            ->expects(self::exactly(2))
             ->method('getGeometry')
             ->willReturn($this->geometry);
         $location
@@ -269,6 +274,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 null,
                 null,
                 null,
+                'roadGeometry',
                 $this->geometry,
             );
 
@@ -356,6 +362,10 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->willReturn($this->roadNumber);
         $location
             ->expects(self::exactly(2))
+            ->method('getRoadGeometry')
+            ->willReturn($fullDepartmentalRoadGeometry);
+        $location
+            ->expects(self::exactly(2))
             ->method('getGeometry')
             ->willReturn($fullDepartmentalRoadGeometry);
 
@@ -377,6 +387,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 $this->toPointNumber,
                 $this->toSide,
                 $this->toAbscissa,
+                $fullDepartmentalRoadGeometry,
                 $fullDepartmentalRoadGeometry,
             );
 
@@ -469,6 +480,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         toPointNumber: $this->toPointNumber,
                         toSide: $this->toSide,
                         toAbscissa: $this->toAbscissa,
+                        roadGeometry: $fullDepartmentalRoadGeometry,
                         geometry: 'sectionGeometry',
                     ),
                 ),
@@ -547,6 +559,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
                         toPointNumber: null,
                         toSide: null,
                         toAbscissa: null,
+                        roadGeometry: 'fullLaneGeometry',
                         geometry: $this->geometry,
                     ),
                 ),

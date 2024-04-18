@@ -22,6 +22,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?string $toHouseNumber = null;
     public ?string $toRoadName = null;
     public ?Coordinates $toCoords = null;
+    public ?string $roadGeometry;
     public ?string $geometry;
     public ?Measure $measure;
     private ?bool $isEntireStreetFormValue = null;
@@ -45,6 +46,7 @@ final class SaveLocationCommand implements CommandInterface
         $this->roadName = $location?->getRoadName();
         $this->fromHouseNumber = $location?->getFromHouseNumber();
         $this->toHouseNumber = $location?->getToHouseNumber();
+        $this->roadGeometry = $location?->getRoadGeometry();
         $this->geometry = $location?->getGeometry();
         $this->isEntireStreetFormValue = $location ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
         $this->fromPointNumber = $location?->getFromPointNumber();

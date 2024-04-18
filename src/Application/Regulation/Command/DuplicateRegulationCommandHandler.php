@@ -98,6 +98,7 @@ final class DuplicateRegulationCommandHandler
                     $cmd->roadName = $location->getRoadName();
                     $cmd->fromHouseNumber = $location->getFromHouseNumber();
                     $cmd->toHouseNumber = $location->getToHouseNumber();
+                    $cmd->roadGeometry = $location->getRoadGeometry();
                     $cmd->geometry = $location->getGeometry();
                     $cmd->fromPointNumber = $location->getFromPointNumber();
                     $cmd->toPointNumber = $location->getToPointNumber();
