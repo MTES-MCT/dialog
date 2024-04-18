@@ -1,17 +1,21 @@
 const map = new maplibregl.Map({
     container: 'map', // container id
-    style: 'https://demotiles.maplibre.org/style.json', // style URL
+    style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json', // style URL
     center: [0, 0], // starting position [lng, lat]
     zoom: 1, // starting zoom
-    maplibreLogo: true
+    maplibreLogo: false
 });
 
 map.on('load', () => {
-    map.addSource('regulations-source', {
-        type: 'vector',
-        url:
-        'http://localhost:3000/location'
-    });
+    // sources : 
+    map.addSource(
+	'regulations-source',
+	{
+            type: 'vector',
+            url: 'http://localhost:3000/location'
+	}
+    );
+    // layers (i.e. styles) : 
     map.addLayer({
         'id': 'regulations-layer',
         'type': 'line',
