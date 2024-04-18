@@ -6,6 +6,8 @@ const map = new maplibregl.Map({
     maplibreLogo: false
 });
 
+let first_map_load = true;
+
 map.on('load', () => {
     // sources : 
     map.addSource(
@@ -49,12 +51,16 @@ map.on('load', () => {
 map.on('idle', () => {
     // automatically pan and zoom on the regulation layer
     // "map.getSource("regulations-source").bounds" is not defined inside "map.on('load', () => {", before the map is fully loaded
-    map.fitBounds(
-	map.getSource("regulations-source").bounds,
-	{
-	    padding: 100,
-	    animate: true,
-	    duration: 500  // duration in ms
-	}
-    );
+    // but do that only one time
+    if (first_map_load) {
+	map.fitBounds(
+	    map.getSource("regulations-source").bounds,
+	    {
+		padding: 100,
+		animate: true,
+		duration: 500  // duration in ms
+	    }
+	);
+	first_map_load = false;
+    };
 });
