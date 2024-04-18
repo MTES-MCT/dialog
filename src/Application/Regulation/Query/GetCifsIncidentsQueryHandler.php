@@ -4,131 +4,135 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
+use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
+use App\Domain\Condition\Period\Period;
+use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetCifsIncidentsQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
+        private PolylineMakerInterface $polylineMaker,
     ) {
     }
 
     public function __invoke(GetCifsIncidentsQuery $query): array
     {
-        $rows = $this->repository->findRegulationOrdersForCifsIncidentFormat();
+        $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat();
 
-        if (empty($rows)) {
-            return [];
-        }
+        // Reference: https://developers.google.com/waze/data-feed/cifs-specification?hl=fr
+        $incidents = [];
 
-        // Rows are sorted by measureId and locationId.
-        // This means that if there are 3 measures with 2 locations each, then we will get:
-        // * 2 rows for the 1st location of the 1st measure
-        // * then 2 rows for the 2nd location of the 1st measure
-        // * then 2 rows for the 1st location of the 2nd measure
-        // * Etc.
-        // We build up the measure's <schedule> and push an incident whenever we encounter a new locationId.
-        $incidentViews = [];
-        $currentMeasure = $rows[0];
-        $currentLocation = $rows[0];
-        $readSchedule = true;
-        $schedule = [];
+        /** @var RegulationOrderRecord $regulationOrderRecord */
+        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
-        foreach ($rows as $row) {
-            if ($row['locationId'] !== $currentLocation['locationId']) {
-                $incidentViews[] = self::makeIncidentView($currentLocation, $schedule);
+            $subType = match ($regulationOrder->getCategory()) {
+                RegulationOrderCategoryEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
+                RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value => 'ROAD_BLOCKED_CONSTRUCTION',
+                RegulationOrderCategoryEnum::INCIDENT->value => 'ROAD_BLOCKED_HAZARD',
+                default => null,
+            };
 
-                $currentLocation = $row;
-                // Once the rows of the first location have passed, the full measure schedule has been read.
-                $readSchedule = false;
-            }
+            $incidentCreationTime = $regulationOrderRecord->getCreatedAt();
+            $regulationStart = $regulationOrder->getStartDate();
+            $regulationEnd = $regulationOrder->getEndDate();
 
-            if ($row['measureId'] !== $currentMeasure['measureId']) {
-                $currentMeasure = $row;
-                $readSchedule = true;
-                $schedule = [];
-            }
+            /** @var Measure $measure */
+            foreach ($regulationOrder->getMeasures() as $measure) {
+                /** @var Period[] $periods */
+                $periods = $measure->getPeriods();
 
-            $applicableDays = $row['applicableDays'];
+                $incidentPeriods = [];
 
-            if ($readSchedule && !empty($applicableDays)) {
-                if (ApplicableDayEnum::hasAllValues($applicableDays)) {
-                    $applicableDays = ['everyday'];
-                }
+                if (\count($periods) > 0) {
+                    foreach ($periods as $period) {
+                        $applicableDays = $period->getDailyRange()?->getApplicableDays() ?? [];
 
-                foreach ($applicableDays as $day) {
-                    if (empty($schedule[$day])) {
-                        $schedule[$day] = [];
+                        if (ApplicableDayEnum::hasAllValues($applicableDays)) {
+                            $applicableDays = ['everyday'];
+                        }
+
+                        /** @var TimeSlot[] $timeSlots */
+                        $timeSlots = $period->getTimeSlots();
+
+                        if ($timeSlots) {
+                            $timeSpans = [];
+
+                            foreach ($timeSlots as $timeSlot) {
+                                $timeSpans[] = [
+                                    'startTime' => $timeSlot->getStartTime(),
+                                    'endTime' => $timeSlot->getEndTime(),
+                                ];
+                            }
+                        } else {
+                            $timeSpans = [['startTime' => new \DateTimeImmutable('00:00'), 'endTime' => new \DateTimeImmutable('23:59')]];
+                        }
+
+                        $schedule = [];
+
+                        foreach ($applicableDays as $day) {
+                            $schedule[$day] = $timeSpans;
+                        }
+
+                        // Adhere to key order in CIFS <schedule> XML element
+                        $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
+                        uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
+
+                        $incidentPeriods[] = [
+                            'id' => $period->getUuid(),
+                            'start' => $period->getStartDateTime(),
+                            'end' => $period->getEndDateTime(),
+                            'schedule' => $schedule,
+                        ];
                     }
-
-                    $schedule[$day][] = [
-                        'startTime' => $row['startTime'] ?? '00:00',
-                        'endTime' => $row['endTime'] ?? '23:59',
+                } else {
+                    $incidentPeriods[] = [
+                        'id' => '0',
+                        'start' => $regulationStart,
+                        'end' => $regulationEnd,
+                        'schedule' => [],
                     ];
                 }
-            }
-        }
 
-        // Flush the last pending view.
-        $incidentViews[] = self::makeIncidentView($currentLocation, $schedule);
+                /** @var Location $location */
+                foreach ($measure->getLocations() as $location) {
+                    $locationId = $location->getUuid();
+                    $street = $location->getRoadName() ?? $location->getRoadNumber();
+                    $polylines = $this->polylineMaker->getPolylines($location->getGeometry());
 
-        return $incidentViews;
-    }
+                    foreach ($incidentPeriods as $incidentPeriod) {
+                        foreach ($polylines as $polyline) {
+                            // The ID of a CIFS incident is opaque to Waze, we can define it as we want.
+                            // But it must be "unique inside the feed and remain stable over an incident's lifetime".
+                            // For the ID to be unique, it should contain the location ID, a hash of the polyline, and the period ID.
+                            $id = $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
 
-    private static function makeIncidentView(array $row, array $schedule): CifsIncidentView
-    {
-        $subType = match ($row['category']) {
-            RegulationOrderCategoryEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
-            RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value => 'ROAD_BLOCKED_CONSTRUCTION',
-            RegulationOrderCategoryEnum::INCIDENT->value => 'ROAD_BLOCKED_HAZARD',
-            default => null,
-        };
-
-        // Adhere to XML schedule key order
-        $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
-        uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
-
-        // Sort time spans by start time
-        foreach (array_keys($schedule) as $day) {
-            usort($schedule[$day], fn ($a, $b) => $a['startTime'] === $b['startTime'] ? 0 : ($a['startTime'] < $b['startTime'] ? -1 : 1));
-        }
-
-        $geom = json_decode($row['geometry'], associative: true);
-
-        $polyLineCoords = [];
-
-        if ($geom['type'] === 'LineString') {
-            foreach ($geom['coordinates'] as $coords) {
-                $lon = $coords[0];
-                $lat = $coords[1];
-                $polyLineCoords[] = sprintf('%.6f %.6f', $lat, $lon);
-            }
-        } elseif ($geom['type'] === 'MultiLineString') {
-            foreach ($geom['coordinates'] as $coordsList) {
-                foreach ($coordsList as $coords) {
-                    $lon = $coords[0];
-                    $lat = $coords[1];
-                    $polyLineCoords[] = sprintf('%.6f %.6f', $lat, $lon);
+                            $incidents[] = new CifsIncidentView(
+                                id: $id,
+                                creationTime: $incidentCreationTime,
+                                type: 'ROAD_CLOSED',
+                                subType: $subType,
+                                street: $street,
+                                direction: 'BOTH_DIRECTIONS',
+                                polyline: $polyline,
+                                startTime: $incidentPeriod['start'],
+                                endTime: $incidentPeriod['end'],
+                                schedule: $incidentPeriod['schedule'],
+                            );
+                        }
+                    }
                 }
             }
         }
 
-        $polyLine = implode(' ', $polyLineCoords);
-
-        return new CifsIncidentView(
-            id: $row['locationId'],
-            creationTime: $row['createdAt']->format('Y-m-d\TH:i:sP'),
-            type: 'ROAD_CLOSED',
-            subType: $subType,
-            street: $row['roadName'] ?? $row['roadNumber'],
-            direction: 'BOTH_DIRECTIONS',
-            polyline: $polyLine,
-            startTime: ($row['periodStartDateTime'] ?? $row['regulationOrderStartDate'])->format('Y-m-d\TH:i:sP'),
-            endTime: ($row['periodEndDateTime'] ?? $row['regulationOrderEndDate'])->format('Y-m-d\TH:i:sP'),
-            schedule: $schedule,
-        );
+        return $incidents;
     }
 }
