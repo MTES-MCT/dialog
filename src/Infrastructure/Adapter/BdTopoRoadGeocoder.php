@@ -187,16 +187,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 "
-                    SELECT array_to_string(
-                        -- BD TOPO contains lowercase road names. We capitalize non-stopwords.
-                        -- Example: 'rue de france' -> 'Rue de France'. (Better than INITCAP('rue de france') -> 'Rue De France')
-                        array(
-                            SELECT CASE WHEN cardinality(t.lexemes) > 0 THEN INITCAP(t.token) ELSE t.token END
-                            FROM ts_debug('french', nom_minuscule) AS t
-                            WHERE t.alias NOT IN ('asciihword')
-                        ),
-                        ''
-                    ) AS road_name
+                    SELECT INITCAP(nom_minuscule) road_name
                     FROM voie_nommee
                     WHERE (
                         nom_minuscule_search @@ to_tsquery('french', :query::text)
