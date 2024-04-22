@@ -170,6 +170,30 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
     }
 
+    /** @group only */
+    public function testGeocodingFailureFullRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['cityCode'] = '59368';
+        $values['measure_form']['locations'][0]['cityLabel'] = 'La Madeleine (59110)';
+        $values['measure_form']['locations'][0]['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
+    }
+
     public function testAddLaneWithBlankHouseNumbers(): void
     {
         $client = $this->login();
