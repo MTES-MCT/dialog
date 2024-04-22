@@ -7,6 +7,7 @@ const map = new maplibregl.Map({
 });
 
 let first_map_load = true;
+const draft_filter = ["==", "is_draft", false];
 
 map.on('load', () => {
     // sources : 
@@ -81,9 +82,8 @@ map.on('load', () => {
 	map.setFilter("regulations-aggregated-layer", null); // delete the filter
 	map.setLayoutProperty('regulations-aggregated-layer', 'visibility', 'none');
     });
-    // filtering :
-    // demo : this filter will display all regulations (means : (is_draft) OR (NOT is_draft) -> always TRUE)
-    //map.setFilter("regulations-layer", ["any", ["==", "is_draft", true], ["==", "is_draft", false]]);    
+    // filtering : do not display draft regulations by default
+    map.setFilter("regulations-layer", draft_filter);    
 });
 
 map.on('idle', () => {
@@ -100,5 +100,14 @@ map.on('idle', () => {
 	    }
 	);
 	first_map_load = false;
+    };
+});
+
+// UI filtering
+document.getElementById('display-drafts').addEventListener('change', (e) => {
+    if (! e.target.checked) {  // do not display draft regulations
+	map.setFilter("regulations-layer", draft_filter);
+    } else {
+	map.setFilter("regulations-layer", null);
     };
 });
