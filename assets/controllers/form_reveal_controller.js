@@ -12,17 +12,11 @@ export default class extends Controller {
     };
 
     open() {
-        if (this.hasSectionTarget) {
-            this.sectionTarget.hidden = false;
-        } else if (this.hasSectionOutlet) {
-            this.sectionOutletElement.hidden = false;
-        }
+        this.sectionTargets.forEach(el => el.hidden = false);
+        this.sectionOutletElements.forEach(el => el.hidden = false);
 
-        if (this.hasFormControlTarget) {
-            this.formControlTarget.disabled = false;
-        } else if (this.hasFormControlOutlet) {
-            this.formControlOutletElement.disabled = false;
-        }
+        this.formControlTargets.forEach(el => el.disabled = false);
+        this.formControlOutletElements.forEach(el => el.disabled = false);
 
         if (!this.isPermanentButtonValue) {
             this.buttonTarget.hidden = true;
@@ -30,17 +24,11 @@ export default class extends Controller {
     }
 
     close() {
-        if (this.hasSectionTarget) {
-            this.sectionTarget.hidden = true;
-        } else if (this.hasSectionOutlet) {
-            this.sectionOutletElement.hidden = true;
-        }
+        this.sectionTargets.forEach(el => el.hidden = true);
+        this.sectionOutletElements.forEach(el => el.hidden = true);
 
-        if (this.hasFormControlTarget) {
-            this.formControlTarget.disabled = true;
-        } else if (this.hasFormControlOutlet) {
-            this.formControlOutletElement.disabled = true;
-        }
+        this.formControlTargets.forEach(el => el.disabled = true);
+        this.formControlOutletElements.forEach(el => el.disabled = true);
 
         if (!this.isPermanentButtonValue) {
             this.buttonTarget.hidden = false;
@@ -49,11 +37,11 @@ export default class extends Controller {
 
     openByValue(event) {
         this.sectionTargets.forEach((element) => {
-            if (element.dataset.value === event.target.value) {
-                element.hidden = false;
-            } else {
-                element.hidden = true;
-            }
+            element.hidden = element.dataset.value !== event.target.value;
+        });
+
+        this.formControlTargets.forEach((element) => {
+            element.disabled = element.dataset.value !== event.target.value;
         });
     }
 }

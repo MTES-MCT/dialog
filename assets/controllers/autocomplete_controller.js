@@ -1,16 +1,26 @@
+import { respondToVisibility } from '../lib';
 import { Autocomplete as StimulusAutocomplete } from './_stimulus_autocomplete';
 
 export default class Autocomplete extends StimulusAutocomplete {
   static values = {
     ...Autocomplete.values,
     extraQueryParams: { type: String, default: undefined },
+    prefetch: { type: Boolean, default: false },
   };
+
+  constructor(...args) {
+    super(...args);
+
+    this._fetchManager = new FetchManager(this);
+  }
 
   connect() {
     super.connect();
 
     this.inputTarget.addEventListener('input', this.#onInput);
     this.inputTarget.addEventListener('focus', this.#onInputFocus);
+
+    this._fetchManager.connect();
   }
 
   disconnect() {
@@ -37,6 +47,8 @@ export default class Autocomplete extends StimulusAutocomplete {
     }
   };
 
+  // Overrides
+
   buildURL(query) {
     const url = new URL(super.buildURL(query));
 
@@ -59,4 +71,64 @@ export default class Autocomplete extends StimulusAutocomplete {
 
     return url.toString();
   }
+
+  // Action callbacks
+
+  reset() {
+    this.resultsTarget.innerHTML = '';
+    this._fetchManager.reset();
+  }
+}
+
+class FetchManager {
+  /**
+   * @param {Autocomplete} controller 
+   */
+  constructor(controller) {
+    this._controller = controller;
+    this._isFetchRequested = controller.prefetchValue;
+    this._isFetching = false;
+  }
+
+  connect() {
+    respondToVisibility(this._controller.element, this.#handleVisibility);
+
+    this._controller.element.addEventListener('loadend', this.#onLoadEnd);
+  }
+
+  reset() {
+    this._isFetchRequested = this._controller.prefetchValue;
+  }
+
+  #handleVisibility = (visible) => {
+    if (visible && this._isFetchRequested) {
+      // Flush any previous fetch request
+      this.#doManagedFetch();
+      this._isFetchRequested = false;
+    }
+  };
+
+  #doManagedFetch = () => {
+    this._isFetching = true;
+
+    // This method on the controller triggers the autocomplete request, including checking for search query length etc. 
+    this._controller.onInputChange();
+  };
+
+  #onLoadEnd = () => {
+    const isFocused = this._controller.inputTarget === document.activeElement;
+    const hasResults = !!this._controller.resultsTarget.innerHTML;
+
+    if (isFocused && hasResults) {
+      this._controller.open();
+      return;
+    }
+
+    if (this._isFetching) {
+      // This function is called just before the autocomplete request handling finishes ('loadend' event).
+      // If we come here, it means the results come from a managed request.
+      // Don't show them yet, they will be shown when user focuses the input element.
+      this._controller.close();
+    }
+  };
 }

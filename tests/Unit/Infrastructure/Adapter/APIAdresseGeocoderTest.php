@@ -191,24 +191,4 @@ final class APIAdresseGeocoderTest extends TestCase
         $this->assertEquals([['code' => '93007', 'label' => 'Blanc Mesnil (93150)']], $cities);
         $this->assertEquals(1, $http->getRequestsCount());
     }
-
-    public function testComputeJunctionCoordinates(): void
-    {
-        $body = '{"features": [{"geometry": {"coordinates": [0.5, 44.3]}}]}';
-        $response = new MockResponse($body, ['http_code' => 200]);
-        $http = new MockHttpClient([$response], 'https://testserver');
-
-        $geocoder = new APIAdresseGeocoder($http);
-
-        $coords = $geocoder->computeJunctionCoordinates($this->address, 'Boulevard de Clignancourt', $this->cityCode);
-
-        $this->assertSame(44.3, $coords->latitude);
-        $this->assertSame(0.5, $coords->longitude);
-
-        $this->assertSame('GET', $response->getRequestMethod());
-        $this->assertSame(
-            'https://testserver/search/?q=Boulevard%20de%20Clignancourt%20/%2015%20Route%20du%20Grand%20Brossais&limit=1&type=poi&citycode=44195',
-            $response->getRequestUrl(),
-        );
-    }
 }

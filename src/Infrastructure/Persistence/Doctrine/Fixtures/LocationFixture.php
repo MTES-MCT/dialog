@@ -80,6 +80,23 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             toHouseNumber: null,
         );
 
+        $typicalMeasureLocation4 = new Location(
+            '7d3a6e4f-0cc0-4c08-94da-45e75c399ac6',
+            $this->getReference('typicalMeasure'),
+            roadType: RoadTypeEnum::LANE->value,
+            geometry: '{"type":"MultiLineString","coordinates":[[[1.362369855,44.029061548],[1.361775337,44.028475621],[1.361626131,44.028327555],[1.361270712,44.027974756],[1.361204036,44.027907143],[1.361204036,44.027907143]]]}',
+        );
+
+        $namedStreetTypicalMeasureLocation4 = new NamedStreet(
+            uuid: 'f8f38bf6-6dec-4a0a-aa23-0d934cc49e55',
+            location: $typicalMeasureLocation4,
+            cityCode: '82121',
+            cityLabel: 'Montauban (82000)',
+            roadName: 'Avenue de Fonneuve',
+            fromRoadName: 'Rue Georges Guynemer',
+            toRoadName: 'Rue Jean-Jacques Rousseau',
+        );
+
         $publishedLocation1 = new Location(
             self::UUID_PUBLISHED,
             $this->getReference('publishedMeasure'),
@@ -224,6 +241,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($namedStreetTypicalMeasureLocation1);
         $manager->persist($namedStreetTypicalMeasureLocation2);
         $manager->persist($namedStreetTypicalMeasureLocation3);
+        $manager->persist($namedStreetTypicalMeasureLocation4);
         $manager->persist($namedStreetPublishedLocation1);
         $manager->persist($namedStreetPublishedLocation2);
         $manager->persist($namedStreetPublishedLocation3);
@@ -236,6 +254,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($typicalMeasureLocation1);
         $manager->persist($typicalMeasureLocation2);
         $manager->persist($typicalMeasureLocation3);
+        $manager->persist($typicalMeasureLocation4);
         $manager->persist($publishedLocation1);
         $manager->persist($publishedLocation2);
         $manager->persist($publishedLocation3);
@@ -249,6 +268,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);
         $this->addReference('typicalMeasureLocation2', $typicalMeasureLocation2);
         $this->addReference('typicalMeasureLocation3', $typicalMeasureLocation3);
+        $this->addReference('typicalMeasureLocation4', $typicalMeasureLocation4);
     }
 
     public function getDependencies(): array

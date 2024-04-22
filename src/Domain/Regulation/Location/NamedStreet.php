@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Location;
 
+use App\Domain\Regulation\Enum\PointTypeEnum;
+
 class NamedStreet
 {
     public function __construct(
@@ -13,7 +15,9 @@ class NamedStreet
         private ?string $cityLabel = null,
         private ?string $roadName = null,
         private ?string $fromHouseNumber = null,
+        private ?string $fromRoadName = null,
         private ?string $toHouseNumber = null,
+        private ?string $toRoadName = null,
     ) {
     }
 
@@ -42,9 +46,40 @@ class NamedStreet
         return $this->roadName;
     }
 
+    public function getFromPointType(): ?string
+    {
+        if ($this->fromHouseNumber) {
+            return PointTypeEnum::HOUSE_NUMBER->value;
+        }
+
+        if ($this->fromRoadName) {
+            return PointTypeEnum::INTERSECTION->value;
+        }
+
+        return null;
+    }
+
     public function getFromHouseNumber(): ?string
     {
         return $this->fromHouseNumber;
+    }
+
+    public function getFromRoadName(): ?string
+    {
+        return $this->fromRoadName;
+    }
+
+    public function getToPointType(): ?string
+    {
+        if ($this->toHouseNumber) {
+            return PointTypeEnum::HOUSE_NUMBER->value;
+        }
+
+        if ($this->toRoadName) {
+            return PointTypeEnum::INTERSECTION->value;
+        }
+
+        return null;
     }
 
     public function getToHouseNumber(): ?string
@@ -52,17 +87,26 @@ class NamedStreet
         return $this->toHouseNumber;
     }
 
+    public function getToRoadName(): ?string
+    {
+        return $this->toRoadName;
+    }
+
     public function update(
         ?string $cityCode = null,
         ?string $cityLabel = null,
         ?string $roadName = null,
         ?string $fromHouseNumber = null,
+        ?string $fromRoadName = null,
         ?string $toHouseNumber = null,
+        ?string $toRoadName = null,
     ): void {
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
+        $this->fromRoadName = $fromRoadName;
         $this->toHouseNumber = $toHouseNumber;
+        $this->toRoadName = $toRoadName;
     }
 }

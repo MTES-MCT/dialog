@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Domain\Regulation\Enum\PointTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -55,19 +57,45 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'fromPointType',
+                ChoiceType::class,
+                options: $this->getPointTypeOptions(),
+            )
+            ->add(
                 'fromHouseNumber',
                 TextType::class,
                 options: [
                     'required' => false,
-                    'label' => 'regulation.location.from_house_number',
+                    'label' => 'regulation.location.named_street.house_number',
                 ],
+            )
+            ->add(
+                'fromRoadName',
+                TextType::class,
+                options: [
+                    'required' => false,
+                    'label' => 'regulation.location.named_street.intersection',
+                ],
+            )
+            ->add(
+                'toPointType',
+                ChoiceType::class,
+                options: $this->getPointTypeOptions(),
             )
             ->add(
                 'toHouseNumber',
                 TextType::class,
                 options: [
                     'required' => false,
-                    'label' => 'regulation.location.to_house_number',
+                    'label' => 'regulation.location.named_street.house_number',
+                ],
+            )
+            ->add(
+                'toRoadName',
+                TextType::class,
+                options: [
+                    'required' => false,
+                    'label' => 'regulation.location.named_street.intersection',
                 ],
             )
             ->add('roadType', HiddenType::class)
@@ -79,6 +107,34 @@ final class NamedStreetFormType extends AbstractType
             $data['roadType'] = $event->getForm()->getParent()->get('roadType')->getData();
             $event->setData($data);
         });
+    }
+
+    private function getPointTypeOptions(): array
+    {
+        $choices = [];
+
+        foreach (PointTypeEnum::cases() as $case) {
+            $choices[sprintf('regulation.location.named_street.point_type.%s', $case->value)] = $case->value;
+        }
+
+        $choices = array_merge(
+            ['regulation.location.named_street.point_type.placeholder' => ''],
+            $choices,
+        );
+
+        return [
+            'choices' => $choices,
+            'choice_attr' => [
+                'regulation.location.named_street.point_type.placeholder' => [
+                    'disabled' => true,
+                ],
+            ],
+            'required' => false,
+            'label' => 'regulation.location.named_street.point_type',
+            'label_attr' => [
+                'class' => 'required',
+            ],
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
