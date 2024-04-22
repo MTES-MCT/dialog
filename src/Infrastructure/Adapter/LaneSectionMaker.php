@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineSectionMakerInterface;
@@ -30,7 +31,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
     }
 
     /**
-     * @throws GeocodingFailureException
+     * @throws LaneGeocodingFailureException
      */
     public function computeSection(
         string $fullLaneGeometry,
@@ -43,14 +44,18 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
         ?string $toHouseNumber,
         ?string $toRoadName,
     ): string {
-        if (!$fromCoords) {
-            $fromCoords = $this->resolvePoint($roadName, $cityCode, $fromHouseNumber, $fromRoadName);
-        }
+        try {
+            if (!$fromCoords) {
+                $fromCoords = $this->resolvePoint($roadName, $cityCode, $fromHouseNumber, $fromRoadName);
+            }
 
-        if (!$toCoords) {
-            $toCoords = $this->resolvePoint($roadName, $cityCode, $toHouseNumber, $toRoadName);
-        }
+            if (!$toCoords) {
+                $toCoords = $this->resolvePoint($roadName, $cityCode, $toHouseNumber, $toRoadName);
+            }
 
-        return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
+            return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
+        } catch (GeocodingFailureException $exc) {
+            throw new LaneGeocodingFailureException(previous: $exc);
+        }
     }
 }
