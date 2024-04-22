@@ -21,7 +21,7 @@ use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;

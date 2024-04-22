@@ -6,6 +6,7 @@ namespace App\Infrastructure\EudonetParis;
 
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
@@ -201,17 +202,17 @@ final class EudonetParisTransformer
         }
 
         $locationCommand = new SaveLocationCommand();
-        $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = $cityCode;
-        $locationCommand->cityLabel = self::CITY_LABEL;
-        $locationCommand->roadName = $roadName;
-        $locationCommand->fromHouseNumber = $fromHouseNumber;
-        $locationCommand->fromRoadName = $fromRoadName;
-        $locationCommand->fromCoords = empty($row['fromCoords']) ? null : $row['fromCoords'];
-        $locationCommand->toHouseNumber = $toHouseNumber;
-        $locationCommand->toRoadName = $toRoadName;
-        $locationCommand->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
-        $locationCommand->geometry = null; // Will be handled by SaveLocationCommandHandler.
+        $locationCommand->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->namedStreet->cityCode = $cityCode;
+        $locationCommand->namedStreet->cityLabel = self::CITY_LABEL;
+        $locationCommand->namedStreet->roadName = $roadName;
+        $locationCommand->namedStreet->fromHouseNumber = $fromHouseNumber;
+        $locationCommand->namedStreet->fromRoadName = $fromRoadName;
+        $locationCommand->namedStreet->fromCoords = empty($row['fromCoords']) ? null : $row['fromCoords'];
+        $locationCommand->namedStreet->toHouseNumber = $toHouseNumber;
+        $locationCommand->namedStreet->toRoadName = $toRoadName;
+        $locationCommand->namedStreet->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
 
         return [$locationCommand, null];
     }

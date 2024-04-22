@@ -183,7 +183,7 @@
                     data-value="departmentalRoad"
                     {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif %}
                 >
-                    {{ form_row(form.administrator, {
+                    {{ form_row(form.numberedRoad.administrator, {
                         group_class: 'fr-input-group',
                         widget_class: 'fr-input',
                         attr: {
@@ -196,13 +196,13 @@
                         data-controller="autocomplete"
                         data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
                         data-autocomplete-query-param-value="search"
-                        data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}"
+                        data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.numberedRoad.administrator.vars.id}|json_encode }}"
                         data-autocomplete-min-length-value="2"
                         data-autocomplete-delay-value="500"
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadNumber"
                     >
-                        {{ form_row(form.roadNumber, {
+                        {{ form_row(form.numberedRoad.roadNumber, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
                             attr: {
@@ -212,7 +212,7 @@
                             },
                         }) }}
                             <ul
-                                id="{{ form.roadNumber.vars.id }}-results"
+                                id="{{ form.numberedRoad.roadNumber.vars.id }}-results"
                                 role="listbox"
                                 aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
                                 class="fr-x-autocomplete"
@@ -237,9 +237,9 @@
                                 {{ 'regulation.location.referencePoint.from'|trans }}
                             </legend>
                             <div class="fr-grid-row fr-grid-row--gutters">
-                                {{ form_row(form.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                                {{ form_row(form.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                                {{ form_row(form.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                                {{ form_row(form.numberedRoad.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                                {{ form_row(form.numberedRoad.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                                {{ form_row(form.numberedRoad.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                             </div>
                         </fieldset>
                         <fieldset
@@ -250,9 +250,9 @@
                                 {{ 'regulation.location.referencePoint.to'|trans }}
                             </legend>
                             <div class="fr-grid-row fr-grid-row--gutters">
-                                {{ form_row(form.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                                {{ form_row(form.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                                {{ form_row(form.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                                {{ form_row(form.numberedRoad.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                                {{ form_row(form.numberedRoad.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                                {{ form_row(form.numberedRoad.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                             </div>
                         </fieldset>
                     </fieldset>
@@ -274,9 +274,9 @@
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="city"
                     >
-                        {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+                        {{ form_row(form.namedStreet.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
 
-                        {{ form_row(form.cityLabel, {
+                        {{ form_row(form.namedStreet.cityLabel, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
                             attr: {
@@ -284,7 +284,7 @@
                             },
                         }) }}
                         <ul
-                            id="{{ form.cityLabel.vars.id }}-results"
+                            id="{{ form.namedStreet.cityLabel.vars.id }}-results"
                             role="listbox"
                             aria-label="{{ 'regulation.location.city.results_label'|trans }}"
                             class="fr-x-autocomplete"
@@ -297,12 +297,12 @@
                         data-controller="autocomplete"
                         data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
                         data-autocomplete-query-param-value="search"
-                        data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
+                        data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
                         data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadName"
                     >
-                        {{ form_row(form.roadName, {
+                        {{ form_row(form.namedStreet.roadName, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
                             attr: {
@@ -312,7 +312,7 @@
                             },
                         }) }}
                         <ul
-                            id="{{ form.roadName.vars.id }}-results"
+                            id="{{ form.namedStreet.roadName.vars.id }}-results"
                             role="listbox"
                             aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
                             class="fr-x-autocomplete"
@@ -321,7 +321,7 @@
                     </div>
 
                     <div data-controller="form-reveal">
-                        {{ form_row(form.isEntireStreet, {
+                        {{ form_row(form.namedStreet.isEntireStreet, {
                             group_class: 'fr-checkbox-group',
                             attr: {
                                 'data-controller': 'condition',
@@ -332,13 +332,13 @@
 
                         <fieldset
                             class="fr-fieldset fr-mt-3w fr-mb-0"
-                            aria-labelledby="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend"
+                            aria-labelledby="{{ form.namedStreet.isEntireStreet.vars.id }}-houseNumbers-legend"
                             data-form-reveal-target="section"
                             data-reset-target="element"
                             data-reset-keys="{{ ['city', 'roadName']|json_encode }}"
-                            {% if form.isEntireStreet.vars.checked %}hidden{% endif %}
+                            {% if form.namedStreet.isEntireStreet.vars.checked %}hidden{% endif %}
                         >
-                            <legend id="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend" class="app-sr-only">
+                            <legend id="{{ form.namedStreet.isEntireStreet.vars.id }}-houseNumbers-legend" class="app-sr-only">
                                 {{ 'regulation.location.houseNumbers.legend'|trans }}
                             </legend>
                             <div class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-0">
