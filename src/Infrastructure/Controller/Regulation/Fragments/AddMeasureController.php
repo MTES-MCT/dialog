@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\CommandBusInterface;
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
@@ -80,6 +81,13 @@ final class AddMeasureController extends AbstractRegulationController
                             'canDelete' => ($regulationOrderRecord->countMeasures() + 1) > 1,
                             'preExistingMeasureUuids' => $preExistingMeasureUuids,
                         ],
+                    ),
+                );
+            } catch (LaneGeocodingFailureException $exc) {
+                $commandFailed = true;
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('fromHouseNumber')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.lane_geocoding_failed', [], 'validators'),
                     ),
                 );
             } catch (AbscissaOutOfRangeException $exc) {

@@ -18,6 +18,14 @@
                 <source>regulation.location.error.abscissa_out_of_range</source>
                 <target>Cette abscisse n'est pas située sur la route. Veuillez vérifier votre saisie.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.error.lane_geocoding_failed">
+                <source>regulation.location.error.lane_geocoding_failed</source>
+                <target>La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.house_numbers.error.empty">
+                <source>regulation.location.house_numbers.error.empty</source>
+                <target>Veuillez définir le numéro de début et/ou le numéro de fin.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.departmental_road_geocoding_failed">
                 <source>regulation.location.error.departmental_road_geocoding_failed</source>
                 <target>La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.</target>
@@ -45,10 +53,6 @@
             <trans-unit id="measure.locations.error.not_blank">
                 <source>measure.locations.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs localisations.</target>
-            </trans-unit>
-            <trans-unit id="location.isEntireStreet.error.need_house_numbers">
-                <source>location.isEntireStreet.error.need_house_numbers</source>
-                <target>Veuillez définir le numéro de début et/ou le numéro de fin.</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.restricted_types.error.not_blank">
                 <source>regulation.vehicle_set.restricted_types.error.not_blank</source>

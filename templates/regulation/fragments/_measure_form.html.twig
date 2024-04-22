@@ -324,10 +324,8 @@
                         }
                     }) }}
 
-                    {% set hasHouseNumbersErrors = form.isEntireStreet.vars.errors|filter(e => app_is_fieldset_error(e, 'houseNumbers'))|length > 0 %}
-
                     <fieldset
-                        class="fr-fieldset {% if hasHouseNumbersErrors %}fr-fieldset--error{% endif %} fr-mt-3w fr-mb-0"
+                        class="fr-fieldset fr-mt-3w fr-mb-0"
                         aria-labelledby="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend"
                         data-form-reveal-target="section"
                         {% if form.isEntireStreet.vars.checked %}hidden{% endif %}
@@ -336,8 +334,8 @@
                             {{ 'regulation.location.houseNumbers.legend'|trans }}
                         </legend>
                         <div class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-0">
-                            {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3 fr-mb-0'}}) }}
-                            {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-md-5 fr-col-lg-3'}}) }}
+                            {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-mb-0'}}) }}
+                            {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6'}}) }}
                         </div>
                     </fieldset>
                 </div>

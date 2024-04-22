@@ -221,6 +221,52 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
     }
 
+    public function testLaneWithBlankHouseNumbers(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['measure_form[locations][0][cityCode]'] = '44195';
+        $form['measure_form[locations][0][cityLabel]'] = 'Savenay(44260)';
+        $form['measure_form[locations][0][roadName]'] = 'Route du Grand Brossais';
+        unset($form['measure_form[locations][0][isEntireStreet]']);
+        $form['measure_form[locations][0][fromHouseNumber]'] = '';
+        $form['measure_form[locations][0][toHouseNumber]'] = '';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+    }
+
+    public function testLaneWithUnknownHouseNumbers(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['measure_form[locations][0][cityCode]'] = '44195';
+        $form['measure_form[locations][0][cityLabel]'] = 'Savenay(44260)';
+        $form['measure_form[locations][0][roadName]'] = 'Route du Grand Brossais';
+        unset($form['measure_form[locations][0][isEntireStreet]']);
+        $form['measure_form[locations][0][fromHouseNumber]'] = '15';
+        $form['measure_form[locations][0][toHouseNumber]'] = '999'; // Mock will return no result
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+    }
+
     public function testUpdateAddressFullRoad(): void
     {
         $client = $this->login();

@@ -65,26 +65,6 @@
             <constraint name="Type">
                 <option name="type">boolean</option>
             </constraint>
-            <constraint name="When">
-                <option name="expression">this.roadType === 'lane' and !value</option>
-                <option name="constraints">
-                    <constraint name="AtLeastOneOf">
-                        <option name="constraints">
-                            <constraint name="Expression">
-                                <option name="expression">this.fromHouseNumber</option>
-                            </constraint>
-                            <constraint name="Expression">
-                                <option name="expression">this.toHouseNumber</option>
-                            </constraint>
-                        </option>
-                        <option name="includeInternalMessages">false</option>
-                        <option name="message">location.isEntireStreet.error.need_house_numbers</option>
-                        <option name="payload">
-                            <value key="fieldset">houseNumbers</value>
-                        </option>
-                    </constraint>
-                </option>
-            </constraint>
         </getter>
         <property name="cityCode">
             <constraint name="Length">
@@ -125,6 +105,23 @@
         <property name="fromHouseNumber">
             <constraint name="Length">
                 <option name="max">8</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet()</option>
+                <option name="constraints">
+                    <constraint name="AtLeastOneOf">
+                        <option name="constraints">
+                            <constraint name="Expression">
+                                <option name="expression">this.fromHouseNumber</option>
+                            </constraint>
+                            <constraint name="Expression">
+                                <option name="expression">this.toHouseNumber</option>
+                            </constraint>
+                        </option>
+                        <option name="includeInternalMessages">false</option>
+                        <option name="message">regulation.location.house_numbers.error.empty</option>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="toHouseNumber">
