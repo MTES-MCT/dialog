@@ -14,7 +14,7 @@ map.on('load', () => {
 	'regulations-source',
 	{
             type: 'vector',
-            url: 'http://localhost:3000/location'
+            url: 'http://localhost:3000/general_map_view'
 	}
     );
     // layers (i.e. styles) :
@@ -23,7 +23,7 @@ map.on('load', () => {
             'id': 'regulations-layer',
             'type': 'line',
             'source': 'regulations-source',
-            'source-layer': 'location',
+            'source-layer': 'general_map_view',
             'layout': {
 		'line-join': 'round',
 		'line-cap': 'round'
@@ -39,7 +39,7 @@ map.on('load', () => {
     map.on('click', 'regulations-layer', (e) => {
         new maplibregl.Popup()
             .setLngLat(e.lngLat)
-            .setHTML((e.features[0].properties.road_name || "''") + " [" + (e.features[0].properties.road_number || "") + "]")
+            .setHTML((e.features[0].properties.road_name || "''") + " [" + (e.features[0].properties.road_number || "") + "]" + "<h3>" + e.features[0].properties.identifier + "</h3>" + e.features[0].properties.description + "<br />" + " • arrêté permanent = " + e.features[0].properties.is_permanent + "<br /> • arrêté à l'état de brouillon = " + e.features[0].properties.is_draft)
             .addTo(map);
     });
     // change the cursor when the mouse is over the regulations layer
@@ -49,6 +49,9 @@ map.on('load', () => {
     map.on('mouseleave', 'regulations-layer', () => {
         map.getCanvas().style.cursor = '';
     });
+    // filtering :
+    // this filter will display all regulations (means : (is_draft) OR (NOT is_draft) -> always TRUE)
+    map.setFilter("regulations-layer", ["any", ["==", "is_draft", true], ["==", "is_draft", false]]);
 });
 
 map.on('idle', () => {
