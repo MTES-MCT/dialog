@@ -11,7 +11,14 @@
 </head>
 <body>
   <div id="map"></div>
-  <nav class="map-overlay top"><input id="display-drafts" type="checkbox" /> Arrêtés en état de brouillon</nav>
+  <nav class="map-overlay top">
+    <input id="display-drafts" type="checkbox" /><label>Arrêtés en état de brouillon</label>
+    <div id="regulations-permanent-and-or-temporary">
+      <label><input type="radio" id="regulations-permanent-only" name="permanent-and-or-temporary" value="permanent-only" />Arrêtés permanents seulement</label>
+      <label><input type="radio" id="regulations-temporary-only" name="permanent-and-or-temporary" value="temporary-only" />Arrêtés temporaires seulement</label>
+      <label><input type="radio" id="regulations-both-permanent-and-temporary" name="permanent-and-or-temporary" value="both-permanent-and-temporary" checked="checked" />Arrêtés permanents et temporaires</label>
+    </div>
+  </nav>
   <script src='./map.js'></script>
 </body>
 </html>

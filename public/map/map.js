@@ -8,6 +8,8 @@ const map = new maplibregl.Map({
 
 let first_map_load = true;
 const draft_filter = ["==", "is_draft", false];
+const permanent_only_filter = ["==", "is_permanent", true]
+const temporary_only_filter = ["==", "is_permanent", false]
 
 map.on('load', () => {
     // sources : 
@@ -108,6 +110,18 @@ document.getElementById('display-drafts').addEventListener('change', (e) => {
     if (! e.target.checked) {  // do not display draft regulations
 	map.setFilter("regulations-layer", draft_filter);
     } else {
+	map.setFilter("regulations-layer", null);
+    };
+});
+document.getElementById('regulations-permanent-and-or-temporary').addEventListener('change', (e) => {
+    switch (e.target.value) {
+    case "permanent-only":
+	map.setFilter("regulations-layer", permanent_only_filter);
+	break;
+    case "temporary-only":
+	map.setFilter("regulations-layer", temporary_only_filter);
+	break;
+    default:
 	map.setFilter("regulations-layer", null);
     };
 });
