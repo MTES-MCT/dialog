@@ -13,7 +13,9 @@ const temporary_only_filter = ["==", "is_permanent", false];
 const filters_as_a_dict = {};
 
 function apply_filters() {
-    map.setFilter("regulations-layer", ["all", ...Object.values(filters_as_a_dict)]);
+    const filters_as_a_list = ["all", ...Object.values(filters_as_a_dict)];
+    map.setFilter("regulations-layer", filters_as_a_list);
+    //console.log("filters_as_a_list : ", filters_as_a_list); // for debugging purpose
 };
 
 map.on('load', () => {
@@ -73,7 +75,7 @@ map.on('load', () => {
     map.on('click', 'regulations-layer', (e) => {
         new maplibregl.Popup()
             .setLngLat(e.lngLat)
-            .setHTML((e.features[0].properties.road_name || "''") + " [" + (e.features[0].properties.road_number || "") + "]" + "<h3>" + e.features[0].properties.identifier + "</h3>" + e.features[0].properties.description + "<br />" + " • arrêté permanent = " + e.features[0].properties.is_permanent + "<br /> • arrêté à l'état de brouillon = " + e.features[0].properties.is_draft)
+            .setHTML((e.features[0].properties.road_name || "''") + " [" + (e.features[0].properties.road_number || "") + "]" + "<h3>" + e.features[0].properties.identifier + "</h3>" + "<h4>" + e.features[0].properties.organization_name + "</h4>" + e.features[0].properties.description + "<br />" + " • arrêté permanent = " + e.features[0].properties.is_permanent + "<br /> • arrêté à l'état de brouillon = " + e.features[0].properties.is_draft)
             .addTo(map);
     });    
     // change the cursor when the mouse is over the regulations layer
@@ -111,6 +113,8 @@ map.on('idle', () => {
 });
 
 // UI filtering
+// draft regulations filter
+// credits : https://maplibre.org/maplibre-gl-js/docs/examples/filter-within-layer/
 document.getElementById('display-drafts').addEventListener('change', (e) => {
     if (! e.target.checked) {  // do not display draft regulations
 	filters_as_a_dict.draft_filter = draft_filter;
@@ -119,6 +123,8 @@ document.getElementById('display-drafts').addEventListener('change', (e) => {
     };
     apply_filters();
 });
+// permanent and/or temporary regulations filter
+// credits : https://maplibre.org/maplibre-gl-js/docs/examples/filter-within-layer/
 document.getElementById('regulations-permanent-and-or-temporary').addEventListener('change', (e) => {
     switch (e.target.value) {
     case "permanent-only":
@@ -129,6 +135,18 @@ document.getElementById('regulations-permanent-and-or-temporary').addEventListen
 	break;
     default:
 	delete filters_as_a_dict.permanent_and_or_temporary_filter;
+    };
+    apply_filters();
+});
+// organization names filter
+// credits : https://maplibre.org/maplibre-gl-js/docs/examples/filter-markers-by-input/
+// fitering reference : https://maplibre.org/maplibre-style-spec/expressions/
+document.getElementById('organization-filter').addEventListener('input', (e) => {
+    if (e.target.value.length) {
+	const beginning_of_an_organization_name = e.target.value.trim().toLowerCase();
+	filters_as_a_dict.organization_filter = [">", ["index-of", beginning_of_an_organization_name, ["downcase", ["get", "organization_name"]]], -1];
+    } else {
+	delete filters_as_a_dict.organization_filter;
     };
     apply_filters();
 });
