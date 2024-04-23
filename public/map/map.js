@@ -8,8 +8,13 @@ const map = new maplibregl.Map({
 
 let first_map_load = true;
 const draft_filter = ["==", "is_draft", false];
-const permanent_only_filter = ["==", "is_permanent", true]
-const temporary_only_filter = ["==", "is_permanent", false]
+const permanent_only_filter = ["==", "is_permanent", true];
+const temporary_only_filter = ["==", "is_permanent", false];
+const filters_as_a_dict = {};
+
+function apply_filters() {
+    map.setFilter("regulations-layer", ["all", ...Object.values(filters_as_a_dict)]);
+};
 
 map.on('load', () => {
     // sources : 
@@ -84,8 +89,8 @@ map.on('load', () => {
 	map.setFilter("regulations-aggregated-layer", null); // delete the filter
 	map.setLayoutProperty('regulations-aggregated-layer', 'visibility', 'none');
     });
-    // filtering : do not display draft regulations by default
-    map.setFilter("regulations-layer", draft_filter);    
+    // filtering : 
+    apply_filters();   
 });
 
 map.on('idle', () => {
@@ -108,20 +113,22 @@ map.on('idle', () => {
 // UI filtering
 document.getElementById('display-drafts').addEventListener('change', (e) => {
     if (! e.target.checked) {  // do not display draft regulations
-	map.setFilter("regulations-layer", draft_filter);
+	filters_as_a_dict.draft_filter = draft_filter;
     } else {
-	map.setFilter("regulations-layer", null);
+	delete filters_as_a_dict.draft_filter
     };
+    apply_filters();
 });
 document.getElementById('regulations-permanent-and-or-temporary').addEventListener('change', (e) => {
     switch (e.target.value) {
     case "permanent-only":
-	map.setFilter("regulations-layer", permanent_only_filter);
+	filters_as_a_dict.permanent_and_or_temporary_filter = permanent_only_filter;
 	break;
     case "temporary-only":
-	map.setFilter("regulations-layer", temporary_only_filter);
+	filters_as_a_dict.permanent_and_or_temporary_filter = temporary_only_filter;
 	break;
     default:
-	map.setFilter("regulations-layer", null);
+	delete filters_as_a_dict.permanent_and_or_temporary_filter;
     };
+    apply_filters();
 });
