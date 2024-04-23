@@ -54,6 +54,9 @@ final class Version20240422085504 extends AbstractMigration
         $this->addSql('ALTER TABLE location DROP to_point_number');
         $this->addSql('ALTER TABLE location DROP to_side');
         $this->addSql('ALTER TABLE location DROP to_abscissa');
+
+        $this->addSql('ALTER INDEX uniq_df07e54e517be5e6 RENAME TO UNIQ_D9113ECE517BE5E6');
+        $this->addSql('ALTER INDEX uniq_95c0c4b1517be5e6 RENAME TO UNIQ_B5775645517BE5E6');
     }
 
     public function down(Schema $schema): void
@@ -76,5 +79,7 @@ final class Version20240422085504 extends AbstractMigration
         $this->addSql('ALTER TABLE location ADD to_point_number VARCHAR(5) DEFAULT NULL');
         $this->addSql('ALTER TABLE location ADD to_side VARCHAR(1) DEFAULT NULL');
         $this->addSql('ALTER TABLE location ADD to_abscissa INT DEFAULT 0');
+        $this->addSql('ALTER INDEX uniq_b5775645517be5e6 RENAME TO uniq_95c0c4b1517be5e6');
+        $this->addSql('ALTER INDEX uniq_d9113ece517be5e6 RENAME TO uniq_df07e54e517be5e6');
     }
 }

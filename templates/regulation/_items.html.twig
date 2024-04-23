@@ -33,10 +33,10 @@
                     {% endif %}
                     <td>
                         {% if location %}
-                            {% if location.cityLabel %}
+                            {% if location.cityLabel is defined %}
                                 {{ location.cityLabel }}<br/>
                                 <b>{{ location.roadName }}</b>
-                            {% else %}
+                            {% elseif location.administrator is defined %}
                                 {{ location.administrator }} ({{location.roadNumber}})<br/>
                             {% endif %}
                             {% if regulation.numLocations > 1%}

@@ -52,4 +52,14 @@ class Location
     {
         $this->geometry = $geometry;
     }
+
+    public function setNamedStreet(NamedStreet $namedStreet): void
+    {
+        $this->namedStreet = $namedStreet;
+    }
+
+    public function setNumberedRoad(NumberedRoad $numberedRoad): void
+    {
+        $this->numberedRoad = $numberedRoad;
+    }
 }

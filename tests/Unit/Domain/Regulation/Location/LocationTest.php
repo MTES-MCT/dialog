@@ -17,7 +17,9 @@ final class LocationTest extends TestCase
     public function testGetters(): void
     {
         $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet2 = $this->createMock(NamedStreet::class);
         $numberedRoad = $this->createMock(NumberedRoad::class);
+        $numberedRoad2 = $this->createMock(NumberedRoad::class);
         $measure = $this->createMock(Measure::class);
         $geometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.935836, 47.347024),
@@ -33,21 +35,30 @@ final class LocationTest extends TestCase
         );
 
         $numberedRoadLocation = new Location(
-            uuid: '3c549b5c-3c36-4a4d-a0a7-2bbfacc36736',
+            uuid: 'a6b8f7db-2901-4588-b05c-fac633481d1e',
             measure: $measure,
             roadType: 'departmentalRoad',
             geometry: $geometry,
             numberedRoad: $numberedRoad,
         );
 
-        $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $namedStreetLocation->getUuid());
+        $this->assertSame('3c549b5c-3c36-4a4d-a0a7-2bbfacc36736', $namedStreetLocation->getUuid());
         $this->assertSame($measure, $namedStreetLocation->getMeasure());
         $this->assertSame($geometry, $namedStreetLocation->getGeometry());
         $this->assertSame('lane', $namedStreetLocation->getRoadType());
 
-        $this->assertSame('3c549b5c-3c36-4a4d-a0a7-2bbfacc36736', $numberedRoadLocation->getUuid());
+        $this->assertSame('a6b8f7db-2901-4588-b05c-fac633481d1e', $numberedRoadLocation->getUuid());
         $this->assertSame($measure, $numberedRoadLocation->getMeasure());
         $this->assertSame($geometry, $numberedRoadLocation->getGeometry());
         $this->assertSame('departmentalRoad', $numberedRoadLocation->getRoadType());
+
+        $this->assertSame($numberedRoad, $numberedRoadLocation->getNumberedRoad());
+        $this->assertSame($namedStreet, $namedStreetLocation->getNamedStreet());
+
+        $numberedRoadLocation->setNumberedRoad($numberedRoad2);
+        $namedStreetLocation->setNamedStreet($namedStreet2);
+
+        $this->assertSame($numberedRoad2, $numberedRoadLocation->getNumberedRoad());
+        $this->assertSame($namedStreet2, $namedStreetLocation->getNamedStreet());
     }
 }

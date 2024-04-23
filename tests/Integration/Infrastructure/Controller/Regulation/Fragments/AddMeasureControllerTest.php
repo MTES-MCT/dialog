@@ -47,6 +47,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = ''; // Blank
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Manual Input';
@@ -73,6 +74,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = '';
         $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = '';
         $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '';
@@ -145,6 +147,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
 
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
@@ -184,6 +187,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
@@ -207,6 +212,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
@@ -234,6 +240,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
@@ -262,6 +269,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59606';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Valenciennes (59300)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue du Faubourg de Paris';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
@@ -271,7 +279,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet__fromHouseNumber_error')->text());
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testAddDepartmentalRoad(): void
@@ -293,6 +301,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D906';
         $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '34';
         $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '35';
+
         $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'U';
         $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
         $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
@@ -323,6 +332,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
         $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
         $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '6';
@@ -354,6 +364,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
         $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '1';
         $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '5';
@@ -383,6 +394,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
         $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
         $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '1';
@@ -801,8 +813,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ain';
-        $values['measure_form']['locations'][0]['roadNumber'] = str_repeat('a', 51);
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ain';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = str_repeat('a', 51);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 

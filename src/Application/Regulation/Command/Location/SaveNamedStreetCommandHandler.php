@@ -39,7 +39,7 @@ final class SaveNamedStreetCommandHandler
                 ),
             );
 
-            $this->namedStreetRepository->add(
+            $namedStreet = $this->namedStreetRepository->add(
                 new NamedStreet(
                     uuid: $this->idFactory->make(),
                     location: $location,
@@ -52,6 +52,7 @@ final class SaveNamedStreetCommandHandler
             );
 
             $command->measure->addLocation($location);
+            $location->setNamedStreet($namedStreet);
 
             return $location;
         }

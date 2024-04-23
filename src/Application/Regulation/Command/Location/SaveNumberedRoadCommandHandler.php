@@ -37,7 +37,7 @@ final class SaveNumberedRoadCommandHandler
                 ),
             );
 
-            $this->numberedRoadRepository->add(
+            $numberedRoad = $this->numberedRoadRepository->add(
                 new NumberedRoad(
                     uuid: $this->idFactory->make(),
                     location: $location,
@@ -53,6 +53,7 @@ final class SaveNumberedRoadCommandHandler
             );
 
             $command->measure->addLocation($location);
+            $location->setNumberedRoad($numberedRoad);
 
             return $location;
         }

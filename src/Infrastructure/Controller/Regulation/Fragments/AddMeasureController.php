@@ -85,7 +85,7 @@ final class AddMeasureController extends AbstractRegulationController
                 );
             } catch (LaneGeocodingFailureException $exc) {
                 $commandFailed = true;
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('fromHouseNumber')->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('fromHouseNumber')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.lane_geocoding_failed', [], 'validators'),
                     ),
@@ -93,7 +93,7 @@ final class AddMeasureController extends AbstractRegulationController
             } catch (AbscissaOutOfRangeException $exc) {
                 $commandFailed = true;
                 $field = $exc instanceof StartAbscissaOutOfRangeException ? 'fromAbscissa' : 'toAbscissa';
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get($field)->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('numberedRoad')->get($field)->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators'),
                     ),

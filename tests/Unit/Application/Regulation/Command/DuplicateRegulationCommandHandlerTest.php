@@ -8,6 +8,8 @@ use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -24,6 +26,8 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\NamedStreet;
+use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -163,55 +167,69 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getOrganization')
             ->willReturn($originalOrganization);
 
-        $location1
+        $namedStreet1 = $this->createMock(NamedStreet::class);
+        $namedStreet1
             ->expects(self::once())
             ->method('getCityCode')
             ->willReturn('44195');
         $location1
             ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet1);
+        $namedStreet1
+            ->expects(self::once())
             ->method('getCityLabel')
             ->willReturn('Savenay');
         $location1
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getRoadType')
             ->willReturn(RoadTypeEnum::LANE->value);
         $location1
             ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn('streetGeometry');
+        $namedStreet1
+            ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Route du Lac');
-        $location1
+        $namedStreet1
             ->expects(self::once())
             ->method('getFromHouseNumber')
             ->willReturn('11');
-        $location1
+        $namedStreet1
             ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn('15');
 
+        $numberedRoad1 = $this->createMock(NumberedRoad::class);
         $location2
             ->expects(self::once())
-            ->method('getCityCode')
-            ->willReturn('44195');
-        $location2
+            ->method('getNumberedRoad')
+            ->willReturn($numberedRoad1);
+        $numberedRoad1
             ->expects(self::once())
-            ->method('getCityLabel')
-            ->willReturn('Savenay');
-        $location2
+            ->method('getAdministrator')
+            ->willReturn('Ardèche');
+        $numberedRoad1
             ->expects(self::once())
+            ->method('getRoadNumber')
+            ->willReturn('D110');
+        $location2
+            ->expects(self::exactly(2))
             ->method('getRoadType')
-            ->willReturn(RoadTypeEnum::LANE->value);
+            ->willReturn(RoadTypeEnum::DEPARTMENTAL_ROAD->value);
+        $numberedRoad1
+            ->expects(self::once())
+            ->method('getFromPointNumber')
+            ->willReturn('1');
+        $numberedRoad1
+            ->expects(self::once())
+            ->method('getToPointNumber')
+            ->willReturn('3');
         $location2
             ->expects(self::once())
-            ->method('getRoadName')
-            ->willReturn('Route du Grand Brossais');
-        $location2
-            ->expects(self::once())
-            ->method('getFromHouseNumber')
-            ->willReturn(null);
-        $location2
-            ->expects(self::once())
-            ->method('getToHouseNumber')
-            ->willReturn(null);
+            ->method('getGeometry')
+            ->willReturn('roadGeometry');
 
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -294,24 +312,25 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         ];
 
         $locationCommand1 = new SaveLocationCommand();
-        $locationCommand1->cityCode = '44195';
-        $locationCommand1->cityLabel = 'Savenay';
         $locationCommand1->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand1->roadName = 'Route du Lac';
-        $locationCommand1->fromHouseNumber = '11';
-        $locationCommand1->toHouseNumber = '15';
-        $locationCommand1->geometry = null;
-        $locationCommand1->measure = $measure1;
+        $locationCommand1->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand1->namedStreet->cityCode = '44195';
+        $locationCommand1->namedStreet->cityLabel = 'Savenay';
+        $locationCommand1->namedStreet->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand1->namedStreet->roadName = 'Route du Lac';
+        $locationCommand1->namedStreet->fromHouseNumber = '11';
+        $locationCommand1->namedStreet->toHouseNumber = '15';
+        $locationCommand1->namedStreet->geometry = 'streetGeometry';
 
         $locationCommand2 = new SaveLocationCommand();
-        $locationCommand2->cityCode = '44195';
-        $locationCommand2->cityLabel = 'Savenay';
-        $locationCommand2->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand2->roadName = 'Route du Grand Brossais';
-        $locationCommand2->fromHouseNumber = null;
-        $locationCommand2->toHouseNumber = null;
-        $locationCommand2->geometry = null;
-        $locationCommand2->measure = $measure1;
+        $locationCommand2->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $locationCommand2->numberedRoad = new SaveNumberedRoadCommand();
+        $locationCommand2->numberedRoad->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $locationCommand2->numberedRoad->administrator = 'Ardèche';
+        $locationCommand2->numberedRoad->roadNumber = 'D110';
+        $locationCommand2->numberedRoad->fromPointNumber = '1';
+        $locationCommand2->numberedRoad->toPointNumber = '3';
+        $locationCommand2->numberedRoad->geometry = 'roadGeometry';
 
         $measureCommand1 = new SaveMeasureCommand($duplicatedRegulationOrder);
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;

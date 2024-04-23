@@ -80,6 +80,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Add
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Saint-Victor';
@@ -210,11 +211,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][namedStreet][0][cityCode]'] = '59368';
-        $form['measure_form[locations][namedStreet][0][cityLabel]'] = 'La Madeleine (59110)';
-        $form['measure_form[locations][namedStreet][0][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
-        $form['measure_form[locations][namedStreet][0][fromHouseNumber]'] = '';
-        $form['measure_form[locations][namedStreet][0][toHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
+        $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
+        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
@@ -230,6 +232,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '44195';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Savenay(44260)';
         $form['measure_form[locations][0][namedStreet][roadName]'] = 'Route du Grand Brossais';
@@ -239,7 +242,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_namedStreet_romHouseNumber_error')->text());
+        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testLaneWithUnknownHouseNumbers(): void
@@ -255,6 +258,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '44195';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Savenay(44260)';
         $form['measure_form[locations][0][namedStreet][roadName]'] = 'Route du Grand Brossais';
@@ -275,6 +279,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
         $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue Saint-Victor';
@@ -294,6 +299,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '82121';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Montauban (82000)';
         $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue de la République';
@@ -320,6 +326,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
         $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
         $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '6';

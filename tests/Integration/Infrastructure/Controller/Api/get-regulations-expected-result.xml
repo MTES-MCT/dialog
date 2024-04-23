@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <d2:payload
     modelBaseVersion="3"
     lang="FR"
@@ -307,8 +308,7 @@
                                             </com:values>
                                         </loc:roadName>
                                     </loc:linearElement>
-                                    <loc:fromPoint
-                                        xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:fromPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
                                         <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
                                     </loc:fromPoint>
                                     <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
@@ -427,6 +427,7 @@
             </issuingAuthority>
             <regulationId>06549047-db9d-74bb-8000-754a6f2ff4c3</regulationId>
             <status>madeAndImplemented</status>
+
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
@@ -451,7 +452,33 @@
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+
                                     <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+
+                                    <com:validPeriod>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringDayWeekMonthPeriod>
+                                            <com:applicableDay>tuesday</com:applicableDay>
+                                        </com:recurringDayWeekMonthPeriod>
+                                    </com:validPeriod>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+
+                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
                                             <com:startTimeOfPeriod>18:00:00+00:00</com:startTimeOfPeriod>
@@ -475,7 +502,9 @@
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2021-11-03T08:00:00+00:00</com:overallStartTime>
+
                                     <com:overallEndTime>2021-11-05T10:00:00+00:00</com:overallEndTime>
+
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
                                             <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
@@ -489,28 +518,6 @@
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
-                        <conditions xsi:type="ValidityCondition">
-                            <validityByOrder>
-                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                                <com:validityTimeSpecification>
-                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
-                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
-                                    <com:validPeriod>
-                                        <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
-                                        </com:recurringTimePeriodOfDay>
-                                        <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
-                                        </com:recurringTimePeriodOfDay>
-                                        <com:recurringDayWeekMonthPeriod>
-                                            <com:applicableDay>tuesday</com:applicableDay>
-                                        </com:recurringDayWeekMonthPeriod>
-                                    </com:validPeriod>
-                                </com:validityTimeSpecification>
-                            </validityByOrder>
-                        </conditions>                        
                     </conditions>
 
                     <conditions xsi:type="ConditionSet">
@@ -560,6 +567,7 @@
             </issuingAuthority>
             <regulationId>2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c</regulationId>
             <status>madeAndImplemented</status>
+
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
@@ -576,7 +584,6 @@
 
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="LocationCondition">
@@ -636,7 +643,6 @@
                             </locationByOrder>
                         </conditions>
                     </conditions>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="VehicleCondition">

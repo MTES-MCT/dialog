@@ -92,6 +92,7 @@ final class DuplicateRegulationCommandHandler
 
                 foreach ($measure->getLocations() as $location) {
                     $cmd = new SaveLocationCommand();
+                    $cmd->roadType = $location->getRoadType();
 
                     if ($numberedRoad = $location->getNumberedRoad()) {
                         $cmd->numberedRoad = new SaveNumberedRoadCommand();
@@ -115,6 +116,7 @@ final class DuplicateRegulationCommandHandler
                         $cmd->namedStreet->fromHouseNumber = $namedStreet->getFromHouseNumber();
                         $cmd->namedStreet->toHouseNumber = $namedStreet->getToHouseNumber();
                     }
+
                     $locationCommands[] = $cmd;
                 }
 

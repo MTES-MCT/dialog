@@ -9,6 +9,7 @@ use App\Application\Regulation\Query\Measure\GetMeasuresQueryHandler;
 use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\Measure\LocationView;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Application\Regulation\View\Measure\NamedStreetView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
@@ -18,6 +19,7 @@ use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Measure;
 use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\MeasureRepository;
 use PHPUnit\Framework\TestCase;
@@ -147,14 +149,19 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->willReturn('certainDays');
 
         $location = $this->createMock(Location::class);
+        $namedStreet = $this->createMock(NamedStreet::class);
         $location
+            ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet);
+        $namedStreet
             ->expects(self::never())
             ->method('getCityCode');
-        $location
+        $namedStreet
             ->expects(self::once())
             ->method('getCityLabel')
             ->willReturn('Montauban');
-        $location
+        $namedStreet
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Avenue de Fonneuve');
@@ -162,19 +169,11 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRoadType')
             ->willReturn('lane');
-        $location
+        $namedStreet
             ->expects(self::once())
             ->method('getFromHouseNumber')
             ->willReturn('95');
-        $location
-            ->expects(self::once())
-            ->method('getRoadNumber')
-            ->willReturn(null);
-        $location
-            ->expects(self::once())
-            ->method('getAdministrator')
-            ->willReturn(null);
-        $location
+        $namedStreet
             ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn('253');
@@ -241,18 +240,12 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                     [
                         new LocationView(
                             roadType: 'lane',
-                            cityLabel: 'Montauban',
-                            roadName: 'Avenue de Fonneuve',
-                            fromHouseNumber: '95',
-                            toHouseNumber: '253',
-                            administrator: null,
-                            roadNumber: null,
-                            fromPointNumber: null,
-                            fromAbscissa: null,
-                            fromSide: null,
-                            toPointNumber: null,
-                            toAbscissa: null,
-                            toSide: null,
+                            namedStreet: new NamedStreetView(
+                                cityLabel: 'Montauban',
+                                roadName: 'Avenue de Fonneuve',
+                                fromHouseNumber: '95',
+                                toHouseNumber: '253',
+                            ),
                         ),
                     ],
                 ),

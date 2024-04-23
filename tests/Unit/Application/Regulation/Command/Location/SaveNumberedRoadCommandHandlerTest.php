@@ -97,11 +97,16 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
             ->willReturn('sectionGeometry');
 
         $createdLocation = $this->createMock(Location::class);
+        $createdNumberedRoad = $this->createMock(NumberedRoad::class);
         $measure = $this->createMock(Measure::class);
         $measure
-                ->expects(self::once())
-                ->method('addLocation')
-                ->with($createdLocation);
+            ->expects(self::once())
+            ->method('addLocation')
+            ->with($createdLocation);
+        $createdLocation
+            ->expects(self::once())
+            ->method('setNumberedRoad')
+            ->with($createdNumberedRoad);
 
         $this->locationRepository
             ->expects(self::once())
@@ -136,7 +141,8 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
                         toAbscissa: $this->toAbscissa,
                     ),
                 ),
-            );
+            )
+            ->willReturn($createdNumberedRoad);
 
         $handler = new SaveNumberedRoadCommandHandler(
             $this->idFactory,

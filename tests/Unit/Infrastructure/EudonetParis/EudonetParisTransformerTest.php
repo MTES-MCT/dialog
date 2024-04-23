@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
@@ -83,19 +84,23 @@ final class EudonetParisTransformerTest extends TestCase
 
         $locationCommand1 = new SaveLocationCommand();
         $locationCommand1->roadType = 'lane';
-        $locationCommand1->cityCode = '75118';
-        $locationCommand1->cityLabel = 'Paris';
-        $locationCommand1->roadName = $roadName;
+        $locationCommand1->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand1->namedStreet->roadType = 'lane';
+        $locationCommand1->namedStreet->cityCode = '75118';
+        $locationCommand1->namedStreet->cityLabel = 'Paris';
+        $locationCommand1->namedStreet->roadName = $roadName;
 
         $locationCommand2 = new SaveLocationCommand();
         $locationCommand2->roadType = 'lane';
-        $locationCommand2->cityCode = '75118';
-        $locationCommand2->cityLabel = 'Paris';
-        $locationCommand2->roadName = $roadName;
-        $locationCommand2->fromHouseNumber = '12';
-        $locationCommand2->fromCoords = Coordinates::fromLonLat(3, 45);
-        $locationCommand2->toHouseNumber = '26';
-        $locationCommand2->toCoords = Coordinates::fromLonLat(3, 45.5);
+        $locationCommand2->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand2->namedStreet->roadType = 'lane';
+        $locationCommand2->namedStreet->cityCode = '75118';
+        $locationCommand2->namedStreet->cityLabel = 'Paris';
+        $locationCommand2->namedStreet->roadName = $roadName;
+        $locationCommand2->namedStreet->fromHouseNumber = '12';
+        $locationCommand2->namedStreet->fromCoords = Coordinates::fromLonLat(3, 45);
+        $locationCommand2->namedStreet->toHouseNumber = '26';
+        $locationCommand2->namedStreet->toCoords = Coordinates::fromLonLat(3, 45.5);
 
         $vehicleSet = new SaveVehicleSetCommand();
         $vehicleSet->allVehicles = true;

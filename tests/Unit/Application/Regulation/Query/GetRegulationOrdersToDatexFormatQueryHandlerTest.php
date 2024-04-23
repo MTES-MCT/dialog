@@ -22,6 +22,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -141,18 +142,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location1 = $this->createMock(Location::class);
+        $namedStreet1 = $this->createMock(NamedStreet::class);
         $location1
             ->expects(self::once())
             ->method('getRoadType')
             ->willReturn($locationView1->roadType);
         $location1
             ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet1);
+        $namedStreet1
+            ->expects(self::once())
             ->method('getRoadName')
             ->willReturn($locationView1->roadName);
-        $location1
-            ->expects(self::once())
-            ->method('getRoadNumber')
-            ->willReturn($locationView1->roadNumber);
         $location1
             ->expects(self::once())
             ->method('getGeometry')
@@ -238,18 +240,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location2 = $this->createMock(Location::class);
+        $namedStreet2 = $this->createMock(NamedStreet::class);
         $location2
             ->expects(self::once())
             ->method('getRoadType')
             ->willReturn($locationView2->roadType);
         $location2
             ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet2);
+        $namedStreet2
+            ->expects(self::once())
             ->method('getRoadName')
             ->willReturn($locationView2->roadName);
-        $location2
-            ->expects(self::once())
-            ->method('getRoadNumber')
-            ->willReturn($locationView2->roadNumber);
         $location2
             ->expects(self::once())
             ->method('getGeometry')
@@ -385,18 +388,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location3 = $this->createMock(Location::class);
+        $namedStreet3 = $this->createMock(NamedStreet::class);
+        $location3
+            ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet3);
         $location3
             ->expects(self::once())
             ->method('getRoadType')
             ->willReturn($locationView3->roadType);
-        $location3
+        $namedStreet3
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn($locationView3->roadName);
-        $location3
-            ->expects(self::once())
-            ->method('getRoadNumber')
-            ->willReturn($locationView3->roadNumber);
         $location3
             ->expects(self::once())
             ->method('getGeometry')
@@ -486,18 +490,20 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         );
 
         $location4 = $this->createMock(Location::class);
+        $namedStreet4 = $this->createMock(NamedStreet::class);
+        $location4
+            ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet4);
+
         $location4
             ->expects(self::once())
             ->method('getRoadType')
             ->willReturn($locationView4->roadType);
-        $location4
+        $namedStreet4
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn($locationView4->roadName);
-        $location4
-            ->expects(self::once())
-            ->method('getRoadNumber')
-            ->willReturn($locationView4->roadNumber);
         $location4
             ->expects(self::once())
             ->method('getGeometry')

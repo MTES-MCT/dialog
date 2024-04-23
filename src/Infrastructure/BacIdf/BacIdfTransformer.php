@@ -393,6 +393,7 @@ final class BacIdfTransformer
     private function parseLocation(array $row, array $regVoie): SaveLocationCommand
     {
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
 
         $geometries = [];
 

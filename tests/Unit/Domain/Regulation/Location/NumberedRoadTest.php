@@ -50,7 +50,7 @@ final class NumberedRoadTest extends TestCase
         );
 
         $this->assertSame('Ain', $numberedRoad->getAdministrator());
-        $this->assertSame('D16', $numberedRoad->getNumberedRoadNumber());
+        $this->assertSame('D16', $numberedRoad->getRoadNumber());
         $this->assertSame('10', $numberedRoad->getFromPointNumber());
         $this->assertSame('D', $numberedRoad->getFromSide());
         $this->assertSame(0, $numberedRoad->getFromAbscissa());

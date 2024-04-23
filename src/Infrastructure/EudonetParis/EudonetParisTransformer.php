@@ -202,6 +202,7 @@ final class EudonetParisTransformer
         }
 
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet->cityCode = $cityCode;

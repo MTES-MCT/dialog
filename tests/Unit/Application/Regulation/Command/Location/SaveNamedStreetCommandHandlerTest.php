@@ -73,12 +73,17 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
             ->with('fullLaneGeometry', $this->roadName, $this->cityCode, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
             ->willReturn($this->geometry);
 
+        $createdNamedStreet = $this->createMock(NamedStreet::class);
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
         $measure
             ->expects(self::once())
             ->method('addLocation')
             ->with($createdLocation);
+        $createdLocation
+            ->expects(self::once())
+            ->method('setNamedStreet')
+            ->with($createdNamedStreet);
 
         $this->locationRepository
             ->expects(self::once())
@@ -110,7 +115,7 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
                         toHouseNumber: $this->toHouseNumber,
                     ),
                 ),
-            );
+            )->willReturn($createdNamedStreet);
 
         $handler = new SaveNamedStreetCommandHandler(
             $this->idFactory,
