@@ -53,3 +53,31 @@ export function beginMatomoTracking() {
 }
 
 // End Matomo helpers
+
+/**
+ * @param {HTMLElement} element 
+ * @returns {void}
+ */
+export function resetFormControl(element) {
+    // No unified DOM interface exists to reset a form control.
+    // So we must implement it on a case-by-case basis in JavaScript.
+
+    if (element instanceof HTMLInputElement) {
+        element.value = '';
+        return;
+    }
+    
+    if (element instanceof HTMLSelectElement) {
+        element.selectedIndex = 0;
+        return;
+    }
+    
+    if (element instanceof HTMLFieldSetElement) {
+        for (const subElement of element.elements) {
+            resetFormControl(subElement);
+        }
+        return;
+    }
+
+    throw new Error(`Reset not implemented for element ${element}`);
+}
