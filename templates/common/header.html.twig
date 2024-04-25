@@ -28,8 +28,8 @@
                         <ul class="fr-btns-group">
                             {% if app.user %}
                                 <li>
-                                    <a class="fr-btn fr-icon-user-fill" href="{{ path('app_regulations_list') }}">
-                                        {{ app.user.fullName }}
+                                    <a class="fr-btn fr-icon-file-text-line" href="{{ path('app_regulations_list') }}">
+                                        {{ 'regulation.list.title'|trans }}
                                     </a>
                                 </li>
                                 <li>
@@ -51,13 +51,13 @@
                                 </li>
                             {% else %}
                                 <li>
-                                    <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
-                                        {{ 'common.login'|trans }}
+                                    <a class="fr-btn fr-icon-user-fill" href="{{ path('app_access_request') }}">
+                                        {{ 'common.accessRequest'|trans }}
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="fr-btn fr-icon-user-fill" href="{{ path('app_access_request') }}">
-                                        {{ 'common.accessRequest'|trans }}
+                                    <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
+                                        {{ 'common.login'|trans }}
                                     </a>
                                 </li>
                             {% endif %}
