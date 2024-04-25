@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class MapController
