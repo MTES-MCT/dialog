@@ -12,7 +12,12 @@ export default class extends Controller {
         });
     }
 
-    _shouldReset(/** @type {Object} */ params, /** @type {HTMLElement} */ el) {
+    /**
+     * @param {Object} params 
+     * @param {HTMLElement} el 
+     * @returns {Boolean}
+     */
+    _shouldReset(params, el) {
         if (!params.key) {
             return true;
         }
@@ -21,9 +26,9 @@ export default class extends Controller {
             return false;
         }
 
-        const keys = /** @type {string[]} */ (JSON.parse(el.dataset.resetKeys));
+        /** @type {string[]} */
+        const keys = (JSON.parse(el.dataset.resetKeys));
 
         return keys.includes(params.key);
     }
-
 }
