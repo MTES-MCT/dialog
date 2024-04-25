@@ -167,14 +167,7 @@
             </button>
         </div>
         <div class="app-card__content">
-            <div
-                data-controller="form-reveal"
-                class="fr-x-autocomplete-wrapper"
-                data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
-                data-autocomplete-query-param-value="search"
-                data-autocomplete-min-length-value="3"
-                data-autocomplete-delay-value="500"
-            >
+            <div data-controller="form-reveal">
                 {{ form_row(form.roadType, {
                     group_class: 'fr-select-group',
                     widget_class: 'fr-select',
@@ -184,160 +177,176 @@
                     },
                 }) }}
 
-            <div
-                data-form-reveal-target="section"
-                data-value="departmentalRoad"
-                {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif%}
-            >
-                {{ form_row(form.administrator, {
-                    group_class: 'fr-input-group',
-                    widget_class: 'fr-input',
-                }) }}
-                <ul
-                    id="{{ form.administrator.vars.id }}-results"
-                    role="listbox"
-                    aria-label="{{ 'regulation.location.city.results_label'|trans }}"
-                    class="fr-x-autocomplete"
-                    data-autocomplete-target="results"
-                ></ul>
                 <div
-                    class="fr-x-autocomplete-wrapper"
-                    data-controller="autocomplete"
-                    data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
-                    data-autocomplete-query-param-value="search"
-                    data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}"
-                    data-autocomplete-min-length-value="2"
-                    data-autocomplete-delay-value="500"
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="departmentalRoad"
+                    {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif %}
                 >
-                    {{ form_row(form.roadNumber, {
+                    {{ form_row(form.administrator, {
                         group_class: 'fr-input-group',
                         widget_class: 'fr-input',
                         attr: {
-                            'data-autocomplete-target': 'input',
-                        },
-                    }) }}
-                        <ul
-                            id="{{ form.roadNumber.vars.id }}-results"
-                            role="listbox"
-                            aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
-                            class="fr-x-autocomplete"
-                            data-autocomplete-target="results">
-                        </ul>
-                </div>
-
-                <fieldset
-                    aria-labelledby="regulation-location-{{ index }}-reference-point"
-                >
-                    <legend id="regulation-location-{{ index }}-reference-point">
-                        <span class="fr-x-label-content">{{ 'regulation.location.referencePoint'|trans }}</span>
-                    </legend>
-                    <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
-                    <fieldset
-                        class="fr-mt-2w"
-                        aria-labelledby="regulation-location-{{ index }}-reference-point-start-legend"
-                    >
-                        <legend id="regulation-location-{{ index }}-reference-point-start-legend">
-                            {{ 'regulation.location.referencePoint.from'|trans }}
-                        </legend>
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            {{ form_row(form.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                            {{ form_row(form.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                            {{ form_row(form.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                        </div>
-                    </fieldset>
-                    <fieldset
-                        class="fr-mt-2w fr-mb-2w"
-                        aria-labelledby="regulation-location-{{ index }}-reference-point-end-legend"
-                    >
-                        <legend id="regulation-location-{{ index }}-reference-point-end-legend">
-                            {{ 'regulation.location.referencePoint.to'|trans }}
-                        </legend>
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            {{ form_row(form.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                            {{ form_row(form.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                            {{ form_row(form.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                        </div>
-                    </fieldset>
-                </fieldset>
-            </div>
-            <div
-                data-form-reveal-target="section"
-                data-value="lane"
-                {% if form.roadType.vars.value != 'lane'%} hidden {% endif%}
-            >
-                <div
-                    class="fr-x-autocomplete-wrapper"
-                    data-controller="autocomplete"
-                    data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
-                    data-autocomplete-query-param-value="search"
-                    data-autocomplete-min-length-value="3"
-                    data-autocomplete-delay-value="500"
-                >
-                    {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
-
-                    {{ form_row(form.cityLabel, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-autocomplete-target': 'input',
-                        },
-                    }) }}
-                    <ul
-                        id="{{ form.cityLabel.vars.id }}-results"
-                        role="listbox"
-                        aria-label="{{ 'regulation.location.city.results_label'|trans }}"
-                        class="fr-x-autocomplete"
-                        data-autocomplete-target="results"
-                    ></ul>
-                </div>
-                <div
-                    class="fr-x-autocomplete-wrapper"
-                    data-controller="autocomplete"
-                    data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
-                    data-autocomplete-query-param-value="search"
-                    data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
-                    data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
-                >
-                    {{ form_row(form.roadName, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-autocomplete-target': 'input',
-                        },
-                    }) }}
-                    <ul
-                        id="{{ form.roadName.vars.id }}-results"
-                        role="listbox"
-                        aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
-                        class="fr-x-autocomplete"
-                        data-autocomplete-target="results"
-                    ></ul>
-                </div>
-
-                <div data-controller="form-reveal">
-                    {{ form_row(form.isEntireStreet, {
-                        group_class: 'fr-checkbox-group',
-                        attr: {
-                            'data-controller': 'condition',
-                            'data-condition-equals-value': true,
-                            'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
+                            'data-action': 'change->reset#reset',
+                            'data-reset-key-param': 'administrator',
                         }
                     }) }}
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.administrator.vars.id}|json_encode }}"
+                        data-autocomplete-min-length-value="2"
+                        data-autocomplete-delay-value="500"
+                        data-action="autocomplete.change->reset#reset"
+                        data-reset-key-param="roadNumber"
+                    >
+                        {{ form_row(form.roadNumber, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                                'data-reset-target': 'element',
+                                'data-reset-keys': ['administrator']|json_encode,
+                            },
+                        }) }}
+                            <ul
+                                id="{{ form.roadNumber.vars.id }}-results"
+                                role="listbox"
+                                aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
+                                class="fr-x-autocomplete"
+                                data-autocomplete-target="results">
+                            </ul>
+                    </div>
 
                     <fieldset
-                        class="fr-fieldset fr-mt-3w fr-mb-0"
-                        aria-labelledby="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend"
-                        data-form-reveal-target="section"
-                        {% if form.isEntireStreet.vars.checked %}hidden{% endif %}
+                        aria-labelledby="regulation-location-{{ index }}-reference-point"
+                        data-reset-target="element"
+                        data-reset-keys="{{ ['administrator', 'roadNumber']|json_encode }}"
                     >
-                        <legend id="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend" class="app-sr-only">
-                            {{ 'regulation.location.houseNumbers.legend'|trans }}
+                        <legend id="regulation-location-{{ index }}-reference-point">
+                            <span class="fr-x-label-content">{{ 'regulation.location.referencePoint'|trans }}</span>
                         </legend>
-                        <div class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-0">
-                            {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-mb-0'}}) }}
-                            {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6'}}) }}
-                        </div>
+                        <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
+                        <fieldset
+                            class="fr-mt-2w"
+                            aria-labelledby="regulation-location-{{ index }}-reference-point-start-legend"
+                        >
+                            <legend id="regulation-location-{{ index }}-reference-point-start-legend">
+                                {{ 'regulation.location.referencePoint.from'|trans }}
+                            </legend>
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                {{ form_row(form.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                                {{ form_row(form.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                                {{ form_row(form.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                            </div>
+                        </fieldset>
+                        <fieldset
+                            class="fr-mt-2w fr-mb-2w"
+                            aria-labelledby="regulation-location-{{ index }}-reference-point-end-legend"
+                        >
+                            <legend id="regulation-location-{{ index }}-reference-point-end-legend">
+                                {{ 'regulation.location.referencePoint.to'|trans }}
+                            </legend>
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                {{ form_row(form.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                                {{ form_row(form.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                                {{ form_row(form.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                            </div>
+                        </fieldset>
                     </fieldset>
+                </div>
+
+                <div
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="lane"
+                    {% if form.roadType.vars.value != 'lane'%} hidden {% endif%}
+                >
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-min-length-value="3"
+                        data-autocomplete-delay-value="500"
+                        data-action="autocomplete.change->reset#reset"
+                        data-reset-key-param="city"
+                    >
+                        {{ form_row(form.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+
+                        {{ form_row(form.cityLabel, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                            },
+                        }) }}
+                        <ul
+                            id="{{ form.cityLabel.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        ></ul>
+                    </div>
+
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.cityCode.vars.id}|json_encode }}"
+                        data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
+                        data-action="autocomplete.change->reset#reset"
+                        data-reset-key-param="roadName"
+                    >
+                        {{ form_row(form.roadName, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                                'data-reset-target': 'element',
+                                'data-reset-keys': ['city']|json_encode,
+                            },
+                        }) }}
+                        <ul
+                            id="{{ form.roadName.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        ></ul>
+                    </div>
+
+                    <div data-controller="form-reveal">
+                        {{ form_row(form.isEntireStreet, {
+                            group_class: 'fr-checkbox-group',
+                            attr: {
+                                'data-controller': 'condition',
+                                'data-condition-equals-value': true,
+                                'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
+                            }
+                        }) }}
+
+                        <fieldset
+                            class="fr-fieldset fr-mt-3w fr-mb-0"
+                            aria-labelledby="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend"
+                            data-form-reveal-target="section"
+                            data-reset-target="element"
+                            data-reset-keys="{{ ['city', 'roadName']|json_encode }}"
+                            {% if form.isEntireStreet.vars.checked %}hidden{% endif %}
+                        >
+                            <legend id="{{ form.isEntireStreet.vars.id }}-houseNumbers-legend" class="app-sr-only">
+                                {{ 'regulation.location.houseNumbers.legend'|trans }}
+                            </legend>
+                            <div class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-0">
+                                {{ form_row(form.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-mb-0'}}) }}
+                                {{ form_row(form.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6'}}) }}
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
             </div>
         </div>
