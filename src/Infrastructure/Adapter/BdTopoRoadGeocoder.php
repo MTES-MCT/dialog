@@ -210,10 +210,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface
         $roadNames = [];
 
         foreach ($rows as $row) {
-            $roadNames[] = [
-                'value' => $row['road_name'],
-                'label' => $row['road_name'],
-            ];
+            $roadNames[] = $row['road_name'];
         }
 
         return $roadNames;
