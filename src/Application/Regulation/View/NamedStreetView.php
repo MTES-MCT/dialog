@@ -7,6 +7,7 @@ namespace App\Application\Regulation\View;
 final readonly class NamedStreetView implements LocationViewInterface
 {
     public function __construct(
+        public string $roadType,
         public ?string $cityCode = null,
         public ?string $cityLabel = null,
         public ?string $roadName = null,

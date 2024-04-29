@@ -16,15 +16,15 @@ final class NamedStreetRepository extends ServiceEntityRepository implements Nam
         parent::__construct($registry, NamedStreet::class);
     }
 
-    public function add(NamedStreet $namedstreet): NamedStreet
+    public function add(NamedStreet $namedStreet): NamedStreet
     {
-        $this->getEntityManager()->persist($namedstreet);
+        $this->getEntityManager()->persist($namedStreet);
 
-        return $namedstreet;
+        return $namedStreet;
     }
 
-    public function delete(NamedStreet $namedstreet): void
+    public function delete(NamedStreet $namedStreet): void
     {
-        $this->getEntityManager()->remove($namedstreet);
+        $this->getEntityManager()->remove($namedStreet);
     }
 }

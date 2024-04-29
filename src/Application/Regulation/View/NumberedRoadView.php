@@ -7,6 +7,7 @@ namespace App\Application\Regulation\View;
 final readonly class NumberedRoadView implements LocationViewInterface
 {
     public function __construct(
+        public string $roadType,
         public ?string $roadNumber = null,
         public ?string $administrator = null,
     ) {

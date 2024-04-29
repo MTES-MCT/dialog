@@ -6,17 +6,17 @@
     name="App\Domain\Regulation\Location\NumberedRoad"
     table="numbered_road">
     <id name="uuid" type="guid" column="uuid" />
-    <field name="administrator" type="string" column="administrator" nullable="true" length="255" />
-    <field name="roadNumber" type="string" column="road_number" nullable="true" length="50" />
-    <field name="fromPointNumber" type="string" column="from_point_number" length="5"  nullable="true"/>
-    <field name="fromSide" type="string" column="from_side" nullable="true" length="1" />
+    <field name="administrator" type="string" column="administrator" nullable="false" length="255" />
+    <field name="roadNumber" type="string" column="road_number" nullable="false" length="50" />
+    <field name="fromPointNumber" type="string" column="from_point_number" length="5"  nullable="false"/>
+    <field name="fromSide" type="string" column="from_side" nullable="false" length="1" />
     <field name="fromAbscissa" type="integer" column="from_abscissa" nullable="true">
       <options>
             <option name="default">0</option>
       </options>
     </field>
-    <field name="toPointNumber" type="string" column="to_point_number" length="5" nullable="true"/>
-    <field name="toSide" type="string" column="to_side" nullable="true" length="1" />
+    <field name="toPointNumber" type="string" column="to_point_number" length="5" nullable="false"/>
+    <field name="toSide" type="string" column="to_side" nullable="false" length="1" />
     <field name="toAbscissa" type="integer" column="to_abscissa" nullable="true">
       <options>
             <option name="default">0</option>
