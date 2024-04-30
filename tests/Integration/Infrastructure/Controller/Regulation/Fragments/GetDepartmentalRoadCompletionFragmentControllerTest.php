@@ -18,9 +18,12 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
 
         $li = $crawler->filter('li');
 
-        $this->assertSame(1, $li->count());
+        $this->assertSame(4, $li->count());
 
-        $this->assertSame('D322', $li->eq(0)->text());
+        $this->assertSame('D32', $li->eq(0)->text());
+        $this->assertSame('D322', $li->eq(1)->text());
+        $this->assertSame('D322A', $li->eq(2)->text());
+        $this->assertSame('D324', $li->eq(3)->text());
     }
 
     public function testBadRequest(): void
