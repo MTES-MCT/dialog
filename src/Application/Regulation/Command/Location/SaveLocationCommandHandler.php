@@ -24,12 +24,12 @@ final class SaveLocationCommandHandler
     {
         $command->clean();
         $roadCommand = $command->getRoadCommand();
-        $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
 
         // Update location
 
         if ($location = $command->location) {
             $roadCommand->setLocation($location);
+            $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
             $location->update($command->roadType, $geometry);
             $this->commandBus->handle($roadCommand);
 
@@ -41,7 +41,7 @@ final class SaveLocationCommandHandler
         }
 
         // Create location
-
+        $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
         $location = $this->locationRepository->add(
             new Location(
                 uuid: $this->idFactory->make(),
