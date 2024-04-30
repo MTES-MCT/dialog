@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command\Location;
+namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;

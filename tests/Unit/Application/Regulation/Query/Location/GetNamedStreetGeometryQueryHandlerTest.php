@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Regulation\Command\Location;
+namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
 use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
@@ -107,6 +107,14 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Route de Paris'); // Changed
+        $namedStreet
+            ->expects(self::once())
+            ->method('getFromHouseNumber')
+            ->willReturn($this->fromHouseNumber);
+        $namedStreet
+            ->expects(self::once())
+            ->method('getToHouseNumber')
+            ->willReturn($this->toHouseNumber);
 
         $this->roadGeocoder
             ->expects(self::once())

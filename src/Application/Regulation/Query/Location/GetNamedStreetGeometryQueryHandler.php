@@ -32,6 +32,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
     private function computeGeometry(GetNamedStreetGeometryQuery $query): ?string
     {
         $command = $query->command;
+        $command->clean();
 
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;

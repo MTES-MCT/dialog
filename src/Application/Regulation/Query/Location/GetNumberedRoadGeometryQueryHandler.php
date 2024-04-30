@@ -32,6 +32,7 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
     private function computeGeometry(GetNumberedRoadGeometryQuery $query): string
     {
         $command = $query->command;
+
         $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
 
         return $this->roadSectionMaker->computeSection(
@@ -51,7 +52,8 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
     {
         $command = $query->command;
 
-        return $command->roadNumber !== $command->numberedRoad->getRoadNumber()
+        return !$command->numberedRoad
+            || $command->roadNumber !== $command->numberedRoad->getRoadNumber()
             || $command->administrator !== $command->numberedRoad->getAdministrator()
             || $command->fromPointNumber !== $command->numberedRoad->getFromPointNumber()
             || $command->toPointNumber !== $command->numberedRoad->getToPointNumber()
