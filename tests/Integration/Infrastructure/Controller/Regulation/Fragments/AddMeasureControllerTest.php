@@ -170,7 +170,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
     }
 
-    /** @group only */
     public function testGeocodingFailureFullRoad(): void
     {
         $client = $this->login();
@@ -291,9 +290,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '1';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '5';
+        $values['measure_form']['locations'][0]['roadNumber'] = 'D906';
+        $values['measure_form']['locations'][0]['fromPointNumber'] = '34';
+        $values['measure_form']['locations'][0]['toPointNumber'] = '35';
         $values['measure_form']['locations'][0]['fromSide'] = 'U';
         $values['measure_form']['locations'][0]['toSide'] = 'U';
         $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
@@ -306,7 +305,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('D110 (Ardèche) du PR 1+100 (côté U) au PR 5+650 (côté U)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('D906 (Ardèche) du PR 34+100 (côté U) au PR 35+650 (côté U)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testAddDepartmentalRoadWithUnknownPointNumbers(): void

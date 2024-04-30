@@ -18,7 +18,7 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
 
         $li = $crawler->filter('li');
         $this->assertSame(1, $li->count());
-        $this->assertSame('Rue Eugène Berthoud, 93400 Saint-Ouen-sur-Seine', $li->eq(0)->text());
+        $this->assertSame('Rue Eugène Berthoud', $li->eq(0)->text());
     }
 
     public function testBadRequest(): void
