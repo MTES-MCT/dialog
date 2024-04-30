@@ -5,41 +5,55 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandBusInterface;
+use App\Application\IdFactoryInterface;
+use App\Application\QueryBusInterface;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 
 final class SaveLocationCommandHandler
 {
     public function __construct(
         private CommandBusInterface $commandBus,
+        private QueryBusInterface $queryBus,
+        private LocationRepositoryInterface $locationRepository,
+        private IdFactoryInterface $idFactory,
     ) {
     }
 
     public function __invoke(SaveLocationCommand $command): Location
     {
         $command->clean();
+        $roadCommand = $command->getRoadCommand();
+        $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
+
+        // Update location
 
         if ($location = $command->location) {
-            if ($location->getNamedStreet() && $command->namedStreet === null) {
-                // Delete named street when road type changed
-                $this->commandBus->handle(new DeleteNamedStreetCommand($location->getNamedStreet()));
-            } elseif ($location->getNumberedRoad() && $command->numberedRoad === null) {
-                // Delete numbered road when road type changed
-                $this->commandBus->handle(new DeleteNumberedRoadCommand($location->getNumberedRoad()));
+            $roadCommand->setLocation($location);
+            $location->update($command->roadType, $geometry);
+            $this->commandBus->handle($roadCommand);
+
+            if ($deleteCommand = $command->getRoadDeleteCommand()) {
+                $this->commandBus->handle($deleteCommand);
             }
+
+            return $location;
         }
 
-        if ($command->namedStreet) {
-            $command->namedStreet->measure = $command->measure;
-            $command->namedStreet->roadType = $command->roadType;
+        // Create location
 
-            return $this->commandBus->handle($command->namedStreet);
-        } elseif ($command->numberedRoad) {
-            $command->numberedRoad->measure = $command->measure;
-            $command->numberedRoad->roadType = $command->roadType;
+        $location = $this->locationRepository->add(
+            new Location(
+                uuid: $this->idFactory->make(),
+                measure: $command->measure,
+                roadType: $command->roadType,
+                geometry: $geometry,
+            ),
+        );
+        $roadCommand->setLocation($location);
+        $this->commandBus->handle($roadCommand);
+        $command->measure->addLocation($location);
 
-            return $this->commandBus->handle($command->numberedRoad);
-        }
-
-        throw new \LogicException('Location road type not managed');
+        return $location;
     }
 }

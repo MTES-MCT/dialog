@@ -40,4 +40,22 @@ final class SaveLocationCommand implements CommandInterface
             $this->numberedRoad = null;
         }
     }
+
+    public function getRoadCommand(): RoadCommandInterface|CommandInterface
+    {
+        return $this->namedStreet ?? $this->numberedRoad ?? throw new \LogicException('No road command');
+    }
+
+    public function getRoadDeleteCommand(): ?CommandInterface
+    {
+        if (!$this->namedStreet && $namedStreet = $this->location->getNamedStreet()) {
+            return new DeleteNamedStreetCommand($namedStreet);
+        }
+
+        if (!$this->numberedRoad && $numberedRoad = $this->location->getNumberedRoad()) {
+            return new DeleteNumberedRoadCommand($numberedRoad);
+        }
+
+        return null;
+    }
 }

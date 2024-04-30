@@ -48,8 +48,9 @@ class Location
         return $this->namedStreet;
     }
 
-    public function updateGeometry(?string $geometry): void
+    public function update(string $roadType, ?string $geometry): void
     {
+        $this->roadType = $roadType;
         $this->geometry = $geometry;
     }
 

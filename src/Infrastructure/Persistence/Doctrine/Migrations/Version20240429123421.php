@@ -22,7 +22,6 @@ final class Version20240429123421 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE named_street ALTER city_code SET NOT NULL');
         $this->addSql('ALTER TABLE named_street ALTER city_label SET NOT NULL');
-        $this->addSql('ALTER TABLE named_street ALTER road_name SET NOT NULL');
         $this->addSql('ALTER TABLE numbered_road ALTER administrator SET NOT NULL');
         $this->addSql('ALTER TABLE numbered_road ALTER road_number SET NOT NULL');
         $this->addSql('ALTER TABLE numbered_road ALTER from_point_number SET NOT NULL');

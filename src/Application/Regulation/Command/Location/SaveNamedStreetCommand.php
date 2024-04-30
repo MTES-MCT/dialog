@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandInterface;
+use App\Application\QueryInterface;
+use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
-use App\Domain\Regulation\Measure;
 
-final class SaveNamedStreetCommand implements CommandInterface
+final class SaveNamedStreetCommand implements CommandInterface, RoadCommandInterface
 {
     public ?string $roadType = null;
     public ?string $cityCode = null;
@@ -23,7 +25,7 @@ final class SaveNamedStreetCommand implements CommandInterface
     public ?Coordinates $toCoords = null;
     private ?bool $isEntireStreetFormValue = null;
     public ?string $geometry = null;
-    public ?Measure $measure;
+    public ?Location $location = null;
 
     public function __construct(
         public readonly ?NamedStreet $namedStreet = null,
@@ -58,5 +60,17 @@ final class SaveNamedStreetCommand implements CommandInterface
     public function setIsEntireStreet(bool $value): void
     {
         $this->isEntireStreetFormValue = $value;
+    }
+
+    // Road command interface
+
+    public function setLocation(Location $location): void
+    {
+        $this->location = $location;
+    }
+
+    public function getGeometryQuery(): QueryInterface
+    {
+        return new GetNamedStreetGeometryQuery($this, $this->location, $this->geometry);
     }
 }

@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandInterface;
+use App\Application\QueryInterface;
+use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Measure;
 
-final class SaveNumberedRoadCommand implements CommandInterface
+final class SaveNumberedRoadCommand implements CommandInterface, RoadCommandInterface
 {
     public ?string $roadType = null;
     public ?string $administrator = null;
@@ -21,6 +24,7 @@ final class SaveNumberedRoadCommand implements CommandInterface
     public ?string $toSide = null;
     public ?string $geometry = null;
     public ?Measure $measure;
+    public ?Location $location = null;
 
     public function __construct(
         public readonly ?NumberedRoad $numberedRoad = null,
@@ -33,5 +37,17 @@ final class SaveNumberedRoadCommand implements CommandInterface
         $this->toPointNumber = $numberedRoad?->getToPointNumber();
         $this->toAbscissa = $numberedRoad?->getToAbscissa();
         $this->toSide = $numberedRoad?->getToSide();
+    }
+
+    // Road command interface
+
+    public function setLocation(Location $location): void
+    {
+        $this->location = $location;
+    }
+
+    public function getGeometryQuery(): QueryInterface
+    {
+        return new GetNumberedRoadGeometryQuery($this, $this->location, $this->geometry);
     }
 }

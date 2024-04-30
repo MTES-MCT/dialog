@@ -23,8 +23,11 @@ final class LocationFormType extends AbstractType
             )
             ->add('numberedRoad', NumberedRoadFormType::class, [
                 'administrators' => $options['administrators'],
+                'label' => false,
             ])
-            ->add('namedStreet', NamedStreetFormType::class)
+            ->add('namedStreet', NamedStreetFormType::class, [
+                'label' => false,
+            ])
         ;
     }
 

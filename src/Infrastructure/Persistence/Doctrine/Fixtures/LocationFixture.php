@@ -146,6 +146,10 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             location: $publishedLocation4DepartmentalRoad,
             administrator: 'Ardennes',
             roadNumber: 'D322',
+            fromPointNumber: '1',
+            toPointNumber: '4',
+            fromSide: 'U',
+            toSide: 'U',
         );
 
         $permanentRegulationOrderLocation = new Location(
@@ -211,6 +215,10 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             location: $cifsLocationDepartmentalRoad,
             administrator: 'Ardennes',
             roadNumber: 'D324',
+            fromPointNumber: '1',
+            toPointNumber: '4',
+            fromSide: 'U',
+            toSide: 'U',
         );
 
         $manager->persist($namedStreetTypicalMeasureLocation1);
