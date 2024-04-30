@@ -6,17 +6,20 @@ export default class extends HTMLElement {
         /** @type {[number, number]} */
         const pos = JSON.parse(this.dataset.pos || '');
         const zoom = +(this.dataset.zoom || 13);
-        const geometries = JSON.parse(this.dataset.geometries || '[]');
+        const geojson = JSON.parse(this.dataset.geojson || '[]');
+	const bbox = JSON.parse(this.dataset.bbox || '');
 	
         const container = document.createElement('div');
         container.style.height = height;
         this.appendChild(container);
 	
-        createMapLibreMap(container, pos, zoom, geometries);
+        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox);
+	// use this to debug in the JS console of your browser :
+	//my_map = await document.getElementsByTagName("dialog-map")[0].map_on_promise
     }
 }
 
-async function createMapLibreMap(container, pos, zoom, geometries) {
+async function createMapLibreMap(container, pos, zoom, geojson, bbox) {
     const maplibregl = (await import('maplibre-gl')).default;
     
     const styleLink = document.createElement('link');
@@ -24,38 +27,76 @@ async function createMapLibreMap(container, pos, zoom, geometries) {
     styleLink.href = 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css';
     document.head.appendChild(styleLink);
     
+    // Define the map syle (OpenStreetMap raster tiles)
+    const osm_style = {
+	"version": 8,
+	"sources": {
+	    "osm": {
+		"type": "raster",
+		"tiles": ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+		"tileSize": 256,
+		"attribution": "&copy; OpenStreetMap Contributors",
+		"maxzoom": 19
+	    }
+	}, 
+	"layers": [
+	    {
+		"id": "osm",
+		"type": "raster",
+		"source": "osm" // This must match the source key above
+	    }
+	]
+    };
+    
     const map = new maplibregl.Map({
         container: container,
         style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
+	//style: osm_style, 
         center: pos,
         zoom,
     });
+    let first_map_load = true;
     
     // credit: https://maplibre.org/maplibre-gl-js/docs/examples/geojson-line/
     map.on('load', () => {
+	// automatically pan and zoom on the bbox, queried from the database (there is no .bounds for GeoJSON MapLibre source)
+	// we must do that only one time
+	if (first_map_load) {
+	    map.fitBounds(
+		bbox,
+		{
+		    padding: 100,
+		    animate: true,
+		    duration: 500  // duration in ms
+		}
+	    );
+	    first_map_load = false;
+	};
         map.addControl(new maplibregl.NavigationControl(), 'top-left');
-	
-        map.addSource('regulations-source', {
+	const regulation_source_as_json = {
             type: 'geojson',
             data: {
-                type: 'GeometryCollection',
-                geometries
+                type: 'FeatureCollection',
+                features: geojson
             }
-        });
-	
-        map.addLayer({
-            id: 'regulations-layer',
-            'type': 'line',
-            'source': 'regulations-source',
-            'layout': {
-                'line-join': 'round',
-                'line-cap': 'round',
-            },
-            'paint': {
-                'line-color': '#F00',
-                'line-width': 4,
+        };
+        map.addSource('regulations-source', regulation_source_as_json);
+        map.addLayer(
+	    {
+		'id': 'regulations-layer',
+		'type': 'line',
+		'source': 'regulations-source',
+		'layout': {
+                    'line-join': 'round',
+                    'line-cap': 'round',
+		},
+		'paint': {
+                    'line-color': '#ff69b4',
+                    'line-width': 10,
+		},
             },
 	    "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
-        });
+	);
     });
+    return map;
 }

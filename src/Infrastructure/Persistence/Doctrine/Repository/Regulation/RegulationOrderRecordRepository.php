@@ -12,6 +12,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -197,6 +198,58 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    // TODO : test this if ST_Envelope is not a Polygon
+    // TODO : check if the query result is empty or malformed ?
+    public function findRegulationOrdersBbox(): array
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('longitude_x', 'longitude_x')
+            ->addScalarResult('latitude_y', 'latitude_y')
+        ;
+        $bbox_points = $this->getEntityManager()
+                     ->createNativeQuery('
+WITH bbox_as_points AS (
+SELECT ST_DumpPoints(ST_Envelope(ST_Extent(location.geometry))) AS dump_points FROM location
+)
+SELECT ST_X((bbox_as_points.dump_points).geom) AS longitude_x, ST_Y((bbox_as_points.dump_points).geom) AS latitude_y
+FROM bbox_as_points
+WHERE (bbox_as_points.dump_points).path IN (ARRAY[1,1], ARRAY[1,3])
+',
+                         $rsm,
+                     )
+                     ->getResult()
+        ;
+
+        return [
+            [$bbox_points[0]['longitude_x'], $bbox_points[0]['latitude_y']],
+            [$bbox_points[1]['longitude_x'], $bbox_points[1]['latitude_y']],
+        ];
+    }
+
+    public function findRegulationOrdersAsGeoJson(): array
+    {
+        $rsm = new ResultSetMapping();
+        $geoJSONs = $this->getEntityManager()
+                  ->createNativeQuery('
+WITH filtered_location AS (
+SELECT geometry, road_name, road_number
+FROM location
+)
+SELECT ST_AsGeoJSON(filtered_location.*) AS geo_json
+FROM filtered_location
+',
+                      $rsm,
+                  )
+                  ->getSingleColumnResult()
+        ;
+        $geometries = [];
+        foreach ($geoJSONs as $geoJSON) {
+            $geometries[] = json_decode($geoJSON, associative: true, flags: JSON_THROW_ON_ERROR);
+        }
+
+        return $geometries;
     }
 
     public function add(RegulationOrderRecord $regulationOrderRecord): RegulationOrderRecord

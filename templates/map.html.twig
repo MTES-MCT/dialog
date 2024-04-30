@@ -7,6 +7,8 @@
 {% block body %}
 <dialog-map class="fr-py-2w"
             data-height="480px"
+	    data-geojson="{{ regulationOrdersAsGeoJson|json_encode }}"
+	    data-bbox="{{ regulationOrdersBbox|json_encode }}"
             data-pos="[2.725, 47.16]"
             data-zoom="5"
             aria-hidden="true"
