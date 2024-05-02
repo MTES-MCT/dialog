@@ -6,7 +6,8 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\Regulation\Query\GetRegulationsQueryHandler;
-use App\Application\Regulation\View\LocationView;
+use App\Application\Regulation\View\NamedStreetView;
+use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -27,8 +28,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'startDate' => $startDate1,
                 'endDate' => null,
                 'nbLocations' => 0,
-                'location' => null,
-                'departmentalRoad' => null,
+                'namedStreet' => null,
+                'numberedRoad' => null,
                 'organizationName' => 'DiaLog',
             ],
             [
@@ -38,8 +39,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'startDate' => $startDate2,
                 'endDate' => null,
                 'nbLocations' => 2,
-                'location' => 'Avenue de Fonneuve#Montauban#82121',
-                'departmentalRoad' => null,
+                'namedStreet' => 'Avenue de Fonneuve#Montauban#82121',
+                'numberedRoad' => null,
                 'organizationName' => 'DiaLog',
             ],
             [
@@ -49,8 +50,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'startDate' => $startDate2,
                 'endDate' => null,
                 'nbLocations' => 1,
-                'location' => null,
-                'departmentalRoad' => 'D123#Ardennes',
+                'namedStreet' => null,
+                'numberedRoad' => 'D123#Ardennes',
                 'organizationName' => 'DiaLog',
             ],
         ];
@@ -92,12 +93,10 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'draft',
                     2,
                     'DiaLog',
-                    new LocationView(
+                    new NamedStreetView(
                         cityCode: '82121',
                         cityLabel: 'Montauban',
                         roadName: 'Avenue de Fonneuve',
-                        roadNumber: null,
-                        administrator: null,
                     ),
                     $startDate2,
                     null,
@@ -108,10 +107,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'draft',
                     1,
                     'DiaLog',
-                    new LocationView(
-                        cityCode: null,
-                        cityLabel: null,
-                        roadName: null,
+                    new NumberedRoadView(
                         administrator: 'Ardennes',
                         roadNumber: 'D123',
                     ),

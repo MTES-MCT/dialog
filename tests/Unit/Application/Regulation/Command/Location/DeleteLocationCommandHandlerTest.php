@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Location\DeleteLocationCommandHandler;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 

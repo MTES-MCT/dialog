@@ -80,12 +80,13 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Add
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '59368';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'La Madeleine (59110)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Rue Saint-Victor';
-        $values['measure_form']['locations'][0]['isEntireStreet'] = '1';
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = '3'; // Will be ignored because of isEntireStreet
-        $values['measure_form']['locations'][0]['toHouseNumber'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Saint-Victor';
+        $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '3'; // Will be ignored because of isEntireStreet
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
@@ -210,15 +211,16 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][cityCode]'] = '59368';
-        $form['measure_form[locations][0][cityLabel]'] = 'La Madeleine (59110)';
-        $form['measure_form[locations][0][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
-        $form['measure_form[locations][0][fromHouseNumber]'] = '';
-        $form['measure_form[locations][0][toHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
+        $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
+        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
     }
 
     public function testLaneWithBlankHouseNumbers(): void
@@ -230,16 +232,17 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][cityCode]'] = '44195';
-        $form['measure_form[locations][0][cityLabel]'] = 'Savenay(44260)';
-        $form['measure_form[locations][0][roadName]'] = 'Route du Grand Brossais';
-        unset($form['measure_form[locations][0][isEntireStreet]']);
-        $form['measure_form[locations][0][fromHouseNumber]'] = '';
-        $form['measure_form[locations][0][toHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
+        $form['measure_form[locations][0][namedStreet][cityCode]'] = '44195';
+        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Savenay(44260)';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Route du Grand Brossais';
+        unset($form['measure_form[locations][0][namedStreet][isEntireStreet]']);
+        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testLaneWithUnknownHouseNumbers(): void
@@ -255,16 +258,17 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][cityCode]'] = '44195';
-        $form['measure_form[locations][0][cityLabel]'] = 'Savenay(44260)';
-        $form['measure_form[locations][0][roadName]'] = 'Route du Grand Brossais';
-        unset($form['measure_form[locations][0][isEntireStreet]']);
-        $form['measure_form[locations][0][fromHouseNumber]'] = '15';
-        $form['measure_form[locations][0][toHouseNumber]'] = '999'; // Mock will return no result
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
+        $form['measure_form[locations][0][namedStreet][cityCode]'] = '44195';
+        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Savenay(44260)';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Route du Grand Brossais';
+        unset($form['measure_form[locations][0][namedStreet][isEntireStreet]']);
+        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '15';
+        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '999'; // Mock will return no result
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testUpdateAddressFullRoad(): void
@@ -275,12 +279,13 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][cityCode]'] = '59368';
-        $form['measure_form[locations][0][cityLabel]'] = 'La Madeleine (59110)';
-        $form['measure_form[locations][0][roadName]'] = 'Rue Saint-Victor';
-        $form['measure_form[locations][0][isEntireStreet]'] = '1';
-        $form['measure_form[locations][0][fromHouseNumber]'] = '';
-        $form['measure_form[locations][0][toHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
+        $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
+        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue Saint-Victor';
+        $form['measure_form[locations][0][namedStreet][isEntireStreet]'] = '1';
+        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
+        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -294,12 +299,13 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][cityCode]'] = '82121';
-        $form['measure_form[locations][0][cityLabel]'] = 'Montauban (82000)';
-        $form['measure_form[locations][0][roadName]'] = 'Rue de la République';
-        unset($form['measure_form[locations][0][isEntireStreet]']);
-        $form['measure_form[locations][0][fromHouseNumber]'] = '';
-        $form['measure_form[locations][0][toHouseNumber]'] = '33';
+        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
+        $form['measure_form[locations][0][namedStreet][cityCode]'] = '82121';
+        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Montauban (82000)';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue de la République';
+        unset($form['measure_form[locations][0][namedStreet][isEntireStreet]']);
+        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '1';
+        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '33';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
@@ -320,19 +326,20 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '6';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '15';
-        $values['measure_form']['locations'][0]['fromSide'] = 'D';
-        $values['measure_form']['locations'][0]['toSide'] = 'D';
-        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
-        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '6';
+        $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '15';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'D';
+        $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'D';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
+        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void

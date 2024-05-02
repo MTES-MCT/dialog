@@ -7,6 +7,7 @@ namespace App\Infrastructure\BacIdf;
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -392,6 +393,7 @@ final class BacIdfTransformer
     private function parseLocation(array $row, array $regVoie): SaveLocationCommand
     {
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->roadType = RoadTypeEnum::LANE->value;
 
         $geometries = [];
 
@@ -404,11 +406,12 @@ final class BacIdfTransformer
             'geometries' => $geometries,
         ];
 
-        $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
-        $locationCommand->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
-        $locationCommand->roadName = $regVoie['VOIE_NAME'];
-        $locationCommand->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
+        $locationCommand->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->namedStreet->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
+        $locationCommand->namedStreet->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
+        $locationCommand->namedStreet->roadName = $regVoie['VOIE_NAME'];
+        $locationCommand->namedStreet->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
 
         return $locationCommand;
     }
