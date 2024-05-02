@@ -49,21 +49,31 @@ readonly class MeasureView
         }
 
         foreach ($measure->getLocations() as $location) {
-            $locations[] = new LocationView(
-                roadType: $location->getRoadType(),
-                cityLabel: $location->getCityLabel(),
-                roadName: $location->getRoadName(),
-                fromHouseNumber: $location->getFromHouseNumber(),
-                toHouseNumber: $location->getToHouseNumber(),
-                administrator: $location->getAdministrator(),
-                roadNumber: $location->getRoadNumber(),
-                fromPointNumber: $location->getFromPointNumber(),
-                fromAbscissa: $location->getFromAbscissa() ?? 0,
-                fromSide: $location->getFromSide(),
-                toPointNumber: $location->getToPointNumber(),
-                toAbscissa: $location->getToAbscissa() ?? 0,
-                toSide: $location->getToSide(),
-            );
+            if ($namedStreet = $location->getNamedStreet()) {
+                $locations[] = new LocationView(
+                    roadType: $location->getRoadType(),
+                    namedStreet: new NamedStreetView(
+                        cityLabel: $namedStreet->getCityLabel(),
+                        roadName: $namedStreet->getRoadName(),
+                        fromHouseNumber: $namedStreet->getFromHouseNumber(),
+                        toHouseNumber: $namedStreet->getToHouseNumber(),
+                    ),
+                );
+            } elseif ($numberedRoad = $location->getNumberedRoad()) {
+                $locations[] = new LocationView(
+                    roadType: $location->getRoadType(),
+                    numberedRoad: new NumberedRoadView(
+                        administrator: $numberedRoad->getAdministrator(),
+                        roadNumber: $numberedRoad->getRoadNumber(),
+                        fromPointNumber: $numberedRoad->getFromPointNumber(),
+                        fromAbscissa: $numberedRoad->getFromAbscissa() ?? 0,
+                        fromSide: $numberedRoad->getFromSide(),
+                        toPointNumber: $numberedRoad->getToPointNumber(),
+                        toAbscissa: $numberedRoad->getToAbscissa() ?? 0,
+                        toSide: $numberedRoad->getToSide(),
+                    ),
+                );
+            }
         }
 
         return new MeasureView(

@@ -10,7 +10,7 @@ use App\Application\Regulation\View\DatexValidityConditionView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -78,8 +78,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 foreach ($measure->getLocations() as $location) {
                     $locationConditions[] = new DatexLocationView(
                         roadType: $location->getRoadType(),
-                        roadName: $location->getRoadName(),
-                        roadNumber: $location->getRoadNumber(),
+                        roadName: $location->getNamedStreet()?->getRoadName(),
+                        roadNumber: $location->getNumberedRoad()?->getRoadNumber(),
                         geometry: $location->getGeometry(),
                     );
                 }

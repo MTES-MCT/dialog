@@ -47,14 +47,15 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = ''; // Blank
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Manual Input';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = ''; // Blank
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Manual Input';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez choisir une ville ou commune parmi la liste.', $crawler->filter('#measure_form_locations_0_cityLabel_error')->text());
+        $this->assertSame('Veuillez choisir une ville ou commune parmi la liste.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
     }
 
     public function testInvalidDepartmentalRoad(): void
@@ -73,25 +74,26 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = '';
-        $values['measure_form']['locations'][0]['roadNumber'] = '';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '';
-        $values['measure_form']['locations'][0]['fromSide'] = 'A';
-        $values['measure_form']['locations'][0]['toSide'] = 'A';
-        $values['measure_form']['locations'][0]['fromAbscissa'] = 'A';
-        $values['measure_form']['locations'][0]['toAbscissa'] = 'A';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = '';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = '';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '';
+        $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'A';
+        $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'A';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 'A';
+        $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 'A';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_administrator_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_fromPointNumber_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_toPointNumber_error')->text());
-        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_fromSide_error')->text());
-        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_toSide_error')->text());
-        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_fromAbscissa_error')->text());
-        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_toAbscissa_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_numberedRoad_administrator_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_numberedRoad_fromPointNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_numberedRoad_toPointNumber_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_numberedRoad_fromSide_error')->text());
+        $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_numberedRoad_toSide_error')->text());
+        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_numberedRoad_fromAbscissa_error')->text());
+        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_numberedRoad_toAbscissa_error')->text());
     }
 
     public function testInvalidCertainDaysWithoutApplicableDays(): void
@@ -145,12 +147,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
 
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
-        unset($values['measure_form']['locations'][0]['isEntireStreet']);
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
-        $values['measure_form']['locations'][0]['toHouseNumber'] = '37bis';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '37bis';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -184,13 +187,15 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '59368';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'La Madeleine (59110)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
     }
 
     public function testAddLaneWithBlankHouseNumbers(): void
@@ -207,17 +212,18 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
-        unset($values['measure_form']['locations'][0]['isEntireStreet']);
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = '';
-        $values['measure_form']['locations'][0]['toHouseNumber'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testAddLaneWithUnknownHouseNumbers(): void
@@ -234,17 +240,18 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
-        unset($values['measure_form']['locations'][0]['isEntireStreet']);
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = '15';
-        $values['measure_form']['locations'][0]['toHouseNumber'] = '999'; // Mock will return no result
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '999'; // Mock will return no result
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testAddLaneWithHouseNumbersOnMultipleSections(): void
@@ -261,17 +268,18 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = '59606';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Valenciennes (59300)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Rue du Faubourg de Paris';
-        unset($values['measure_form']['locations'][0]['isEntireStreet']);
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = '80';
-        $values['measure_form']['locations'][0]['toHouseNumber'] = '44'; // Not on same section than 80
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59606';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Valenciennes (59300)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue du Faubourg de Paris';
+        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '80';
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '44'; // Not on same section than 80
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
+        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
     }
 
     public function testAddDepartmentalRoad(): void
@@ -289,14 +297,15 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D906';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '34';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '35';
-        $values['measure_form']['locations'][0]['fromSide'] = 'U';
-        $values['measure_form']['locations'][0]['toSide'] = 'U';
-        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
-        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D906';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '34';
+        $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '35';
+
+        $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -323,19 +332,20 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '6';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '15';
-        $values['measure_form']['locations'][0]['fromSide'] = 'D';
-        $values['measure_form']['locations'][0]['toSide'] = 'D';
-        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
-        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '6';
+        $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '15';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'D';
+        $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'D';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
+        $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
     }
 
     public function testAddDepartmentalRoadWithStartAbscissaOutOfRange(): void
@@ -353,19 +363,20 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '1';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '5';
-        $values['measure_form']['locations'][0]['fromSide'] = 'U';
-        $values['measure_form']['locations'][0]['toSide'] = 'U';
-        $values['measure_form']['locations'][0]['fromAbscissa'] = 100000000;
-        $values['measure_form']['locations'][0]['toAbscissa'] = 650;
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '1';
+        $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '5';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100000000;
+        $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_fromAbscissa_error')->text());
+        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_numberedRoad_fromAbscissa_error')->text());
     }
 
     public function testAddDepartmentalRoadWithEndAbscissaOutOfRange(): void
@@ -383,19 +394,20 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['fromPointNumber'] = '1';
-        $values['measure_form']['locations'][0]['toPointNumber'] = '5';
-        $values['measure_form']['locations'][0]['fromSide'] = 'U';
-        $values['measure_form']['locations'][0]['toSide'] = 'U';
-        $values['measure_form']['locations'][0]['fromAbscissa'] = 100;
-        $values['measure_form']['locations'][0]['toAbscissa'] = 100000000;
+        $values['measure_form']['locations'][0]['numberedRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromPointNumber'] = '1';
+        $values['measure_form']['locations'][0]['numberedRoad']['toPointNumber'] = '5';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 100000000;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_toAbscissa_error')->text());
+        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_numberedRoad_toAbscissa_error')->text());
     }
 
     public function testInvalidVehicleSetBlankRestrictedTypes(): void
@@ -470,9 +482,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['measure_form']['vehicleSet']['critairTypes'] = [];
@@ -493,8 +505,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['restrictedTypes'] = ['critair'];
         $values['measure_form']['vehicleSet']['critairTypes'] = ['invalidCritair'];
@@ -640,9 +652,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['locations'][0]['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['roadName'] = 'Route du Grand Brossais';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['periods'][0]['isPermanent'] = '0';
@@ -772,20 +784,20 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['cityCode'] = str_repeat('a', 6);
-        $values['measure_form']['locations'][0]['cityLabel'] = str_repeat('a', 256);
-        $values['measure_form']['locations'][0]['roadName'] = str_repeat('a', 256);
-        unset($values['location_form']['isEntireStreet']);
-        $values['measure_form']['locations'][0]['fromHouseNumber'] = str_repeat('a', 9);
-        $values['measure_form']['locations'][0]['toHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = str_repeat('a', 6);
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = str_repeat('a', 256);
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = str_repeat('a', 256);
+        unset($values['location_form']['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = str_repeat('a', 9);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_cityLabel_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_roadName_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_fromHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_toHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toHouseNumber_error')->text());
     }
 
     public function testFieldsTooLongDepartmentalRoad(): void
@@ -801,13 +813,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['administrator'] = 'Ain';
-        $values['measure_form']['locations'][0]['roadNumber'] = str_repeat('a', 51);
+        $values['measure_form']['locations'][0]['numberedRoad']['administrator'] = 'Ain';
+        $values['measure_form']['locations'][0]['numberedRoad']['roadNumber'] = str_repeat('a', 51);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locations_0_roadNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

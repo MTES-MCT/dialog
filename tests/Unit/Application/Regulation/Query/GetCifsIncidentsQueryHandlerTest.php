@@ -13,7 +13,8 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -238,11 +239,16 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn([]);
 
         $location1 = $this->createMock(Location::class);
+        $namedStreet1 = $this->createMock(NamedStreet::class);
         $location1
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('02d5eb61-9ca3-4e67-aacd-726f124382d0');
         $location1
+            ->expects(self::exactly(2))
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet1);
+        $namedStreet1
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Rue des Arts');
@@ -456,11 +462,16 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn([$period1, $period2, $period3, $period4]);
 
         $location2 = $this->createMock(Location::class);
+        $namedStreet2 = $this->createMock(NamedStreet::class);
         $location2
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('9698b212-705c-4c46-8968-63b5a55a4d66');
         $location2
+            ->expects(self::exactly(2))
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet2);
+        $namedStreet2
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Avenue de Fonneuve');

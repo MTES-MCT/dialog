@@ -17,7 +17,6 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
         $this->assertSecurityHeaders();
 
         $li = $crawler->filter('li');
-
         $this->assertSame(4, $li->count());
 
         $this->assertSame('D32', $li->eq(0)->text());

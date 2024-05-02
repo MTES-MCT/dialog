@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Domain\Regulation;
 
 use App\Domain\Condition\Period\Period;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use Doctrine\Common\Collections\ArrayCollection;
