@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command\Location;
 
-use App\Application\CommandInterface;
 use App\Application\QueryInterface;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Measure;
 
-final class SaveNumberedRoadCommand implements CommandInterface, RoadCommandInterface
+final class SaveNumberedRoadCommand implements RoadCommandInterface
 {
-    public ?string $roadType = null;
+    public ?string $roadType = null; // Used by validation
     public ?string $administrator = null;
     public ?string $roadNumber = null;
     public ?string $fromPointNumber = null;

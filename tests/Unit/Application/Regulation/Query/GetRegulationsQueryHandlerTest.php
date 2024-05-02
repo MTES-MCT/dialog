@@ -10,7 +10,6 @@ use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -95,7 +94,6 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     2,
                     'DiaLog',
                     new NamedStreetView(
-                        roadType: RoadTypeEnum::LANE->value,
                         cityCode: '82121',
                         cityLabel: 'Montauban',
                         roadName: 'Avenue de Fonneuve',
@@ -110,7 +108,6 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     1,
                     'DiaLog',
                     new NumberedRoadView(
-                        roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
                         administrator: 'Ardennes',
                         roadNumber: 'D123',
                     ),

@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command\Location;
 
-use App\Application\CommandInterface;
 use App\Application\QueryInterface;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 
-final class SaveNamedStreetCommand implements CommandInterface, RoadCommandInterface
+final class SaveNamedStreetCommand implements RoadCommandInterface
 {
-    public ?string $roadType = null;
+    public ?string $roadType = null; // Used by validation
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;

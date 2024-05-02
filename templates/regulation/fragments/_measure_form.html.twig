@@ -481,7 +481,6 @@
                                 style="--stack-gap: var(--2w)"
                                 data-form-collection-target="collectionContainer"
                                 data-action="remove:child-removed->form-collection#syncPositions"
-                                aria-label="{{ form.locations.vars.label|trans }}"
                             >
                                 {% for item in form.locations %}
                                     {{ _self.locations_list_item(item, loop.index0, loop.index) }}

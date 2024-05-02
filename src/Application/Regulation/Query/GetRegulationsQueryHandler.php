@@ -8,7 +8,6 @@ use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationsQueryHandler
@@ -33,10 +32,10 @@ final class GetRegulationsQueryHandler
 
             if ($row['namedStreet']) {
                 [$roadName, $cityLabel, $cityCode] = explode('#', $row['namedStreet']);
-                $locationView = new NamedStreetView(RoadTypeEnum::LANE->value, $cityCode, $cityLabel, $roadName);
+                $locationView = new NamedStreetView($cityCode, $cityLabel, $roadName);
             } elseif ($row['numberedRoad']) {
                 [$roadNumber, $administrator] = explode('#', $row['numberedRoad']);
-                $locationView = new NumberedRoadView(RoadTypeEnum::DEPARTMENTAL_ROAD->value, $roadNumber, $administrator);
+                $locationView = new NumberedRoadView($roadNumber, $administrator);
             }
 
             $regulationOrderViews[] = new RegulationOrderListItemView(

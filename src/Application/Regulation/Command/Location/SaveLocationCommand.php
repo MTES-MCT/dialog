@@ -41,7 +41,7 @@ final class SaveLocationCommand implements CommandInterface
         }
     }
 
-    public function getRoadCommand(): RoadCommandInterface|CommandInterface
+    public function getRoadCommand(): RoadCommandInterface
     {
         return $this->namedStreet ?? $this->numberedRoad ?? throw new \LogicException('No road command');
     }
