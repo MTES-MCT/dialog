@@ -32,7 +32,7 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findRegulationOrdersBbox(): array;
 
-    public function findRegulationOrdersAsGeoJson(): array;
+    public function findRegulationOrdersAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter): array;
 
     public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 

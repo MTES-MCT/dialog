@@ -97,6 +97,20 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox) {
             },
 	    "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
 	);
+	// popup when clicking on a feature of the regulation layer
+	map.on('click', 'regulations-layer', (e) => {
+            new maplibregl.Popup()
+		.setLngLat(e.lngLat)
+		.setHTML((e.features[0].properties.road_name || "''") + " [" + (e.features[0].properties.road_number || "") + "]" + "<h3>" + e.features[0].properties.identifier + "</h3>" + "<h4>" + e.features[0].properties.organization_name + "</h4>" + e.features[0].properties.description + "<br />" + " • arrêté permanent = " + e.features[0].properties.is_permanent + "<br /> • arrêté à l'état de brouillon = " + e.features[0].properties.is_draft)
+		.addTo(map);
+	});
+	// change the cursor when the mouse is over the regulations layer
+	map.on('mouseenter', 'regulations-layer', () => {
+            map.getCanvas().style.cursor = 'pointer';
+	});
+	map.on('mouseleave', 'regulations-layer', () => {
+            map.getCanvas().style.cursor = '';
+	});
     });
     return map;
 }
