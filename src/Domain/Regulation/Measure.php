@@ -6,6 +6,7 @@ namespace App\Domain\Regulation;
 
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Regulation\Location\Location;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 

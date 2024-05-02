@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Repository;
 
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\LocationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;

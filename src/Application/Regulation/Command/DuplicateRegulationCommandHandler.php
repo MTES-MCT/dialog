@@ -6,6 +6,8 @@ namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -91,21 +93,29 @@ final class DuplicateRegulationCommandHandler
                 foreach ($measure->getLocations() as $location) {
                     $cmd = new SaveLocationCommand();
                     $cmd->roadType = $location->getRoadType();
-                    $cmd->administrator = $location->getAdministrator();
-                    $cmd->roadNumber = $location->getRoadNumber();
-                    $cmd->cityCode = $location->getCityCode();
-                    $cmd->cityLabel = $location->getCityLabel();
-                    $cmd->roadName = $location->getRoadName();
-                    $cmd->fromHouseNumber = $location->getFromHouseNumber();
-                    $cmd->toHouseNumber = $location->getToHouseNumber();
-                    $cmd->geometry = $location->getGeometry();
-                    $cmd->fromPointNumber = $location->getFromPointNumber();
-                    $cmd->toPointNumber = $location->getToPointNumber();
-                    $cmd->toAbscissa = $location->getToAbscissa();
-                    $cmd->fromAbscissa = $location->getFromAbscissa();
-                    $cmd->fromSide = $location->getFromSide();
-                    $cmd->toSide = $location->getToSide();
-                    $cmd->measure = $measure;
+
+                    if ($numberedRoad = $location->getNumberedRoad()) {
+                        $cmd->numberedRoad = new SaveNumberedRoadCommand();
+                        $cmd->numberedRoad->geometry = $location->getGeometry();
+                        $cmd->numberedRoad->roadType = $location->getRoadType();
+                        $cmd->numberedRoad->administrator = $numberedRoad->getAdministrator();
+                        $cmd->numberedRoad->roadNumber = $numberedRoad->getRoadNumber();
+                        $cmd->numberedRoad->fromPointNumber = $numberedRoad->getFromPointNumber();
+                        $cmd->numberedRoad->fromSide = $numberedRoad->getFromSide();
+                        $cmd->numberedRoad->fromAbscissa = $numberedRoad->getFromAbscissa();
+                        $cmd->numberedRoad->toPointNumber = $numberedRoad->getToPointNumber();
+                        $cmd->numberedRoad->toAbscissa = $numberedRoad->getToAbscissa();
+                        $cmd->numberedRoad->toSide = $numberedRoad->getToSide();
+                    } elseif ($namedStreet = $location->getNamedStreet()) {
+                        $cmd->namedStreet = new SaveNamedStreetCommand();
+                        $cmd->namedStreet->geometry = $location->getGeometry();
+                        $cmd->namedStreet->roadType = $location->getRoadType();
+                        $cmd->namedStreet->cityLabel = $namedStreet->getCityLabel();
+                        $cmd->namedStreet->cityCode = $namedStreet->getCityCode();
+                        $cmd->namedStreet->roadName = $namedStreet->getRoadName();
+                        $cmd->namedStreet->fromHouseNumber = $namedStreet->getFromHouseNumber();
+                        $cmd->namedStreet->toHouseNumber = $namedStreet->getToHouseNumber();
+                    }
 
                     $locationCommands[] = $cmd;
                 }

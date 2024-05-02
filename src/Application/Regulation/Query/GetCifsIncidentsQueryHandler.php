@@ -10,7 +10,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -105,7 +105,7 @@ final class GetCifsIncidentsQueryHandler
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
                     $locationId = $location->getUuid();
-                    $street = $location->getRoadName() ?? $location->getRoadNumber();
+                    $street = $location->getNamedStreet() ? $location->getNamedStreet()->getRoadName() : $location->getNumberedRoad()->getRoadNumber();
                     $polylines = $this->polylineMaker->getPolylines($location->getGeometry());
 
                     foreach ($incidentPeriods as $incidentPeriod) {

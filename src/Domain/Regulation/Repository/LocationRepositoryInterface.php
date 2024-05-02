@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Repository;
 
-use App\Domain\Regulation\Location;
+use App\Domain\Regulation\Location\Location;
 
 interface LocationRepositoryInterface
 {

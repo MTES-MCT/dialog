@@ -49,7 +49,7 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue de l\'Hôtel de Ville du n° 30 au n° 12 Montauban (82000)', $measure1Content->filter('li')->eq(3)->text());
         $this->assertSame('Rue Gamot Montauban (82000)', $measure1Content->filter('li')->eq(4)->text());
-        $this->assertSame('D322 (Ardennes)', $measure1Content->filter('li')->eq(5)->text());
+        $this->assertSame('D322 (Ardennes) du PR 1+0 (côté U) au PR 4+0 (côté U)', $measure1Content->filter('li')->eq(5)->text());
         $this->assertSame('Avenue de Fonneuve du n° 695 au n° 253 Montauban (82000)', $measure1Content->filter('li')->eq(6)->text());
     }
 

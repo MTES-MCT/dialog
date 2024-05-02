@@ -25,24 +25,26 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     private const COUNT_LOCATIONS_QUERY = '
         SELECT count(DISTINCT(_loc.uuid))
-        FROM App\Domain\Regulation\Location _loc
+        FROM App\Domain\Regulation\Location\Location _loc
         INNER JOIN _loc.measure _m
         INNER JOIN _m.regulationOrder _ro
         WHERE _ro.uuid = ro.uuid';
 
-    private const GET_LOCATION_QUERY = "
+    private const GET_NAMED_STREET_QUERY = "
         FIRST(
-            SELECT CONCAT(_loc2.roadName, '#', _loc2.cityLabel, '#',  _loc2.cityCode)
-            FROM App\Domain\Regulation\Location _loc2
+            SELECT CONCAT(_ns2.roadName, '#', _ns2.cityLabel, '#',  _ns2.cityCode)
+            FROM App\Domain\Regulation\Location\Location _loc2
+            INNER JOIN _loc2.namedStreet _ns2
             INNER JOIN _loc2.measure _m2
             INNER JOIN _m2.regulationOrder _ro2
             WHERE _ro2.uuid = ro.uuid
         )";
 
-    private const GET_LOCATION_DEPARTMENTAL_ROAD_QUERY = "
+    private const GET_NUMBERED_ROAD_QUERY = "
             FIRST(
-                SELECT CONCAT(_loc3.roadNumber, '#', _loc3.administrator)
-                FROM App\Domain\Regulation\Location _loc3
+                SELECT CONCAT(_nr3.roadNumber, '#', _nr3.administrator)
+                FROM App\Domain\Regulation\Location\Location _loc3
+                INNER JOIN _loc3.numberedRoad _nr3
                 INNER JOIN _loc3.measure _m3
                 INNER JOIN _m3.regulationOrder _ro3
                 WHERE _ro3.uuid = ro.uuid
@@ -57,8 +59,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, ro.startDate, ro.endDate')
             ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
-            ->addSelect(sprintf('(%s) as location', self::GET_LOCATION_QUERY))
-            ->addSelect(sprintf('(%s) as departmentalRoad', self::GET_LOCATION_DEPARTMENTAL_ROAD_QUERY))
+            ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
+            ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
             ->where('roc.organization IN (:organizationUuids)')
             ->setParameter('organizationUuids', $organizationUuids)
             ->innerJoin('roc.organization', 'o')
@@ -92,6 +94,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'o')
             ->leftJoin('ro.measures', 'm')
             ->leftJoin('m.locations', 'l')
+            ->leftJoin('l.numberedRoad', 'nr')
+            ->leftJoin('l.namedStreet', 'ns')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -133,11 +137,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
-            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't')
+            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
+            ->leftJoin('loc.namedStreet', 'ns')
+            ->leftJoin('loc.numberedRoad', 'nr')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')

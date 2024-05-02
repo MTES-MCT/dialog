@@ -39,12 +39,12 @@
                         <li>
                             <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
                             {% if location.roadType == 'lane' %}
-                                {{ location.roadName }}
-                                {% include 'regulation/_location_house_numbers.html.twig' with { location } only %}
-                                {{ location.cityLabel }}
+                                {{ location.namedStreet.roadName }}
+                                {% include 'regulation/_location_house_numbers.html.twig' with { location: location.namedStreet } only %}
+                                {{ location.namedStreet.cityLabel }}
                             {% else %}
-                                {{ location.roadNumber }} ({{ location.administrator }})
-                                {% include 'regulation/_reference_points.html.twig' with { location } only %}
+                                {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }})
+                                {% include 'regulation/_reference_points.html.twig' with { location: location.numberedRoad } only %}
                             {% endif %}
                         </li>
                     {% endfor %}

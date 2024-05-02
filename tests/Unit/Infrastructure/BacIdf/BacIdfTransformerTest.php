@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\BacIdf;
 use App\Application\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -67,12 +68,14 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = $this->cityCode;
-        $locationCommand->cityLabel = 'La Courneuve (93120)';
-        $locationCommand->roadName = 'Passage Pierre Curie';
-        $locationCommand->fromHouseNumber = null;
-        $locationCommand->toHouseNumber = null;
-        $locationCommand->geometry = json_encode(
+        $locationCommand->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->namedStreet->cityCode = $this->cityCode;
+        $locationCommand->namedStreet->cityLabel = 'La Courneuve (93120)';
+        $locationCommand->namedStreet->roadName = 'Passage Pierre Curie';
+        $locationCommand->namedStreet->fromHouseNumber = null;
+        $locationCommand->namedStreet->toHouseNumber = null;
+        $locationCommand->namedStreet->geometry = json_encode(
             [
                 'type' => 'GeometryCollection',
                 'geometries' => [
@@ -177,12 +180,14 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = $this->cityCode;
-        $locationCommand->cityLabel = 'La Courneuve (93120)';
-        $locationCommand->roadName = 'Ruelle du Pressin';
-        $locationCommand->fromHouseNumber = null;
-        $locationCommand->toHouseNumber = null;
-        $locationCommand->geometry = json_encode(
+        $locationCommand->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->namedStreet->cityCode = $this->cityCode;
+        $locationCommand->namedStreet->cityLabel = 'La Courneuve (93120)';
+        $locationCommand->namedStreet->roadName = 'Ruelle du Pressin';
+        $locationCommand->namedStreet->fromHouseNumber = null;
+        $locationCommand->namedStreet->toHouseNumber = null;
+        $locationCommand->namedStreet->geometry = json_encode(
             [
                 'type' => 'GeometryCollection',
                 'geometries' => [
@@ -589,12 +594,14 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
-        $locationCommand->cityCode = $this->cityCode;
-        $locationCommand->cityLabel = 'La Courneuve (93120)';
-        $locationCommand->roadName = 'Ruelle du Pressin';
-        $locationCommand->fromHouseNumber = null;
-        $locationCommand->toHouseNumber = null;
-        $locationCommand->geometry = json_encode(
+        $locationCommand->namedStreet = new SaveNamedStreetCommand();
+        $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->namedStreet->cityCode = $this->cityCode;
+        $locationCommand->namedStreet->cityLabel = 'La Courneuve (93120)';
+        $locationCommand->namedStreet->roadName = 'Ruelle du Pressin';
+        $locationCommand->namedStreet->fromHouseNumber = null;
+        $locationCommand->namedStreet->toHouseNumber = null;
+        $locationCommand->namedStreet->geometry = json_encode(
             [
                 'type' => 'GeometryCollection',
                 'geometries' => [

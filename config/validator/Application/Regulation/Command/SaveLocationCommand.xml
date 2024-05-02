@@ -3,131 +3,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\Location\SaveLocationCommand">
-        <property name="administrator">
-            <constraint name="Length">
-                <option name="max">255</option>
-            </constraint>
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank" />
-                </option>
-            </constraint>
+        <property name="roadType">
+            <constraint name="NotBlank" />
         </property>
-        <property name="roadNumber">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank" />
-                    <constraint name="Length">
-                        <option name="max">50</option>
-                    </constraint>
-                </option>
-            </constraint>
+        <property name="namedStreet">
+            <constraint name="Valid" />
         </property>
-        <property name="fromPointNumber">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank"/>
-                </option>
-            </constraint>
-        </property>
-        <property name="toPointNumber">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank"/>
-                </option>
-            </constraint>
-        </property>
-        <property name="fromAbscissa">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="Type">
-                        <option name="type">integer</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <property name="toAbscissa">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="Type">
-                        <option name="type">integer</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <getter property="isEntireStreet">
-            <constraint name="Type">
-                <option name="type">boolean</option>
-            </constraint>
-        </getter>
-        <property name="cityCode">
-            <constraint name="Length">
-                <option name="min">5</option>
-                <option name="max">5</option>
-            </constraint>
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'lane'</option>
-                <option name="constraints">
-                    <constraint name="NotBlank">
-                        <option name="message">regulation.location.cityCode.error.blank</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <property name="cityLabel">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'lane' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank" />
-                    <constraint name="Length">
-                        <option name="max">255</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <property name="roadName">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'lane' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank" />
-                    <constraint name="Length">
-                        <option name="max">255</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <property name="fromHouseNumber">
-            <constraint name="Length">
-                <option name="max">8</option>
-            </constraint>
-            <constraint name="When">
-                <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet()</option>
-                <option name="constraints">
-                    <constraint name="AtLeastOneOf">
-                        <option name="constraints">
-                            <constraint name="Expression">
-                                <option name="expression">this.fromHouseNumber</option>
-                            </constraint>
-                            <constraint name="Expression">
-                                <option name="expression">this.toHouseNumber</option>
-                            </constraint>
-                        </option>
-                        <option name="includeInternalMessages">false</option>
-                        <option name="message">regulation.location.house_numbers.error.empty</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <property name="toHouseNumber">
-            <constraint name="Length">
-                <option name="max">8</option>
-            </constraint>
+        <property name="numberedRoad">
+            <constraint name="Valid" />
         </property>
     </class>
 </constraint-mapping>

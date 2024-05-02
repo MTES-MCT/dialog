@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
-use App\Application\Regulation\View\LocationView;
+use App\Application\Regulation\View\NamedStreetView;
+use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -29,12 +30,12 @@ final class GetRegulationsQueryHandler
         foreach ($rows['items'] as $row) {
             $locationView = null;
 
-            if ($row['location']) {
-                [$roadName, $cityLabel, $cityCode] = explode('#', $row['location']);
-                $locationView = new LocationView($cityCode, $cityLabel, $roadName);
-            } elseif ($row['departmentalRoad']) {
-                [$roadNumber, $administrator] = explode('#', $row['departmentalRoad']);
-                $locationView = new LocationView(null, null, null, $roadNumber, $administrator);
+            if ($row['namedStreet']) {
+                [$roadName, $cityLabel, $cityCode] = explode('#', $row['namedStreet']);
+                $locationView = new NamedStreetView($cityCode, $cityLabel, $roadName);
+            } elseif ($row['numberedRoad']) {
+                [$roadNumber, $administrator] = explode('#', $row['numberedRoad']);
+                $locationView = new NumberedRoadView($roadNumber, $administrator);
             }
 
             $regulationOrderViews[] = new RegulationOrderListItemView(
