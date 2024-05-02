@@ -234,4 +234,33 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 
         $this->assertSame($this->geometry, $result);
     }
+
+    public function testGetWithNoStartOrNoEnd(): void
+    {
+        $toCoords = Coordinates::fromLonLat(-1.930973, 47.347917);
+
+        $this->roadGeocoder
+            ->expects(self::never())
+            ->method('computeRoadLine');
+
+        $this->laneSectionMaker
+            ->expects(self::never())
+            ->method('computeSection');
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadName = $this->roadName;
+        $saveNamedStreetCommand->toCoords = $toCoords;
+
+        $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+
+        $this->assertNull($result);
+    }
 }

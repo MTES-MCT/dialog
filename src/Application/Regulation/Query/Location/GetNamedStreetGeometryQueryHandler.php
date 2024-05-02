@@ -16,7 +16,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
     ) {
     }
 
-    public function __invoke(GetNamedStreetGeometryQuery $query): string
+    public function __invoke(GetNamedStreetGeometryQuery $query): ?string
     {
         if ($query->geometry) {
             return $query->geometry;
