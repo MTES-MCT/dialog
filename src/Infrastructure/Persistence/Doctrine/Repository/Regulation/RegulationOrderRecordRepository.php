@@ -234,12 +234,14 @@ WHERE (bbox_as_points.dump_points).path IN (ARRAY[1,1], ARRAY[1,3])
         $geoJSONs = $this->getEntityManager()
                   ->createNativeQuery('
 WITH filtered_location AS (
-SELECT location.road_name AS road_name, location.road_number AS road_number, measure.type AS "type",
+SELECT named_street.road_name AS road_name, numbered_road.road_number AS road_number, measure.type AS "type",
        regulation_order.category AS category, regulation_order.description AS description, regulation_order.identifier AS identifier,
        (regulation_order.end_date IS NULL) AS is_permanent, (regulation_order_record.status = \'draft\') AS is_draft,
        organization.name AS organization_name, location.geometry AS geometry,
        regulation_order.uuid AS regulation_order_id
 FROM location
+LEFT JOIN numbered_road ON numbered_road.location_uuid = location.uuid
+LEFT JOIN named_street ON named_street.location_uuid = location.uuid
 JOIN measure ON measure.uuid = location.measure_uuid
 JOIN regulation_order ON regulation_order.uuid = measure.regulation_order_uuid
 JOIN regulation_order_record ON regulation_order_record.regulation_order_uuid = regulation_order.uuid
