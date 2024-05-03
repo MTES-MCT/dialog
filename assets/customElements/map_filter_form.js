@@ -4,7 +4,7 @@
 // credits to https://github.com/fairnesscoop/permacoop/blob/master/src/assets/customElements/autoForm.js
 export default class extends HTMLElement {
     connectedCallback() {
-	requestAnimationFrame(() => {
+ 	requestAnimationFrame(() => {
 	    // Progressive enhancement:
 	    // If this custom element activates, submit the form whenever
 	    // a form control changes value.

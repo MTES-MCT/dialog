@@ -17,6 +17,12 @@ export default class extends HTMLElement {
 	// use this to debug in the JS console of your browser :
 	//my_map = await document.getElementsByTagName("dialog-map")[0].map_on_promise
     }
+
+    attributeChangedCallback(attributeName, attributeOldValue, attributeNewValue) {
+	console.log(
+	    `Attribute ${attributeName} has changed from ${attributeOldValue} to ${attributeNewValue}.`,
+	);
+    }
 }
 
 async function createMapLibreMap(container, pos, zoom, geojson, bbox) {
