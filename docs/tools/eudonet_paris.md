@@ -8,13 +8,12 @@ Au 01/09/2023, l'intégration nécessite d'exécuter manuellement une commande d
 
 ### Préparation
 
-1. Lancez l'[instance Addok personnalisée](./addok.md)
-1. Ajoutez ces variables d'environnement à votre fichier `.env.local` :
-  * `APP_EUDONET_PARIS_CREDENTIALS=...`, en remplaçant `...` par les identifiants au format JSON.
-    * Obtenez ces identifiants auprès de l'équipe.
-  * `APP_EUDONET_PARIS_ORG_ID=...`, en remplaçant `...` par le UUID de l'organisation de la Ville de Paris, où les arrêtés seront ajoutés
-    * En local ou en développement, créez une organisation "Ville de Paris" dans l'[admin](./admin.md) et recopiez son ID (visible dans son URL d'édition).
-  * `API_ADRESSE_BASE_URL=http://addok:7878`
+Ajoutez ces variables d'environnement à votre fichier `.env.local` :
+
+* `APP_EUDONET_PARIS_CREDENTIALS=...`, en remplaçant `...` par les identifiants au format JSON.
+  * Obtenez ces identifiants auprès de l'équipe.
+* `APP_EUDONET_PARIS_ORG_ID=...`, en remplaçant `...` par le UUID de l'organisation de la Ville de Paris, où les arrêtés seront ajoutés
+  * En local ou en développement, créez une organisation "Ville de Paris" dans l'[admin](./admin.md) et recopiez son ID (visible dans son URL d'édition).
 
 ### Exécution
 
@@ -76,8 +75,6 @@ La configuration passe par diverses variables d'environnement résumées ci-dess
 | `EUDONET_PARIS_IMPORT_APP` | [Variable](https://docs.github.com/fr/actions/learn-github-actions/variables) au sens GitHub Actions | L'application Scalingo cible (par exemple `dialog` pour la production) |
 | `EUDONET_PARIS_IMPORT_CREDENTIALS` | [Secret](https://docs.github.com/fr/actions/security-guides/using-secrets-in-github-actions) au sens GitHub Actions | Les identifiants d'accès à l'API Eudonet Paris |
 | `EUDONET_PARIS_IMPORT_DATABASE_URL` | Secret | L'URL d'accès à la base de données par la CI (voir ci-dessous) |
-| `EUDONET_PARIS_IMPORT_KDRIVE_TOKEN` | Secret | Clé d'API pour Infomaniak kDrive (téléchargement des données Addok par la CI) |
-| `EUDONET_PARIS_IMPORT_KDRIVE_FILE_ID`| Variable | Identifiant du fichier Addok sur kDrive |
 | `EUDONET_PARIS_IMPORT_ORG_ID` | Variable | Le UUID de l'organisation "Ville de Paris" dans l'environnement défini apr `EUDONET_PARIS_IMPORT_APP` |
 | `GH_SCALINGO_SSH_PRIVATE_KEY` | Secret | Clé SSH privée permettant l'accès à Scalingo par la CI |
 
@@ -118,17 +115,3 @@ Et recopiez l'URL qui s'affiche.
 > Cette commande nécessite le CLI Scalingo, voir [Utiliser une DB Scalingo en local](./db.md#utiliser-une-db-scalingo-en-local).
 
 Sinon il vous faut récupérer la `DATABASE_URL` dans l'interface web Scalingo.
-
-### Données Addok
-
-L'intégration Eudonet Paris a besoin de faire tourner l'[instance Addok personnalisée](./addok.md) sur la CI, en parallèle de l'import.
-
-Il faut donc que la GitHub Action télécharge le fichier ZIP contenant les données (1.6 Go environ). (Le fichier est mis en cache après le premier téléchargement.)
-
-Le fichier est hébergé sur le kDrive de Fairness.
-
-Le téléchargement se fait par le script `tools/download_addok_bundle.sh`. Pour cela une clé d'API Infomaniak avec le scope `drive` a été créée par @florimondmanca et enregistrée dans le secret `EUDONET_PARIS_IMPORT_KDRIVE_TOKEN`.
-
-L'identifiant du fichier sur kDrive est stocké dans la variable `EUDONET_PARIS_IMPORT_KDRIVE_FILE_ID`.
-
-**Important** : si un nouveau bundle Addok est stocké sur le kDrive, ou si l'URL du fichier change pour toute autre raison, il faut mettre à jour la variable `EUDONET_PARIS_IMPORT_KDRIVE_FILE_ID` avec le nouveau FileID (visible dans l'URL d'aperçu du fichier : `/app/drive/{DriveID}/files/{DirID}/preview/archive/{FileID}`).

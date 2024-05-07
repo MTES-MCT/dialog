@@ -56,7 +56,9 @@ readonly class MeasureView
                         cityLabel: $namedStreet->getCityLabel(),
                         roadName: $namedStreet->getRoadName(),
                         fromHouseNumber: $namedStreet->getFromHouseNumber(),
+                        fromRoadName: $namedStreet->getFromRoadName(),
                         toHouseNumber: $namedStreet->getToHouseNumber(),
+                        toRoadName: $namedStreet->getToRoadName(),
                     ),
                 );
             } elseif ($numberedRoad = $location->getNumberedRoad()) {

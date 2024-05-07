@@ -506,33 +506,77 @@
                 <source>regulation.location.roadName.results_label</source>
                 <target>Noms de voies suggérés</target>
             </trans-unit>
-            <trans-unit id="regulation.location.houseNumbers.legend">
-                <source>regulation.location.houseNumbers.legend</source>
-                <target>Numéros</target>
+            <trans-unit id="regulation.location.named_street.point_type">
+                <source>regulation.location.named_street.point_type</source>
+                <target>Type de point</target>
             </trans-unit>
-            <trans-unit id="regulation.location.from_house_number">
-                <source>regulation.location.from_house_number</source>
-                <target>Numéro de début</target>
+            <trans-unit id="regulation.location.named_street.point_type.placeholder">
+                <source>regulation.location.named_street.point_type.placeholder</source>
+                <target>Sélectionner une option...</target>
             </trans-unit>
-            <trans-unit id="regulation.location.to_house_number">
-                <source>regulation.location.to_house_number</source>
-                <target>Numéro de fin</target>
+            <trans-unit id="regulation.location.named_street.point_type.houseNumber">
+                <source>regulation.location.named_street.point_type.houseNumber</source>
+                <target>Numéro d'adresse</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.point_type.intersection">
+                <source>regulation.location.named_street.point_type.intersection</source>
+                <target>Intersection</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.from_point">
+                <source>regulation.location.named_street.from_point</source>
+                <target>Point A</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.to_point">
+                <source>regulation.location.named_street.to_point</source>
+                <target>Point B</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.house_number">
+                <source>regulation.location.named_street.house_number</source>
+                <target>Numéro</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.intersection">
+                <source>regulation.location.named_street.intersection</source>
+                <target>Voie d'intersection</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.intersection.results_label">
+                <source>regulation.location.named_street.intersection.results_label</source>
+                <target>Intersections suggérées</target>
             </trans-unit>
             <trans-unit id="regulation.location.reference_point">
                 <source>regulation.location.reference_point</source>
                 <target>du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)</target>
             </trans-unit>
-            <trans-unit id="regulation.location.house_number_from_to">
-                <source>regulation.location.house_number_from_to</source>
-                <target>du n° %from% au n° %to%</target>
+            <trans-unit id="regulation.location.from_point.house_number">
+                <source>regulation.location.from_point.house_number</source>
+                <target>du n° %houseNumber%</target>
             </trans-unit>
-            <trans-unit id="regulation.location.house_number_from">
-                <source>regulation.location.house_number_from</source>
-                <target>à partir du n° %from%</target>
+            <trans-unit id="regulation.location.from_point.house_number.only">
+                <source>regulation.location.from_point.house_number.only</source>
+                <target>à partir du n° %houseNumber%</target>
             </trans-unit>
-            <trans-unit id="regulation.location.house_number_to">
-                <source>regulation.location.house_number_to</source>
-                <target>jusqu'au n° %to%</target>
+            <trans-unit id="regulation.location.from_point.road_name">
+                <source>regulation.location.from_point.road_name</source>
+                <target>de %roadName%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.from_point.road_name.only">
+                <source>regulation.location.from_point.road_name.only</source>
+                <target>à partir de %roadName%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.to_point.house_number">
+                <source>regulation.location.to_point.house_number</source>
+                <target>au n° %houseNumber%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.to_point.house_number.only">
+                <source>regulation.location.to_point.house_number.only</source>
+                <target>jusqu'au n° %houseNumber%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.to_point.road_name">
+                <source>regulation.location.to_point.road_name</source>
+                <target>à %roadName%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.to_point.road_name.only">
+                <source>regulation.location.to_point.road_name.only</source>
+                <target>jusqu'à %roadName%</target>
             </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>

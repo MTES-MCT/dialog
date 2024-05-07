@@ -29,7 +29,9 @@ final class SaveNamedStreetCommandHandler
                     cityCode: $command->cityCode,
                     roadName: $command->roadName,
                     fromHouseNumber: $command->fromHouseNumber,
+                    fromRoadName: $command->fromRoadName,
                     toHouseNumber: $command->toHouseNumber,
+                    toRoadName: $command->toRoadName,
                 ),
             );
             $command->location->setNamedStreet($namedStreet);
@@ -42,7 +44,9 @@ final class SaveNamedStreetCommandHandler
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,
             fromHouseNumber: $command->fromHouseNumber,
+            fromRoadName: $command->fromRoadName,
             toHouseNumber: $command->toHouseNumber,
+            toRoadName: $command->toRoadName,
         );
 
         return $command->namedStreet;

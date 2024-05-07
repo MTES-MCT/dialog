@@ -226,4 +226,57 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
     {
         $this->assertEquals($roadNames, $this->roadGeocoder->findRoadNames($search, $cityCode));
     }
+
+    private function provideTestFindIntersectingRoadNames(): array
+    {
+        return [
+            'no-result' => ['', 'does not exist', '59606', []],
+            'no-result-roadName-not-exact' => ['', 'rue saints victor', '59368', []],
+            'success' => ['', 'rue saint victor', '59368', ['Rue Des Gantois', 'Rue Georges Pompidou']],
+            'success-case-insensitive' => ['', 'rue SAINT VICtor', '59368', ['Rue Des Gantois', 'Rue Georges Pompidou']],
+            'success-search' => ['gant', 'rue saint victor', '59368', ['Rue Des Gantois']],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestFindIntersectingRoadNames
+     */
+    public function testFindIntersectingRoads(string $search, string $roadName, string $cityCode, array $roadNames): void
+    {
+        $this->assertEquals($roadNames, $this->roadGeocoder->findIntersectingRoadNames($search, $roadName, $cityCode));
+    }
+
+    private function provideTestComputeIntersection(): array
+    {
+        return [
+            'success' => ['rue saint victor', 'rue des gantois', '59368', Coordinates::fromLonLat(3.0677371147030987, 50.653028447505825)],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestComputeIntersection
+     */
+    public function testComputeIntersection(string $roadName, string $otherRoadName, string $cityCode, Coordinates $coords): void
+    {
+        $this->assertEquals($coords, $this->roadGeocoder->computeIntersection($roadName, $otherRoadName, $cityCode));
+    }
+
+    private function provideTestComputeIntersectionError(): array
+    {
+        return [
+            'roadName-does-not-exist' => ['does not exist', 'rue des gantois', '59368'],
+            'otherRoadName-does-not-exist' => ['rue saint victor', 'does not exist', '59368'],
+            'roads-do-not-intersect' => ['rue saint victor', 'rue de flandre', '59368'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestComputeIntersectionError
+     */
+    public function testComputeIntersectionError(string $roadName, string $otherRoadName, string $cityCode): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->roadGeocoder->computeIntersection($roadName, $otherRoadName, $cityCode);
+    }
 }

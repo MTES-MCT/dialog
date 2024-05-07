@@ -21,7 +21,9 @@ final class NamedStreetTest extends TestCase
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',
             fromHouseNumber: '15',
+            fromRoadName: null,
             toHouseNumber: '37bis',
+            toRoadName: null,
         );
 
         $this->assertSame('b4812143-c4d8-44e6-8c3a-34688becae6e', $namedstreet->getUuid());
@@ -30,7 +32,9 @@ final class NamedStreetTest extends TestCase
         $this->assertSame('Savenay', $namedstreet->getCityLabel());
         $this->assertSame('Route du Grand Brossais', $namedstreet->getRoadName());
         $this->assertSame('15', $namedstreet->getFromHouseNumber());
+        $this->assertSame(null, $namedstreet->getFromRoadName());
         $this->assertSame('37bis', $namedstreet->getToHouseNumber());
+        $this->assertSame(null, $namedstreet->getToRoadName());
 
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
@@ -43,13 +47,17 @@ final class NamedStreetTest extends TestCase
             $newCityLabel,
             $newRoadName,
             $newFromHouseNumber,
+            null,
             $newToHouseNumber,
+            null,
         );
 
         $this->assertSame($newCityCode, $namedstreet->getCityCode());
         $this->assertSame($newCityLabel, $namedstreet->getCityLabel());
         $this->assertSame($newRoadName, $namedstreet->getRoadName());
         $this->assertSame($newFromHouseNumber, $namedstreet->getFromHouseNumber());
+        $this->assertSame(null, $namedstreet->getFromRoadName());
         $this->assertSame($newToHouseNumber, $namedstreet->getToHouseNumber());
+        $this->assertSame(null, $namedstreet->getToRoadName());
     }
 }

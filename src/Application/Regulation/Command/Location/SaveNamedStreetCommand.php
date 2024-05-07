@@ -16,9 +16,11 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
     public ?string $roadName = null;
+    public ?string $fromPointType = null;
     public ?string $fromHouseNumber = null;
     public ?string $fromRoadName = null;
     public ?Coordinates $fromCoords = null;
+    public ?string $toPointType = null;
     public ?string $toHouseNumber = null;
     public ?string $toRoadName = null;
     public ?Coordinates $toCoords = null;
@@ -32,9 +34,13 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
         $this->cityLabel = $namedStreet?->getCityLabel();
         $this->cityCode = $namedStreet?->getCityCode();
         $this->roadName = $namedStreet?->getRoadName();
+        $this->fromPointType = $namedStreet?->getFromPointType();
         $this->fromHouseNumber = $namedStreet?->getFromHouseNumber();
+        $this->fromRoadName = $namedStreet?->getFromRoadName();
+        $this->toPointType = $namedStreet?->getToPointType();
         $this->toHouseNumber = $namedStreet?->getToHouseNumber();
-        $this->isEntireStreetFormValue = $namedStreet ? (!$this->fromHouseNumber && !$this->toHouseNumber) : null;
+        $this->toRoadName = $namedStreet?->getToRoadName();
+        $this->isEntireStreetFormValue = $namedStreet ? $this->computeIsEntireStreetFormValue() : null;
     }
 
     public function clean(): void
@@ -45,6 +51,11 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
         }
     }
 
+    private function computeIsEntireStreetFormValue(): bool
+    {
+        return !$this->fromHouseNumber && !$this->fromRoadName && !$this->toHouseNumber && !$this->toRoadName;
+    }
+
     // Used by validation layer
 
     public function getIsEntireStreet(): bool
@@ -53,7 +64,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
             return $this->isEntireStreetFormValue;
         }
 
-        return !$this->fromHouseNumber && !$this->toHouseNumber;
+        return $this->computeIsEntireStreetFormValue();
     }
 
     public function setIsEntireStreet(bool $value): void

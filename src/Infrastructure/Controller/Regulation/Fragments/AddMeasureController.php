@@ -85,7 +85,7 @@ final class AddMeasureController extends AbstractRegulationController
                 );
             } catch (LaneGeocodingFailureException $exc) {
                 $commandFailed = true;
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('fromHouseNumber')->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('fromPointType')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.lane_geocoding_failed', [], 'validators'),
                     ),

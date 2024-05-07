@@ -13,7 +13,6 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Repository\NamedStreetRepositoryInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class SaveNamedStreetCommandHandlerTest extends TestCase
@@ -25,8 +24,8 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
     private string $toHouseNumber;
     private string $geometry;
 
-    private MockObject $idFactory;
-    private MockObject $namedStreetRepository;
+    private $idFactory;
+    private $namedStreetRepository;
 
     public function setUp(): void
     {
@@ -105,8 +104,18 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
 
         $namedStreet
             ->expects(self::once())
+            ->method('getFromRoadName')
+            ->willReturn(null);
+
+        $namedStreet
+            ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn('37bis');
+
+        $namedStreet
+            ->expects(self::once())
+            ->method('getToRoadName')
+            ->willReturn(null);
 
         $namedStreet
             ->expects(self::once())
@@ -116,7 +125,9 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
                 $this->cityLabel,
                 $this->roadName,
                 $this->fromHouseNumber,
+                null,
                 $this->toHouseNumber,
+                null,
             );
 
         $this->idFactory
@@ -138,7 +149,9 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
         $command->cityLabel = $this->cityLabel;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
+        $command->fromRoadName = null;
         $command->toHouseNumber = $this->toHouseNumber;
+        $command->toRoadName = null;
 
         $this->assertSame($namedStreet, $handler($command));
     }

@@ -1,0 +1,21 @@
+{%- set hasStart = location.fromHouseNumber or location.fromRoadName -%}
+{%- set hasEnd = location.toHouseNumber or location.toRoadName -%}
+
+{%- if hasStart or hasEnd -%}
+    {%- if hasStart -%}
+        {%- if location.fromHouseNumber -%}
+            {{ ('regulation.location.from_point.house_number' ~ (hasEnd ? '' : '.only'))|trans({ '%houseNumber%': location.fromHouseNumber }) }}
+        {%- else -%}
+            {{ ('regulation.location.from_point.road_name' ~ (hasEnd ? '' : '.only'))|trans({ '%roadName%': location.fromRoadName })}}
+        {%- endif -%}
+        {%- if hasEnd %} {# space #}{% endif %}
+    {%- endif -%}
+
+    {%- if hasEnd -%}
+        {%- if location.toHouseNumber -%}
+            {{ ('regulation.location.to_point.house_number' ~ (hasStart ? '' : '.only'))|trans({ '%houseNumber%': location.toHouseNumber }) }}
+        {%- else -%}
+            {{ ('regulation.location.to_point.road_name' ~ (hasStart ? '' : '.only'))|trans({ '%roadName%': location.toRoadName }) }}
+        {%- endif -%}
+    {%- endif -%}
+{%- endif -%}

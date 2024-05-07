@@ -7,6 +7,7 @@ namespace App\Infrastructure\Adapter;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\GeocoderInterface;
+use App\Application\IntersectionGeocoderInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
@@ -15,6 +16,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
 {
     public function __construct(
         private GeocoderInterface $geocoder,
+        private IntersectionGeocoderInterface $intersectionGeocder,
         private LineSectionMakerInterface $lineSectionMaker,
     ) {
     }
@@ -27,7 +29,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
             return $this->geocoder->computeCoordinates($fromAddress, $cityCode);
         }
 
-        return $this->geocoder->computeJunctionCoordinates($roadName, $intersectingRoadName, $cityCode);
+        return $this->intersectionGeocder->computeIntersection($roadName, $intersectingRoadName, $cityCode);
     }
 
     /**

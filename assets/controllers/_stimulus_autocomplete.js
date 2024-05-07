@@ -13,6 +13,7 @@ export default class Autocomplete extends Controller {
     minLength: Number,
     delay: { type: Number, default: 300 },
     queryParam: { type: String, default: "q" },
+    fetchEmpty: { type: Boolean, default: false },
   }
   static uniqOptionId = 0
 
@@ -173,7 +174,7 @@ export default class Autocomplete extends Controller {
     if (this.hasHiddenTarget) this.hiddenTarget.value = ""
 
     const query = this.inputTarget.value.trim()
-    if (query && query.length >= this.minLengthValue) {
+    if ((query && query.length >= this.minLengthValue) || (!query && this.fetchEmptyValue)) {
       this.fetchResults(query)
     } else {
       this.hideAndRemoveOptions()

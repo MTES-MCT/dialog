@@ -44,31 +44,43 @@
                 </option>
             </constraint>
         </property>
-        <property name="fromHouseNumber">
-            <constraint name="Length">
-                <option name="max">8</option>
-            </constraint>
+        <property name="fromPointType">
             <constraint name="When">
                 <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet()</option>
                 <option name="constraints">
                     <constraint name="AtLeastOneOf">
                         <option name="constraints">
                             <constraint name="Expression">
-                                <option name="expression">this.fromHouseNumber</option>
+                                <option name="expression">this.fromHouseNumber || this.fromRoadName</option>
                             </constraint>
                             <constraint name="Expression">
-                                <option name="expression">this.toHouseNumber</option>
+                                <option name="expression">this.toHouseNumber || this.toRoadName</option>
                             </constraint>
                         </option>
                         <option name="includeInternalMessages">false</option>
-                        <option name="message">regulation.location.house_numbers.error.empty</option>
+                        <option name="message">regulation.location.named_street.points.error.empty</option>
                     </constraint>
                 </option>
+            </constraint>
+        </property>
+        <property name="fromHouseNumber">
+            <constraint name="Length">
+                <option name="max">8</option>
+            </constraint>
+        </property>
+        <property name="fromRoadName">
+            <constraint name="Length">
+                <option name="max">255</option>
             </constraint>
         </property>
         <property name="toHouseNumber">
             <constraint name="Length">
                 <option name="max">8</option>
+            </constraint>
+        </property>
+        <property name="toRoadName">
+            <constraint name="Length">
+                <option name="max">255</option>
             </constraint>
         </property>
     </class>

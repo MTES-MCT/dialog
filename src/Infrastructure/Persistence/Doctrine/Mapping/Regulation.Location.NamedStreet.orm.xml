@@ -10,7 +10,9 @@
     <field name="cityLabel" type="string" column="city_label" nullable="false" />
     <field name="roadName" type="string" column="road_name" nullable="true" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />
+    <field name="fromRoadName" type="string" column="from_road_name" nullable="true" length="255" />
     <field name="toHouseNumber" type="string" column="to_house_number" nullable="true" length="8" />
+    <field name="toRoadName" type="string" column="to_road_name" nullable="true" length="255" />
     <one-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="namedStreet">
         <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </one-to-one>

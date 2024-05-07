@@ -152,6 +152,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
         $namedStreet = $this->createMock(NamedStreet::class);
         $location
             ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn('lane');
+        $location
+            ->expects(self::once())
             ->method('getNamedStreet')
             ->willReturn($namedStreet);
         $namedStreet
@@ -165,18 +169,22 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn('Avenue de Fonneuve');
-        $location
-            ->expects(self::once())
-            ->method('getRoadType')
-            ->willReturn('lane');
         $namedStreet
             ->expects(self::once())
             ->method('getFromHouseNumber')
             ->willReturn('95');
         $namedStreet
             ->expects(self::once())
+            ->method('getFromRoadName')
+            ->willReturn(null);
+        $namedStreet
+            ->expects(self::once())
             ->method('getToHouseNumber')
             ->willReturn('253');
+        $namedStreet
+            ->expects(self::once())
+            ->method('getToRoadName')
+            ->willReturn(null);
 
         $measure = $this->createMock(Measure::class);
         $measure
@@ -244,7 +252,9 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                                 cityLabel: 'Montauban',
                                 roadName: 'Avenue de Fonneuve',
                                 fromHouseNumber: '95',
+                                fromRoadName: null,
                                 toHouseNumber: '253',
+                                toRoadName: null,
                             ),
                         ),
                     ],

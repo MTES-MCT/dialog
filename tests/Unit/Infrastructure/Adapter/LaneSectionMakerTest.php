@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\GeocoderInterface;
+use App\Application\IntersectionGeocoderInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
 use App\Infrastructure\Adapter\LaneSectionMaker;
@@ -18,6 +19,7 @@ final class LaneSectionMakerTest extends TestCase
     private $fromCoords;
     private $toCoords;
     private $geocoder;
+    private $intersectionGeocoder;
     private $lineSectionMaker;
     private $laneSectionMaker;
 
@@ -30,10 +32,12 @@ final class LaneSectionMakerTest extends TestCase
         $this->toCoords = Coordinates::fromLonLat(9, 49);
 
         $this->geocoder = $this->createMock(GeocoderInterface::class);
+        $this->intersectionGeocoder = $this->createMock(IntersectionGeocoderInterface::class);
         $this->lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
 
         $this->laneSectionMaker = new LaneSectionMaker(
             $this->geocoder,
+            $this->intersectionGeocoder,
             $this->lineSectionMaker,
         );
     }
@@ -46,9 +50,9 @@ final class LaneSectionMakerTest extends TestCase
             ->with('1 Rue du Test', $this->cityCode)
             ->willReturn($this->fromCoords);
 
-        $this->geocoder
+        $this->intersectionGeocoder
             ->expects(self::once())
-            ->method('computeJunctionCoordinates')
+            ->method('computeIntersection')
             ->with($this->roadName, 'Rue de la Fin', $this->cityCode)
             ->willReturn($this->toCoords);
 
@@ -77,9 +81,9 @@ final class LaneSectionMakerTest extends TestCase
             ->expects(self::never())
             ->method('computeCoordinates');
 
-        $this->geocoder
+        $this->intersectionGeocoder
             ->expects(self::never())
-            ->method('computeJunctionCoordinates');
+            ->method('computeIntersection');
 
         $this->lineSectionMaker
             ->expects(self::once())

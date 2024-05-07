@@ -90,7 +90,7 @@ Chaque application peut être configurée avec les variables d'environnement sui
 
 | Variable d'environnement | Description | Valeur par défaut | Notes |
 |--------------------------|-------------|--------|-------|
-| `API_ADRESSE_BASE_URL` | URL de l'instance API Adresse / Addok à utiliser | _(Obligatoire)_ | Exemple : `https://api-adresse.data.gouv.fr` |
+| `API_ADRESSE_BASE_URL` | URL de l'instance API Adresse à utiliser | `https://api-adresse.data.gouv.fr` | |
 | `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
 | `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet-partage.apps.paris.fr | |
 | `APP_EUDONET_PARIS_ORG_ID` | Utiliser l'UUID de l'organisation Ville de Paris | _Vide_ | |

@@ -330,22 +330,13 @@
                             }
                         }) }}
 
-                        <fieldset
-                            class="fr-fieldset fr-mt-3w fr-mb-0"
-                            aria-labelledby="{{ form.namedStreet.isEntireStreet.vars.id }}-houseNumbers-legend"
+                        <div
+                            class="fr-mt-3w"
                             data-form-reveal-target="section"
-                            data-reset-target="element"
-                            data-reset-keys="{{ ['city', 'roadName']|json_encode }}"
                             {% if form.namedStreet.isEntireStreet.vars.checked %}hidden{% endif %}
                         >
-                            <legend id="{{ form.namedStreet.isEntireStreet.vars.id }}-houseNumbers-legend" class="app-sr-only">
-                                {{ 'regulation.location.houseNumbers.legend'|trans }}
-                            </legend>
-                            <div class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-0">
-                                {{ form_row(form.namedStreet.fromHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-mb-0'}}) }}
-                                {{ form_row(form.namedStreet.toHouseNumber, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6'}}) }}
-                            </div>
-                        </fieldset>
+                            {% include 'location/named_street/points_form.html.twig' with { form } only %}
+                        </div>
                     </div>
                 </div>
             </div>
