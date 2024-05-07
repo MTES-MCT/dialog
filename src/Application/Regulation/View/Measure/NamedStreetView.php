@@ -10,7 +10,9 @@ final readonly class NamedStreetView
         public ?string $cityLabel,
         public ?string $roadName,
         public ?string $fromHouseNumber,
+        public ?string $fromRoadName,
         public ?string $toHouseNumber,
+        public ?string $toRoadName,
     ) {
     }
 }

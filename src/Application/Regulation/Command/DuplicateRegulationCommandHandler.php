@@ -114,7 +114,9 @@ final class DuplicateRegulationCommandHandler
                         $cmd->namedStreet->cityCode = $namedStreet->getCityCode();
                         $cmd->namedStreet->roadName = $namedStreet->getRoadName();
                         $cmd->namedStreet->fromHouseNumber = $namedStreet->getFromHouseNumber();
+                        $cmd->namedStreet->fromRoadName = $namedStreet->getFromRoadName();
                         $cmd->namedStreet->toHouseNumber = $namedStreet->getToHouseNumber();
+                        $cmd->namedStreet->toRoadName = $namedStreet->getToRoadName();
                     }
 
                     $locationCommands[] = $cmd;

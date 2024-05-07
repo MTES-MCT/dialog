@@ -69,6 +69,8 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             || $command->cityCode !== $command->namedStreet->getCityCode()
             || $command->roadName !== $command->namedStreet->getRoadName()
             || ($command->fromHouseNumber !== $command->namedStreet->getFromHouseNumber())
-            || ($command->toHouseNumber !== $command->namedStreet->getToHouseNumber());
+            || ($command->fromRoadName !== $command->namedStreet->getFromRoadName())
+            || ($command->toHouseNumber !== $command->namedStreet->getToHouseNumber())
+            || ($command->toRoadName !== $command->namedStreet->getToRoadName());
     }
 }
