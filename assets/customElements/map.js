@@ -1,5 +1,6 @@
 // @ts-check
 
+
 export default class extends HTMLElement {
     connectedCallback() {
         const height = this.dataset.height || '300px';
@@ -9,23 +10,20 @@ export default class extends HTMLElement {
         const geojson = JSON.parse(this.dataset.geojson || '[]');
 	const bbox = JSON.parse(this.dataset.bbox || '');
 	
+	const regulations_as_geojson_output_id = this.dataset['regulations-as-geojson-output-id'] || 'regulations_as_geojson_output';
+	const regulations_as_geojson_turbo_frame_id = this.dataset['regulations-as-geojson-turbo-frame-id'] || 'regulations_as_geojson_turbo_frame';
+	
         const container = document.createElement('div');
         container.style.height = height;
         this.appendChild(container);
 	
-        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox);
+        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id);
 	// use this to debug in the JS console of your browser :
 	//my_map = await document.getElementsByTagName("dialog-map")[0].map_on_promise
     }
-
-    attributeChangedCallback(attributeName, attributeOldValue, attributeNewValue) {
-	console.log(
-	    `Attribute ${attributeName} has changed from ${attributeOldValue} to ${attributeNewValue}.`,
-	);
-    }
 }
 
-async function createMapLibreMap(container, pos, zoom, geojson, bbox) {
+async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id) {
     const maplibregl = (await import('maplibre-gl')).default;
     
     const styleLink = document.createElement('link');
@@ -118,5 +116,31 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox) {
             map.getCanvas().style.cursor = '';
 	});
     });
+    
+    // Mutation API Observer
+    function mutationCallback(mutationList) {
+	for (const mutation of mutationList) {
+	    if (mutation.type === "childList") {
+		if (mutation.addedNodes && mutation.addedNodes.length >= 1) {
+		    const ouput_element = mutation.target.querySelector("#" + regulations_as_geojson_output_id);
+		    if (ouput_element) {
+			const new_geojson = JSON.parse(ouput_element.innerText || []);
+			// credits to https://maplibre.org/maplibre-gl-js/docs/examples/live-update-feature/
+			map.getSource('regulations-source').setData({
+			    type: 'FeatureCollection',
+			    features: new_geojson
+			});
+		    }
+		}
+	    }
+	}
+    };
+    const targetNode = document.getElementById(regulations_as_geojson_turbo_frame_id); // observe our <turbo-frame>
+    if (targetNode) {
+	const config = { attributes: false, childList: true, subtree: true, characterData: false };
+	const observer = new MutationObserver(mutationCallback);
+	observer.observe(targetNode, config);
+    }
+    
     return map;
 }

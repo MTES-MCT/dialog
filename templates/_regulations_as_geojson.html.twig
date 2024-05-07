@@ -8,7 +8,7 @@
       <noscript>
 	<input type="submit" value="Appliquer les filtres" class="" />
       </noscript>
-      <output class="" name="regulations-geojson" for="permanent-and-or-temporary display-drafts" aria-hidden="true">{{ regulationOrdersAsGeoJson|json_encode }}</output><!-- TODO : add class="fr-hidden" -->
+      <output id="regulations_as_geojson_output" class="fr-hidden" name="regulations-geojson" for="permanent-and-or-temporary display-drafts" aria-hidden="true">{{ regulationOrdersAsGeoJson|json_encode }}</output>
     </form>
   </dialog-map-filter-form>
 </turbo-frame>
