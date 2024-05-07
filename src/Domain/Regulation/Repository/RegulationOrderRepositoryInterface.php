@@ -11,4 +11,6 @@ interface RegulationOrderRepositoryInterface
     public function add(RegulationOrder $regulationOrder): RegulationOrder;
 
     public function delete(RegulationOrder $regulationOrder): void;
+
+    public function getDuplicateIdentifier(string $identifier): string;
 }

@@ -22,7 +22,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('Arrêté permanent FO3/2023 (copie)', $crawler->filter('h2')->text());
+        $this->assertSame('Arrêté permanent FO3/2023 (1)', $crawler->filter('h2')->text());
         $this->assertSame('Copiée avec succès Vous pouvez modifier les informations que vous souhaitez dans cette copie de la réglementation.', $crawler->filter('div.fr-alert--success')->text());
         $measures = $crawler->filter('[data-testid="measure"]');
         // Measure
@@ -30,6 +30,49 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('pour tous les véhicules', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
         $this->assertSame('tous les jours', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text());
         $this->assertSame('Rue du Simplon Paris 18e Arrondissement (75018)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+    }
+
+    public function testDuplicateMultiple(): void
+    {
+        $client = $this->login();
+
+        // Create duplicate 1
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('Arrêté permanent FO3/2023 (1)', $crawler->filter('h2')->text());
+        $parts = explode('/', $crawler->getUri());
+        $duplicate1Uuid = $parts[\count($parts) - 1];
+
+        // Create duplicate 2 from original
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('Arrêté permanent FO3/2023 (2)', $crawler->filter('h2')->text());
+
+        // Create duplicate 3 from original
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('Arrêté permanent FO3/2023 (3)', $crawler->filter('h2')->text());
+
+        // Delete duplicate 1 and recreate it
+        $client->request('DELETE', '/regulations/' . $duplicate1Uuid, [
+            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+        ]);
+        $this->assertResponseStatusCodeSame(303);
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
+            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+        ]);
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('Arrêté permanent FO3/2023 (1)', $crawler->filter('h2')->text());
     }
 
     public function testWithoutLocations(): void

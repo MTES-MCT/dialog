@@ -48,7 +48,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.error.identifier">
                 <source>regulation.general_info.error.identifier</source>
-                <target>Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.</target>
+                <target>Un arrêté avec l'identifiant "%identifier%" existe déjà. Veuillez saisir un autre identifiant.</target>
             </trans-unit>
             <trans-unit id="measure.locations.error.not_blank">
                 <source>measure.locations.error.not_blank</source>

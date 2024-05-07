@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
@@ -12,15 +13,15 @@ use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Application\Regulation\Query\GetDuplicateIdentifierQuery;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DuplicateRegulationCommandHandler
 {
     public function __construct(
-        private TranslatorInterface $translator,
+        private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
     ) {
     }
@@ -41,13 +42,15 @@ final class DuplicateRegulationCommandHandler
         Organization $organization,
         RegulationOrder $originalRegulationOrder,
     ): RegulationOrderRecord {
+        $identifier = $this->queryBus->handle(
+            new GetDuplicateIdentifierQuery($originalRegulationOrder->getIdentifier()),
+        );
+
         $generalInfo = new SaveRegulationGeneralInfoCommand();
         $generalInfo->category = $originalRegulationOrder->getCategory();
         $generalInfo->otherCategoryText = $originalRegulationOrder->getOtherCategoryText();
         $generalInfo->organization = $organization;
-        $generalInfo->identifier = $this->translator->trans('regulation.identifier.copy', [
-            '%identifier%' => $originalRegulationOrder->getIdentifier(),
-        ]);
+        $generalInfo->identifier = $identifier;
         $generalInfo->description = $originalRegulationOrder->getDescription();
         $generalInfo->startDate = $originalRegulationOrder->getStartDate();
         $generalInfo->endDate = $originalRegulationOrder->getEndDate();

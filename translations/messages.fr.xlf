@@ -688,10 +688,6 @@
                 <source>regulation.stepper.next</source>
                 <target>Étape suivante :</target>
             </trans-unit>
-            <trans-unit id="regulation.identifier.copy">
-                <source>regulation.identifier.copy</source>
-                <target>%identifier% (copie)</target>
-            </trans-unit>
             <trans-unit id="pagination.first">
                 <source>pagination.first</source>
                 <target>Première page</target>
