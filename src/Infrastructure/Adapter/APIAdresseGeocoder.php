@@ -102,11 +102,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
         return Coordinates::fromLonLat($lonLat[0], $lonLat[1]);
     }
 
-    public function computeJunctionCoordinates(string $address, string $roadName, string $cityCode): Coordinates
-    {
-        return $this->computeCoordinates($roadName . ' / ' . $address, $cityCode, type: 'poi');
-    }
-
     public function findCities(string $search): array
     {
         if (\strlen($search) < 3) {

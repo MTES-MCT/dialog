@@ -217,13 +217,15 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromPointType'] = 'houseNumber';
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'houseNumber';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez définir le numéro de début et/ou le numéro de fin.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('Veuillez définir le point A et/ou le point B.', $crawler->filter('#measure_form_locations_0_namedStreet_fromPointType_error')->text());
     }
 
     public function testAddLaneWithUnknownHouseNumbers(): void
@@ -251,7 +253,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('La géolocalisation de la voie entre ces points a échoué. Veuillez vérifier que ces points existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromPointType_error')->text());
     }
 
     public function testAddLaneWithHouseNumbersOnMultipleSections(): void
@@ -279,7 +281,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La géolocalisation de la voie entre ces numéros a échoué. Veuillez vérifier que ces numéros existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('La géolocalisation de la voie entre ces points a échoué. Veuillez vérifier que ces points existent et appartiennent bien à une même chaussée.', $crawler->filter('#measure_form_locations_0_namedStreet_fromPointType_error')->text());
     }
 
     public function testAddDepartmentalRoad(): void
@@ -789,7 +791,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = str_repeat('a', 256);
         unset($values['location_form']['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = str_repeat('a', 256);
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = str_repeat('a', 256);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -797,7 +801,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette chaîne doit avoir exactement 5 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
     }
 
     public function testFieldsTooLongDepartmentalRoad(): void

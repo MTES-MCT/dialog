@@ -1,3 +1,4 @@
+// @ts-check
 // Turbo helpers
 
 // See: https://turbo.hotwired.dev/reference/events
@@ -80,4 +81,17 @@ export function resetFormControl(element) {
     }
 
     throw new Error(`Reset not implemented for element ${element}`);
+}
+
+export function respondToVisibility(element, callback) {
+    // Credit: https://stackoverflow.com/a/44670818
+    const options = { root: document.documentElement };
+
+    const observer = new IntersectionObserver((entries, _observer) => {
+        entries.forEach(entry => {
+            callback(entry.intersectionRatio > 0);
+        });
+    }, options);
+
+    observer.observe(element);
 }

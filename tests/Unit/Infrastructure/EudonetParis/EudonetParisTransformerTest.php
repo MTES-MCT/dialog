@@ -173,21 +173,6 @@ final class EudonetParisTransformerTest extends TestCase
         );
     }
 
-    private function provideTransformHouseNumberAndJunction(): array
-    {
-        return [
-            [
-                'porteSur' => 'Une section',
-            ],
-            [
-                'porteSur' => 'Une zone',
-            ],
-            [
-                'porteSur' => 'Un axe',
-            ],
-        ];
-    }
-
     public function testSkipNoMeasures(): void
     {
         $organization = $this->createMock(Organization::class);
