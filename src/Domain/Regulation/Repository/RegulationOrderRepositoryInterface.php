@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Regulation\Repository;
 
 use App\Domain\Regulation\RegulationOrder;
+use App\Domain\User\Organization;
 
 interface RegulationOrderRepositoryInterface
 {
@@ -12,5 +13,5 @@ interface RegulationOrderRepositoryInterface
 
     public function delete(RegulationOrder $regulationOrder): void;
 
-    public function getDuplicateIdentifier(string $identifier): string;
+    public function getDuplicateIdentifier(string $identifier, Organization $organization): string;
 }

@@ -15,6 +15,6 @@ final class GetDuplicateIdentifierQueryHandler
 
     public function __invoke(GetDuplicateIdentifierQuery $query): string
     {
-        return $this->repository->getDuplicateIdentifier($query->identifier);
+        return $this->repository->getDuplicateIdentifier($query->identifier, $query->organization);
     }
 }

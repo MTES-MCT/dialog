@@ -43,7 +43,7 @@ final class DuplicateRegulationCommandHandler
         RegulationOrder $originalRegulationOrder,
     ): RegulationOrderRecord {
         $identifier = $this->queryBus->handle(
-            new GetDuplicateIdentifierQuery($originalRegulationOrder->getIdentifier()),
+            new GetDuplicateIdentifierQuery($originalRegulationOrder->getIdentifier(), $organization),
         );
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
