@@ -20,17 +20,20 @@ final class UserFixture extends Fixture
         $mainOrgUser = (new User('0b507871-8b5e-4575-b297-a630310fc06e'))
             ->setFullName('Mathieu MARCHOIS')
             ->setEmail(self::MAIN_ORG_USER_EMAIL)
-            ->setPassword(self::PASSWORD);
+            ->setPassword(self::PASSWORD)
+            ->setRegistrationDate(new \DateTimeImmutable('2024-03-01'));
 
         $mainOtherAdmin = (new User('5bc831a3-7a09-44e9-aefa-5ce3588dac33'))
             ->setFullName('Mathieu FERNANDEZ')
             ->setEmail(self::MAIN_ORG_ADMIN_EMAIL)
-            ->setPassword(self::PASSWORD);
+            ->setPassword(self::PASSWORD)
+            ->setRegistrationDate(new \DateTimeImmutable('2024-04-02'));
 
         $otherOrgUser = (new User('d47badd9-989e-472b-a80e-9df642e93880'))
             ->setFullName('Florimond MANCA')
             ->setEmail(self::OTHER_ORG_USER_EMAIL)
-            ->setPassword(self::PASSWORD);
+            ->setPassword(self::PASSWORD)
+            ->setRegistrationDate(new \DateTimeImmutable('2024-05-07'));
 
         $manager->persist($mainOrgUser);
         $manager->persist($mainOtherAdmin);

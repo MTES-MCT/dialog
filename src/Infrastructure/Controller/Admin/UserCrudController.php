@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -52,6 +53,9 @@ final class UserCrudController extends AbstractCrudController
         $fields = [
             TextField::new('fullName')->setLabel('Prénom / Nom'),
             EmailField::new('email'),
+            DateField::new('registrationDate')
+                ->setLabel('Date d\'inscription')
+                ->setDisabled($pageName === Crud::PAGE_EDIT),
             AssociationField::new('organizations')
                 ->setFormTypeOption('by_reference', false)
                 ->setFormTypeOption('choice_label', 'name')
