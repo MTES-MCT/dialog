@@ -24,7 +24,8 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['general_info_form[identifier]'] = RegulationOrderFixture::TYPICAL_IDENTIFIER;
+        $identifier = RegulationOrderFixture::TYPICAL_IDENTIFIER;
+        $form['general_info_form[identifier]'] = $identifier;
         $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $form['general_info_form[description]'] = 'Travaux';
@@ -32,7 +33,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $form['general_info_form[endDate]'] = '2024-02-11';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('#general_info_form_identifier_error')->text());
+        $this->assertSame(sprintf('Un arrêté avec l\'identifiant "%s" existe déjà. Veuillez saisir un autre identifiant.', $identifier), $crawler->filter('#general_info_form_identifier_error')->text());
     }
 
     public function testEditDescriptionTruncated(): void

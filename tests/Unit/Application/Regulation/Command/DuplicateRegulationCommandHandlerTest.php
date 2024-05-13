@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DuplicateRegulationCommand;
 use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
@@ -16,6 +17,7 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Application\Regulation\Query\GetDuplicateIdentifierQuery;
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
@@ -33,18 +35,17 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DuplicateRegulationCommandHandlerTest extends TestCase
 {
-    private $translator;
+    private $queryBus;
     private $commandBus;
     private $originalRegulationOrderRecord;
     private $originalRegulationOrder;
 
     public function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->originalRegulationOrder = $this->createMock(RegulationOrder::class);
         $this->originalRegulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -273,16 +274,14 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($duplicatedRegulationOrder);
 
-        $this->translator
+        $this->queryBus
             ->expects(self::once())
-            ->method('trans')
-            ->with('regulation.identifier.copy', [
-                '%identifier%' => 'F01/2023',
-            ])
-            ->willReturn('F01/2023 (copie)');
+            ->method('handle')
+            ->with(new GetDuplicateIdentifierQuery('F01/2023', $originalOrganization))
+            ->willReturn('F01/2023-1');
 
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
-        $generalInfoCommand->identifier = 'F01/2023 (copie)';
+        $generalInfoCommand->identifier = 'F01/2023-1';
         $generalInfoCommand->description = 'Description';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $generalInfoCommand->startDate = $startDate;
@@ -355,7 +354,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
 
         $handler = new DuplicateRegulationCommandHandler(
-            $this->translator,
+            $this->queryBus,
             $this->commandBus,
         );
 

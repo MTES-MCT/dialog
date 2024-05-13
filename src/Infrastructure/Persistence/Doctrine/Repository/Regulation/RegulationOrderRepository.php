@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -26,5 +27,31 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
     public function delete(RegulationOrder $regulationOrder): void
     {
         $this->getEntityManager()->remove($regulationOrder);
+    }
+
+    public function getDuplicateIdentifier(string $identifier, Organization $organization): string
+    {
+        // Algorithm for choosing the duplicate's identifier must avoid identifier collisions with the original or existing duplicates
+        $nextNumber = $this->getEntityManager()->getConnection()->fetchOne(
+            "WITH regex AS (
+                SELECT '^' || :identifier || '-(\d+)$' AS pattern
+            ),
+            duplicates AS (
+                SELECT (regexp_match(ro.identifier, re.pattern))[1]::int AS number
+                FROM regulation_order AS ro
+                INNER JOIN regulation_order_record AS roc ON roc.regulation_order_uuid = ro.uuid
+                INNER JOIN regex AS re ON true
+                WHERE regexp_match(ro.identifier, re.pattern) IS NOT NULL
+                AND roc.organization_uuid = :organization_uuid
+            )
+            SELECT MAX(d.number) + 1
+            FROM duplicates AS d
+            ",
+            ['identifier' => $identifier, 'organization_uuid' => $organization->getUuid()],
+        );
+
+        $nextNumber = $nextNumber ? (int) $nextNumber : 1;
+
+        return sprintf('%s-%d', $identifier, $nextNumber);
     }
 }

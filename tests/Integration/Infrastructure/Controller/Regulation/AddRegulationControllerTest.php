@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
@@ -101,7 +102,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
-        $form['general_info_form[identifier]'] = 'FO1/2023';
+        $identifier = RegulationOrderFixture::TYPICAL_IDENTIFIER;
+        $form['general_info_form[identifier]'] = $identifier;
         $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[description]'] = 'Travaux';
         $form['general_info_form[startDate]'] = '2023-02-12';
@@ -110,7 +112,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Un arrêté avec cet identifiant existe déjà. Veuillez saisir un autre identifiant.', $crawler->filter('#general_info_form_identifier_error')->text());
+        $this->assertSame(sprintf('Un arrêté avec l\'identifiant "%s" existe déjà. Veuillez saisir un autre identifiant.', $identifier), $crawler->filter('#general_info_form_identifier_error')->text());
     }
 
     public function testCancel(): void
