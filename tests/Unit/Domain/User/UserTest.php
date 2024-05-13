@@ -14,12 +14,14 @@ final class UserTest extends TestCase
     {
         $organization1 = $this->createMock(Organization::class);
         $organization2 = $this->createMock(Organization::class);
+        $date = new \DateTime('2024-05-07');
 
         $user = (new User('9cebe00d-04d8-48da-89b1-059f6b7bfe44'))
             ->setFullName('Mathieu Marchois')
             ->setEmail('mathieu@fairness.coop')
             ->setPassword('password');
 
+        $user->setRegistrationDate($date);
         $user->addOrganization($organization1);
         $user->addOrganization($organization2);
         $user->addOrganization($organization1); // Test deduplication
@@ -28,6 +30,7 @@ final class UserTest extends TestCase
         $this->assertSame('Mathieu Marchois', $user->getFullName());
         $this->assertSame('mathieu@fairness.coop', $user->getEmail());
         $this->assertSame('password', $user->getPassword());
+        $this->assertSame($date, $user->getRegistrationDate());
         $this->assertSame([$organization1, $organization2], $user->getOrganizations()->toArray());
 
         $user->removeOrganization($organization1);
