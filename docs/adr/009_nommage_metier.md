@@ -31,6 +31,7 @@ Cette option consiste à continuer de nommer les termes métier en anglais dans 
 Avantages
 
 * Pas de travail supplémentaire ; pas besoin de retravailler le code existant
+* Dans l'hypothèse d'une collaboration à l'international, si DiaLog dépasse le contexte franco-français, l'anglais peut être un avantage car c'est la langue du DATEX II également.
 
 Inconvénients
 
