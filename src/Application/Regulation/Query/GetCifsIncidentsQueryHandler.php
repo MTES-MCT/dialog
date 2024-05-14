@@ -33,6 +33,7 @@ final class GetCifsIncidentsQueryHandler
         /** @var RegulationOrderRecord $regulationOrderRecord */
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+            $regulationOrderId = $regulationOrder->getUuid();
 
             $subType = match ($regulationOrder->getCategory()) {
                 RegulationOrderCategoryEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
@@ -113,7 +114,8 @@ final class GetCifsIncidentsQueryHandler
                             // The ID of a CIFS incident is opaque to Waze, we can define it as we want.
                             // But it must be "unique inside the feed and remain stable over an incident's lifetime".
                             // For the ID to be unique, it should contain the location ID, a hash of the polyline, and the period ID.
-                            $id = $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
+                            // We include the regulation order ID so that we can identify which regulation order an incident comes from.
+                            $id = $regulationOrderId . ':' . $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
 
                             $incidents[] = new CifsIncidentView(
                                 id: $id,
