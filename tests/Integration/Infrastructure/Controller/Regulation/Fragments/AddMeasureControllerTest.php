@@ -229,7 +229,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_toHouseNumber_error')->text());
     }
 
-    public function testAddLaneWithBlankIntersectionRoadNames(): void
+    public function testAddLaneWithBlankFromRoadName(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
@@ -249,13 +249,41 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromPointType'] = 'intersection';
         $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'houseNumber';
+        $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = '15';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
+    }
+
+    public function testAddLaneWithBlankToRoadName(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromPointType'] = 'houseNumber';
+        $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = '15';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'intersection';
         $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
     }
 
