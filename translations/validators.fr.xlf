@@ -22,10 +22,6 @@
                 <source>regulation.location.error.lane_geocoding_failed</source>
                 <target>La géolocalisation de la voie entre ces points a échoué. Veuillez vérifier que ces points existent et appartiennent bien à une même chaussée.</target>
             </trans-unit>
-            <trans-unit id="regulation.location.named_street.points.error.empty">
-                <source>regulation.location.named_street.points.error.empty</source>
-                <target>Veuillez définir le point A et/ou le point B.</target>
-            </trans-unit>
             <trans-unit id="regulation.location.error.departmental_road_geocoding_failed">
                 <source>regulation.location.error.departmental_road_geocoding_failed</source>
                 <target>La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.</target>

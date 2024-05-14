@@ -67,6 +67,9 @@ final class NamedStreetFormType extends AbstractType
                 options: [
                     'required' => false,
                     'label' => 'regulation.location.named_street.house_number',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(
@@ -75,6 +78,9 @@ final class NamedStreetFormType extends AbstractType
                 options: [
                     'required' => false,
                     'label' => 'regulation.location.named_street.intersection',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(
@@ -88,6 +94,9 @@ final class NamedStreetFormType extends AbstractType
                 options: [
                     'required' => false,
                     'label' => 'regulation.location.named_street.house_number',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add(
@@ -96,6 +105,9 @@ final class NamedStreetFormType extends AbstractType
                 options: [
                     'required' => false,
                     'label' => 'regulation.location.named_street.intersection',
+                    'label_attr' => [
+                        'class' => 'required',
+                    ],
                 ],
             )
             ->add('roadType', HiddenType::class)
