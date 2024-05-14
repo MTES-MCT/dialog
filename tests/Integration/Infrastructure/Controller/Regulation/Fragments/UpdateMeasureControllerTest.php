@@ -238,7 +238,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez définir le point A et/ou le point B.', $crawler->filter('#measure_form_locations_1_namedStreet_fromPointType_error')->text());
+
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_1_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_1_namedStreet_toHouseNumber_error')->text());
     }
 
     public function testLaneWithUnknownHouseNumbers(): void
