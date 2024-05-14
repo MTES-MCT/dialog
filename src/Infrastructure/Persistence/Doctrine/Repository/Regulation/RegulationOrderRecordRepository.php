@@ -238,7 +238,7 @@ SELECT named_street.road_name AS road_name, numbered_road.road_number AS road_nu
        regulation_order.category AS category, regulation_order.description AS description, regulation_order.identifier AS identifier,
        (regulation_order.end_date IS NULL) AS is_permanent, (regulation_order_record.status = \'draft\') AS is_draft,
        organization.name AS organization_name, location.geometry AS geometry,
-       regulation_order.uuid AS regulation_order_id
+       regulation_order.uuid AS regulation_order_id, measure.uuid AS measure_uuid
 FROM location
 LEFT JOIN numbered_road ON numbered_road.location_uuid = location.uuid
 LEFT JOIN named_street ON named_street.location_uuid = location.uuid

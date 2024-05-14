@@ -12,18 +12,19 @@ export default class extends HTMLElement {
 	
 	const regulations_as_geojson_output_id = this.dataset['regulations-as-geojson-output-id'] || 'regulations_as_geojson_output';
 	const regulations_as_geojson_turbo_frame_id = this.dataset['regulations-as-geojson-turbo-frame-id'] || 'regulations_as_geojson_turbo_frame';
+	const regulationLocationPath = this.dataset['regulation-location-path'];
 	
         const container = document.createElement('div');
         container.style.height = height;
         this.appendChild(container);
 	
-        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id);
+        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, regulationLocationPath);
 	// use this to debug in the JS console of your browser :
 	//my_map = await document.getElementsByTagName("dialog-map")[0].map_on_promise
     }
 }
 
-async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id) {
+async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, regulationLocationPath) {
     const maplibregl = (await import('maplibre-gl')).default;
     
     const styleLink = document.createElement('link');
@@ -103,10 +104,18 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 	);
 	// popup when clicking on a feature of the regulation layer
 	map.on('click', 'regulations-layer', (e) => {
-            new maplibregl.Popup()
-		.setLngLat(e.lngLat)
-		.setHTML((e.features[0].properties.road_name || "''") + " [" + (e.features[0].properties.road_number || "") + "]" + "<h3>" + e.features[0].properties.identifier + "</h3>" + "<h4>" + e.features[0].properties.organization_name + "</h4>" + e.features[0].properties.description + "<br />" + " • arrêté permanent = " + e.features[0].properties.is_permanent + "<br /> • arrêté à l'état de brouillon = " + e.features[0].properties.is_draft)
-		.addTo(map);
+	    const regulationProperties = e.features[0].properties;
+	    const regulationLocationTurboFrame = document.createElement('turbo-frame');
+	    regulationLocationTurboFrame.id = `regulation_location_turbo_frame_${regulationProperties.measure_uuid}`;
+	    regulationLocationTurboFrame.src = `${regulationLocationPath}/${regulationProperties.measure_uuid}`;
+            const regulationLocationPopUp = new maplibregl.Popup({'className' : 'fr-hidden'})
+		  .setLngLat(e.lngLat)
+		  .setDOMContent(regulationLocationTurboFrame)
+		  .addTo(map);
+	    // display the popup when the turbo frame is loaded (otherwise MapLibre GL JS will display an empty popup for a few seconds)
+	    regulationLocationTurboFrame.addEventListener('turbo:frame-load', () => {
+		regulationLocationPopUp.removeClassName('fr-hidden');
+	    });
 	});
 	// change the cursor when the mouse is over the regulations layer
 	map.on('mouseenter', 'regulations-layer', () => {
