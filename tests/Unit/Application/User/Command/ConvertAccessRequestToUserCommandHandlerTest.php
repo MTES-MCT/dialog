@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\User\Command;
 
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\User\Command\ConvertAccessRequestToUserCommand;
 use App\Application\User\Command\ConvertAccessRequestToUserCommandHandler;
@@ -26,6 +27,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
     private MockObject $userRepository;
     private MockObject $organizationRepository;
     private MockObject $accessRequest;
+    private MockObject $dateUtils;
 
     public function setUp(): void
     {
@@ -34,6 +36,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
         $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
         $this->accessRequest = $this->createMock(AccessRequest::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
     public function testConvertWithSiretLinkedToExistingOrganization(): void
@@ -84,10 +87,17 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
+        $date = new \DateTimeImmutable('2024-05-07');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($date);
+
         $user = (new User('0de5692b-cab1-494c-804d-765dc14df674'))
             ->setFullName('Mathieu MARCHOIS')
             ->setPassword('passwordHashed')
-            ->setEmail('mathieu@fairness.coop');
+            ->setEmail('mathieu@fairness.coop')
+            ->setRegistrationDate($date);
         $user->addOrganization($organization);
 
         $this->userRepository
@@ -106,6 +116,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->accessRequestRepository,
             $this->userRepository,
             $this->organizationRepository,
+            $this->dateUtils,
         );
         $command = new ConvertAccessRequestToUserCommand('e8a18fab-58d9-4aaf-bb47-b7a8edc20c23');
         $handler($command);
@@ -148,10 +159,17 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->with('82050375300015')
             ->willReturn(null);
 
+        $date = new \DateTimeImmutable('2024-05-07');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($date);
+
         $user = (new User('0de5692b-cab1-494c-804d-765dc14df674'))
             ->setFullName('Mathieu MARCHOIS')
             ->setPassword('passwordHashed')
-            ->setEmail('mathieu@fairness.coop');
+            ->setEmail('mathieu@fairness.coop')
+            ->setRegistrationDate($date);
 
         $organization = (new Organization('d145a0e3-e397-412c-ba6a-90b150f7aec2'))
             ->setName('Fairness')
@@ -193,6 +211,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->accessRequestRepository,
             $this->userRepository,
             $this->organizationRepository,
+            $this->dateUtils,
         );
         $command = new ConvertAccessRequestToUserCommand('e8a18fab-58d9-4aaf-bb47-b7a8edc20c23');
         $handler($command);
@@ -237,6 +256,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->accessRequestRepository,
             $this->userRepository,
             $this->organizationRepository,
+            $this->dateUtils,
         );
         $command = new ConvertAccessRequestToUserCommand('e8a18fab-58d9-4aaf-bb47-b7a8edc20c23');
         $handler($command);
@@ -292,6 +312,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->accessRequestRepository,
             $this->userRepository,
             $this->organizationRepository,
+            $this->dateUtils,
         );
         $command = new ConvertAccessRequestToUserCommand('e8a18fab-58d9-4aaf-bb47-b7a8edc20c23');
         $handler($command);
@@ -335,6 +356,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->accessRequestRepository,
             $this->userRepository,
             $this->organizationRepository,
+            $this->dateUtils,
         );
         $command = new ConvertAccessRequestToUserCommand('e8a18fab-58d9-4aaf-bb47-b7a8edc20c23');
         $handler($command);

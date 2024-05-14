@@ -37,7 +37,7 @@ final class RegulationOrderFixture extends Fixture
 
         $regulationOrderDuplicate = new RegulationOrder(
             uuid: '0658c6ab-6b49-7a3b-8000-0683622905a3',
-            identifier: 'FO2/2023 (copie)',
+            identifier: 'FO2/2023-1',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Description 2',
             startDate: new \DateTimeImmutable('2023-03-10'),

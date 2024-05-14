@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\User\Command;
 
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\User\AccessRequest;
 use App\Domain\User\Exception\AccessRequestNotFoundException;
@@ -22,6 +23,7 @@ final class ConvertAccessRequestToUserCommandHandler
         private AccessRequestRepositoryInterface $accessRequestRepository,
         private UserRepositoryInterface $userRepository,
         private OrganizationRepositoryInterface $organizationRepository,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -52,7 +54,8 @@ final class ConvertAccessRequestToUserCommandHandler
         $user = (new User($this->idFactory->make()))
             ->setFullName($accessRequest->getFullName())
             ->setPassword($accessRequest->getPassword())
-            ->setEmail($accessRequest->getEmail());
+            ->setEmail($accessRequest->getEmail())
+            ->setRegistrationDate($this->dateUtils->getNow());
         $user->addOrganization($organization);
 
         $this->userRepository->add($user);

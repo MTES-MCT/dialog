@@ -13,6 +13,7 @@ class User
     private string $email;
     private string $password;
     private Collection $organizations;
+    private \DateTimeInterface $registrationDate;
 
     public function __construct(
         private string $uuid,
@@ -57,6 +58,18 @@ class User
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getRegistrationDate(): \DateTimeInterface
+    {
+        return $this->registrationDate;
+    }
+
+    public function setRegistrationDate(\DateTimeInterface $date): self
+    {
+        $this->registrationDate = $date;
 
         return $this;
     }
