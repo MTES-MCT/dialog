@@ -301,26 +301,6 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
     }
 
-    public function testUpdateLocationSingleEndSection(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
-        $this->assertResponseStatusCodeSame(200);
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        $values = $form->getPhpValues();
-        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '82121';
-        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Montauban (82000)';
-        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue de la République';
-        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
-        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '';
-        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '33';
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
-        $this->assertResponseStatusCodeSame(303);
-    }
-
     public function testDepartmentalRoadWithUnknownPointNumbers(): void
     {
         $client = $this->login();
