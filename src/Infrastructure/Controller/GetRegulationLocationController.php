@@ -10,6 +10,7 @@ use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -30,15 +31,27 @@ final class GetRegulationLocationController extends AbstractController
     )]
     public function __invoke(Request $request, string $uuid = ''): Response
     {
-        $location = $this->locationRepository->findOneByUuid($uuid); // uuid of a location
-        $measure = $this->measureRepository->findOneByUuid($location->getMeasure()->getUuid());
+        $location = null;
+        $measure_as_a_view = null;
+        if ($uuid) { // uuid of a location
+            $location = $this->locationRepository->findOneByUuid($uuid);
+            if ($location) {
+                $measure = $this->measureRepository->findOneByUuid($location->getMeasure()->getUuid());
+                if ($measure) {
+                    $measure_as_a_view = MeasureView::fromEntity($measure);
+                }
+            }
+        }
+        if (!$location or !$measure_as_a_view) {
+            throw new NotFoundHttpException();
+        }
 
         return new Response(
             $this->twig->render(
                 name: '_regulation_location.html.twig',
                 context: [
                     'location' => $location,
-                    'measure' => MeasureView::fromEntity($measure),
+                    'measure' => $measure_as_a_view,
                 ],
             ),
         );
