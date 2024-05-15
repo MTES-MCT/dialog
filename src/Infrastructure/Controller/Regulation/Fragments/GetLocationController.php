@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller;
+namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
-final class GetRegulationLocationController extends AbstractController
+final class GetLocationController extends AbstractController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -24,15 +24,15 @@ final class GetRegulationLocationController extends AbstractController
     }
 
     #[Route(
-        '/_regulation_location/{uuid}',
-        name: 'get_regulation_location',
+        '/_location/{uuid}',
+        name: 'get_location',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]
     public function __invoke(Request $request, string $uuid = ''): Response
     {
         $location = null;
-        $measure_as_a_view = null;
+        $measureAsAView = null;
         $regulationOrderRecordId = null;
         if ($uuid) { // uuid of a location
             $location = $this->locationRepository->findOneByUuid($uuid);
@@ -40,20 +40,20 @@ final class GetRegulationLocationController extends AbstractController
                 $measure = $this->measureRepository->findOneByUuid($location->getMeasure()->getUuid());
                 if ($measure) {
                     $regulationOrderRecordId = $measure->getRegulationOrder()->getRegulationOrderRecord()->getUuid();
-                    $measure_as_a_view = MeasureView::fromEntity($measure);
+                    $measureAsAView = MeasureView::fromEntity($measure);
                 }
             }
         }
-        if (!$location or !$measure_as_a_view) {
+        if (!$location or !$measureAsAView) {
             throw new NotFoundHttpException();
         }
 
         return new Response(
             $this->twig->render(
-                name: '_regulation_location.html.twig',
+                name: '/regulation/fragments/_location.html.twig',
                 context: [
                     'location' => $location,
-                    'measure' => $measure_as_a_view,
+                    'measure' => $measureAsAView,
                     'regulationOrderRecordId' => $regulationOrderRecordId,
                 ],
             ),

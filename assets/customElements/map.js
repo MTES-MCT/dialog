@@ -12,19 +12,19 @@ export default class extends HTMLElement {
 	
 	const regulations_as_geojson_output_id = this.dataset['regulations-as-geojson-output-id'] || 'regulations_as_geojson_output';
 	const regulations_as_geojson_turbo_frame_id = this.dataset['regulations-as-geojson-turbo-frame-id'] || 'regulations_as_geojson_turbo_frame';
-	const regulationLocationPath = this.dataset['regulation-location-path'];
+	const locationPath = this.dataset['location-path'];
 	
         const container = document.createElement('div');
         container.style.height = height;
         this.appendChild(container);
 	
-        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, regulationLocationPath);
+        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, locationPath);
 	// use this to debug in the JS console of your browser :
 	//my_map = await document.getElementsByTagName("dialog-map")[0].map_on_promise
     }
 }
 
-async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, regulationLocationPath) {
+async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, locationPath) {
     const maplibregl = (await import('maplibre-gl')).default;
     
     const styleLink = document.createElement('link');
@@ -105,16 +105,16 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 	// popup when clicking on a feature of the regulation layer
 	map.on('click', 'regulations-layer', (e) => {
 	    const regulationProperties = e.features[0].properties;
-	    const regulationLocationTurboFrame = document.createElement('turbo-frame');
-	    regulationLocationTurboFrame.id = `regulation_location_turbo_frame_${regulationProperties.location_uuid}`;
-	    regulationLocationTurboFrame.src = `${regulationLocationPath}/${regulationProperties.location_uuid}`;
-            const regulationLocationPopUp = new maplibregl.Popup({'className' : 'fr-hidden'})
+	    const locationTurboFrame = document.createElement('turbo-frame');
+	    locationTurboFrame.id = `location_turbo_frame_${regulationProperties.location_uuid}`;
+	    locationTurboFrame.src = `${locationPath}/${regulationProperties.location_uuid}`;
+            const locationPopUp = new maplibregl.Popup({'className' : 'fr-hidden'})
 		  .setLngLat(e.lngLat)
-		  .setDOMContent(regulationLocationTurboFrame)
+		  .setDOMContent(locationTurboFrame)
 		  .addTo(map);
 	    // display the popup when the turbo frame is loaded (otherwise MapLibre GL JS will display an empty popup for a few seconds)
-	    regulationLocationTurboFrame.addEventListener('turbo:frame-load', () => {
-		regulationLocationPopUp.removeClassName('fr-hidden');
+	    locationTurboFrame.addEventListener('turbo:frame-load', () => {
+		locationPopUp.removeClassName('fr-hidden');
 	    });
 	});
 	// change the cursor when the mouse is over the regulations layer
