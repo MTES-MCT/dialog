@@ -31,5 +31,6 @@
       {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
     </li>
   </ul>
+  <a href="{{ path('app_regulation_detail', {'uuid' : regulationOrderRecordId}) }}" target="_BLANK">{{ 'show details'|trans }}</a>
 </turbo-frame>
 {% endif %}

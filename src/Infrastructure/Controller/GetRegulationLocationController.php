@@ -33,11 +33,13 @@ final class GetRegulationLocationController extends AbstractController
     {
         $location = null;
         $measure_as_a_view = null;
+        $regulationOrderRecordId = null;
         if ($uuid) { // uuid of a location
             $location = $this->locationRepository->findOneByUuid($uuid);
             if ($location) {
                 $measure = $this->measureRepository->findOneByUuid($location->getMeasure()->getUuid());
                 if ($measure) {
+                    $regulationOrderRecordId = $measure->getRegulationOrder()->getRegulationOrderRecord()->getUuid();
                     $measure_as_a_view = MeasureView::fromEntity($measure);
                 }
             }
@@ -52,6 +54,7 @@ final class GetRegulationLocationController extends AbstractController
                 context: [
                     'location' => $location,
                     'measure' => $measure_as_a_view,
+                    'regulationOrderRecordId' => $regulationOrderRecordId,
                 ],
             ),
         );
