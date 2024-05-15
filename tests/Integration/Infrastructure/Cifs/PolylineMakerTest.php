@@ -31,7 +31,7 @@ final class PolylineMakerTest extends WebTestCase
             ],
             'multiline-mergeable' => [
                 'geometry' => '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[2, 3], [4, 5]]]}',
-                'polylines' => ['1 0 3 2 5 4'],
+                'polylines' => ['1 0 3 2', '3 2 5 4'],
             ],
             'multiline-separate' => [
                 'geometry' => '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]}',

@@ -24,11 +24,17 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
-                    SELECT ST_AsGeoJSON(geometrie) AS geometry
-                    FROM voie_nommee
-                    WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
-                    AND code_insee = :code_insee
-                    LIMIT 1
+                    WITH voie_nommee as (
+                        SELECT id_pseudo_fpb
+                        FROM voie_nommee
+                        WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
+                        AND code_insee = :code_insee
+                        LIMIT 1
+                    )
+                    SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(geometrie))) AS geometry
+                    FROM troncon_de_route
+                    INNER JOIN voie_nommee ON true
+                    WHERE voie_nommee.id_pseudo_fpb = identifiant_voie_1_gauche
                 ',
                 [
                     'nom_minuscule' => $roadName,
@@ -39,7 +45,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingFailureException(sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        if ($rows) {
+        if ($rows && $rows[0]['geometry']) {
             return $rows[0]['geometry'];
         }
 

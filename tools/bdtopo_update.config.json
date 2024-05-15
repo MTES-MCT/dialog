@@ -2,6 +2,7 @@
     "tables": [
         "voie_nommee",
         "route_numerotee_ou_nommee",
-        "point_de_repere"
+        "point_de_repere",
+        "troncon_de_route"
     ]
 }

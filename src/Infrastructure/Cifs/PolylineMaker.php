@@ -16,13 +16,16 @@ final class PolylineMaker implements PolylineMakerInterface
 
     public function getPolylines(string $geometry): array
     {
+        $isMultiLineString = str_contains($geometry, 'MultiLineString');
+
         $rows = $this->em
             ->getConnection()
             ->fetchAllAssociative(
-                'WITH linestring AS (
+                sprintf(
+                    'WITH linestring AS (
                         -- Split the geometry into its individual LINESTRING components
                         SELECT (components.dump).geom AS geom FROM (
-                            SELECT ST_Dump(ST_LineMerge(:geom)) AS dump
+                            SELECT (%s) as dump
                         ) AS components
                     )
                     SELECT array_to_string(
@@ -33,7 +36,9 @@ final class PolylineMaker implements PolylineMakerInterface
                         \' \'
                     ) AS polyline
                     FROM linestring',
-                ['geom' => $geometry],
+                    $isMultiLineString ? 'ST_Dump(:geom)' : 'ST_Dump(ST_LineMerge(:geom))',
+                ),
+                ['geom' => sprintf($geometry)],
             );
 
         $polylines = [];
