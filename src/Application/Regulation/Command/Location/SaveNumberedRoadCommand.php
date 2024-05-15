@@ -36,6 +36,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         $this->toPointNumber = $numberedRoad?->getToPointNumber();
         $this->toAbscissa = $numberedRoad?->getToAbscissa();
         $this->toSide = $numberedRoad?->getToSide();
+        $this->roadType = $numberedRoad?->getLocation()?->getRoadType();
     }
 
     // Road command interface

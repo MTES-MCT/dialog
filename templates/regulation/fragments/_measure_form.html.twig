@@ -176,13 +176,13 @@
                         'change->form-reveal#openByValue'
                     },
                 }) }}
-
                 <div
                     data-controller="reset"
                     data-form-reveal-target="section"
                     data-value="departmentalRoad"
                     {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif %}
                 >
+                    {{ form_row(form.numberedRoad.roadType) }}
                     {{ form_row(form.numberedRoad.administrator, {
                         group_class: 'fr-input-group',
                         widget_class: 'fr-input',
@@ -274,6 +274,7 @@
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="city"
                     >
+                        {{ form_row(form.namedStreet.roadType) }}
                         {{ form_row(form.namedStreet.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
 
                         {{ form_row(form.namedStreet.cityLabel, {

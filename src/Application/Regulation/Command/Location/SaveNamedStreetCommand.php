@@ -41,6 +41,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
         $this->toHouseNumber = $namedStreet?->getToHouseNumber();
         $this->toRoadName = $namedStreet?->getToRoadName();
         $this->isEntireStreetFormValue = $namedStreet ? $this->computeIsEntireStreetFormValue() : null;
+        $this->roadType = $namedStreet?->getLocation()?->getRoadType();
     }
 
     public function clean(): void
