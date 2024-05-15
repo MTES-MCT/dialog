@@ -235,7 +235,7 @@ WHERE (bbox_as_points.dump_points).path IN (ARRAY[1,1], ARRAY[1,3])
                   ->createNativeQuery('
 WITH filtered_location AS (
 SELECT (regulation_order.end_date IS NULL) AS is_permanent, (regulation_order_record.status = \'draft\') AS is_draft,
-       location.geometry AS geometry, measure.uuid AS measure_uuid
+       location.geometry AS geometry, location.uuid AS location_uuid
 FROM location
 JOIN measure ON measure.uuid = location.measure_uuid
 JOIN regulation_order ON regulation_order.uuid = measure.regulation_order_uuid

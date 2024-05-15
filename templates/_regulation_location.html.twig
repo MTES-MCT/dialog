@@ -1,4 +1,35 @@
-<turbo-frame id="regulation_location_turbo_frame_{{ regulation_location_uuid }}" loading="lazy">
-  turbo FRAME REPLACED
+{% if location and measure %}
+<turbo-frame id="regulation_location_turbo_frame_{{ location.uuid }}" loading="lazy">
+  <div class="app-card__header">
+    <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--sm" aria-hidden="true"></span>
+    <span class="app-card__title fr-mb-0">
+      {% if measure.type == 'speedLimitation' %}
+      {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
+      {% else %}
+      {{ ('regulation.measure.type.' ~ measure.type)|trans }}
+      {% endif %}
+    </span>
+  </div>
+  <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
+  {% if location.roadType == 'lane' %}
+  {{ location.namedStreet.roadName }}
+  {% include 'regulation/_location_house_numbers.html.twig' with { location: location.namedStreet } only %}
+  {{ location.namedStreet.cityLabel }}
+  {% else %}
+  {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }})
+  {% include 'regulation/_reference_points.html.twig' with { location: location.numberedRoad } only %}
+  {% endif %}
+  <ul class="fr-raw-list">
+    <li class="fr-mb-2w">
+      <span class="app-card__img fr-icon-car-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
+      {% include 'regulation/_vehicle_set.html.twig' with {
+      vehicleSet: measure.vehicleSet,
+      } only %}
+    </li>
+    <li class="fr-mb-2w">
+      <span class="app-card__img fr-icon-calendar-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
+      {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+    </li>
+  </ul>
 </turbo-frame>
-
+{% endif %}

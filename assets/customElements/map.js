@@ -106,8 +106,8 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 	map.on('click', 'regulations-layer', (e) => {
 	    const regulationProperties = e.features[0].properties;
 	    const regulationLocationTurboFrame = document.createElement('turbo-frame');
-	    regulationLocationTurboFrame.id = `regulation_location_turbo_frame_${regulationProperties.measure_uuid}`;
-	    regulationLocationTurboFrame.src = `${regulationLocationPath}/${regulationProperties.measure_uuid}`;
+	    regulationLocationTurboFrame.id = `regulation_location_turbo_frame_${regulationProperties.location_uuid}`;
+	    regulationLocationTurboFrame.src = `${regulationLocationPath}/${regulationProperties.location_uuid}`;
             const regulationLocationPopUp = new maplibregl.Popup({'className' : 'fr-hidden'})
 		  .setLngLat(e.lngLat)
 		  .setDOMContent(regulationLocationTurboFrame)
