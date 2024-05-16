@@ -23,23 +23,23 @@ use PHPUnit\Framework\TestCase;
 
 final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
+    private $regulationOrderRecordRepository;
     private $polylineMaker;
 
     protected function setUp(): void
     {
+        $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
     }
 
     public function testGetAllEmpty(): void
     {
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
-
-        $regulationOrderRecordRepository
+        $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository, $this->polylineMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -208,8 +208,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 ],
             ],
         );
-
-        $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
         $regulationOrderRecord1 = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord1
@@ -509,17 +507,43 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->withConsecutive([$geometry1], [$geometry2])
             ->willReturnOnConsecutiveCalls([$polyline1, $polyline2], [$polyline3]);
 
-        $regulationOrderRecordRepository
+        $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2]);
 
-        $handler = new GetCifsIncidentsQueryHandler($regulationOrderRecordRepository, $this->polylineMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker);
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
             [$incident1, $incident2, $incident3, $incident4, $incident5, $incident6],
             $incidents,
         );
+    }
+
+    private function provideTestAllowedIds(): array
+    {
+        return [
+            [null, []],
+            [[], []],
+            [['id'], ['id']],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestAllowedIds
+     */
+    public function testAllowedIds(?array $allowedIdsParam, array $allowedIdsValue): void
+    {
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('findRegulationOrdersForCifsIncidentFormat')
+            ->with($allowedIdsValue)
+            ->willReturn([]); // Don't care, we just test that the correct value was passed to the repository method
+
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $allowedIdsParam);
+        $incidents = $handler(new GetCifsIncidentsQuery());
+
+        $this->assertEquals([], $incidents);
     }
 }

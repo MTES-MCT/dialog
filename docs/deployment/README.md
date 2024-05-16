@@ -95,6 +95,7 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet-partage.apps.paris.fr | |
 | `APP_EUDONET_PARIS_ORG_ID` | Utiliser l'UUID de l'organisation Ville de Paris | _Vide_ | |
 | `APP_SECRET` | Correspond au paramètre Symfony [`secret`](https://symfony.com/doc/current/reference/configuration/framework.html#secret) | _(Obligatoire)_ | Longueur recommandée : 32 caractères. Exemple : générer avec `python3 -c 'import secrets; print(secrets.token_hex(16))'` |
+| `APP_CIFS_REGULATION_ORDER_RECORD_IDS` | N'exporte en CIFS que les arrêtés dont le `regulation_order_record.uuid` est parmi cette liste | | Format JSON. La liste vide `[]` a pour effet de continuer d'exporter tous les arrêtés |
 | `DATABASE_URL` | URL vers le serveur PostgreSQL | _(Obligatoire)_ `$SCALINGO_POSTGRESQL_URL` | La variable `$SCALINGO_POSTGRESQL_URL` est configurée automatiquement par Scalingo |
 | `MATOMO_ENABLED` | `true` (ou autre valeur truthy) pour activer les [analytics](../tools/analytics.md), `false` pour ne pas les activer | `false` | |
 | `PHP_BUILDPACK_NO_NODE` | Désactive le support Node.js dans le buildpack PHP, puisqu'on utilise le buildpack Node.js complet (voir `.buildpacks`). | _(Obligatoire)_ `true` | Voir : [PHP application with Node.js (Scalingo docs)](https://doc.scalingo.com/languages/php/php-nodejs) |
