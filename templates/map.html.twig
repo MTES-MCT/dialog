@@ -6,18 +6,16 @@
 
 {% block body %}
 <nav class="map-overlay top">
-  <turbo-frame id="regulations_as_geojson_turbo_frame">
-    {% include '_regulations_as_geojson.html.twig' %}
-  </turbo-frame>
+  {% include '_map_filter.html.twig' %}
 </nav>
 <dialog-map class="fr-py-2w"
             data-height="480px"
-	    data-geojson="{{ regulationOrdersAsGeoJson|json_encode }}"
-	    data-bbox="{{ regulationOrdersBbox|json_encode }}"
+	    data-geojson="{{ locationsAsGeoJson|json_encode }}"
+	    data-bbox="{{ locationsBbox|json_encode }}"
             data-pos="[2.725, 47.16]"
             data-zoom="5"
-	    data-regulations-as-geojson-output-id="regulations_as_geojson_output"
-	    data-regulations-as-geojson-turbo-frame-id="regulations_as_geojson_turbo_frame"
+	    data-locations-as-geojson-output-id="locations_as_geojson_output"
+	    data-map-filter-turbo-frame-id="map_filter_turbo_frame"
 	    data-location-path="{{ path('get_location') }}"
             aria-hidden="true"
             />

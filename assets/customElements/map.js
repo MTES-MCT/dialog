@@ -10,21 +10,21 @@ export default class extends HTMLElement {
         const geojson = JSON.parse(this.dataset.geojson || '[]');
 	const bbox = JSON.parse(this.dataset.bbox || '');
 	
-	const regulations_as_geojson_output_id = this.dataset['regulations-as-geojson-output-id'] || 'regulations_as_geojson_output';
-	const regulations_as_geojson_turbo_frame_id = this.dataset['regulations-as-geojson-turbo-frame-id'] || 'regulations_as_geojson_turbo_frame';
+	const locationsAsGeoJSONOutputId = this.dataset['locations-as-geojson-output-id'] || 'locations_as_geojson_output';
+	const mapFilterTurboFrameId = this.dataset['map-filter-turbo-frame-id'] || 'map_filter_turbo_frame';
 	const locationPath = this.dataset['location-path'];
 	
         const container = document.createElement('div');
         container.style.height = height;
         this.appendChild(container);
 	
-        this.map_on_promise = createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, locationPath);
+        this.mapOnPromise = createMapLibreMap(container, pos, zoom, geojson, bbox, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath);
 	// use this to debug in the JS console of your browser :
-	//my_map = await document.getElementsByTagName("dialog-map")[0].map_on_promise
+	//my_map = await document.getElementsByTagName("dialog-map")[0].mapOnPromise
     }
 }
 
-async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulations_as_geojson_output_id, regulations_as_geojson_turbo_frame_id, locationPath) {
+async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath) {
     const maplibregl = (await import('maplibre-gl')).default;
     
     const styleLink = document.createElement('link');
@@ -33,6 +33,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
     document.head.appendChild(styleLink);
     
     // Define the map syle (OpenStreetMap raster tiles)
+    /*
     const osm_style = {
 	"version": 8,
 	"sources": {
@@ -51,7 +52,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 		"source": "osm" // This must match the source key above
 	    }
 	]
-    };
+    };*/
     
     const map = new maplibregl.Map({
         container: container,
@@ -60,13 +61,13 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
         center: pos,
         zoom,
     });
-    let first_map_load = true;
+    let firstMapLoad = true;
     
     // credit: https://maplibre.org/maplibre-gl-js/docs/examples/geojson-line/
     map.on('load', () => {
 	// automatically pan and zoom on the bbox, queried from the database (there is no .bounds for GeoJSON MapLibre source)
 	// we must do that only one time
-	if (first_map_load) {
+	if (firstMapLoad) {
 	    map.fitBounds(
 		bbox,
 		{
@@ -75,22 +76,22 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 		    duration: 500  // duration in ms
 		}
 	    );
-	    first_map_load = false;
+	    firstMapLoad = false;
 	};
         map.addControl(new maplibregl.NavigationControl(), 'top-left');
-	const regulation_source_as_json = {
+	const locationSourceAsGeoJSON = {
             type: 'geojson',
             data: {
                 type: 'FeatureCollection',
                 features: geojson
             }
         };
-        map.addSource('regulations-source', regulation_source_as_json);
+        map.addSource('locations-source', locationSourceAsGeoJSON);
         map.addLayer(
 	    {
-		'id': 'regulations-layer',
+		'id': 'locations-layer',
 		'type': 'line',
-		'source': 'regulations-source',
+		'source': 'locations-source',
 		'layout': {
                     'line-join': 'round',
                     'line-cap': 'round',
@@ -102,12 +103,12 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
             },
 	    "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
 	);
-	// popup when clicking on a feature of the regulation layer
-	map.on('click', 'regulations-layer', (e) => {
-	    const regulationProperties = e.features[0].properties;
+	// popup when clicking on a feature of the locations layer
+	map.on('click', 'locations-layer', (e) => {
+	    const locationProperties = e.features[0].properties;
 	    const locationTurboFrame = document.createElement('turbo-frame');
-	    locationTurboFrame.id = `location_turbo_frame_${regulationProperties.location_uuid}`;
-	    locationTurboFrame.src = `${locationPath}/${regulationProperties.location_uuid}`;
+	    locationTurboFrame.id = `location_turbo_frame_${locationProperties.location_uuid}`;
+	    locationTurboFrame.src = `${locationPath}/${locationProperties.location_uuid}`;
             const locationPopUp = new maplibregl.Popup({'className' : 'fr-hidden'})
 		  .setLngLat(e.lngLat)
 		  .setDOMContent(locationTurboFrame)
@@ -117,11 +118,11 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 		locationPopUp.removeClassName('fr-hidden');
 	    });
 	});
-	// change the cursor when the mouse is over the regulations layer
-	map.on('mouseenter', 'regulations-layer', () => {
+	// change the cursor when the mouse is over the locations layer
+	map.on('mouseenter', 'locations-layer', () => {
             map.getCanvas().style.cursor = 'pointer';
 	});
-	map.on('mouseleave', 'regulations-layer', () => {
+	map.on('mouseleave', 'locations-layer', () => {
             map.getCanvas().style.cursor = '';
 	});
     });
@@ -131,11 +132,11 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 	for (const mutation of mutationList) {
 	    if (mutation.type === "childList") {
 		if (mutation.addedNodes && mutation.addedNodes.length >= 1) {
-		    const ouput_element = mutation.target.querySelector("#" + regulations_as_geojson_output_id);
-		    if (ouput_element) {
-			const new_geojson = JSON.parse(ouput_element.innerText || []);
+		    const ouputElement = mutation.target.querySelector("#" + locationsAsGeoJSONOutputId);
+		    if (ouputElement) {
+			const new_geojson = JSON.parse(ouputElement.innerText || []);
 			// credits to https://maplibre.org/maplibre-gl-js/docs/examples/live-update-feature/
-			map.getSource('regulations-source').setData({
+			map.getSource('locations-source').setData({
 			    type: 'FeatureCollection',
 			    features: new_geojson
 			});
@@ -144,7 +145,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, regulation
 	    }
 	}
     };
-    const targetNode = document.getElementById(regulations_as_geojson_turbo_frame_id); // observe our <turbo-frame>
+    const targetNode = document.getElementById(mapFilterTurboFrameId); // observe our <turbo-frame>
     if (targetNode) {
 	const config = { attributes: false, childList: true, subtree: true, characterData: false };
 	const observer = new MutationObserver(mutationCallback);

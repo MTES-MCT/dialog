@@ -30,10 +30,6 @@ interface RegulationOrderRecordRepositoryInterface
         array $allowedLocationIds = [],
     ): array;
 
-    public function findRegulationOrdersBbox(): array;
-
-    public function findRegulationOrdersAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter): array;
-
     public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 
     public function findIdentifiersForSource(string $source): array;

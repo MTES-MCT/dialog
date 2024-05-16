@@ -1,6 +1,6 @@
-<turbo-frame id="regulations_as_geojson_turbo_frame">
+<turbo-frame id="map_filter_turbo_frame">
   <dialog-map-filter-form>
-    <form method="GET" action="{{ path('get_regulations_as_geojson') }}">
+    <form method="GET" action="{{ path('get_map_filter') }}">
       <label><input type="checkbox" id="display-drafts" name="display-drafts" value="yes" {% if draftFilter == 'yes' %} checked="checked" {% endif %} />Arrêtés en état de brouillon</label>
       <label><input type="radio" id="regulations-permanent-only" name="permanent-and-or-temporary" value="permanent-only" {% if permanentAndOrTemporaryFilter == 'permanent-only' %} checked="checked" {% endif %} />Arrêtés permanents</label>
       <label><input type="radio" id="regulations-temporary-only" name="permanent-and-or-temporary" value="temporary-only" {% if permanentAndOrTemporaryFilter == 'temporary-only' %} checked="checked" {% endif %} />Arrêtés temporaires</label>
@@ -8,7 +8,7 @@
       <noscript>
 	<input type="submit" value="Appliquer les filtres" class="" />
       </noscript>
-      <output id="regulations_as_geojson_output" class="fr-hidden" name="regulations-geojson" for="permanent-and-or-temporary display-drafts" aria-hidden="true">{{ regulationOrdersAsGeoJson|json_encode }}</output>
+      <output id="locations_as_geojson_output" class="fr-hidden" name="locations-geojson" for="permanent-and-or-temporary display-drafts" aria-hidden="true">{{ locationsAsGeoJson|json_encode }}</output>
     </form>
   </dialog-map-filter-form>
 </turbo-frame>

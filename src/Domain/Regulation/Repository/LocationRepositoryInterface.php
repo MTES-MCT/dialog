@@ -13,4 +13,8 @@ interface LocationRepositoryInterface
     public function delete(Location $location): void;
 
     public function findOneByUuid(string $uuid): ?Location;
+
+    public function findAllLocationsBbox(): array;
+
+    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter): array;
 }
