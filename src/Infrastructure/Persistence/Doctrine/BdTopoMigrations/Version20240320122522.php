@@ -16,11 +16,11 @@ final class Version20240320122522 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE EXTENSION postgis');
+        $this->addSql('CREATE EXTENSION IF NOT EXISTS postgis');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP EXTENSION postgis');
+        $this->addSql('DROP EXTENSION IF EXISTS postgis');
     }
 }
