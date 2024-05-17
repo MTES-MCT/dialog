@@ -19,11 +19,11 @@ final class Version20240417143817 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE EXTENSION pg_trgm');
+        $this->addSql('CREATE EXTENSION IF NOT EXISTS pg_trgm');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP EXTENSION pg_trgm');
+        $this->addSql('DROP EXTENSION IF EXISTS pg_trgm');
     }
 }

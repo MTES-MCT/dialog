@@ -39,8 +39,8 @@ final class Version20240320130731 extends AbstractMigration
             $func$;
         ');
 
-        $this->addSql('CREATE INDEX voie_nommee_normalized_nom_minuscule_code_insee_idx ON voie_nommee (f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), code_insee);');
-        $this->addSql('CREATE INDEX route_numerotee_ou_nommee_numero_gestionnaire_idx ON route_numerotee_ou_nommee (numero, gestionnaire);');
+        $this->addSql('CREATE INDEX IF NOT EXISTS voie_nommee_normalized_nom_minuscule_code_insee_idx ON voie_nommee (f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), code_insee);');
+        $this->addSql('CREATE INDEX IF NOT EXISTS route_numerotee_ou_nommee_numero_gestionnaire_idx ON route_numerotee_ou_nommee (numero, gestionnaire);');
     }
 
     public function down(Schema $schema): void
