@@ -19,7 +19,7 @@ final class Version20240327135054 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE INDEX point_de_repere_route_numero_gestionnaire_cote_idx ON point_de_repere (route, numero, gestionnaire, cote);');
+        $this->addSql('CREATE INDEX IF NOT EXISTS point_de_repere_route_numero_gestionnaire_cote_idx ON point_de_repere (route, numero, gestionnaire, cote);');
     }
 
     public function down(Schema $schema): void
