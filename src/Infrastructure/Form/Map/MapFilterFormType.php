@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Form\Map;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+
+final class MapFilterFormType extends AbstractType
+{
+    public function __construct(
+    ) {
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add(
+                'display_drafts',
+                CheckboxType::class,
+                options: [
+                    'label' => 'Arrêtés en état de brouillon',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'category',
+                ChoiceType::class,
+                options: $this->getCategoryOptions(),
+            )
+            ->add(
+                'save',
+                SubmitType::class,
+            )
+        ;
+    }
+
+    private function getCategoryOptions(): array
+    {
+        $choices = [
+            'Arrêtés permanents' => 'permanents_only',
+            'Arrêtés temporaires' => 'temporaries_only',
+            'Tous les arrêtés' => 'permanents_and_temporaries',
+        ];
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.general_info.category',
+            'expanded' => true, // we want radio buttons
+            'multiple' => false, // we want radio buttons
+            'required' => true,
+            'data' => 'permanents_and_temporaries', // default value for the radio buttons
+        ];
+    }
+}

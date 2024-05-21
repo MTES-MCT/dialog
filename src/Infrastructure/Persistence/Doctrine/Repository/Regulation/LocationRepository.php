@@ -85,16 +85,16 @@ FROM filtered_location
 WHERE
 ((:with_published_only AND NOT filtered_location.is_draft) OR :with_drafts_and_published)
 AND
-((:with_permanent_only AND is_permanent) OR (:with_temporary_only AND NOT is_permanent) OR (:with_temporary_and_permanent))
+((:with_permanents_only AND is_permanent) OR (:with_temporaries_only AND NOT is_permanent) OR (:with_temporaries_and_permanents))
 ',
                       $rsm,
                   )
                   ->setParameters([
                       'with_published_only' => ($draftFilter != 'yes'),
                       'with_drafts_and_published' => ($draftFilter == 'yes'),
-                      'with_permanent_only' => ($permanentAndOrTemporaryFilter == 'permanent-only'),
-                      'with_temporary_only' => ($permanentAndOrTemporaryFilter == 'temporary-only'),
-                      'with_temporary_and_permanent' => ($permanentAndOrTemporaryFilter == 'both-permanent-and-temporary'),
+                      'with_permanents_only' => ($permanentAndOrTemporaryFilter == 'permanents_only'),
+                      'with_temporaries_only' => ($permanentAndOrTemporaryFilter == 'temporaries_only'),
+                      'with_temporaries_and_permanents' => ($permanentAndOrTemporaryFilter == 'permanents_and_temporaries'),
                   ])
                   ->getSingleColumnResult()
         ;
