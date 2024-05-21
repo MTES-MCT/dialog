@@ -16,29 +16,26 @@ final class PolylineMaker implements PolylineMakerInterface
 
     public function getPolylines(string $geometry): array
     {
-        $isMultiLineString = str_contains($geometry, 'MultiLineString');
-
         $rows = $this->em
             ->getConnection()
             ->fetchAllAssociative(
-                sprintf(
-                    'WITH linestring AS (
-                        -- Split the geometry into its individual LINESTRING components
-                        SELECT (components.dump).geom AS geom FROM (
-                            SELECT (%s) as dump
-                        ) AS components
-                    )
-                    SELECT array_to_string(
-                        array(
-                            SELECT ST_Y(d.geom) || \' \' || ST_X(d.geom)
-                            FROM ST_DumpPoints(linestring.geom) AS d
-                        ),
-                        \' \'
-                    ) AS polyline
-                    FROM linestring',
-                    $isMultiLineString ? 'ST_Dump(:geom)' : 'ST_Dump(ST_LineMerge(:geom))',
-                ),
-                ['geom' => sprintf($geometry)],
+                'WITH linestring AS (
+                    -- Split the geometry into its individual LINESTRING components
+                    SELECT (components.dump).geom AS geom FROM (
+                        SELECT ST_Dump(ST_Multi(:geom)) as dump
+                    ) AS components
+                    WHERE ST_Dimension((components.dump).geom) >= 1 -- Remove (MULTI)POINT components
+                    AND ST_NPoints((components.dump).geom) >= 2 -- Remove single-point LINESTRING components
+                )
+                SELECT array_to_string(
+                    array(
+                        SELECT ST_Y(d.geom) || \' \' || ST_X(d.geom)
+                        FROM ST_DumpPoints(linestring.geom) AS d
+                    ),
+                    \' \'
+                ) AS polyline
+                FROM linestring',
+                ['geom' => $geometry],
             );
 
         $polylines = [];

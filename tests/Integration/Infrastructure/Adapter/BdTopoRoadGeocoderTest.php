@@ -98,7 +98,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             'success' => [
                 'D906',
                 'Ardèche',
-                'bbe020470c7bb1f15e4d3abd70ac6c45',
+                '188aafa16d56b14ac98387d369be5798',
             ],
             'multiple-results' => [
                 'D60',

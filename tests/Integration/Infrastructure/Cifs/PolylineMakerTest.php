@@ -51,8 +51,8 @@ final class PolylineMakerTest extends WebTestCase
     /**
      * @dataProvider provideConvertToPolylines
      */
-    public function testConvertToPolylines(string $geometry, array $polylines, ?string $roadGeometry = null): void
+    public function testConvertToPolylines(string $geometry, array $polylines): void
     {
-        $this->assertEquals($polylines, $this->polylineMaker->getPolylines($geometry, $roadGeometry));
+        $this->assertEquals($polylines, $this->polylineMaker->getPolylines($geometry));
     }
 }

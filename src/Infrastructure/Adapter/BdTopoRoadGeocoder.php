@@ -90,7 +90,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
-                    SELECT ST_AsGeoJSON(geometrie) AS geometry
+                    SELECT ST_AsGeoJSON(ST_LineMerge(geometrie)) AS geometry
                     FROM route_numerotee_ou_nommee
                     WHERE numero = :numero
                     AND gestionnaire = :gestionnaire
