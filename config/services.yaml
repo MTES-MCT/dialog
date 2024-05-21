@@ -8,6 +8,7 @@ parameters:
     client_timezone: '%env(APP_CLIENT_TIMEZONE)%'
     admin_email: '%env(ADMIN_EMAIL)%'
     features: []
+    _empty_array: []
 
 services:
     # default configuration for services in *this* file
@@ -23,6 +24,7 @@ services:
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
             $bacIdfCitiesFile: '%env(APP_BAC_IDF_CITIES_FILE)%'
             $featureMap: '%features%'
+            $cifsAllowedRegulationOrderRecordIds: '%env(default:_empty_array:json:APP_CIFS_ALLOWED_REGULATION_ORDER_RECORD_IDS)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
