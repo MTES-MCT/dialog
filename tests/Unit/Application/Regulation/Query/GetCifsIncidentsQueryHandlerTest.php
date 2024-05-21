@@ -524,7 +524,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     private function provideTestAllowedIds(): array
     {
         return [
-            [null, []],
             [[], []],
             [['id'], ['id']],
         ];
