@@ -24,7 +24,7 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findRegulationOrdersForDatexFormat(): array;
 
-    public function findRegulationOrdersForCifsIncidentFormat(array $allowedIds = []): array;
+    public function findRegulationOrdersForCifsIncidentFormat(array $allowedLocationIds = []): array;
 
     public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 

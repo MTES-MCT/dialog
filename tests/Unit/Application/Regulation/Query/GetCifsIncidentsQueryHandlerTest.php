@@ -521,26 +521,15 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
     }
 
-    private function provideTestAllowedIds(): array
-    {
-        return [
-            [[], []],
-            [['id'], ['id']],
-        ];
-    }
-
-    /**
-     * @dataProvider provideTestAllowedIds
-     */
-    public function testAllowedIds(?array $allowedIdsParam, array $allowedIdsValue): void
+    public function testAllowedLocationIds(): void
     {
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
-            ->with($allowedIdsValue)
-            ->willReturn([]); // Don't care, we just test that the correct value was passed to the repository method
+            ->with(['id1'])
+            ->willReturn([]); // Don't care, we just test that the IDs were passed to the repository method
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $allowedIdsParam);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, ['id1']);
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $incidents);
