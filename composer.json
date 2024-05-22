@@ -112,7 +112,8 @@
         },
         "paas": {
             "php-config": [
-                "session.gc_maxlifetime = 86400"
+                "session.gc_maxlifetime = 86400",
+                "max_input_vars = 5000"
             ],
             "nginx-includes": [
                 "paas/server.locations"
