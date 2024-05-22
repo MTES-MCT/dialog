@@ -125,6 +125,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
             $regulationOrderViews[] = new RegulationOrderDatexListItemView(
                 uuid: $regulationOrder->getUuid(),
+                regulationId: $regulationOrder->getIdentifier() . '#' . $regulationOrderRecord->getOrganizationUuid(),
                 organization: $regulationOrderRecord->getOrganizationName(),
                 description: $regulationOrder->getDescription(),
                 startDate: $regulationOrder->getStartDate(),
