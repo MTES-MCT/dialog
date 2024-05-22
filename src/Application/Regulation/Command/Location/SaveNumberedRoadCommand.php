@@ -50,4 +50,8 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     {
         return new GetNumberedRoadGeometryQuery($this, $this->location, $this->geometry);
     }
+
+    public function clean(): void
+    {
+    }
 }

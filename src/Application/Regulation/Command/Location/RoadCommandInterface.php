@@ -13,4 +13,6 @@ interface RoadCommandInterface extends CommandInterface
     public function setLocation(Location $location): void;
 
     public function getGeometryQuery(): QueryInterface;
+
+    public function clean(): void;
 }
