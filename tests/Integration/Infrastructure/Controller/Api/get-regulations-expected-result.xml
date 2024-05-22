@@ -427,7 +427,7 @@
                     <com:value>Main Org</com:value>
                 </com:values>
             </issuingAuthority>
-            <regulationId>F/CIFS/2021</regulationId>
+            <regulationId>F/CIFS/2021#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
             <status>madeAndImplemented</status>
 
             <validityByOrder>
@@ -567,7 +567,7 @@
                     <com:value>Main Org</com:value>
                 </com:values>
             </issuingAuthority>
-            <regulationId>FO2/2023</regulationId>
+            <regulationId>FO2/2023#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
             <status>madeAndImplemented</status>
 
             <validityByOrder>

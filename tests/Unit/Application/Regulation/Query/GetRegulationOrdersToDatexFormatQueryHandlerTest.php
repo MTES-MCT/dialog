@@ -82,6 +82,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganizationName')
             ->willReturn('Autorité 1');
+        $regulationOrderRecord1
+            ->expects(self::once())
+            ->method('getOrganizationUuid')
+            ->willReturn('56456ff6-7e1c-4d24-aa09-9c650d7f6115');
         $regulationOrder1
             ->expects(self::once())
             ->method('getDescription')
@@ -329,6 +333,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganizationName')
             ->willReturn('Autorité 2');
+        $regulationOrderRecord2
+            ->expects(self::once())
+            ->method('getOrganizationUuid')
+            ->willReturn('df1895bf-17af-4d68-adbd-02a7110d3b29');
         $regulationOrder2
             ->expects(self::once())
             ->method('getDescription')
@@ -442,6 +450,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganizationName')
             ->willReturn('Autorité 3');
+        $regulationOrderRecord3
+            ->expects(self::once())
+            ->method('getOrganizationUuid')
+            ->willReturn('fde674d4-9e82-42f5-841d-13f7d20b43e0');
         $regulationOrder3
             ->expects(self::once())
             ->method('getDescription')
@@ -543,7 +555,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             [
                 new RegulationOrderDatexListItemView(
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
-                    identifier: 'F01/2024',
+                    regulationId: 'F01/2024#56456ff6-7e1c-4d24-aa09-9c650d7f6115',
                     organization: 'Autorité 1',
                     description: 'Description 1',
                     startDate: $startDate1,
@@ -568,7 +580,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                 ),
                 new RegulationOrderDatexListItemView(
                     uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
-                    identifier: 'F02/2024',
+                    regulationId: 'F02/2024#df1895bf-17af-4d68-adbd-02a7110d3b29',
                     organization: 'Autorité 2',
                     description: 'Description 2',
                     startDate: $startDate2,
@@ -596,7 +608,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                 ),
                 new RegulationOrderDatexListItemView(
                     uuid: '12410fb8-a2b9-4449-a7d5-a4f409807f99',
-                    identifier: 'F03/2024',
+                    regulationId: 'F03/2024#fde674d4-9e82-42f5-841d-13f7d20b43e0',
                     organization: 'Autorité 3',
                     description: 'Description 3',
                     startDate: $startDate3,
