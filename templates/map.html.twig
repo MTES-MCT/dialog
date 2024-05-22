@@ -5,18 +5,25 @@
 {% endblock %}
 
 {% block body %}
-<nav class="map-overlay top">
-  {% include '_map_filter.html.twig' %}
-</nav>
-<dialog-map class="fr-py-2w"
-            data-height="480px"
-	    data-geojson="{{ locationsAsGeoJson|json_encode }}"
-	    data-bbox="{{ locationsBbox|json_encode }}"
-            data-pos="[2.725, 47.16]"
-            data-zoom="5"
-	    data-locations-as-geojson-output-id="locations_as_geojson_output"
-	    data-map-filter-turbo-frame-id="map_filter_turbo_frame"
-	    data-location-path="{{ path('get_location') }}"
-            aria-hidden="true"
-            />
+    <nav class="fr-accordion" style="position: absolute; z-index: 99; background-color: white;">
+	<button
+	    class="fr-accordion__btn"
+	    aria-controls="fr-accordion-wrapper"
+	    aria-expanded="false"
+	>Filtrer les arrêtés sur la carte</button>
+	<div class="fr-collapse fr-p-1w" id="fr-accordion-wrapper">
+	    {% include '_map_filter.html.twig' %}
+	</div>
+    </nav>
+    <dialog-map class=""
+		data-height="480px"
+		data-geojson="{{ locationsAsGeoJson|json_encode }}"
+		data-bbox="{{ locationsBbox|json_encode }}"
+		data-pos="[2.725, 47.16]"
+		data-zoom="5"
+		data-locations-as-geojson-output-id="locations_as_geojson_output"
+		data-map-filter-turbo-frame-id="map_filter_turbo_frame"
+		data-location-path="{{ path('get_location') }}"
+		aria-hidden="true"
+    />
 {% endblock %}

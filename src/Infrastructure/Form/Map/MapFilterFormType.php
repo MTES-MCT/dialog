@@ -23,7 +23,7 @@ final class MapFilterFormType extends AbstractType
                 'display_drafts',
                 CheckboxType::class,
                 options: [
-                    'label' => 'Arrêtés en état de brouillon',
+                    'label' => 'Arrêtés en brouillon',
                     'value' => 'yes',
                     'required' => false,
                 ],
@@ -50,7 +50,7 @@ final class MapFilterFormType extends AbstractType
 
         return [
             'choices' => $choices,
-            'label' => 'regulation.general_info.category',
+            'label' => false,
             'expanded' => true, // we want radio buttons
             'multiple' => false, // we want radio buttons
             'required' => true,

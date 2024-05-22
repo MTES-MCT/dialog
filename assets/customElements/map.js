@@ -78,7 +78,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
 	    );
 	    firstMapLoad = false;
 	};
-        map.addControl(new maplibregl.NavigationControl(), 'top-left');
+        map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 	const locationSourceAsGeoJSON = {
             type: 'geojson',
             data: {

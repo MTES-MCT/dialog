@@ -1,8 +1,8 @@
 <turbo-frame id="map_filter_turbo_frame">
     <dialog-map-filter-form data-turbo-frame-id="map_filter_turbo_frame" data-update-url-with="{{ path('app_carto') }}">
 	{{ form_start(form) }}
-	    {{ form_row(form.display_drafts) }}
-	    {{ form_row(form.category) }}
+	    {{ form_row(form.display_drafts, {group_class: 'fr-checkbox-group fr-mb-3w fr-pl-1w'}) }}
+	    {{ form_row(form.category, {group_class: 'fr-radio-group'}) }}
 	    <noscript>
 		{{ form_row(form.save) }}
 	    </noscript>
