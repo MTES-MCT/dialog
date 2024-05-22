@@ -84,7 +84,8 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
             data: {
                 type: 'FeatureCollection',
                 features: geojson
-            }
+            },
+	    tolerance: 0.0, // we want to display the data at very low zoom level -> tolerance must be very low
         };
         map.addSource('locations-source', locationSourceAsGeoJSON);
         map.addLayer(
