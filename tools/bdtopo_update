@@ -59,8 +59,18 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
 
 
 @dataclass
+class Table:
+    name: str
+    select_sql: str | list[str] | None = None
+
+    def __post_init__(self):
+        if isinstance(self.select_sql, list):
+            self.select_sql = "\n".join(self.select_sql)
+
+
+@dataclass
 class Config:
-    tables: list[str]
+    tables: list[Table]
 
 
 def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
@@ -70,11 +80,14 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
 
     search_pattern = "*/BDTOPO/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*"
 
-    geopackage_paths = [
-        path for path in directory.glob(search_pattern) if path.stem in config.tables
-    ]
+    tables_by_name = {table.name: table for table in config.tables}
+    geopackages = []
 
-    if not geopackage_paths:
+    for path in directory.glob(search_pattern):
+        if path.stem in tables_by_name:
+            geopackages.append({"path": path, "table": tables_by_name[path.stem]})
+
+    if not geopackages:
         print(
             f"ERROR: no geopackages found at {directory} "
             f"using pattern {search_pattern!r}",
@@ -84,7 +97,7 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
 
     # Improve pg disk usage by importing smallest packages first.
     # Reason: ogr2ogr runs TRUNCATE *after* importing the 1st package.
-    geopackage_paths = sorted(geopackage_paths, key=lambda p: p.stat().st_size)
+    geopackages = sorted(geopackages, key=lambda t: t["path"].stat().st_size)
 
     with ExitStack() as exit_stack:
         if url is not None:
@@ -154,11 +167,12 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
         tables_seen = set()
 
         try:
-            for path in geopackage_paths:
-                tablename = path.stem  # e.g. voie_nommee
+            for gpkg in geopackages:
+                path = gpkg["path"]  # type: Path
+                table = gpkg["table"]  # type: Table
 
                 pretty_size = _sizeof_fmt(path.stat().st_size)
-                print(f"------> Import into {tablename}: {path} ({pretty_size})")
+                print(f"------> Import into {table.name}: {path} ({pretty_size})")
 
                 options = [
                     # See general ogr2ogr options here:
@@ -166,13 +180,16 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
                     "-progress",
                     # Define the table name on initial import
                     "-nln",
-                    tablename,
+                    table.name,
                     # Reproject all geometries to standard WGS 84 projection, aka EPSG 4326
                     # (Geopackages in BD TOPO may not all use the same projection)
                     "-t_srs",
                     "EPSG:4326",
                     # Append on subsequent calls
                     "-append",
+                    # Use provided SQL statement, if any, to only import certain columns
+                    # (In this case, progress bar won't be available due a limitation of the ogr2ogr Postgres driver)
+                    *(["-sql", table.select_sql] if table.select_sql else []),
                     # Enable slightly faster ingestion
                     # https://gdal.org/drivers/vector/pg.html#config-PG_USE_COPY
                     "--config",
@@ -180,7 +197,7 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
                     "YES",
                 ]
 
-                if tablename not in tables_seen:
+                if table.name not in tables_seen:
                     options.extend(
                         [
                             # Remove existing tuples before importing (saves disk space
@@ -194,7 +211,7 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
                         ]
                     )
 
-                    tables_seen.add(tablename)
+                    tables_seen.add(table.name)
 
                 result = _run_dockerized_ogr2ogr(
                     database_url,
@@ -284,7 +301,7 @@ if __name__ == "__main__":
     configdata = json.loads(args.config.read_text())
 
     config = Config(
-        tables=configdata["tables"],
+        tables=[Table(**t) for t in configdata["tables"]],
     )
 
     # Relative paths are OK but ogr2ogr volume will require an absolute path.

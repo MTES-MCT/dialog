@@ -31,7 +31,7 @@ final class PolylineMakerTest extends WebTestCase
             ],
             'multiline-mergeable' => [
                 'geometry' => '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[2, 3], [4, 5]]]}',
-                'polylines' => ['1 0 3 2 5 4'],
+                'polylines' => ['1 0 3 2', '3 2 5 4'],
             ],
             'multiline-separate' => [
                 'geometry' => '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]}',
@@ -51,8 +51,8 @@ final class PolylineMakerTest extends WebTestCase
     /**
      * @dataProvider provideConvertToPolylines
      */
-    public function testConvertToPolylines(string $geometry, array $polylines, ?string $roadGeometry = null): void
+    public function testConvertToPolylines(string $geometry, array $polylines): void
     {
-        $this->assertEquals($polylines, $this->polylineMaker->getPolylines($geometry, $roadGeometry));
+        $this->assertEquals($polylines, $this->polylineMaker->getPolylines($geometry));
     }
 }
