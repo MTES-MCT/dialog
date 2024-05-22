@@ -20,19 +20,21 @@ final class PolylineMaker implements PolylineMakerInterface
             ->getConnection()
             ->fetchAllAssociative(
                 'WITH linestring AS (
-                        -- Split the geometry into its individual LINESTRING components
-                        SELECT (components.dump).geom AS geom FROM (
-                            SELECT ST_Dump(ST_LineMerge(:geom)) AS dump
-                        ) AS components
-                    )
-                    SELECT array_to_string(
-                        array(
-                            SELECT ST_Y(d.geom) || \' \' || ST_X(d.geom)
-                            FROM ST_DumpPoints(linestring.geom) AS d
-                        ),
-                        \' \'
-                    ) AS polyline
-                    FROM linestring',
+                    -- Split the geometry into its individual LINESTRING components
+                    SELECT (components.dump).geom AS geom FROM (
+                        SELECT ST_Dump(ST_Multi(:geom)) as dump
+                    ) AS components
+                    WHERE ST_Dimension((components.dump).geom) >= 1 -- Remove (MULTI)POINT components
+                    AND ST_NPoints((components.dump).geom) >= 2 -- Remove single-point LINESTRING components
+                )
+                SELECT array_to_string(
+                    array(
+                        SELECT ST_Y(d.geom) || \' \' || ST_X(d.geom)
+                        FROM ST_DumpPoints(linestring.geom) AS d
+                    ),
+                    \' \'
+                ) AS polyline
+                FROM linestring',
                 ['geom' => $geometry],
             );
 

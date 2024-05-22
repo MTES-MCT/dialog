@@ -1,7 +1,20 @@
 {
     "tables": [
-        "voie_nommee",
-        "route_numerotee_ou_nommee",
-        "point_de_repere"
+        {
+            "name": "voie_nommee"
+        },
+        {
+            "name": "route_numerotee_ou_nommee"
+        },
+        {
+            "name": "point_de_repere"
+        },
+        {
+            "name": "troncon_de_route",
+            "select_sql": [
+                "SELECT identifiant_voie_1_gauche, sens_de_circulation, geometrie",
+                "FROM troncon_de_route"
+            ]
+        }
     ]
 }
