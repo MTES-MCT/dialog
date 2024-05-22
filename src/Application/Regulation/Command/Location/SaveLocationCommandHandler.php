@@ -24,6 +24,7 @@ final class SaveLocationCommandHandler
     {
         $command->clean();
         $roadCommand = $command->getRoadCommand();
+        $roadCommand->clean();
 
         // Update location
 
