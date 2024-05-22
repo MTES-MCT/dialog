@@ -159,7 +159,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function findRegulationOrdersForCifsIncidentFormat(array $allowedIds = []): array
+    public function findRegulationOrdersForCifsIncidentFormat(array $allowedLocationIds = []): array
     {
         return $this->createQueryBuilder('roc')
             ->addSelect('ro', 'loc', 'm', 'p', 'd', 't')
@@ -171,15 +171,15 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('p.dailyRange', 'd')
             ->leftJoin('p.timeSlots', 't')
             ->where(
-                $allowedIds ? 'roc.uuid IN (:uuids)' : null,
                 'roc.status = :status',
                 'ro.endDate IS NOT NULL',
                 'loc.geometry IS NOT NULL',
+                $allowedLocationIds ? 'loc.uuid IN (:locationIds)' : null,
                 'm.type = :measureType',
                 'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )
             ->setParameters([
-                ...($allowedIds ? ['uuids' => $allowedIds] : []),
+                ...($allowedLocationIds ? ['locationIds' => $allowedLocationIds] : []),
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
             ])

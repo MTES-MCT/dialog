@@ -20,14 +20,14 @@ final class GetCifsIncidentsQueryHandler
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
-        private array $cifsAllowedRegulationOrderRecordIds = [],
+        private array $cifsAllowedLocationIds = [],
     ) {
     }
 
     public function __invoke(GetCifsIncidentsQuery $query): array
     {
         $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat(
-            allowedIds: $this->cifsAllowedRegulationOrderRecordIds,
+            allowedLocationIds: $this->cifsAllowedLocationIds,
         );
 
         // Reference: https://developers.google.com/waze/data-feed/cifs-specification?hl=fr
