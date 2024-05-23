@@ -1,3 +1,7 @@
 {% for roadNumber in departmentalRoadNumbers %}
     <li role="option" data-autocomplete-value="{{ roadNumber.roadNumber }}">{{ roadNumber.roadNumber }}</li>
 {% endfor %}
+
+<template id="status">
+    {{ 'common.autocomplete.results_count'|trans({ '%count%': departmentalRoadNumbers|length }) }}
+</template>

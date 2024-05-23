@@ -57,6 +57,8 @@
             }|json_encode }}"
             data-autocomplete-min-length-value="3"
             data-autocomplete-delay-value="500"
+            data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+            data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
             data-autocomplete-prefetch-value="true"
             data-autocomplete-fetch-empty-value="true"
         >
@@ -83,7 +85,9 @@
                 aria-label="{{ 'regulation.location.named_street.intersection.results_label'|trans }}"
                 class="fr-x-autocomplete"
                 data-autocomplete-target="results"
-            ></ul>
+            >
+                <li role="status" data-autocomplete-target="status"></li>
+            </ul>
         </div>
     </div>
 </fieldset>

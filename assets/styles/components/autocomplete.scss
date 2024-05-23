@@ -13,15 +13,26 @@
         z-index: 3;
         position: absolute;
 
-        li[role="option"] {
+        li[role="option"], li[role="status"] {
             border-bottom: 1px solid var(--background-contrast-grey-active);
             padding: 10px;
-            cursor: pointer;
             background: var(--background-default-grey);
+        }
+        
+        li[role="option"] {
+            cursor: pointer;
         }
 
         li[role="option"]:hover, li[role="option"].active, li[role="option"][aria-selected="true"] {
             background-color: var(--background-contrast-grey);
+        }
+
+        li[role="status"] {
+            font-style: italic;
+            cursor: default;
+        }
+        li[role="status"]:empty {
+            display: none;
         }
     }
 }

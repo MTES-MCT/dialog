@@ -1,16 +1,19 @@
 import { Controller } from "@hotwired/stimulus"
+import { Idiomorph } from 'idiomorph/dist/idiomorph.esm';
 
 const optionSelector = "[role='option']:not([aria-disabled])"
 const activeSelector = "[aria-selected='true']"
 
 export default class Autocomplete extends Controller {
-  static targets = ["input", "hidden", "results"]
+  static targets = ["input", "hidden", "results", "status"]
   static classes = ["selected"]
   static values = {
     ready: Boolean,
     submitOnEnter: Boolean,
     url: String,
     minLength: Number,
+    loadingStatus: { type: String, default: '' },
+    emptyStatus: { type: String, default: '' },
     delay: { type: Number, default: 300 },
     queryParam: { type: String, default: "q" },
     fetchEmpty: { type: Boolean, default: false },
@@ -19,6 +22,19 @@ export default class Autocomplete extends Controller {
 
   connect() {
     this.close()
+
+    // Accessibility attributes
+    // See: https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/
+    // Announce that this is a combobox with list of results
+    this.inputTarget.setAttribute("role", "combobox")
+    this.inputTarget.setAttribute("aria-autocomplete", "list")
+    // Link the input to the list of results
+    const resultsId = this.resultsTarget.id
+    if (!resultsId) {
+      throw new Error('[a11y]: results element must have an id="..."')
+    }
+    this.inputTarget.setAttribute("aria-controls", resultsId)
+    this.inputTarget.setAttribute('aria-describedby', resultsId) // Announce list of items and status when they change
 
     if(!this.inputTarget.hasAttribute("autocomplete")) this.inputTarget.setAttribute("autocomplete", "off")
     this.inputTarget.setAttribute("spellcheck", "false")
@@ -35,6 +51,10 @@ export default class Autocomplete extends Controller {
 
     if (this.inputTarget.hasAttribute("autofocus")) {
       this.inputTarget.focus()
+    }
+
+    if (!this.inputTarget.value && this.hasStatusTarget && this.emptyStatusValue) {
+      this.statusTarget.textContent = this.emptyStatusValue
     }
 
     this.readyValue = true
@@ -62,10 +82,25 @@ export default class Autocomplete extends Controller {
     return sibling || def
   }
 
+  selectFirst() {
+    const first = this.options[0]
+    if (first) {
+      this.select(first)
+    }
+  }
+
+  selectLast() {
+    const options = this.options
+    const last = options[options.length - 1]
+    if (last) {
+      this.select(last)
+    }
+  }
+
   select(target) {
     const previouslySelected = this.selectedOption
     if (previouslySelected) {
-      previouslySelected.removeAttribute("aria-selected")
+      previouslySelected.setAttribute("aria-selected", "false")
       previouslySelected.classList.remove(...this.selectedClassesOrDefault)
     }
 
@@ -81,22 +116,35 @@ export default class Autocomplete extends Controller {
   }
 
   onEscapeKeydown = (event) => {
-    if (!this.resultsShown) return
+    if (!this.resultsShown) {
+      this.clear()
+      return
+    }
 
-    this.hideAndRemoveOptions()
+    this.close()
     event.stopPropagation()
     event.preventDefault()
   }
 
   onArrowDownKeydown = (event) => {
-    const item = this.sibling(true)
-    if (item) this.select(item)
+    if (!this.resultsShown) {
+      this.open()
+      this.selectFirst()
+    } else {
+      const item = this.sibling(true)
+      if (item) this.select(item)
+    }
     event.preventDefault()
   }
 
   onArrowUpKeydown = (event) => {
-    const item = this.sibling(false)
-    if (item) this.select(item)
+    if (!this.resultsShown) {
+      this.open()
+      this.selectLast()
+    } else {
+      const item = this.sibling(false)
+      if (item) this.select(item)
+    }
     event.preventDefault()
   }
 
@@ -142,7 +190,8 @@ export default class Autocomplete extends Controller {
     }
 
     this.inputTarget.focus()
-    this.hideAndRemoveOptions()
+    this.close()
+    this.resetOptions()
 
     this.element.dispatchEvent(
       new CustomEvent("autocomplete.change", {
@@ -177,7 +226,7 @@ export default class Autocomplete extends Controller {
     if ((query && query.length >= this.minLengthValue) || (!query && this.fetchEmptyValue)) {
       this.fetchResults(query)
     } else {
-      this.hideAndRemoveOptions()
+      this.resetOptions()
     }
   }
 
@@ -187,9 +236,25 @@ export default class Autocomplete extends Controller {
     optionsWithoutId.forEach(el => el.id = `${prefix}-option-${Autocomplete.uniqOptionId++}`)
   }
 
-  hideAndRemoveOptions() {
-    this.close()
-    this.resultsTarget.innerHTML = null
+  resetOptions() {
+    if (this.hasStatusTarget && this.emptyStatusValue) {
+      this.setStatus(this.emptyStatusValue)
+    }
+
+    this.morphResults('')
+  }
+
+  setStatus(text) {
+    this.statusTarget.textContent = text
+  }
+
+  showLoadingStatus() {
+    if (!this.hasStatusTarget || !this.loadingStatusValue) {
+      return
+    }
+    this.resultsShown = true
+    this.inputTarget.setAttribute("aria-expanded", "true")
+    this.setStatus(this.loadingStatusValue)
   }
 
   fetchResults = async (query) => {
@@ -198,6 +263,7 @@ export default class Autocomplete extends Controller {
     const url = this.buildURL(query)
     try {
       this.element.dispatchEvent(new CustomEvent("loadstart"))
+      this.showLoadingStatus()
       const html = await this.doFetch(url)
       this.replaceResults(html)
       this.element.dispatchEvent(new CustomEvent("load"))
@@ -229,8 +295,34 @@ export default class Autocomplete extends Controller {
     return html
   }
 
+  morphResults(html) {
+    // Be sure to morph while keeping the <li role="status"> reference the same,
+    // otherwise screen readers may not announce the new status.
+    if (this.hasStatusTarget) {
+      html += this.statusTarget.outerHTML;
+    }
+
+    Idiomorph.morph(this.resultsTarget, html, {
+      morphStyle: 'innerHTML'
+    });
+
+    const statusTemplate = this.resultsTarget.querySelector('template[id="status"]');
+
+    if (statusTemplate) {
+      if (this.hasStatusTarget) {
+        // Load HTML string into a throaway div
+        const div = document.createElement('div');
+        div.appendChild(statusTemplate.content.cloneNode(true));
+        this.setStatus(div.textContent);
+      }
+
+      statusTemplate.remove();
+    }
+  }
+
   replaceResults(html) {
-    this.resultsTarget.innerHTML = html
+    this.close()
+    this.morphResults(html)
     this.identifyOptions()
     if (!!this.options) {
       this.open()
@@ -243,7 +335,7 @@ export default class Autocomplete extends Controller {
     if (this.resultsShown) return
 
     this.resultsShown = true
-    this.element.setAttribute("aria-expanded", "true")
+    this.inputTarget.setAttribute("aria-expanded", "true")
     this.element.dispatchEvent(
       new CustomEvent("toggle", {
         detail: { action: "open", inputTarget: this.inputTarget, resultsTarget: this.resultsTarget }
@@ -256,7 +348,7 @@ export default class Autocomplete extends Controller {
 
     this.resultsShown = false
     this.inputTarget.removeAttribute("aria-activedescendant")
-    this.element.setAttribute("aria-expanded", "false")
+    this.inputTarget.setAttribute("aria-expanded", "false")
     this.element.dispatchEvent(
       new CustomEvent("toggle", {
         detail: { action: "close", inputTarget: this.inputTarget, resultsTarget: this.resultsTarget }

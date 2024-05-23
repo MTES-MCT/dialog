@@ -199,6 +199,8 @@
                         data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.numberedRoad.administrator.vars.id}|json_encode }}"
                         data-autocomplete-min-length-value="2"
                         data-autocomplete-delay-value="500"
+                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadNumber"
                     >
@@ -216,7 +218,9 @@
                                 role="listbox"
                                 aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
                                 class="fr-x-autocomplete"
-                                data-autocomplete-target="results">
+                                data-autocomplete-target="results"
+                            >
+                                <li role="status" data-autocomplete-target="status"></li>
                             </ul>
                     </div>
 
@@ -271,6 +275,8 @@
                         data-autocomplete-query-param-value="search"
                         data-autocomplete-min-length-value="3"
                         data-autocomplete-delay-value="500"
+                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="city"
                     >
@@ -290,7 +296,9 @@
                             aria-label="{{ 'regulation.location.city.results_label'|trans }}"
                             class="fr-x-autocomplete"
                             data-autocomplete-target="results"
-                        ></ul>
+                        >
+                            <li role="status" data-autocomplete-target="status"></li>
+                        </ul>
                     </div>
 
                     <div
@@ -299,7 +307,10 @@
                         data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
                         data-autocomplete-query-param-value="search"
                         data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
-                        data-autocomplete-min-length-value="3" data-autocomplete-delay-value="500"
+                        data-autocomplete-min-length-value="3"
+                        data-autocomplete-delay-value="500"
+                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadName"
                     >
@@ -318,7 +329,9 @@
                             aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
                             class="fr-x-autocomplete"
                             data-autocomplete-target="results"
-                        ></ul>
+                        >
+                            <li role="status" data-autocomplete-target="status"></li>
+                        </ul>
                     </div>
 
                     <div data-controller="form-reveal">

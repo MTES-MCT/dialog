@@ -75,7 +75,7 @@ export default class Autocomplete extends StimulusAutocomplete {
   // Action callbacks
 
   reset() {
-    this.resultsTarget.innerHTML = '';
+    this.resetOptions();
     this._fetchManager.reset();
   }
 }
