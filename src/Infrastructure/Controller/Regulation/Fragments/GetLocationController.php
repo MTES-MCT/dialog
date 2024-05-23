@@ -33,18 +33,20 @@ final class GetLocationController extends AbstractController
     {
         $location = null;
         $measureAsAView = null;
+        $regulation = null;
         $regulationOrderRecordId = null;
         if ($uuid) { // uuid of a location
             $location = $this->locationRepository->findOneByUuid($uuid);
             if ($location) {
                 $measure = $this->measureRepository->findOneByUuid($location->getMeasure()->getUuid());
                 if ($measure) {
-                    $regulationOrderRecordId = $measure->getRegulationOrder()->getRegulationOrderRecord()->getUuid();
+                    $regulation = $measure->getRegulationOrder();
+                    $regulationOrderRecordId = $regulation->getRegulationOrderRecord()->getUuid();
                     $measureAsAView = MeasureView::fromEntity($measure);
                 }
             }
         }
-        if (!$location or !$measureAsAView) {
+        if (!$location or !$measureAsAView or !$regulation) {
             throw new NotFoundHttpException();
         }
 
@@ -54,6 +56,7 @@ final class GetLocationController extends AbstractController
                 context: [
                     'location' => $location,
                     'measure' => $measureAsAView,
+                    'regulation' => $regulation,
                     'regulationOrderRecordId' => $regulationOrderRecordId,
                 ],
             ),
