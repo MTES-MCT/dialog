@@ -427,14 +427,14 @@
                     <com:value>Main Org</com:value>
                 </com:values>
             </issuingAuthority>
-            <regulationId>F/CIFS/2021#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
+            <regulationId>F/CIFS/2023#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
             <status>madeAndImplemented</status>
 
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
-                    <com:overallStartTime>2021-11-02T00:00:00.000Z</com:overallStartTime>
-                    <com:overallEndTime>2021-11-06T23:59:59.000Z</com:overallEndTime>
+                    <com:overallStartTime>2023-06-02T00:00:00.000Z</com:overallStartTime>
+                    <com:overallEndTime>2023-06-10T23:59:59.000Z</com:overallEndTime>
                 </com:validityTimeSpecification>
             </validityByOrder>
 
@@ -453,9 +453,9 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+                                    <com:overallStartTime>2023-09-03T00:00:00+00:00</com:overallStartTime>
 
-                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:overallEndTime>2023-09-06T00:00:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
@@ -477,9 +477,8 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
-
-                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2023-09-05T00:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-09-06T00:00:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
@@ -503,9 +502,8 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2021-11-03T08:00:00+00:00</com:overallStartTime>
-
-                                    <com:overallEndTime>2021-11-05T10:00:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2023-09-03T08:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-09-05T10:00:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
@@ -553,6 +551,8 @@
                             </locationByOrder>
                         </conditions>
                     </conditions>
+
+
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
@@ -586,7 +586,6 @@
 
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
 
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
@@ -706,6 +705,81 @@
                             <vehicleCharacteristics>
                                 <com:vehicleUsage>emergencyServices</com:vehicleUsage>
                             </vehicleCharacteristics>
+                        </conditions>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+        </trafficRegulationOrder>
+        <trafficRegulationOrder id="edc8dd18-5f56-4684-b2ba-d18658d53518" version="1">
+            <description>
+                <com:values>
+                    <com:value>Arrêté exporté vers CIFS</com:value>
+                </com:values>
+            </description>
+            <issuingAuthority>
+                <com:values>
+                    <com:value>Mairie de Savenay</com:value>
+                </com:values>
+            </issuingAuthority>
+            <regulationId>F/OUTDATED/CIFS/2021#3c46e94d-7ca2-4253-a9ea-0ce5fdb966a4</regulationId>
+            <status>madeAndImplemented</status>
+
+            <validityByOrder>
+                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                <com:validityTimeSpecification>
+                    <com:overallStartTime>2021-06-02T00:00:00.000Z</com:overallStartTime>
+                    <com:overallEndTime>2021-06-10T23:59:59.000Z</com:overallEndTime>
+                </com:validityTimeSpecification>
+            </validityByOrder>
+
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+
+                    <conditions xsi:type="ConditionSet">
+                        <operator>or</operator>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2021-11-02T00:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2021-11-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:validPeriod>
+                                        <com:recurringDayWeekMonthPeriod>
+                                            <com:applicableDay>monday</com:applicableDay>
+                                            <com:applicableDay>tuesday</com:applicableDay>
+                                            <com:applicableDay>wednesday</com:applicableDay>
+                                            <com:applicableDay>thursday</com:applicableDay>
+                                            <com:applicableDay>friday</com:applicableDay>
+                                            <com:applicableDay>saturday</com:applicableDay>
+                                            <com:applicableDay>sunday</com:applicableDay>
+                                        </com:recurringDayWeekMonthPeriod>
+                                    </com:validPeriod>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                    </conditions>
+
+                    <conditions xsi:type="ConditionSet">
+                        <operator>or</operator>
+                        <conditions xsi:type="LocationCondition">
+                            <locationByOrder xsi:type="loc:LinearLocation">
+                                <loc:supplementaryPositionalDescription>
+                                    <loc:roadInformation>
+                                        <loc:roadName></loc:roadName>
+                                    </loc:roadInformation>
+                                </loc:supplementaryPositionalDescription>
+                                <loc:_linearLocationExtension>
+                                    <loc:linearLocationExtended>
+                                        <locdx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</locdx:geoJsonGeometry>
+                                    </loc:linearLocationExtended>
+                                </loc:_linearLocationExtension>
+                            </locationByOrder>
                         </conditions>
                     </conditions>
                 </condition>
