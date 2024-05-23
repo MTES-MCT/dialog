@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@gouvfr/dsfr": "^1.7.2",
+        "idiomorph": "^0.3.0",
         "remixicon": "^2.5.0"
     },
     "engines": {

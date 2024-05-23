@@ -16,17 +16,31 @@ final class GetCityCompletionFragmentControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $li = $crawler->filter('li');
-        $this->assertSame(3, $li->count());
+        $this->assertSame('3 résultats trouvés', $crawler->filter('template[id="status"]')->text());
+        $options = $crawler->filter('li[role="option"]');
+        $this->assertSame(3, $options->count());
 
-        $this->assertSame('Blanc Mesnil (93150)', $li->eq(0)->text());
-        $this->assertSame('93007', $li->eq(0)->attr('data-autocomplete-value'));
+        $this->assertSame('Blanc Mesnil (93150)', $options->eq(0)->text());
+        $this->assertSame('93007', $options->eq(0)->attr('data-autocomplete-value'));
 
-        $this->assertSame('Le Mesnil-Esnard (76240)', $li->eq(1)->text());
-        $this->assertSame('76429', $li->eq(1)->attr('data-autocomplete-value'));
+        $this->assertSame('Le Mesnil-Esnard (76240)', $options->eq(1)->text());
+        $this->assertSame('76429', $options->eq(1)->attr('data-autocomplete-value'));
 
-        $this->assertSame('Le Mesnil-le-Roi (78600)', $li->eq(2)->text());
-        $this->assertSame('78396', $li->eq(2)->attr('data-autocomplete-value'));
+        $this->assertSame('Le Mesnil-le-Roi (78600)', $options->eq(2)->text());
+        $this->assertSame('78396', $options->eq(2)->attr('data-autocomplete-value'));
+    }
+
+    public function testCityAutoCompleteNoResults(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/city-completions?search=BlahBlah');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $this->assertSame('0 résultat trouvé', $crawler->filter('template[id="status"]')->text());
+        $options = $crawler->filter('li[role="option"]');
+        $this->assertSame(0, $options->count());
     }
 
     public function testBadRequest(): void

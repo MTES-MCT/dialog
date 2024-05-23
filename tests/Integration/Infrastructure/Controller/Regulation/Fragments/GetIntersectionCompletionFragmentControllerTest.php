@@ -16,10 +16,11 @@ final class GetIntersectionCompletionFragmentControllerTest extends AbstractWebT
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $li = $crawler->filter('li');
-        $this->assertSame(2, $li->count());
-        $this->assertSame('Boulevard Morland', $li->eq(0)->text());
-        $this->assertSame('Quai Henri Iv', $li->eq(1)->text());
+        $this->assertSame('2 résultats trouvés', $crawler->filter('template[id="status"]')->text());
+        $options = $crawler->filter('li[role="option"]');
+        $this->assertSame(2, $options->count());
+        $this->assertSame('Boulevard Morland', $options->eq(0)->text());
+        $this->assertSame('Quai Henri Iv', $options->eq(1)->text());
     }
 
     public function testIntersectionsAutoCompleteWithSearch(): void
@@ -30,9 +31,10 @@ final class GetIntersectionCompletionFragmentControllerTest extends AbstractWebT
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $li = $crawler->filter('li');
-        $this->assertSame(1, $li->count());
-        $this->assertSame('Boulevard Morland', $li->eq(0)->text());
+        $this->assertSame('1 résultat trouvé', $crawler->filter('template[id="status"]')->text());
+        $options = $crawler->filter('li[role="option"]');
+        $this->assertSame(1, $options->count());
+        $this->assertSame('Boulevard Morland', $options->eq(0)->text());
     }
 
     private function provideTestBadRequest(): array
