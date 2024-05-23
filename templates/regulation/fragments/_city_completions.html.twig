@@ -1,3 +1,7 @@
 {% for city in cities %}
     <li role="option" data-autocomplete-value="{{ city.code }}">{{ city.label }}</li>
 {% endfor %}
+
+<template id="status">
+    {{ 'common.autocomplete.results_count'|trans({ '%count%': cities|length }) }}
+</template>

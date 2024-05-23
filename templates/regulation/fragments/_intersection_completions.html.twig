@@ -1,3 +1,7 @@
 {% for roadName in roadNames %}
     <li role="option">{{ roadName }}</li>
 {% endfor %}
+
+<template id="status">
+    {{ 'common.autocomplete.results_count'|trans({ '%count%': roadNames|length }) }}
+</template>
