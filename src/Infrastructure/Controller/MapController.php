@@ -28,7 +28,7 @@ final class MapController
         name: 'app_carto',
         methods: ['GET'],
     )]
-    public function __invoke(Request $request, #[MapQueryParameter] array $map_filter_form = ['display_drafts' => 'no', 'category' => 'permanents_and_temporaries']): Response
+    public function __invoke(Request $request, #[MapQueryParameter] array $map_filter_form = ['display_drafts' => 'no', 'category' => 'permanents_and_temporaries', 'display_future_regulations' => 'no']): Response
     {
         $form = $this->formFactory->create(
             type: MapFilterFormType::class,
@@ -45,8 +45,9 @@ final class MapController
         // the array '$map_filter_form' can be defined without the 'display_drafts' key for example, so we have to set a default value eventually
         $permanentAndOrTemporaryFilter = $map_filter_form['category'] ?? 'permanents_and_temporaries';
         $draftFilter = $map_filter_form['display_drafts'] ?? 'no';
+        $futureFilter = $map_filter_form['display_future_regulations'] ?? 'no';
 
-        $locationsAsGeoJson = $this->locationRepository->findFilteredLocationsAsGeoJson($permanentAndOrTemporaryFilter, $draftFilter);
+        $locationsAsGeoJson = $this->locationRepository->findFilteredLocationsAsGeoJson($permanentAndOrTemporaryFilter, $draftFilter, $futureFilter);
         $locationsBbox = $this->locationRepository->findAllLocationsBbox();
 
         return new Response(
@@ -55,8 +56,9 @@ final class MapController
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
                     'locationsBbox' => $locationsBbox,
-                    'permanentAndOrTemporaryFilter' => $permanentAndOrTemporaryFilter,
-                    'draftFilter' => $draftFilter,
+                    'permanentAndOrTemporaryFilter' => $permanentAndOrTemporaryFilter, // TODO : check if this is still useful
+                    'draftFilter' => $draftFilter, // TODO : check if this is still useful
+                    'futureFilter' => $futureFilter, // TODO : check if this is still useful
                     'form' => $form->createView(),
                 ],
             ),

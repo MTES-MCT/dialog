@@ -67,7 +67,7 @@ WHERE (bbox_as_points.dump_points).path IN (ARRAY[1,1], ARRAY[1,3])
         ];
     }
 
-    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter): array
+    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter, string $futureFilter): array
     {
         $rsm = new ResultSetMapping();
         $geoJSONs = $this->getEntityManager()
@@ -90,6 +90,8 @@ measure_type IN (\'noEntry\', \'speedLimitation\')
 AND
 (is_permanent OR (regulation_end_date >= NOW()))
 AND
+(:with_current_and_future_regulation OR (:with_current_regulation_only AND (regulation_start_date <= NOW())))
+AND
 ((:with_published_only AND NOT is_draft) OR :with_drafts_and_published)
 AND
 ((:with_permanents_only AND is_permanent) OR (:with_temporaries_only AND NOT is_permanent) OR (:with_temporaries_and_permanents))
@@ -105,6 +107,8 @@ FROM filtered_location
                       'with_permanents_only' => ($permanentAndOrTemporaryFilter == 'permanents_only'),
                       'with_temporaries_only' => ($permanentAndOrTemporaryFilter == 'temporaries_only'),
                       'with_temporaries_and_permanents' => ($permanentAndOrTemporaryFilter == 'permanents_and_temporaries'),
+                      'with_current_and_future_regulation' => ($futureFilter == 'yes'),
+                      'with_current_regulation_only' => ($futureFilter != 'yes'),
                   ])
                   ->getSingleColumnResult()
         ;

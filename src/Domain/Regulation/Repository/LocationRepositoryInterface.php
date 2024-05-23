@@ -16,5 +16,5 @@ interface LocationRepositoryInterface
 
     public function findAllLocationsBbox(): array;
 
-    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter): array;
+    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter, string $futureFilter): array;
 }
