@@ -98,8 +98,11 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
                     'line-cap': 'round',
 		},
 		'paint': {
-                    'line-color': '#ff69b4',
-                    'line-width': 10,
+                    'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
+				   ['==', ['get', 'measure_type'], 'noEntry'], '#ec625c', // red
+				   ['==', ['get', 'measure_type'], 'speedLimitation'], '#e98147', // orange
+				   '#000000'], // black
+                    'line-width': 4,
 		},
             },
 	    "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels

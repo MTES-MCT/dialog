@@ -74,6 +74,7 @@ WHERE (bbox_as_points.dump_points).path IN (ARRAY[1,1], ARRAY[1,3])
                   ->createNativeQuery('
 WITH filtered_location AS (
 SELECT (regulation_order.end_date IS NULL) AS is_permanent, (regulation_order_record.status = \'draft\') AS is_draft,
+       measure.type AS measure_type, 
        location.geometry AS geometry, location.uuid AS location_uuid
 FROM location
 JOIN measure ON measure.uuid = location.measure_uuid
@@ -83,7 +84,9 @@ JOIN regulation_order_record ON regulation_order_record.regulation_order_uuid = 
 SELECT ST_AsGeoJSON(filtered_location.*) AS geo_json
 FROM filtered_location
 WHERE
-((:with_published_only AND NOT filtered_location.is_draft) OR :with_drafts_and_published)
+measure_type IN (\'noEntry\', \'speedLimitation\')
+AND
+((:with_published_only AND NOT is_draft) OR :with_drafts_and_published)
 AND
 ((:with_permanents_only AND is_permanent) OR (:with_temporaries_only AND NOT is_permanent) OR (:with_temporaries_and_permanents))
 ',
