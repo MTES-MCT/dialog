@@ -56,9 +56,6 @@ final class GetMapFilterController extends AbstractController
                 name: '_map_filter.html.twig',
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
-                    'permanentAndOrTemporaryFilter' => $permanentAndOrTemporaryFilter, // TODO : check if this is still useful
-                    'draftFilter' => $draftFilter, // TODO : check if this is still useful
-                    'futureFilter' => $futureFilter, // TODO : check if this is still useful
                     'form' => $form->createView(),
                 ],
             ),

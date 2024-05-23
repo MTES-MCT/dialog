@@ -56,9 +56,6 @@ final class MapController
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
                     'locationsBbox' => $locationsBbox,
-                    'permanentAndOrTemporaryFilter' => $permanentAndOrTemporaryFilter, // TODO : check if this is still useful
-                    'draftFilter' => $draftFilter, // TODO : check if this is still useful
-                    'futureFilter' => $futureFilter, // TODO : check if this is still useful
                     'form' => $form->createView(),
                 ],
             ),
