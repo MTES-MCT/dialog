@@ -38,7 +38,7 @@ final class GetCityCompletionFragmentControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('0 résultat trouvé', $crawler->filter('template[id="status"]')->text());
+        $this->assertSame('Aucun résultat trouvé', $crawler->filter('template[id="status"]')->text());
         $options = $crawler->filter('li[role="option"]');
         $this->assertSame(0, $options->count());
     }
