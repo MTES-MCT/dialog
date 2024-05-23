@@ -1,5 +1,9 @@
 {% extends 'layouts/_base.html.twig' %}
 
+{% set skipLinks = [
+    {href: '#header-navigation', label: 'public.skiplinks.menu'|trans},
+] %}
+
 {% block header %}
     {% embed 'common/header.html.twig' %}
         {% block navigation %}

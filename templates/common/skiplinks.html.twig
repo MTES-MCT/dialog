@@ -1,0 +1,11 @@
+<div class="fr-skiplinks">
+    <nav class="fr-container" role="navigation" aria-label="{{ 'common.skiplinks'|trans }}">
+        <ul class="fr-skiplinks__list">
+            {% for skipLink in skipLinks|default([]) %}
+                <li>
+                    <a class="fr-link" href="{{ skipLink.href }}">{{ skipLink.label }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>

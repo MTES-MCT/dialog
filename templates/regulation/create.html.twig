@@ -6,6 +6,8 @@
      {{ title }} - {{ parent() }}
 {% endblock %}
 
+{% set definesContentSkiplink = true %}
+
 {% block page_class %}fr-background-alt--grey{% endblock %}
 
 {% block body %}
@@ -15,45 +17,47 @@
             { title },
         ]} %}
 
-        <h2 id="add-title">
-            {{ title }}
-        </h2>
+        <div id="content">
+            <h2 id="add-title">
+                {{ title }}
+            </h2>
 
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-8 fr-col-xl-9">
-                <div class="fr-mx-n4v fr-mx-md-0">
-                    {% include "regulation/_general_info_form.html.twig" with { form, cancelUrl } only %}
-                </div>
-            </div>
-
-            <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
-                <div class="app-card app-card--raised">
-                    <div class="app-card__content">
-                        <h3 class="fr-h4">{{ 'regulation.status'|trans }}</h3>
-                            {% include 'regulation/_status_badge.html.twig' with { status: 'draft', withHint: true } %}
-                        <hr class="fr-mt-2w"/>
-
-                        <h3 class="fr-h4">{{ 'common.actions'|trans }}</h3>
-                        <ul class="fr-btns-group fr-btns-group--icon-left">
-                            <li>
-                                <button class="fr-btn fr-btn--secondary" disabled>
-                                    {{ 'common.publish'|trans }}
-                                </button>
-                            </li>
-                            <li>
-                                <button class="fr-btn fr-btn--secondary" disabled>
-                                    {{ 'common.duplicate'|trans }}
-                                </button>
-                            </li>
-                            <li>
-                                <a href="{{ path('app_regulations_list') }}" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line">
-                                    {{'common.delete'|trans}}
-                                </a>
-                            </li>
-                        </ul>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-8 fr-col-xl-9">
+                    <div class="fr-mx-n4v fr-mx-md-0">
+                        {% include "regulation/_general_info_form.html.twig" with { form, cancelUrl } only %}
                     </div>
                 </div>
-            </aside>
+
+                <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
+                    <div class="app-card app-card--raised">
+                        <div class="app-card__content">
+                            <h3 class="fr-h4">{{ 'regulation.status'|trans }}</h3>
+                                {% include 'regulation/_status_badge.html.twig' with { status: 'draft', withHint: true } %}
+                            <hr class="fr-mt-2w"/>
+
+                            <h3 class="fr-h4">{{ 'common.actions'|trans }}</h3>
+                            <ul class="fr-btns-group fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary" disabled>
+                                        {{ 'common.publish'|trans }}
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary" disabled>
+                                        {{ 'common.duplicate'|trans }}
+                                    </button>
+                                </li>
+                                <li>
+                                    <a href="{{ path('app_regulations_list') }}" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line">
+                                        {{'common.delete'|trans}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+            </div>
         </div>
     </div>
 {% endblock %}
