@@ -99,9 +99,9 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
 		},
 		'paint': {
                     'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
-				   ['==', ['get', 'measure_type'], 'noEntry'], '#ec625c', // red
+				   ['==', ['get', 'measure_type'], 'noEntry'], '#ff5655', // red
 				   ['==', ['get', 'measure_type'], 'speedLimitation'], '#e98147', // orange
-				   '#000000'], // black
+				   '#000000'], // black ; blue -> 0063cb
                     'line-width': 4,
 		},
             },
@@ -120,6 +120,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
 	    // display the popup when the turbo frame is loaded (otherwise MapLibre GL JS will display an empty popup for a few seconds)
 	    locationTurboFrame.addEventListener('turbo:frame-load', () => {
 		locationPopUp.removeClassName('fr-hidden');
+		locationPopUp._update(); // we need this, otherwise the popup is misplaced (example : anchor on the bottom side, even at the top of the map -> popup outside of the <div> of the map), as the popup is filled after its creation, thanks to an AJAX request ; credits : https://stackoverflow.com/questions/60928595/dynamic-anchor-popup-open-outside-of-map-container
 	    });
 	});
 	// change the cursor when the mouse is over the locations layer
