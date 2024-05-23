@@ -16,7 +16,7 @@ final class GetIntersectionCompletionFragmentControllerTest extends AbstractWebT
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('2 résultats trouvés', $crawler->filter('template[id="status"]')->text());
+        $this->assertSame('2 résultats', $crawler->filter('template[id="status"]')->text());
         $options = $crawler->filter('li[role="option"]');
         $this->assertSame(2, $options->count());
         $this->assertSame('Boulevard Morland', $options->eq(0)->text());
@@ -31,7 +31,7 @@ final class GetIntersectionCompletionFragmentControllerTest extends AbstractWebT
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('1 résultat trouvé', $crawler->filter('template[id="status"]')->text());
+        $this->assertSame('1 résultat', $crawler->filter('template[id="status"]')->text());
         $options = $crawler->filter('li[role="option"]');
         $this->assertSame(1, $options->count());
         $this->assertSame('Boulevard Morland', $options->eq(0)->text());

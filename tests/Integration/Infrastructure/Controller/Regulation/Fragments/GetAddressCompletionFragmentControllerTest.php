@@ -16,7 +16,7 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('1 résultat trouvé', $crawler->filter('template[id="status"]')->text());
+        $this->assertSame('1 résultat', $crawler->filter('template[id="status"]')->text());
         $options = $crawler->filter('li[role="option"]');
         $this->assertSame(1, $options->count());
         $this->assertSame('Rue Eugène Berthoud', $options->eq(0)->text());

@@ -16,7 +16,7 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('4 résultats trouvés', $crawler->filter('template[id="status"]')->text());
+        $this->assertSame('4 résultats', $crawler->filter('template[id="status"]')->text());
         $options = $crawler->filter('li[role="option"]');
         $this->assertSame(4, $options->count());
 
