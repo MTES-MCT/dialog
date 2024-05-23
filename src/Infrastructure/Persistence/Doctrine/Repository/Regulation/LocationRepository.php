@@ -39,34 +39,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ;
     }
 
-    // TODO : test this if ST_Envelope is not a Polygon
-    // TODO : check if the query result is empty or malformed ?
-    public function findAllLocationsBbox(): array
-    {
-        $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('longitude_x', 'longitude_x')
-            ->addScalarResult('latitude_y', 'latitude_y')
-        ;
-        $bbox_points = $this->getEntityManager()
-                     ->createNativeQuery('
-WITH bbox_as_points AS (
-SELECT ST_DumpPoints(ST_Envelope(ST_Extent(location.geometry))) AS dump_points FROM location
-)
-SELECT ST_X((bbox_as_points.dump_points).geom) AS longitude_x, ST_Y((bbox_as_points.dump_points).geom) AS latitude_y
-FROM bbox_as_points
-WHERE (bbox_as_points.dump_points).path IN (ARRAY[1,1], ARRAY[1,3])
-',
-                         $rsm,
-                     )
-                     ->getResult()
-        ;
-
-        return [
-            [$bbox_points[0]['longitude_x'], $bbox_points[0]['latitude_y']],
-            [$bbox_points[1]['longitude_x'], $bbox_points[1]['latitude_y']],
-        ];
-    }
-
     public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter, string $futureFilter): array
     {
         $rsm = new ResultSetMapping();

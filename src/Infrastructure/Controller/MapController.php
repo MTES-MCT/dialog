@@ -48,14 +48,12 @@ final class MapController
         $futureFilter = $map_filter_form['display_future_regulations'] ?? 'no';
 
         $locationsAsGeoJson = $this->locationRepository->findFilteredLocationsAsGeoJson($permanentAndOrTemporaryFilter, $draftFilter, $futureFilter);
-        $locationsBbox = $this->locationRepository->findAllLocationsBbox();
 
         return new Response(
             $this->twig->render(
                 name: 'map.html.twig',
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
-                    'locationsBbox' => $locationsBbox,
                     'form' => $form->createView(),
                 ],
             ),

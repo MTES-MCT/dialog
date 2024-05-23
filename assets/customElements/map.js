@@ -8,7 +8,6 @@ export default class extends HTMLElement {
         const pos = JSON.parse(this.dataset.pos || '');
         const zoom = +(this.dataset.zoom || 13);
         const geojson = JSON.parse(this.dataset.geojson || '[]');
-	const bbox = JSON.parse(this.dataset.bbox || '');
 	
 	const locationsAsGeoJSONOutputId = this.dataset['locations-as-geojson-output-id'] || 'locations_as_geojson_output';
 	const mapFilterTurboFrameId = this.dataset['map-filter-turbo-frame-id'] || 'map_filter_turbo_frame';
@@ -18,13 +17,13 @@ export default class extends HTMLElement {
         container.style.height = height;
         this.appendChild(container);
 	
-        this.mapOnPromise = createMapLibreMap(container, pos, zoom, geojson, bbox, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath);
+        this.mapOnPromise = createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath);
 	// use this to debug in the JS console of your browser :
 	//my_map = await document.getElementsByTagName("dialog-map")[0].mapOnPromise
     }
 }
 
-async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath) {
+async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath) {
     const maplibregl = (await import('maplibre-gl')).default;
     
     const styleLink = document.createElement('link');
@@ -61,23 +60,9 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
         center: pos,
         zoom,
     });
-    let firstMapLoad = true;
     
     // credit: https://maplibre.org/maplibre-gl-js/docs/examples/geojson-line/
     map.on('load', () => {
-	// automatically pan and zoom on the bbox, queried from the database (there is no .bounds for GeoJSON MapLibre source)
-	// we must do that only one time
-	if (firstMapLoad) {
-	    map.fitBounds(
-		bbox,
-		{
-		    padding: 100,
-		    animate: true,
-		    duration: 500  // duration in ms
-		}
-	    );
-	    firstMapLoad = false;
-	};
         map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 	const locationSourceAsGeoJSON = {
             type: 'geojson',
@@ -100,7 +85,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, bbox, locationsA
 		'paint': {
                     'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
 				   ['==', ['get', 'measure_type'], 'noEntry'], '#ff5655', // red
-				   ['==', ['get', 'measure_type'], 'speedLimitation'], '#e98147', // orange
+				   ['==', ['get', 'measure_type'], 'speedLimitation'], '#ff742e', // orange
 				   '#000000'], // black ; blue -> 0063cb
                     'line-width': 4,
 		},
