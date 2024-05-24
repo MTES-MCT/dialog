@@ -59,6 +59,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 	//style: osm_style, 
         center: pos,
         zoom,
+	hash: "mapZoomAndPosition",
     });
     
     // credit: https://maplibre.org/maplibre-gl-js/docs/examples/geojson-line/
