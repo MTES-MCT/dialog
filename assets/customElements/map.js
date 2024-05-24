@@ -7,8 +7,7 @@ export default class extends HTMLElement {
         /** @type {[number, number]} */
         const pos = JSON.parse(this.dataset.pos || '');
         const zoom = +(this.dataset.zoom || 13);
-        const geojson = JSON.parse(this.dataset.geojson || '[]');
-	
+        const geojson = JSON.parse(this.dataset.geojson || '[]'); // example : "[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-1.728876775,48.37839112],[-1.72880412,48.378224342], … ]},"properties":{"is_permanent":true,"is_draft":false,"measure_type":"noEntry","location_uuid":"018f3ede-1930-7556-8b32-449ca7f026a8"}},{"type":"Feature","geometry":{"type":"MultiLineString","coordinates":[[[-1.6976246,48.21139647],[-1.697490153,48.211703784]],[[-1.697490153,48.211703784],[-1.697420744,48.211848064]], … ]},"properties":{"is_permanent":false,"is_draft":true,"measure_type":"speedLimitation","location_uuid":"018f7c41-846c-72fc-a2a6-477a3a171c0a"}}, … ]]"
 	const locationsAsGeoJSONOutputId = this.dataset['locations-as-geojson-output-id'] || 'locations_as_geojson_output';
 	const mapFilterTurboFrameId = this.dataset['map-filter-turbo-frame-id'] || 'map_filter_turbo_frame';
 	const locationPath = this.dataset['location-path'];

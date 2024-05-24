@@ -41,13 +41,14 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 
     public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $draftFilter, string $futureFilter): array
     {
+        // we want to retrieve only LineString : location.geometry can be LineString or MultiLineString, so we apply ST_Multi to have only MultiLineString, then we apply ST_Dump to have only LineString
         $rsm = new ResultSetMapping();
         $geoJSONs = $this->getEntityManager()
                   ->createNativeQuery('
 WITH location_alias AS (
 SELECT (regulation_order.end_date IS NULL) AS is_permanent, (regulation_order_record.status = \'draft\') AS is_draft,
        measure.type AS measure_type, regulation_order.start_date AS regulation_start_date, regulation_order.end_date AS regulation_end_date, 
-       location.geometry AS geometry, location.uuid AS location_uuid
+       (ST_Dump(ST_Multi(location.geometry))).geom AS geometry, location.uuid AS location_uuid
 FROM location
 JOIN measure ON measure.uuid = location.measure_uuid
 JOIN regulation_order ON regulation_order.uuid = measure.regulation_order_uuid
