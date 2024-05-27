@@ -34,6 +34,15 @@ final class MapFilterFormType extends AbstractType
                 ],
             )
             ->add(
+                'display_past_regulations',
+                CheckboxType::class,
+                options: [
+                    'label' => 'Arrêtés passés',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
                 'save',
                 SubmitType::class,
             )

@@ -39,7 +39,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ;
     }
 
-    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter): array
+    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter, string $pastFilter): array
     {
         // we want to retrieve only LineString : location.geometry can be LineString or MultiLineString, so we apply ST_Multi to have only MultiLineString, then we apply ST_Dump to have only LineString
         $rsm = new ResultSetMapping();
@@ -65,9 +65,13 @@ WHERE
 AND
 measure_type IN (\'noEntry\', \'speedLimitation\')
 AND
-(is_permanent OR (regulation_end_date >= NOW()))
-AND
-(:with_current_and_future_regulation OR (:with_current_regulation_only AND (regulation_start_date <= NOW())))
+(
+(regulation_start_date <= NOW() AND (is_permanent OR regulation_end_date >= NOW()))
+OR
+(:also_with_future_regulations AND regulation_start_date > NOW())
+OR
+(:also_with_past_regulations AND regulation_end_date < NOW())
+)
 AND
 ((:with_permanents_only AND is_permanent) OR (:with_temporaries_only AND NOT is_permanent) OR (:with_temporaries_and_permanents))
 )
@@ -80,8 +84,8 @@ FROM filtered_location
                       'with_permanents_only' => ($permanentAndOrTemporaryFilter == 'permanents_only'),
                       'with_temporaries_only' => ($permanentAndOrTemporaryFilter == 'temporaries_only'),
                       'with_temporaries_and_permanents' => ($permanentAndOrTemporaryFilter == 'permanents_and_temporaries'),
-                      'with_current_and_future_regulation' => ($futureFilter == 'yes'),
-                      'with_current_regulation_only' => ($futureFilter != 'yes'),
+                      'also_with_future_regulations' => ($futureFilter == 'yes'),
+                      'also_with_past_regulations' => ($pastFilter == 'yes'),
                   ])
                   ->getSingleColumnResult()
         ;

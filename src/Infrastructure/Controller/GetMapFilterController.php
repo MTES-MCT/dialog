@@ -29,7 +29,7 @@ final class GetMapFilterController extends AbstractController
         name: 'get_map_filter',
         methods: ['GET'],
     )]
-    public function __invoke(Request $request, #[MapQueryParameter] array $map_filter_form = ['category' => 'permanents_and_temporaries', 'display_future_regulations' => 'no']): Response
+    public function __invoke(Request $request, #[MapQueryParameter] array $map_filter_form = ['category' => 'permanents_and_temporaries', 'display_future_regulations' => 'no', 'display_past_regulations' => 'no']): Response
     {
         $form = $this->formFactory->create(
             type: MapFilterFormType::class,
@@ -47,8 +47,9 @@ final class GetMapFilterController extends AbstractController
         // the array '$map_filter_form' can be defined without the 'category' key for example, so we have to set a default value eventually
         $permanentAndOrTemporaryFilter = $map_filter_form['category'] ?? 'permanents_and_temporaries';
         $futureFilter = $map_filter_form['display_future_regulations'] ?? 'no';
+        $pastFilter = $map_filter_form['display_past_regulations'] ?? 'no';
 
-        $locationsAsGeoJson = $this->locationRepository->findFilteredLocationsAsGeoJson($permanentAndOrTemporaryFilter, $futureFilter);
+        $locationsAsGeoJson = $this->locationRepository->findFilteredLocationsAsGeoJson($permanentAndOrTemporaryFilter, $futureFilter, $pastFilter);
 
         return new Response(
             $this->twig->render(

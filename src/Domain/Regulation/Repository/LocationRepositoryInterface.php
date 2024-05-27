@@ -14,5 +14,5 @@ interface LocationRepositoryInterface
 
     public function findOneByUuid(string $uuid): ?Location;
 
-    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter): array;
+    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter, string $pastFilter): array;
 }
