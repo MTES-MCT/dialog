@@ -56,7 +56,9 @@ JOIN regulation_order_record ON regulation_order_record.regulation_order_uuid = 
 ),
 filtered_location AS (
 SELECT is_permanent, is_draft, measure_type, 
-       geometry, location_uuid
+       geometry, location_uuid,
+       ST_StartPoint(geometry) AS geometry_start_point,
+       ST_EndPoint(geometry) AS geometry_end_point
 FROM location_alias
 WHERE
 measure_type IN (\'noEntry\', \'speedLimitation\')
