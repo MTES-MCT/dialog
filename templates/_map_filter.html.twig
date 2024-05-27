@@ -1,13 +1,12 @@
 <turbo-frame id="map_filter_turbo_frame">
     <dialog-map-filter-form data-turbo-frame-id="map_filter_turbo_frame" data-update-url-with="{{ path('app_carto') }}">
 	{{ form_start(form) }}
-	    {{ form_row(form.display_drafts, {group_class: 'fr-checkbox-group fr-mb-3w fr-pl-1w'}) }}
 	    {{ form_row(form.category, {group_class: 'fr-radio-group'}) }}
 	    {{ form_row(form.display_future_regulations, {group_class: 'fr-checkbox-group fr-pl-1w'}) }}
 	    <noscript>
 		{{ form_row(form.save) }}
 	    </noscript>
-	    <output id="locations_as_geojson_output" class="fr-hidden" name="locations-geojson" for="permanent-and-or-temporary display-drafts" aria-hidden="true">{{ locationsAsGeoJson|json_encode }}</output>
+	    <output id="locations_as_geojson_output" class="fr-hidden" name="locations-geojson" for="permanent-and-or-temporary" aria-hidden="true">{{ locationsAsGeoJson|json_encode }}</output>
 	{{ form_end(form) }}
     </dialog-map-filter-form>
 </turbo-frame>

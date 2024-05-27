@@ -20,15 +20,6 @@ final class MapFilterFormType extends AbstractType
     {
         $builder
             ->add(
-                'display_drafts',
-                CheckboxType::class,
-                options: [
-                    'label' => 'Arrêtés en brouillon',
-                    'value' => 'yes',
-                    'required' => false,
-                ],
-            )
-            ->add(
                 'category',
                 ChoiceType::class,
                 options: $this->getCategoryOptions(),
