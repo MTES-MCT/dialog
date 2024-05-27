@@ -10,6 +10,7 @@ final readonly class RegulationOrderDatexListItemView
         public string $uuid,
         public string $regulationId,
         public string $organization,
+        public string $source,
         public string $description,
         public ?\DateTimeInterface $startDate,
         public ?\DateTimeInterface $endDate,

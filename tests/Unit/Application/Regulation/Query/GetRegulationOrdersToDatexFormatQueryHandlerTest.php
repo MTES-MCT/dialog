@@ -19,6 +19,7 @@ use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
@@ -66,6 +67,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $regulationOrderRecord1 = $this->createMock(RegulationOrderRecord::class);
 
         $regulationOrder1 = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord1
+            ->expects(self::once())
+            ->method('getSource')
+            ->willReturn(RegulationOrderRecordSourceEnum::DIALOG->value);
         $regulationOrderRecord1
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -319,6 +324,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $regulationOrder2 = $this->createMock(RegulationOrder::class);
         $regulationOrderRecord2
             ->expects(self::once())
+            ->method('getSource')
+            ->willReturn(RegulationOrderRecordSourceEnum::DIALOG->value);
+        $regulationOrderRecord2
+            ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder2);
         $regulationOrder2
@@ -434,6 +443,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
         $regulationOrderRecord3 = $this->createMock(RegulationOrderRecord::class);
         $regulationOrder3 = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord3
+            ->expects(self::once())
+            ->method('getSource')
+            ->willReturn(RegulationOrderRecordSourceEnum::DIALOG->value);
         $regulationOrderRecord3
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -557,6 +570,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     uuid: '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     regulationId: 'F01/2024#56456ff6-7e1c-4d24-aa09-9c650d7f6115',
                     organization: 'Autorité 1',
+                    source: RegulationOrderRecordSourceEnum::DIALOG->value,
                     description: 'Description 1',
                     startDate: $startDate1,
                     endDate: $endDate1,
@@ -582,6 +596,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     regulationId: 'F02/2024#df1895bf-17af-4d68-adbd-02a7110d3b29',
                     organization: 'Autorité 2',
+                    source: RegulationOrderRecordSourceEnum::DIALOG->value,
                     description: 'Description 2',
                     startDate: $startDate2,
                     endDate: null,
@@ -610,6 +625,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     uuid: '12410fb8-a2b9-4449-a7d5-a4f409807f99',
                     regulationId: 'F03/2024#fde674d4-9e82-42f5-841d-13f7d20b43e0',
                     organization: 'Autorité 3',
+                    source: RegulationOrderRecordSourceEnum::DIALOG->value,
                     description: 'Description 3',
                     startDate: $startDate3,
                     endDate: $endDate3,
