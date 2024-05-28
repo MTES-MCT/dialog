@@ -51,6 +51,7 @@ readonly class MeasureView
         foreach ($measure->getLocations() as $location) {
             if ($namedStreet = $location->getNamedStreet()) {
                 $locations[] = new LocationView(
+                    uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
                     namedStreet: new NamedStreetView(
                         cityLabel: $namedStreet->getCityLabel(),
@@ -63,6 +64,7 @@ readonly class MeasureView
                 );
             } elseif ($numberedRoad = $location->getNumberedRoad()) {
                 $locations[] = new LocationView(
+                    uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
                     numberedRoad: new NumberedRoadView(
                         administrator: $numberedRoad->getAdministrator(),
