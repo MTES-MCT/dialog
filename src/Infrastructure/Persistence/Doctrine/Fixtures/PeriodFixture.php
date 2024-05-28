@@ -23,11 +23,18 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'everyDay',
         );
+        $outDatedCifsPeriod = new Period(
+            uuid: 'e1591887-1de6-4362-a5d7-3f2553cb49dd',
+            measure: $this->getReference('outDatedCifsMeasure'),
+            startDateTime: new \DateTimeImmutable('2021-11-02'),
+            endDateTime: new \DateTimeImmutable('2021-11-06'),
+            recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
+        );
         $cifsPeriod1 = new Period(
             uuid: '06548fe3-7bfb-73af-8000-f7f34af31312',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2021-11-02'),
-            endDateTime: new \DateTimeImmutable('2021-11-06'),
+            startDateTime: new \DateTimeImmutable('2023-09-05'),
+            endDateTime: new \DateTimeImmutable('2023-09-06'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
 
@@ -35,6 +42,11 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             uuid: '0654b638-800c-73a8-8000-3edefca88689',
             applicableDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
             period: $cifsPeriod1,
+        );
+        $outDatedCifsDailyRange = new DailyRange(
+            uuid: '6f11c0cb-d2a2-4429-b914-9bfdf486a051',
+            applicableDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+            period: $outDatedCifsPeriod,
         );
         $cifsTimeSlot1 = new TimeSlot(
             uuid: '0654b639-6bea-7657-8000-1b27c6339db4',
@@ -46,8 +58,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $cifsPeriod2 = new Period(
             uuid: '0654b639-cd33-7507-8000-e2ea21673135',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2021-11-02'),
-            endDateTime: new \DateTimeImmutable('2021-11-06'),
+            startDateTime: new \DateTimeImmutable('2023-09-03'),
+            endDateTime: new \DateTimeImmutable('2023-09-06'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
         $cifsDailyRange2 = new DailyRange(
@@ -71,8 +83,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $cifsPeriod3 = new Period(
             uuid: '0654b63a-838d-798b-8000-044b619f225d',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2021-11-03 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2021-11-05 10:00:00'),
+            startDateTime: new \DateTimeImmutable('2023-09-03 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-09-05 10:00:00'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
         $cifsDailyRange3 = new DailyRange(
@@ -98,6 +110,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($cifsPeriod3);
         $manager->persist($cifsDailyRange3);
         $manager->persist($cifsTimeSlot3);
+        $manager->persist($outDatedCifsPeriod);
+        $manager->persist($outDatedCifsDailyRange);
 
         $manager->flush();
     }

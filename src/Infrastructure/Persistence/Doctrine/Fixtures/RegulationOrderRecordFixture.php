@@ -114,8 +114,17 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordSourceEnum::DIALOG->value,
             RegulationOrderRecordStatusEnum::PUBLISHED,
             $this->getReference('regulationOrderCifs'),
-            new \DateTime('2021-11-02'),
+            new \DateTime('2023-09-06'),
             $this->getReference('mainOrg'),
+        );
+
+        $outDatedRegulationOrderRecordCifs = new RegulationOrderRecord(
+            '9d408332-d30f-4530-be66-dfb2d98ebae5',
+            RegulationOrderRecordSourceEnum::DIALOG->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED,
+            $this->getReference('outDatedRegulationOrderCifs'),
+            new \DateTime('2021-11-02'),
+            $this->getReference('otherOrg'),
         );
 
         $manager->persist($typicalRegulationOrderRecord);
@@ -127,6 +136,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $manager->persist($regulationOrderRecordNoLocations);
         $manager->persist($regulationOrderRecordNoMeasures);
         $manager->persist($regulationOrderRecordCifs);
+        $manager->persist($outDatedRegulationOrderRecordCifs);
         $manager->flush();
     }
 

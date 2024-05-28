@@ -210,6 +210,13 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             geometry: '{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}',
         );
 
+        $outDatedCifsLocation = new Location(
+            'ad7b675a-92d8-4556-a0e6-09cc66eb259a',
+            $this->getReference('outDatedCifsMeasure'),
+            roadType: RoadTypeEnum::LANE->value,
+            geometry: '{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}',
+        );
+
         $namedStreetCifsLocation = new NamedStreet(
             uuid: '72b70089-04ea-4ba0-8d9e-61ca86fc2413',
             location: $cifsLocation,
@@ -250,6 +257,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($namedStreetFullCityLocation);
         $manager->persist($namedStreetCifsLocation);
         $manager->persist($numberedRoadCifsLocationDepartmentalRoad);
+        $manager->persist($outDatedCifsLocation);
 
         $manager->persist($typicalMeasureLocation1);
         $manager->persist($typicalMeasureLocation2);

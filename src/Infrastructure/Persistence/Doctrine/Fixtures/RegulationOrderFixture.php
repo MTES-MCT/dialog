@@ -77,8 +77,8 @@ final class RegulationOrderFixture extends Fixture
             description: 'Description 5 that is very long and will be truncated',
             category: RegulationOrderCategoryEnum::OTHER->value,
             otherCategoryText: 'Dérogation préfectorale',
-            startDate: new \DateTimeImmutable('2023-03-13'),
-            endDate: new \DateTimeImmutable('2023-03-15'),
+            startDate: new \DateTimeImmutable('2023-07-13'),
+            endDate: new \DateTimeImmutable('2023-07-15'),
         );
 
         $regulationOrderNoMeasures = new RegulationOrder(
@@ -92,11 +92,20 @@ final class RegulationOrderFixture extends Fixture
 
         $regulationOrderCifs = new RegulationOrder(
             uuid: '06549047-db9d-74bb-8000-754a6f2ff4c3',
-            identifier: 'F/CIFS/2021',
+            identifier: 'F/CIFS/2023',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Arrêté exporté vers CIFS',
-            startDate: new \DateTimeImmutable('2021-11-02'),
-            endDate: new \DateTimeImmutable('2021-11-06'),
+            startDate: new \DateTimeImmutable('2023-06-02'),
+            endDate: new \DateTimeImmutable('2023-06-10'),
+        );
+
+        $outDatedRegulationOrderCifs = new RegulationOrder(
+            uuid: 'edc8dd18-5f56-4684-b2ba-d18658d53518',
+            identifier: 'F/OUTDATED/CIFS/2021',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Arrêté exporté vers CIFS',
+            startDate: new \DateTimeImmutable('2021-06-02'),
+            endDate: new \DateTimeImmutable('2021-06-10'),
         );
 
         $manager->persist($typicalRegulationOrder);
@@ -108,6 +117,7 @@ final class RegulationOrderFixture extends Fixture
         $manager->persist($regulationOrderNoLocations);
         $manager->persist($regulationOrderNoMeasures);
         $manager->persist($regulationOrderCifs);
+        $manager->persist($outDatedRegulationOrderCifs);
         $manager->flush();
 
         $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
@@ -119,5 +129,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
         $this->addReference('regulationOrderDuplicate', $regulationOrderDuplicate);
         $this->addReference('regulationOrderCifs', $regulationOrderCifs);
+        $this->addReference('outDatedRegulationOrderCifs', $outDatedRegulationOrderCifs);
     }
 }
