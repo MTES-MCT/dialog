@@ -152,6 +152,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
         $namedStreet = $this->createMock(NamedStreet::class);
         $location
             ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('12fca512-dee7-4b3d-9c86-59b03a88d8d2');
+        $location
+            ->expects(self::once())
             ->method('getRoadType')
             ->willReturn('lane');
         $location
@@ -247,6 +251,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                     null,
                     [
                         new LocationView(
+                            uuid: '12fca512-dee7-4b3d-9c86-59b03a88d8d2',
                             roadType: 'lane',
                             namedStreet: new NamedStreetView(
                                 cityLabel: 'Montauban',
