@@ -71,7 +71,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
                 -- If the points belong to different LINESTRINGs, this join will be empty.
                 INNER JOIN merged_linestring_b ON l.geom = merged_linestring_b.geom
                 -- When a and b map to the same point on line, ST_LineSubstring returns a POINT, which
-                -- is not a section and yield an error.
+                -- is not a section and should yield an error.
                 WHERE ST_LineLocatepoint(l.geom, a.geom) <> ST_LineLocatePoint(l.geom, b.geom)
                 LIMIT 1
             ),
