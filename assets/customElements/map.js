@@ -7,15 +7,17 @@ export default class extends HTMLElement {
         /** @type {[number, number]} */
         const pos = JSON.parse(this.dataset.pos || '');
         const zoom = +(this.dataset.zoom || 13);
-        const geojson = JSON.parse(this.dataset.geojson || '[]'); // example : "[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-1.728876775,48.37839112],[-1.72880412,48.378224342], … ]},"properties":{"is_permanent":true,"is_draft":false,"measure_type":"noEntry","location_uuid":"018f3ede-1930-7556-8b32-449ca7f026a8"}},{"type":"Feature","geometry":{"type":"MultiLineString","coordinates":[[[-1.6976246,48.21139647],[-1.697490153,48.211703784]],[[-1.697490153,48.211703784],[-1.697420744,48.211848064]], … ]},"properties":{"is_permanent":false,"is_draft":true,"measure_type":"speedLimitation","location_uuid":"018f7c41-846c-72fc-a2a6-477a3a171c0a"}}, … ]]"
+
+
+	const geojson = JSON.parse(this.dataset.geojson || '[]'); // example : "[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-1.728876775,48.37839112],[-1.72880412,48.378224342], … ]},"properties":{"is_permanent":true,"is_draft":false,"measure_type":"noEntry","location_uuid":"018f3ede-1930-7556-8b32-449ca7f026a8"}},{"type":"Feature","geometry":{"type":"MultiLineString","coordinates":[[[-1.6976246,48.21139647],[-1.697490153,48.211703784]],[[-1.697490153,48.211703784],[-1.697420744,48.211848064]], … ]},"properties":{"is_permanent":false,"is_draft":true,"measure_type":"speedLimitation","location_uuid":"018f7c41-846c-72fc-a2a6-477a3a171c0a"}}, … ]]"
 	const locationsAsGeoJSONOutputId = this.dataset['locationsAsGeojsonOutputId'] || 'locations_as_geojson_output';
 	const mapFilterTurboFrameId = this.dataset['mapFilterTurboFrameId'] || 'map_filter_turbo_frame';
 	const locationPath = this.dataset['locationPath'];
-	
+
         const container = document.createElement('div');
         container.style.height = height;
         this.appendChild(container);
-	
+
         this.mapOnPromise = createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath);
 	// use this to debug in the JS console of your browser :
 	//my_map = await document.getElementsByTagName("dialog-map")[0].mapOnPromise
@@ -24,12 +26,12 @@ export default class extends HTMLElement {
 
 async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath) {
     const maplibregl = (await import('maplibre-gl')).default;
-    
+
     const styleLink = document.createElement('link');
     styleLink.rel = 'stylesheet';
     styleLink.href = 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css';
     document.head.appendChild(styleLink);
-    
+
     // Define the map syle (OpenStreetMap raster tiles)
     /*
     const osm_style = {
@@ -42,7 +44,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 		"attribution": "&copy; OpenStreetMap Contributors",
 		"maxzoom": 19
 	    }
-	}, 
+	},
 	"layers": [
 	    {
 		"id": "osm",
@@ -51,16 +53,16 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 	    }
 	]
     };*/
-    
+
     const map = new maplibregl.Map({
         container: container,
         style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
-	//style: osm_style, 
+	//style: osm_style,
         center: pos,
         zoom,
 	hash: "mapZoomAndPosition",
     });
-    
+
     // credit: https://maplibre.org/maplibre-gl-js/docs/examples/geojson-line/
     map.on('load', () => {
         map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
@@ -116,7 +118,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
             map.getCanvas().style.cursor = '';
 	});
     });
-    
+
     // Mutation API Observer
     function mutationCallback(mutationList) {
 	for (const mutation of mutationList) {
@@ -141,6 +143,6 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 	const observer = new MutationObserver(mutationCallback);
 	observer.observe(targetNode, config);
     }
-    
+
     return map;
 }

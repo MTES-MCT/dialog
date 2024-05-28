@@ -21,7 +21,7 @@ final class MapFilterFormType extends AbstractType
                 options: $this->getCategoryOptions(),
             )
             ->add(
-                'display_future_regulations',
+                'displayFutureRegulations',
                 CheckboxType::class,
                 options: [
                     'label' => 'Arrêtés à venir',
@@ -30,7 +30,7 @@ final class MapFilterFormType extends AbstractType
                 ],
             )
             ->add(
-                'display_past_regulations',
+                'displayPastRegulations',
                 CheckboxType::class,
                 options: [
                     'label' => 'Arrêtés passés',
