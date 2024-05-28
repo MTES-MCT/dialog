@@ -6,13 +6,13 @@
   version="3.3"
   targetNamespace="http://datex2.eu/schema/3/locationReferencing"
   xmlns:locx="http://datex2.eu/schema/3/locationExtension"
-  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
+  xmlns:dx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
   xmlns:com="http://datex2.eu/schema/3/common"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
   <xs:import namespace="http://datex2.eu/schema/3/common" schemaLocation="DATEXII_3_Common.xsd" />
   <xs:import namespace="http://datex2.eu/schema/3/locationExtension" schemaLocation="DATEXII_3_LocationExtension.xsd" />
-  <xs:import namespace="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2" schemaLocation="DATEXII_3_DiaLogLocationExtension.xsd" />
+  <xs:import namespace="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2" schemaLocation="DATEXII_3_DiaLogExtension.xsd" />
   <xs:complexType name="_AlertCDirectionEnum">
     <xs:simpleContent>
       <xs:extension base="loc:AlertCDirectionEnum">
@@ -1768,7 +1768,7 @@
   </xs:complexType>
   <xs:complexType name="_LinearLocationExtensionType">
     <xs:sequence>
-      <xs:element name="linearLocationExtended" type="locdx:LinearLocationExtended" minOccurs="0" />
+      <xs:element name="linearLocationExtended" type="dx:LinearLocationExtended" minOccurs="0" />
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
