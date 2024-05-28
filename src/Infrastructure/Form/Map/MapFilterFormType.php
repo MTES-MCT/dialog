@@ -12,10 +12,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class MapFilterFormType extends AbstractType
 {
-    public function __construct(
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
