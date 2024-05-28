@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -18,6 +19,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 {
     public function __construct(
         ManagerRegistry $registry,
+        private DateUtilsInterface $dateUtils,
         private string $dialogOrgId,
     ) {
         parent::__construct($registry, RegulationOrderRecord::class);
@@ -172,7 +174,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('p.timeSlots', 't')
             ->where(
                 'roc.status = :status',
-                'ro.endDate IS NOT NULL',
+                'ro.endDate >= :today',
                 'loc.geometry IS NOT NULL',
                 $allowedLocationIds ? 'loc.uuid IN (:locationIds)' : null,
                 'm.type = :measureType',
@@ -182,6 +184,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ...($allowedLocationIds ? ['locationIds' => $allowedLocationIds] : []),
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
+                'today' => $this->dateUtils->getNow(),
             ])
             ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
