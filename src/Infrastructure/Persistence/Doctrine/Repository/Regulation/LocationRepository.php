@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -12,8 +13,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class LocationRepository extends ServiceEntityRepository implements LocationRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private DateUtilsInterface $dateUtils,
+    ) {
         parent::__construct($registry, Location::class);
     }
 
@@ -66,11 +69,11 @@ AND
 measure_type IN (\'noEntry\', \'speedLimitation\')
 AND
 (
-(regulation_start_date <= NOW() AND (is_permanent OR regulation_end_date >= NOW()))
+(regulation_start_date <= :now AND (is_permanent OR regulation_end_date >= :now))
 OR
-(:also_with_future_regulations AND regulation_start_date > NOW())
+(:also_with_future_regulations AND regulation_start_date > :now)
 OR
-(:also_with_past_regulations AND regulation_end_date < NOW())
+(:also_with_past_regulations AND regulation_end_date < :now)
 )
 AND
 ((:with_permanents_only AND is_permanent) OR (:with_temporaries_only AND NOT is_permanent) OR (:with_temporaries_and_permanents))
@@ -86,6 +89,7 @@ FROM filtered_location
                       'with_temporaries_and_permanents' => ($permanentAndOrTemporaryFilter == 'permanents_and_temporaries'),
                       'also_with_future_regulations' => ($futureFilter == 'yes'),
                       'also_with_past_regulations' => ($pastFilter == 'yes'),
+                      'now' => $this->dateUtils->getNow(),
                   ])
                   ->getSingleColumnResult()
         ;
