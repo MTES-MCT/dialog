@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Regulation\Fragments;
+namespace App\Infrastructure\Controller\Map;
 
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;

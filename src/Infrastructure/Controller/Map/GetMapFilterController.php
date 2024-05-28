@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller;
+namespace App\Infrastructure\Controller\Map;
 
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Infrastructure\Form\Map\MapFilterFormType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class MapController
+final class GetMapFilterController extends AbstractController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -24,8 +25,8 @@ final class MapController
     }
 
     #[Route(
-        '/carte',
-        name: 'app_carto',
+        '/_get_map_filter',
+        name: 'get_map_filter',
         methods: ['GET'],
     )]
     public function __invoke(Request $request, #[MapQueryParameter] array $map_filter_form = ['category' => 'permanents_and_temporaries', 'display_future_regulations' => 'no', 'display_past_regulations' => 'no']): Response
@@ -40,6 +41,7 @@ final class MapController
                 ],
             ],
         );
+
         $form->handleRequest($request); // auto-fill the form with the query parameters from the URL
 
         // the array '$map_filter_form' can be defined without the 'category' key for example, so we have to set a default value eventually
@@ -51,7 +53,7 @@ final class MapController
 
         return new Response(
             $this->twig->render(
-                name: 'map/map.html.twig',
+                name: 'map/map_filter.html.twig',
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
                     'form' => $form->createView(),
