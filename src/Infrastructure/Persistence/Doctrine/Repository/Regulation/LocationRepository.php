@@ -42,8 +42,12 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ;
     }
 
-    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter, string $pastFilter): string
-    {
+    public function findAllForMapAsGeoJSON(
+        bool $includePermanentRegulations = true,
+        bool $includeTemporaryRegulations = true,
+        bool $includeUpcomingRegulations = false,
+        bool $includePastRegulations = false,
+    ): string {
         // we want to retrieve only LineString : location.geometry can be LineString or MultiLineString, so we apply ST_Multi to have only MultiLineString, then we apply ST_Dump to have only LineString
         $rsm = new ResultSetMapping();
         $geoJSONs = $this->getEntityManager()
@@ -84,11 +88,11 @@ FROM filtered_location
                       $rsm,
                   )
                   ->setParameters([
-                      'with_permanents_only' => ($permanentAndOrTemporaryFilter == 'permanents_only'),
-                      'with_temporaries_only' => ($permanentAndOrTemporaryFilter == 'temporaries_only'),
-                      'with_temporaries_and_permanents' => ($permanentAndOrTemporaryFilter == 'permanents_and_temporaries'),
-                      'also_with_future_regulations' => ($futureFilter == 'yes'),
-                      'also_with_past_regulations' => ($pastFilter == 'yes'),
+                      'with_permanents_only' => ($includePermanentRegulations and (!$includeTemporaryRegulations)),
+                      'with_temporaries_only' => ($includeTemporaryRegulations and (!$includePermanentRegulations)),
+                      'with_temporaries_and_permanents' => ($includePermanentRegulations and $includeTemporaryRegulations),
+                      'also_with_future_regulations' => $includeUpcomingRegulations,
+                      'also_with_past_regulations' => $includePastRegulations,
                       'now' => $this->dateUtils->getNow(),
                   ])
                   ->getSingleColumnResult()

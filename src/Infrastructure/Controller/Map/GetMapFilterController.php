@@ -45,11 +45,20 @@ final class GetMapFilterController extends AbstractController
         $form->handleRequest($request); // auto-fill the form with the query parameters from the URL
 
         // the array '$map_filter_form' can be defined without the 'category' key for example, so we have to set a default value eventually
-        $permanentAndOrTemporaryFilter = $map_filter_form['category'] ?? 'permanents_and_temporaries';
-        $futureFilter = $map_filter_form['display_future_regulations'] ?? 'no';
-        $pastFilter = $map_filter_form['display_past_regulations'] ?? 'no';
+        $includePermanentAndOrTemporaryRegulations = $map_filter_form['category'] ?? 'permanents_and_temporaries';
+        $includePermanentRegulations = (($includePermanentAndOrTemporaryRegulations == 'permanents_and_temporaries')
+                                        or ($includePermanentAndOrTemporaryRegulations == 'permanents_only'));
+        $includeTemporaryRegulations = (($includePermanentAndOrTemporaryRegulations == 'permanents_and_temporaries')
+                                        or ($includePermanentAndOrTemporaryRegulations == 'temporaries_only'));
+        $includeUpcomingRegulations = (($map_filter_form['display_future_regulations'] ?? 'no') != 'no');
+        $includePastRegulations = (($map_filter_form['display_past_regulations'] ?? 'no') != 'no');
 
-        $locationsAsGeoJson = $this->locationRepository->findFilteredLocationsAsGeoJson($permanentAndOrTemporaryFilter, $futureFilter, $pastFilter);
+        $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
+            $includePermanentRegulations,
+            $includeTemporaryRegulations,
+            $includeUpcomingRegulations,
+            $includePastRegulations,
+        );
 
         return new Response(
             $this->twig->render(
