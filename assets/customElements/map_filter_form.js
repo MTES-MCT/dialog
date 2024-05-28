@@ -9,8 +9,8 @@ export default class extends HTMLElement {
 	    // If this custom element activates, submit the form whenever
 	    // a form control changes value.
 	    const form = /** @type {HTMLFormElement} */ (this.querySelector('form'));
-	    const associatedTurboFrameId = this.dataset['turbo-frame-id'];
-	    const updateURLWith = this.dataset['update-url-with'];
+	    const associatedTurboFrameId = this.dataset['turboFrameId'];
+	    const updateURLWith = this.dataset['updateUrlWith'];
 	    if (associatedTurboFrameId && updateURLWith) {
 		const associatedTurboFrame = document.getElementById(associatedTurboFrameId);
 		for (const formControl of form.elements) {
