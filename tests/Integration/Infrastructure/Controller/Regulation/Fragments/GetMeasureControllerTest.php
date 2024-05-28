@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
@@ -26,6 +27,7 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('pour tous les véhicules', $measure1Content->filter('li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure1Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue Victor Hugo Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
+        $this->assertSame(LocationFixture::UUID_TYPICAL, $measure1Content->filter('li')->eq(4)->attr('data-location-uuid'));
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measure1Content->filter('.app-card__content li')->eq(4)->text());
 
         $editForm = $crawler->selectButton('Modifier')->form();
