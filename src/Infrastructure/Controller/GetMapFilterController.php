@@ -53,7 +53,7 @@ final class GetMapFilterController extends AbstractController
 
         return new Response(
             $this->twig->render(
-                name: '_map_filter.html.twig',
+                name: 'map/map_filter.html.twig',
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
                     'form' => $form->createView(),

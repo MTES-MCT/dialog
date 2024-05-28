@@ -52,7 +52,7 @@ final class GetLocationController extends AbstractController
 
         return new Response(
             $this->twig->render(
-                name: '/regulation/fragments/_location.html.twig',
+                name: 'map/fragments/location.html.twig',
                 context: [
                     'location' => $location,
                     'measure' => $measureAsAView,

@@ -51,7 +51,7 @@ final class MapController
 
         return new Response(
             $this->twig->render(
-                name: 'map.html.twig',
+                name: 'map/map.html.twig',
                 context: [
                     'locationsAsGeoJson' => $locationsAsGeoJson,
                     'form' => $form->createView(),
