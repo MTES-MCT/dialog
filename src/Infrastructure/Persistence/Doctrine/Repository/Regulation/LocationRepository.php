@@ -42,7 +42,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ;
     }
 
-    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter, string $pastFilter): array
+    public function findFilteredLocationsAsGeoJson(string $permanentAndOrTemporaryFilter, string $futureFilter, string $pastFilter): string
     {
         // we want to retrieve only LineString : location.geometry can be LineString or MultiLineString, so we apply ST_Multi to have only MultiLineString, then we apply ST_Dump to have only LineString
         $rsm = new ResultSetMapping();
@@ -93,11 +93,7 @@ FROM filtered_location
                   ])
                   ->getSingleColumnResult()
         ;
-        $geometries = [];
-        foreach ($geoJSONs as $geoJSON) {
-            $geometries[] = json_decode($geoJSON, associative: true, flags: JSON_THROW_ON_ERROR);
-        }
 
-        return $geometries;
+        return '[' . implode(',', $geoJSONs) . ']';
     }
 }

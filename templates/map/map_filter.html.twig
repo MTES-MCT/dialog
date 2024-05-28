@@ -7,7 +7,7 @@
 	    <noscript>
 		{{ form_row(form.save) }}
 	    </noscript>
-	    <output id="locations_as_geojson_output" class="fr-hidden" name="locations-geojson" for="map_filter_form_category map_filter_form_display_future_regulations map_filter_form_display_past_regulations" aria-hidden="true">{{ locationsAsGeoJson|json_encode }}</output>
+	    <output id="locations_as_geojson_output" class="fr-hidden" name="locations-geojson" for="map_filter_form_category map_filter_form_display_future_regulations map_filter_form_display_past_regulations" aria-hidden="true">{{ locationsAsGeoJson }}</output>
 	{{ form_end(form) }}
     </dialog-map-filter-form>
 </turbo-frame>
