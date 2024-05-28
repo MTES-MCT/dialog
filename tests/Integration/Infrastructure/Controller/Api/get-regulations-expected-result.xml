@@ -788,7 +788,7 @@
                                 </loc:supplementaryPositionalDescription>
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <locdx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</locdx:geoJsonGeometry>
+                                        <dx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</dx:geoJsonGeometry>
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
                             </locationByOrder>
@@ -796,6 +796,12 @@
                     </conditions>
                 </condition>
             </trafficRegulation>
+
+            <_trafficRegulationOrderExtension>
+                <trafficRegulationOrderExtended>
+                    <dx:source>dialog</dx:source>
+                </trafficRegulationOrderExtended>
+            </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>
     </trafficRegulationsFromCompetentAuthorities>
 </d2:payload>
