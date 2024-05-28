@@ -25,7 +25,7 @@
     {% endblock %}
   </head>
   <body>
-    {% include 'common/skiplinks.html.twig' with {skipLinks: [
+    {% include 'common/skiplinks.html.twig' with { skipLinks: [
         {href: '#content', label: 'common.skiplinks.content'|trans},
         ...(skipLinks|default([])),
         {href: '#footer', label: 'common.skiplinks.footer'|trans},
