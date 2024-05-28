@@ -91,4 +91,14 @@ abstract class AbstractWebTestCase extends WebTestCase
 
         $this->assertEquals($expectedStructure, $actualStructure);
     }
+
+    protected function assertSkipLinks(array $expectedSkipLinks, Crawler $crawler): void
+    {
+        $actualSkipLinks = $crawler
+            ->filter('nav[role=navigation][aria-label="Accès rapide"]')
+            ->filter('ul > li > a')
+            ->each(fn (Crawler $node, int $i): array => [$node->text(), $node->attr('href')]);
+
+        $this->assertEquals($expectedSkipLinks, $actualSkipLinks);
+    }
 }

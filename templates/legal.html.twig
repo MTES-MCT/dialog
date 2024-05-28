@@ -6,6 +6,8 @@
     {{ title }} - {{ parent() }}
 {% endblock %}
 
+{% set definesContentSkiplink = true %}
+
 {% block body %}
     <div class="fr-container fr-py-2w fr-py-md-5w">
         {% include "common/breadcrumb.html.twig" with { items: [
@@ -13,44 +15,46 @@
             { title },
         ]} %}
 
-        {% apply markdown_to_html %}
-        # {{ title }}
+        <div id="content">
+            {% apply markdown_to_html %}
+            # {{ title }}
 
-        ## Édition
+            ## Édition
 
-        Ce site est édité par la [Direction générale des infrastructures, des transports et des mobilités (DGITM)](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm), domiciliée dans la tour Séquoia au 1 place Carpeaux 92800 Puteaux.
+            Ce site est édité par la [Direction générale des infrastructures, des transports et des mobilités (DGITM)](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm), domiciliée dans la tour Séquoia au 1 place Carpeaux 92800 Puteaux.
 
-        Le directeur de la publication du site est son directeur général Rodolphe Gintz.
+            Le directeur de la publication du site est son directeur général Rodolphe Gintz.
 
-        ## Réalisation
+            ## Réalisation
 
-        [DiaLog](https://beta.gouv.fr/startups/dialogue.html) est un service numérique développé par la Fabrique numérique de l'écologie, incubateur [beta.gouv.fr](https://beta.gouv.fr/) du [ministère de la Transition écologique et de la Cohésion des territoires](https://www.ecologie.gouv.fr/) (MTE-MCT).
+            [DiaLog](https://beta.gouv.fr/startups/dialogue.html) est un service numérique développé par la Fabrique numérique de l'écologie, incubateur [beta.gouv.fr](https://beta.gouv.fr/) du [ministère de la Transition écologique et de la Cohésion des territoires](https://www.ecologie.gouv.fr/) (MTE-MCT).
 
-        [Son code source](https://github.com/MTES-MCT/dialog/) est distribué sous licence libre [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.fr.html).
+            [Son code source](https://github.com/MTES-MCT/dialog/) est distribué sous licence libre [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.fr.html).
 
-        [Nous vous invitons à signaler tout problème que vous rencontrerez](https://github.com/MTES-MCT/dialog/issues/new/choose).
+            [Nous vous invitons à signaler tout problème que vous rencontrerez](https://github.com/MTES-MCT/dialog/issues/new/choose).
 
-        Pour toute autre demande, vous pouvez contacter l'équipe [par email](mailto:dialog@beta.gouv.fr).
+            Pour toute autre demande, vous pouvez contacter l'équipe [par email](mailto:dialog@beta.gouv.fr).
 
-        ## Hébergement
+            ## Hébergement
 
-        Ce site est hébergé en France par l'entreprise Scalingo, domiciliée au 15 avenue du Rhin 67000 Strasbourg.
+            Ce site est hébergé en France par l'entreprise Scalingo, domiciliée au 15 avenue du Rhin 67000 Strasbourg.
 
-        ## Crédits
+            ## Crédits
 
-        L'image représentant le Capitole à Toulouse (`toulouse.webp`) sur [la page Collectivités](https://dialog.beta.gouv.fr/collectivites) est une adaptation d'[une œuvre de Ceridwen](https://commons.wikimedia.org/wiki/File:Le_Capitole_de_Toulouse.jpg) publiée sous licence [CC BY-SA 2.0 FR](https://creativecommons.org/licenses/by-sa/2.0/fr/deed.fr).
+            L'image représentant le Capitole à Toulouse (`toulouse.webp`) sur [la page Collectivités](https://dialog.beta.gouv.fr/collectivites) est une adaptation d'[une œuvre de Ceridwen](https://commons.wikimedia.org/wiki/File:Le_Capitole_de_Toulouse.jpg) publiée sous licence [CC BY-SA 2.0 FR](https://creativecommons.org/licenses/by-sa/2.0/fr/deed.fr).
 
-        L'image représentant l'église Saint-Martin de Savenay (`savenay.webp`) sur [la page Collectivités](https://dialog.beta.gouv.fr/collectivites) est une adaptation d'[une œuvre de KaTeznik](https://commons.wikimedia.org/wiki/File:Savenay-Eglise.jpg) publiée sous licence [CC BY-SA 2.0 FR](https://creativecommons.org/licenses/by-sa/2.0/fr/deed.fr).
+            L'image représentant l'église Saint-Martin de Savenay (`savenay.webp`) sur [la page Collectivités](https://dialog.beta.gouv.fr/collectivites) est une adaptation d'[une œuvre de KaTeznik](https://commons.wikimedia.org/wiki/File:Savenay-Eglise.jpg) publiée sous licence [CC BY-SA 2.0 FR](https://creativecommons.org/licenses/by-sa/2.0/fr/deed.fr).
 
-        L'image représentant une maison de Saint-Rome (`saint-rome.webp`) sur [la page Collectivités](https://dialog.beta.gouv.fr/collectivites) est une adaptation d'[une œuvre de Et caetera](https://commons.wikimedia.org/wiki/File:Maison_de_Saint-Rome.jpg) publiée sous licence [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.fr).
+            L'image représentant une maison de Saint-Rome (`saint-rome.webp`) sur [la page Collectivités](https://dialog.beta.gouv.fr/collectivites) est une adaptation d'[une œuvre de Et caetera](https://commons.wikimedia.org/wiki/File:Maison_de_Saint-Rome.jpg) publiée sous licence [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/deed.fr).
 
-        Les pictogrammes sont issus du [système de design de l'Etat](https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-techniques/pictogramme) publié sous licence [MIT](https://opensource.org/license/mit/).
+            Les pictogrammes sont issus du [système de design de l'Etat](https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-techniques/pictogramme) publié sous licence [MIT](https://opensource.org/license/mit/).
 
-        Les icones sont issues : 
-        * du [système de design de l'Etat](https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-techniques/icone) publié sous licence [MIT](https://opensource.org/license/mit/),
-        * de [Remix Icon](https://remixicon.com/) publié sous licence [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+            Les icones sont issues : 
+            * du [système de design de l'Etat](https://www.systeme-de-design.gouv.fr/elements-d-interface/fondamentaux-techniques/icone) publié sous licence [MIT](https://opensource.org/license/mit/),
+            * de [Remix Icon](https://remixicon.com/) publié sous licence [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-        Les illustrations sont issues de [Storyset](https://storyset.com/) et utilisées dans le respect des [conditions contractuelles](https://storyset.com/terms).
-        {% endapply %}
+            Les illustrations sont issues de [Storyset](https://storyset.com/) et utilisées dans le respect des [conditions contractuelles](https://storyset.com/terms).
+            {% endapply %}
+        </div>
     </div>
 {% endblock body %}

@@ -25,9 +25,15 @@
     {% endblock %}
   </head>
   <body>
+    {% include 'common/skiplinks.html.twig' with { skipLinks: [
+        {href: '#content', label: 'common.skiplinks.content'|trans},
+        ...(skipLinks|default([])),
+        {href: '#footer', label: 'common.skiplinks.footer'|trans},
+    ]} only %}
+
     {% block header %}{% endblock %}
 
-    <main id="contenu" class="{% block page_class %}{% endblock page_class %}">
+    <main class="{% block page_class %}{% endblock page_class %}">
         <noscript>
             <section class="fr-container fr-mt-3w">
                 <div class="fr-alert fr-alert--info">
@@ -45,7 +51,9 @@
             {% if loop.last %}</div>{% endif %}
         {% endfor %}
 
-        {% block body %}{% endblock %}
+        <div {% if not definesContentSkiplink|default(false) %}id="content"{% endif %}>
+            {% block body %}{% endblock %}
+        </div>
     </main>
     {% include 'common/footer.html.twig' %}
 
