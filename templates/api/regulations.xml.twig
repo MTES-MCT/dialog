@@ -8,7 +8,7 @@
   xmlns:com="http://datex2.eu/schema/3/common"
   xmlns:comx="http://datex2.eu/schema/3/commonExtension"
   xmlns:loc="http://datex2.eu/schema/3/locationReferencing"
-  xmlns:locdx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
+  xmlns:dx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
   xmlns="http://datex2.eu/schema/3/trafficRegulation"
   xsi:schemaLocation="http://datex2.eu/schema/3/d2Payload DATEXII_3_D2Payload.xsd"
   xsi:type="TrafficRegulationPublication"
@@ -123,7 +123,7 @@
                                             </loc:supplementaryPositionalDescription>
                                             <loc:_linearLocationExtension>
                                                 <loc:linearLocationExtended>
-                                                    <locdx:geoJsonGeometry>{{ location.geometry }}</locdx:geoJsonGeometry>
+                                                    <dx:geoJsonGeometry>{{ location.geometry }}</dx:geoJsonGeometry>
                                                 </loc:linearLocationExtended>
                                             </loc:_linearLocationExtension>
                                         </locationByOrder>
@@ -196,6 +196,12 @@
                         </condition>
                     </trafficRegulation>
                 {% endfor %}
+
+                <_trafficRegulationOrderExtension>
+                    <trafficRegulationOrderExtended>
+                        <dx:source>{{ regulationOrder.source }}</dx:source>
+                    </trafficRegulationOrderExtended>
+                </_trafficRegulationOrderExtension>
             </trafficRegulationOrder>
         {% endfor %}
     </trafficRegulationsFromCompetentAuthorities>
