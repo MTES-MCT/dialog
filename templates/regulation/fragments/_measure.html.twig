@@ -36,7 +36,7 @@
                 </ul>
                 <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
                     {% for location in measure.locations %}
-                        <li>
+                        <li data-location-uuid="{{ location.uuid }}">
                             <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
                             {% if location.roadType == 'lane' %}
                                 {{ location.namedStreet.roadName }}
