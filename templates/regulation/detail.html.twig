@@ -10,6 +10,8 @@
 
 {% block page_class %}fr-background-alt--grey{% endblock %}
 
+{% set definesContentSkiplink = true %}
+
 {% block body %}
     {% set isDraft = generalInfo.isDraft %}
     <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
@@ -18,7 +20,7 @@
             { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': generalInfo.identifier }) },
         ]} %}
 
-        <div>
+        <div id="content">
             <h2 id="regulation-detail">{{ title }}</h2>
 
             <div class="fr-grid-row fr-grid-row--gutters">

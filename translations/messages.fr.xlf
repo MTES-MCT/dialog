@@ -216,6 +216,22 @@
                 <source>common.unit.meters</source>
                 <target>mètres</target>
             </trans-unit>
+            <trans-unit id="common.skiplinks">
+                <source>common.skiplinks</source>
+                <target>Accès rapide</target>
+            </trans-unit>
+            <trans-unit id="common.skiplinks.content">
+                <source>common.skiplinks.content</source>
+                <target>Contenu</target>
+            </trans-unit>
+            <trans-unit id="common.skiplinks.footer">
+                <source>common.skiplinks.footer</source>
+                <target>Pied de page</target>
+            </trans-unit>
+            <trans-unit id="public.skiplinks.menu">
+                <source>public.skiplinks.menu</source>
+                <target>Menu</target>
+            </trans-unit>
             <trans-unit id="accessibility.status">
                 <source>accessibility.status</source>
                 <target>Accessibilité : non conforme</target>

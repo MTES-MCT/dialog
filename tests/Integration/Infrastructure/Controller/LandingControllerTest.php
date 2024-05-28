@@ -15,6 +15,14 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
+        $this->assertSkipLinks(
+            [
+                ['Contenu', '#content'],
+                ['Menu', '#header-navigation'],
+                ['Pied de page', '#footer'],
+            ],
+            $crawler,
+        );
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $this->assertSame('/collectivites', $crawler->selectLink('Pour les collectivités')->attr('href'));
         $this->assertSame('/services-numeriques', $crawler->selectLink('Pour les services numériques')->attr('href'));
