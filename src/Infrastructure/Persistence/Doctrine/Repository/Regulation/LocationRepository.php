@@ -55,7 +55,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                ->innerJoin('l.measure', 'm')
                ->innerJoin('m.regulationOrder', 'ro')
                ->innerJoin('ro.regulationOrderRecord', 'roc')
-               ->where('roc.status = :status');
+               ->where('roc.status = :status')
+               ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED);
 
         if ($permanentRegulationsOnly && !$temporaryRegulationsOnly) {
             $query->andWhere('ro.endDate IS NULL');
@@ -73,12 +74,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         } elseif (!$includeUpcomingRegulations && $includePastRegulations) {
             $query->andWhere('((ro.endDate >= :now OR ro.endDate IS NULL) AND ro.startDate <= :now) OR ro.endDate < :now');
         }
-        // no filter needed for ($permanentRegulationsOnly && $temporaryRegulationsOnly) : we want all kind of regulations
-
-        $query->setParameters([
-            'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
-            'now' => $this->dateUtils->getNow()->format('Y-m-d'),
-        ]);
+        // no filter needed for ($includeUpcomingRegulations && $includePastRegulations) : we want all kind of regulations
+        if (!($includeUpcomingRegulations && $includePastRegulations)) {
+            $query->setParameter('now', $this->dateUtils->getNow()->format('Y-m-d'));
+        }
 
         $geoJSONs = [];
         $results = $query->getQuery()->getResult();

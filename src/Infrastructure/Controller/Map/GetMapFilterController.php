@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Map;
 
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -28,10 +28,12 @@ final class GetMapFilterController
         name: 'get_map_filter',
         methods: ['GET'],
     )]
-    public function __invoke(Request $request, #[MapQueryParameter] array $map_filter_form = ['category' => 'permanents_and_temporaries', 'display_future_regulations' => 'no', 'display_past_regulations' => 'no']): Response
+    public function __invoke(Request $request): Response
     {
+        $dto = new MapFilterDTO();
         $form = $this->formFactory->create(
             type: MapFilterFormType::class,
+            data: $dto,
             options: [
                 'action' => $this->router->generate('get_map_filter'),
                 'method' => 'GET',
@@ -43,20 +45,11 @@ final class GetMapFilterController
 
         $form->handleRequest($request); // auto-fill the form with the query parameters from the URL
 
-        // the array '$map_filter_form' can be defined without the 'category' key for example, so we have to set a default value eventually
-        $includePermanentAndOrTemporaryRegulations = $map_filter_form['category'] ?? 'permanents_and_temporaries';
-        $includePermanentRegulations = (($includePermanentAndOrTemporaryRegulations == 'permanents_and_temporaries')
-                                        or ($includePermanentAndOrTemporaryRegulations == 'permanents_only'));
-        $includeTemporaryRegulations = (($includePermanentAndOrTemporaryRegulations == 'permanents_and_temporaries')
-                                        or ($includePermanentAndOrTemporaryRegulations == 'temporaries_only'));
-        $includeUpcomingRegulations = (($map_filter_form['display_future_regulations'] ?? 'no') != 'no');
-        $includePastRegulations = (($map_filter_form['display_past_regulations'] ?? 'no') != 'no');
-
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
-            $includePermanentRegulations,
-            $includeTemporaryRegulations,
-            $includeUpcomingRegulations,
-            $includePastRegulations,
+            $dto->category === 'permanents_only',
+            $dto->category === 'temporaries_only',
+            $dto->displayFutureRegulations === '1',
+            $dto->displayPastRegulations === '1',
         );
 
         return new Response(

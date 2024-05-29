@@ -46,8 +46,8 @@ final class MapController
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
             $dto->category === 'permanents_only',
             $dto->category === 'temporaries_only',
-            $dto->displayFutureRegulations === 'yes',
-            $dto->displayPastRegulations === 'yes',
+            $dto->displayFutureRegulations === '1',
+            $dto->displayPastRegulations === '1',
         );
 
         return new Response(
