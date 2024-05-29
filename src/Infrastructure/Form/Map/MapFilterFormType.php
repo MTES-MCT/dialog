@@ -24,7 +24,7 @@ final class MapFilterFormType extends AbstractType
                 'displayFutureRegulations',
                 CheckboxType::class,
                 options: [
-                    'label' => 'Arrêtés à venir',
+                    'label' => 'map.form.displayFutureRegulations',
                     'value' => 'yes',
                     'required' => false,
                 ],
@@ -33,31 +33,28 @@ final class MapFilterFormType extends AbstractType
                 'displayPastRegulations',
                 CheckboxType::class,
                 options: [
-                    'label' => 'Arrêtés passés',
+                    'label' => 'map.form.displayPastRegulations',
                     'value' => 'yes',
                     'required' => false,
                 ],
             )
-            ->add(
-                'save',
-                SubmitType::class,
-            )
+            ->add('save', SubmitType::class)
         ;
     }
 
     private function getCategoryOptions(): array
     {
         $choices = [
-            'Arrêtés permanents' => 'permanents_only',
-            'Arrêtés temporaires' => 'temporaries_only',
-            'Tous les arrêtés' => 'permanents_and_temporaries',
+            'map.filter.permanents' => 'permanents_only',
+            'map.filter.temporaries' => 'temporaries_only',
+            'map.filter.all' => 'permanents_and_temporaries',
         ];
 
         return [
             'choices' => $choices,
             'label' => false,
-            'expanded' => true, // we want radio buttons
-            'multiple' => false, // we want radio buttons
+            'expanded' => true,
+            'multiple' => false,
             'required' => true,
             'data' => 'permanents_and_temporaries', // default value for the radio buttons
         ];

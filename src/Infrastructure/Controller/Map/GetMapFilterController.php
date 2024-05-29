@@ -6,7 +6,6 @@ namespace App\Infrastructure\Controller\Map;
 
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Infrastructure\Form\Map\MapFilterFormType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +13,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
-final class GetMapFilterController extends AbstractController
+final class GetMapFilterController
 {
     public function __construct(
         private \Twig\Environment $twig,
