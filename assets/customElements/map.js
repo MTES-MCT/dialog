@@ -25,6 +25,7 @@ export default class extends HTMLElement {
 }
 
 async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath) {
+    // Lazy load to only transfer MapLibre JS when loading the map : 
     const maplibregl = (await import('maplibre-gl')).default;
 
     const styleLink = document.createElement('link');
@@ -113,7 +114,9 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 		if (locationPopUpContainer) {
 		    locationPopUpContainer.removeAttribute("hidden");
 		}
-		locationPopUp._update(); // we need this, otherwise the popup is misplaced (example : anchor on the bottom side, even at the top of the map -> popup outside of the <div> of the map), as the popup is filled after its creation, thanks to an AJAX request ; credits : https://stackoverflow.com/questions/60928595/dynamic-anchor-popup-open-outside-of-map-container
+		// force an update for dynamic positioning (as the popup is filled after its creation, thanks to an AJAX request)
+		// credits : https://stackoverflow.com/questions/60928595/dynamic-anchor-popup-open-outside-of-map-container
+		locationPopUp._update();
 	    });
 	});
 	// change the cursor when the mouse is over the locations layer
