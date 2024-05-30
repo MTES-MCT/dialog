@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Cifs\PolylineMakerInterface;
+use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
@@ -17,17 +18,22 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetCifsIncidentsQueryHandler
 {
+    private CifsFilterSet $cifsFilterSet;
+
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
-        private array $cifsAllowedLocationIds = [],
+        array|CifsFilterSet $cifsFilters = [],
     ) {
+        $this->cifsFilterSet = $cifsFilters instanceof CifsFilterSet ? $cifsFilters : CifsFilterSet::fromJSON($cifsFilters);
     }
 
     public function __invoke(GetCifsIncidentsQuery $query): array
     {
         $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat(
-            allowedLocationIds: $this->cifsAllowedLocationIds,
+            $this->cifsFilterSet->allowedSources,
+            $this->cifsFilterSet->excludedIdentifiers,
+            $this->cifsFilterSet->allowedLocationIds,
         );
 
         // Reference: https://developers.google.com/waze/data-feed/cifs-specification?hl=fr
@@ -36,7 +42,7 @@ final class GetCifsIncidentsQueryHandler
         /** @var RegulationOrderRecord $regulationOrderRecord */
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
-            $regulationOrderId = $regulationOrder->getUuid();
+            $identifier = $regulationOrder->getIdentifier();
 
             $subType = match ($regulationOrder->getCategory()) {
                 RegulationOrderCategoryEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
@@ -116,9 +122,8 @@ final class GetCifsIncidentsQueryHandler
                         foreach ($polylines as $polyline) {
                             // The ID of a CIFS incident is opaque to Waze, we can define it as we want.
                             // But it must be "unique inside the feed and remain stable over an incident's lifetime".
-                            // For the ID to be unique, it should contain the location ID, a hash of the polyline, and the period ID.
-                            // We include the regulation order ID so that we can identify which regulation order an incident comes from.
-                            $id = $regulationOrderId . ':' . $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
+                            // We include the regulation order identifier and location ID so that we can identify where an incident comes from.
+                            $id = $identifier . ':' . $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
 
                             $incidents[] = new CifsIncidentView(
                                 id: $id,

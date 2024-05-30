@@ -34,6 +34,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
     public const UUID_OTHER_CATEGORY = self::UUID_NO_LOCATIONS;
 
     public const UUID_NO_MEASURES = '0650037d-3e90-7a99-8000-a2099e71ae4a';
+    public const UUID_CIFS = '0654905d-6771-75d8-8000-d523184d0b55';
 
     public function load(ObjectManager $manager): void
     {
@@ -110,7 +111,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         );
 
         $regulationOrderRecordCifs = new RegulationOrderRecord(
-            '0654905d-6771-75d8-8000-d523184d0b55',
+            self::UUID_CIFS,
             RegulationOrderRecordSourceEnum::DIALOG->value,
             RegulationOrderRecordStatusEnum::PUBLISHED,
             $this->getReference('regulationOrderCifs'),
