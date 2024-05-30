@@ -36,7 +36,7 @@ final class GetMapDataController
             type: MapFilterFormType::class,
             data: $dto,
         );
-        //$form->handleRequest($request); // auto-fill the form with the query parameters from the URL
+        // $form->handleRequest($request); // auto-fill the form with the query parameters from the URL
         $locationsAsGeoJsonAsText = $this->locationRepository->findAllForMapAsGeoJSON(
             $dto->category === 'permanents_only',
             $dto->category === 'temporaries_only',
@@ -45,6 +45,7 @@ final class GetMapDataController
         );
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT); // for the response (!)
+
         return new Response(
             $this->twig->render(
                 name: 'map/fragments/map_data.stream.html.twig',
@@ -53,6 +54,5 @@ final class GetMapDataController
                 ],
             ),
         );
-
     }
 }

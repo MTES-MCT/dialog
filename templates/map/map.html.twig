@@ -6,27 +6,22 @@
 
 {% block body %}
     <nav class="fr-accordion" style="position: absolute; z-index: 99; background-color: white;">
-	<button
-	    class="fr-accordion__btn"
-	    aria-controls="fr-accordion-wrapper"
-	    aria-expanded="false"
-	>{{ 'map.filter.title'|trans }}</button>
-	<div class="fr-collapse fr-p-1w" id="fr-accordion-wrapper">
-	    {% include 'map/map_filter.html.twig' with {dataOutputHTMLId: 'locations_as_geojson_template', form: form} only %}
-	</div>
+		<button
+			class="fr-accordion__btn"
+			aria-controls="fr-accordion-wrapper"
+			aria-expanded="false"
+		>{{ 'map.filter.title'|trans }}</button>
+		<div class="fr-collapse fr-p-1w" id="fr-accordion-wrapper">
+			{% include 'map/map_filter.html.twig' with {form: form} only %}
+		</div>
     </nav>
-    <span id="locations_as_geojson" hidden></span>
+    <span id="locations_as_geojson" hidden>{{ locationsAsGeoJson }}</span>
     <dialog-map class=""
 		data-height="480px"
-		data-geojson="{{ locationsAsGeoJson }}"
 		data-pos="[2.725, 47.16]"
 		data-zoom="5"
 		data-source="locations_as_geojson"
-		data-map-filter-turbo-frame-id="locations_as_geojson"
 		data-location-path="{{ path('fragment_map_location') }}"
 		aria-hidden="true"
     />
-    <turbo-stream target="map-data" action="update">
-	<template id="locations_as_geojson_template" name="locations-geojson" hidden aria-hidden="true">{{ locationsAsGeoJson }}</template>
-    </turbo-stream>
 {% endblock %}
