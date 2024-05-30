@@ -92,6 +92,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ];
         }
 
-        return json_encode($geoJSONs);
+        return json_encode([
+            'type' => 'FeatureCollection',
+            'features' => $geoJSONs,
+        ]);
     }
 }

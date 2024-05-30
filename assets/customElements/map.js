@@ -9,7 +9,7 @@ export default class extends HTMLElement {
         const zoom = +(this.dataset.zoom || 13);
 
 
-	const geojson = JSON.parse(this.dataset.geojson || '[]'); // example : "[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-1.728876775,48.37839112],[-1.72880412,48.378224342], … ]},"properties":{"is_permanent":true,"is_draft":false,"measure_type":"noEntry","location_uuid":"018f3ede-1930-7556-8b32-449ca7f026a8"}},{"type":"Feature","geometry":{"type":"MultiLineString","coordinates":[[[-1.6976246,48.21139647],[-1.697490153,48.211703784]],[[-1.697490153,48.211703784],[-1.697420744,48.211848064]], … ]},"properties":{"is_permanent":false,"is_draft":true,"measure_type":"speedLimitation","location_uuid":"018f7c41-846c-72fc-a2a6-477a3a171c0a"}}, … ]]"
+	const geojson = JSON.parse(this.dataset.geojson || '[]'); // example : "{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-1.728876775,48.37839112],[-1.72880412,48.378224342], … ]},"properties":{"location_uuid":"018f3ede-1930-7556-8b32-449ca7f026a8","measure_type":"noEntry"}},{"type":"Feature","geometry":{"type":"LineString","coordinates": … },"properties":{"location_uuid":"018f3ede-19a7-7bf1-8f69-437d028fa862","measure_type":"noEntry"}},{"type":"Feature","geometry":{"type":"MultiLineString","coordinates": … },"properties":{"location_uuid":"018f3f04-57de-7c71-be8f-4bdd51266df1","measure_type":"noEntry"}}, … ]}"
 	const locationsAsGeoJSONOutputId = this.dataset['locationsAsGeojsonOutputId'] || 'locations_as_geojson_output';
 	const mapFilterTurboFrameId = this.dataset['mapFilterTurboFrameId'] || 'map_filter_turbo_frame';
 	const locationPath = this.dataset['locationPath'];
@@ -69,10 +69,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
         map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 	const locationSourceAsGeoJSON = {
             type: 'geojson',
-            data: {
-                type: 'FeatureCollection',
-                features: geojson
-            },
+            data: geojson,
 	    tolerance: 0.0, // we want to display the data at very low zoom level -> tolerance must be very low
         };
         map.addSource('locations-source', locationSourceAsGeoJSON);
@@ -137,10 +134,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 		    if (ouputElement) {
 			const new_geojson = JSON.parse(ouputElement.innerText || []);
 			// credits to https://maplibre.org/maplibre-gl-js/docs/examples/live-update-feature/
-			map.getSource('locations-source').setData({
-			    type: 'FeatureCollection',
-			    features: new_geojson
-			});
+			map.getSource('locations-source').setData(new_geojson);
 		    }
 		}
 	    }
