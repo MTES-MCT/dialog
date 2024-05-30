@@ -12,13 +12,4 @@ final readonly class CifsFilterSet
         public array $allowedLocationIds = [],
     ) {
     }
-
-    public static function fromJSON(array $data): self
-    {
-        return new self(
-            allowedSources: $data['allowed_sources'] ?? [],
-            excludedIdentifiers: $data['excluded_identifiers'] ?? [],
-            allowedLocationIds: $data['allowed_location_ids'] ?? [],
-        );
-    }
 }

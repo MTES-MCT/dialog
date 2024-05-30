@@ -18,14 +18,11 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetCifsIncidentsQueryHandler
 {
-    private CifsFilterSet $cifsFilterSet;
-
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
-        array|CifsFilterSet $cifsFilters = [],
+        private CifsFilterSet $cifsFilterSet = new CifsFilterSet(),
     ) {
-        $this->cifsFilterSet = $cifsFilters instanceof CifsFilterSet ? $cifsFilters : CifsFilterSet::fromJSON($cifsFilters);
     }
 
     public function __invoke(GetCifsIncidentsQuery $query): array
