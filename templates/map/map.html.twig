@@ -12,17 +12,21 @@
 	    aria-expanded="false"
 	>{{ 'map.filter.title'|trans }}</button>
 	<div class="fr-collapse fr-p-1w" id="fr-accordion-wrapper">
-	    {% include 'map/map_filter.html.twig' %}
+	    {% include 'map/map_filter.html.twig' with {dataOutputHTMLId: 'locations_as_geojson_template', form: form} only %}
 	</div>
     </nav>
+    <span id="locations_as_geojson" hidden></span>
     <dialog-map class=""
 		data-height="480px"
 		data-geojson="{{ locationsAsGeoJson }}"
 		data-pos="[2.725, 47.16]"
 		data-zoom="5"
-		data-locations-as-geojson-output-id="locations_as_geojson_output"
-		data-map-filter-turbo-frame-id="map_filter_turbo_frame"
+		data-source="locations_as_geojson"
+		data-map-filter-turbo-frame-id="locations_as_geojson"
 		data-location-path="{{ path('fragment_map_location') }}"
 		aria-hidden="true"
     />
+    <turbo-stream target="map-data" action="update">
+	<template id="locations_as_geojson_template" name="locations-geojson" hidden aria-hidden="true">{{ locationsAsGeoJson }}</template>
+    </turbo-stream>
 {% endblock %}

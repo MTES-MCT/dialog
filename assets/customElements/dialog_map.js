@@ -10,7 +10,7 @@ customElements.define('dialog-map', class extends HTMLElement {
 
 
 	const geojson = JSON.parse(this.dataset.geojson || '[]'); // example : "{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-1.728876775,48.37839112],[-1.72880412,48.378224342], … ]},"properties":{"location_uuid":"018f3ede-1930-7556-8b32-449ca7f026a8","measure_type":"noEntry"}},{"type":"Feature","geometry":{"type":"LineString","coordinates": … },"properties":{"location_uuid":"018f3ede-19a7-7bf1-8f69-437d028fa862","measure_type":"noEntry"}},{"type":"Feature","geometry":{"type":"MultiLineString","coordinates": … },"properties":{"location_uuid":"018f3f04-57de-7c71-be8f-4bdd51266df1","measure_type":"noEntry"}}, … ]}"
-	const locationsAsGeoJSONOutputId = this.dataset['locationsAsGeojsonOutputId'] || 'locations_as_geojson_output';
+	const locationsAsGeoJSONOutputId = this.dataset['source'] || 'locations_as_geojson_output';
 	const mapFilterTurboFrameId = this.dataset['mapFilterTurboFrameId'] || 'map_filter_turbo_frame';
 	const locationPath = this.dataset['locationPath'];
 
@@ -131,7 +131,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
     // Mutation API Observer
     function mutationCallback(mutationList) {
 	for (const mutation of mutationList) {
-	    if (mutation.type === "childList") {
+	    if (mutation.type === "characterData") {
 		if (mutation.addedNodes && mutation.addedNodes.length >= 1) {
 		    const ouputElement = mutation.target.querySelector("#" + locationsAsGeoJSONOutputId);
 		    if (ouputElement) {
@@ -145,7 +145,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
     };
     const targetNode = document.getElementById(mapFilterTurboFrameId); // observe our <turbo-frame>
     if (targetNode) {
-	const config = { attributes: false, childList: true, subtree: true, characterData: false };
+	const config = { characterData: true };
 	const observer = new MutationObserver(mutationCallback);
 	observer.observe(targetNode, config);
     }

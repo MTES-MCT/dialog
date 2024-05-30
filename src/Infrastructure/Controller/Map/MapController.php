@@ -35,7 +35,7 @@ final class MapController
             type: MapFilterFormType::class,
             data: $dto,
             options: [
-                'action' => $this->router->generate('get_map_filter'),
+                'action' => $this->router->generate('fragment_map_data'),
                 'method' => 'GET',
                 'attr' => [
                     'data-turbo-action' => 'replace',

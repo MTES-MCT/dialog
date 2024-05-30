@@ -1,6 +1,7 @@
 // @ts-check
 
 
+/*
 // credits to https://github.com/fairnesscoop/permacoop/blob/master/src/assets/customElements/autoForm.js
 customElements.define('dialog-map-filter-form', class extends HTMLElement {
     connectedCallback() {
@@ -8,7 +9,7 @@ customElements.define('dialog-map-filter-form', class extends HTMLElement {
 	    // Progressive enhancement:
 	    // If this custom element activates, submit the form whenever
 	    // a form control changes value.
-	    const form = /** @type {HTMLFormElement} */ (this.querySelector('form'));
+	    const form = / ** @type {HTMLFormElement} * / (this.querySelector('form'));
 	    const associatedTurboFrameId = this.dataset['turboFrameId'];
 	    const updateURLWith = this.dataset['updateUrlWith'];
 	    if (associatedTurboFrameId && updateURLWith) {
@@ -29,6 +30,24 @@ customElements.define('dialog-map-filter-form', class extends HTMLElement {
 			});
 		    }
 		}
+	    }
+	});
+    }
+});
+*/
+
+// credits to https://github.com/fairnesscoop/permacoop/blob/master/src/assets/customElements/autoForm.js
+customElements.define('dialog-auto-form', class extends HTMLElement {
+    connectedCallback() {
+ 	requestAnimationFrame(() => {
+	    // Progressive enhancement:
+	    // If this custom element activates, submit the form whenever
+	    // a form control changes value.
+	    const form = /** @type {HTMLFormElement} */ (this.querySelector('form'));
+	    for (const formControl of form.elements) {
+		formControl.addEventListener('change', () => { // a change on one element of the form submits the form automatically
+		    form.requestSubmit();
+		});
 	    }
 	});
     }

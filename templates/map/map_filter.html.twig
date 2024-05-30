@@ -1,13 +1,10 @@
-<turbo-frame id="map_filter_turbo_frame">
-    <dialog-map-filter-form data-turbo-frame-id="map_filter_turbo_frame" data-update-url-with="{{ path('app_carto') }}">
-	{{ form_start(form) }}
-	    {{ form_row(form.category, {group_class: 'fr-radio-group'}) }}
-	    {{ form_row(form.displayFutureRegulations, {group_class: 'fr-checkbox-group fr-pl-1w fr-pb-1w'}) }}
-	    {{ form_row(form.displayPastRegulations, {group_class: 'fr-checkbox-group fr-pl-1w'}) }}
-	    <noscript>
-		{{ form_row(form.save) }}
-	    </noscript>
-	    <output id="locations_as_geojson_output" class="fr-hidden" name="locations-geojson" for="map_filter_form_category map_filter_form_display_future_regulations map_filter_form_display_past_regulations" aria-hidden="true">{{ locationsAsGeoJson }}</output>
-	{{ form_end(form) }}
-    </dialog-map-filter-form>
-</turbo-frame>
+<dialog-auto-form data-output="{{ dataOutputHTMLId }}">
+    {{ form_start(form, {attr: {'data-turbo-action' : 'advance'}}) }}
+	{{ form_row(form.category, {group_class: 'fr-radio-group'}) }}
+	{{ form_row(form.displayFutureRegulations, {group_class: 'fr-checkbox-group fr-pl-1w fr-pb-1w'}) }}
+	{{ form_row(form.displayPastRegulations, {group_class: 'fr-checkbox-group fr-pl-1w'}) }}
+	<noscript>
+	    {{ form_row(form.save) }}
+	</noscript>
+    {{ form_end(form) }}
+</dialog-auto-form>
