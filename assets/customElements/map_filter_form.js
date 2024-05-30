@@ -2,7 +2,7 @@
 
 
 // credits to https://github.com/fairnesscoop/permacoop/blob/master/src/assets/customElements/autoForm.js
-export default class extends HTMLElement {
+customElements.define('dialog-map-filter-form', class extends HTMLElement {
     connectedCallback() {
  	requestAnimationFrame(() => {
 	    // Progressive enhancement:
@@ -32,4 +32,4 @@ export default class extends HTMLElement {
 	    }
 	});
     }
-}
+});

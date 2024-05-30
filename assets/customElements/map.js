@@ -1,7 +1,7 @@
 // @ts-check
 
 
-export default class extends HTMLElement {
+customElements.define('dialog-map', class extends HTMLElement {
     connectedCallback() {
         const height = this.dataset.height || '300px';
         /** @type {[number, number]} */
@@ -25,7 +25,7 @@ export default class extends HTMLElement {
             this.map = map; // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('dialog-map')[0].map"
         });
     }
-}
+});
 
 async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath) {
     // Lazy load to only transfer MapLibre JS when loading the map : 
@@ -71,8 +71,8 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
     map.on('load', () => {
         map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 	const locationSourceAsGeoJSON = {
-            type: 'geojson',
-            data: geojson,
+	    type: 'geojson',
+	    data: geojson,
 	    tolerance: 0.0, // we want to display the data at very low zoom level -> tolerance must be very low
         };
         map.addSource('locations-source', locationSourceAsGeoJSON);
@@ -82,17 +82,17 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 		'type': 'line',
 		'source': 'locations-source',
 		'layout': {
-                    'line-join': 'round',
-                    'line-cap': 'round',
+		    'line-join': 'round',
+		    'line-cap': 'round',
 		},
 		'paint': {
-                    'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
+		    'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
 				   ['==', ['get', 'measure_type'], 'noEntry'], '#ff5655', // red
 				   ['==', ['get', 'measure_type'], 'speedLimitation'], '#ff742e', // orange
 				   '#000000'], // black ; blue -> 0063cb
-                    'line-width': 4,
+		    'line-width': 4,
 		},
-            },
+	    },
 	    "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
 	);
 	// popup when clicking on a feature of the locations layer
@@ -101,7 +101,7 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 	    const locationTurboFrame = document.createElement('turbo-frame');
 	    locationTurboFrame.id = `location_turbo_frame_${locationProperties.location_uuid}`;
 	    locationTurboFrame.src = `${locationPath}/${locationProperties.location_uuid}`;
-            const locationPopUp = new maplibregl.Popup()
+	    const locationPopUp = new maplibregl.Popup()
 		  .setLngLat(e.lngLat)
 		  .setDOMContent(locationTurboFrame)
 		  .addTo(map);
@@ -121,10 +121,10 @@ async function createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJS
 	});
 	// change the cursor when the mouse is over the locations layer
 	map.on('mouseenter', 'locations-layer', () => {
-            map.getCanvas().style.cursor = 'pointer';
+	    map.getCanvas().style.cursor = 'pointer';
 	});
 	map.on('mouseleave', 'locations-layer', () => {
-            map.getCanvas().style.cursor = '';
+	    map.getCanvas().style.cursor = '';
 	});
     });
 
