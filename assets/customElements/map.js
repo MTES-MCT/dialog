@@ -18,9 +18,12 @@ export default class extends HTMLElement {
         container.style.height = height;
         this.appendChild(container);
 
-        this.mapOnPromise = createMapLibreMap(container, pos, zoom, geojson, locationsAsGeoJSONOutputId, mapFilterTurboFrameId, locationPath);
-	// use this to debug in the JS console of your browser :
-	//my_map = await document.getElementsByTagName("dialog-map")[0].mapOnPromise
+        createMapLibreMap(
+	    container, pos, zoom, geojson, locationsAsGeoJSONOutputId,
+	    mapFilterTurboFrameId, locationPath
+	).then((map) => {
+            this.map = map; // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('dialog-map')[0].map"
+        });
     }
 }
 
