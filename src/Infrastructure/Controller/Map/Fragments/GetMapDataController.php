@@ -11,7 +11,6 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class GetMapDataController
@@ -19,7 +18,6 @@ final class GetMapDataController
     public function __construct(
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
-        private RouterInterface $router,
         private LocationRepositoryInterface $locationRepository,
     ) {
     }
