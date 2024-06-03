@@ -14,6 +14,7 @@ final class RegulationOrderFixture extends Fixture
     public const TYPICAL_IDENTIFIER = 'FO1/2023';
     public const NUM_TEMPORARY = 7;
     public const NUM_PERMANENT = 1;
+    public const IDENTIFIER_CIFS = 'F/CIFS/2023';
 
     public function load(ObjectManager $manager): void
     {
@@ -92,7 +93,7 @@ final class RegulationOrderFixture extends Fixture
 
         $regulationOrderCifs = new RegulationOrder(
             uuid: '06549047-db9d-74bb-8000-754a6f2ff4c3',
-            identifier: 'F/CIFS/2023',
+            identifier: self::IDENTIFIER_CIFS,
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Arrêté exporté vers CIFS',
             startDate: new \DateTimeImmutable('2023-06-02'),

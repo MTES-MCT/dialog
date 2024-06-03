@@ -161,8 +161,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
-    public function findRegulationOrdersForCifsIncidentFormat(array $allowedLocationIds = []): array
-    {
+    public function findRegulationOrdersForCifsIncidentFormat(
+        array $allowedSources = [],
+        array $excludedIdentifiers = [],
+        array $allowedLocationIds = [],
+    ): array {
         return $this->createQueryBuilder('roc')
             ->addSelect('ro', 'loc', 'm', 'p', 'd', 't')
             ->innerJoin('roc.regulationOrder', 'ro')
@@ -176,12 +179,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.status = :status',
                 'ro.endDate >= :today',
                 'loc.geometry IS NOT NULL',
-                $allowedLocationIds ? 'loc.uuid IN (:locationIds)' : null,
+                $allowedSources ? 'roc.source in (:allowedSources)' : null,
+                $excludedIdentifiers ? 'ro.identifier NOT IN (:excludedIdentifiers)' : null,
+                $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
                 'm.type = :measureType',
                 'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )
             ->setParameters([
-                ...($allowedLocationIds ? ['locationIds' => $allowedLocationIds] : []),
+                ...($allowedSources ? ['allowedSources' => $allowedSources] : []),
+                ...($excludedIdentifiers ? ['excludedIdentifiers' => $excludedIdentifiers] : []),
+                ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                 'today' => $this->dateUtils->getNow(),
