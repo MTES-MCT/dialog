@@ -32,10 +32,6 @@ final class NumberedRoadFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.roadNumber',
                     'help' => 'regulation.location.roadNumber.help',
-                    'required' => false, // Due to error "An invalid form control with name='x' is not focusable"
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
@@ -44,10 +40,6 @@ final class NumberedRoadFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
                     'help' => 'regulation.location.referencePoint.pointNumber.help',
-                    'required' => false,
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
@@ -61,10 +53,6 @@ final class NumberedRoadFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
                     'help' => 'regulation.location.referencePoint.pointNumber.help',
-                    'required' => false,
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
@@ -128,10 +116,6 @@ final class NumberedRoadFormType extends AbstractType
 
         return [
             'label' => 'regulation.location.administrator',
-            'label_attr' => [
-                'class' => 'required',
-            ],
-            'required' => false, // Due to error "An invalid form control with name='x' is not focusable"
             'help' => 'regulation.location.administrator.help',
             'choices' => array_merge(
                 ['regulation.location.administrator.placeholder' => ''],

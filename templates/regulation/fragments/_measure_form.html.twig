@@ -176,19 +176,30 @@
                         'change->form-reveal#openByValue'
                     },
                 }) }}
+
+                {% set isDepartmentalRoad = form.roadType.vars.value == 'departmentalRoad' %}
                 <div
                     data-controller="reset"
                     data-form-reveal-target="section"
                     data-value="departmentalRoad"
-                    {% if form.roadType.vars.value != 'departmentalRoad'%} hidden {% endif %}
+                    {% if not isDepartmentalRoad%}hidden{% endif %}
                 >
-                    {{ form_row(form.numberedRoad.roadType) }}
+                    {{ form_row(form.numberedRoad.roadType, {
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'departmentalRoad',
+                            'disabled': not isDepartmentalRoad,
+                        }
+                    }) }}
                     {{ form_row(form.numberedRoad.administrator, {
                         group_class: 'fr-input-group',
                         widget_class: 'fr-input',
                         attr: {
                             'data-action': 'change->reset#reset',
                             'data-reset-key-param': 'administrator',
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'departmentalRoad',
+                            'disabled': not isDepartmentalRoad,
                         }
                     }) }}
                     <div
@@ -211,6 +222,9 @@
                                 'data-autocomplete-target': 'input',
                                 'data-reset-target': 'element',
                                 'data-reset-keys': ['administrator']|json_encode,
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'departmentalRoad',
+                                'disabled': not isDepartmentalRoad,
                             },
                         }) }}
                             <ul
@@ -228,9 +242,12 @@
                         aria-labelledby="regulation-location-{{ index }}-reference-point"
                         data-reset-target="element"
                         data-reset-keys="{{ ['administrator', 'roadNumber']|json_encode }}"
+                        data-form-reveal-target="formControl"
+                        data-value="departmentalRoad"
+                        {% if not isDepartmentalRoad %}disabled{% endif %}
                     >
                         <legend id="regulation-location-{{ index }}-reference-point">
-                            <span class="fr-x-label-content">{{ 'regulation.location.referencePoint'|trans }}</span>
+                           {{ 'regulation.location.referencePoint'|trans }}
                         </legend>
                         <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
                         <fieldset
@@ -262,11 +279,12 @@
                     </fieldset>
                 </div>
 
+                {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
                     data-controller="reset"
                     data-form-reveal-target="section"
                     data-value="lane"
-                    {% if form.roadType.vars.value != 'lane'%} hidden {% endif%}
+                    {% if not isLane %}hidden{% endif %}
                 >
                     <div
                         class="fr-x-autocomplete-wrapper"
@@ -280,14 +298,30 @@
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="city"
                     >
-                        {{ form_row(form.namedStreet.roadType) }}
-                        {{ form_row(form.namedStreet.cityCode, { attr: {'data-autocomplete-target': 'hidden'} }) }}
+                        {{ form_row(form.namedStreet.roadType, {
+                            attr: {
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'lane',
+                                'disabled': not isLane,
+                            }
+                        }) }}
+                        {{ form_row(form.namedStreet.cityCode, {
+                            attr: {
+                                'data-autocomplete-target': 'hidden',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'lane',
+                                'disabled': not isLane,
+                            }
+                        }) }}
 
                         {{ form_row(form.namedStreet.cityLabel, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
                             attr: {
                                 'data-autocomplete-target': 'input',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'lane',
+                                'disabled': not isLane,
                             },
                         }) }}
                         <ul
@@ -321,6 +355,9 @@
                                 'data-autocomplete-target': 'input',
                                 'data-reset-target': 'element',
                                 'data-reset-keys': ['city']|json_encode,
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'lane',
+                                'disabled': not isLane,
                             },
                         }) }}
                         <ul
@@ -334,24 +371,39 @@
                         </ul>
                     </div>
 
-                    <div data-controller="form-reveal">
-                        {{ form_row(form.namedStreet.isEntireStreet, {
-                            group_class: 'fr-checkbox-group',
-                            attr: {
-                                'data-controller': 'condition',
-                                'data-condition-equals-value': true,
-                                'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
-                            }
-                        }) }}
+                    <fieldset
+                        aria-labelledby="{{ form.namedStreet.vars.id }}-section-legend"
+                        data-form-reveal-target="formControl"
+                        data-value="lane"
+                        {% if not isLane %}disabled{% endif %}
+                    >
+                        <legend id="{{ form.namedStreet.vars.id }}-section-legend" class="app-sr-only">
+                            {{ 'regulation.location.named_street.section'|trans }}
+                        </legend>
 
-                        <div
-                            class="fr-mt-3w"
-                            data-form-reveal-target="section"
-                            {% if form.namedStreet.isEntireStreet.vars.checked %}hidden{% endif %}
-                        >
-                            {% include 'location/named_street/points_form.html.twig' with { form } only %}
+                        <div data-controller="form-reveal">
+                            {{ form_row(form.namedStreet.isEntireStreet, {
+                                group_class: 'fr-checkbox-group',
+                                attr: {
+                                    'data-controller': 'condition',
+                                    'data-condition-equals-value': true,
+                                    'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
+                                }
+                            }) }}
+
+                            <fieldset
+                                aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
+                                data-form-reveal-target="section formControl"
+                                {% if form.namedStreet.isEntireStreet.vars.checked %}hidden{% endif %}
+                            >
+                                <legend id="{{ form.namedStreet.vars.id }}-points-legend" class="app-sr-only">
+                                    {{ 'regulation.location.named_street.points'|trans }}
+                                </legend>
+                                {% include 'location/named_street/points_form.html.twig' with { form } only %}
+                            </fieldset>
                         </div>
-                    </div>
+                    </fieldset>
+
                 </div>
             </div>
         </div>

@@ -95,9 +95,8 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 {% endblock %}
 
 {% block form_label_content %}
-  {%- set label_content_attr = label_content_attr|default({})|merge({class: label_content_attr.class|default('') ~ ' fr-x-label-content'}) -%}
-  <span {% with {attr: label_content_attr} %}{{ block('attributes')}}{% endwith %}>
-    {{ parent() }}
+  <span>
+    {{ parent() }}{% if required %}<span class="fr-x-required-marker" aria-hidden="true"></span>{% endif %}
   </span>
   {{- form_help(form) -}}
 {% endblock %}

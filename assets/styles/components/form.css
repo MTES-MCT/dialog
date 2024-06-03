@@ -1,7 +1,6 @@
 /* .required is set by Symfony for form types with 'required => true' */
-label.required > .fr-x-label-content::after,
-legend.required > .fr-x-label-content::after {
-  content: " *";
+:where(label, legend).required .fr-x-required-marker[aria-hidden="true"]::after {
+  content: ' *';
 }
 
 @supports not selector(::-webkit-calendar-picker-indicator) {
