@@ -1958,6 +1958,10 @@
                 <source>map.location.popup.details</source>
                 <target>Voir les détails</target>
             </trans-unit>
+            <trans-unit id="map.location.state">
+                <source>map.location.state</source>
+                <target>L'arrêté est :</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
