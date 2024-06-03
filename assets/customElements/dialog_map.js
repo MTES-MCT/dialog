@@ -1,6 +1,5 @@
 // @ts-check
 
-
 customElements.define('dialog-map', class extends HTMLElement {
 	connectedCallback() {
 		const height = this.dataset.height || '300px';
@@ -27,35 +26,13 @@ customElements.define('dialog-map', class extends HTMLElement {
 });
 
 async function createMapLibreMap(container, pos, zoom, geojson, sourceEl, locationPath) {
-	// Lazy load to only transfer MapLibre JS when loading the map : 
+	// Lazy load to only transfer MapLibre JS when loading the map :
 	const maplibregl = (await import('maplibre-gl')).default;
 
 	const styleLink = document.createElement('link');
 	styleLink.rel = 'stylesheet';
 	styleLink.href = 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css';
 	document.head.appendChild(styleLink);
-
-	// Define the map syle (OpenStreetMap raster tiles)
-	/*
-	const osm_style = {
-	"version": 8,
-	"sources": {
-		"osm": {
-		"type": "raster",
-		"tiles": ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
-		"tileSize": 256,
-		"attribution": "&copy; OpenStreetMap Contributors",
-		"maxzoom": 19
-		}
-	},
-	"layers": [
-		{
-		"id": "osm",
-		"type": "raster",
-		"source": "osm" // This must match the source key above
-		}
-	]
-	};*/
 
 	const map = new maplibregl.Map({
 		container: container,

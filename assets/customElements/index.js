@@ -1,2 +1,2 @@
-import map from "./dialog_map";
-import map_filter_form from "./dialog_auto_form";
+import "./dialog_map";
+import "./dialog_auto_form";
