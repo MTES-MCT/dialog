@@ -8,13 +8,11 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';
 
-// our custom HTML elements
-import './customElements';
-
 // start the Stimulus application
 import './bootstrap';
 
 // configure analytics
 import './analytics';
 
+// our custom HTML elements
 import './customElements';
