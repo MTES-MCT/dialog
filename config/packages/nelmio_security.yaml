@@ -32,9 +32,13 @@ nelmio_security:
             default-src: ['self']
             script-src: ['self']
             style-src: ['self']
-            connect-src: ['self']
+            connect-src: ['self', 'https://data.geopf.fr']
             font-src: ['self']
-            img-src: ['self', 'data:']
+            img-src: ['self', 'data:', 'blob:']
+            # maplibre-gl
+            # https://maplibre.org/maplibre-gl-js/docs/#csp-directives
+            worker-src: ['blob:']
+            child-src: ['blob:']
             block-all-mixed-content: true
 
 when@dev:
