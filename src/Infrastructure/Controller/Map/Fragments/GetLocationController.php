@@ -42,7 +42,7 @@ final class GetLocationController
 
         return new Response(
             $this->twig->render(
-                name: 'map/fragments/location.html.twig',
+                name: 'map/fragments/location_popup.html.twig',
                 context: [
                     'location' => $location,
                     'measure' => $measureView,

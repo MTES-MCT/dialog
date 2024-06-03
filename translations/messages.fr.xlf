@@ -1954,6 +1954,10 @@
                 <source>map.filter.all</source>
                 <target>Tous les arrêtés</target>
             </trans-unit>
+            <trans-unit id="map.location.popup.details">
+                <source>map.location.popup.details</source>
+                <target>Voir les détails</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
