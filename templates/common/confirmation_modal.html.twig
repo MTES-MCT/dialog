@@ -1,36 +1,29 @@
+{% set modalId = id %}
+
+{% use "common/form/dsfr_theme.html.twig" %}
+
 <dialog
-    data-controller="modal"
-    id="{{ id }}"
-    class="fr-modal"
+    id="{{ modalId }}"
+    class="app-modal"
     role="dialog"
-    aria-labelledby="{{ id }}-title"
+    aria-labelledby="{{ modalId }}-title"
 >
-    <div class="fr-container fr-container--fluid fr-container-md">
-        <div class="fr-grid-row fr-grid-row--center">
-            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                <form method="dialog" class="fr-modal__body">
-                    <div class="fr-modal__header">
-                        <button class="fr-link fr-link--close" aria-controls="{{ id }}">
-                            {{ 'common.close'|trans }}
-                        </button>
-                    </div>
-                    <div class="fr-modal__content">
-                        <h1 id="{{ id }}-title" class="fr-modal__title">
-                            {{ title }}
-                        </h1>
-                    </div>
-                    <div class="fr-modal__footer">
-                        <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg">
-                            <button data-modal-target="value" class="fr-btn">
-                                {{ confirmLabel }}
-                            </button>
-                            <button class="fr-btn fr-btn--secondary">
-                                {{ cancelLabel }}
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <form method="dialog" class="fr-container">
+        <button class="fr-mb-2w fr-link fr-link--close" aria-controls="{{ modalId }}">
+            {{ 'common.close'|trans }}
+        </button>
+
+        <h1 id="{{ modalId }}-title">
+            {{ title }}
+        </h1>
+
+        <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg">
+            {% for button in buttons %}
+                {% set attr = ({'aria-controls': modalId})|merge(button.attr) %}
+                <button {% with {attr} %}{{ block('attributes') }}{% endwith %}>
+                    {{ button.label }}
+                </button>
+            {% endfor %}
         </div>
-    </div>
+    </form>
 </dialog>

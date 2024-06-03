@@ -1,0 +1,8 @@
+dialog.app-modal {
+    border: none;
+    padding: var(--2w);
+}
+
+dialog.app-modal h1 {
+    font-size: 1.5rem;
+}

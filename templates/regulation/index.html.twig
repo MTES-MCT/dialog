@@ -64,7 +64,9 @@
     {% include 'common/confirmation_modal.html.twig' with {
         id: 'regulation-delete-modal',
         title: 'regulation.delete_modal.title'|trans,
-        confirmLabel: 'common.delete'|trans,
-        cancelLabel: 'common.do_not_delete'|trans,
+        buttons: [
+            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
     } only %}
 {% endblock %}

@@ -13,3 +13,5 @@ import './bootstrap';
 
 // configure analytics
 import './analytics';
+
+import './customElements';
