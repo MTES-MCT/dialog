@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Controller;
+namespace App\Tests\Integration\Infrastructure\Controller\Map\Fragment;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class GetLocationControllerTest extends AbstractWebTestCase
 {
