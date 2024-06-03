@@ -30,10 +30,6 @@ final class NamedStreetFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.city',
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
-                    'required' => false,
                 ],
             )
             ->add(
@@ -42,10 +38,6 @@ final class NamedStreetFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.roadName',
                     'help' => 'regulation.location.roadName.help',
-                    'required' => false,
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
@@ -65,22 +57,14 @@ final class NamedStreetFormType extends AbstractType
                 'fromHouseNumber',
                 TextType::class,
                 options: [
-                    'required' => false,
                     'label' => 'regulation.location.named_street.house_number',
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
                 'fromRoadName',
                 TextType::class,
                 options: [
-                    'required' => false,
                     'label' => 'regulation.location.named_street.intersection',
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
@@ -92,22 +76,14 @@ final class NamedStreetFormType extends AbstractType
                 'toHouseNumber',
                 TextType::class,
                 options: [
-                    'required' => false,
                     'label' => 'regulation.location.named_street.house_number',
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add(
                 'toRoadName',
                 TextType::class,
                 options: [
-                    'required' => false,
                     'label' => 'regulation.location.named_street.intersection',
-                    'label_attr' => [
-                        'class' => 'required',
-                    ],
                 ],
             )
             ->add('roadType', HiddenType::class)
@@ -141,11 +117,7 @@ final class NamedStreetFormType extends AbstractType
                     'disabled' => true,
                 ],
             ],
-            'required' => false,
             'label' => 'regulation.location.named_street.point_type',
-            'label_attr' => [
-                'class' => 'required',
-            ],
         ];
     }
 

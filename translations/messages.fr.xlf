@@ -534,6 +534,14 @@
                 <source>regulation.location.roadName.results_label</source>
                 <target>Noms de voies suggérés</target>
             </trans-unit>
+            <trans-unit id="regulation.location.named_street.section">
+                <source>regulation.location.named_street.section</source>
+                <target>Section concernée</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.points">
+                <source>regulation.location.named_street.points</source>
+                <target>Points de la section concernée</target>
+            </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type">
                 <source>regulation.location.named_street.point_type</source>
                 <target>Type de point</target>
