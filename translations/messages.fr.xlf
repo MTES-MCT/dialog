@@ -1918,6 +1918,50 @@
                 <source>api.cifs.incident.description</source>
                 <target>%street% : circulation interdite tous les jours pour tous les véhicles</target>
             </trans-unit>
+            <trans-unit id="map.meta.title">
+                <source>map.meta.title</source>
+                <target>Carte</target>
+            </trans-unit>
+            <trans-unit id="map.form.displayFutureRegulations">
+                <source>map.form.displayFutureRegulations</source>
+                <target>Arrêtés à venir</target>
+            </trans-unit>
+            <trans-unit id="map.form.displayPastRegulations">
+                <source>map.form.displayPastRegulations</source>
+                <target>Arrêtés passés</target>
+            </trans-unit>
+            <trans-unit id="map.title">
+                <source>map.title</source>
+                <target>Visualiser les restrictions</target>
+            </trans-unit>
+            <trans-unit id="map.loading">
+                <source>map.loading</source>
+                <target>Chargement de la carte en cours...</target>
+            </trans-unit>
+            <trans-unit id="map.filters.title">
+                <source>map.filters.title</source>
+                <target>Filtres</target>
+            </trans-unit>
+            <trans-unit id="map.filter.permanents">
+                <source>map.filter.permanents</source>
+                <target>Arrêtés permanents</target>
+            </trans-unit>
+            <trans-unit id="map.filter.temporaries">
+                <source>map.filter.temporaries</source>
+                <target>Arrêtés temporaires</target>
+            </trans-unit>
+            <trans-unit id="map.filter.all">
+                <source>map.filter.all</source>
+                <target>Tous les arrêtés</target>
+            </trans-unit>
+            <trans-unit id="map.location.popup.details">
+                <source>map.location.popup.details</source>
+                <target>Voir les détails</target>
+            </trans-unit>
+            <trans-unit id="map.location.state">
+                <source>map.location.state</source>
+                <target>L'arrêté est :</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

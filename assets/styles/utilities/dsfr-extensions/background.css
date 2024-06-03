@@ -1,3 +1,7 @@
+.fr-background-default--grey {
+    background-color: var(--background-default-grey);
+}
+
 .fr-background-alt--grey {
     background-color: var(--background-alt-grey);
 }

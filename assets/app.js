@@ -14,4 +14,5 @@ import './bootstrap';
 // configure analytics
 import './analytics';
 
+// our custom HTML elements
 import './customElements';
