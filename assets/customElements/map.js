@@ -197,7 +197,7 @@ class MapLibreMap {
 
 const METROPOLITAN_FRANCE_CENTER = '[2.725, 47.16]';
 
-customElements.define('dialog-map', class extends HTMLElement {
+customElements.define('d-map', class extends HTMLElement {
     connectedCallback() {
         const mapHeight = this.getAttribute('mapHeight') || '300px';
         const mapPos = JSON.parse(this.getAttribute('mapPos') || METROPOLITAN_FRANCE_CENTER);
@@ -218,7 +218,7 @@ customElements.define('dialog-map', class extends HTMLElement {
             const elementsToHide = /** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('[data-map-hidewhen=ready]'));
             elementsToHide.forEach(el => el.hidden = true);
 
-            // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('dialog-map')[0].map"
+            // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('d-map')[0].map"
             this.map = mapInstance;
         });
     }

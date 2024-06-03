@@ -1,7 +1,7 @@
 // @ts-check
 
 // credits to https://github.com/fairnesscoop/permacoop/blob/master/src/assets/customElements/autoForm.js
-customElements.define('dialog-auto-form', class extends HTMLElement {
+customElements.define('d-auto-form', class extends HTMLElement {
     connectedCallback() {
         requestAnimationFrame(() => {
             // Progressive enhancement:

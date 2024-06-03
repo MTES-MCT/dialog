@@ -14,7 +14,7 @@
 
                 <h2 class="fr-h4">{{ 'map.filters.title'|trans }}</h2>
 
-                <dialog-auto-form>
+                <d-auto-form>
                     {{ form_start(form, {
                         attr: {
                             class: 'd-stack',
@@ -28,10 +28,10 @@
                             {{ form_row(form.save) }}
                         </noscript>
                     {{ form_end(form) }}
-                </dialog-auto-form>
+                </d-auto-form>
             </div>
 
-            <dialog-map
+            <d-map
                 class="fr-col-12 fr-col-sm-8 fr-col-md-9"
                 aria-hidden="true"
                 mapHeight="480px"
@@ -43,7 +43,7 @@
                 <p data-map-hidewhen="ready" class="fr-mt-5w fr-x-text--center">
                     {{ 'map.loading'|trans }}
                 </p>
-            </dialog-map>
+            </d-map>
         </div>
     </div>
 {% endblock %}
