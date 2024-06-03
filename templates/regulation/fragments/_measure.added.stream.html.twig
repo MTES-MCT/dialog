@@ -23,16 +23,16 @@
     <template>
         {% include 'regulation/fragments/_add_measure_link.html.twig' with { regulationOrderRecordUuid } only %}
     </template>
-</turbo-frame>
+</turbo-stream>
 
 <turbo-stream action="replace" target="block_export">
     <template>
         {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid } only %}
     </template>
-</turbo-frame>
+</turbo-stream>
 
 <turbo-stream action="update" target="block_publication">
     <template>
         {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: regulationOrderRecordUuid } only %}
     </template>
-</turbo-frame>
+</turbo-stream>
