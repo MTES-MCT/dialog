@@ -15,7 +15,7 @@
 		<span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
 		{% if location.roadType == 'lane' %}
 		    {{ location.namedStreet.roadName }}
-		    {% include 'regulation/_location_house_numbers.html.twig' with { location: location.namedStreet } only %}
+		    {% include 'location/named_street/points.html.twig' with { location: location.namedStreet } only %}
 		    {{ location.namedStreet.cityLabel }}
 		{% else %}
 		    {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }})
@@ -35,7 +35,7 @@
 	    <li class="fr-mb-1w">
 		{% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
 		{% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
-		L'arrêté est : 
+		L'arrêté est :
 		{% if isUpcoming %}
 		    {{ 'common.date.upcoming'|trans }}
 		{% elseif hasPassed %}
