@@ -87,16 +87,15 @@
                                 data-action="modal-trigger:submit->form-submit#submit"
                                 class="fr-hidden fr-unhidden-md"
                             >
-                                <button
-                                    class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
-                                    data-controller="modal-trigger"
-                                    data-modal-trigger-modal-outlet="#regulation-delete-modal"
-                                    data-modal-trigger-key-value="{{ regulation.uuid }}"
-                                    data-action="modal-trigger#showModal:prevent"
-                                    aria-controls="regulation-delete-modal"
-                                    aria-label="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
-                                    title="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
-                                ></button>
+                                <d-modal-trigger modal="regulation-delete-modal" submitValue="regulation-delete-{{ regulation.uuid }}">
+                                    <button
+                                        class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                        aria-controls="regulation-delete-modal"
+                                        aria-label="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
+                                        title="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
+                                    ></button>
+                                </d-modal-trigger>
+
                                 <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
                             </form>
                         </div>
