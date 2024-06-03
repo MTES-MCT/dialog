@@ -33,14 +33,14 @@
 
             <dialog-map
                 class="fr-col-12 fr-col-sm-8 fr-col-md-9"
-                data-height="480px"
-                data-pos="[2.725, 47.16]"
-                data-zoom="5"
-                data-source="locations_as_geojson"
-                data-location-path="{{ path('fragment_map_location') }}"
                 aria-hidden="true"
+                mapHeight="480px"
+                mapPos="[2.725, 47.16]"
+                mapZoom="5"
+                dataSource="locations_as_geojson"
+                locationPopupUrl="{{ path('fragment_map_location') }}"
             >
-                <p data-hidewhen="ready" class="fr-mt-5w fr-x-text--center">
+                <p data-map-hidewhen="ready" class="fr-mt-5w fr-x-text--center">
                     {{ 'map.loading'|trans }}
                 </p>
             </dialog-map>
