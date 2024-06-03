@@ -214,11 +214,12 @@ customElements.define('dialog-map', class extends HTMLElement {
             dataSource,
         );
 
-        map.onReady(() => {
+        map.onReady((mapInstance) => {
             const elementsToHide = /** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('[data-map-hidewhen=ready]'));
             elementsToHide.forEach(el => el.hidden = true);
 
-            this.map = map; // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('dialog-map')[0].map"
+            // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('dialog-map')[0].map"
+            this.map = mapInstance;
         });
     }
 });
