@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class MapController
 {
@@ -35,20 +36,34 @@ final class MapController
             type: MapFilterFormType::class,
             data: $dto,
             options: [
-                'action' => $this->router->generate('fragment_map_data'),
+                'action' => $this->router->generate('app_carto'),
                 'method' => 'GET',
                 'attr' => [
                     'data-turbo-action' => 'replace',
                 ],
             ],
         );
-        $form->handleRequest($request); // auto-fill the form with the query parameters from the URL
+        $form->handleRequest($request);
+
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
             $dto->category === 'permanents_only',
             $dto->category === 'temporaries_only',
             $dto->displayFutureRegulations === '1',
             $dto->displayPastRegulations === '1',
         );
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $request->setRequestFormat(TurboBundle::STREAM_FORMAT); // for the response (!)
+
+            return new Response(
+                $this->twig->render(
+                    name: 'map/fragments/map_data.stream.html.twig',
+                    context: [
+                        'locationsAsGeoJson' => $locationsAsGeoJson,
+                    ],
+                ),
+            );
+        }
 
         return new Response(
             $this->twig->render(
