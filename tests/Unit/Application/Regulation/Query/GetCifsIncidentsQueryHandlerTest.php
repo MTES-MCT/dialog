@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Cifs\PolylineMakerInterface;
+use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
@@ -84,7 +85,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period4Id = '0661e7ed-e549-7e4b-8000-945882a092c4';
 
         $incident1 = new CifsIncidentView(
-            id: sprintf('7a5cec06-8fa4-4883-ba89-fc45713aba9a:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
+            id: sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_HAZARD',
@@ -97,7 +98,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident2 = new CifsIncidentView(
-            id: sprintf('7a5cec06-8fa4-4883-ba89-fc45713aba9a:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline2Hash),
+            id: sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline2Hash),
             creationTime: $incident1->creationTime,
             type: $incident1->type,
             subType: $incident1->subType,
@@ -110,7 +111,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident3 = new CifsIncidentView(
-            id: sprintf('7ef9d046-7092-41ee-b6d9-2cf3693ba0f1:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
+            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_CONSTRUCTION',
@@ -144,7 +145,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident4 = new CifsIncidentView(
-            id: sprintf('7ef9d046-7092-41ee-b6d9-2cf3693ba0f1:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period2Id),
+            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period2Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -170,7 +171,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident5 = new CifsIncidentView(
-            id: sprintf('7ef9d046-7092-41ee-b6d9-2cf3693ba0f1:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period3Id),
+            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period3Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -190,7 +191,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident6 = new CifsIncidentView(
-            id: sprintf('7ef9d046-7092-41ee-b6d9-2cf3693ba0f1:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
+            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -218,8 +219,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $regulationOrder1 = $this->createMock(RegulationOrder::class);
         $regulationOrder1
             ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('7a5cec06-8fa4-4883-ba89-fc45713aba9a');
+            ->method('getIdentifier')
+            ->willReturn('2024T1');
         $regulationOrder1
             ->expects(self::once())
             ->method('getCategory')
@@ -283,8 +284,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $regulationOrder2 = $this->createMock(RegulationOrder::class);
         $regulationOrder2
             ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('7ef9d046-7092-41ee-b6d9-2cf3693ba0f1');
+            ->method('getIdentifier')
+            ->willReturn('2024T2');
         $regulationOrder2
             ->expects(self::once())
             ->method('getCategory')
@@ -521,15 +522,23 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
     }
 
-    public function testAllowedLocationIds(): void
+    public function testFilters(): void
     {
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
-            ->with(['id1'])
-            ->willReturn([]); // Don't care, we just test that the IDs were passed to the repository method
+            ->with(['my_source'], ['identifier1'], ['591b83d1-c70d-4b18-85be-091acd73b087'])
+            ->willReturn([]); // Don't care, we just test that the filters were passed to the repository method
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, ['id1']);
+        $handler = new GetCifsIncidentsQueryHandler(
+            $this->regulationOrderRecordRepository,
+            $this->polylineMaker,
+            new CifsFilterSet(
+                allowedSources: ['my_source'],
+                excludedIdentifiers: ['identifier1'],
+                allowedLocationIds: ['591b83d1-c70d-4b18-85be-091acd73b087'],
+            ),
+        );
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $incidents);
