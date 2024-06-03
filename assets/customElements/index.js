@@ -1,1 +1,3 @@
-import './modal_trigger.element.js';
+import './modal_trigger';
+import './map';
+import './auto_form';

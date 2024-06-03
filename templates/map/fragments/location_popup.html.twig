@@ -1,0 +1,55 @@
+<turbo-frame id="location_turbo_frame_{{ location.uuid }}">
+    <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
+        <li class="fr-grid-row">
+            <span class="fr-icon-x-restriction fr-x-icon--primary fr-x-icon--sm fr-pr-1w" aria-hidden="true"></span>
+            {% if measure.type == 'speedLimitation' %}
+                {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
+            {% else %}
+                {{ ('regulation.measure.type.' ~ measure.type)|trans }}
+            {% endif %}
+        </li>
+
+        <li>
+            <span class="fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
+            {% if location.roadType == 'lane' %}
+                {{ location.namedStreet.roadName }}
+                {% include 'location/named_street/points.html.twig' with { location: location.namedStreet } only %}
+                {{ location.namedStreet.cityLabel }}
+            {% else %}
+                {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }})
+                {% include 'regulation/_reference_points.html.twig' with { location: location.numberedRoad } only %}
+            {% endif %}
+        </li>
+
+        <li>
+            <span class="fr-icon-car-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
+            {% include 'regulation/_vehicle_set.html.twig' with {
+                vehicleSet: measure.vehicleSet,
+            } only %}
+        </li>
+
+        <li>
+            <span class="fr-icon-calendar-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
+            {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+        </li>
+
+        <li>
+            {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
+            {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
+            {{ 'map.location.state'|trans }}
+            {% if isUpcoming %}
+                {{ 'common.date.upcoming'|trans }}
+            {% elseif hasPassed %}
+                {{ 'common.date.passed'|trans }}
+            {% else %}
+                {{ 'common.date.ongoing'|trans }}
+            {% endif %}
+        </li>
+
+        <li>
+            <a href="{{ path('app_regulation_detail', {'uuid' : regulationOrderRecordId}) }}" target="_blank">
+                {{ 'map.location.popup.details'|trans }}
+            </a>
+        </li>
+    </ul>
+</turbo-frame>
