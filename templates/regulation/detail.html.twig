@@ -87,16 +87,15 @@
                                         data-controller="form-submit"
                                         data-action="modal-trigger:submit->form-submit#submit"
                                     >
-                                        <button
-                                            class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
-                                            data-controller="modal-trigger"
-                                            data-modal-trigger-modal-outlet="#regulation-delete-modal"
-                                            data-modal-trigger-key-value="delete"
-                                            data-action="modal-trigger#showModal:prevent"
-                                            aria-controls="regulation-delete-modal"
-                                        >
-                                            {{'common.delete'|trans}}
-                                        </button>
+                                        <d-modal-trigger modal="regulation-delete-modal" submitValue="delete">
+                                            <button
+                                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
+                                                aria-controls="regulation-delete-modal"
+                                            >
+                                                {{'common.delete'|trans}}
+                                            </button>
+                                        </d-modal-trigger>
+
                                         <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
                                     </form>
                                 </li>
@@ -122,20 +121,28 @@
         {% include "common/confirmation_modal.html.twig" with {
             id: 'regulation-publish-modal',
             title: 'regulation.publish_modal.title'|trans,
-            confirmLabel: 'common.publish'|trans,
-            cancelLabel: 'common.do_not_publish'|trans,
+            buttons: [
+                { label: 'common.publish'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+                { label: 'common.do_not_publish'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+            ],
         } only %}
+    
         {% include "common/confirmation_modal.html.twig" with {
             id: 'measure-delete-modal',
             title: 'measure.delete_modal.title'|trans,
-            confirmLabel: 'common.delete'|trans,
-            cancelLabel: 'common.do_not_delete'|trans,
+            buttons: [
+                { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+                { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+            ],
         } only %}
     {% endif %}
+
     {% include "common/confirmation_modal.html.twig" with {
         id: 'regulation-delete-modal',
         title: 'regulation.delete_modal.title'|trans,
-        confirmLabel: 'common.delete'|trans,
-        cancelLabel: 'common.do_not_delete'|trans,
+        buttons: [
+            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ],
     } only %}
 {% endblock %}
