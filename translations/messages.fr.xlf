@@ -1910,6 +1910,10 @@
                 <source>api.cifs.incident.description</source>
                 <target>%street% : circulation interdite tous les jours pour tous les véhicles</target>
             </trans-unit>
+            <trans-unit id="map.meta.title">
+                <source>map.meta.title</source>
+                <target>Carte</target>
+            </trans-unit>
             <trans-unit id="map.form.displayFutureRegulations">
                 <source>map.form.displayFutureRegulations</source>
                 <target>Arrêtés à venir</target>
