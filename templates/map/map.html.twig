@@ -5,25 +5,46 @@
 {% endblock %}
 
 {% block body %}
-    <nav class="fr-accordion" style="position: absolute; z-index: 99; background-color: white;">
-        <button
-            class="fr-accordion__btn"
-            aria-controls="fr-accordion-wrapper"
-            aria-expanded="false"
-        >
-            {{ 'map.filter.title'|trans }}
-        </button>
-        <div class="fr-collapse fr-p-1w" id="fr-accordion-wrapper">
-            {% include 'map/map_filter.html.twig' with {form: form} only %}
-        </div>
-    </nav>
     <span id="locations_as_geojson" hidden>{{ locationsAsGeoJson }}</span>
-    <dialog-map class=""
-        data-height="480px"
-        data-pos="[2.725, 47.16]"
-        data-zoom="5"
-        data-source="locations_as_geojson"
-        data-location-path="{{ path('fragment_map_location') }}"
-        aria-hidden="true"
-    />
+
+    <div class="fr-x-container--fluid" style="--container-width: 75rem">
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-pt-2w fr-pb-6w">
+                <h1 class="fr-h3">{{ 'map.title'|trans }} </h1>
+
+                <h2 class="fr-h4">{{ 'map.filters.title'|trans }}</h2>
+
+                <dialog-auto-form>
+                    {{ form_start(form, {
+                        attr: {
+                            'data-turbo-action' : 'advance',
+                            class: 'd-stack',
+                            style: '--stack-gap: var(--1w)',
+                        },
+                    }) }}
+                        {{ form_row(form.category, {group_class: 'fr-radio-group'}) }}
+                        {{ form_row(form.displayFutureRegulations, {group_class: 'fr-checkbox-group'}) }}
+                        {{ form_row(form.displayPastRegulations, {group_class: 'fr-checkbox-group'}) }}
+                        <noscript>
+                            {{ form_row(form.save) }}
+                        </noscript>
+                    {{ form_end(form) }}
+                </dialog-auto-form>
+            </div>
+
+            <dialog-map
+                class="fr-col-12 fr-col-sm-8 fr-col-md-9"
+                data-height="480px"
+                data-pos="[2.725, 47.16]"
+                data-zoom="5"
+                data-source="locations_as_geojson"
+                data-location-path="{{ path('fragment_map_location') }}"
+                aria-hidden="true"
+            >
+                <p data-hidewhen="ready" class="fr-mt-5w fr-x-text--center">
+                    {{ 'map.loading'|trans }}
+                </p>
+            </dialog-map>
+        </div>
+    </div>
 {% endblock %}

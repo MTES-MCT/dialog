@@ -1,6 +1,7 @@
 .fr-x-container--fluid {
-    max-width: none;
+    max-width: var(--container-width, none);
     padding-left: 0;
     padding-right: 0;
+    margin: auto;
     /* No 'overflow: hidden' (contrary to '.fr-container--fluid') */
 }

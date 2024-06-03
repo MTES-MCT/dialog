@@ -1922,6 +1922,18 @@
                 <source>map.form.displayPastRegulations</source>
                 <target>Arrêtés passés</target>
             </trans-unit>
+            <trans-unit id="map.title">
+                <source>map.title</source>
+                <target>Visualiser les restrictions</target>
+            </trans-unit>
+            <trans-unit id="map.loading">
+                <source>map.loading</source>
+                <target>Chargement de la carte en cours...</target>
+            </trans-unit>
+            <trans-unit id="map.filters.title">
+                <source>map.filters.title</source>
+                <target>Filtres</target>
+            </trans-unit>
             <trans-unit id="map.filter.permanents">
                 <source>map.filter.permanents</source>
                 <target>Arrêtés permanents</target>
@@ -1933,10 +1945,6 @@
             <trans-unit id="map.filter.all">
                 <source>map.filter.all</source>
                 <target>Tous les arrêtés</target>
-            </trans-unit>
-            <trans-unit id="map.filter.title">
-                <source>map.filter.title</source>
-                <target>Filtrer les arrêtés sur la carte</target>
             </trans-unit>
         </body>
     </file>
