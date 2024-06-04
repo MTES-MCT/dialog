@@ -23,7 +23,7 @@ services:
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
             $bacIdfCitiesFile: '%env(APP_BAC_IDF_CITIES_FILE)%'
             $featureMap: '%features%'
-            $cifsFilters: '%env(cifs_filterset:APP_CIFS_FILTERS)%'
+            $cifsFilterSet: '%env(cifs_filterset:default::APP_CIFS_FILTERS)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
