@@ -10,7 +10,7 @@ class MapDataSource {
     #element;
 
     /**
-     * @param {HTMLElement} element 
+     * @param {HTMLElement} element
      */
     constructor(element) {
         this.#element = element;
@@ -22,14 +22,16 @@ class MapDataSource {
     }
 
     /**
-     * @param {(value: any) => void} callback 
+     * @param {(value: any) => void} callback
      */
     onChange(callback) {
         const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-                    const text = mutation.addedNodes[0].textContent || '';
-                    callback(JSON.parse(text));
+                    const text = mutation.addedNodes[0].textContent;
+                    if (text) {
+                        callback(JSON.parse(text));
+                    }
                 }
             }
         });
@@ -52,7 +54,7 @@ class MapLibreMap {
     #map;
 
     /**
-     * @param {HTMLElement} root 
+     * @param {HTMLElement} root
      * @param {string} height
      * @param {[number, number]} center
      * @param {number} zoom
@@ -153,7 +155,7 @@ class MapLibreMap {
     }
 
     /**
-     * @param {(instance: maplibregl.Map) => void} callback 
+     * @param {(instance: maplibregl.Map) => void} callback
      */
     onReady(callback) {
         this.#prom.then(() => {
@@ -162,9 +164,9 @@ class MapLibreMap {
     }
 
     /**
-     * 
-     * @param {[number, number]} pos 
-     * @param {string} uuid 
+     *
+     * @param {[number, number]} pos
+     * @param {string} uuid
      */
     #openLocationPopup(pos, uuid) {
         const locationTurboFrame = document.createElement('turbo-frame');
