@@ -97,6 +97,8 @@ Encore
                 /^fr-icon-x-/,
                 /^fr-modal--/,
                 /^fr-alert--/,
+                // Map libre classes
+                /^maplibregl/
             ],
             greedy: [
                 // Source of complex selectors
