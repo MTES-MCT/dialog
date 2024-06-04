@@ -75,12 +75,6 @@ class MapLibreMap {
                 const maplibregl = exports.default;
                 this.#maplibregl = maplibregl;
 
-                // Load MapLibre styles
-                const styleLink = document.createElement('link');
-                styleLink.rel = 'stylesheet';
-                styleLink.href = 'https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css';
-                document.head.appendChild(styleLink);
-
                 // Create a container for the map
                 const mapContainer = document.createElement('div');
                 mapContainer.style.height = height;

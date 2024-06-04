@@ -4,6 +4,11 @@
     {{'map.meta.title'|trans}} - {{ parent() }}
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('map') }}
+{% endblock %}
+
 {% block body %}
     <span id="locations_as_geojson" hidden>{{ locationsAsGeoJson }}</span>
 

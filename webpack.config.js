@@ -28,6 +28,9 @@ Encore
      */
     .addEntry('app', './assets/app.js')
 
+    // Public map
+    .addStyleEntry('map', './assets/styles/map.scss')
+
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
