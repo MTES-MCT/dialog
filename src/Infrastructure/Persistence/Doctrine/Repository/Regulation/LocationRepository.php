@@ -56,6 +56,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                ->innerJoin('m.regulationOrder', 'ro')
                ->innerJoin('ro.regulationOrderRecord', 'roc')
                ->where('roc.status = :status')
+               ->andWhere('l.geometry IS NOT NULL')
                ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED);
 
         if ($permanentRegulationsOnly && !$temporaryRegulationsOnly) {
