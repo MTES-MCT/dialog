@@ -28,7 +28,14 @@ class MapDataSource {
         const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-                    const text = mutation.addedNodes[0].textContent;
+                    const parts = [];
+
+                    mutation.addedNodes.forEach(node => {
+                        parts.push(node.textContent);
+                    });
+
+                    const text = parts.join('');
+
                     if (text) {
                         callback(JSON.parse(text));
                     }
