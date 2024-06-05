@@ -19,9 +19,9 @@ abstract class AbstractWebTestCase extends WebTestCase
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
-        $adminEmail = static::getContainer()->getParameter('admin_email');
+        $adminEmails = static::getContainer()->getParameter('admin_emails');
         $testUser = $userRepository->findOneByEmail($email);
-        $role = $testUser->getEmail() === $adminEmail ? 'ROLE_ADMIN' : 'ROLE_USER';
+        $role = \in_array($testUser->getEmail(), $adminEmails) ? 'ROLE_ADMIN' : 'ROLE_USER';
         $organizations = [];
 
         foreach ($testUser->getOrganizations() as $organization) {
