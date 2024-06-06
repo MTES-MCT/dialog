@@ -31,7 +31,7 @@ nelmio_security:
         enforce:
             default-src: ['self']
             script-src: ['self']
-            style-src: ['self']
+            style-src: ['self', 'unsafe-hashes']
             connect-src: ['self', 'https://data.geopf.fr']
             font-src: ['self']
             img-src: ['self', 'data:', 'blob:']
