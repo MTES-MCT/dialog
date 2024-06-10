@@ -135,8 +135,26 @@ class MapLibreMap {
                         "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
                     );
 
+                    map.addLayer(
+                        {
+                            'id': 'locations-layer-click-zone',
+                            'type': 'line',
+                            'source': 'locations-source',
+                            'layout': {
+                                'line-join': 'round',
+                                'line-cap': 'round',
+                            },
+                            'paint': {
+                                'line-color': '#000000',
+                                'line-width': 12,
+				'line-opacity': 0, // fully transparent
+                            },
+                        },
+                        "locations-layer" // insert this layer below the 'locations-layer' layer
+                    );
+		    
                     // popup when clicking on a feature of the locations layer
-                    map.on('click', 'locations-layer', (event) => {
+                    map.on('click', 'locations-layer-click-zone', (event) => {
                         if (!event.features) {
                             return;
                         }
@@ -145,10 +163,10 @@ class MapLibreMap {
                     });
 
                     // change the cursor when the mouse is over the locations layer
-                    map.on('mouseenter', 'locations-layer', () => {
+                    map.on('mouseenter', 'locations-layer-click-zone', () => {
                         map.getCanvas().style.cursor = 'pointer';
                     });
-                    map.on('mouseleave', 'locations-layer', () => {
+                    map.on('mouseleave', 'locations-layer-click-zone', () => {
                         map.getCanvas().style.cursor = '';
                     });
 
