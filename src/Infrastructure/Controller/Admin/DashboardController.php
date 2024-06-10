@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Admin;
 
+use App\Domain\Regulation\RegulationOrderIssue;
 use App\Domain\User\AccessRequest;
 use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
@@ -37,6 +38,9 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
         yield MenuItem::linkToCrud('Création de comptes', 'fa fa-code-pull-request', AccessRequest::class);
         yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
+
+        yield MenuItem::section('Arrếtés');
+        yield MenuItem::linkToCrud('Alertes qualité', 'fa fa-triangle-exclamation', RegulationOrderIssue::class);
 
         yield MenuItem::section('Application');
         yield MenuItem::linkToRoute('DiaLog', 'fa fa-globe', 'app_regulations_list');
