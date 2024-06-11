@@ -18,7 +18,7 @@ final class UserProvider implements UserProviderInterface
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private EntityManagerInterface $entityManager,
-        private string $adminEmail,
+        private array $adminEmails,
     ) {
     }
 
@@ -30,7 +30,7 @@ final class UserProvider implements UserProviderInterface
             throw new UserNotFoundException(sprintf('Unable to find the user %s', $identifier));
         }
 
-        $role = $user->getEmail() === $this->adminEmail ? 'ROLE_ADMIN' : 'ROLE_USER';
+        $role = \in_array($user->getEmail(), $this->adminEmails) ? 'ROLE_ADMIN' : 'ROLE_USER';
         $organizations = [];
 
         foreach ($user->getOrganizations() as $organization) {

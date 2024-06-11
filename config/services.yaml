@@ -6,7 +6,7 @@
 parameters:
     server_timezone: '%env(APP_SERVER_TIMEZONE)%'
     client_timezone: '%env(APP_CLIENT_TIMEZONE)%'
-    admin_email: '%env(ADMIN_EMAIL)%'
+    admin_emails: '%env(json:ADMIN_EMAILS)%'
     features: []
 
 services:
@@ -17,7 +17,7 @@ services:
         bind:
             $clientTimezone: '%client_timezone%'
             $projectDir: '%kernel.project_dir%'
-            $adminEmail: '%admin_email%'
+            $adminEmails: '%admin_emails%'
             $eudonetParisOrgId: '%env(APP_EUDONET_PARIS_ORG_ID)%'
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
