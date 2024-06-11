@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Unit\Infrastructure\Security;
+namespace App\Tests\Unit\Infrastructure\Security;
 
 use App\Domain\User\Organization;
 use App\Infrastructure\Security\SymfonyUser;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Unit\Infrastructure\Symfony\DependencyInjection;
+namespace App\Tests\Unit\Infrastructure\Symfony\DependencyInjection;
 
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Infrastructure\Symfony\DependencyInjection\CifsFilterSetEnvVarProcessor;

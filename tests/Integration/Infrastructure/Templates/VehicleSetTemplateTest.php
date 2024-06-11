@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Integration\Infrastructure\Templates;
+namespace App\Tests\Integration\Infrastructure\Templates;
 
 use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Condition\VehicleSet;

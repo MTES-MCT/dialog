@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Unit\Infrastructure\Symfony\Command;
+namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Infrastructure\BacIdf\BacIdfExecutor;
 use App\Infrastructure\BacIdf\Exception\BacIdfException;
