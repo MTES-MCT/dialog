@@ -115,6 +115,8 @@ class MapLibreMap {
                         map.getSource('locations-source').setData(data);
                     });
 
+		    const lineWidthFirstStep = 15;
+		    const lineWidthSecondStep = 18;
                     map.addLayer(
                         {
                             'id': 'locations-layer',
@@ -128,8 +130,8 @@ class MapLibreMap {
                                 'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
                                     ['==', ['get', 'measure_type'], 'noEntry'], '#ff5655', // red
                                     ['==', ['get', 'measure_type'], 'speedLimitation'], '#ff742e', // orange
-                                    '#000000'], // black ; blue -> 0063cb
-                                'line-width': 4,
+				    '#000000'], // black ; note : blue -> 0063cb
+                                'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16], // line-width = 4 when zoom < 15, line-width = 8 when zoom bewteen 15 and 18, and line-width = 16 for zoom > 18 ; https://maplibre.org/maplibre-style-spec/expressions/#step
                             },
                         },
                         "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
@@ -146,7 +148,7 @@ class MapLibreMap {
                             },
                             'paint': {
                                 'line-color': '#000000',
-                                'line-width': 12,
+                                'line-width': ["step", ["zoom"], 12, lineWidthFirstStep, 16, lineWidthSecondStep, 20], // like the 'locations-layer' above : steps are zoom = 15 and zoom = 18
 				'line-opacity': 0, // fully transparent
                             },
                         },
