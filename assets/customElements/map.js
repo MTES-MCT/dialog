@@ -180,7 +180,7 @@ class MapLibreMap {
         locationTurboFrame.id = `location_turbo_frame_${uuid}`;
         locationTurboFrame.setAttribute('src', `${this.#locationPopupUrl}/${uuid}`);
 
-        const locationPopUp = new this.#maplibregl.Popup()
+        const locationPopUp = new this.#maplibregl.Popup({closeButton: false})
             .setLngLat(pos)
             .setDOMContent(locationTurboFrame)
             .addTo(this.#map);
@@ -194,6 +194,15 @@ class MapLibreMap {
             // force an update for dynamic positioning (as the popup is filled after its creation, thanks to an AJAX request)
             // credits : https://stackoverflow.com/questions/60928595/dynamic-anchor-popup-open-outside-of-map-container
             locationPopUp._update();
+
+	    // custom close button of the popup
+	    const customCloseButton = document.getElementById(`close_location_popup_${uuid}`);
+	    if (customCloseButton) {
+		customCloseButton.addEventListener('click', () => {
+		    locationPopUp.remove();
+		});
+	    }
+
         });
     }
 }
