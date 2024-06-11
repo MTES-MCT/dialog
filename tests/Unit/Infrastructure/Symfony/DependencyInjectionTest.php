@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Unit\Infrastructure\Symfony;
+namespace App\Tests\Unit\Infrastructure\Symfony;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

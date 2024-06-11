@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Unit\Infrastructure\Symfony\Command;
+namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Infrastructure\Symfony\EventSubscriber\RateLimiterSubscriber;
 use PHPUnit\Framework\TestCase;
