@@ -115,8 +115,8 @@ class MapLibreMap {
                         map.getSource('locations-source').setData(data);
                     });
 
-		    const lineWidthFirstStep = 15;
-		    const lineWidthSecondStep = 18;
+                    const lineWidthFirstStep = 15;
+                    const lineWidthSecondStep = 18;
                     map.addLayer(
                         {
                             'id': 'locations-layer',
@@ -127,10 +127,11 @@ class MapLibreMap {
                                 'line-cap': 'round',
                             },
                             'paint': {
-                                'line-color': ['case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
+                                'line-color': [
+                                    'case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
                                     ['==', ['get', 'measure_type'], 'noEntry'], '#ff5655', // red
                                     ['==', ['get', 'measure_type'], 'speedLimitation'], '#ff742e', // orange
-				    '#000000'], // black ; note : blue -> 0063cb
+                                    '#000000'], // black ; note : blue -> 0063cb
                                 'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16], // line-width = 4 when zoom < 15, line-width = 8 when zoom bewteen 15 and 18, and line-width = 16 for zoom > 18 ; https://maplibre.org/maplibre-style-spec/expressions/#step
                             },
                         },
@@ -149,12 +150,12 @@ class MapLibreMap {
                             'paint': {
                                 'line-color': '#000000',
                                 'line-width': ["step", ["zoom"], 12, lineWidthFirstStep, 16, lineWidthSecondStep, 20], // like the 'locations-layer' above : steps are zoom = 15 and zoom = 18
-				'line-opacity': 0, // fully transparent
+                                'line-opacity': 0, // fully transparent
                             },
                         },
                         "locations-layer" // insert this layer below the 'locations-layer' layer
                     );
-		    
+
                     // popup when clicking on a feature of the locations layer
                     map.on('click', 'locations-layer-click-zone', (event) => {
                         if (!event.features) {
@@ -215,13 +216,13 @@ class MapLibreMap {
             // credits : https://stackoverflow.com/questions/60928595/dynamic-anchor-popup-open-outside-of-map-container
             locationPopUp._update();
 
-	    // custom close button of the popup
-	    const customCloseButton = document.getElementById(`close_location_popup_${uuid}`);
-	    if (customCloseButton) {
-		customCloseButton.addEventListener('click', () => {
-		    locationPopUp.remove();
-		});
-	    }
+            // custom close button of the popup
+            const customCloseButton = document.getElementById(`close_location_popup_${uuid}`);
+            if (customCloseButton) {
+                customCloseButton.addEventListener('click', () => {
+                    locationPopUp.remove();
+                });
+            }
 
         });
     }
