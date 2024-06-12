@@ -1,4 +1,11 @@
 <turbo-frame id="location_turbo_frame_{{ location.uuid }}">
+    <div class="fr-container--fluid">
+	<div class="fr-grid-row fr-grid-row--right">
+	    <button id="close_location_popup_{{ location.uuid }}" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-btn--icon-right fr-icon-close-line">
+		{{ 'common.close'|trans }}
+	    </button>
+	</div>
+    </div>
     <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
         <li class="fr-grid-row">
             <span class="fr-icon-x-restriction fr-x-icon--primary fr-x-icon--sm fr-pr-1w" aria-hidden="true"></span>
