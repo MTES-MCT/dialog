@@ -1,8 +1,8 @@
 {%- for period in periods -%}
     {%- if period.endDateTime -%}
-        du {{ app_datetime(period.startDateTime, true) }} au {{ app_datetime(period.endDateTime, true) }}
+        {{ 'common.date.from'|trans({'%date%': app_datetime(period.startDateTime, true) }) }} {{ 'common.date.to'|trans({'%date%': app_datetime(period.endDateTime, true) }) }}
     {%- elseif period.startDateTime and not period.endDateTime  -%}
-        à partir du {{ app_datetime(period.startDateTime, true) }}
+        {{ 'common.date.starting'|trans({'%date%': app_datetime(period.startDateTime, true) }) }}
     {%- else -%}
         {{ app_datetime(period.startDateTime, true) }}
     {%- endif -%}
