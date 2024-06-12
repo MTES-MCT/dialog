@@ -42,14 +42,7 @@
 
         {% if regulation.startDate %}
 	    <li>
-		{% set startDate = regulation.startDate %}
-		{% set endDate = regulation.endDate %}
-		{% if startDate and endDate %}
-                    {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
-                    {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-		{% else %}
-                    {{ 'common.date.starting'|trans({ '%date%': app_datetime(startDate) }) }}
-		{% endif %}
+		{% include 'regulation/_overall_period.html.twig' with { generalInfo: regulation } only %}
 	    </li>
         {% endif %}
 
