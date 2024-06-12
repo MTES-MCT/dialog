@@ -1,7 +1,7 @@
 {% set text = 'regulation.status_badge.' ~ status ~ '.text' %}
 {% set hint = 'regulation.status_badge.' ~ status ~ '.hint' %}
 
-<span class="fr-badge {% if status == 'draft' %}fr-badge--info{% else %}fr-badge--success{% endif %}" data-testid="status-badge">
+<span class="fr-mt-2v fr-badge {% if status == 'draft' %}fr-badge--info{% else %}fr-badge--success{% endif %}" data-testid="status-badge">
     {{ text|trans }}
 </span>
 

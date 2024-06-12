@@ -1,0 +1,63 @@
+{% extends 'layouts/public.html.twig' %}
+
+{% set title = (generalInfo.endDate ? 'regulation.temporary' : 'regulation.permanent')|trans ~ ' ' ~ generalInfo.identifier  %}
+
+{% block title %}
+    {{ title }}
+    -
+    {{ parent() }}
+{% endblock %}
+
+{% block page_class %}fr-background-alt--grey{% endblock %}
+
+{% set definesContentSkiplink = true %}
+
+{% block body %}
+    <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing'},
+            { title: 'regulation.breadcrumb'|trans, path: 'app_carto'},
+            { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': generalInfo.identifier }) },
+        ]} %}
+        <div id="content">
+            <h2 id="regulation-detail">{{ title }}</h2>
+
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-8 fr-col-xl-9">
+                    <div class="fr-mx-n4v fr-mx-md-0">
+                        {% include "regulation/fragments/_general_info.html.twig" with { canEdit: false, generalInfo } only %}
+                    </div>
+                    <section aria-labelledby="measures-title">
+                        <h3 id="measures-title" class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                            {{ 'regulation.measures'|trans }}
+                        </h3>
+
+                        <ul id="measure_list" class="fr-raw-list">
+                            {% for measure in measures %}
+                                <li class="fr-mx-n4v fr-mx-md-0">
+                                    {% include "regulation/fragments/_measure.html.twig" with { measure, generalInfo, canDelete: false } only %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                </div>
+                <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
+                    <div class="app-card app-card--raised">
+                        <div class="app-card__content">
+                            <h3 class="fr-h4 fr-mb-0">{{ 'regulation.status'|trans }}</h3>
+                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
+                            <h3 class="fr-h4 fr-mb-0">{{ 'public.regulation.map'|trans }}</h3>
+                            <p class="fr-text--sm fr-x-text--mention-grey fr-mt-2v">{{ 'public.regulation.map.view'|trans }}</p>
+                            <div class="fr-x-text--center">
+                                <a class="fr-link fr-icon-road-map-line fr-link--icon-left" href="{{ path('app_carto') }}">
+                                    {{ 'public.regulation.map.link'|trans }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

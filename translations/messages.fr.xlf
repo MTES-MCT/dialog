@@ -1962,6 +1962,18 @@
                 <source>map.location.state</source>
                 <target>L'arrêté est :</target>
             </trans-unit>
+            <trans-unit id="public.regulation.map">
+                <source>public.regulation.map</source>
+                <target>Carte</target>
+            </trans-unit>
+            <trans-unit id="public.regulation.map.link">
+                <source>public.regulation.map.link</source>
+                <target>Voir la cartographie</target>
+            </trans-unit>
+            <trans-unit id="public.regulation.map.view">
+                <source>public.regulation.map.view</source>
+                <target>Visualiser les restrictions sur la carte</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
