@@ -40,6 +40,19 @@
             {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
         </li>
 
+        {% if regulation.startDate %}
+	    <li>
+		{% set startDate = regulation.startDate %}
+		{% set endDate = regulation.endDate %}
+		{% if startDate and endDate %}
+                    {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
+                    {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
+		{% else %}
+                    {{ 'common.date.starting'|trans({ '%date%': app_datetime(startDate) }) }}
+		{% endif %}
+	    </li>
+        {% endif %}
+
         <li>
             {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
             {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
