@@ -11,8 +11,8 @@ use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
@@ -34,23 +34,28 @@ final class RegulationDetailController extends AbstractRegulationController
         '/regulations/{uuid}',
         name: 'app_regulation_detail',
         requirements: ['uuid' => Requirement::UUID],
-        methods: ['GET', 'POST'],
+        methods: ['GET'],
     )]
-    public function __invoke(Request $request, string $uuid): Response
+    public function __invoke(string $uuid): Response
     {
+        /** @var SymfonyUser|null */
+        $currentUser = $this->security->getUser();
+
         /** @var GeneralInfoView */
         $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
-        });
+        }, false);
 
-        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $regulationOrderRecord = $this->getRegulationOrderRecord(uuid: $uuid, requireUserSameOrg: false);
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
+        $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $currentUser->getOrganizationUuids()));
 
         $context = [
-            'isDraft' => $generalInfo->isDraft(),
-            'canPublish' => $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
-            'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
             'uuid' => $uuid,
+            'isDraft' => $generalInfo->isDraft(),
+            'canPublish' => !$isReadOnly && $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
+            'canDelete' => !$isReadOnly && $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
+            'isReadOnly' => $isReadOnly,
             'generalInfo' => $generalInfo,
             'measures' => $measures,
         ];
