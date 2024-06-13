@@ -93,7 +93,8 @@ class MapLibreMap {
                 // Create and configure the map
                 const map = new maplibregl.Map({
                     container: mapContainer,
-                    style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
+                    //style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
+		    style: 'point_de_repere.json',
                     center,
                     zoom,
                     hash: "mapZoomAndPosition",
@@ -135,7 +136,7 @@ class MapLibreMap {
                                 'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16], // line-width = 4 when zoom < 15, line-width = 8 when zoom bewteen 15 and 18, and line-width = 16 for zoom > 18 ; https://maplibre.org/maplibre-style-spec/expressions/#step
                             },
                         },
-                        "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
+                        //"toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
                     );
 
                     map.addLayer(
