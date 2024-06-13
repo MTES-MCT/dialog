@@ -11,6 +11,7 @@ use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
@@ -29,6 +30,7 @@ final class PublicRegulationController
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]
+    #[Cache(public: false, maxage: 2629800, mustRevalidate: true)]
     public function __invoke(Request $request, string $uuid): Response
     {
         try {

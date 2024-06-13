@@ -23,6 +23,7 @@ final class PublicRegulationControllerTest extends AbstractWebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/public/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
 
+        $this->assertResponseHeaderSame('Cache-Control', 'max-age=2629800, must-revalidate, private');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Arrêté temporaire FO2/2023', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Arrêté temporaire FO2/2023 - DiaLog', $crawler);
