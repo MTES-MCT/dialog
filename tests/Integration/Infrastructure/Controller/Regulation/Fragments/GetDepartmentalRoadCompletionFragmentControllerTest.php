@@ -11,7 +11,7 @@ final class GetDepartmentalRoadCompletionFragmentControllerTest extends Abstract
     public function testDepartmentalRoadAutoComplete(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/road-number-completions?search=d32&administrator=Ardennes');
+        $crawler = $client->request('GET', '/_fragment/road-number-completions?search=rd32&administrator=Ardennes');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
