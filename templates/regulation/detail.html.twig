@@ -26,7 +26,7 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-8 fr-col-xl-9">
                     <div class="fr-mx-n4v fr-mx-md-0">
-                        {% include "regulation/fragments/_general_info.html.twig" with { 'canEdit': isDraft, generalInfo } only %}
+                        {% include "regulation/fragments/_general_info.html.twig" with { canEdit: (isDraft and not isReadOnly), generalInfo } only %}
                     </div>
                     <section aria-labelledby="measures-title">
                         <h3 id="measures-title" class="fr-h5 fr-x-text--default-grey fr-mt-5w">
@@ -36,12 +36,12 @@
                         <ul id="measure_list" class="fr-raw-list">
                             {% for measure in measures %}
                                 <li class="fr-mx-n4v fr-mx-md-0">
-                                    {% include "regulation/fragments/_measure.html.twig" with { measure, generalInfo, canDelete } only %}
+                                    {% include "regulation/fragments/_measure.html.twig" with { isReadOnly, measure, generalInfo, canDelete } only %}
                                 </li>
                             {% endfor %}
                         </ul>
 
-                        {% if isDraft %}
+                        {% if not isReadOnly and isDraft %}
                             {% if measures|length > 0 %}
                                 {% include "regulation/fragments/_add_measure_link.html.twig" with { regulationOrderRecordUuid: generalInfo.uuid } only %}
                             {% else %}
@@ -57,49 +57,58 @@
                             <h3 class="fr-h4 fr-mb-0">{{ 'regulation.status'|trans }}</h3>
                             {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
 
-                            <turbo-frame id="block_export">
-                                {% if canPublish %}
-                                    {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid } only %}
-                                {% endif %}
-                            </turbo-frame>
-
-                            <h3 class="fr-h4 fr-mb-0">{{ 'common.actions'|trans }}</h3>
-                            <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
-                                {% if isDraft %}
+                            {% if not isReadOnly %}
+                                <turbo-frame id="block_export">
+                                    {% if canPublish %}
+                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid } only %}
+                                    {% endif %}
+                                </turbo-frame>
+                                <h3 class="fr-h4 fr-mb-0">{{ 'common.actions'|trans }}</h3>
+                                <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
+                                    {% if isDraft %}
+                                        <li>
+                                            <div id="block_publication">
+                                                {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid } only %}
+                                            </div>
+                                        </li>
+                                    {% endif %}
                                     <li>
-                                        <div id="block_publication">
-                                            {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid } only %}
-                                        </div>
+                                        {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
+                                        <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInfo.uuid })}}">
+                                            <button class="fr-btn fr-btn--secondary" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
+                                            <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
+                                        </form>
                                     </li>
-                                {% endif %}
-                                <li>
-                                    {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
-                                    <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInfo.uuid })}}">
-                                        <button class="fr-btn fr-btn--secondary" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
-                                        <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
-                                    </form>
-                                </li>
-                                <li>
-                                    {% set deleteCsrfToken = csrf_token('delete-regulation') %}
-                                    <form
-                                        method="delete"
-                                        action="{{ path('app_regulation_delete', { uuid: generalInfo.uuid }) }}"
-                                        data-controller="form-submit"
-                                        data-action="modal-trigger:submit->form-submit#submit"
-                                    >
-                                        <d-modal-trigger modal="regulation-delete-modal" submitValue="delete">
-                                            <button
-                                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
-                                                aria-controls="regulation-delete-modal"
-                                            >
-                                                {{'common.delete'|trans}}
-                                            </button>
-                                        </d-modal-trigger>
+                                    <li>
+                                        {% set deleteCsrfToken = csrf_token('delete-regulation') %}
+                                        <form
+                                            method="delete"
+                                            action="{{ path('app_regulation_delete', { uuid: generalInfo.uuid }) }}"
+                                            data-controller="form-submit"
+                                            data-action="modal-trigger:submit->form-submit#submit"
+                                        >
+                                            <d-modal-trigger modal="regulation-delete-modal" submitValue="delete">
+                                                <button
+                                                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
+                                                    aria-controls="regulation-delete-modal"
+                                                >
+                                                    {{'common.delete'|trans}}
+                                                </button>
+                                            </d-modal-trigger>
 
-                                        <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
-                                    </form>
-                                </li>
-                            </ul>
+                                            <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
+                                        </form>
+                                    </li>
+                                </ul>
+                            {% else %}
+                                <h3 class="fr-h4 fr-mb-0">{{ 'public.regulation.map'|trans }}</h3>
+                                <p class="fr-text--sm fr-x-text--mention-grey fr-mt-2v">{{ 'public.regulation.map.view'|trans }}</p>
+                                <div class="fr-x-text--center">
+                                    <a class="fr-link fr-icon-road-map-line fr-link--icon-left" href="{{ path('app_carto') }}">
+                                        {{ 'public.regulation.map.link'|trans }}
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </aside>
@@ -116,33 +125,34 @@
 
 {% block body_end %}
     {{ parent() }}
+    {% if not isReadOnly %}
+        {% if isDraft %}
+            {% include "common/confirmation_modal.html.twig" with {
+                id: 'regulation-publish-modal',
+                title: 'regulation.publish_modal.title'|trans,
+                buttons: [
+                    { label: 'common.publish'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+                    { label: 'common.do_not_publish'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+                ],
+            } only %}
 
-    {% if isDraft %}
-        {% include "common/confirmation_modal.html.twig" with {
-            id: 'regulation-publish-modal',
-            title: 'regulation.publish_modal.title'|trans,
-            buttons: [
-                { label: 'common.publish'|trans, attr: {type: 'submit', class: 'fr-btn'} },
-                { label: 'common.do_not_publish'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
-            ],
-        } only %}
+            {% include "common/confirmation_modal.html.twig" with {
+                id: 'measure-delete-modal',
+                title: 'measure.delete_modal.title'|trans,
+                buttons: [
+                    { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+                    { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+                ],
+            } only %}
+        {% endif %}
 
         {% include "common/confirmation_modal.html.twig" with {
-            id: 'measure-delete-modal',
-            title: 'measure.delete_modal.title'|trans,
+            id: 'regulation-delete-modal',
+            title: 'regulation.delete_modal.title'|trans,
             buttons: [
                 { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
                 { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
             ],
         } only %}
     {% endif %}
-
-    {% include "common/confirmation_modal.html.twig" with {
-        id: 'regulation-delete-modal',
-        title: 'regulation.delete_modal.title'|trans,
-        buttons: [
-            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
-            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
-        ],
-    } only %}
 {% endblock %}
