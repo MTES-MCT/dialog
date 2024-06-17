@@ -89,7 +89,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

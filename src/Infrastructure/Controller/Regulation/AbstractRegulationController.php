@@ -26,7 +26,7 @@ abstract class AbstractRegulationController
     ) {
     }
 
-    protected function getRegulationOrderRecordUsing(callable $func): mixed
+    protected function getRegulationOrderRecordUsing(callable $func, bool $requireUserSameOrg = true): mixed
     {
         /** @var ?OrganizationRegulationAccessInterface */
         $regulationOrderRecord = null;
@@ -37,17 +37,19 @@ abstract class AbstractRegulationController
             throw new NotFoundHttpException();
         }
 
-        /** @var SymfonyUser */
-        $user = $this->security->getUser();
+        if ($requireUserSameOrg) {
+            /** @var SymfonyUser|null */
+            $user = $this->security->getUser();
 
-        if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganizationUuids())) {
-            throw new AccessDeniedHttpException();
+            if (!$user || !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getOrganizationUuids())) {
+                throw new AccessDeniedHttpException();
+            }
         }
 
         return $regulationOrderRecord;
     }
 
-    protected function getRegulationOrderRecord(string $uuid): RegulationOrderRecord
+    protected function getRegulationOrderRecord(string $uuid, bool $requireUserSameOrg = true): RegulationOrderRecord
     {
         if (!Uuid::isValid($uuid)) {
             throw new BadRequestHttpException();
@@ -55,6 +57,6 @@ abstract class AbstractRegulationController
 
         return $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
-        });
+        }, $requireUserSameOrg);
     }
 }

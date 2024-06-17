@@ -149,9 +149,14 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertSame(0, $crawler->selectButton('Publier')->count());
+        $this->assertSame(0, $crawler->selectButton('Supprimer')->count());
+        $this->assertSame(0, $crawler->selectButton('Dupliquer')->count());
+        $this->assertSame(0, $crawler->selectButton('Modifier')->count());
+
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testRegulationOrderRecordNotFound(): void
@@ -165,8 +170,13 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
-        $this->assertResponseRedirects('http://localhost/login', 302);
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertSame(0, $crawler->selectButton('Publier')->count());
+        $this->assertSame(0, $crawler->selectButton('Supprimer')->count());
+        $this->assertSame(0, $crawler->selectButton('Dupliquer')->count());
+        $this->assertSame(0, $crawler->selectButton('Modifier')->count());
     }
 }
