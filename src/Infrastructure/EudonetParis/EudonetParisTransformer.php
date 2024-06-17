@@ -7,9 +7,12 @@ namespace App\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -139,6 +142,8 @@ final class EudonetParisTransformer
             $locationCommands[] = $locationCommand;
         }
 
+        $periodCommands = $this->parsePeriods($row);
+
         $vehicleSet = new SaveVehicleSetCommand();
         $vehicleSet->allVehicles = true;
 
@@ -146,6 +151,7 @@ final class EudonetParisTransformer
         $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->vehicleSet = $vehicleSet;
         $command->locations = $locationCommands;
+        $command->periods = $periodCommands;
 
         return [$command, null];
     }
@@ -216,5 +222,99 @@ final class EudonetParisTransformer
         $locationCommand->namedStreet->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
 
         return [$locationCommand, null];
+    }
+
+    private function parsePeriods(array $row): array
+    {
+        // The "Alinéa" field contains info on the measure's dates and times which we can use to build Periods.
+        $alinea = $row['fields'][EudonetParisExtractor::MESURE_ALINEA];
+
+        if (!$alinea) {
+            // No info => no periods.
+            return [];
+        }
+
+        // We try to find dates and times in "Alinéa".
+        $datesAndTimes = $this::parsePeriodsInText($alinea);
+
+        if (!$datesAndTimes) {
+            // No dates and times found => assume no periods.
+            // (There may be false negatives, for example dates and times in exotic formats, but we cannot detect this.)
+            return [];
+        }
+
+        // Build periods from dates and times found.
+        // We may miss some dates and times due to exotic formats, which could result in misinterpretation of the source
+        // data, but we cannot detect this, so we treat this as an acceptable data quality compromise.
+        $periodCommands = [];
+
+        foreach ($datesAndTimes as $item) {
+            $periodCommand = new SavePeriodCommand();
+            $periodCommand->startDate = $item['startDate'];
+            $periodCommand->startTime = $item['startTime'];
+            $periodCommand->endDate = $item['endDate'];
+            $periodCommand->endTime = $item['endTime'];
+
+            if ($item['days']) {
+                $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
+                $dailyRange = new SaveDailyRangeCommand();
+                $dailyRange->applicableDays = $item['days'];
+                $periodCommand->dailyRange = $dailyRange;
+            } else {
+                $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+            }
+
+            $timeSlots = [];
+            $periodCommand->timeSlots = $timeSlots;
+
+            $periodCommands[] = $periodCommand;
+        }
+
+        return $periodCommands;
+    }
+
+    private static function parsePeriodsInText(string $text): array
+    {
+        $text = strtolower($text);
+
+        $items = [];
+
+        $frenchDateFmt = new \IntlDateFormatter(
+            'fr-FR',
+            \IntlDateFormatter::MEDIUM,
+            \IntlDateFormatter::MEDIUM,
+            'Europe/Paris',
+            \IntlDateFormatter::GREGORIAN,
+            'dd MMMM y',
+        );
+
+        // Combined days in the same month
+        // "du 16 au 20 janvier 2023"
+        $daySpanPattern = '/(?P<startDayNumber>\d{1,2}) au (?P<endDayNumber>\d{1,2}) (?P<monthName>[a-z]+) (?P<year>\d{4})/';
+        $matchCount = preg_match_all($daySpanPattern, $text, $matches);
+        if ($matchCount > 0) {
+            dump($matches);
+            foreach (range(0, $matchCount - 1) as $index) {
+                $startDayNumber = $matches['startDayNumber'][$index];
+                $endDayNumber = $matches['endDayNumber'][$index];
+                $monthName = $matches['monthName'][$index];
+                $year = $matches['year'][$index];
+
+                $startDateTimestamp = $frenchDateFmt->parse(sprintf('%s %s %s', $startDayNumber, $monthName, $year));
+                $endDateTimestamp = $frenchDateFmt->parse(sprintf('%s %s %s', $endDayNumber, $monthName, $year));
+
+                $items[] = [
+                    'startDate' => \DateTimeImmutable::createFromFormat('U', (string) $startDateTimestamp),
+                    'startTime' => \DateTimeImmutable::createFromFormat('H:i:s', '00:00:00'),
+                    'endDate' => \DateTimeImmutable::createFromFormat('U', (string) $endDateTimestamp),
+                    'endTime' => \DateTimeImmutable::createFromFormat('H:i:s', '23:59:00'),
+                    'days' => [],
+                ];
+            }
+
+            $text = preg_replace($daySpanPattern, '', $text);
+        }
+
+        return $items;
     }
 }

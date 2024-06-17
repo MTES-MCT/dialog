@@ -109,6 +109,7 @@ final class EudonetParisTransformerTest extends TestCase
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand->locations = [$locationCommand1, $locationCommand2];
         $measureCommand->vehicleSet = $vehicleSet;
+        $measureCommand->periods = [];
 
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new EudonetParisTransformerResult($importCommand, []);
