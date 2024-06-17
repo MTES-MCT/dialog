@@ -92,7 +92,7 @@ final class EudonetParisExtractorTest extends TestCase
 
                 2 => $this->assertSame([
                     1200,
-                    [1201, 1202],
+                    [1201, 1202, 1294],
                     [
                         'WhereCustoms' => [
                             [
@@ -152,7 +152,7 @@ final class EudonetParisExtractorTest extends TestCase
 
                 6 => $this->assertSame([
                     1200,
-                    [1201, 1202],
+                    [1201, 1202, 1294],
                     [
                         'WhereCustoms' => [
                             [
