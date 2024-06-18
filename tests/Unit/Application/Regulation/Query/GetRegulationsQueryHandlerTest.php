@@ -31,6 +31,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'namedStreet' => null,
                 'numberedRoad' => null,
                 'organizationName' => 'DiaLog',
+                'organizationUuid' => 'dcab837f-4460-4355-99d5-bf4891c35f8f',
             ],
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -42,6 +43,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'namedStreet' => 'Avenue de Fonneuve#Montauban#82121',
                 'numberedRoad' => null,
                 'organizationName' => 'DiaLog',
+                'organizationUuid' => 'dcab837f-4460-4355-99d5-bf4891c35f8f',
             ],
             [
                 'uuid' => 'ef5b3632-8525-41b5-9e84-3116d9089610',
@@ -53,6 +55,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'namedStreet' => null,
                 'numberedRoad' => 'D123#Ardennes',
                 'organizationName' => 'DiaLog',
+                'organizationUuid' => 'dcab837f-4460-4355-99d5-bf4891c35f8f',
             ],
         ];
 
@@ -60,8 +63,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findRegulationsByOrganizations')
-            ->with(['dcab837f-4460-4355-99d5-bf4891c35f8f'], 20, 1, true)
+            ->method('findAllRegulations')
+            ->with(['dcab837f-4460-4355-99d5-bf4891c35f8f'], true, 20, 1, true)
             ->willReturn([
                 'count' => 3,
                 'items' => $rows,
@@ -70,6 +73,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetRegulationsQuery(
             ['dcab837f-4460-4355-99d5-bf4891c35f8f'],
+            true,
             20,
             1,
             isPermanent: true,
@@ -83,6 +87,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'draft',
                     0,
                     'DiaLog',
+                    'dcab837f-4460-4355-99d5-bf4891c35f8f',
                     null,
                     $startDate1,
                     null,
@@ -93,6 +98,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'draft',
                     2,
                     'DiaLog',
+                    'dcab837f-4460-4355-99d5-bf4891c35f8f',
                     new NamedStreetView(
                         cityCode: '82121',
                         cityLabel: 'Montauban',
@@ -107,6 +113,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'draft',
                     1,
                     'DiaLog',
+                    'dcab837f-4460-4355-99d5-bf4891c35f8f',
                     new NumberedRoadView(
                         administrator: 'Ardennes',
                         roadNumber: 'D123',
