@@ -20,8 +20,10 @@ final class GetRegulationsQueryHandler
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
         $regulationOrderViews = [];
-        $rows = $this->repository->findRegulationsByOrganizations(
+
+        $rows = $this->repository->findAllRegulations(
             $query->organizationUuids,
+            $query->hasOrganizations,
             $query->pageSize,
             $query->page,
             $query->isPermanent,
@@ -44,6 +46,7 @@ final class GetRegulationsQueryHandler
                 status: $row['status'],
                 numLocations: $row['nbLocations'],
                 organizationName: $row['organizationName'],
+                organizationUuid: $row['organizationUuid'],
                 location: $locationView,
                 startDate: $row['startDate'],
                 endDate: $row['endDate'],

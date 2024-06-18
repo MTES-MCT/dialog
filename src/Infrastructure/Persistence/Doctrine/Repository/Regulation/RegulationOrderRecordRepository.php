@@ -53,20 +53,25 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 WHERE _ro3.uuid = ro.uuid
             )";
 
-    public function findRegulationsByOrganizations(
-        array $organizationUuids,
+    public function findAllRegulations(
+        ?array $organizationUuids,
+        bool $hasOrganizations,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, ro.startDate, ro.endDate')
+            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
             ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
-            ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
-            ->where('roc.organization IN (:organizationUuids)')
-            ->setParameter('organizationUuids', $organizationUuids)
-            ->innerJoin('roc.organization', 'o')
+            ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
+        if ($hasOrganizations) {
+            $query->where('(roc.status = \'published\') OR (roc.status = \'draft\' AND roc.organization IN (:organizationUuids))')
+                ->setParameter('organizationUuids', $organizationUuids);
+        } else {
+            $query->where('(roc.status = \'published\')');
+        }
+        $query->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->orderBy('ro.startDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')

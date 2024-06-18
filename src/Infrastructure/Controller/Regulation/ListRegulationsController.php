@@ -32,7 +32,7 @@ final class ListRegulationsController
     )]
     public function __invoke(Request $request): Response
     {
-        /** @var SymfonyUser */
+        /** @var SymfonyUser|null */
         $user = $this->security->getUser();
         $tab = $request->query->get('tab', 'temporary');
         $pageSize = min($request->query->getInt('pageSize', 20), 100);
@@ -44,9 +44,20 @@ final class ListRegulationsController
             );
         }
 
+        if ($user) {
+            $userOrganizationUuids = $user->getOrganizationUuids();
+            $isReadOnly = false;
+            $hasOrganizations = true;
+        } else {
+            $userOrganizationUuids = null;
+            $isReadOnly = true;
+            $hasOrganizations = false;
+        }
+
         $temporaryRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
-                $user->getOrganizationUuids(),
+                $userOrganizationUuids,
+                $hasOrganizations,
                 $pageSize,
                 $tab === 'temporary' ? $page : 1,
                 isPermanent: false,
@@ -54,7 +65,8 @@ final class ListRegulationsController
         );
         $permanentRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
-                $user->getOrganizationUuids(),
+                $userOrganizationUuids,
+                $hasOrganizations,
                 $pageSize,
                 $tab === 'permanent' ? $page : 1,
                 isPermanent: true,

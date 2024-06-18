@@ -13,8 +13,9 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findOneByUuid(string $uuid): ?RegulationOrderRecord;
 
-    public function findRegulationsByOrganizations(
+    public function findAllRegulations(
         array $organizations,
+        bool $hasOrganizations,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,

@@ -1,6 +1,11 @@
-{% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
-{% set deleteCsrfToken = csrf_token('delete-regulation') %}
-{% set displayOrganization = app.user.getOrganizations|length > 1 %}
+{% set isReadOnlyMode = app.user is empty %}
+{% if not isReadOnlyMode %}
+    {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
+    {% set deleteCsrfToken = csrf_token('delete-regulation') %}
+    {% set userOrganizationsUuids = app.user.getOrganizations|map(o => o.uuid) %}
+{% else %}
+    {% set userOrganizationsUuids = [] %}
+{% endif %}
 
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
     <table class="app-regulation-table">
@@ -8,9 +13,7 @@
         <thead>
             <tr>
                 <th scope="col" class="app-regulation-table__identifier">{{ 'regulation'|trans }}</th>
-                {% if displayOrganization %}
-                    <th scope="col" class="app-regulation-table__identifier fr-hidden fr-x-revert-sm">{{ 'regulation.organization'|trans }}</th>
-                {% endif %}
+                <th scope="col" class="app-regulation-table__identifier fr-hidden fr-x-revert-sm">{{ 'regulation.organization'|trans }}</th>
                 <th scope="col">{{ 'regulation.locations'|trans }}</th>
                 <th scope="col" class="fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
                 <th scope="col" class="fr-hidden fr-x-revert-sm">{{ 'regulation.status'|trans }}</th>
@@ -22,15 +25,15 @@
                 {% set location = regulation.location %}
                 {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
                 {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
+		{% set isDraft = regulation.status != 'published' %}
+		{% set belongsToUserOrganizations = regulation.organizationUuid in userOrganizationsUuids %}
                 <tr>
                     <td>
                         {{ regulation.identifier }}
                     </td>
-                    {% if displayOrganization %}
-                        <td class="fr-hidden fr-x-revert-sm">
-                            {{ regulation.organizationName }}
-                        </td>
-                    {% endif %}
+                    <td class="fr-hidden fr-x-revert-sm">
+                        {{ regulation.organizationName }}
+                    </td>
                     <td>
                         {% if location %}
                             {% if location.roadType == 'lane' %}
@@ -71,33 +74,37 @@
                     </td>
                     <td>
                         <div class="fr-btns-group fr-btns-group--inline-sm">
-                            {% if regulation.status == 'published' %}
+                            {% if not isDraft %}
                                 <a title="{{ 'common.see'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline">
                                     {{ 'common.see'|trans }}
                                 </a>
                             {% else %}
-                                <a title="{{ 'common.update'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-                                    {{ 'common.update'|trans }}
-                                </a>
+				{% if (not isReadOnlyMode) and belongsToUserOrganizations %}
+                                    <a title="{{ 'common.update'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+					{{ 'common.update'|trans }}
+                                    </a>
+				{% endif %}
                             {% endif %}
-                            <form
-                                method="delete"
-                                action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
-                                data-controller="form-submit"
-                                data-action="modal-trigger:submit->form-submit#submit"
-                                class="fr-hidden fr-unhidden-md"
-                            >
-                                <d-modal-trigger modal="regulation-delete-modal" submitValue="regulation-delete-{{ regulation.uuid }}">
-                                    <button
-                                        class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
-                                        aria-controls="regulation-delete-modal"
-                                        aria-label="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
-                                        title="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
-                                    ></button>
-                                </d-modal-trigger>
+			    {% if (not isReadOnlyMode) and belongsToUserOrganizations %}
+				<form
+                                    method="delete"
+                                    action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
+                                    data-controller="form-submit"
+                                    data-action="modal-trigger:submit->form-submit#submit"
+                                    class="fr-hidden fr-unhidden-md"
+				>
+                                    <d-modal-trigger modal="regulation-delete-modal" submitValue="regulation-delete-{{ regulation.uuid }}">
+					<button
+                                            class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                            aria-controls="regulation-delete-modal"
+                                            aria-label="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
+                                            title="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
+					></button>
+                                    </d-modal-trigger>
 
-                                <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
-                            </form>
+                                    <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
+				</form>
+			    {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -106,7 +113,7 @@
                     <td class="fr-x-hidden-sm" colspan="3">
                         <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                     </td>
-                    <td class="fr-hidden fr-x-revert-sm" colspan="{% if displayOrganization %}6{% else %}5{% endif %}">
+                    <td class="fr-hidden fr-x-revert-sm" colspan="6">
                         <p><em>{{ 'regulation.list.empty'|trans }}</em></p>
                     </td>
                 </tr>
