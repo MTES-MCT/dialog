@@ -19,9 +19,6 @@
         </thead>
         <tbody>
             {% for regulation in pagination.items %}
-                {% set location = regulation.location %}
-                {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
-                {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
                 <tr>
                     <td>
                         {{ regulation.identifier }}
@@ -32,39 +29,10 @@
                         </td>
                     {% endif %}
                     <td>
-                        {% if location %}
-                            {% if location.roadType == 'lane' %}
-                                {{ location.cityLabel }}<br/>
-                                <b>{{ location.roadName }}</b>
-                            {% elseif location.roadType == 'departmentalRoad' %}
-                                {{ location.administrator }} ({{location.roadNumber}})<br/>
-                            {% endif %}
-                            {% if regulation.numLocations > 1%}
-                                <em>{{ 'regulation.locations.more'|trans({'%count%': regulation.numLocations - 1}) }}</em>
-                            {% endif %}
-                        {% endif %}
+                        {{ regulation.location|raw }}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
-                        {% if regulation.startDate %}
-                            {% set startDate = regulation.startDate %}
-                            {% set endDate = regulation.endDate %}
-                            {% if startDate and endDate %}
-                                {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) }) }}
-                                {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-                            {% else %}
-                                {{ 'common.date.starting'|trans({ '%date%': app_datetime(startDate) }) }}
-                            {% endif %}
-                            <br />
-                            <b>
-                                {% if isUpcoming %}
-                                    {{ 'common.date.upcoming'|trans }}
-                                {% elseif hasPassed %}
-                                    {{ 'common.date.passed'|trans }}
-                                {% else %}
-                                    {{ 'common.date.ongoing'|trans }}
-                                {% endif %}
-                            </b>
-                        {% endif %}
+                        {{ regulation.period|raw }}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
                         {% include 'regulation/_status_badge.html.twig' with { status: regulation.status } only %}

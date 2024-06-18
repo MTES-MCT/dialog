@@ -6,16 +6,16 @@ namespace App\Domain;
 
 final class Pagination
 {
-    public readonly array $windowPages;
-    public readonly int $lastPage;
-    public readonly bool $hasFirstPageLandmark;
-    public readonly bool $hasLeftTruncature;
-    public readonly bool $hasRightTruncature;
-    public readonly bool $hasLastPageLandmark;
+    public array $windowPages;
+    public int $lastPage;
+    public bool $hasFirstPageLandmark;
+    public bool $hasLeftTruncature;
+    public bool $hasRightTruncature;
+    public bool $hasLastPageLandmark;
 
     public function __construct(
-        public readonly array $items,
-        public readonly int $totalItems,
+        public array $items,
+        public int $totalItems,
         int $currentPage,
         int $pageSize,
     ) {

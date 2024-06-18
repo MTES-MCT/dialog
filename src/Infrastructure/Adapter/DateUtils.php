@@ -53,4 +53,38 @@ final class DateUtils implements DateUtilsInterface
             ->setTime($hour, $min)
             ->setTimeZone(new \DateTimeZone('UTC'));
     }
+
+    public function isClientFutureDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool
+    {
+        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
+        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        return $today < $day;
+    }
+
+    public function isClientPastDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool
+    {
+        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
+        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
+
+        return $day < $today;
+    }
+
+    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface|bool|null $time = null): string
+    {
+        $dateTime = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
+        $format = 'd/m/Y';
+
+        if ($time) {
+            $time = \DateTimeImmutable::createFromInterface($time === true ? $date : $time)->setTimezone($this->clientTimezone);
+            $dateTime = $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
+            $format = 'd/m/Y à H\hi';
+        }
+
+        return $dateTime->format($format);
+    }
 }

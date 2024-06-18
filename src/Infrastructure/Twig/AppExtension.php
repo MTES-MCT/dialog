@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Twig;
 
+use App\Application\DateUtilsInterface;
 use App\Application\StringUtilsInterface;
 use App\Infrastructure\FeatureFlagService;
 use Symfony\Component\Form\FormError;
@@ -15,6 +16,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function __construct(
         string $clientTimezone,
+        private DateUtilsInterface $dateUtils,
         private StringUtilsInterface $stringUtils,
         private FeatureFlagService $featureFlagService,
     ) {
@@ -40,16 +42,7 @@ class AppExtension extends \Twig\Extension\AbstractExtension
      */
     public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface|bool|null $time = null): string
     {
-        $dateTime = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone);
-        $format = 'd/m/Y';
-
-        if ($time) {
-            $time = \DateTimeImmutable::createFromInterface($time === true ? $date : $time)->setTimezone($this->clientTimezone);
-            $dateTime = $dateTime->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
-            $format = 'd/m/Y à H\hi';
-        }
-
-        return $dateTime->format($format);
+        return $this->dateUtils->formatDateTime($date, $time);
     }
 
     public function formatTime(\DateTimeInterface $time): string
@@ -76,22 +69,12 @@ class AppExtension extends \Twig\Extension\AbstractExtension
 
     public function isClientPastDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool
     {
-        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
-        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-
-        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-
-        return $day < $today;
+        return $this->dateUtils->isClientPastDay($date, $today);
     }
 
     public function isClientFutureDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool
     {
-        $today = $today ? \DateTimeImmutable::createFromInterface($today) : new \DateTimeImmutable('now');
-        $today = $today->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-
-        $day = \DateTimeImmutable::createFromInterface($date)->setTimeZone($this->clientTimezone)->setTime(0, 0, 0, 0);
-
-        return $today < $day;
+        return $this->dateUtils->isClientFutureDay($date, $today);
     }
 
     public function getVehicleTypeIconName(string $value): string

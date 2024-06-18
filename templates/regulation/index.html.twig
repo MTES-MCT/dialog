@@ -1,13 +1,11 @@
 {% extends 'layouts/app.html.twig' %}
 
 {% block title %}
-    {{'regulation.list.meta.title'|trans}} - {{ parent() }}
+    {{ metaTitle }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-list">
-        {% set isTemporaryTab = tab == 'temporary' %}
-        {% set isPermanent = tab == 'permanent' %}
         <div class="fr-grid-row">
             <h3 id="regulation-list" class="fr-col fr-mb-0">{{ 'regulation.list.title'|trans }}</h3>
             <a href="{{ path('app_regulation_add') }}" class="fr-ml-auto fr-btn fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ "regulation.list.add_button"|trans }}">
@@ -17,19 +15,19 @@
         <div class="fr-tabs fr-mt-2w">
             <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.list.title'|trans }}">
                 <li role="presentation">
-                    <button id="temporary" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="{{ isTemporaryTab ? "true" : "false" }}" aria-controls="temporary-panel">
+                    <button id="temporary" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="{{ temporaryButtonAriaSelected }}" aria-controls="temporary-panel">
                         {{ 'regulation.list.total_temporary'|trans({'%count%': temporaryRegulations.totalItems}) }}
                     </button>
                 </li>
                 <li role="presentation">
-                    <button id="permanent" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="{{ isPermanent ? "true" : "false" }}" aria-controls="permanent-panel">
+                    <button id="permanent" class="fr-tabs__tab" tabindex="1" role="tab" aria-selected="{{ permanentButtonAriaSelected }}" aria-controls="permanent-panel">
                         {{ 'regulation.list.total_permanent'|trans({'%count%': permanentRegulations.totalItems}) }}
                     </button>
                 </li>
             </ul>
             <div
                 id="temporary-panel"
-                class="fr-tabs__panel {% if isTemporaryTab %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-start{% endif %}"
+                class="fr-tabs__panel {{ temporaryTabsPanelClass }}"
                 role="tabpanel"
                 aria-labelledby="temporary"
                 tabindex="0"
@@ -43,7 +41,7 @@
             </div>
             <div
                 id="permanent-panel"
-                class="fr-tabs__panel {% if isPermanent %}fr-tabs__panel--selected{% else %}fr-tabs__panel--direction-end{% endif %}"
+                class="fr-tabs__panel {{ permanentTabsPanelClass }}"
                 role="tabpanel"
                 aria-labelledby="permanent"
                 tabindex="1"
@@ -51,7 +49,7 @@
                 {% include "regulation/_items.html.twig" with { pagination: permanentRegulations } only %}
                 {% include "common/pagination.html.twig" with {
                     pagination: permanentRegulations,
-                    currentPage: isPermanent ? app.request.get('page', 1) : 1,
+                    currentPage: isPermanentTab ? app.request.get('page', 1) : 1,
                     queryParams: app.request.query.all|merge({ tab: 'permanent' }),
                 } only %}
             </div>

@@ -13,4 +13,10 @@ interface DateUtilsInterface
     public function getMicroTime(): float;
 
     public function mergeDateAndTime(\DateTimeInterface $date, \DateTimeInterface $time): \DateTimeInterface;
+
+    public function isClientFutureDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool;
+
+    public function isClientPastDay(\DateTimeInterface $date, ?\DateTimeInterface $today = null): bool;
+
+    public function formatDateTime(\DateTimeInterface $date, \DateTimeInterface|bool|null $time = null): string;
 }

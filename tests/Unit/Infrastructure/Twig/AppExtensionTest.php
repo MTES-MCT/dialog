@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Twig;
 
+use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Infrastructure\Adapter\StringUtils;
@@ -21,12 +22,15 @@ class AppExtensionTest extends TestCase
 
     private AppExtension $extension;
     private $featureFlagService;
+    private $dateUtils;
 
     protected function setUp(): void
     {
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->featureFlagService = $this->createMock(FeatureFlagService::class);
         $this->extension = new AppExtension(
             'Etc/GMT-1', // Independent of Daylight Saving Time (DST).
+            $this->dateUtils,
             new StringUtils(),
             $this->featureFlagService,
         );
@@ -38,6 +42,31 @@ class AppExtensionTest extends TestCase
     }
 
     public function testFormatDateTimeDateOnly(): void
+    {
+        $this->assertSame('06/01/2023', $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06')));
+        // Time in $date is ignored
+        $this->assertSame('06/01/2023', $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06T08:30:00')));
+    }
+
+    public function testFormatDateTimeWithTime(): void
+    {
+        $this->assertSame(
+            '06/01/2023 à 09h30',
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06'), new \DateTimeImmutable('08:30:00')),
+        );
+        $this->assertSame(
+            '07/01/2023 à 11h30',
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 23:00'), new \DateTimeImmutable('10:30:00')),
+        );
+    }
+
+    public function testFormatDateTimeReuseTime(): void
+    {
+        $this->assertSame(
+            '06/01/2023 à 18h00',
+            $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06 17:00'), true),
+        );
+    }public function testFormatDateTimeDateOnly(): void
     {
         $this->assertSame('06/01/2023', $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06')));
         // Time in $date is ignored

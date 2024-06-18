@@ -21,6 +21,7 @@ final class ListRegulationsController
         private QueryBusInterface $queryBus,
         private TranslatorInterface $translator,
         private Security $security,
+        private ListRegulationsPresenter $presenter,
     ) {
     }
 
@@ -63,13 +64,13 @@ final class ListRegulationsController
 
         return new Response($this->twig->render(
             name: 'regulation/index.html.twig',
-            context: [
+            context: $this->presenter->present([
                 'temporaryRegulations' => $temporaryRegulations,
                 'permanentRegulations' => $permanentRegulations,
                 'tab' => $tab,
                 'pageSize' => $pageSize,
                 'page' => $page,
-            ],
+            ]),
         ));
     }
 }
