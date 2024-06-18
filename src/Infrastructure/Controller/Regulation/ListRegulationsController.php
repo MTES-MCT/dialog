@@ -46,18 +46,16 @@ final class ListRegulationsController
 
         if ($user) {
             $userOrganizationUuids = $user->getOrganizationUuids();
-            $isReadOnly = false;
-            $hasOrganizations = true;
+            $withUserOrganizationsDrafts = true;
         } else {
             $userOrganizationUuids = null;
-            $isReadOnly = true;
-            $hasOrganizations = false;
+            $withUserOrganizationsDrafts = false;
         }
 
         $temporaryRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 $userOrganizationUuids,
-                $hasOrganizations,
+                $withUserOrganizationsDrafts,
                 $pageSize,
                 $tab === 'temporary' ? $page : 1,
                 isPermanent: false,
@@ -66,7 +64,7 @@ final class ListRegulationsController
         $permanentRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 $userOrganizationUuids,
-                $hasOrganizations,
+                $withUserOrganizationsDrafts,
                 $pageSize,
                 $tab === 'permanent' ? $page : 1,
                 isPermanent: true,

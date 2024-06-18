@@ -23,7 +23,7 @@ final class GetRegulationsQueryHandler
 
         $rows = $this->repository->findAllRegulations(
             $query->organizationUuids,
-            $query->hasOrganizations,
+            $query->withUserOrganizationsDrafts,
             $query->pageSize,
             $query->page,
             $query->isPermanent,
