@@ -320,4 +320,23 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         return Coordinates::fromLonLat((float) $x, (float) $y);
     }
+
+    public function findSectionsInArea(string $areaGeometry): string
+    {
+        try {
+            $row = $this->bdtopoConnection->fetchAssociative(
+                'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(t.geometrie))) AS geom
+                FROM troncon_de_route AS t
+                WHERE ST_Intersects(t.geometrie, :areaGeometry)
+                ',
+                [
+                    'areaGeometry' => $areaGeometry,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(sprintf('Sections in area query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        return $row['geom'];
+    }
 }
