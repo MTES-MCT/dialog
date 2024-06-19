@@ -471,6 +471,83 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_numberedRoad_toAbscissa_error')->text());
     }
 
+    public function testAddRawGeoJSONAsAdmin(): void
+    {
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Village olympique';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"type": "Point", "coordinates": [42, 4]}';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
+        $this->assertSame('Village olympique (données brutes geojson)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+    }
+
+    public function testAddRawGeoJSONAsAdminInvalidBlank(): void
+    {
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = '';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_label_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
+    }
+
+    public function testAddRawGeoJSONAsAdminInvalidGeometryJSON(): void
+    {
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Test';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{notvalidjson';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur doit être un JSON valide.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
+    }
+
     public function testInvalidVehicleSetBlankRestrictedTypes(): void
     {
         $client = $this->login();

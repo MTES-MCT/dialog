@@ -28,6 +28,9 @@ final class LocationFormType extends AbstractType
             ->add('namedStreet', NamedStreetFormType::class, [
                 'label' => false,
             ])
+            ->add('rawGeoJSON', RawGeoJSONFormType::class, [
+                'label' => false,
+            ])
         ;
     }
 

@@ -95,8 +95,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
         $measures = $crawler->filter('[data-testid="measure"]');
 
-        $this->assertSame('Rue Saint-Victor La Madeleine (59110)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
+        $this->assertSame('Rue Saint-Victor à La Madeleine (59110)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis à Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
     public function testDeletePeriod(): void
@@ -330,6 +330,30 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
+    }
+
+    public function testRawGeoJSONWithInvalidJSON(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Invalide';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"dfuji';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur doit être un JSON valide.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void

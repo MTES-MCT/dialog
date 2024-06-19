@@ -150,12 +150,15 @@
     </li>
 {% endmacro %}
 
-{% macro locations_list_item(form, index) %}
+{% macro locations_list_item(form, index, canUseRawGeoJSON) %}
+    {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
+
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
+        {% if isRawGeoJSON and not canUseRawGeoJSON %}hidden{% endif %}
     >
         <div class="app-card__actions">
             <button
@@ -403,7 +406,37 @@
                             </fieldset>
                         </div>
                     </fieldset>
+                </div>
 
+                <div
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="rawGeoJSON"
+                    {% if not isRawGeoJSON %}hidden{% endif %}
+                >
+                    {{ form_row(form.rawGeoJSON.roadType, {
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'rawGeoJSON',
+                            'disabled': not isRawGeoJSON,
+                        }
+                    }) }}
+
+                    {{ form_row(form.rawGeoJSON.label, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'disabled': not isRawGeoJSON,
+                        },
+                    }) }}
+
+                    {{ form_row(form.rawGeoJSON.geometry, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'disabled': not isRawGeoJSON,
+                        },
+                    }) }}
                 </div>
             </div>
         </div>
@@ -530,7 +563,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__')|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', canUseRawGeoJSON)|e('html_attr') }}"
                             class="fr-mb-4w"
                         >
                             <ul
@@ -540,7 +573,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, loop.index) }}
+                                    {{ _self.locations_list_item(item, loop.index0, canUseRawGeoJSON) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}

@@ -18,6 +18,7 @@ use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
+use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -131,6 +132,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                     'form' => $form->createView(),
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'measure' => MeasureView::fromEntity($measure),
+                    'canUseRawGeoJSON' => $this->security->isGranted(SymfonyUser::ROLE_ADMIN),
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed

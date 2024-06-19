@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
@@ -193,6 +194,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.status = :status',
                 'ro.endDate >= :today',
                 'loc.geometry IS NOT NULL',
+                'loc.roadType NOT IN (:excludedRoadTypes)',
                 $allowedSources ? 'roc.source in (:allowedSources)' : null,
                 $excludedIdentifiers ? 'ro.identifier NOT IN (:excludedIdentifiers)' : null,
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
@@ -206,6 +208,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                 'today' => $this->dateUtils->getNow(),
+                'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
             ])
             ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
