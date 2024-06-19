@@ -1924,11 +1924,11 @@
             </trans-unit>
             <trans-unit id="map.form.displayFutureRegulations">
                 <source>map.form.displayFutureRegulations</source>
-                <target>Arrêtés à venir</target>
+                <target>Restrictions à venir</target>
             </trans-unit>
             <trans-unit id="map.form.displayPastRegulations">
                 <source>map.form.displayPastRegulations</source>
-                <target>Arrêtés passés</target>
+                <target>Restrictions passées</target>
             </trans-unit>
             <trans-unit id="map.title">
                 <source>map.title</source>
