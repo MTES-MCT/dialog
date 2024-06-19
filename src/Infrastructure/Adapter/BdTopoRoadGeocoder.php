@@ -55,6 +55,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
     public function findRoads(string $search, string $administrator): array
     {
+        // Can search for a departmental road with the prefix "RD"
+        if (str_starts_with(strtoupper($search), 'RD')) {
+            $search = substr($search, 1);
+        }
+
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
@@ -63,6 +68,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     WHERE numero LIKE :numero_pattern
                     AND gestionnaire = :gestionnaire
                     AND type_de_route = :type_de_route
+                    LIMIT 10
                 ',
                 [
                     'numero_pattern' => sprintf('%s%%', strtoupper($search)),
