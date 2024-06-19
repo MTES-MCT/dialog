@@ -40,11 +40,9 @@
             {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
         </li>
 
-        {% if regulation.startDate %}
-            <li>
-                {% include 'regulation/_overall_period.html.twig' with { generalInfo: regulation } only %}
-            </li>
-        {% endif %}
+        <li>
+            {% include 'regulation/_overall_period.html.twig' with { generalInfo: regulation } only %}
+        </li>
 
         <li>
             {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
