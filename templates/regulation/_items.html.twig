@@ -25,8 +25,8 @@
                 {% set location = regulation.location %}
                 {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
                 {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
-		{% set isDraft = regulation.status != 'published' %}
-		{% set belongsToUserOrganizations = regulation.organizationUuid in userOrganizationsUuids %}
+                {% set isDraft = regulation.status != 'published' %}
+                {% set belongsToUserOrganizations = regulation.organizationUuid in userOrganizationsUuids %}
                 <tr>
                     <td>
                         {{ regulation.identifier }}
@@ -79,32 +79,32 @@
                                     {{ 'common.see'|trans }}
                                 </a>
                             {% else %}
-				{% if (not isReadOnlyMode) and belongsToUserOrganizations %}
+                                {% if (not isReadOnlyMode) and belongsToUserOrganizations %}
                                     <a title="{{ 'common.update'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-					{{ 'common.update'|trans }}
+                                        {{ 'common.update'|trans }}
                                     </a>
-				{% endif %}
+                                {% endif %}
                             {% endif %}
-			    {% if (not isReadOnlyMode) and belongsToUserOrganizations %}
-				<form
+                            {% if (not isReadOnlyMode) and belongsToUserOrganizations %}
+                                <form
                                     method="delete"
                                     action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
                                     data-controller="form-submit"
                                     data-action="modal-trigger:submit->form-submit#submit"
                                     class="fr-hidden fr-unhidden-md"
-				>
+                                >
                                     <d-modal-trigger modal="regulation-delete-modal" submitValue="regulation-delete-{{ regulation.uuid }}">
-					<button
+                                        <button
                                             class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
                                             aria-controls="regulation-delete-modal"
                                             aria-label="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
                                             title="{{ 'regulation.delete'|trans({'%identifier%': regulation.identifier}) }}"
-					></button>
+                                        ></button>
                                     </d-modal-trigger>
 
                                     <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
-				</form>
-			    {% endif %}
+                                </form>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
