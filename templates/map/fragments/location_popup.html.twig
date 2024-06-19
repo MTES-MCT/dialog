@@ -1,10 +1,10 @@
 <turbo-frame id="location_turbo_frame_{{ location.uuid }}">
     <div class="fr-container--fluid">
-	<div class="fr-grid-row fr-grid-row--right">
-	    <button id="close_location_popup_{{ location.uuid }}" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-btn--icon-right fr-icon-close-line">
-		{{ 'common.close'|trans }}
-	    </button>
-	</div>
+        <div class="fr-grid-row fr-grid-row--right">
+            <button id="close_location_popup_{{ location.uuid }}" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-btn--icon-right fr-icon-close-line">
+                {{ 'common.close'|trans }}
+            </button>
+        </div>
     </div>
     <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
         <li class="fr-grid-row">
@@ -41,9 +41,9 @@
         </li>
 
         {% if regulation.startDate %}
-	    <li>
-		{% include 'regulation/_overall_period.html.twig' with { generalInfo: regulation } only %}
-	    </li>
+            <li>
+                {% include 'regulation/_overall_period.html.twig' with { generalInfo: regulation } only %}
+            </li>
         {% endif %}
 
         <li>
