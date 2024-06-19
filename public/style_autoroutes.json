@@ -1,0 +1,46 @@
+{
+    "version": 8,
+    "name": "BDTOPO",
+    "glyphs": "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
+    "sprite": "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/BDTOPO/sprite/sprite_bdtopo",
+    "metadata": {"maputnik:renderer": "ol"},
+    "sources": {
+        "bdtopo": {
+            "type": "vector",
+            "tiles": [
+		"https://data.geopf.fr/tms/1.0.0/BDTOPO/{z}/{x}/{y}.pbf"
+            ],
+            "url":"https://data.geopf.fr/tms/1.0.0/BDTOPO/metadata.json"
+        }
+    },
+    "transition": {
+        "duration": 300,
+        "delay": 0
+    },
+    "layers": [
+        {
+            "id": "type_autoroutier",
+            "type": "line",
+            "source": "bdtopo",
+            "source-layer": "troncon_de_route",
+            "minzoom": 13,
+            "paint": {
+		"line-color": "#5068d2",
+		"line-width": 3
+            }
+        },
+	{
+	    "id": "point_de_repere",
+	    "type": "circle",
+	    "source": "bdtopo",
+	    "source-layer": "point_de_repere",
+	    "paint": {
+		"circle-color": "#549d2c",
+		"circle-stroke-color": "#000000",
+		"circle-opacity": 1,
+		"circle-stroke-width": 1,
+		"circle-radius": 5
+	    }
+	}
+    ]
+}
