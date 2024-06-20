@@ -45,8 +45,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     }
 
     public function findAllForMapAsGeoJSON(
-        bool $permanentRegulationsOnly = false,
-        bool $temporaryRegulationsOnly = false,
+        bool $includePermanentRegulations = false,
+        bool $includeTemporaryRegulations = false,
         bool $includeUpcomingRegulations = false,
         bool $includePastRegulations = false,
     ): string {
@@ -59,14 +59,17 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                ->andWhere('l.geometry IS NOT NULL')
                ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED);
 
-        if ($permanentRegulationsOnly && !$temporaryRegulationsOnly) {
+        if ($includePermanentRegulations && !$includeTemporaryRegulations) {
             $query->andWhere('ro.endDate IS NULL');
-        } elseif (!$permanentRegulationsOnly && $temporaryRegulationsOnly) {
+        } elseif (!$includePermanentRegulations && $includeTemporaryRegulations) {
             $query->andWhere('ro.endDate IS NOT NULL');
-        } elseif ($permanentRegulationsOnly && $temporaryRegulationsOnly) {
-            return json_encode([]); // we return no regulations
+        } elseif (!$includePermanentRegulations && !$includeTemporaryRegulations) {
+            return json_encode([
+                'type' => 'FeatureCollection',
+                'features' => [],
+            ]); // we return no regulations
         }
-        // no filter needed for (!$permanentRegulationsOnly && !$temporaryRegulationsOnly) : we want all kind of regulations
+        // no filter needed for ($includePermanentRegulations && $includeTemporaryRegulations) : we want all kind of regulations
 
         if (!$includeUpcomingRegulations && !$includePastRegulations) {
             $query->andWhere('(ro.endDate >= :now OR ro.endDate IS NULL) AND ro.startDate <= :now');

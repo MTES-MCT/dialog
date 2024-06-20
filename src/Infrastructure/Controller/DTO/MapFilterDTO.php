@@ -6,7 +6,8 @@ namespace App\Infrastructure\Controller\DTO;
 
 final class MapFilterDTO
 {
-    public ?string $category = null;
-    public ?string $displayFutureRegulations = null;
-    public ?string $displayPastRegulations = null;
+    public bool $displayPermanentRegulations = true;
+    public bool $displayTemporaryRegulations = true;
+    public bool $displayFutureRegulations = false;
+    public bool $displayPastRegulations = false;
 }
