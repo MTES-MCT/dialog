@@ -46,10 +46,10 @@ final class MapController
         $form->handleRequest($request);
 
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
-            $dto->category === 'permanents_only',
-            $dto->category === 'temporaries_only',
-            $dto->displayFutureRegulations === '1',
-            $dto->displayPastRegulations === '1',
+            $dto->displayPermanentRegulations,
+            $dto->displayTemporaryRegulations,
+            $dto->displayFutureRegulations,
+            $dto->displayPastRegulations,
         );
 
         if ($form->isSubmitted() && $form->isValid()) {

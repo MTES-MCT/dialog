@@ -6,7 +6,6 @@ namespace App\Infrastructure\Form\Map;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -16,9 +15,22 @@ final class MapFilterFormType extends AbstractType
     {
         $builder
             ->add(
-                'category',
-                ChoiceType::class,
-                options: $this->getCategoryOptions(),
+                'displayPermanentRegulations',
+                CheckboxType::class,
+                options: [
+                    'label' => 'map.filter.permanents',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'displayTemporaryRegulations',
+                CheckboxType::class,
+                options: [
+                    'label' => 'map.filter.temporaries',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
             )
             ->add(
                 'displayFutureRegulations',
@@ -40,23 +52,5 @@ final class MapFilterFormType extends AbstractType
             )
             ->add('save', SubmitType::class)
         ;
-    }
-
-    private function getCategoryOptions(): array
-    {
-        $choices = [
-            'map.filter.permanents' => 'permanents_only',
-            'map.filter.temporaries' => 'temporaries_only',
-            'map.filter.all' => 'permanents_and_temporaries',
-        ];
-
-        return [
-            'choices' => $choices,
-            'label' => false,
-            'expanded' => true,
-            'multiple' => false,
-            'required' => true,
-            'data' => 'permanents_and_temporaries', // default value for the radio buttons
-        ];
     }
 }

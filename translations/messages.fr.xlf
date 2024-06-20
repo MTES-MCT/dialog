@@ -1944,15 +1944,11 @@
             </trans-unit>
             <trans-unit id="map.filter.permanents">
                 <source>map.filter.permanents</source>
-                <target>Arrêtés permanents</target>
+                <target>Restrictions permanentes</target>
             </trans-unit>
             <trans-unit id="map.filter.temporaries">
                 <source>map.filter.temporaries</source>
-                <target>Arrêtés temporaires</target>
-            </trans-unit>
-            <trans-unit id="map.filter.all">
-                <source>map.filter.all</source>
-                <target>Tous les arrêtés</target>
+                <target>Restrictions temporaires</target>
             </trans-unit>
             <trans-unit id="map.location.popup.details">
                 <source>map.location.popup.details</source>
