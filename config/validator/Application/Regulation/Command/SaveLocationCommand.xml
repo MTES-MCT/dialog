@@ -15,5 +15,6 @@
         <property name="rawGeoJSON">
             <constraint name="Valid" />
         </property>
+        <constraint name="App\Infrastructure\Validator\SaveLocationCommandConstraint" />
     </class>
 </constraint-mapping>

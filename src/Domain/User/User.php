@@ -9,6 +9,9 @@ use Doctrine\Common\Collections\Collection;
 
 class User
 {
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_USER = 'ROLE_USER';
+
     private string $fullName;
     private string $email;
     private string $password;

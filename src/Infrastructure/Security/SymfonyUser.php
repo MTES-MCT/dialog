@@ -10,9 +10,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
-    public const ROLE_USER = 'ROLE_USER';
-
     public function __construct(
         private string $uuid,
         private string $email,

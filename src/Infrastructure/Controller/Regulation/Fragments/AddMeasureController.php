@@ -16,9 +16,9 @@ use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
-use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -37,6 +37,8 @@ final class AddMeasureController extends AbstractRegulationController
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
+        private CanUseRawGeoJSON $canUseRawGeoJSON,
+
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -127,7 +129,7 @@ final class AddMeasureController extends AbstractRegulationController
                     'form' => $form->createView(),
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'measure' => null,
-                    'canUseRawGeoJSON' => $this->security->isGranted(SymfonyUser::ROLE_ADMIN),
+                    'canUseRawGeoJSON' => $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles()),
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed
