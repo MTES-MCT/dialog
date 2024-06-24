@@ -63,6 +63,7 @@ final class UpdateMeasureController extends AbstractRegulationController
 
         $command = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder(), $measure);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
+        $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
         $form = $this->formFactory->create(
             type: MeasureFormType::class,
@@ -74,6 +75,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 ]),
                 'administrators' => $administrators,
                 'isPermanent' => $regulationOrder->isPermanent(),
+                'canUseRawGeoJSON' => $canUseRawGeoJSON,
             ],
         );
         $form->handleRequest($request);
@@ -133,7 +135,6 @@ final class UpdateMeasureController extends AbstractRegulationController
                     'form' => $form->createView(),
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'measure' => MeasureView::fromEntity($measure),
-                    'canUseRawGeoJSON' => $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles()),
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed

@@ -150,17 +150,22 @@
     </li>
 {% endmacro %}
 
-{% macro locations_list_item(form, index, canUseRawGeoJSON) %}
-    {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
-
+{% macro locations_list_item(form, index) %}
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
-        {% if isRawGeoJSON and not canUseRawGeoJSON %}hidden{% endif %}
     >
-        <div class="app-card__actions">
+        {% if form.vars.readonly %}
+            <p class="app-card__content">
+                {{ form.vars.readonly_text }}
+            </p>
+        {% endif %}
+
+        {# Hide but keep in DOM so that re-submitting an unchanged read-only location works. #}
+
+        <div class="app-card__actions" {% if form.vars.readonly %}hidden{% endif %}>
             <button
                 type="button"
                 aria-label="{{ 'common.delete'|trans }}"
@@ -169,7 +174,8 @@
             >
             </button>
         </div>
-        <div class="app-card__content">
+
+        <div class="app-card__content" {% if form.vars.readonly %}hidden{% endif %}>
             <div data-controller="form-reveal">
                 {{ form_row(form.roadType, {
                     group_class: 'fr-select-group',
@@ -250,7 +256,7 @@
                         {% if not isDepartmentalRoad %}disabled{% endif %}
                     >
                         <legend id="regulation-location-{{ index }}-reference-point">
-                           {{ 'regulation.location.referencePoint'|trans }}
+                            {{ 'regulation.location.referencePoint'|trans }}
                         </legend>
                         <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
                         <fieldset
@@ -408,6 +414,7 @@
                     </fieldset>
                 </div>
 
+                {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
                 <div
                     data-controller="reset"
                     data-form-reveal-target="section"
@@ -567,7 +574,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', canUseRawGeoJSON)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__')|e('html_attr') }}"
                             class="fr-mb-4w"
                         >
                             <ul
@@ -577,7 +584,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, canUseRawGeoJSON) }}
+                                    {{ _self.locations_list_item(item, loop.index0) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}
