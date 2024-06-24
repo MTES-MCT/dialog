@@ -23,7 +23,8 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Avenue de Fonneuve du n° 695 au n° 253 Montauban (82000)', $li->eq(1)->text());
         $this->assertSame('pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, matières dangereuses, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels', $li->eq(2)->text());
         $this->assertSame('tous les jours', $li->eq(3)->text());
-        $this->assertSame('L\'arrêté est : passé', $li->eq(4)->text());
+        $this->assertSame('Du 10/03/2023 au 20/03/2023', $li->eq(4)->text());
+        $this->assertSame('L\'arrêté est : passé', $li->eq(5)->text());
     }
 
     public function testLocationNotFound(): void

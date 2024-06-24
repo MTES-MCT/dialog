@@ -15,8 +15,8 @@ interface LocationRepositoryInterface
     public function findOneByUuid(string $uuid): ?Location;
 
     public function findAllForMapAsGeoJSON(
-        bool $includePermanentRegulations = true,
-        bool $includeTemporaryRegulations = true,
+        bool $includePermanentRegulations = false,
+        bool $includeTemporaryRegulations = false,
         bool $includeUpcomingRegulations = false,
         bool $includePastRegulations = false,
     ): string;

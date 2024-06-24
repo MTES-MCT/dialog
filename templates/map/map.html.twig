@@ -25,7 +25,9 @@
                             style: '--stack-gap: var(--1w)',
                         },
                     }) }}
-                        {{ form_row(form.category, {group_class: 'fr-radio-group'}) }}
+                        {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group'}) }}
+                        {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}
+                        <hr />
                         {{ form_row(form.displayFutureRegulations, {group_class: 'fr-checkbox-group'}) }}
                         {{ form_row(form.displayPastRegulations, {group_class: 'fr-checkbox-group'}) }}
                         <noscript>
