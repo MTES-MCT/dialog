@@ -66,12 +66,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
         if ($withUserOrganizationsDrafts) {
-            $query->where('(roc.status = \'published\') OR (roc.status = \'draft\' AND roc.organization IN (:organizationUuids))')
-                ->setParameter('organizationUuids', $organizationUuids);
+            $query->where('(roc.status = :published_status) OR (roc.status = :draft_status AND roc.organization IN (:organizationUuids))')
+                ->setParameters([
+                    'organizationUuids' => $organizationUuids,
+                    'draft_status' => RegulationOrderRecordStatusEnum::DRAFT,
+                ]);
         } else {
-            $query->where('(roc.status = \'published\')');
+            $query->where('(roc.status = :published_status)');
         }
-        $query->innerJoin('roc.organization', 'o')
+        $query->setParameter('published_status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->orderBy('ro.startDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')
