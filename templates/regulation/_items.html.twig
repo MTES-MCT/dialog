@@ -85,7 +85,7 @@
                                     </a>
                                 {% endif %}
                             {% endif %}
-                            {% if (not isReadOnlyMode) and belongsToUserOrganizations %}
+                            {% if not isReadOnlyMode and belongsToUserOrganizations %}
                                 <form
                                     method="delete"
                                     action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
