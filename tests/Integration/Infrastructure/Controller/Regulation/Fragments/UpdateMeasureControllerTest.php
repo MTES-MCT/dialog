@@ -332,9 +332,20 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
     }
 
-    public function testRawGeoJSONWithInvalidJSON(): void
+    public function testEditRawGeoJSONAsUserReadOnly(): void
     {
         $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $locationText = $crawler->filter('[data-testid="measure_form_location_0"]')->filter('[data-testid="location_readonly"]')->innerText();
+        $this->assertSame('Zone Olympique (données brutes geojson)', $locationText);
+    }
+
+    public function testEditRawGeoJSONWithInvalidJSON(): void
+    {
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();

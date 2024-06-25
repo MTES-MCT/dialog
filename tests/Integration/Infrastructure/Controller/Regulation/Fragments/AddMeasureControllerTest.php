@@ -471,9 +471,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_numberedRoad_toAbscissa_error')->text());
     }
 
-    public function testAddRawGeoJSONAsUserHidden(): void
+    public function testAddRawGeoJSONAsUserForbidden(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_USER_EMAIL);
+        $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -481,6 +481,22 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $roadTypeOptions = $crawler->filter('#measure_form_locations_0_roadType')->filter('option');
         $this->assertSame('Données brutes GeoJSON', $roadTypeOptions->eq(3)->innerText());
         $this->assertSame('', $roadTypeOptions->eq(3)->attr('hidden'));
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Test';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = 'geometry';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Vous ne disposez pas des droits nécessaires pour saisir des données brutes.', $crawler->filter('#measure_form_locations_0_roadType_error')->text());
     }
 
     public function testAddRawGeoJSONAsAdmin(): void

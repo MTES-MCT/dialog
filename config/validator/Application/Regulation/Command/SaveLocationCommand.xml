@@ -5,6 +5,17 @@
     <class name="App\Application\Regulation\Command\Location\SaveLocationCommand">
         <property name="roadType">
             <constraint name="NotBlank" />
+            <constraint name="When">
+                <option name="expression">
+                    'canUseRawGeoJSON' not in this.permissions
+                </option>
+                <option name="constraints">
+                    <constraint name="NotEqualTo">
+                        <option name="value">rawGeoJSON</option>
+                        <option name="message">regulation.location.error.road_type.raw_geojson_forbidden</option>
+                    </constraint>
+                </option>
+            </constraint>
         </property>
         <property name="namedStreet">
             <constraint name="Valid" />

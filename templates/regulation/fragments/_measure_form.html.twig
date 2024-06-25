@@ -156,9 +156,10 @@
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
+        data-testid="measure_form_location_{{ index }}"
     >
         {% if form.vars.readonly %}
-            <p class="app-card__content">
+            <p class="app-card__content" data-testid="location_readonly">
                 {{ form.vars.readonly_text }}
             </p>
         {% endif %}
@@ -256,7 +257,7 @@
                         {% if not isDepartmentalRoad %}disabled{% endif %}
                     >
                         <legend id="regulation-location-{{ index }}-reference-point">
-                            {{ 'regulation.location.referencePoint'|trans }}
+                           {{ 'regulation.location.referencePoint'|trans }}
                         </legend>
                         <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
                         <fieldset
@@ -574,7 +575,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__')|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__')|e('html_attr') }}"
                             class="fr-mb-4w"
                         >
                             <ul
@@ -584,7 +585,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0) }}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}

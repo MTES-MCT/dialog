@@ -258,7 +258,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $rawGeoJSON = new RawGeoJSON(
             uuid: '06672bc8-d38a-72b4-8000-69857847b68f',
             location: $rawGeoJSONLocation,
-            label: 'TOUR EIFFEL',
+            label: 'Zone Olympique',
         );
 
         $manager->persist($namedStreetTypicalMeasureLocation1);

@@ -57,7 +57,7 @@ final class MeasureFormType extends AbstractType
                 'entry_options' => [
                     'label' => false,
                     'administrators' => $options['administrators'],
-                    'canUseRawGeoJSON' => $options['canUseRawGeoJSON'],
+                    'permissions' => $options['permissions'],
                 ],
                 'prototype_name' => '__location_name__',
                 'label' => false,
@@ -98,11 +98,11 @@ final class MeasureFormType extends AbstractType
             'data_class' => SaveMeasureCommand::class,
             'administrators' => [],
             'isPermanent' => false,
-            'canUseRawGeoJSON' => false,
+            'permissions' => [],
             'validation_groups' => ['Default', 'html_form'],
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
         $resolver->setAllowedTypes('isPermanent', 'boolean');
-        $resolver->setAllowedTypes('canUseRawGeoJSON', 'boolean');
+        $resolver->setAllowedTypes('permissions', 'array');
     }
 }

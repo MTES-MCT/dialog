@@ -59,11 +59,15 @@ final class AddMeasureController extends AbstractRegulationController
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
         $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
+        if ($canUseRawGeoJSON) {
+            $command->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
+        }
+
         $form = $this->formFactory->create(MeasureFormType::class, $command, [
             'action' => $this->router->generate('fragment_regulations_measure_add', ['uuid' => $uuid]),
             'administrators' => $administrators,
             'isPermanent' => $regulationOrder->isPermanent(),
-            'canUseRawGeoJSON' => $canUseRawGeoJSON,
+            'permissions' => $command->permissions,
         ]);
         $form->handleRequest($request);
         $commandFailed = false;

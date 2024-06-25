@@ -20,6 +20,7 @@ final class SaveMeasureCommand implements CommandInterface
     public array $periods = [];
     public ?\DateTimeInterface $createdAt = null;
     public ?SaveVehicleSetCommand $vehicleSet = null;
+    public array $permissions = []; // For validation
 
     public function __construct(
         public ?RegulationOrder $regulationOrder = null,
@@ -45,14 +46,18 @@ final class SaveMeasureCommand implements CommandInterface
             }
 
             foreach ($measure->getLocations() as $location) {
-                $command->locations[] = new SaveLocationCommand($location);
+                $locationCommand = new SaveLocationCommand($location);
+                $locationCommand->permissions = &$command->permissions;
+                $command->locations[] = $locationCommand;
             }
 
             foreach ($measure->getPeriods() as $period) {
                 $command->periods[] = new SavePeriodCommand($period);
             }
         } else {
-            $command->locations[] = new SaveLocationCommand();
+            $locationCommand = new SaveLocationCommand();
+            $locationCommand->permissions = &$command->permissions;
+            $command->locations[] = $locationCommand;
         }
 
         return $command;

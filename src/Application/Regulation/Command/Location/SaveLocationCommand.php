@@ -16,6 +16,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?SaveNumberedRoadCommand $numberedRoad = null;
     public ?SaveNamedStreetCommand $namedStreet = null;
     public ?SaveRawGeoJSONCommand $rawGeoJSON = null;
+    public array $permissions = []; // For validation
 
     public function __construct(
         public readonly ?Location $location = null,

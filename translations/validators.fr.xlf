@@ -66,9 +66,9 @@
                 <source>regulation.period.error.end_time</source>
                 <target>L'heure de fin doit être supérieure à l'heure de début.</target>
             </trans-unit>
-            <trans-unit id="regulation.location.error.road_type">
-                <source>regulation.location.error.road_type</source>
-                <target>Ce type de localisation n'est pas valide.</target>
+            <trans-unit id="regulation.location.error.road_type.raw_geojson_forbidden">
+                <source>regulation.location.error.road_type.raw_geojson_forbidden</source>
+                <target>Vous ne disposez pas des droits nécessaires pour saisir des données brutes.</target>
             </trans-unit>
         </body>
     </file>

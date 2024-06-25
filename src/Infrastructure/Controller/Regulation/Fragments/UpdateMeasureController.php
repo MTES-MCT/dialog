@@ -65,6 +65,10 @@ final class UpdateMeasureController extends AbstractRegulationController
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
         $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
+        if ($canUseRawGeoJSON) {
+            $command->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
+        }
+
         $form = $this->formFactory->create(
             type: MeasureFormType::class,
             data: $command,
@@ -75,7 +79,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 ]),
                 'administrators' => $administrators,
                 'isPermanent' => $regulationOrder->isPermanent(),
-                'canUseRawGeoJSON' => $canUseRawGeoJSON,
+                'permissions' => $command->permissions,
             ],
         );
         $form->handleRequest($request);
