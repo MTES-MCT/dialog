@@ -194,8 +194,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/regulations');
+        $pageOne = $client->request('GET', '/regulations');
 
         $this->assertResponseStatusCodeSame(200);
+
+        $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
+        $this->assertSame('tablist', $tabs->attr('role'));
+        $this->assertSame('Temporaires (4) Permanents (0)', $tabs->text());
     }
 }
