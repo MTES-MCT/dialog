@@ -15,7 +15,6 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findAllRegulations(
         ?array $organizations,
-        bool $withUserOrganizationsDrafts,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,

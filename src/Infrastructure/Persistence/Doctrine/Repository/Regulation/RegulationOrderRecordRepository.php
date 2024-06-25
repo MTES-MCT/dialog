@@ -55,7 +55,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     public function findAllRegulations(
         ?array $organizationUuids,
-        bool $withUserOrganizationsDrafts,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,
@@ -65,13 +64,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
-        if ($withUserOrganizationsDrafts) {
+        if ($organizationUuids) {
             $query->where('(roc.status = :published_status) OR (roc.status = :draft_status AND roc.organization IN (:organizationUuids))')
                 ->setParameters([
                     'organizationUuids' => $organizationUuids,
                     'draft_status' => RegulationOrderRecordStatusEnum::DRAFT,
                 ]);
-        } else {
+        } else {  // the user is not connected -> no draft regulations
             $query->where('(roc.status = :published_status)');
         }
         $query->setParameter('published_status', RegulationOrderRecordStatusEnum::PUBLISHED)

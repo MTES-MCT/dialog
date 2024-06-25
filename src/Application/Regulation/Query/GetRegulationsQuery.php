@@ -10,7 +10,6 @@ final readonly class GetRegulationsQuery implements QueryInterface
 {
     public function __construct(
         public ?array $organizationUuids,
-        public bool $withUserOrganizationsDrafts,
         public int $pageSize,
         public int $page,
         public bool $isPermanent,
