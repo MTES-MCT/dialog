@@ -154,13 +154,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
-            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns')
+            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('loc.namedStreet', 'ns')
             ->leftJoin('loc.numberedRoad', 'nr')
+            ->leftJoin('loc.rawGeoJSON', 'rg')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
