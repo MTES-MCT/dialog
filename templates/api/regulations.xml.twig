@@ -139,7 +139,7 @@
                                 {% endfor %}
                             </conditions>
 
-                            {% set vehicles = trafficRegulation.vehicleConditions|filter(v => not v.isOther) %}
+                            {% set vehicles = trafficRegulation.vehicleConditions %}
 
                             {% if vehicles|length > 0 %}
                                 <conditions xsi:type="ConditionSet">
@@ -182,7 +182,7 @@
                                                                     <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
                                                                 </com:widthCharacteristic>
                                                             {% endif %}
-                                                        {% else %}
+                                                        {% elseif not vehicle.isOther %}
                                                             <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
                                                         {% endif %}
                                                         {% if vehicle.type == 'heavyGoodsVehicle' %}
@@ -193,6 +193,13 @@
                                                                     <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
                                                                 </com:grossWeightCharacteristic>
                                                             {% endif %}
+                                                        {% endif %}
+                                                        {% if vehicle.isOther %}
+                                                            <com:_vehicleCharacteristicsExtension>
+                                                                <com:vehicleCharacteristicsExtended>
+                                                                    <dx:otherVehicleType>{{ vehicle.otherTypeText }}</dx:otherVehicleType>
+                                                                </com:vehicleCharacteristicsExtended>
+                                                            </com:_vehicleCharacteristicsExtension>
                                                         {% endif %}
                                                     {% endif %}
                                                 </vehicleCharacteristics>
