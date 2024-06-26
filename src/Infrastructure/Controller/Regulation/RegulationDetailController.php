@@ -6,8 +6,10 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
+use App\Application\Regulation\Query\GetRegulationOrderRecordOrganizationUuidQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\ArrayRegulationMeasures;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
@@ -46,15 +48,15 @@ final class RegulationDetailController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         }, false);
 
-        $regulationOrderRecord = $this->getRegulationOrderRecord(uuid: $uuid, requireUserSameOrg: false);
+        $organizationUuid = $this->queryBus->handle(new GetRegulationOrderRecordOrganizationUuidQuery($uuid));
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
-        $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $currentUser->getOrganizationUuids()));
+        $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getOrganizationUuids()));
 
         $context = [
             'uuid' => $uuid,
             'isDraft' => $generalInfo->isDraft(),
-            'canPublish' => !$isReadOnly && $this->canRegulationOrderRecordBePublished->isSatisfiedBy($regulationOrderRecord),
-            'canDelete' => !$isReadOnly && $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
+            'canPublish' => !$isReadOnly && $this->canRegulationOrderRecordBePublished->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
+            'canDelete' => !$isReadOnly && $this->canDeleteMeasures->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
             'isReadOnly' => $isReadOnly,
             'generalInfo' => $generalInfo,
             'measures' => $measures,
