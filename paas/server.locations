@@ -9,3 +9,6 @@ location ~* \.(css|js|jpg|jpeg|png|svg|webp|ico|woff2|woff|eot|ttf) {
 location /blog {
     try_files $uri $uri.html $uri/index.html =404;
 }
+
+gzip on;
+gzip_types text/html text/xml;
