@@ -24,6 +24,15 @@ final class CanOrganizationAccessToRegulationTest extends TestCase
         $this->assertTrue($specification->isSatisfiedBy($organization, $userOrganizationUuids));
     }
 
+    public function testRegulationCanBePublishedStringOrganizationUuid(): void
+    {
+        $userOrganizationUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
+        $organizationUuid = $userOrganizationUuids[0];
+
+        $specification = new CanOrganizationAccessToRegulation();
+        $this->assertTrue($specification->isSatisfiedBy($organizationUuid, $userOrganizationUuids));
+    }
+
     public function testRegulationCannotBePublished(): void
     {
         $userOrganizationUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];

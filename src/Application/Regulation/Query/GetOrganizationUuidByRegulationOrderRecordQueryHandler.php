@@ -7,14 +7,14 @@ namespace App\Application\Regulation\Query;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 
-final class GetRegulationOrderRecordOrganizationUuidQueryHandler
+final class GetOrganizationUuidByRegulationOrderRecordQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
     ) {
     }
 
-    public function __invoke(GetRegulationOrderRecordOrganizationUuidQuery $query): string
+    public function __invoke(GetOrganizationUuidByRegulationOrderRecordQuery $query): string
     {
         $uuid = $this->regulationOrderRecordRepository->findOrganizationUuid(
             $query->uuid,

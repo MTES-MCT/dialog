@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
-use App\Application\Regulation\Query\GetRegulationOrderRecordOrganizationUuidQuery;
+use App\Application\Regulation\Query\GetOrganizationUuidByRegulationOrderRecordQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\ArrayRegulationMeasures;
@@ -48,7 +48,7 @@ final class RegulationDetailController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         }, false);
 
-        $organizationUuid = $this->queryBus->handle(new GetRegulationOrderRecordOrganizationUuidQuery($uuid));
+        $organizationUuid = $this->queryBus->handle(new GetOrganizationUuidByRegulationOrderRecordQuery($uuid));
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getOrganizationUuids()));
 
