@@ -136,6 +136,20 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function findOrganizationUuid(string $uuid): ?string
+    {
+        $row = $this->createQueryBuilder('roc')
+            ->select('o.uuid')
+            ->innerJoin('roc.organization', 'o')
+            ->where('roc.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return $row ? $row['uuid'] : null;
+    }
+
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')

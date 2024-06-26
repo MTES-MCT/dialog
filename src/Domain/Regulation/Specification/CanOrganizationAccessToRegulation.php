@@ -9,9 +9,13 @@ use App\Domain\User\OrganizationRegulationAccessInterface;
 class CanOrganizationAccessToRegulation
 {
     public function isSatisfiedBy(
-        OrganizationRegulationAccessInterface $organization,
+        OrganizationRegulationAccessInterface|string $organizationUuid,
         array $userOrganizationUuids,
     ): bool {
-        return \in_array($organization->getOrganizationUuid(), $userOrganizationUuids);
+        if (!\is_string($organizationUuid)) {
+            $organizationUuid = $organizationUuid->getOrganizationUuid();
+        }
+
+        return \in_array($organizationUuid, $userOrganizationUuids);
     }
 }
