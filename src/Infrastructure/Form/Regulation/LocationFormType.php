@@ -68,7 +68,10 @@ final class LocationFormType extends AbstractType
             $label = sprintf('regulation.location.road.type.%s', $case->value);
 
             if ($this->isRawGeoJSONDisabled($case->value, $options)) {
-                $choiceAttr[$label] = ['hidden' => ''];
+                $choiceAttr[$label] = [
+                    'hidden' => '',
+                    'disabled' => 'disabled', // Safari does not support <option hidden>
+                ];
             }
 
             $choices[$label] = $case->value;
