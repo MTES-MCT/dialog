@@ -12,8 +12,8 @@
 {% block body %}
     <span id="locations_as_geojson" hidden>{{ locationsAsGeoJson|raw }}</span>
 
-    <div class="fr-x-container--fluid" style="--container-width: 75rem">
-        <div class="fr-grid-row">
+    <div class="fr-x-container--fluid" style="--container-width: 75rem; height: 100%;">
+        <div class="fr-grid-row" style="height: 100%;">
             <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-pt-2w fr-pb-6w">
                 <h1 class="fr-h4">{{ 'map.title'|trans }} </h1>
                 <h2 class="fr-h6">{{ 'map.filters.title'|trans }}</h2>
