@@ -12,7 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 final class RegulationOrderFixture extends Fixture
 {
     public const TYPICAL_IDENTIFIER = 'FO1/2023';
-    public const NUM_TEMPORARY = 7;
+    public const NUM_TEMPORARY = 8;
     public const NUM_PERMANENT = 1;
     public const IDENTIFIER_CIFS = 'F/CIFS/2023';
 
@@ -109,6 +109,15 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2021-06-10'),
         );
 
+        $rawGeoJSONRegulationOrder = new RegulationOrder(
+            uuid: '06672e5f-f248-785b-8000-5f4ee64ca094',
+            identifier: 'F2024/RAWGEOJSON',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Arrêté avec données brutes GeoJSON',
+            startDate: new \DateTimeImmutable('2020-06-02'),
+            endDate: new \DateTimeImmutable('2020-06-10'),
+        );
+
         $manager->persist($typicalRegulationOrder);
         $manager->persist($publishedRegulationOrder);
         $manager->persist($regulationOrderDuplicate);
@@ -119,6 +128,7 @@ final class RegulationOrderFixture extends Fixture
         $manager->persist($regulationOrderNoMeasures);
         $manager->persist($regulationOrderCifs);
         $manager->persist($outDatedRegulationOrderCifs);
+        $manager->persist($rawGeoJSONRegulationOrder);
         $manager->flush();
 
         $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
@@ -131,5 +141,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('regulationOrderDuplicate', $regulationOrderDuplicate);
         $this->addReference('regulationOrderCifs', $regulationOrderCifs);
         $this->addReference('outDatedRegulationOrderCifs', $outDatedRegulationOrderCifs);
+        $this->addReference('rawGeoJSONRegulationOrder', $rawGeoJSONRegulationOrder);
     }
 }

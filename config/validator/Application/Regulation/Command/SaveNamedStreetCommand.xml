@@ -14,7 +14,7 @@
                 <option name="max">5</option>
             </constraint>
             <constraint name="When">
-                <option name="expression"> this.roadType === 'lane'</option>
+                <option name="expression">this.roadType === 'lane'</option>
                 <option name="constraints">
                     <constraint name="NotBlank">
                         <option name="message">regulation.location.cityCode.error.blank</option>

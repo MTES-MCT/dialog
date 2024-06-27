@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand">
+        <property name="label">
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'rawGeoJSON'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
+        </property>
+        <property name="geometry">
+            <constraint name="Json"/>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'rawGeoJSON'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>

@@ -80,6 +80,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                         roadType: $location->getRoadType(),
                         roadName: $location->getNamedStreet()?->getRoadName(),
                         roadNumber: $location->getNumberedRoad()?->getRoadNumber(),
+                        rawGeoJSONLabel: $location->getRawGeoJSON()?->getLabel(),
                         geometry: $location->getGeometry(),
                     );
                 }

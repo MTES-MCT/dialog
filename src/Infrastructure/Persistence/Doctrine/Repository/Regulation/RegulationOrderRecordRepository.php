@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
@@ -153,13 +154,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
-            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns')
+            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
             ->leftJoin('loc.namedStreet', 'ns')
             ->leftJoin('loc.numberedRoad', 'nr')
+            ->leftJoin('loc.rawGeoJSON', 'rg')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
@@ -193,6 +195,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.status = :status',
                 'ro.endDate >= :today',
                 'loc.geometry IS NOT NULL',
+                'loc.roadType NOT IN (:excludedRoadTypes)',
                 $allowedSources ? 'roc.source in (:allowedSources)' : null,
                 $excludedIdentifiers ? 'ro.identifier NOT IN (:excludedIdentifiers)' : null,
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
@@ -206,6 +209,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                 'today' => $this->dateUtils->getNow(),
+                'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
             ])
             ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
