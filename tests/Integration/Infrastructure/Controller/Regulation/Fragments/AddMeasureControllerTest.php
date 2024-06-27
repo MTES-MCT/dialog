@@ -553,7 +553,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
         $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Test';
-        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{notvalidjson';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{notvalidjson'; // Trigger invalid JSON error
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
