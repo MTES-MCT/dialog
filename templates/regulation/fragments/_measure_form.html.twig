@@ -158,15 +158,7 @@
         data-form-collection-target="collectionItem"
         data-testid="measure_form_location_{{ index }}"
     >
-        {% if form.vars.readonly %}
-            <p class="app-card__content" data-testid="location_readonly">
-                {{ form.vars.readonly_text }}
-            </p>
-        {% endif %}
-
-        {# Hide but keep in DOM so that re-submitting an unchanged read-only location works. #}
-
-        <div class="app-card__actions" {% if form.vars.readonly %}hidden{% endif %}>
+        <div class="app-card__actions">
             <button
                 type="button"
                 aria-label="{{ 'common.delete'|trans }}"
@@ -176,7 +168,7 @@
             </button>
         </div>
 
-        <div class="app-card__content" {% if form.vars.readonly %}hidden{% endif %}>
+        <div class="app-card__content">
             <div data-controller="form-reveal">
                 {{ form_row(form.roadType, {
                     group_class: 'fr-select-group',

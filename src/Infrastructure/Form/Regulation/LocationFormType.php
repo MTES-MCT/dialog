@@ -10,25 +10,19 @@ use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class LocationFormType extends AbstractType
 {
-    public function __construct(
-        private TranslatorInterface $translator,
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
                 'roadType',
                 ChoiceType::class,
-                options: $this->getRoadTypeOptions($options),
+                options: $this->getRoadTypeOptions(),
             )
             ->add('numberedRoad', NumberedRoadFormType::class, [
                 'administrators' => $options['administrators'],
@@ -41,25 +35,28 @@ final class LocationFormType extends AbstractType
                 'label' => false,
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            $form = $event->getForm();
+            $command = $event->getData();
+
+            $isRawGeoJSON = $command?->roadType === RoadTypeEnum::RAW_GEOJSON->value;
+            $canUseRawGeoJSON = \in_array(CanUseRawGeoJSON::PERMISSION_NAME, $options['permissions']);
+
+            if ($isRawGeoJSON || $canUseRawGeoJSON) {
+                // Replace field with new options
+                $form->add(
+                    'roadType',
+                    ChoiceType::class,
+                    options: $this->getRoadTypeOptions(
+                        includeRawGeoJSONOption: true,
+                    ),
+                );
+            }
+        });
     }
 
-    private function isRawGeoJSONDisabled(?string $value, array $options): bool
-    {
-        return $value === RoadTypeEnum::RAW_GEOJSON->value && !\in_array(CanUseRawGeoJSON::PERMISSION_NAME, $options['permissions']);
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options): void
-    {
-        $view->vars['readonly'] = false;
-
-        if ($this->isRawGeoJSONDisabled($form->get('roadType')->getData(), $options)) {
-            $view->vars['readonly'] = true;
-            $label = $form->get('rawGeoJSON')->get('label')->getData();
-            $view->vars['readonly_text'] = $label . ' (' . strtolower($this->translator->trans('regulation.location.road.type.rawGeoJSON')) . ')';
-        }
-    }
-
-    private function getRoadTypeOptions(array $options): array
+    private function getRoadTypeOptions(bool $includeRawGeoJSONOption = false): array
     {
         $choices = [];
         $choiceAttr = [];
@@ -67,10 +64,10 @@ final class LocationFormType extends AbstractType
         foreach (RoadTypeEnum::cases() as $case) {
             $label = sprintf('regulation.location.road.type.%s', $case->value);
 
-            if ($this->isRawGeoJSONDisabled($case->value, $options)) {
+            if ($case->value === RoadTypeEnum::RAW_GEOJSON->value && !$includeRawGeoJSONOption) {
                 $choiceAttr[$label] = [
                     'hidden' => '',
-                    'disabled' => 'disabled', // Safari does not support <option hidden>
+                    'disabled' => 'disabled', // For Safari (it does not support <option hidden>)
                 ];
             }
 

@@ -332,20 +332,73 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('La géolocalisation de la départementale entre ces points de repère a échoué. Veuillez vérifier que ces PR appartiennent bien à une même portion de la départementale.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
     }
 
-    public function testEditRawGeoJSONAsUserReadOnly(): void
+    public function testEditAsUserRawGeoJSONHidden(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(3);
+        $this->assertSame('Données brutes GeoJSON', $rawGeoJSONOption->innerText());
+        $this->assertSame('', $rawGeoJSONOption->attr('hidden'));
+        $this->assertSame('disabled', $rawGeoJSONOption->attr('disabled'));
+    }
+
+    public function testEditAsAdminRawGeoJSONShown(): void
+    {
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(3);
+        $this->assertSame('Données brutes GeoJSON', $rawGeoJSONOption->innerText());
+        $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
+        $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
+    }
+
+    public function testEditExistingRawGeoJSONAsUser(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $locationText = $crawler->filter('[data-testid="measure_form_location_0"]')->filter('[data-testid="location_readonly"]')->innerText();
-        $this->assertSame('Zone Olympique (données brutes geojson)', $locationText);
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['measure_form[locations][0][rawGeoJSON][label]'] = 'New label';
+        $form['measure_form[locations][0][rawGeoJSON][geometry]'] = '{"type": "Point", "coordinates": [12, 13]}';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(303);
+    }
+
+    public function testReplaceRawGeoJSONWithLane(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = ''; // Simulate effect of changing road type: old fields become disabled and submitted as empty
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Saint-Victor';
+        $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(303);
     }
 
     public function testEditRawGeoJSONWithInvalidJSON(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
