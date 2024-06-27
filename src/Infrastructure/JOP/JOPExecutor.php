@@ -11,7 +11,6 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
-use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
@@ -31,7 +30,7 @@ final class JOPExecutor
     public function execute(): void
     {
         if (!$this->jopOrgId) {
-            throw new EudonetParisException('No target organization ID set. Please set APP_JOP_ORG_ID');
+            throw new \RuntimeException('No target organization ID set. Please set APP_JOP_ORG_ID');
         }
 
         try {
@@ -57,8 +56,9 @@ final class JOPExecutor
 
         try {
             $this->commandBus->handle($command);
-        } catch (ValidationFailedException $exc) {
-            $this->logger->error('import:error', ['message' => $exc->getMessage(), 'violations' => $exc->getViolations()]);
+        } catch (\RuntimeException $exc) {
+            $context = ['message' => $exc->getMessage(), 'violations' => $exc instanceof ValidationFailedException ? $exc->getViolations() : null];
+            $this->logger->error('import:error', $context);
             throw $exc;
         }
 

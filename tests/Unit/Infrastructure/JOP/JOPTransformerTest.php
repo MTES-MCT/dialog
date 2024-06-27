@@ -48,6 +48,19 @@ final class JOPTransformerTest extends TestCase
                         'coordinates' => '<coords1>',
                     ],
                 ],
+                [
+                    'type' => 'Feature',
+                    'properties' => [
+                        'EVENEMENT' => str_repeat('a', 255),
+                        'TYPE_PERI' => 'Rouge',
+                        'DATE_DEBUT' => '2024/09/12 08:30:00.000',
+                        'DATE_FIN' => '2024/09/12 11:00:00.000',
+                    ],
+                    'geometry' => [
+                        'type' => 'Polygon',
+                        'coordinates' => '<coords1>',
+                    ],
+                ],
                 // Feature with NULL geometry
                 [
                     'type' => 'Feature',
@@ -116,12 +129,12 @@ final class JOPTransformerTest extends TestCase
         $generalInfoCommand->description = 'Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)';
         $generalInfoCommand->organization = $organization;
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-09-08 05:30:00 Europe/Paris');
-        $generalInfoCommand->endDate = new \DateTimeImmutable('2024-09-08 14:00:00 Europe/Paris');
+        $generalInfoCommand->endDate = new \DateTimeImmutable('2024-09-12 11:00:00 Europe/Paris');
 
         $locationCommand1 = new SaveLocationCommand();
         $locationCommand1->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $locationCommand1->rawGeoJSON = new SaveRawGeoJSONCommand();
-        $locationCommand1->rawGeoJSON->label = 'PARA_Marathon';
+        $locationCommand1->rawGeoJSON->label = 'PARA_Marathon, ' . str_repeat('a', 234) . ' [...]';
         $locationCommand1->rawGeoJSON->geometry = '<sectionsGeometry1>';
         $locationCommand1->permissions = $permissions;
 
@@ -137,11 +150,18 @@ final class JOPTransformerTest extends TestCase
         $period1->dailyRange = null;
         $period1->timeSlots = [];
 
+        $period2 = new SavePeriodCommand();
+        $period2->startDate = $period2->startTime = new \DateTimeImmutable('2024-09-12 08:30:00 Europe/Paris');
+        $period2->endDate = $period2->endTime = new \DateTimeImmutable('2024-09-12 11:00:00 Europe/Paris');
+        $period2->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $period2->dailyRange = null;
+        $period2->timeSlots = [];
+
         $measureCommand = new SaveMeasureCommand();
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand->locations = [$locationCommand1];
         $measureCommand->vehicleSet = $vehicleSet1;
-        $measureCommand->periods = [$period1];
+        $measureCommand->periods = [$period1, $period2];
         $measureCommand->permissions = $permissions;
 
         $result = new ImportJOPRegulationCommand($generalInfoCommand, [$measureCommand]);
