@@ -113,13 +113,21 @@
                                     <conditions xsi:type="LocationCondition">
                                         <locationByOrder xsi:type="loc:LinearLocation">
                                             <loc:supplementaryPositionalDescription>
-                                                <loc:roadInformation>
-                                                    {% if location.roadType == 'lane' %}
+                                                {% if location.roadType == 'lane' %}
+                                                    <loc:roadInformation>
                                                         <loc:roadName>{{ location.roadName }}</loc:roadName>
-                                                    {% else %}
+                                                    </loc:roadInformation>
+                                                {% elseif location.roadType == 'departmentalRoad' %}
+                                                    <loc:roadInformation>
                                                         <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
-                                                    {% endif %}
-                                                </loc:roadInformation>
+                                                    </loc:roadInformation>
+                                                {% elseif location.roadType == 'rawGeoJSON' %}
+                                                    <loc:locationDescription>
+                                                        <com:values>
+                                                            <com:value>{{ location.rawGeoJSONLabel }}</com:value>
+                                                        </com:values>
+                                                    </loc:locationDescription>
+                                                {% endif %}
                                             </loc:supplementaryPositionalDescription>
                                             <loc:_linearLocationExtension>
                                                 <loc:linearLocationExtended>

@@ -19,6 +19,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
     public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
     public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
     public const UUID_PERMANENT_ONLY_ONE = 'fa8f07e7-2db6-444d-bb41-3815b46198be';
+    public const UUID_RAWGEOJSON = '06672e2d-669d-7593-8000-7cfd59230dc2';
 
     public function load(ObjectManager $manager): void
     {
@@ -72,6 +73,13 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2021-11-02'),
         );
 
+        $rawGeoJSONMeasure = new Measure(
+            self::UUID_RAWGEOJSON,
+            $this->getReference('rawGeoJSONRegulationOrder'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-01-06'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
@@ -79,6 +87,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($fullCityMeasure);
         $manager->persist($cifsMeasure);
         $manager->persist($outDatedCifsMeasure);
+        $manager->persist($rawGeoJSONMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
@@ -87,6 +96,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('fullCityMeasure', $fullCityMeasure);
         $this->addReference('cifsMeasure', $cifsMeasure);
         $this->addReference('outDatedCifsMeasure', $outDatedCifsMeasure);
+        $this->addReference('rawGeoJSONMeasure', $rawGeoJSONMeasure);
 
         $manager->flush();
     }

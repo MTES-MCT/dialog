@@ -43,7 +43,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Vitesse limitée à 50 km/h', $measure1Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure1Content->filter('li')->eq(0)->text());
         $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
-        $this->assertSame('Route du Grand Brossais Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais à Savenay (44260)', $measure1Content->filter('li')->eq(3)->text());
 
         // Measure 2
         $measure2Header = $crawler->filter('[data-testid="measure"]')->eq(1);
@@ -52,8 +52,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measure2Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure2Content->filter('li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure2Content->filter('li')->eq(1)->text());
-        $this->assertSame('Rue Victor Hugo Savenay (44260)', $measure2Content->filter('li')->eq(3)->text());
-        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis Savenay (44260)', $measure2Content->filter('li')->eq(4)->text());
+        $this->assertSame('Rue Victor Hugo à Savenay (44260)', $measure2Content->filter('li')->eq(3)->text());
+        $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis à Savenay (44260)', $measure2Content->filter('li')->eq(4)->text());
 
         $editLocationForm = $measures->eq(1)->selectButton('Modifier')->form();
         $this->assertSame(

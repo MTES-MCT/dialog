@@ -10,6 +10,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
+use App\Domain\Regulation\Location\RawGeoJSON;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -247,6 +248,19 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             toSide: 'U',
         );
 
+        $rawGeoJSONLocation = new Location(
+            '06672bc8-5e45-7e76-8000-36b5483dda9f',
+            $this->getReference('rawGeoJSONMeasure'),
+            roadType: RoadTypeEnum::RAW_GEOJSON->value,
+            geometry: '{"type": "Point", "coordinates": [4.8, 49.6]}',
+        );
+
+        $rawGeoJSON = new RawGeoJSON(
+            uuid: '06672bc8-d38a-72b4-8000-69857847b68f',
+            location: $rawGeoJSONLocation,
+            label: 'Zone Olympique',
+        );
+
         $manager->persist($namedStreetTypicalMeasureLocation1);
         $manager->persist($namedStreetTypicalMeasureLocation2);
         $manager->persist($namedStreetTypicalMeasureLocation3);
@@ -273,6 +287,8 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($fullCityLocation);
         $manager->persist($cifsLocation);
         $manager->persist($cifsLocationDepartmentalRoad);
+        $manager->persist($rawGeoJSONLocation);
+        $manager->persist($rawGeoJSON);
         $manager->flush();
 
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);

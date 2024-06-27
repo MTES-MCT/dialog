@@ -30,7 +30,7 @@ final class UserProvider implements UserProviderInterface
             throw new UserNotFoundException(sprintf('Unable to find the user %s', $identifier));
         }
 
-        $role = \in_array($user->getEmail(), $this->adminEmails) ? 'ROLE_ADMIN' : 'ROLE_USER';
+        $role = \in_array($user->getEmail(), $this->adminEmails) ? User::ROLE_ADMIN : User::ROLE_USER;
         $organizations = [];
 
         foreach ($user->getOrganizations() as $organization) {

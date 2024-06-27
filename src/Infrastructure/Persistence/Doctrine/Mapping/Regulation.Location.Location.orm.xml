@@ -18,5 +18,6 @@
     </many-to-one>
     <one-to-one field="namedStreet" target-entity="App\Domain\Regulation\Location\NamedStreet" mapped-by="location" />
     <one-to-one field="numberedRoad" target-entity="App\Domain\Regulation\Location\NumberedRoad" mapped-by="location" />
+    <one-to-one field="rawGeoJSON" target-entity="App\Domain\Regulation\Location\RawGeoJSON" mapped-by="location" />
   </entity>
 </doctrine-mapping>

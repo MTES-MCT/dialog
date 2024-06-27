@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
+use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -120,6 +121,11 @@ final class DuplicateRegulationCommandHandler
                         $cmd->namedStreet->fromRoadName = $namedStreet->getFromRoadName();
                         $cmd->namedStreet->toHouseNumber = $namedStreet->getToHouseNumber();
                         $cmd->namedStreet->toRoadName = $namedStreet->getToRoadName();
+                    } elseif ($rawGeoJSON = $location->getRawGeoJSON()) {
+                        $cmd->rawGeoJSON = new SaveRawGeoJSONCommand();
+                        $cmd->rawGeoJSON->roadType = $location->getRoadType();
+                        $cmd->rawGeoJSON->label = $rawGeoJSON->getLabel();
+                        $cmd->rawGeoJSON->geometry = $location->getGeometry();
                     }
 
                     $locationCommands[] = $cmd;

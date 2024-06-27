@@ -120,6 +120,20 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
   {{ parent() }}
 {% endblock %}
 
+{%- block textarea_widget -%}
+  {%- if errors|length > 0 -%}
+    {%- if widget_class is defined -%}
+      {# DSFR generally uses e.g. "fr-input fr-input--error" #}
+      {%- set widget_class = widget_class ~ ' ' ~ (widget_error_class|default(widget_class ~'--error')) -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- set widget_class = (widget_class|default('') ~ ' ' ~ attr.class|default(''))|trim -%}
+  {%- set attr = attr|merge({class: widget_class}) -%}
+
+  {{ parent() }}
+{%- endblock textarea_widget -%}
+
 {% block date_widget %}
   {% set attr = attr|merge({'data-controller': ('datepicker-toggle ' ~ attr['data-controller']|default(''))|trim}) %}
   {%- if widget == 'single_text' -%}

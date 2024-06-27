@@ -156,6 +156,7 @@
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
+        data-testid="measure_form_location_{{ index }}"
     >
         <div class="app-card__actions">
             <button
@@ -166,6 +167,7 @@
             >
             </button>
         </div>
+
         <div class="app-card__content">
             <div data-controller="form-reveal">
                 {{ form_row(form.roadType, {
@@ -403,7 +405,42 @@
                             </fieldset>
                         </div>
                     </fieldset>
+                </div>
 
+                {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
+                <div
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="rawGeoJSON"
+                    {% if not isRawGeoJSON %}hidden{% endif %}
+                >
+                    {{ form_row(form.rawGeoJSON.roadType, {
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'rawGeoJSON',
+                            'disabled': not isRawGeoJSON,
+                        }
+                    }) }}
+
+                    {{ form_row(form.rawGeoJSON.label, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'rawGeoJSON',
+                            'disabled': not isRawGeoJSON,
+                        },
+                    }) }}
+
+                    {{ form_row(form.rawGeoJSON.geometry, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'rawGeoJSON',
+                            'disabled': not isRawGeoJSON,
+                        },
+                    }) }}
                 </div>
             </div>
         </div>

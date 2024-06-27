@@ -16,6 +16,7 @@ use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -37,6 +38,7 @@ final class UpdateMeasureController extends AbstractRegulationController
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
+        private CanUseRawGeoJSON $canUseRawGeoJSON,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
@@ -61,6 +63,11 @@ final class UpdateMeasureController extends AbstractRegulationController
 
         $command = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder(), $measure);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
+        $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
+
+        if ($canUseRawGeoJSON) {
+            $command->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
+        }
 
         $form = $this->formFactory->create(
             type: MeasureFormType::class,
@@ -72,6 +79,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 ]),
                 'administrators' => $administrators,
                 'isPermanent' => $regulationOrder->isPermanent(),
+                'permissions' => $command->permissions,
             ],
         );
         $form->handleRequest($request);

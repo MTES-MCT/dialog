@@ -77,6 +77,14 @@ readonly class MeasureView
                         toSide: $numberedRoad->getToSide(),
                     ),
                 );
+            } elseif ($rawGeoJSON = $location->getRawGeoJSON()) {
+                $locations[] = new LocationView(
+                    uuid: $location->getUuid(),
+                    roadType: $location->getRoadType(),
+                    rawGeoJSON: new RawGeoJSONView(
+                        label: $rawGeoJSON->getLabel(),
+                    ),
+                );
             }
         }
 

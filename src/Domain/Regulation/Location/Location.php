@@ -15,6 +15,7 @@ class Location
         private ?string $geometry = null,
         private ?NamedStreet $namedStreet = null,
         private ?NumberedRoad $numberedRoad = null,
+        private ?RawGeoJSON $rawGeoJSON = null,
     ) {
     }
 
@@ -48,6 +49,11 @@ class Location
         return $this->namedStreet;
     }
 
+    public function getRawGeoJSON(): ?RawGeoJSON
+    {
+        return $this->rawGeoJSON;
+    }
+
     public function update(string $roadType, ?string $geometry): void
     {
         $this->roadType = $roadType;
@@ -62,5 +68,10 @@ class Location
     public function setNumberedRoad(NumberedRoad $numberedRoad): void
     {
         $this->numberedRoad = $numberedRoad;
+    }
+
+    public function setRawGeoJSON(RawGeoJSON $rawGeoJSON): void
+    {
+        $this->rawGeoJSON = $rawGeoJSON;
     }
 }

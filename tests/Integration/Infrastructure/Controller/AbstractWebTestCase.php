@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller;
 
 use App\Domain\User\Organization;
+use App\Domain\User\User;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Infrastructure\Persistence\Doctrine\Repository\User\UserRepository;
 use App\Infrastructure\Security\SymfonyUser;
@@ -21,7 +22,7 @@ abstract class AbstractWebTestCase extends WebTestCase
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
         $adminEmails = static::getContainer()->getParameter('admin_emails');
         $testUser = $userRepository->findOneByEmail($email);
-        $role = \in_array($testUser->getEmail(), $adminEmails) ? 'ROLE_ADMIN' : 'ROLE_USER';
+        $role = \in_array($testUser->getEmail(), $adminEmails) ? User::ROLE_ADMIN : User::ROLE_USER;
         $organizations = [];
 
         foreach ($testUser->getOrganizations() as $organization) {

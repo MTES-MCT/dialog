@@ -485,6 +485,10 @@
                 <source>regulation.location.road.type.lane</source>
                 <target>Voie</target>
             </trans-unit>
+            <trans-unit id="regulation.location.road.type.rawGeoJSON">
+                <source>regulation.location.road.type.rawGeoJSON</source>
+                <target>Données brutes GeoJSON</target>
+            </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
                 <target>Département ou gestionnaire</target>
@@ -613,6 +617,14 @@
             <trans-unit id="regulation.location.to_point.road_name.only">
                 <source>regulation.location.to_point.road_name.only</source>
                 <target>jusqu'à %roadName%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.label">
+                <source>regulation.location.raw_geojson.label</source>
+                <target>Descriptif</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.geometry">
+                <source>regulation.location.raw_geojson.geometry</source>
+                <target>Géométrie GeoJSON</target>
             </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>

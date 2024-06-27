@@ -10,6 +10,7 @@ final class DatexLocationView
         public readonly string $roadType,
         public readonly ?string $roadName,
         public readonly ?string $roadNumber,
+        public readonly ?string $rawGeoJSONLabel,
         public readonly string $geometry,
     ) {
     }

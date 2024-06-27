@@ -12,3 +12,8 @@ fieldset {
     padding: 0;
     border: none;
 }
+
+textarea {
+  /* Prevent resizing horizontally */
+  resize: vertical;
+}
