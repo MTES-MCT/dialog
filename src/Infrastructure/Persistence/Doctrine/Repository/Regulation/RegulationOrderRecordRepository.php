@@ -54,10 +54,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             )";
 
     public function findAllRegulations(
-        ?array $organizationUuids,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,
+        ?array $organizationUuids = null,
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')

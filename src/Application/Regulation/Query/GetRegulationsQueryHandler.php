@@ -22,10 +22,10 @@ final class GetRegulationsQueryHandler
         $regulationOrderViews = [];
 
         $rows = $this->repository->findAllRegulations(
-            $query->organizationUuids,
             $query->pageSize,
             $query->page,
             $query->isPermanent,
+            $query->organizationUuids,
         );
 
         foreach ($rows['items'] as $row) {

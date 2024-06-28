@@ -14,10 +14,10 @@ interface RegulationOrderRecordRepositoryInterface
     public function findOneByUuid(string $uuid): ?RegulationOrderRecord;
 
     public function findAllRegulations(
-        ?array $organizations,
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,
+        ?array $organizationUuids = null,
     ): array;
 
     public function findGeneralInformation(string $uuid): ?array;
