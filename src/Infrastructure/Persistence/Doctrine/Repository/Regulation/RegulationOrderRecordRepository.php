@@ -64,16 +64,24 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
+
         if ($organizationUuids) {
-            $query->where('(roc.status = :published_status) OR (roc.status = :draft_status AND roc.organization IN (:organizationUuids))')
+            $query
+                ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
                 ->setParameters([
                     'organizationUuids' => $organizationUuids,
-                    'draft_status' => RegulationOrderRecordStatusEnum::DRAFT,
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                    'draft' => RegulationOrderRecordStatusEnum::DRAFT,
                 ]);
         } else {  // the user is not connected -> no draft regulations
-            $query->where('(roc.status = :published_status)');
+            $query
+                ->where('roc.status = :published')
+                ->setParameters([
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                ]);
         }
-        $query->setParameter('published_status', RegulationOrderRecordStatusEnum::PUBLISHED)
+
+        $query
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->orderBy('ro.startDate', 'DESC')
