@@ -122,11 +122,15 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $vehicleSet1
             ->expects(self::once())
             ->method('getRestrictedTypes')
-            ->willReturn([VehicleTypeEnum::CRITAIR->value]);
+            ->willReturn([VehicleTypeEnum::CRITAIR->value, VehicleTypeEnum::OTHER->value]);
         $vehicleSet1
             ->expects(self::once())
             ->method('getCritairTypes')
             ->willReturn([CritairEnum::CRITAIR_3->value, CritairEnum::CRITAIR_4->value]);
+        $vehicleSet1
+            ->expects(self::once())
+            ->method('getOtherRestrictedtypeText')
+            ->willReturn('Trottinettes');
         $vehicleSet1
             ->expects(self::never())
             ->method('getMaxHeight');
@@ -402,7 +406,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $vehicleSet3
             ->expects(self::once())
             ->method('getExemptedTypes')
-            ->willReturn([VehicleTypeEnum::COMMERCIAL->value]);
+            ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value]);
+        $vehicleSet3
+            ->expects(self::once())
+            ->method('getOtherExemptedTypeText')
+            ->willReturn('Véhicules de service');
 
         $locationView3 = new DatexLocationView(
             roadType: RoadTypeEnum::LANE->value,
@@ -586,6 +594,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                             vehicleConditions: [
                                 new DatexVehicleConditionView('critair3'),
                                 new DatexVehicleConditionView('critair4'),
+                                new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, otherTypeText: 'Trottinettes'),
                             ],
                         ),
                         new DatexTrafficRegulationView(
@@ -621,6 +630,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                     maxHeight: 2.4,
                                 ),
                                 new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
+                                new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, isExempted: true, otherTypeText: 'Véhicules de service'),
                             ],
                         ),
                     ],

@@ -712,6 +712,16 @@
                                 <com:vehicleUsage>emergencyServices</com:vehicleUsage>
                             </vehicleCharacteristics>
                         </conditions>
+                        <conditions xsi:type="VehicleCondition">
+                            <negate>true</negate>
+                            <vehicleCharacteristics>
+                                <com:_vehicleCharacteristicsExtension>
+                                    <com:vehicleCharacteristicsExtended>
+                                        <dx:otherVehicleType>Convois exceptionnels</dx:otherVehicleType>
+                                    </com:vehicleCharacteristicsExtended>
+                                </com:_vehicleCharacteristicsExtension>
+                            </vehicleCharacteristics>
+                        </conditions>
                     </conditions>
                 </condition>
             </trafficRegulation>

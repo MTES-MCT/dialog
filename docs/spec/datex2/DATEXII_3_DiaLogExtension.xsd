@@ -32,4 +32,17 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:complexType name="VehicleCharacteristicsExtended">
+    <xs:annotation>
+      <xs:documentation>Extension of class VehicleCharacteristics.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="otherVehicleType" type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Other type of vehicle.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>

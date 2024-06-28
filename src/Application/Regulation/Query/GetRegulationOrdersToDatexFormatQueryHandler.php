@@ -60,6 +60,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                                 vehicleType: $restrictedVehicleType,
                                 maxWeight: $vehicleSet->getHeavyweightMaxWeight(),
                             );
+                        } elseif (VehicleTypeEnum::OTHER->value === $restrictedVehicleType) {
+                            $vehicleConditions[] = new DatexVehicleConditionView(
+                                vehicleType: $restrictedVehicleType,
+                                otherTypeText: $vehicleSet->getOtherRestrictedTypeText(),
+                            );
                         } else {
                             $vehicleConditions[] = new DatexVehicleConditionView(
                                 vehicleType: $restrictedVehicleType,
@@ -68,7 +73,15 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     }
 
                     foreach ($vehicleSet->getExemptedTypes() as $exemptedVehicleType) {
-                        $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
+                        if (VehicleTypeEnum::OTHER->value === $exemptedVehicleType) {
+                            $vehicleConditions[] = new DatexVehicleConditionView(
+                                vehicleType: $exemptedVehicleType,
+                                otherTypeText: $vehicleSet->getOtherExemptedTypeText(),
+                                isExempted: true,
+                            );
+                        } else {
+                            $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
+                        }
                     }
                 }
 

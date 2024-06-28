@@ -23,6 +23,7 @@ final class DatexVehicleConditionView
         public readonly ?float $maxLength = null,
         public readonly ?float $maxHeight = null,
         public readonly bool $isExempted = false,
+        public readonly ?string $otherTypeText = null,
     ) {
         switch ($vehicleType) {
             case VehicleTypeEnum::PEDESTRIANS->value:

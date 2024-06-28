@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:com="http://datex2.eu/schema/3/common" version="3.3" targetNamespace="http://datex2.eu/schema/3/common" xmlns:comx="http://datex2.eu/schema/3/commonExtension" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns:com="http://datex2.eu/schema/3/common"
+  version="3.3"
+  targetNamespace="http://datex2.eu/schema/3/common"
+  xmlns:comx="http://datex2.eu/schema/3/commonExtension"
+  xmlns:dx="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
   <xs:import namespace="http://datex2.eu/schema/3/commonExtension" schemaLocation="DATEXII_3_CommonExtension.xsd" />
+  <xs:import namespace="https://raw.githubusercontent.com/MTES-MCT/dialog/main/docs/spec/datex2" schemaLocation="DATEXII_3_DiaLogExtension.xsd" />
   <xs:complexType name="_CalendarWeekWithinMonthEnum">
     <xs:simpleContent>
       <xs:extension base="com:CalendarWeekWithinMonthEnum">
@@ -137,7 +147,7 @@
   </xs:complexType>
   <xs:complexType name="_VehicleCharacteristicsExtensionType">
     <xs:sequence>
-      <xs:element name="vehicleCharacteristicsExtended" type="comx:VehicleCharacteristicsExtended" minOccurs="0" />
+      <xs:element name="vehicleCharacteristicsExtended" type="dx:VehicleCharacteristicsExtended" minOccurs="0" />
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
