@@ -44,26 +44,22 @@ final class ListRegulationsController
             );
         }
 
-        if ($user) {
-            $userOrganizationUuids = $user->getOrganizationUuids();
-        } else {
-            $userOrganizationUuids = null;
-        }
+        $userOrganizationUuids = $user?->getOrganizationUuids();
 
         $temporaryRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
-                $userOrganizationUuids,
-                $pageSize,
-                $tab === 'temporary' ? $page : 1,
+                pageSize: $pageSize,
+                page: $tab === 'temporary' ? $page : 1,
                 isPermanent: false,
+                organizationUuids: $userOrganizationUuids,
             ),
         );
         $permanentRegulations = $this->queryBus->handle(
             new GetRegulationsQuery(
-                $userOrganizationUuids,
-                $pageSize,
-                $tab === 'permanent' ? $page : 1,
+                pageSize: $pageSize,
+                page: $tab === 'permanent' ? $page : 1,
                 isPermanent: true,
+                organizationUuids: $userOrganizationUuids,
             ),
         );
 

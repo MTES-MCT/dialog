@@ -9,10 +9,10 @@ use App\Application\QueryInterface;
 final readonly class GetRegulationsQuery implements QueryInterface
 {
     public function __construct(
-        public ?array $organizationUuids,
         public int $pageSize,
         public int $page,
         public bool $isPermanent,
+        public ?array $organizationUuids = null,
     ) {
     }
 }
