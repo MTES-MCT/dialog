@@ -201,5 +201,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $tabs = $pageOne->filter('.fr-tabs__list')->eq(0);
         $this->assertSame('tablist', $tabs->attr('role'));
         $this->assertSame('Temporaires (4) Permanents (0)', $tabs->text());
+
+        // check that the only link of the first row is to view the regulation
+        $rows = $pageOne->filter('#temporary-panel tbody > tr');
+        $row = $rows->eq(0)->filter('td');
+        $links = $row->filter('a');
+        $this->assertCount(1, $links);
+        $this->assertSame('Voir le détail', $links->eq(0)->text());
     }
 }
