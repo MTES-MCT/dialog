@@ -104,4 +104,16 @@ final class BdTopoRoadGeocoderTest extends TestCase
 
         $this->roadGeocoder->computeIntersection('Rue Eugène Berthoud', 'Rue du Test', '93070');
     }
+
+    public function testFindSectionsInAreaUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->findSectionsInArea('<geometry>');
+    }
 }

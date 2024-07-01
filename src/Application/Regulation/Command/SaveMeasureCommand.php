@@ -46,20 +46,22 @@ final class SaveMeasureCommand implements CommandInterface
             }
 
             foreach ($measure->getLocations() as $location) {
-                $locationCommand = new SaveLocationCommand($location);
-                $locationCommand->permissions = &$command->permissions;
-                $command->locations[] = $locationCommand;
+                $command->addLocation(new SaveLocationCommand($location));
             }
 
             foreach ($measure->getPeriods() as $period) {
                 $command->periods[] = new SavePeriodCommand($period);
             }
         } else {
-            $locationCommand = new SaveLocationCommand();
-            $locationCommand->permissions = &$command->permissions;
-            $command->locations[] = $locationCommand;
+            $command->addLocation(new SaveLocationCommand());
         }
 
         return $command;
+    }
+
+    public function addLocation(SaveLocationCommand $locationCommand): void
+    {
+        $locationCommand->permissions = &$this->permissions;
+        $this->locations[] = $locationCommand;
     }
 }

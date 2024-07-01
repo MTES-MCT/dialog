@@ -94,6 +94,7 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
 | `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet-partage.apps.paris.fr | |
 | `APP_EUDONET_PARIS_ORG_ID` | Utiliser l'UUID de l'organisation Ville de Paris | _Vide_ | |
+| `APP_JOP_ORG_ID` | UUID de l'organisation où intégrer les données JOP | _Vide_ | |
 | `APP_SECRET` | Correspond au paramètre Symfony [`secret`](https://symfony.com/doc/current/reference/configuration/framework.html#secret) | _(Obligatoire)_ | Longueur recommandée : 32 caractères. Exemple : générer avec `python3 -c 'import secrets; print(secrets.token_hex(16))'` |
 | `APP_CIFS_FILTERS` | Filtre les données exportées vers CIFS | `{}` | Format JSON, champs acceptés : `allowed_sources`, `excluded_identifiers`, `allowed_location_isd`. L'objet vide `{}` a pour effet de continuer de toute exporter. |
 | `DATABASE_URL` | URL vers le serveur PostgreSQL | _(Obligatoire)_ `$SCALINGO_POSTGRESQL_URL` | La variable `$SCALINGO_POSTGRESQL_URL` est configurée automatiquement par Scalingo |
