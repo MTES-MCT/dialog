@@ -11,6 +11,7 @@ use App\Application\Regulation\Command\DuplicateRegulationCommandHandler;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
+use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -30,6 +31,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
+use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -64,6 +66,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $location1 = $this->createMock(Location::class);
         $location2 = $this->createMock(Location::class);
+        $location3 = $this->createMock(Location::class);
 
         $timeSlot = $this->createMock(TimeSlot::class);
         $timeSlot
@@ -129,7 +132,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measure1
             ->expects(self::once())
             ->method('getLocations')
-            ->willReturn([$location1, $location2]);
+            ->willReturn([$location1, $location2, $location3]);
 
         $measure2 = $this->createMock(Measure::class);
         $measure2
@@ -232,6 +235,24 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->method('getGeometry')
             ->willReturn('roadGeometry');
 
+        $rawGeoJSON1 = $this->createMock(RawGeoJSON::class);
+        $location3
+            ->expects(self::exactly(2))
+            ->method('getRoadType')
+            ->willReturn(RoadTypeEnum::RAW_GEOJSON->value);
+        $location3
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn('rawGeometry');
+        $location3
+            ->expects(self::once())
+            ->method('getRawGeoJSON')
+            ->willReturn($rawGeoJSON1);
+        $rawGeoJSON1
+            ->expects(self::once())
+            ->method('getLabel')
+            ->willReturn('Données');
+
         $this->originalRegulationOrder
             ->expects(self::once())
             ->method('getIdentifier')
@@ -331,6 +352,13 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $locationCommand2->numberedRoad->toPointNumber = '3';
         $locationCommand2->numberedRoad->geometry = 'roadGeometry';
 
+        $locationCommand3 = new SaveLocationCommand();
+        $locationCommand3->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $locationCommand3->rawGeoJSON = new SaveRawGeoJSONCommand();
+        $locationCommand3->rawGeoJSON->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $locationCommand3->rawGeoJSON->label = 'Données';
+        $locationCommand3->rawGeoJSON->geometry = 'rawGeometry';
+
         $measureCommand1 = new SaveMeasureCommand($duplicatedRegulationOrder);
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand1->createdAt = $startDate;
@@ -340,6 +368,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $measureCommand1->locations = [
             $locationCommand1,
             $locationCommand2,
+            $locationCommand3,
         ];
         $measureCommand1->vehicleSet = $vehicleSetCommand;
 

@@ -122,11 +122,15 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $vehicleSet1
             ->expects(self::once())
             ->method('getRestrictedTypes')
-            ->willReturn([VehicleTypeEnum::CRITAIR->value]);
+            ->willReturn([VehicleTypeEnum::CRITAIR->value, VehicleTypeEnum::OTHER->value]);
         $vehicleSet1
             ->expects(self::once())
             ->method('getCritairTypes')
             ->willReturn([CritairEnum::CRITAIR_3->value, CritairEnum::CRITAIR_4->value]);
+        $vehicleSet1
+            ->expects(self::once())
+            ->method('getOtherRestrictedtypeText')
+            ->willReturn('Trottinettes');
         $vehicleSet1
             ->expects(self::never())
             ->method('getMaxHeight');
@@ -148,6 +152,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             roadType: RoadTypeEnum::LANE->value,
             roadName: 'Avenue de Fonneuve',
             roadNumber: null,
+            rawGeoJSONLabel: null,
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(1.362275, 44.028996),
                 Coordinates::fromLonLat(1.35931, 44.025665),
@@ -246,6 +251,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             roadType: RoadTypeEnum::LANE->value,
             roadName: "Rue de l'Hôtel de Ville",
             roadNumber: null,
+            rawGeoJSONLabel: null,
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(1.352126, 44.016833),
                 Coordinates::fromLonLat(1.353016, 44.016402),
@@ -400,12 +406,17 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $vehicleSet3
             ->expects(self::once())
             ->method('getExemptedTypes')
-            ->willReturn([VehicleTypeEnum::COMMERCIAL->value]);
+            ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value]);
+        $vehicleSet3
+            ->expects(self::once())
+            ->method('getOtherExemptedTypeText')
+            ->willReturn('Véhicules de service');
 
         $locationView3 = new DatexLocationView(
             roadType: RoadTypeEnum::LANE->value,
             roadName: 'Route du Grand Brossais',
             roadNumber: null,
+            rawGeoJSONLabel: null,
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
@@ -523,6 +534,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             roadName: 'D303',
             roadNumber: null,
+            rawGeoJSONLabel: null,
             geometry: '{"type":"MultiLineString","coordinates":[[[-1.252483043,43.167928836],[-1.252508262,43.168020621],[-1.252512651,43.168130343],[-1.252507561,43.168211614]],[[-1.252488731,43.168340267],[-1.252486756,43.168430423],[-1.252503915,43.168529732],[-1.25252801,43.168606249],[-1.25258819,43.168671432]]]}',
         );
 
@@ -582,6 +594,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                             vehicleConditions: [
                                 new DatexVehicleConditionView('critair3'),
                                 new DatexVehicleConditionView('critair4'),
+                                new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, otherTypeText: 'Trottinettes'),
                             ],
                         ),
                         new DatexTrafficRegulationView(
@@ -617,6 +630,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                     maxHeight: 2.4,
                                 ),
                                 new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
+                                new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, isExempted: true, otherTypeText: 'Véhicules de service'),
                             ],
                         ),
                     ],

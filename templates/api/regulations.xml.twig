@@ -113,13 +113,21 @@
                                     <conditions xsi:type="LocationCondition">
                                         <locationByOrder xsi:type="loc:LinearLocation">
                                             <loc:supplementaryPositionalDescription>
-                                                <loc:roadInformation>
-                                                    {% if location.roadType == 'lane' %}
+                                                {% if location.roadType == 'lane' %}
+                                                    <loc:roadInformation>
                                                         <loc:roadName>{{ location.roadName }}</loc:roadName>
-                                                    {% else %}
+                                                    </loc:roadInformation>
+                                                {% elseif location.roadType == 'departmentalRoad' %}
+                                                    <loc:roadInformation>
                                                         <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
-                                                    {% endif %}
-                                                </loc:roadInformation>
+                                                    </loc:roadInformation>
+                                                {% elseif location.roadType == 'rawGeoJSON' %}
+                                                    <loc:locationDescription>
+                                                        <com:values>
+                                                            <com:value>{{ location.rawGeoJSONLabel }}</com:value>
+                                                        </com:values>
+                                                    </loc:locationDescription>
+                                                {% endif %}
                                             </loc:supplementaryPositionalDescription>
                                             <loc:_linearLocationExtension>
                                                 <loc:linearLocationExtended>
@@ -131,7 +139,7 @@
                                 {% endfor %}
                             </conditions>
 
-                            {% set vehicles = trafficRegulation.vehicleConditions|filter(v => not v.isOther) %}
+                            {% set vehicles = trafficRegulation.vehicleConditions %}
 
                             {% if vehicles|length > 0 %}
                                 <conditions xsi:type="ConditionSet">
@@ -174,7 +182,7 @@
                                                                     <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
                                                                 </com:widthCharacteristic>
                                                             {% endif %}
-                                                        {% else %}
+                                                        {% elseif not vehicle.isOther %}
                                                             <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
                                                         {% endif %}
                                                         {% if vehicle.type == 'heavyGoodsVehicle' %}
@@ -185,6 +193,13 @@
                                                                     <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
                                                                 </com:grossWeightCharacteristic>
                                                             {% endif %}
+                                                        {% endif %}
+                                                        {% if vehicle.isOther %}
+                                                            <com:_vehicleCharacteristicsExtension>
+                                                                <com:vehicleCharacteristicsExtended>
+                                                                    <dx:otherVehicleType>{{ vehicle.otherTypeText }}</dx:otherVehicleType>
+                                                                </com:vehicleCharacteristicsExtended>
+                                                            </com:_vehicleCharacteristicsExtension>
                                                         {% endif %}
                                                     {% endif %}
                                                 </vehicleCharacteristics>

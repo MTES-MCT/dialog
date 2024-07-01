@@ -12,5 +12,8 @@
         <property name="numberedRoad">
             <constraint name="Valid" />
         </property>
+        <property name="rawGeoJSON">
+            <constraint name="Valid" />
+        </property>
     </class>
 </constraint-mapping>
