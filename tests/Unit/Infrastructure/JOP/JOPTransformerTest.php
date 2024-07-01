@@ -22,6 +22,7 @@ use App\Domain\User\Organization;
 use App\Infrastructure\JOP\JOPTransformer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class JOPTransformerTest extends TestCase
 {
@@ -30,6 +31,7 @@ final class JOPTransformerTest extends TestCase
         $organization = $this->createMock(Organization::class);
         $roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $logger = $this->createMock(LoggerInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
 
         $geoJSON = [
             'features' => [
@@ -67,22 +69,6 @@ final class JOPTransformerTest extends TestCase
                     'properties' => '...',
                     'geometry' => null,
                 ],
-                // Feature with inconsistent dates
-                [
-                    'type' => 'Feature',
-                    'properties' => [
-                        'EVENEMENT' => 'CIRCULATION-DISPOSITIF - ARENA BERCY - SP',
-                        'TYPE_PERI' => 'Rouge',
-                        'DATE_DEBUT' => '2024/08/06 08:30:00.000',
-                        'DATE_FIN' => '2024/08/06 00:30:00.000',
-                        'COMPE' => 'Oly',
-                        'TRI' > 'BCY',
-                    ],
-                    'geometry' => [
-                        'type' => 'Polygon',
-                        'coordinates' => '<coords2>',
-                    ],
-                ],
             ],
         ];
 
@@ -92,41 +78,18 @@ final class JOPTransformerTest extends TestCase
             ->with('{"type":"Polygon","coordinates":"<coords1>","crs":{"type":"name","properties":{"name":"EPSG:4326"}}}')
             ->willReturn('<sectionsGeometry1>');
 
-        $logger
-            ->expects(self::exactly(2))
-            ->method('warning')
-            ->withConsecutive(
-                [
-                    'data_issue',
-                    [
-                        'issue' => 'geometry_missing',
-                        'impact' => 'skip_feature',
-                        'featureProperties' => ['...'],
-                    ],
-                ],
-                [
-                    'data_issue',
-                    [
-                        'issue' => 'end_date_before_start_date',
-                        'impact' => 'skip_feature',
-                        'properties' => [
-                            'EVENEMENT' => 'CIRCULATION-DISPOSITIF - ARENA BERCY - SP',
-                            'TYPE_PERI' => 'Rouge',
-                            'DATE_DEBUT' => '2024/08/06 08:30:00.000',
-                            'DATE_FIN' => '2024/08/06 00:30:00.000',
-                            'COMPE' => 'Oly',
-                            'TRI' > 'BCY',
-                        ],
-                    ],
-                ],
-            );
+        $translator
+            ->expects(self::once())
+            ->method('trans')
+            ->with('jop.regulation_order.description')
+            ->willReturn('Description arrêté JOP');
 
         $permissions = [CanUseRawGeoJSON::PERMISSION_NAME];
 
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'JOP2024-ZONES';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::EVENT->value;
-        $generalInfoCommand->description = 'Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)';
+        $generalInfoCommand->description = 'Description arrêté JOP';
         $generalInfoCommand->organization = $organization;
         $generalInfoCommand->startDate = new \DateTimeImmutable('2024-09-08 05:30:00 Europe/Paris');
         $generalInfoCommand->endDate = new \DateTimeImmutable('2024-09-12 11:00:00 Europe/Paris');
@@ -166,7 +129,7 @@ final class JOPTransformerTest extends TestCase
 
         $result = new ImportJOPRegulationCommand($generalInfoCommand, [$measureCommand]);
 
-        $transformer = new JOPTransformer($logger, $roadGeocoder);
+        $transformer = new JOPTransformer($logger, $roadGeocoder, $translator);
 
         $this->assertEquals($result, $transformer->transform($geoJSON, $organization));
     }

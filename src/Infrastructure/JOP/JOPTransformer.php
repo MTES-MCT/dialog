@@ -20,14 +20,16 @@ use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Domain\User\Organization;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class JOPTransformer
+final readonly class JOPTransformer
 {
     public const JOP_REGULATION_ORDER_IDENTIFIER = 'JOP2024-ZONES';
 
     public function __construct(
         private LoggerInterface $logger,
         private RoadGeocoderInterface $roadGeocoder,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -37,7 +39,7 @@ final class JOPTransformer
         $generalInfoCommand->identifier = self::JOP_REGULATION_ORDER_IDENTIFIER;
         $generalInfoCommand->organization = $organization;
         $generalInfoCommand->category = RegulationOrderCategoryEnum::EVENT->value;
-        $generalInfoCommand->description = 'Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)';
+        $generalInfoCommand->description = $this->translator->trans('jop.regulation_order.description');
 
         $measureCommands = [];
         $startDates = [];
@@ -46,7 +48,11 @@ final class JOPTransformer
 
         // Many features share the same polygon geometry.
         // Process each polygon exactly once to minimize overlaps and duplicates.
-        $featuresByGeometry = groupBy($geoJSON['features'], keyFunc: fn ($feature) => json_encode($feature['geometry']));
+        $featuresByGeometry = [];
+
+        foreach ($geoJSON['features'] as $feature) {
+            $featuresByGeometry[json_encode($feature['geometry'])][] = $feature;
+        }
 
         foreach ($featuresByGeometry as $geom => $featureList) {
             $areaGeometry = json_decode($geom, associative: true); // Polygon or MultiPolygon
@@ -74,15 +80,6 @@ final class JOPTransformer
                 $startDate = \DateTimeImmutable::createFromFormat('Y/m/d H:i:s.v', $feature['properties']['DATE_DEBUT'], $tz);
                 $endDate = \DateTimeImmutable::createFromFormat('Y/m/d H:i:s.v', $feature['properties']['DATE_FIN'], $tz);
 
-                if ($endDate < $startDate) {
-                    $this->logger->warning('data_issue', [
-                        'issue' => 'end_date_before_start_date',
-                        'impact' => 'skip_feature',
-                        'properties' => $feature['properties'],
-                    ]);
-                    continue;
-                }
-
                 $periodCommand = new SavePeriodCommand();
                 $periodCommand->startDate = $startDate;
                 $periodCommand->startTime = $startDate;
@@ -98,14 +95,10 @@ final class JOPTransformer
                 $measureCommand->periods[] = $periodCommand;
             }
 
-            if (!$measureCommand->periods) {
-                // All dates were wrong
-                continue;
-            }
-
             $label = implode(', ', $eventNames);
 
             if (\strlen($label) > 255) {
+                // Adhere to DB column length
                 $suffix = ' [...]';
                 $label = substr($label, 0, 255 - \strlen($suffix)) . $suffix;
             }
@@ -136,15 +129,4 @@ final class JOPTransformer
 
         return new ImportJOPRegulationCommand($generalInfoCommand, $measureCommands);
     }
-}
-
-function groupBy(array $items, callable $keyFunc)
-{
-    $result = [];
-
-    foreach ($items as $item) {
-        $result[$keyFunc($item)][] = $item;
-    }
-
-    return $result;
 }

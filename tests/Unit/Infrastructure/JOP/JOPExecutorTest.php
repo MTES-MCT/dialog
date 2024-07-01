@@ -171,7 +171,7 @@ final class JOPExecutorTest extends TestCase
         $executor->execute();
     }
 
-    public function testExecutImoprtFailed(): void
+    public function testExecuteImportFailed(): void
     {
         $this->expectException(\RuntimeException::class);
 
