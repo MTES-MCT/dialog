@@ -24,4 +24,6 @@ interface RoadGeocoderInterface
     ): Coordinates;
 
     public function findRoadNames(string $search, string $cityCode): array;
+
+    public function findSectionsInArea(string $areaGeometry): string;
 }

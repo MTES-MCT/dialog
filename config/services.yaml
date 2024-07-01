@@ -22,6 +22,8 @@ services:
             $dialogOrgId: '%env(DIALOG_ORG_ID)%'
             $bacIdfDecreesFile: '%env(APP_BAC_IDF_DECREES_FILE)%'
             $bacIdfCitiesFile: '%env(APP_BAC_IDF_CITIES_FILE)%'
+            $jopOrgId: '%env(APP_JOP_ORG_ID)%'
+            $jopGeoJSONFile: '%env(APP_JOP_GEOJSON_FILE)%'
             $featureMap: '%features%'
             $cifsFilterSet: '%env(cifs_filterset:default::APP_CIFS_FILTERS)%'
 
@@ -99,6 +101,20 @@ services:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: bac_idf_import }
+
+    # --------------
+    # JOP
+    # --------------
+
+    App\Infrastructure\JOP\JOPExecutor:
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger, channel: jop_import }
+
+    App\Infrastructure\JOP\JOPTransformer:
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger, channel: jop_import }
 
 when@test:
     services:

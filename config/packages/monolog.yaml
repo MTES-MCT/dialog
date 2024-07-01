@@ -17,6 +17,12 @@ monolog:
             path: "%kernel.project_dir%/log/bac_idf/import.%kernel.environment%.log"
             formatter: monolog.formatter.json
             channels: ["bac_idf_import"]
+        jop_import:
+            level: debug
+            type: rotating_file
+            path: "%kernel.project_dir%/log/jop/import.%kernel.environment%.log"
+            formatter: monolog.formatter.json
+            channels: ["jop_import"]
 
 when@dev:
     monolog:
