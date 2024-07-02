@@ -10,9 +10,11 @@
         {% set isPermanent = tab == 'permanent' %}
         <div class="fr-grid-row">
             <h3 id="regulation-list" class="fr-col fr-mb-0">{{ 'regulation.list.title'|trans }}</h3>
-            <a href="{{ path('app_regulation_add') }}" class="fr-ml-auto fr-btn fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ "regulation.list.add_button"|trans }}">
-                {{ "regulation.list.add_button"|trans }}
-            </a>
+            {% if app.user %}
+                <a href="{{ path('app_regulation_add') }}" class="fr-ml-auto fr-btn fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ "regulation.list.add_button"|trans }}">
+                    {{ "regulation.list.add_button"|trans }}
+                </a>
+            {% endif %}
         </div>
         <div class="fr-tabs fr-mt-2w">
             <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.list.title'|trans }}">
