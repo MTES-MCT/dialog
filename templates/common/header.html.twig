@@ -26,12 +26,12 @@
                 <div class="fr-header__tools" data-testid="user-links">
                     <div class="fr-header__tools-links">
                         <ul class="fr-btns-group">
+                            <li>
+                                <a class="fr-btn fr-icon-file-text-line" href="{{ path('app_regulations_list') }}">
+                                    {{ 'regulation.list.title'|trans }}
+                                </a>
+                            </li>
                             {% if app.user %}
-                                <li>
-                                    <a class="fr-btn fr-icon-file-text-line" href="{{ path('app_regulations_list') }}">
-                                        {{ 'regulation.list.title'|trans }}
-                                    </a>
-                                </li>
                                 <li>
                                     <a class="fr-btn fr-icon-edit-line" href="{{ path('app_feedback') }}">
                                         {{ 'common.feedback'|trans }}
