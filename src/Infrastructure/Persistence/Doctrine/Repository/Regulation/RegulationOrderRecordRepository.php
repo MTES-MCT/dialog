@@ -53,19 +53,35 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 WHERE _ro3.uuid = ro.uuid
             )";
 
-    public function findRegulationsByOrganizations(
-        array $organizationUuids,
+    public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
         bool $isPermanent,
+        ?array $organizationUuids = null,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, ro.startDate, ro.endDate')
+            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
             ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
-            ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
-            ->where('roc.organization IN (:organizationUuids)')
-            ->setParameter('organizationUuids', $organizationUuids)
+            ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
+
+        if ($organizationUuids) {
+            $query
+                ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
+                ->setParameters([
+                    'organizationUuids' => $organizationUuids,
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                    'draft' => RegulationOrderRecordStatusEnum::DRAFT,
+                ]);
+        } else {  // the user is not connected -> no draft regulations
+            $query
+                ->where('roc.status = :published')
+                ->setParameters([
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                ]);
+        }
+
+        $query
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
             ->orderBy('ro.startDate', 'DESC')

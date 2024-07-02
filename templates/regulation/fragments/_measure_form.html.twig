@@ -396,7 +396,7 @@
                             <fieldset
                                 aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
                                 data-form-reveal-target="section formControl"
-                                {% if form.namedStreet.isEntireStreet.vars.checked %}hidden{% endif %}
+                                {% if form.namedStreet.isEntireStreet.vars.checked %}hidden disabled{% endif %}
                             >
                                 <legend id="{{ form.namedStreet.vars.id }}-points-legend" class="app-sr-only">
                                     {{ 'regulation.location.named_street.points'|trans }}
