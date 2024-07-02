@@ -287,6 +287,13 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
+        // Inspect existing full road location
+        $existingFullRoadLocation = $crawler->filter('[data-testid=measure_form_location_1]');
+        $pointsFieldset1 = $existingFullRoadLocation->filter('[aria-labelledby=measure_form_locations_1_namedStreet-points-legend]')->first();
+        $this->assertNull($pointsFieldset1->attr('hidden'), 'not_present'); // Attr must be present but its value will be null
+        $this->assertNull($pointsFieldset1->attr('disabled'), 'not_present'); // Attr must be present but its value will be null
+
+        // Convert location to full road
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
