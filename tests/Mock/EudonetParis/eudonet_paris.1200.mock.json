@@ -23,6 +23,13 @@
             "UpdateAllowed": false,
             "Value": "circulation interdite",
             "ViewAllowed": true
+          },
+          {
+            "DbValue": "",
+            "DescId": 1294,
+            "UpdateAllowed": false,
+            "Value": "",
+            "ViewAllowed": true
           }
         ],
         "FileId": 363226,
@@ -44,6 +51,13 @@
             "DescId": 1202,
             "UpdateAllowed": false,
             "Value": "circulation interdite",
+            "ViewAllowed": true
+          },
+          {
+            "DbValue": "",
+            "DescId": 1294,
+            "UpdateAllowed": false,
+            "Value": "",
             "ViewAllowed": true
           }
         ],
