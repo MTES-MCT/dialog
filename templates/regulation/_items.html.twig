@@ -2,7 +2,7 @@
 {% if isAuthenticated %}
     {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
     {% set deleteCsrfToken = csrf_token('delete-regulation') %}
-    {% set userOrganizationsUuids = app.user.getOrganizations|map(o => o.uuid) %}
+    {% set userOrganizationsUuids = app.user.getOrganizationUuids %}
 {% else %}
     {% set userOrganizationsUuids = [] %}
 {% endif %}
