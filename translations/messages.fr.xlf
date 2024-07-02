@@ -1982,6 +1982,10 @@
                 <source>public.regulation.map.view</source>
                 <target>Visualiser les restrictions sur la carte</target>
             </trans-unit>
+            <trans-unit id="jop.regulation_order.description">
+                <source>jop.regulation_order.description</source>
+                <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -121,6 +121,23 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function findOneUuidByIdentifierInOrganization(string $identifier, Organization $organization): ?string
+    {
+        $row = $this->createQueryBuilder('roc')
+            ->select('roc.uuid')
+            ->where('roc.organization = :organization')
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
+            ->setParameters([
+                'identifier' => $identifier,
+                'organization' => $organization,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return $row ? $row['uuid'] : null;
+    }
+
     /**
      * @return GeneralInfoView[]
      */
@@ -244,18 +261,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         Organization $organization,
         string $identifier,
     ): bool {
-        $row = $this->createQueryBuilder('roc')
-            ->select('roc.uuid')
-            ->where('roc.organization = :organization')
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
-            ->setParameters([
-                'identifier' => $identifier,
-                'organization' => $organization,
-            ])
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        return $row !== null;
+        return $this->findOneUuidByIdentifierInOrganization($identifier, $organization) !== null;
     }
 
     public function findIdentifiersForSource(string $source): array
