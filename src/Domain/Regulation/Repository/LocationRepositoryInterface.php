@@ -20,5 +20,6 @@ interface LocationRepositoryInterface
         bool $includeUpcomingRegulations = false,
         bool $includePastRegulations = false,
         float $toleranceInMeters = 5,
+        ?array $bounds = null,
     ): string;
 }

@@ -11,4 +11,5 @@ final class MapFilterDTO
     public bool $displayFutureRegulations = false;
     public bool $displayPastRegulations = false;
     public float $zoomLevel = 5;
+    public ?string $boundsJson = null;
 }

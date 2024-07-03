@@ -53,6 +53,7 @@ final class MapController
             $dto->displayFutureRegulations,
             $dto->displayPastRegulations,
             toleranceInMeters: $tolerance,
+            bounds: $dto->boundsJson ? json_decode($dto->boundsJson, true) : null,
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -88,6 +89,7 @@ final class MapController
         $a = 59959.436;
         $metersPerPixel = $a * pow(2, -$zoomLevel);
 
-        return 10 * $metersPerPixel;
+        // We won't show features smaller than 1px (may vary due to screen pixel density)
+        return $metersPerPixel;
     }
 }

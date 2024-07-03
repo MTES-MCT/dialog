@@ -31,6 +31,7 @@
                         {{ form_row(form.displayFutureRegulations, {group_class: 'fr-checkbox-group'}) }}
                         {{ form_row(form.displayPastRegulations, {group_class: 'fr-checkbox-group'}) }}
                         {{ form_row(form.zoomLevel) }}
+                        {{ form_row(form.boundsJson) }}
                         <noscript>
                             {{ form_row(form.save) }}
                         </noscript>
@@ -44,6 +45,7 @@
                 mapHeight="480px"
                 mapPos="[2.725, 47.16]"
                 mapZoomSource="{{ form.zoomLevel.vars.id }}"
+                mapBoundsSource="{{ form.boundsJson.vars.id }}"
                 dataSource="locations_as_geojson"
                 locationPopupUrl="{{ path('fragment_map_location') }}"
             >

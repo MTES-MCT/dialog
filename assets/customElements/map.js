@@ -193,12 +193,20 @@ class MapLibreMap {
     }
 
     /**
-     * @param {(zoom: number) => void} callback
+     * @param {(zoom: number, bounds: number[]) => void} callback
      */
     onZoom(callback) {
         this.#prom.then(() => {
             this.#map.on('zoomend', () => {
-                callback(this.#map.getZoom());
+                const [southWest, northEast] = this.#map.getBounds().toArray();
+
+                const xMin = southWest[0];
+                const yMin = southWest[1];
+                const xMax = northEast[0];
+                const yMax = northEast[1];
+                const bounds = [xMin, yMin, xMax, yMax];
+
+                callback(this.#map.getZoom(), bounds);
             });
         })
     }
@@ -213,7 +221,7 @@ class MapLibreMap {
         locationTurboFrame.id = `location_turbo_frame_${uuid}`;
         locationTurboFrame.setAttribute('src', `${this.#locationPopupUrl}/${uuid}`);
 
-        const locationPopUp = new this.#maplibregl.Popup({closeButton: false})
+        const locationPopUp = new this.#maplibregl.Popup({ closeButton: false })
             .setLngLat(pos)
             .setDOMContent(locationTurboFrame)
             .addTo(this.#map);
@@ -246,12 +254,20 @@ customElements.define('d-map', class extends HTMLElement {
     connectedCallback() {
         const mapHeight = this.getAttribute('mapHeight') || '300px';
         const mapPos = JSON.parse(this.getAttribute('mapPos') || METROPOLITAN_FRANCE_CENTER);
+
         const mapZoomSourceId = this.getAttribute('mapZoomSource');
         if (!mapZoomSourceId) {
             throw new Error('mapZoomSource attribute is missing or empty');
         }
         const mapZoomSource = /** @type {HTMLInputElement} */ (document.getElementById(mapZoomSourceId));
         const mapZoom = +mapZoomSource.value;
+
+        const mapBoundsSourceId = this.getAttribute('mapBoundsSource');
+        if (!mapBoundsSourceId) {
+            throw new Error('mapBoundsSource attribute is missing or empty');
+        }
+        const mapBoundsSource = /** @type {HTMLInputElement} */ (document.getElementById(mapBoundsSourceId));
+
         const locationPopupUrl = getAttributeOrError(this, 'locationPopupUrl');
         const dataSource = new MapDataSource(querySelectorOrError(document, `#${getAttributeOrError(this, 'dataSource')}`));
 
@@ -264,9 +280,11 @@ customElements.define('d-map', class extends HTMLElement {
             dataSource,
         );
 
-        map.onZoom(zoom => {
+        map.onZoom((zoom, bounds) => {
             mapZoomSource.value = zoom.toString();
             mapZoomSource.dispatchEvent(new Event('change'));
+            mapBoundsSource.value = JSON.stringify(bounds);
+            mapBoundsSource.dispatchEvent(new Event('change'));
         });
 
         map.onReady((mapInstance) => {

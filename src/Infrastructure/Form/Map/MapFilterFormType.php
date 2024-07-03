@@ -55,6 +55,10 @@ final class MapFilterFormType extends AbstractType
                 'zoomLevel',
                 HiddenType::class,
             )
+            ->add(
+                'boundsJson',
+                HiddenType::class,
+            )
             ->add('save', SubmitType::class)
         ;
     }

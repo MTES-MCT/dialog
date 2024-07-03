@@ -50,6 +50,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         bool $includeUpcomingRegulations = false,
         bool $includePastRegulations = false,
         float $toleranceInMeters = 10,
+        ?array $bounds = null,
     ): string {
         $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations;
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
@@ -63,8 +64,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         }
 
         $regulationTypeWhereClause =
-            $permanentOnly ? 'AND ro.end_date IS NULL'
-            : ($temporaryOnly ? 'AND ro.end_date IS NOT NULL'
+            $permanentOnly
+            ? 'AND ro.end_date IS NULL'
+            : ($temporaryOnly
+                ? 'AND ro.end_date IS NOT NULL'
                 : '');
 
         $upcomingOnly = $includeUpcomingRegulations && !$includePastRegulations;
@@ -72,14 +75,34 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         $presentOnly = !$includeUpcomingRegulations && !$includePastRegulations;
 
         $regulationDatesWhereClause =
-            $upcomingOnly ? 'AND ((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.start_date > :now'
-            : ($pastOnly ? 'AND ((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.end_date < :now'
-                : ($presentOnly ? 'AND (ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now'
+            $upcomingOnly
+            ? 'AND (((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.start_date > :now)'
+            : ($pastOnly
+                ? 'AND (((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.end_date < :now)'
+                : ($presentOnly
+                    ? 'AND ((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now)'
                     : ''));
+
+        $geometryField = 'l.geometry';
+        $boundsWhereClause = '';
+
+        if ($bounds) {
+            $geometryField = 'ST_Intersection(l.geometry, ST_MakeEnvelope(:xMin, :yMin, :xMax, :yMax, 4326))';
+            $boundsWhereClause = 'AND (l.geometry && ST_MakeEnvelope(:xMin, :yMin, :xMax, :yMax, 4326))';
+        }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             sprintf(
-                'SELECT ST_AsGeoJSON(ST_Simplify(l.geometry, :tolerance)) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
+                'SELECT ST_AsGeoJSON(
+                    ST_ReducePrecision(
+                        ST_Simplify(
+                            %s,
+                            -- ST_Simplify tolerance must be in degrees (EPSG:4326), convert from meters using 0.00001° ~= 1m
+                            0.00001 * :toleranceInMeters
+                        ),
+                        0.00001 -- 6 decimals max (~1m precision) to limit transfer size
+                    )
+                ) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
                 FROM location AS l
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
@@ -88,14 +111,23 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 AND l.geometry IS NOT NULL
                 %s
                 %s
+                %s
                 ',
+                $geometryField,
                 $regulationTypeWhereClause,
                 $regulationDatesWhereClause,
+                $boundsWhereClause,
             ),
             [
-                'tolerance' => $toleranceInMeters,
+                'toleranceInMeters' => $toleranceInMeters,
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'now' => $this->dateUtils->getNow()->format('Y-m-d'),
+                ...($bounds ? [
+                    'xMin' => $bounds[0],
+                    'yMin' => $bounds[1],
+                    'xMax' => $bounds[2],
+                    'yMax' => $bounds[3],
+                ] : []),
             ],
         );
 
