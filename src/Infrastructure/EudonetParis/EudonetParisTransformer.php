@@ -125,6 +125,17 @@ final class EudonetParisTransformer
         $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
         $errors = [];
 
+        $alinea = $row['fields'][EudonetParisExtractor::MESURE_ALINEA];
+
+        if ($alinea) {
+            // This "alinea" field contains free-form text with indications on temporal validity.
+            // We cannot parse this data so we only ingest measures that do NOT have an "alinea", meaning their dates are
+            // the same as the global regulation order dates.
+            $errors[] = ['loc' => $loc, 'reason' => 'measure_may_contain_dates', 'alinea' => $alinea, 'impact' => 'skip_measure'];
+
+            return [null, $errors];
+        }
+
         $locationCommands = [];
 
         foreach ($row['locations'] as $locationRow) {
