@@ -45,11 +45,14 @@ final class MapController
         );
         $form->handleRequest($request);
 
+        $tolerance = $this->convertZoomLevelToToleranceInMeters($dto->zoomLevel);
+
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
             $dto->displayPermanentRegulations,
             $dto->displayTemporaryRegulations,
             $dto->displayFutureRegulations,
             $dto->displayPastRegulations,
+            toleranceInMeters: $tolerance,
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -62,6 +65,7 @@ final class MapController
                         'locationsAsGeoJson' => $locationsAsGeoJson,
                     ],
                 ),
+                headers: ['x-tolerance' => (string) $tolerance],
             );
         }
 
@@ -73,6 +77,17 @@ final class MapController
                     'form' => $form->createView(),
                 ],
             ),
+            headers: ['x-tolerance' => (string) $tolerance],
         );
+    }
+
+    private function convertZoomLevelToToleranceInMeters(float $zoomLevel): float
+    {
+        // Formula and value for $a were derived from the table in this page at latitude ± 40:
+        // https://docs.mapbox.com/help/glossary/zoom-level/
+        $a = 59959.436;
+        $metersPerPixel = $a * pow(2, -$zoomLevel);
+
+        return 10 * $metersPerPixel;
     }
 }

@@ -97,6 +97,8 @@ class MapLibreMap {
                     center,
                     zoom,
                     hash: "mapZoomAndPosition",
+                    minZoom: 4.33, // Prevent zooming less than size of metropolitan France
+                    maxZoom: 17, // Default is 22, adjust so that max zoom allows looking at a small street
                 });
 
                 this.#map = map;
@@ -107,7 +109,6 @@ class MapLibreMap {
                     map.addSource('locations-source', {
                         type: 'geojson',
                         data: dataSource.getValue(),
-                        tolerance: 0.0, // we want to display the data at very low zoom level -> tolerance must be very low
                     });
 
                     dataSource.onChange(data => {
@@ -192,6 +193,17 @@ class MapLibreMap {
     }
 
     /**
+     * @param {(zoom: number) => void} callback
+     */
+    onZoom(callback) {
+        this.#prom.then(() => {
+            this.#map.on('zoomend', () => {
+                callback(this.#map.getZoom());
+            });
+        })
+    }
+
+    /**
      *
      * @param {[number, number]} pos
      * @param {string} uuid
@@ -234,7 +246,12 @@ customElements.define('d-map', class extends HTMLElement {
     connectedCallback() {
         const mapHeight = this.getAttribute('mapHeight') || '300px';
         const mapPos = JSON.parse(this.getAttribute('mapPos') || METROPOLITAN_FRANCE_CENTER);
-        const mapZoom = +(this.getAttribute('mapZoom') || 13);
+        const mapZoomSourceId = this.getAttribute('mapZoomSource');
+        if (!mapZoomSourceId) {
+            throw new Error('mapZoomSource attribute is missing or empty');
+        }
+        const mapZoomSource = /** @type {HTMLInputElement} */ (document.getElementById(mapZoomSourceId));
+        const mapZoom = +mapZoomSource.value;
         const locationPopupUrl = getAttributeOrError(this, 'locationPopupUrl');
         const dataSource = new MapDataSource(querySelectorOrError(document, `#${getAttributeOrError(this, 'dataSource')}`));
 
@@ -246,6 +263,11 @@ customElements.define('d-map', class extends HTMLElement {
             locationPopupUrl,
             dataSource,
         );
+
+        map.onZoom(zoom => {
+            mapZoomSource.value = zoom.toString();
+            mapZoomSource.dispatchEvent(new Event('change'));
+        });
 
         map.onReady((mapInstance) => {
             const elementsToHide = /** @type {NodeListOf<HTMLElement>} */ (this.querySelectorAll('[data-map-hidewhen=ready]'));

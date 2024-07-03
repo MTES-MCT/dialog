@@ -19,5 +19,6 @@ interface LocationRepositoryInterface
         bool $includeTemporaryRegulations = false,
         bool $includeUpcomingRegulations = false,
         bool $includePastRegulations = false,
+        float $toleranceInMeters = 5,
     ): string;
 }

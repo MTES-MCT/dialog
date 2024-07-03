@@ -49,6 +49,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         bool $includeTemporaryRegulations = false,
         bool $includeUpcomingRegulations = false,
         bool $includePastRegulations = false,
+        float $toleranceInMeters = 10,
     ): string {
         $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations;
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
@@ -78,7 +79,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             sprintf(
-                'SELECT ST_AsGeoJSON(l.geometry) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
+                'SELECT ST_AsGeoJSON(ST_Simplify(l.geometry, :tolerance)) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
                 FROM location AS l
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
@@ -92,6 +93,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 $regulationDatesWhereClause,
             ),
             [
+                'tolerance' => $toleranceInMeters,
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'now' => $this->dateUtils->getNow()->format('Y-m-d'),
             ],

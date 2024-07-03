@@ -10,4 +10,5 @@ final class MapFilterDTO
     public bool $displayTemporaryRegulations = true;
     public bool $displayFutureRegulations = false;
     public bool $displayPastRegulations = false;
+    public float $zoomLevel = 5;
 }
