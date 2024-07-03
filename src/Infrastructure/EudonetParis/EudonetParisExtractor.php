@@ -24,6 +24,7 @@ final class EudonetParisExtractor
     public const MESURE_TAB_ID = 1200;
     public const MESURE_ID = 1201;
     public const MESURE_NOM = 1202;
+    public const MESURE_ALINEA = 1294;
     public const MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE = '103';
 
     // LOCALISATION fields
@@ -109,6 +110,7 @@ final class EudonetParisExtractor
                 listCols: [
                     $this::MESURE_ID,
                     $this::MESURE_NOM,
+                    $this::MESURE_ALINEA,
                 ],
                 whereCustom: [
                     'WhereCustoms' => [

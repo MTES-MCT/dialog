@@ -39,6 +39,7 @@ final class EudonetParisTransformerTest extends TestCase
                     'fields' => [
                         EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
                     ],
                     'locations' => [
                         [
@@ -145,6 +146,7 @@ final class EudonetParisTransformerTest extends TestCase
                     'fields' => [
                         EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
                     ],
                     'locations' => [
                         [
@@ -218,6 +220,7 @@ final class EudonetParisTransformerTest extends TestCase
                     'fields' => [
                         EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
                     ],
                     'locations' => [
                         [
@@ -364,6 +367,7 @@ final class EudonetParisTransformerTest extends TestCase
                     'fields' => [
                         EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
                     ],
                     'locations' => [$location],
                 ],
@@ -401,6 +405,7 @@ final class EudonetParisTransformerTest extends TestCase
                     'fields' => [
                         EudonetParisExtractor::MESURE_ID => 'mesure1',
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
                     ],
                     'locations' => [
                         [
@@ -499,6 +504,55 @@ final class EudonetParisTransformerTest extends TestCase
                     'impact' => 'skip_regulation',
                     'reason' => 'parsing_failed',
                     'value' => 'invalid',
+                ],
+            ],
+        );
+
+        $this->assertEquals($result, $transformer->transform($record, $organization));
+    }
+
+    public function testSkipNonEmptyAlinea(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $record = [
+            'fields' => [
+                EudonetParisExtractor::ARRETE_ID => '20230514-1',
+                EudonetParisExtractor::ARRETE_DATE_DEBUT => '2023/06/05 14:30:00',
+                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
+                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
+                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => 'Description',
+            ],
+            'measures' => [
+                [
+                    'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
+                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => 'not empty may contain dates',
+                    ],
+                    'locations' => ['...'],
+                ],
+            ],
+        ];
+
+        $transformer = new EudonetParisTransformer();
+        $result = new EudonetParisTransformerResult(
+            null,
+            [
+                [
+                    'loc' => ['regulation_identifier' => '20230514-1'],
+                    'impact' => 'skip_regulation',
+                    'reason' => 'measure_errors',
+                    'errors' => [
+                        [
+                            'loc' => [
+                                'measure_id' => 'mesure1',
+                            ],
+                            'reason' => 'measure_may_contain_dates',
+                            'alinea' => 'not empty may contain dates',
+                            'impact' => 'skip_measure',
+                        ],
+                    ],
                 ],
             ],
         );
