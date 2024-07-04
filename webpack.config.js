@@ -31,9 +31,6 @@ Encore
     // Public map
     .addStyleEntry('map', './assets/styles/map.scss')
 
-    // Responsive map
-    .addStyleEntry('map-size', './assets/styles/map-size.css')
-
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
