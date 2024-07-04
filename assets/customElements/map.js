@@ -96,6 +96,8 @@ class MapLibreMap {
                     style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
                     center,
                     zoom,
+                    minZoom: 4.33, // Prevent zooming less than size of metropolitan France
+                    maxZoom: 17, // Default is 22, adjust so that max zoom allows looking at a small street
                     hash: "mapZoomAndPosition",
                 });
 
@@ -107,7 +109,12 @@ class MapLibreMap {
                     map.addSource('locations-source', {
                         type: 'geojson',
                         data: dataSource.getValue(),
-                        tolerance: 0.0, // we want to display the data at very low zoom level -> tolerance must be very low
+                        // This option enables simplification of geometries at low zoom levels.
+                        // Expressed in meters.
+                        // Use > 0 to avoid "blob effect" at low zoom levels.
+                        // Use a small enough value to enable details at bigger zoom levels.
+                        // NOTE: computation is performed on the client's CPU using the data loaded in memory.
+                        tolerance: 3,
                     });
 
                     dataSource.onChange(data => {
