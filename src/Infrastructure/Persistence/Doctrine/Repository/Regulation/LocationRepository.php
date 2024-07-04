@@ -89,8 +89,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                             l.geometry,
                             0.00001 -- 5 degree decimals max (~1m precision) to reduce transfer size
                         ),
-                        -- Simplify lines smaller than 5m (0.00001° ~= 1m) to reduce transfer size
-                        5 * 0.00001
+                        -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
+                        3 * 0.00001
                     )
                 ) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
                 FROM location AS l

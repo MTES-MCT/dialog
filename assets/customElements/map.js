@@ -97,7 +97,7 @@ class MapLibreMap {
                     center,
                     zoom,
                     minZoom: 4.33, // Prevent zooming less than size of metropolitan France
-                    maxZoom: 17, // Default is 22, adjust so that max zoom allows looking at a small street
+                    maxZoom: 18, // Default is 22, adjust so that maximum zoom makes house numbers visible
                     hash: "mapZoomAndPosition",
                 });
 
