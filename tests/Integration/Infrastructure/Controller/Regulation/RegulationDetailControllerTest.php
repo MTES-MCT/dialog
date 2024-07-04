@@ -167,10 +167,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testWithoutAuthenticatedUser(): void
+    public function testPublishedWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
 
         $this->assertResponseStatusCodeSame(200);
 
@@ -178,5 +178,13 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $crawler->selectButton('Supprimer')->count());
         $this->assertSame(0, $crawler->selectButton('Dupliquer')->count());
         $this->assertSame(0, $crawler->selectButton('Modifier')->count());
+    }
+
+    public function testDraftWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+
+        $this->assertResponseStatusCodeSame(403);
     }
 }
