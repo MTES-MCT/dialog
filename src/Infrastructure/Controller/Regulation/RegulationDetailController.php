@@ -13,9 +13,11 @@ use App\Domain\Regulation\ArrayRegulationMeasures;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
+use App\Domain\Regulation\Specification\CanViewRegulationDetail;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -24,6 +26,7 @@ final class RegulationDetailController extends AbstractRegulationController
     public function __construct(
         private \Twig\Environment $twig,
         protected QueryBusInterface $queryBus,
+        private CanViewRegulationDetail $canViewRegulationDetail,
         private CanDeleteMeasures $canDeleteMeasures,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -47,6 +50,10 @@ final class RegulationDetailController extends AbstractRegulationController
         $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         }, false);
+
+        if (!$this->canViewRegulationDetail->isSatisfiedBy($currentUser?->getUuid(), $generalInfo->status)) {
+            throw new AccessDeniedHttpException();
+        }
 
         $organizationUuid = $this->queryBus->handle(new GetOrganizationUuidByRegulationOrderRecordQuery($uuid));
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
