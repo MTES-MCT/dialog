@@ -1365,6 +1365,10 @@
                 <source>login.password</source>
                 <target>Mot de passe</target>
             </trans-unit>
+            <trans-unit id="login.forgot_password">
+                <source>login.forgot_password</source>
+                <target>Mot de passe oublié ?</target>
+            </trans-unit>
             <trans-unit id="login.email_format">
                 <source>login.email_format</source>
                 <target>Format attendu : nom@domaine.fr</target>
@@ -1388,6 +1392,18 @@
             <trans-unit id="login.legend">
                 <source>login.legend</source>
                 <target>Se connecter avec son compte</target>
+            </trans-unit>
+            <trans-unit id="forgot_password.title">
+                <source>forgot_password.title</source>
+                <target>Mot de passe oublié</target>
+            </trans-unit>
+            <trans-unit id="forgot_password.instructions">
+                <source>forgot_password.instructions</source>
+                <target>Pour toute demande de réinitialisation de mot de passe, veuillez contacter notre équipe à l'adresse dialog@beta.gouv.fr en précisant l'adresse e-mail du compte que vous souhaitez réinitialiser.</target>
+            </trans-unit>
+            <trans-unit id="forgot_password.go_back">
+                <source>forgot_password.go_back</source>
+                <target>Revenir au formulaire de connexion</target>
             </trans-unit>
             <trans-unit id="home.breadcrumb">
                 <source>home.breadcrumb</source>
