@@ -6,7 +6,6 @@ namespace App\Tests\Integration\Infrastructure\Controller\Map\Fragment;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-/** @group only */
 final class MapDataControllerTest extends AbstractWebTestCase
 {
     public function testGet(): void

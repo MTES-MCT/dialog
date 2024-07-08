@@ -9,6 +9,9 @@ customElements.define('d-map-form', class extends HTMLElement {
     /** @type {HTMLElement} */
     #map;
 
+    /** @type {string} */
+    #urlAttribute;
+
     connectedCallback() {
         requestAnimationFrame(() => {
             const form = /** @type {HTMLFormElement} */ querySelectorOrError(this, 'form');
@@ -16,6 +19,8 @@ customElements.define('d-map-form', class extends HTMLElement {
             
             const map = /** @type {HTMLElement} */ querySelectorOrError(document, `#${getAttributeOrError(this, 'target')}`);
             this.#map = map;
+
+            this.#urlAttribute = /** @type {string} */ getAttributeOrError(this, 'urlAttribute');
 
             this.#init();
         });
@@ -31,7 +36,7 @@ customElements.define('d-map-form', class extends HTMLElement {
 
     #onChange() {
         const url = this.#makeUrl();
-        this.#map.setAttribute('dataUrl', url);
+        this.#map.setAttribute(this.#urlAttribute, url);
     }
 
     #makeUrl() {

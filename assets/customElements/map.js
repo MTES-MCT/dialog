@@ -12,24 +12,17 @@ class MapDataSource {
     /** @type {any} */
     #data = null;
 
-    static urlAttrName = 'dataUrl';
-
     /**
      * @param {MapElement} element
      */
     constructor(element) {
         this.#mapElement = element;
-
-        this.#mapElement.addEventListener('form_intercept', (event) => {
-            const url = event['detail'].url;
-            this.#mapElement.setAttribute(MapDataSource.urlAttrName, url);
-        });
     }
 
     /** @returns {Promise<any>} */
     async readValue() {
         if (!this.#data) {
-            const url = getAttributeOrError(this.#mapElement, MapDataSource.urlAttrName);
+            const url = this.#mapElement.getDataUrl();
             const response = await fetch(url);
             const text = await response.text();
             const data = text ? JSON.parse(text) : {};
@@ -43,22 +36,13 @@ class MapDataSource {
      * @param {(value: any) => void} callback
      */
     onChange(callback) {
-        const observer = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-                if (
-                    mutation.type === "attributes"
-                    && mutation.attributeName?.toLowerCase() === MapDataSource.urlAttrName.toLowerCase()
-                ) {
-                    this.#data = null;
+        this.#mapElement.onDataUrlChange(() => {
+            this.#data = null;
 
-                    this.readValue().then(json => {
-                        callback(json);
-                    });
-                }
-            }
+            this.readValue().then((json) => {
+                callback(json);
+            });
         });
-
-        observer.observe(this.#mapElement, { attributes: true });
     }
 }
 
@@ -256,7 +240,6 @@ class MapLibreMap {
                     locationPopUp.remove();
                 });
             }
-
         });
     }
 }
@@ -270,7 +253,6 @@ class MapElement extends HTMLElement {
         const mapPos = JSON.parse(this.getAttribute('mapPos') || METROPOLITAN_FRANCE_CENTER);
         const mapZoom = +(this.getAttribute('mapZoom') || 13);
         const locationPopupUrl = getAttributeOrError(this, 'locationPopupUrl');
-
         const dataSource = new MapDataSource(this);
 
         const map = new MapLibreMap(
@@ -290,6 +272,28 @@ class MapElement extends HTMLElement {
             // useful to debug the map in the JS console of your browser : access it with "document.getElementsByTagName('d-map')[0].map"
             this.map = mapInstance;
         });
+    }
+
+    /**
+     * @returns {string}
+     */
+    getDataUrl() {
+        return getAttributeOrError(this, 'dataUrl');
+    }
+
+    /**
+     * @param {() => void} callback 
+     */
+    onDataUrlChange(callback) {
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.type === "attributes" && mutation.attributeName?.toLowerCase() === 'dataurl') {
+                    callback();
+                }
+            }
+        });
+
+        observer.observe(this, { attributes: true });
     }
 }
 
