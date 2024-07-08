@@ -83,7 +83,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             sprintf(
-                'SELECT ST_AsGeoJSON(l.geometry) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
+                'SELECT ST_AsGeoJSON(
+                    ST_SimplifyPreserveTopology(
+                        l.geometry,
+                        -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
+                        3 * 0.00001
+                    )
+                ) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
                 FROM location AS l
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid

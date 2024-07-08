@@ -9,7 +9,6 @@ use App\Tests\Mock\EudonetParis\EudonetParisMockHttpClient;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/** @group only */
 final class EudonetParisImportCommandTest extends KernelTestCase
 {
     public function testExecute(): void
