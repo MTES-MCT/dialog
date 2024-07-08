@@ -78,6 +78,7 @@ class MapLibreMap {
     /**
      * @param {HTMLElement} root
      * @param {string} height
+     * @param {string} minHeight
      * @param {[number, number]} center
      * @param {number} zoom
      * @param {string} locationPopupUrl
@@ -86,6 +87,7 @@ class MapLibreMap {
     constructor(
         root,
         height,
+        minHeight,
         center,
         zoom,
         locationPopupUrl,
@@ -96,6 +98,7 @@ class MapLibreMap {
         // Create a container for the map
         const mapContainer = document.createElement('div');
         mapContainer.style.height = height;
+        mapContainer.style.minHeight = minHeight;
         mapContainer.hidden = true; // Don't show an empty map
         root.appendChild(mapContainer);
 
@@ -262,7 +265,8 @@ const METROPOLITAN_FRANCE_CENTER = '[2.725, 47.16]';
 
 class MapElement extends HTMLElement {
     connectedCallback() {
-        const mapHeight = this.getAttribute('mapHeight') || '300px';
+        const mapHeight = this.getAttribute('mapHeight') || '100%';
+        const mapMinHeight = this.getAttribute('mapMinHeight') || '600px';
         const mapPos = JSON.parse(this.getAttribute('mapPos') || METROPOLITAN_FRANCE_CENTER);
         const mapZoom = +(this.getAttribute('mapZoom') || 13);
         const locationPopupUrl = getAttributeOrError(this, 'locationPopupUrl');
@@ -272,6 +276,7 @@ class MapElement extends HTMLElement {
         const map = new MapLibreMap(
             this,
             mapHeight,
+            mapMinHeight,
             mapPos,
             mapZoom,
             locationPopupUrl,
