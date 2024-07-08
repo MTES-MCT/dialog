@@ -50,13 +50,10 @@ final class MapDataController
             $dto->displayPastRegulations,
         );
 
-        $gzippedGeoJSON = gzcompress($locationsAsGeoJson, encoding: ZLIB_ENCODING_GZIP);
-
         return new Response(
-            $gzippedGeoJSON,
+            $locationsAsGeoJson,
             headers: [
                 'Content-Type' => 'application/json',
-                'Content-Encoding' => 'gzip',
             ],
         );
     }
