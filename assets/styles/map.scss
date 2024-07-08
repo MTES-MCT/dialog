@@ -1,1 +1,19 @@
 @import url('maplibre-gl/dist/maplibre-gl.css');
+
+html, body {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: auto;
+}
+
+#content {
+    height: 100%;
+}
