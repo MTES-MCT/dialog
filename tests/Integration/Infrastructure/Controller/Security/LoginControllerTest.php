@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Controller;
+namespace App\Tests\Integration\Infrastructure\Controller\Security;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
+use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class LoginControllerTest extends AbstractWebTestCase
 {
