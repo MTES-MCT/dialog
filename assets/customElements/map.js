@@ -90,6 +90,8 @@ class MapLibreMap {
         const mapOptions = {
             center,
             zoom,
+            minZoom: 4.33, // Prevent zooming less than size of metropolitan France
+            maxZoom: 18, // Default is 22, adjust so that maximum zoom makes house numbers visible
         };
 
         this.#prom = this.#init(dataSource, mapOptions, mapContainer);
@@ -125,7 +127,12 @@ class MapLibreMap {
                 map.addSource('locations-source', {
                     type: 'geojson',
                     data,
-                    tolerance: 0.0, // we want to display the data at very low zoom level -> tolerance must be very low
+                    // This option enables simplification of geometries at low zoom levels.
+                    // Expressed in meters.
+                    // Use > 0 to avoid "blob effect" at low zoom levels.
+                    // Use a small enough value to enable details at bigger zoom levels.
+                    // NOTE: computation is performed on the client's CPU using the data loaded in memory.
+                    tolerance: 3,
                 });
 
                 dataSource.onChange(data => {
