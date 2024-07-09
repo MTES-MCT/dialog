@@ -1,3 +1,3 @@
 import './modal_trigger';
 import './map';
-import './auto_form';
+import './map_form';
