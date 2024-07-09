@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Symfony\Command;
+
+use App\Infrastructure\Litteralis\LitteralisExecutor;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+#[AsCommand(
+    name: 'app:litteralis:mel:import',
+    description: 'Import Litteralis data of MEL (Métropole Européenne de Lille)',
+    hidden: false,
+)]
+class LitteralisImportCommand extends Command
+{
+    public function __construct(
+        private LitteralisExecutor $executor,
+    ) {
+        parent::__construct();
+    }
+
+    public function execute(InputInterface $input, OutputInterface $output): int
+    {
+        // DiaLog
+        // TODO: configurable
+        $orgId = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66';
+
+        try {
+            $report = $this->executor->execute($orgId);
+
+            $output->write($report);
+        } catch (\RuntimeException $exc) {
+            $output->writeln($exc->getMessage());
+
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+}

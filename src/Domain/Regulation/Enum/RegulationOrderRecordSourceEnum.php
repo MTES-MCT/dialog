@@ -10,4 +10,5 @@ enum RegulationOrderRecordSourceEnum: string
     case EUDONET_PARIS = 'eudonet_paris';
     case BAC_IDF = 'bacidf';
     case JOP = 'jop';
+    case LITTERALIS = 'litteralis';
 }

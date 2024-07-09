@@ -136,7 +136,7 @@ class MapLibreMap {
                     // Use > 0 to avoid "blob effect" at low zoom levels.
                     // Use a small enough value to enable details at bigger zoom levels.
                     // NOTE: computation is performed on the client's CPU using the data loaded in memory.
-                    tolerance: 3,
+                    tolerance: 1,
                 });
 
                 dataSource.onChange(data => {

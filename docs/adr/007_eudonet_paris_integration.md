@@ -97,7 +97,7 @@ La BD TOPO comme la BD CARTO contiennent les linéaires routiers français et so
 
 L'utilisation de l'une ou l'autre de ces bases aurait été similaire : télécharger la base et l'importer dans un PostgreSQL afin d'y soumettre des requêtes PostGIS de calcul d'intersections au moment de l'import.
 
-Calcul d'une intersection : les routes sont représentées par des formes vectorielles dont "l'épaisseur" varie entre la BD TOPO et la BD CARTO en raison de la différence d'échelle (1m pour la BD TOPO et 10m pour la BD CARTO). L'intersection entre deux routes est donc un polygône et non pas un point. En prenant le centroïde de ce polygône, on obtient le point d'intersection.
+Calcul d'une intersection : les routes sont représentées par des formes vectorielles dont "l'épaisseur" varie entre la BD TOPO et la BD CARTO en raison de la différence d'échelle (1m pour la BD TOPO et 10m pour la BD CARTO). L'intersection entre deux routes est donc un polygone et non pas un point. En prenant le centroïde de ce polygone, on obtient le point d'intersection.
 
 **Avantages**
 
