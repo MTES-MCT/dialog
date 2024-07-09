@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Security;
 
+use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Organization;
-use App\Domain\User\User;
 use App\Infrastructure\Security\SymfonyUser;
 use PHPUnit\Framework\TestCase;
 
@@ -24,11 +24,11 @@ class SymfonyUserTest extends TestCase
             'Mathieu MARCHOIS',
             'password',
             $organizations,
-            [User::ROLE_USER],
+            [UserRolesEnum::ROLE_USER->value],
         );
 
         $this->assertSame('2d3724f1-2910-48b4-ba56-81796f6e100b', $user->getUuid());
-        $this->assertSame([User::ROLE_USER], $user->getRoles());
+        $this->assertSame([UserRolesEnum::ROLE_USER->value], $user->getRoles());
         $this->assertSame('Mathieu MARCHOIS', $user->getFullName());
         $this->assertSame(null, $user->getSalt());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $user->getUsername());

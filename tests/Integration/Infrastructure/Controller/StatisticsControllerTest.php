@@ -19,7 +19,7 @@ final class StatisticsControllerTest extends AbstractWebTestCase
         $stats = $crawler->filter('div.fr-card');
         $this->assertSame(6, $stats->count());
 
-        $this->assertSame("Nombre total d'utilisateurs 1", $stats->eq(0)->text());
+        $this->assertSame("Nombre total d'utilisateurs 3", $stats->eq(0)->text());
         $this->assertSame("Nombre total d'organisations 1", $stats->eq(1)->text());
         $this->assertSame("Nombre total d'arrếtés 2", $stats->eq(2)->text());
         $this->assertSame("Nombre total d'arrếtés publiés 1", $stats->eq(3)->text());
