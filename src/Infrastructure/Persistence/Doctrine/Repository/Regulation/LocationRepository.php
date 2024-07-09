@@ -85,7 +85,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             sprintf(
                 'SELECT ST_AsGeoJSON(
                     ST_ReducePrecision(
-                        l.geometry,
+                        ST_SimplifyPreserveTopology(
+                            l.geometry,
+                            -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
+                            3 * 0.00001
+                        ),
                         0.00001 -- 6 decimals max (~1m precision) to limit transfer size
                     )
                 ) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
