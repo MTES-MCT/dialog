@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -244,6 +245,28 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
             ])
             ->orderBy('loc.uuid') // Predictable order
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findRegulationOrdersForLitteralisCleanUp(string $organizationId, \DateTimeInterface $laterThan): array
+    {
+        return $this->createQueryBuilder('roc')
+            ->addSelect('ro')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where(
+                'roc.source = :source',
+                'roc.organization = :organizationId',
+                'roc.status = :status',
+                'ro.endDate IS NULL OR ro.endDate >= :laterThan',
+            )
+            ->setParameters([
+                'source' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
+                'organizationId' => $organizationId,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'laterThan' => $laterThan,
+            ])
             ->getQuery()
             ->getResult()
         ;

@@ -33,6 +33,8 @@ interface RegulationOrderRecordRepositoryInterface
         array $allowedLocationIds = [],
     ): array;
 
+    public function findRegulationOrdersForLitteralisCleanUp(string $organizationId, \DateTimeInterface $laterThan): array;
+
     public function doesOneExistInOrganizationWithIdentifier(Organization $organization, string $identifier): bool;
 
     public function findIdentifiersForSource(string $source): array;
