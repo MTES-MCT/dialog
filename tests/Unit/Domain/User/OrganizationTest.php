@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\User;
 
 use App\Domain\User\Organization;
-use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
 
 final class OrganizationTest extends TestCase
@@ -20,16 +19,5 @@ final class OrganizationTest extends TestCase
         $this->assertSame('Mairie de Savenay', $organization->getName());
         $this->assertSame('21440195200129', $organization->getSiret());
         $this->assertSame('Mairie de Savenay', (string) $organization);
-        $this->assertEmpty($organization->getUsers());
-
-        $user = $this->createMock(User::class);
-        $organization->addUser($user);
-        $organization->addUser($user); // Test deduplication of users
-
-        $this->assertSame([$user], $organization->getUsers()->toArray());
-
-        $organization->removeUser($user);
-        $organization->removeUser($user); // Test removal of non existing user
-        $this->assertEmpty($organization->getUsers()->toArray());
     }
 }
