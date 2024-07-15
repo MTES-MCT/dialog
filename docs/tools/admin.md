@@ -6,6 +6,4 @@ L'implémentation utilise [EasyAdmin](https://github.com/EasyCorp/EasyAdminBundl
 
 ## Accès à l'admin
 
-L'admin n'est accessible qu'aux comptes administrateurs déterminés par la variable d'environnement `ADMIN_EMAILS`.
-
-En local, mettez l'email de votre compte dans `ADMIN_EMAILS` dans `.env.local` pour pouvoir accéder à l'admin.
+L'admin n'est accessible qu'aux comptes administrateurs déterminés par le super administrateur Mathieu Fernandez (mathieu.fernandez@beta.gouv.fr).

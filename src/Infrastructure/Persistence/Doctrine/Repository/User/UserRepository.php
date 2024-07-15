@@ -14,7 +14,6 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
 {
     public function __construct(
         ManagerRegistry $registry,
-        private string $dialogOrgId,
         private readonly StringUtilsInterface $stringUtils,
     ) {
         parent::__construct($registry, User::class);
@@ -30,7 +29,6 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         return $this->createQueryBuilder('u')
             ->where('u.email = :email')
             ->setParameter('email', $this->stringUtils->normalizeEmail($email))
-            ->innerJoin('u.organizations', 'o')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -41,9 +39,6 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
     {
         return $this->createQueryBuilder('u')
             ->select('count(DISTINCT(u.uuid))')
-            ->innerJoin('u.organizations', 'o')
-            ->where('o.uuid <> :uuid')
-            ->setParameter('uuid', $this->dialogOrgId)
             ->getQuery()
             ->getSingleScalarResult()
         ;

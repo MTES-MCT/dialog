@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Specification;
 
-use App\Domain\User\User;
+use App\Domain\User\Enum\UserRolesEnum;
 
 final class CanUseRawGeoJSON
 {
@@ -12,6 +12,6 @@ final class CanUseRawGeoJSON
 
     public function isSatisfiedBy(?array $roles): bool
     {
-        return \in_array(User::ROLE_ADMIN, $roles ?? []);
+        return \in_array(UserRolesEnum::ROLE_SUPER_ADMIN->value, $roles ?? []);
     }
 }

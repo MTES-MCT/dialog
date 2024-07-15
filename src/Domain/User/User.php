@@ -4,24 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 class User
 {
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
-    public const ROLE_USER = 'ROLE_USER';
-
     private string $fullName;
     private string $email;
     private string $password;
-    private Collection $organizations;
+    private array $roles = [];
     private \DateTimeInterface $registrationDate;
 
     public function __construct(
         private string $uuid,
     ) {
-        $this->organizations = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -65,6 +58,18 @@ class User
         return $this;
     }
 
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
     public function getRegistrationDate(): \DateTimeInterface
     {
         return $this->registrationDate;
@@ -75,26 +80,5 @@ class User
         $this->registrationDate = $date;
 
         return $this;
-    }
-
-    public function getOrganizations(): Collection
-    {
-        return $this->organizations;
-    }
-
-    public function addOrganization(Organization $organization): void
-    {
-        if (!$this->organizations->contains($organization)) {
-            $this->organizations->add($organization);
-            $organization->addUser($this);
-        }
-    }
-
-    public function removeOrganization(Organization $organization): void
-    {
-        if ($this->organizations->contains($organization)) {
-            $this->organizations->removeElement($organization);
-            $organization->removeUser($this);
-        }
     }
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
-use App\Domain\User\Organization;
-use App\Domain\User\User;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
+use App\Infrastructure\Persistence\Doctrine\Repository\User\OrganizationUserRepository;
 use App\Infrastructure\Persistence\Doctrine\Repository\User\UserRepository;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -19,14 +18,13 @@ abstract class AbstractWebTestCase extends WebTestCase
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $em = static::getContainer()->get('doctrine.orm.entity_manager');
-        $adminEmails = static::getContainer()->getParameter('admin_emails');
+        $organizationUserRepository = static::getContainer()->get(OrganizationUserRepository::class);
         $testUser = $userRepository->findOneByEmail($email);
-        $role = \in_array($testUser->getEmail(), $adminEmails) ? User::ROLE_ADMIN : User::ROLE_USER;
-        $organizations = [];
+        $roles = $testUser->getRoles();
+        $userOrganizations = $organizationUserRepository->findOrganizationsByUser($testUser);
 
-        foreach ($testUser->getOrganizations() as $organization) {
-            $organizations[] = $em->getReference(Organization::class, $organization->getUuid());
+        foreach ($userOrganizations as $userOrganization) {
+            $organizations[] = $userOrganization->getOrganization();
         }
 
         $client->loginUser(
@@ -36,7 +34,7 @@ abstract class AbstractWebTestCase extends WebTestCase
                 $testUser->getFullName(),
                 $testUser->getPassword(),
                 $organizations,
-                [$role],
+                $roles,
             ),
         );
 
