@@ -23,17 +23,13 @@ abstract class AbstractWebTestCase extends WebTestCase
         $roles = $testUser->getRoles();
         $userOrganizations = $organizationUserRepository->findOrganizationsByUser($testUser);
 
-        foreach ($userOrganizations as $userOrganization) {
-            $organizations[] = $userOrganization->getOrganization();
-        }
-
         $client->loginUser(
             new SymfonyUser(
                 $testUser->getUuid(),
                 $testUser->getEmail(),
                 $testUser->getFullName(),
                 $testUser->getPassword(),
-                $organizations,
+                $userOrganizations,
                 $roles,
             ),
         );

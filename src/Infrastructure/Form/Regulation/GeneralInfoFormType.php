@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\User\Organization;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,6 +22,7 @@ final class GeneralInfoFormType extends AbstractType
 {
     public function __construct(
         private string $clientTimezone,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -93,6 +98,19 @@ final class GeneralInfoFormType extends AbstractType
                 SubmitType::class,
                 options: $options['save_options'],
             )
+        ;
+
+        $builder->get('organization')
+            ->addModelTransformer(new CallbackTransformer(
+                function (?Organization $organization = null): ?UserOrganizationView {
+                    return $organization
+                        ? new UserOrganizationView($organization->getUuid(), $organization->getName())
+                        : null;
+                },
+                function (UserOrganizationView $userOrganizationView): Organization {
+                    return $this->entityManager->getReference(Organization::class, $userOrganizationView->uuid);
+                },
+            ))
         ;
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\User;
@@ -26,11 +27,15 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
     public function findOrganizationsByUser(User $user): array
     {
         return $this->createQueryBuilder('ou')
+            ->select(
+                sprintf('NEW %s(o.uuid, o.name, ou.roles)',
+                    UserOrganizationView::class,
+                ),
+            )
             ->where('ou.user = :user')
             ->innerJoin('ou.organization', 'o')
             ->setParameter('user', $user)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }
