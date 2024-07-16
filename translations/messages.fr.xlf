@@ -2026,6 +2026,22 @@
                 <source>roles.ROLE_ORGA_ADMIN</source>
                 <target>Administrateur</target>
             </trans-unit>
+            <trans-unit id="user.list.title">
+                <source>user.list.title</source>
+                <target>Utilisateurs %organizationName%</target>
+            </trans-unit>
+            <trans-unit id="user.list.fullName">
+                <source>user.list.fullName</source>
+                <target>Prénom / Nom</target>
+            </trans-unit>
+            <trans-unit id="user.list.email">
+                <source>user.list.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="user.list.roles">
+                <source>user.list.roles</source>
+                <target>Rôles</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

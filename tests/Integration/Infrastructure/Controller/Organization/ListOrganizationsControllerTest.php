@@ -8,7 +8,7 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class ListOrganizationsControllerTest extends AbstractWebTestCase
 {
-    public function testPageAndTabs(): void
+    public function testIndex(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/organizations');
@@ -19,8 +19,11 @@ final class ListOrganizationsControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle('Mes organisations - DiaLog', $crawler);
 
         $organizations = $crawler->filter('[data-testid="organization-list"]');
+        $td = $organizations->filter('tr')->eq(0)->filter('td');
         $this->assertCount(1, $organizations->filter('tr'));
-        $this->assertSame('Main Org Contributeur', $organizations->filter('tr')->eq(0)->text());
+        $this->assertSame('Main Org', $td->eq(0)->text());
+        $this->assertSame('Contributeur', $td->eq(1)->text());
+        $this->assertSame('Voir le détail', $td->eq(2)->text());
     }
 
     public function testWithoutAuthenticatedUser(): void
