@@ -28,5 +28,6 @@ final class UserTest extends TestCase
         $this->assertSame('password', $user->getPassword());
         $this->assertSame([UserRolesEnum::ROLE_SUPER_ADMIN->value], $user->getRoles());
         $this->assertSame($date, $user->getRegistrationDate());
+        $this->assertSame('Mathieu Marchois (mathieu@fairness.coop)', (string) $user);
     }
 }
