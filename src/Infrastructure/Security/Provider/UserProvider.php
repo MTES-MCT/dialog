@@ -29,18 +29,13 @@ final class UserProvider implements UserProviderInterface
         }
 
         $userOrganizations = $this->organizationUserRepositoryInterface->findOrganizationsByUser($user);
-        $organizations = [];
-
-        foreach ($userOrganizations as $userOrganization) {
-            $organizations[] = $userOrganization->getOrganization();
-        }
 
         return new SymfonyUser(
             $user->getUuid(),
             $user->getEmail(),
             $user->getFullName(),
             $user->getPassword(),
-            $organizations,
+            $userOrganizations,
             $user->getRoles(),
         );
     }

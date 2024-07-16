@@ -2002,6 +2002,30 @@
                 <source>jop.regulation_order.description</source>
                 <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
             </trans-unit>
+            <trans-unit id="organization.list.title">
+                <source>organization.list.title</source>
+                <target>Mes organisations</target>
+            </trans-unit>
+            <trans-unit id="organization.list.organizationName">
+                <source>organization.list.organizationName</source>
+                <target>Organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.list.roles">
+                <source>organization.list.roles</source>
+                <target>Rôles</target>
+            </trans-unit>
+            <trans-unit id="roles.ROLE_ORGA_CONTRIBUTOR">
+                <source>roles.ROLE_ORGA_CONTRIBUTOR</source>
+                <target>Contributeur</target>
+            </trans-unit>
+            <trans-unit id="roles.ROLE_ORGA_PUBLISHER">
+                <source>roles.ROLE_ORGA_PUBLISHER</source>
+                <target>Editeur</target>
+            </trans-unit>
+            <trans-unit id="roles.ROLE_ORGA_ADMIN">
+                <source>roles.ROLE_ORGA_ADMIN</source>
+                <target>Administrateur</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
