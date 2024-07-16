@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Admin;
 use App\Domain\User\AccessRequest;
 use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
+use App\Domain\User\OrganizationUser;
 use App\Domain\User\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -34,11 +35,13 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
-        yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
+        yield MenuItem::linkToCrud('Membres d\'organisations', 'fa fa-user-gear', OrganizationUser::class);
         yield MenuItem::linkToCrud('Création de comptes', 'fa fa-code-pull-request', AccessRequest::class);
-        yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
 
-        yield MenuItem::section('Application');
-        yield MenuItem::linkToRoute('DiaLog', 'fa fa-globe', 'app_regulations_list');
+        yield MenuItem::section('Gestion des organisations');
+        yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
+
+        yield MenuItem::section('Autres');
+        yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
     }
 }
