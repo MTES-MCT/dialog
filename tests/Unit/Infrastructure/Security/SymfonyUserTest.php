@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Security;
 
-use App\Application\User\View\UserOrganizationView;
+use App\Application\User\View\OrganizationView;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Infrastructure\Security\SymfonyUser;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +13,7 @@ class SymfonyUserTest extends TestCase
 {
     public function testUser()
     {
-        $organizationUser = new UserOrganizationView('133fb411-7754-4749-9590-ce05a2abe108', 'Mairie de Savenay', []);
+        $organizationUser = new OrganizationView('133fb411-7754-4749-9590-ce05a2abe108', 'Mairie de Savenay', []);
 
         $user = new SymfonyUser(
             '2d3724f1-2910-48b4-ba56-81796f6e100b',

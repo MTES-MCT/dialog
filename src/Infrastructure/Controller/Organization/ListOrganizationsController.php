@@ -6,7 +6,6 @@ namespace App\Infrastructure\Controller\Organization;
 
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,7 +22,7 @@ final class ListOrganizationsController
         name: 'app_organizations_list',
         methods: ['GET'],
     )]
-    public function __invoke(Request $request): Response
+    public function __invoke(): Response
     {
         /** @var SymfonyUser|null */
         $user = $this->security->getUser();
