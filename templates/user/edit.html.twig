@@ -1,0 +1,27 @@
+{% extends 'layouts/app.html.twig' %}
+{% set metaTitle = user.fullName ~ ' (' ~ user.email ~ ')' %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w" aria-labelledby="user-list">
+        <div class="app-card app-card--raised">
+            <div class="app-card__header">
+                <span class="app-card__img fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
+                <h3 class="app-card__title fr-h4 fr-mb-0">
+                    {{ metaTitle }}
+                </h3>
+            </div>
+            <div class="app-card__content">
+                {{ form_start(form) }}
+                    {{ form_row(form.roles) }}
+                    <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                        {{ "common.cancel"|trans }}
+                    </a>
+                    {{ form_widget(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
