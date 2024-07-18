@@ -32,7 +32,11 @@
                                     {% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
-                            <td></td>
+                            <td>
+                                <a title="{{ 'common.see'|trans }}" href="{{ path('app_users_list', { uuid: organization.uuid }) }}" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline">
+                                    {{ 'common.see'|trans }}
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
