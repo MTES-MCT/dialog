@@ -14,6 +14,7 @@ use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
+use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\EudonetParis\EudonetParisTransformerResult;
@@ -193,7 +194,7 @@ final class EudonetParisTransformerTest extends TestCase
         $result = new EudonetParisTransformerResult(null, [
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
-                'reason' => 'no_measures_found',
+                'reason' => EudonetParisErrorEnum::NO_MEASURES_FOUND->value,
                 'impact' => 'skip_regulation',
             ],
         ]);
@@ -244,12 +245,12 @@ final class EudonetParisTransformerTest extends TestCase
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'impact' => 'skip_regulation',
-                'reason' => 'measure_errors',
+                'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value,
                 'errors' => [
                     [
                         'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                         'impact' => 'skip_measure',
-                        'reason' => 'unsupported_location_fieldset',
+                        'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                         'location_raw' => '{"fields":{"2701":"localisation1","2705":"Autre chose","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":null}}',
                     ],
                 ],
@@ -280,7 +281,7 @@ final class EudonetParisTransformerTest extends TestCase
                 'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
-                    'reason' => 'unsupported_location_fieldset',
+                    'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
                 ],
             ],
@@ -300,7 +301,7 @@ final class EudonetParisTransformerTest extends TestCase
                 'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
-                    'reason' => 'unsupported_location_fieldset',
+                    'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
                 ],
             ],
@@ -320,7 +321,7 @@ final class EudonetParisTransformerTest extends TestCase
                 'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
-                    'reason' => 'unsupported_location_fieldset',
+                    'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
                 ],
             ],
@@ -340,7 +341,7 @@ final class EudonetParisTransformerTest extends TestCase
                 'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
-                    'reason' => 'unsupported_location_fieldset',
+                    'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
                 ],
             ],
@@ -378,7 +379,7 @@ final class EudonetParisTransformerTest extends TestCase
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'impact' => 'skip_regulation',
-                'reason' => 'measure_errors',
+                'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value,
                 'errors' => [$error],
             ],
         ]);
@@ -429,11 +430,11 @@ final class EudonetParisTransformerTest extends TestCase
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'impact' => 'skip_regulation',
-                'reason' => 'measure_errors',
+                'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value,
                 'errors' => [
                     [
                         'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1', 'fieldname' => 'ARRONDISSEMENT'],
-                        'reason' => 'value_does_not_match_pattern',
+                        'reason' => EudonetParisErrorEnum::VALUE_DOES_NOT_MATCH_PATTERN->value,
                         'impact' => 'skip_measure',
                         'value' => 'invalid',
                         'pattern' => '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i',
@@ -471,7 +472,7 @@ final class EudonetParisTransformerTest extends TestCase
                 [
                     'loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'],
                     'impact' => 'skip_regulation',
-                    'reason' => 'parsing_failed',
+                    'reason' => EudonetParisErrorEnum::PARSING_FAILED->value,
                     'value' => 'invalid',
                 ],
             ],
@@ -502,7 +503,7 @@ final class EudonetParisTransformerTest extends TestCase
                 [
                     'loc' => ['fieldname' => 'ARRETE_DATE_FIN'],
                     'impact' => 'skip_regulation',
-                    'reason' => 'parsing_failed',
+                    'reason' => EudonetParisErrorEnum::PARSING_FAILED->value,
                     'value' => 'invalid',
                 ],
             ],
@@ -542,13 +543,13 @@ final class EudonetParisTransformerTest extends TestCase
                 [
                     'loc' => ['regulation_identifier' => '20230514-1'],
                     'impact' => 'skip_regulation',
-                    'reason' => 'measure_errors',
+                    'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value,
                     'errors' => [
                         [
                             'loc' => [
                                 'measure_id' => 'mesure1',
                             ],
-                            'reason' => 'measure_may_contain_dates',
+                            'reason' => EudonetParisErrorEnum::MEASURE_MAY_CONTAIN_DATES->value,
                             'alinea' => 'not empty may contain dates',
                             'impact' => 'skip_measure',
                         ],
