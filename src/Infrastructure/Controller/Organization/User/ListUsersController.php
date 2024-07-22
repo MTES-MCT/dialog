@@ -34,7 +34,7 @@ final class ListUsersController extends AbstractOrganizationController
         $users = $this->queryBus->handle(new GetOrganizationUsersQuery($uuid));
 
         return new Response($this->twig->render(
-            name: 'user/index.html.twig',
+            name: 'organization/user/index.html.twig',
             context: [
                 'users' => $users,
                 'organization' => $organization,

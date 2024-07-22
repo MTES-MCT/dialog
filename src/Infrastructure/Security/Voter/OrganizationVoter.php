@@ -54,7 +54,7 @@ final class OrganizationVoter extends Voter
     private function canEdit(Organization $organization, SymfonyUser $user): bool
     {
         foreach ($user->getUserOrganizations() as $userOrganization) {
-            if (!$userOrganization->uuid == $organization->getUuid()) {
+            if ($userOrganization->uuid !== $organization->getUuid()) {
                 continue;
             }
 
