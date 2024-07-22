@@ -14,6 +14,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\User\Organization;
+use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
 
 final class EudonetParisTransformer
 {
@@ -27,7 +28,7 @@ final class EudonetParisTransformer
         $loc = ['regulation_identifier' => $row['fields'][EudonetParisExtractor::ARRETE_ID]];
 
         if (\count($row['measures']) === 0) {
-            $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'no_measures_found'];
+            $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::NO_MEASURES_FOUND->value];
 
             return new EudonetParisTransformerResult(null, $errors);
         }
@@ -46,7 +47,7 @@ final class EudonetParisTransformer
             [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow);
 
             if (empty($measureCommand)) {
-                $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => 'measure_errors', 'errors' => $measureErrors];
+                $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value, 'errors' => $measureErrors];
 
                 return new EudonetParisTransformerResult(null, $errors);
             }
@@ -100,7 +101,7 @@ final class EudonetParisTransformer
         $startDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]);
 
         if (!$startDate) {
-            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => 'parsing_failed', 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
+            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
 
             return [null, $error];
         }
@@ -110,7 +111,7 @@ final class EudonetParisTransformer
         $endDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]);
 
         if (!$endDate) {
-            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => 'parsing_failed', 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
+            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
 
             return [null, $error];
         }
@@ -131,7 +132,7 @@ final class EudonetParisTransformer
             // This "alinea" field contains free-form text with indications on temporal validity.
             // We cannot parse this data so we only ingest measures that do NOT have an "alinea", meaning their dates are
             // the same as the global regulation order dates.
-            $errors[] = ['loc' => $loc, 'reason' => 'measure_may_contain_dates', 'alinea' => $alinea, 'impact' => 'skip_measure'];
+            $errors[] = ['loc' => $loc, 'reason' => EudonetParisErrorEnum::MEASURE_MAY_CONTAIN_DATES->value, 'alinea' => $alinea, 'impact' => 'skip_measure'];
 
             return [null, $errors];
         }
@@ -170,7 +171,7 @@ final class EudonetParisTransformer
         if (!preg_match(self::ARRONDISSEMENT_REGEX, $arrondissement, $matches)) {
             $error = [
                 'loc' => [...$loc, 'fieldname' => 'ARRONDISSEMENT'],
-                'reason' => 'value_does_not_match_pattern',
+                'reason' => EudonetParisErrorEnum::VALUE_DOES_NOT_MATCH_PATTERN->value,
                 'value' => $arrondissement,
                 'pattern' => self::ARRONDISSEMENT_REGEX,
             ];
@@ -205,7 +206,7 @@ final class EudonetParisTransformer
         } else {
             $error = [
                 'loc' => $loc,
-                'reason' => 'unsupported_location_fieldset',
+                'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                 'location_raw' => json_encode($row),
             ];
 
