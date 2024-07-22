@@ -23,13 +23,14 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $tr0 = $users->filter('tr')->eq(0)->filter('td');
         $tr1 = $users->filter('tr')->eq(1)->filter('td');
         $this->assertCount(2, $users->filter('tr'));
-        $this->assertSame('Mathieu MARCHOIS', $tr0->eq(0)->text());
-        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr0->eq(1)->text());
-        $this->assertSame('Contributeur', $tr0->eq(2)->text());
 
-        $this->assertSame('Mathieu FERNANDEZ', $tr1->eq(0)->text());
-        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr1->eq(1)->text());
-        $this->assertSame('Administrateur', $tr1->eq(2)->text());
+        $this->assertSame('Mathieu FERNANDEZ', $tr0->eq(0)->text());
+        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr0->eq(1)->text());
+        $this->assertSame('Administrateur', $tr0->eq(2)->text());
+
+        $this->assertSame('Mathieu MARCHOIS', $tr1->eq(0)->text());
+        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr1->eq(1)->text());
+        $this->assertSame('Contributeur', $tr1->eq(2)->text());
     }
 
     public function testOrganizationNotOwned(): void

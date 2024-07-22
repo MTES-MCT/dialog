@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
+use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -52,6 +53,14 @@ final class OrganizationVoter extends Voter
 
     private function canEdit(Organization $organization, SymfonyUser $user): bool
     {
-        return $this->canView($organization, $user);
+        foreach ($user->getUserOrganizations() as $userOrganization) {
+            if (!$userOrganization->uuid == $organization->getUuid()) {
+                continue;
+            }
+
+            return \in_array(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value, $userOrganization->roles);
+        }
+
+        return false;
     }
 }

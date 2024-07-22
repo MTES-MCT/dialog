@@ -31,8 +31,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             ->setParameter('email', $this->stringUtils->normalizeEmail($email))
             ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 
     public function countUsers(): int
@@ -40,7 +39,6 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         return $this->createQueryBuilder('u')
             ->select('count(DISTINCT(u.uuid))')
             ->getQuery()
-            ->getSingleScalarResult()
-        ;
+            ->getSingleScalarResult();
     }
 }
