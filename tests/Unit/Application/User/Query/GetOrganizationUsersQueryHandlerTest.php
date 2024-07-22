@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 final class GetOrganizationUsersQueryHandlerTest extends TestCase
 {
-    public function testGetUsers(): void
+    public function testGet(): void
     {
         $expectedResults = [
             new UserView('42a1888f-29cb-4e32-a02f-49d278b6d128', 'Mathieu MARCHOIS', 'mathieu.marchois@beta.gouv.fr'),

@@ -47,7 +47,25 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->where('ou.organization = :organization')
             ->innerJoin('ou.user', 'u')
             ->setParameter('organization', $uuid)
+            ->orderBy('u.fullName', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findUserOrganization(string $organizationUuid, string $userUuid): ?OrganizationUser
+    {
+        return $this->createQueryBuilder('ou')
+            ->addSelect('u', 'o')
+            ->where('ou.organization = :organization')
+            ->andWhere('ou.user = :user')
+            ->innerJoin('ou.user', 'u')
+            ->innerJoin('ou.organization', 'o')
+            ->setParameters([
+                'organization' => $organizationUuid,
+                'user' => $userUuid,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
