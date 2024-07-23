@@ -255,4 +255,4 @@ scalingo-node-postbuild: ## Scalingo postbuild hook for the Node buildpack
 
 scalingo-postdeploy: ## Scalingo postdeploy hook
 	@echo 'Executing migrations...'
-	${BIN_CONSOLE} doctrine:migrations:migrate --no-interaction
+	php bin/console doctrine:migrations:migrate --no-interaction
