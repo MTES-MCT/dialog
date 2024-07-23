@@ -70,7 +70,7 @@ final class EditUserController
 
         return new Response(
             content: $this->twig->render(
-                name: 'user/edit.html.twig',
+                name: 'organization/user/edit.html.twig',
                 context: [
                     'organization' => $organization,
                     'user' => $user,
