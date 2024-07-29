@@ -109,18 +109,22 @@ class MapLibreMap {
         const maplibregl = exports.default;
         this.#maplibregl = maplibregl;
 
-        // Create and configure the map
-        const map = new maplibregl.Map({
-            container: mapContainer,
-            style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
-            hash: 'mapZoomAndPosition',
-            ...mapOptions,
-        });
-        this.#map = map;
-
+        // Load data before creating maplibre Map
         const data = await dataSource.readValue();
 
         return new Promise((resolve) => {
+            // NOTE: creation and configuration of the map should be done synchronously, without any 'await' in between.
+            // See: https://github.com/MTES-MCT/dialog/issues/881
+
+            // Create and configure the map
+            const map = new maplibregl.Map({
+                container: mapContainer,
+                style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
+                hash: 'mapZoomAndPosition',
+                ...mapOptions,
+            });
+            this.#map = map;
+
             map.on('load', () => {
                 map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 
