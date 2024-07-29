@@ -39,9 +39,9 @@ class MapDataSource {
         this.#mapElement.onDataUrlChange(() => {
             this.#data = null;
 
-            this.readValue().then((json) => {
-                callback(json);
-            });
+            this.readValue()
+                .then((json) => callback(json))
+                .catch(err => console.error(err));
         });
     }
 }
@@ -210,9 +210,9 @@ class MapLibreMap {
      * @param {(instance: maplibregl.Map) => void} callback
      */
     onReady(callback) {
-        this.#prom.then(() => {
-            callback(this.#map);
-        });
+        this.#prom
+            .then(() => callback(this.#map))
+            .catch(err => console.error(err));
     }
 
     /**
