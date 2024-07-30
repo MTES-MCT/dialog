@@ -48,6 +48,20 @@ Pour intégrer une nouvelle table, mettez à jour le fichier `tools/bdtopo_updat
 
 De même, pour retirer une table qui n'est plus utilisée, retirez-la du fichier de configuration puis mettez à jour les données.
 
+### Intégrer de nouvelles colonnes dans la BD TOPO
+
+Pour les plus grosses tables comme `troncon_de_route`, on n'intègre que les colonnes dont on a besoin afin de limiter la taille de la BD TOPO sur le disque.
+
+Si vous avez besoin d'intégrer une nouvelle colonne, mettez à jour `tools/bdtopo_update.config.json`, puis [mettez à jour les données](#mettre-à-jour-les-données) mais ajoutez l'option `--overwrite` lors de l'exécution du script de mise à jour :
+
+```bash
+./tools/bdtopo_update ~/path/to/bdtopo --prod --overwrite
+```
+
+Cette option va supprimer les tables et refaire un import de zéro. Ensuite elle réexécute les migrations BD TOPO afin de recréer les indexes.
+
+Cet import de zéro est nécessaire car sinon la nouvelle colonne sera ignorée, seul le contenu des colonnes existantes sera mis à jour.
+
 ### Configurer des indexes
 
 La création d'indexes judicieux sur les tables BD TOPO peut permettre d'accélérer les requêtes.

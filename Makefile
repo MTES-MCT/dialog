@@ -81,6 +81,10 @@ bdtopo_migration: ## Generate new db migration for bdtopo
 bdtopo_migrate: ## Run db migrations for bdtopo
 	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing --configuration ./config/packages/bdtopo/doctrine_migrations.yaml ${ARGS}
 
+bdtopo_migrate_post_overwrite: ## Revert db migrations for bdtopo and run them again
+	make bdtopo_migrate ARGS="App\\\Infrastructure\\\Persistence\\\Doctrine\\\BdTopoMigrations\\\Version20240320122522"
+	make bdtopo_migrate
+
 dbshell: ## Connect to the database
 	docker-compose exec database psql postgresql://dialog:dialog@database:5432/dialog
 

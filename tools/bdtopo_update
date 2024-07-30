@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import re
 import signal
-import string
 import subprocess
 import sys
 from contextlib import ExitStack
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -73,7 +71,7 @@ class Config:
     tables: list[Table]
 
 
-def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
+def main(config: Config, directory: Path, url: str | None, overwrite: bool, yes: bool) -> int:
     if not directory.exists():
         print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
         return 1
@@ -157,8 +155,9 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
         # are provided, such as '?sslmode=prefer' by Scalingo.
         database_url = database_url.replace("postgres://", "postgresql://")
 
-        print("===> Will import into:")
-        print(database_url)
+        print("===> Import info:")
+        print("Database URL:", database_url)
+        print("Import mode:", "overwrite" if overwrite else "append")
 
         if not yes and input("------> Proceed? (y/N) ") != "y":
             return 1
@@ -185,8 +184,8 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
                     # (Geopackages in BD TOPO may not all use the same projection)
                     "-t_srs",
                     "EPSG:4326",
-                    # Append on subsequent calls
-                    "-append",
+                    # Append to existing data, or overwrite for faster re-ingestion
+                    "-overwrite" if overwrite else "-append",
                     # Use provided SQL statement, if any, to only import certain columns
                     # (In this case, progress bar won't be available due a limitation of the ogr2ogr Postgres driver)
                     *(["-sql", table.select_sql] if table.select_sql else []),
@@ -247,6 +246,12 @@ def main(config: Config, directory: Path, url: str | None, yes: bool) -> int:
             )
             result.check_returncode()
             print("------> VACUUM ANALYZE ran successfully!")
+
+            if overwrite:
+                print("===> Ran with overwrite, rewind and re-execute migrations to recreate indexes...")
+                result = subprocess.run(["make", "bdtopo_migrate_post_overwrite"])
+                result.check_returncode()
+                print("----> Migrations re-executed successfully!")
         except KeyboardInterrupt:
             # ogr2ogr already manages most of the cleanup for us, nothing to do.
             return 2
@@ -280,6 +285,9 @@ if __name__ == "__main__":
         help="Deploy to a PostgreSQL database identified by this database URL",
         default=None,
     )
+    parser.add_argument(
+        "--overwrite", action="store_true", help="Recreate tables instead of appending"
+    )
     parser.add_argument("-y", "--yes", action="store_true", help="Accept all prompts")
     parser.add_argument(
         "-c",
@@ -312,6 +320,7 @@ if __name__ == "__main__":
             config,
             directory=directory,
             url=args.url,
+            overwrite=args.overwrite,
             yes=args.yes,
         )
     )
