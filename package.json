@@ -34,7 +34,7 @@
         "blog_build": "cd blog && npm run build && npm run postbuild"
     },
     "dependencies": {
-        "@gouvfr/dsfr": "^1.7.2",
+        "@gouvfr/dsfr": "^1.12.1",
         "remixicon": "^2.5.0"
     },
     "engines": {
