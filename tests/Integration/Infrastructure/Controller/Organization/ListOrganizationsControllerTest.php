@@ -19,11 +19,8 @@ final class ListOrganizationsControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle('Mes organisations - DiaLog', $crawler);
 
         $organizations = $crawler->filter('[data-testid="organization-list"]');
-        $td = $organizations->filter('tr')->eq(0)->filter('td');
-        $this->assertCount(1, $organizations->filter('tr'));
-        $this->assertSame('Main Org', $td->eq(0)->text());
-        $this->assertSame('Contributeur', $td->eq(1)->text());
-        $this->assertSame('Voir le détail', $td->eq(2)->text());
+        $this->assertCount(1, $organizations->filter('[data-testid="organization-detail"]'));
+        $this->assertSame('Main Org Contributeur', $organizations->filter('[data-testid="organization-detail"]')->text());
     }
 
     public function testWithoutAuthenticatedUser(): void
