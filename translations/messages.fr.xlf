@@ -2006,14 +2006,6 @@
                 <source>organization.list.title</source>
                 <target>Mes organisations</target>
             </trans-unit>
-            <trans-unit id="organization.list.organizationName">
-                <source>organization.list.organizationName</source>
-                <target>Organisation</target>
-            </trans-unit>
-            <trans-unit id="organization.list.roles">
-                <source>organization.list.roles</source>
-                <target>Rôles</target>
-            </trans-unit>
             <trans-unit id="roles.ROLE_ORGA_CONTRIBUTOR">
                 <source>roles.ROLE_ORGA_CONTRIBUTOR</source>
                 <target>Contributeur</target>
