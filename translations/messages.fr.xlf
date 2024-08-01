@@ -2028,7 +2028,7 @@
             </trans-unit>
             <trans-unit id="user.list.title">
                 <source>user.list.title</source>
-                <target>Utilisateurs %organizationName%</target>
+                <target>Utilisateurs</target>
             </trans-unit>
             <trans-unit id="user.list.fullName">
                 <source>user.list.fullName</source>

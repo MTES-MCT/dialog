@@ -1,51 +1,56 @@
 {% extends 'layouts/app.html.twig' %}
 
 {% block title %}
-    {{'user.list.title'|trans({'%organizationName%': organization.name }) }} - {{ parent() }}
+    {{'user.list.title'|trans }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="user-list">
-        <div class="fr-grid-row">
-            <h3 id="user-list" class="fr-col fr-mb-0">{{ 'user.list.title'|trans({'%organizationName%': organization.name }) }}</h3>
-        </div>
-        <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
-            <table>
-                <caption>{{ 'user.list.title'|trans }}</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">{{ 'user.list.fullName'|trans }}</th>
-                        <th scope="col">{{ 'user.list.email'|trans }}</th>
-                        <th scope="col">{{ 'user.list.roles'|trans }}</th>
-                        <th scope="col">{{ 'common.actions'|trans }}</th>
-                    </tr>
-                </thead>
-                <tbody data-testid="user-list">
-                    {% for user in users %}
-                        <tr>
-                            <td>
-                                {{ user.fullName }}
-                            </td>
-                            <td>
-                                {{ user.email }}
-                            </td>
-                            <td>
-                                {% for role in user.roles %}
-                                    {{ ('roles.' ~ role)|trans }}
-                                    {% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                                    <a title="{{ 'common.update'|trans }}" href="{{ path('app_users_edit', { uuid: user.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-                                        {{ 'common.update'|trans }}
-                                    </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-3">
+                {% include 'organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-9">
+                <h3 id="user-list" class="fr-col fr-mb-0">{{ 'user.list.title'|trans }}</h3>
+                <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
+                    <table>
+                        <caption>{{ 'user.list.title'|trans }}</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">{{ 'user.list.fullName'|trans }}</th>
+                                <th scope="col">{{ 'user.list.email'|trans }}</th>
+                                <th scope="col">{{ 'user.list.roles'|trans }}</th>
+                                <th scope="col">{{ 'common.actions'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody data-testid="user-list">
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        {{ user.fullName }}
+                                    </td>
+                                    <td>
+                                        {{ user.email }}
+                                    </td>
+                                    <td>
+                                        {% for role in user.roles %}
+                                            {{ ('roles.' ~ role)|trans }}
+                                            {% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_users_edit', { uuid: user.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                {{ 'common.update'|trans }}
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </section>
 {% endblock %}

@@ -1,0 +1,32 @@
+{% set routeName = app.request.get('_route') %}
+
+<nav class="fr-sidemenu" role="navigation" aria-labelledby="sidemenu-title">
+    <div class="fr-sidemenu__inner">
+        <button class="fr-sidemenu__btn" aria-controls="sidemenu" aria-expanded="false">{{ organization.name }}</button>
+        <div class="fr-collapse" id="sidemenu">
+            <p class="fr-sidemenu__title" id="sidemenu-title">{{ organization.name }}</p>
+            <ul class="fr-sidemenu__list">
+                <li class="fr-sidemenu__item">
+                    <a class="fr-sidemenu__link" href="#">
+                        Mon organisation
+                    </a>
+                </li>
+                <li class="fr-sidemenu__item {% if 'app_users' in routeName %}fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{{ path('app_users_list', { uuid: organization.uuid }) }}" {% if 'app_users' in routeName %}aria-current="page"{% endif%}>
+                        {{ 'user.list.title'|trans }}
+                    </a>
+                </li>
+                <li class="fr-sidemenu__item">
+                    <a class="fr-sidemenu__link" href="#">
+                        Modèles de visas
+                    </a>
+                </li>
+                <li class="fr-sidemenu__item">
+                    <a class="fr-sidemenu__link" href="#">
+                        Signatures / cachet
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
