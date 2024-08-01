@@ -6,41 +6,31 @@
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="organization-list">
-        <div class="fr-grid-row">
-            <h3 id="organization-list" class="fr-col fr-mb-0">{{ 'organization.list.title'|trans }}</h3>
-        </div>
-        <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
-            <table>
-                <caption>{{ 'organization.list.title'|trans }}</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">{{ 'organization.list.organizationName'|trans }}</th>
-                        <th scope="col">{{ 'organization.list.roles'|trans }}</th>
-                        <th scope="col">{{ 'common.actions'|trans }}</th>
-                    </tr>
-                </thead>
-                <tbody data-testid="organization-list">
-                    {% for organization in organizations %}
-                        <tr>
-                            <td>
-                                {{ organization.name }}
-                            </td>
-
-                            <td>
-                                {% for role in organization.roles %}
-                                    {{ ('roles.' ~ role)|trans }}
-                                    {% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
-                                <a title="{{ 'common.see'|trans }}" href="{{ path('app_users_list', { uuid: organization.uuid }) }}" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline">
-                                    {{ 'common.see'|trans }}
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <h3 id="organization-list">{{ 'organization.list.title'|trans }}</h3>
+        <div class="fr-grid-row fr-grid-row--gutters" data-testid="organization-list">
+            {% for organization in organizations %}
+                <div class="fr-col-12 fr-col-md-4 fr-col-lg-4" data-testid="organization-detail">
+                    <div class="fr-tile fr-tile--horizontal fr-enlarge-link">
+                        <div class="fr-tile__body">
+                            <div class="fr-tile__content">
+                                <h3 class="fr-tile__title">
+                                    <a href="{{ path('app_users_list', { uuid: organization.uuid }) }}">{{ organization.name }}</a>
+                                </h3>
+                                <p class="fr-tile__detail">
+                                    {% for role in organization.roles %}
+                                        {{ ('roles.' ~ role)|trans }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-tile__header">
+                            <div class="fr-tile__pictogram">
+                                <img src="{{ asset('images/city-hall.png') }}" alt="city-hall" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </section>
 {% endblock %}
