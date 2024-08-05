@@ -75,7 +75,10 @@ final class JOPTransformerTest extends TestCase
         $roadGeocoder
             ->expects(self::once())
             ->method('findSectionsInArea')
-            ->with('{"type":"Polygon","coordinates":"<coords1>","crs":{"type":"name","properties":{"name":"EPSG:4326"}}}')
+            ->with(
+                '{"type":"Polygon","coordinates":"<coords1>","crs":{"type":"name","properties":{"name":"EPSG:4326"}}}',
+                [RoadGeocoderInterface::HIGHWAY],
+            )
             ->willReturn('<sectionsGeometry1>');
 
         $translator

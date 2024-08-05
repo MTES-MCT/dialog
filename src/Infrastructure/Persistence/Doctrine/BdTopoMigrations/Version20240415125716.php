@@ -28,6 +28,6 @@ final class Version20240415125716 extends AbstractMigration
     {
         $this->addSql('DROP INDEX IF EXISTS voie_nommee_nom_minuscule_search_idx');
         $this->addSql('DROP INDEX IF EXISTS voie_nommee_code_insee_idx');
-        $this->addSql('ALTER TABLE voie_nommee DROP COLUMN nom_minuscule_search');
+        $this->addSql('ALTER TABLE voie_nommee DROP COLUMN IF EXISTS nom_minuscule_search');
     }
 }

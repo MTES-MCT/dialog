@@ -105,7 +105,10 @@ final readonly class JOPTransformer
 
             // CRS is missing in the data but required by PostGIS
             $areaGeometry['crs'] = ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']];
-            $sectionsGeometryCollection = $this->roadGeocoder->findSectionsInArea(json_encode($areaGeometry));
+            $sectionsGeometryCollection = $this->roadGeocoder->findSectionsInArea(
+                json_encode($areaGeometry),
+                excludeTypes: [$this->roadGeocoder::HIGHWAY],
+            );
 
             $locationCommand = new SaveLocationCommand();
             $locationCommand->roadType = RoadTypeEnum::RAW_GEOJSON->value;

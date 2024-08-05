@@ -12,7 +12,7 @@
         {
             "name": "troncon_de_route",
             "select_sql": [
-                "SELECT identifiant_voie_1_gauche, sens_de_circulation, geometrie",
+                "SELECT identifiant_voie_1_gauche, sens_de_circulation, nature, geometrie",
                 "FROM troncon_de_route"
             ]
         }
