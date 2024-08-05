@@ -13,4 +13,6 @@ interface UserRepositoryInterface
     public function countUsers(): int;
 
     public function add(User $user): void;
+
+    public function remove(User $user): void;
 }
