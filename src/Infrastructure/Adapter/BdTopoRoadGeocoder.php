@@ -10,6 +10,7 @@ use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\IntersectionGeocoderInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 
 final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeocoderInterface
@@ -321,16 +322,33 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return Coordinates::fromLonLat((float) $x, (float) $y);
     }
 
-    public function findSectionsInArea(string $areaGeometry): string
+    public function findSectionsInArea(string $areaGeometry, array $excludeTypes = []): string
     {
+        $bdTopoExcludeTypes = [];
+
+        foreach ($excludeTypes as $type) {
+            $bdTopoExcludeTypes[] = match ($type) {
+                $this::HIGHWAY => 'Type autoroutier',
+                default => $type,
+            };
+        }
+
         try {
             $row = $this->bdtopoConnection->fetchAssociative(
-                'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(t.geometrie))) AS geom
-                FROM troncon_de_route AS t
-                WHERE ST_Intersects(t.geometrie, :areaGeometry)
-                ',
+                sprintf(
+                    'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(t.geometrie))) AS geom
+                    FROM troncon_de_route AS t
+                    WHERE ST_Intersects(t.geometrie, :areaGeometry)
+                    %s
+                    ',
+                    $bdTopoExcludeTypes ? 'AND t.nature NOT IN (:types)' : '',
+                ),
                 [
                     'areaGeometry' => $areaGeometry,
+                    'types' => $bdTopoExcludeTypes,
+                ],
+                [
+                    'types' => ArrayParameterType::STRING,
                 ],
             );
         } catch (\Exception $exc) {

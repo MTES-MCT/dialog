@@ -8,6 +8,8 @@ use App\Domain\Geography\Coordinates;
 
 interface RoadGeocoderInterface
 {
+    public const HIGHWAY = 'HIGHWAY';
+
     public function computeRoadLine(string $roadName, string $inseeCode): string;
 
     public function findRoads(string $search, string $administrator): array;
@@ -25,5 +27,5 @@ interface RoadGeocoderInterface
 
     public function findRoadNames(string $search, string $cityCode): array;
 
-    public function findSectionsInArea(string $areaGeometry): string;
+    public function findSectionsInArea(string $areaGeometry, array $excludeTypes = []): string;
 }
