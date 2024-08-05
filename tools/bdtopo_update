@@ -71,7 +71,9 @@ class Config:
     tables: list[Table]
 
 
-def main(config: Config, directory: Path, url: str | None, overwrite: bool, yes: bool) -> int:
+def main(
+    config: Config, directory: Path, url: str | None, overwrite: bool, yes: bool
+) -> int:
     if not directory.exists():
         print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
         return 1
@@ -194,6 +196,9 @@ def main(config: Config, directory: Path, url: str | None, overwrite: bool, yes:
                     "--config",
                     "PG_USE_COPY",
                     "YES",
+                    # Explicitly set the name of the FID column to create
+                    "-lco",
+                    "FID=ogc_fid",
                 ]
 
                 if table.name not in tables_seen:
@@ -248,10 +253,10 @@ def main(config: Config, directory: Path, url: str | None, overwrite: bool, yes:
             print("------> VACUUM ANALYZE ran successfully!")
 
             if overwrite:
-                print("===> Ran with overwrite, rewind and re-execute migrations to recreate indexes...")
-                result = subprocess.run(["make", "bdtopo_migrate_post_overwrite"])
-                result.check_returncode()
-                print("----> Migrations re-executed successfully!")
+                print(
+                    "===> NOTE: run 'make bdtopo_migrate_redo' "
+                    "to recreate indexes"
+                )
         except KeyboardInterrupt:
             # ogr2ogr already manages most of the cleanup for us, nothing to do.
             return 2

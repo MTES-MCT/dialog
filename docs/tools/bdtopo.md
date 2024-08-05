@@ -58,7 +58,15 @@ Si vous avez besoin d'intégrer une nouvelle colonne, mettez à jour `tools/bdto
 ./tools/bdtopo_update ~/path/to/bdtopo --prod --overwrite
 ```
 
-Cette option va supprimer les tables et refaire un import de zéro. Ensuite elle réexécute les migrations BD TOPO afin de recréer les indexes.
+Cette option va supprimer les tables et refaire un import de zéro.
+
+Il faut ensuite recréer les indexes en réexecutant les migrations :
+
+```bash
+make bdtopo_migrate_redo
+```
+
+Ensuite elle réexécute les migrations BD TOPO afin de recréer les indexes.
 
 Cet import de zéro est nécessaire car sinon la nouvelle colonne sera ignorée, seul le contenu des colonnes existantes sera mis à jour.
 
