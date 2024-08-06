@@ -12,11 +12,11 @@ L'intégration JOP consiste à traiter ce GeoJSON pour créer un unique arrêté
 
 Si `zones.geojson` change ou si l'arrêté `JOP2024-ZONES` doit être recalculé pour une quelconque autre raison, voici comment procéder pour le mettre à jour.
 
-0. Récupérer le UUID de l'organisation "Préfecture de Police de Paris" (PP) en prod. Pour cela demander à un super-admin : l'UUID est visible dans l'URL de la page de l'organisation dans l'admin.
-0. Créer un fichier `.env.prod.local` vide, et y définir :
+1. Récupérer le UUID de l'organisation "Préfecture de Police de Paris" (PP) en prod. Pour cela demander à un super-admin : l'UUID est visible dans l'URL de la page de l'organisation dans l'admin.
+2. Créer un fichier `.env.prod.local` vide, et y définir :
     * `BDTOPO_DATABASE_URL`
     * `APP_JOP_ORG_ID=ID`, où `ID` est l'UUID de la PP que vous venez de récupérer.
-0. Ouvrir un [tunnel](./db.md#utiliser-une-db-scalingo-en-local) vers la DB de prod :
+3. Ouvrir un [tunnel](./db.md#utiliser-une-db-scalingo-en-local) vers la DB de prod :
 
     ```bash
     ./tools/scalingodbtunnel dialog
@@ -24,8 +24,8 @@ Si `zones.geojson` change ou si l'arrêté `JOP2024-ZONES` doit être recalculé
 
     Copier l'URL qui s'affiche dans le terminal.
 
-0. Dans `.env.prod.local`, ajouter `DATABASE_URL=URL` où `URL` est l'URL que vous venez de copier.
-0. Lancer cette commande :
+4. Dans `.env.prod.local`, ajouter `DATABASE_URL=URL` où `URL` est l'URL que vous venez de copier.
+5. Lancer cette commande :
 
 ```bash
 make console CMD="app:jop:import --env=prod"
