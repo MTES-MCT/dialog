@@ -48,7 +48,9 @@ final class EudonetParisExtractor
     // See: https://eudonet-partage.apps.paris.fr/eudoapi/eudoapidoc/lexique_FR.html
     public const EQUALS = 0;
     public const AND = 1;
+    public const OR = 2;
     public const GREATER_THAN = 3;
+    public const NOT_EQUALS = 5;
     public const NOT_IN_LIST = 15;
 
     // ARRETE_TYPE values
@@ -57,6 +59,68 @@ final class EudonetParisExtractor
     public function __construct(
         private EudonetParisClient $eudonetParisClient,
     ) {
+    }
+
+    public function numberOfRegulations(): int
+    {
+        // hack : Eudonet API needs a $whereCustoms -> we provide a $whereCustom that matches all regulations
+        $whereCustomsActuallyAllRegulations = [
+            [
+                'Criteria' => [
+                    'Field' => $this::ARRETE_TYPE,
+                    'Operator' => $this::EQUALS,
+                    'Value' => $this::TEMPORAIRE,
+                ],
+            ],
+            [
+                'Criteria' => [
+                    'Field' => $this::ARRETE_TYPE,
+                    'Operator' => $this::NOT_EQUALS,
+                    'Value' => $this::TEMPORAIRE,
+                ],
+                'InterOperator' => $this::OR,
+            ],
+        ];
+        $numberOfRegulations = $this->eudonetParisClient->count(
+            tabId: $this::ARRETE_TAB_ID,
+            listCols: [
+                self::ARRETE_ID,
+            ],
+            whereCustom: ['WhereCustoms' => $whereCustomsActuallyAllRegulations],
+        );
+
+        return $numberOfRegulations;
+    }
+
+    public function numberOfMeasures(): int
+    {
+        // hack : Eudonet API needs a $whereCustoms -> we provide a $whereCustom that matches all measures
+        $whereCustomsActuallyAllMeasures = [
+            [
+                'Criteria' => [
+                    'Field' => $this::MESURE_NOM,
+                    'Operator' => $this::EQUALS,
+                    'Value' => $this::MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE,
+                ],
+            ],
+            [
+                'Criteria' => [
+                    'Field' => $this::MESURE_NOM,
+                    'Operator' => $this::NOT_EQUALS,
+                    'Value' => $this::MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE,
+                ],
+                'InterOperator' => $this::OR,
+            ],
+        ];
+        $numberOfMeasures = $this->eudonetParisClient->count(
+            tabId: $this::MESURE_TAB_ID,
+            listCols: [
+                self::MESURE_ID,
+            ],
+            whereCustom: ['WhereCustoms' => $whereCustomsActuallyAllMeasures],
+        );
+
+        return $numberOfMeasures;
     }
 
     public function iterExtract(\DateTimeInterface $laterThanUTC, array $ignoreIDs = []): \Iterator
