@@ -2022,6 +2022,14 @@
                 <source>user.list.title</source>
                 <target>Utilisateurs</target>
             </trans-unit>
+            <trans-unit id="user.list.delete">
+                <source>user.list.delete</source>
+                <target>Supprimer %fullName% de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="user.delete_modal.title">
+                <source>user.delete_modal.title</source>
+                <target>Supprimer cet utilisateur ?</target>
+            </trans-unit>
             <trans-unit id="user.list.fullName">
                 <source>user.list.fullName</source>
                 <target>Prénom / Nom</target>

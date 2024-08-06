@@ -11,6 +11,8 @@ interface OrganizationUserRepositoryInterface
 {
     public function add(OrganizationUser $organizationUser): void;
 
+    public function remove(OrganizationUser $organizationUser): void;
+
     public function findOrganizationsByUser(User $user): array;
 
     public function findUsersByOrganizationUuid(string $uuid): array;
