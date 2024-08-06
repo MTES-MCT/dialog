@@ -7,17 +7,20 @@ namespace App\Application\User\Command;
 use App\Application\CommandInterface;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
-use App\Domain\User\User;
 
 final class SaveUserOrganizationCommand implements CommandInterface
 {
+    public ?string $fullName = null;
+    public ?string $email = null;
+    public ?string $password = null;
     public array $roles = [];
 
     public function __construct(
-        public readonly User $user,
         public readonly Organization $organization,
         public readonly ?OrganizationUser $organizationUser = null,
     ) {
         $this->roles = $organizationUser?->getRoles() ?? [];
+        $this->fullName = $organizationUser?->getUser()?->getFullName();
+        $this->email = $organizationUser?->getUser()?->getEmail();
     }
 }

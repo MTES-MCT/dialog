@@ -61,13 +61,29 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
     {
         return $this->createQueryBuilder('ou')
             ->addSelect('u', 'o')
-            ->where('ou.organization = :organization')
-            ->andWhere('ou.user = :user')
+            ->where('o.uuid = :organizationUuid')
+            ->andWhere('ou.user = :userUuid')
             ->innerJoin('ou.user', 'u')
             ->innerJoin('ou.organization', 'o')
             ->setParameters([
-                'organization' => $organizationUuid,
-                'user' => $userUuid,
+                'organizationUuid' => $organizationUuid,
+                'userUuid' => $userUuid,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findByEmailAndOrganization(string $email, string $organizationUuid): ?OrganizationUser
+    {
+        return $this->createQueryBuilder('ou')
+            ->where('o.uuid = :organizationUuid')
+            ->andWhere('u.email = :email')
+            ->innerJoin('ou.user', 'u')
+            ->innerJoin('ou.organization', 'o')
+            ->setParameters([
+                'organizationUuid' => $organizationUuid,
+                'email' => $email,
             ])
             ->setMaxResults(1)
             ->getQuery()
