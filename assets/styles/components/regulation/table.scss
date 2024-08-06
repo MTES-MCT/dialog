@@ -9,13 +9,14 @@
             width: 10%;
         }
     }
-    .app-regulation-table__actions {
-        width: 25%;
-        @media screen and (min-width: 36em) {
-            width: 15%;
-        }
-        @media screen and (min-width: 48em) {
-            width: 20%;
-        }
+}
+
+.app-table__actions {
+    width: 20%;
+    @media screen and (min-width: 36em) {
+        width: 10%;
+    }
+    @media screen and (min-width: 48em) {
+        width: 15%;
     }
 }

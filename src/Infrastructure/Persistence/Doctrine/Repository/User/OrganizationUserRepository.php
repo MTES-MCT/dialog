@@ -25,6 +25,11 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
         $this->getEntityManager()->persist($organizationUser);
     }
 
+    public function remove(OrganizationUser $organizationUser): void
+    {
+        $this->getEntityManager()->remove($organizationUser);
+    }
+
     public function findOrganizationsByUser(User $user): array
     {
         return $this->createQueryBuilder('ou')
