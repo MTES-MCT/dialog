@@ -6,7 +6,7 @@ DiaLog intègre les données des zones JOP pour les Jeux Olympiques de Paris 202
 
 Un fichier GeoJSON préparé à partir du Shapefile de la Préfecture de Police de Paris est stocké dans le dépôt : [data/jop/zones.geojson](../../data/jop/zones.geojson). Voir son [README.md](../../data/jop) pour savoir comment il a été préparé.
 
-L'intégration JOP consiste à traiter ce GeoJSON pour créer un unique arrêté `JOP2024-ZONES` contenant les différentes mesures et localisations. La zone concernée est indiquée via un "Sauf...".
+L'intégration JOP consiste à traiter ce GeoJSON pour créer un unique arrêté `JOP2024-ZONES` contenant les différentes mesures et localisations. La zone JOP (bleue, rouge, grise) correspondant à la localisation est indiquée en remplissant le champ `otherExemptedTypeText`.
 
 ## Mettre à jour les données
 
@@ -30,6 +30,8 @@ Si `zones.geojson` change ou si l'arrêté `JOP2024-ZONES` doit être recalculé
 ```bash
 make console CMD="app:jop:import --env=prod"
 ```
+
+    L'exécution prendra généralement quelques minutes. Les logs d'exécution seront ajoutés au dossier `logs/jop/`. En cas d'exception la commande échouera.
 
 ## Références
 
