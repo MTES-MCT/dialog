@@ -48,6 +48,7 @@ final class UserFormType extends AbstractType
                         "roles.$roleAdmin" => $roleAdmin,
                     ],
                     'label' => 'user.form.roles',
+                    'help' => 'user.form.roles.help',
                     'expanded' => true,
                     'multiple' => true,
                 ],
