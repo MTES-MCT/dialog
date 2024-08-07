@@ -1,33 +1,32 @@
 {% extends 'layouts/app.html.twig' %}
-{% set metaTitle = user.fullName ~ ' (' ~ user.email ~ ')' %}
+{% set metaTitle = user.fullName %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
-    <section class="fr-container fr-py-5w" aria-labelledby="user-list">
-            <div class="fr-grid-row fr-grid-row--gutters">
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-3">
                 {% include 'organization/_menu.html.twig' with { organization } only %}
             </div>
             <div class="fr-col-12 fr-col-md-9">
-                <div class="app-card app-card--raised">
-                    <div class="app-card__header">
-                        <span class="app-card__img fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-                        <h3 class="app-card__title fr-h4 fr-mb-0">
-                            {{ metaTitle }}
-                        </h3>
-                    </div>
-                    <div class="app-card__content">
-                        {{ form_start(form) }}
-                            {{ form_row(form.roles) }}
-                            <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
-                                {{ "common.cancel"|trans }}
-                            </a>
-                            {{ form_widget(form.save) }}
-                        {{ form_end(form) }}
-                    </div>
-                </div>
+                <h3 class="fr-h3 fr-mb-2">
+                    {{ metaTitle }}
+                </h3>
+                {{ form_start(form) }}
+                    {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {% if form.password is defined %}
+                        {{ form_row(form.password, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {% endif %}
+                    {{ form_row(form.roles) }}
+
+                    <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                        {{ "common.cancel"|trans }}
+                    </a>
+                    {{ form_widget(form.save) }}
+                {{ form_end(form) }}
             </div>
         </div>
     </section>

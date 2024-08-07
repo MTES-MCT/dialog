@@ -7,10 +7,14 @@ namespace App\Infrastructure\Form\User;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-final class RolesFormType extends AbstractType
+final class UserFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -20,6 +24,21 @@ final class RolesFormType extends AbstractType
 
         $builder
             ->add(
+                'fullName',
+                TextType::class,
+                options: [
+                    'label' => 'user.list.fullName',
+                ],
+            )
+            ->add(
+                'email',
+                EmailType::class,
+                options: [
+                    'label' => 'user.list.email',
+                    'help' => 'login.email_format',
+                ],
+            )
+            ->add(
                 'roles',
                 ChoiceType::class,
                 options: [
@@ -28,7 +47,7 @@ final class RolesFormType extends AbstractType
                         "roles.$rolePublisher" => $rolePublisher,
                         "roles.$roleAdmin" => $roleAdmin,
                     ],
-                    'label' => 'user.list.roles',
+                    'label' => 'user.form.roles',
                     'expanded' => true,
                     'multiple' => true,
                 ],
@@ -40,5 +59,17 @@ final class RolesFormType extends AbstractType
                 ],
             )
         ;
+
+        if (!$options['data']->organizationUser) {
+            $builder->add(
+                'password',
+                RepeatedType::class,
+                options: [
+                    'type' => PasswordType::class,
+                    'first_options' => ['label' => 'user.form.password'],
+                    'second_options' => ['label' => 'user.form.password.repeat'],
+                ],
+            );
+        }
     }
 }

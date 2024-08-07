@@ -3,8 +3,23 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\User\Command\SaveUserOrganizationCommand">
+        <property name="fullName">
+            <constraint name="NotBlank"/>
+        </property>
+        <property name="email">
+            <constraint name="NotBlank"/>
+            <constraint name="Email"/>
+        </property>
         <property name="roles">
             <constraint name="NotBlank"/>
+        </property>
+        <property name="password">
+            <constraint name="When">
+                <option name="expression">!this.organizationUser</option>
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                </option>
+            </constraint>
         </property>
     </class>
 </constraint-mapping>
