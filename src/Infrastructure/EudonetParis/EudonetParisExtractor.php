@@ -61,7 +61,7 @@ final class EudonetParisExtractor
     ) {
     }
 
-    public function numberOfRegulations(): int
+    public function getNumberOfRegulations(): int
     {
         // hack : Eudonet API needs a $whereCustoms -> we provide a $whereCustom that matches all regulations
         $whereCustomsActuallyAllRegulations = [
@@ -92,7 +92,7 @@ final class EudonetParisExtractor
         return $numberOfRegulations;
     }
 
-    public function numberOfMeasures(): int
+    public function getNumberOfMeasures(): int
     {
         // hack : Eudonet API needs a $whereCustoms -> we provide a $whereCustom that matches all measures
         $whereCustomsActuallyAllMeasures = [
