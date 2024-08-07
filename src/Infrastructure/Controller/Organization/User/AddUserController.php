@@ -7,9 +7,8 @@ namespace App\Infrastructure\Controller\Organization\User;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Command\SaveUserOrganizationCommand;
-use App\Application\User\Query\GetOrganizationUserQuery;
-use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\Exception\UserOrganizationNotFoundException;
+use App\Domain\User\Exception\UserAlreadyRegisteredException;
+use App\Infrastructure\Controller\Organization\AbstractOrganizationController;
 use App\Infrastructure\Form\User\UserFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,13 +18,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class EditUserController
+final class AddUserController extends AbstractOrganizationController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -33,33 +31,27 @@ final class EditUserController
         private RouterInterface $router,
         private TranslatorInterface $translator,
         private CommandBusInterface $commandBus,
-        private QueryBusInterface $queryBus,
-        private Security $security,
+        QueryBusInterface $queryBus,
+        Security $security,
     ) {
+        parent::__construct($queryBus, $security);
     }
 
     #[Route(
-        '/organizations/{organizationUuid}/users/{uuid}/edit',
-        name: 'app_users_edit',
-        requirements: ['organizationUuid' => Requirement::UUID, 'uuid' => Requirement::UUID],
+        '/organizations/{organizationUuid}/users/add',
+        name: 'app_users_add',
+        requirements: ['organizationUuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
-    public function __invoke(Request $request, string $organizationUuid, string $uuid): Response
+    public function __invoke(Request $request, string $organizationUuid): Response
     {
-        try {
-            $userOrganization = $this->queryBus->handle(new GetOrganizationUserQuery($organizationUuid, $uuid));
-        } catch (UserOrganizationNotFoundException) {
-            throw new NotFoundHttpException();
-        }
-
-        $organization = $userOrganization->getOrganization();
-        $user = $userOrganization->getUser();
+        $organization = $this->getOrganization($organizationUuid);
 
         if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)) {
             throw new AccessDeniedHttpException();
         }
 
-        $command = new SaveUserOrganizationCommand($organization, $userOrganization);
+        $command = new SaveUserOrganizationCommand($organization);
         $form = $this->formFactory->create(UserFormType::class, $command);
         $form->handleRequest($request);
 
@@ -71,9 +63,9 @@ final class EditUserController
                     url: $this->router->generate('app_users_list', ['uuid' => $organizationUuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
-            } catch (EmailAlreadyExistsException) {
+            } catch (UserAlreadyRegisteredException) {
                 $form->get('email')->addError(
-                    new FormError($this->translator->trans('email.already.exists', [], 'validators')),
+                    new FormError($this->translator->trans('user.already.registered', [], 'validators')),
                 );
             }
         }
@@ -83,7 +75,6 @@ final class EditUserController
                 name: 'organization/user/form.html.twig',
                 context: [
                     'organization' => $organization,
-                    'user' => $user,
                     'form' => $form->createView(),
                 ],
             ),
