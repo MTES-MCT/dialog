@@ -62,7 +62,7 @@ final class LocationFormType extends AbstractType
         $choiceAttr = [];
 
         foreach (RoadTypeEnum::cases() as $case) {
-            $label = sprintf('regulation.location.road.type.%s', $case->value);
+            $label = \sprintf('regulation.location.road.type.%s', $case->value);
 
             if ($case->value === RoadTypeEnum::RAW_GEOJSON->value && !$includeRawGeoJSONOption) {
                 $choiceAttr[$label] = [

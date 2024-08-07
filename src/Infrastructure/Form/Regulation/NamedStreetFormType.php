@@ -102,7 +102,7 @@ final class NamedStreetFormType extends AbstractType
         $choices = [];
 
         foreach (PointTypeEnum::cases() as $case) {
-            $choices[sprintf('regulation.location.named_street.point_type.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.location.named_street.point_type.%s', $case->value)] = $case->value;
         }
 
         $choices = array_merge(

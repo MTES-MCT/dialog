@@ -29,7 +29,7 @@ class GeoJSONGeometryType extends GeometryType
     {
         $options = $this->getNormalizedPostGISColumnOptions($column);
 
-        return sprintf(
+        return \sprintf(
             '%s(%s, %d)',
             'geometry', // would use getName() ('geojson_geometry') by default, but the PostGIS type is still 'geometry'
             $options['geometry_type'],
@@ -39,11 +39,11 @@ class GeoJSONGeometryType extends GeometryType
 
     public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform): string
     {
-        return sprintf('ST_GeomFromGeoJSON(%s)', $sqlExpr);
+        return \sprintf('ST_GeomFromGeoJSON(%s)', $sqlExpr);
     }
 
     public function convertToPHPValueSQL($sqlExpr, $platform): string
     {
-        return sprintf('ST_AsGeoJSON(%s)', $sqlExpr);
+        return \sprintf('ST_AsGeoJSON(%s)', $sqlExpr);
     }
 }
