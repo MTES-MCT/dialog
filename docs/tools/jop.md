@@ -27,9 +27,9 @@ Si `zones.geojson` change ou si l'arrêté `JOP2024-ZONES` doit être recalculé
 4. Dans `.env.prod.local`, ajouter `DATABASE_URL=URL` où `URL` est l'URL que vous venez de copier.
 5. Lancer cette commande :
 
-```bash
-make console CMD="app:jop:import --env=prod"
-```
+    ```bash
+    make console CMD="app:jop:import --env=prod"
+    ```
 
     L'exécution prendra généralement quelques minutes. Les logs d'exécution seront ajoutés au dossier `logs/jop/`. En cas d'exception la commande échouera.
 
