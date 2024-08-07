@@ -2036,7 +2036,19 @@
             </trans-unit>
             <trans-unit id="user.list.email">
                 <source>user.list.email</source>
-                <target>Email</target>
+                <target>Adresse e-mail</target>
+            </trans-unit>
+            <trans-unit id="user.form.password">
+                <source>user.form.password</source>
+                <target>Mot de passe</target>
+            </trans-unit>
+            <trans-unit id="user.form.password.repeat">
+                <source>user.form.password.repeat</source>
+                <target>Confirmer le mot de passe</target>
+            </trans-unit>
+            <trans-unit id="user.form.roles">
+                <source>user.form.roles</source>
+                <target>Assigner un ou plusieurs rôles à l'utilisateur</target>
             </trans-unit>
             <trans-unit id="user.list.roles">
                 <source>user.list.roles</source>

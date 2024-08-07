@@ -8,10 +8,12 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Command\SaveUserOrganizationCommand;
 use App\Application\User\Query\GetOrganizationUserQuery;
+use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\UserOrganizationNotFoundException;
-use App\Infrastructure\Form\User\RolesFormType;
+use App\Infrastructure\Form\User\UserFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class EditUserController
 {
@@ -28,6 +31,7 @@ final class EditUserController
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
+        private TranslatorInterface $translator,
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private Security $security,
@@ -55,17 +59,23 @@ final class EditUserController
             throw new AccessDeniedHttpException();
         }
 
-        $command = new SaveUserOrganizationCommand($user, $organization, $userOrganization);
-        $form = $this->formFactory->create(RolesFormType::class, $command);
+        $command = new SaveUserOrganizationCommand($organization, $userOrganization);
+        $form = $this->formFactory->create(UserFormType::class, $command);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->commandBus->handle($command);
+            try {
+                $this->commandBus->handle($command);
 
-            return new RedirectResponse(
-                url: $this->router->generate('app_users_list', ['uuid' => $organizationUuid]),
-                status: Response::HTTP_SEE_OTHER,
-            );
+                return new RedirectResponse(
+                    url: $this->router->generate('app_users_list', ['uuid' => $organizationUuid]),
+                    status: Response::HTTP_SEE_OTHER,
+                );
+            } catch (EmailAlreadyExistsException) {
+                $form->get('email')->addError(
+                    new FormError($this->translator->trans('email.already.exists', [], 'validators')),
+                );
+            }
         }
 
         return new Response(

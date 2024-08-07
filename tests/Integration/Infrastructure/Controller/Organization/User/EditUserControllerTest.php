@@ -17,20 +17,40 @@ final class EditUserControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Mathieu MARCHOIS (mathieu.marchois@beta.gouv.fr)', $crawler->filter('h3')->text());
-        $this->assertMetaTitle('Mathieu MARCHOIS (mathieu.marchois@beta.gouv.fr) - DiaLog', $crawler);
+        $this->assertSame('Mathieu MARCHOIS', $crawler->filter('h3')->text());
+        $this->assertMetaTitle('Mathieu MARCHOIS - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['roles_form']['roles'] = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $values['user_form']['fullName'] = 'Mathieu MARCHOIS';
+        $values['user_form']['email'] = 'mathieu.marchois@beta.gouv.fr';
+        $values['user_form']['roles'] = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
         $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_users_list');
+    }
+
+    public function testBadEmail(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['user_form']['email'] = 'mathieu.fernandez@beta.gouv.fr';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette adresse email est déjà associée à un autre compte.', $crawler->filter('#user_form_email_error')->text());
     }
 
     public function testBadFormValues(): void
@@ -43,12 +63,21 @@ final class EditUserControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['roles_form']['roles'] = [];
+        $values['user_form']['fullName'] = '';
+        $values['user_form']['email'] = '';
+        $values['user_form']['roles'] = [];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#roles_form_roles_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_roles_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_email_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_fullName_error')->text());
+
+        $values['user_form']['email'] = 'abc';
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#user_form_email_error')->text());
     }
 
     public function testNotAdministrator(): void

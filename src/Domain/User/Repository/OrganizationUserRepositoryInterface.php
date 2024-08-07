@@ -18,4 +18,6 @@ interface OrganizationUserRepositoryInterface
     public function findUsersByOrganizationUuid(string $uuid): array;
 
     public function findUserOrganization(string $organizationUuid, string $userUuid): ?OrganizationUser;
+
+    public function findByEmailAndOrganization(string $email, string $organizationUuid): ?OrganizationUser;
 }
