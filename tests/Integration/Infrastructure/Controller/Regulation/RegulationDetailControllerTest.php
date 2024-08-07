@@ -12,9 +12,9 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class RegulationDetailControllerTest extends AbstractWebTestCase
 {
-    public function testDraftRegulationDetail(): void
+    public function testDraftRegulationDetailAsAdmin(): void
     {
-        $client = $this->login();
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
         $this->assertSecurityHeaders();
@@ -80,6 +80,14 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         // Go back link
         $goBackLink = $crawler->selectLink('Revenir aux arrêtés');
         $this->assertSame('/regulations?tab=temporary', $goBackLink->extract(['href'])[0]);
+    }
+
+    public function testDraftRegulationDetailAsContributor(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+
+        $this->assertSame(0, $crawler->selectButton('Publier')->count());
     }
 
     public function testPermanentRegulationDetail(): void
