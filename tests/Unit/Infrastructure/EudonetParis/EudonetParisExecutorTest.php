@@ -117,6 +117,16 @@ final class EudonetParisExecutorTest extends TestCase
                 2 => 1695218796.3069,
             });
 
+        $this->extractor
+            ->expects(self::once())
+            ->method('numberOfRegulations')
+            ->willReturn(3);
+
+        $this->extractor
+            ->expects(self::once())
+            ->method('numberOfMeasures')
+            ->willReturn(3);
+
         $logMatcher = self::exactly(5);
         $this->logger
             ->expects($logMatcher)
@@ -138,6 +148,8 @@ final class EudonetParisExecutorTest extends TestCase
                         'numErrors' => 0,
                         'percentErrors' => 0,
                         'elapsedSeconds' => 17.67,
+                        'numberOfRegulationsInsideEudonet' => 3,
+                        'numberOfMeasuresInsideEudonet' => 3,
                     ])
                 ),
             });
@@ -188,6 +200,16 @@ final class EudonetParisExecutorTest extends TestCase
                 2 => 1695218779.3069,
             });
 
+        $this->extractor
+        ->expects(self::once())
+        ->method('numberOfRegulations')
+        ->willReturn(0);
+
+        $this->extractor
+        ->expects(self::once())
+        ->method('numberOfMeasures')
+        ->willReturn(0);
+
         $logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
@@ -206,6 +228,8 @@ final class EudonetParisExecutorTest extends TestCase
                         'numErrors' => 0,
                         'percentErrors' => 0,
                         'elapsedSeconds' => 0.67,
+                        'numberOfRegulationsInsideEudonet' => 0,
+                        'numberOfMeasuresInsideEudonet' => 0,
                     ])
                 ),
             });
@@ -313,6 +337,16 @@ final class EudonetParisExecutorTest extends TestCase
                 2 => 1695218796.3069,
             });
 
+        $this->extractor
+            ->expects(self::once())
+            ->method('numberOfRegulations')
+            ->willReturn(1);
+
+        $this->extractor
+            ->expects(self::once())
+            ->method('numberOfMeasures')
+            ->willReturn(1);
+
         $logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
@@ -331,6 +365,8 @@ final class EudonetParisExecutorTest extends TestCase
                         'numErrors' => 1,
                         'percentErrors' => 100,
                         'elapsedSeconds' => 17.67,
+                        'numberOfRegulationsInsideEudonet' => 1,
+                        'numberOfMeasuresInsideEudonet' => 1,
                     ])
                 ),
             });
