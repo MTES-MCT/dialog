@@ -1,5 +1,5 @@
 {% extends 'layouts/app.html.twig' %}
-{% set metaTitle = user.fullName %}
+{% set metaTitle = user is defined ? user.fullName : 'user.form.add'|trans %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -11,9 +11,8 @@
                 {% include 'organization/_menu.html.twig' with { organization } only %}
             </div>
             <div class="fr-col-12 fr-col-md-9">
-                <h3 class="fr-h3 fr-mb-2">
-                    {{ metaTitle }}
-                </h3>
+                <h2 class="fr-mb-0">{{ metaTitle }}</h2>
+                <p class="fr-text--sm fr-x-text--uppercase">{{ organization.name }}</p>
                 {{ form_start(form) }}
                     {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                     {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}

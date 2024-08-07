@@ -13,7 +13,15 @@
                 {% include 'organization/_menu.html.twig' with { organization } only %}
             </div>
             <div class="fr-col-12 fr-col-md-9">
-                <h3 id="user-list" class="fr-col fr-mb-0">{{ 'user.list.title'|trans }}</h3>
+                <div class="fr-grid-row">
+                    <h2 id="user-list" class="fr-col fr-mb-0">{{ 'user.list.title'|trans }}</h2>
+                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                        <a href="{{ path('app_users_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'user.add.title'|trans }}">
+                            {{ 'user.add.title'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+                <p class="fr-text--sm fr-x-text--uppercase">{{ organization.name }}</p>
                 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
                     <table>
                         <caption>{{ 'user.list.title'|trans }}</caption>

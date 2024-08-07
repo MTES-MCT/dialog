@@ -27,3 +27,7 @@
 .fr-x-text--blue-france {
     color: var(--blue-france-sun-113-625);
 }
+
+.fr-x-text--uppercase {
+    text-transform: uppercase;
+}

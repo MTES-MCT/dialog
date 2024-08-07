@@ -2042,17 +2042,29 @@
                 <source>user.form.password</source>
                 <target>Mot de passe</target>
             </trans-unit>
+            <trans-unit id="user.form.add">
+                <source>user.form.add</source>
+                <target>Nouvel utilisateur</target>
+            </trans-unit>
             <trans-unit id="user.form.password.repeat">
                 <source>user.form.password.repeat</source>
                 <target>Confirmer le mot de passe</target>
             </trans-unit>
             <trans-unit id="user.form.roles">
                 <source>user.form.roles</source>
+                <target>Rôles</target>
+            </trans-unit>
+            <trans-unit id="user.form.roles.help">
+                <source>user.form.roles.help</source>
                 <target>Assigner un ou plusieurs rôles à l'utilisateur</target>
             </trans-unit>
             <trans-unit id="user.list.roles">
                 <source>user.list.roles</source>
                 <target>Rôles</target>
+            </trans-unit>
+            <trans-unit id="user.add.title">
+                <source>user.add.title</source>
+                <target>Ajouter un utilisateur</target>
             </trans-unit>
         </body>
     </file>
