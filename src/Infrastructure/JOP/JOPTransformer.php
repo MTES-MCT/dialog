@@ -121,7 +121,7 @@ final readonly class JOPTransformer
             $vehicleSetCommand = new SaveVehicleSetCommand();
             $vehicleSetCommand->allVehicles = true;
             $vehicleSetCommand->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value];
-            $vehicleSetCommand->otherExemptedTypeText = sprintf('Zone %s', $areaType);
+            $vehicleSetCommand->otherExemptedTypeText = \sprintf('Zone %s', $areaType);
             $measureCommand->vehicleSet = $vehicleSetCommand;
 
             $measureCommands[] = $measureCommand;

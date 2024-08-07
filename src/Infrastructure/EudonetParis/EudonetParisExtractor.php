@@ -191,7 +191,7 @@ final class EudonetParisExtractor
                 'Criteria' => [
                     'Field' => $this::ADRESSE_LIBELLE,
                     'Operator' => $this::EQUALS,
-                    'Value' => sprintf('%s %s', $houseNumber, $roadName),
+                    'Value' => \sprintf('%s %s', $houseNumber, $roadName),
                 ],
             ],
         );

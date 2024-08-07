@@ -137,7 +137,7 @@ final class VehicleSetFormType extends AbstractType
         $choices = [];
 
         foreach (VehicleTypeEnum::restrictedCases() as $case) {
-            $choices[sprintf('regulation.vehicle_set.type.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.vehicle_set.type.%s', $case->value)] = $case->value;
         }
 
         return [
@@ -172,7 +172,7 @@ final class VehicleSetFormType extends AbstractType
         $choices = [];
 
         foreach (VehicleTypeEnum::exemptedCases() as $case) {
-            $choices[sprintf('regulation.vehicle_set.type.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.vehicle_set.type.%s', $case->value)] = $case->value;
         }
 
         return [

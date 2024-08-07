@@ -21,7 +21,7 @@ abstract class AbstractWebTestCase extends WebTestCase
         $organizationUserRepository = static::getContainer()->get(OrganizationUserRepository::class);
         $testUser = $userRepository->findOneByEmail($email);
         $roles = $testUser->getRoles();
-        $userOrganizations = $organizationUserRepository->findOrganizationsByUser($testUser);
+        $organizationUsers = $organizationUserRepository->findOrganizationsByUser($testUser);
 
         $client->loginUser(
             new SymfonyUser(
@@ -29,7 +29,7 @@ abstract class AbstractWebTestCase extends WebTestCase
                 $testUser->getEmail(),
                 $testUser->getFullName(),
                 $testUser->getPassword(),
-                $userOrganizations,
+                $organizationUsers,
                 $roles,
             ),
         );

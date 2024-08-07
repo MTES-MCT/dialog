@@ -44,7 +44,7 @@ final class AddRegulationController
             type: GeneralInfoFormType::class,
             data: $command,
             options: [
-                'organizations' => $user->getUserOrganizations(),
+                'organizations' => $user->getOrganizationUsers(),
                 'action' => $this->router->generate('app_regulation_add'),
                 'save_options' => [
                     'label' => 'common.form.continue',

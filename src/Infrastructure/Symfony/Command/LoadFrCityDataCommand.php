@@ -31,7 +31,7 @@ class LoadFrCityDataCommand extends Command
         $statements = explode(';\n', $sql);
 
         foreach ($statements as $statement) {
-            $this->em->getConnection()->executeStatement(sprintf('%s;', $statement));
+            $this->em->getConnection()->executeStatement(\sprintf('%s;', $statement));
         }
 
         return Command::SUCCESS;

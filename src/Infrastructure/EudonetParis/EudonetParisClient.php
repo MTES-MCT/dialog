@@ -79,7 +79,7 @@ class EudonetParisClient
         $pageNumber = 1;
 
         while (true) {
-            $response = $this->request('POST', sprintf('/EudoAPI/Search/%s', $tabId), [
+            $response = $this->request('POST', \sprintf('/EudoAPI/Search/%s', $tabId), [
                 'headers' => ['Content-Type: application/json'],
                 'body' => json_encode([
                     'ShowMetadata' => true,

@@ -34,7 +34,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
     {
         return $this->createQueryBuilder('ou')
             ->select(
-                sprintf('NEW %s(o.uuid, o.name, ou.roles)', OrganizationView::class),
+                \sprintf('NEW %s(o.uuid, o.name, ou.roles)', OrganizationView::class),
             )
             ->where('ou.user = :user')
             ->innerJoin('ou.organization', 'o')
@@ -47,7 +47,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
     {
         return $this->createQueryBuilder('ou')
             ->select(
-                sprintf('NEW %s(u.uuid, u.fullName, u.email, ou.roles)', UserView::class),
+                \sprintf('NEW %s(u.uuid, u.fullName, u.email, ou.roles)', UserView::class),
             )
             ->where('ou.organization = :organization')
             ->innerJoin('ou.user', 'u')
@@ -57,7 +57,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->getResult();
     }
 
-    public function findUserOrganization(string $organizationUuid, string $userUuid): ?OrganizationUser
+    public function findOrganizationUser(string $organizationUuid, string $userUuid): ?OrganizationUser
     {
         return $this->createQueryBuilder('ou')
             ->addSelect('u', 'o')
