@@ -31,7 +31,7 @@ class SymfonyUserTest extends TestCase
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $user->getUsername());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $user->getUserIdentifier());
         $this->assertSame('password', $user->getPassword());
-        $this->assertSame([$organizationUser], $user->getUserOrganizations());
+        $this->assertSame([$organizationUser], $user->getOrganizationUsers());
         $this->assertSame(['133fb411-7754-4749-9590-ce05a2abe108'], $user->getOrganizationUuids());
         $this->assertEmpty($user->eraseCredentials());
     }
