@@ -41,6 +41,8 @@ final class EudonetParisExecutor
         $numSkippedNoLocationsGathered = 0;
         $numErrors = 0;
         $startTime = $this->dateUtils->getMicroTime();
+        $numberOfRegulationsInsideEudonet = null;
+        $numberOfMeasuresInsideEudonet = null;
 
         $this->logger->info('started');
 
@@ -81,6 +83,9 @@ final class EudonetParisExecutor
                     }
                 }
             }
+
+            $numberOfRegulationsInsideEudonet = $this->eudonetParisExtractor->getNumberOfRegulations();
+            $numberOfMeasuresInsideEudonet = $this->eudonetParisExtractor->getNumberOfMeasures();
         } catch (\Exception $exc) {
             $this->logger->error($exc);
 
@@ -99,6 +104,8 @@ final class EudonetParisExecutor
                 'numErrors' => $numErrors,
                 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
                 'elapsedSeconds' => round($elapsedSeconds, 2),
+                'numberOfRegulationsInsideEudonet' => $numberOfRegulationsInsideEudonet,
+                'numberOfMeasuresInsideEudonet' => $numberOfMeasuresInsideEudonet,
             ]);
         }
     }
