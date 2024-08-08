@@ -15,7 +15,7 @@ final class ListOrganizationsControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Mes organisations', $crawler->filter('h3')->text());
+        $this->assertSame('Mes organisations', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Mes organisations - DiaLog', $crawler);
 
         $organizations = $crawler->filter('[data-testid="organization-list"]');

@@ -11,7 +11,7 @@
                     </li>
                 {% else %}
                     <li>
-                        <a class="fr-breadcrumb__link" href="{{ path(item.path) }}">{{ item.title }}</a>
+                        <a class="fr-breadcrumb__link" href="{{ item.url is defined ? item.url : path(item.path) }}">{{ item.title }}</a>
                     </li>
                 {% endif %}
             {% endfor %}

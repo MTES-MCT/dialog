@@ -2066,6 +2066,10 @@
                 <source>user.add.title</source>
                 <target>Ajouter un utilisateur</target>
             </trans-unit>
+            <trans-unit id="user.myarea">
+                <source>user.myarea</source>
+                <target>Mon espace</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
