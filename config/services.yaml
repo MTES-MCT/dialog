@@ -114,6 +114,15 @@ services:
         tags:
             - { name: monolog.logger, channel: jop_import }
 
+    # --------------
+    # Litteralis
+    # --------------
+
+    App\Infrastructure\Litteralis\LitteralisReporterFactory:
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger, channel: litteralis_import }
+
 when@test:
     services:
         App\Tests\Mock\APIAdresseMockClient:

@@ -96,6 +96,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
                 WHERE roc.status = :status
                 AND l.geometry IS NOT NULL
+                AND roc.source = :source
                 %s
                 %s
                 ',
@@ -105,6 +106,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             [
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
                 'now' => $this->dateUtils->getNow()->format('Y-m-d'),
+                'source' => 'litteralis',
             ],
         );
 
