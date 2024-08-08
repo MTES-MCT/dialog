@@ -6,7 +6,6 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
-use App\Application\Regulation\Query\GetOrganizationUuidByRegulationOrderRecordQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\ArrayRegulationMeasures;
@@ -55,7 +54,8 @@ final class RegulationDetailController extends AbstractRegulationController
             throw new AccessDeniedHttpException();
         }
 
-        $organizationUuid = $this->queryBus->handle(new GetOrganizationUuidByRegulationOrderRecordQuery($uuid));
+        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid, requireUserSameOrg: false);
+        $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getOrganizationUuids()));
 
@@ -67,6 +67,7 @@ final class RegulationDetailController extends AbstractRegulationController
             'isReadOnly' => $isReadOnly,
             'generalInfo' => $generalInfo,
             'measures' => $measures,
+            'regulationOrderRecord' => $regulationOrderRecord,
         ];
 
         return new Response(
