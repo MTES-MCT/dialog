@@ -73,7 +73,7 @@ final class PeriodFormType extends AbstractType
         $choices = [];
 
         foreach (PeriodRecurrenceTypeEnum::cases() as $case) {
-            $choices[sprintf('regulation.period.recurrenceType.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.period.recurrenceType.%s', $case->value)] = $case->value;
         }
 
         return [

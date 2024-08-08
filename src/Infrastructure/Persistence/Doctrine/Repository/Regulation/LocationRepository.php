@@ -82,7 +82,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     : ''));
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
-            sprintf(
+            \sprintf(
                 'SELECT ST_AsGeoJSON(
                     ST_SimplifyPreserveTopology(
                         l.geometry,

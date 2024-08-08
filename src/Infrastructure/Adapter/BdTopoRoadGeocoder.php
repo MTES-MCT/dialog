@@ -43,14 +43,14 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         if ($rows && $rows[0]['geometry']) {
             return $rows[0]['geometry'];
         }
 
-        $message = sprintf('no result found in voie_nommee for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
+        $message = \sprintf('no result found in voie_nommee for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
         throw new GeocodingFailureException($message);
     }
 
@@ -72,13 +72,13 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     LIMIT 10
                 ',
                 [
-                    'numero_pattern' => sprintf('%s%%', strtoupper($search)),
+                    'numero_pattern' => \sprintf('%s%%', strtoupper($search)),
                     'gestionnaire' => $administrator,
                     'type_de_route' => 'Départementale',
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         $departmentalRoads = [];
@@ -111,14 +111,14 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new RoadGeocodingFailureException(sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new RoadGeocodingFailureException(\sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         if ($rows) {
             return $rows[0]['geometry'];
         }
 
-        $message = sprintf('no result found in route_numerotee_ou_nommee for roadNumber="%s", administrator="%s"', $roadNumber, $administrator);
+        $message = \sprintf('no result found in route_numerotee_ou_nommee for roadNumber="%s", administrator="%s"', $roadNumber, $administrator);
         throw new RoadGeocodingFailureException($message);
     }
 
@@ -170,11 +170,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Reference point query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Reference point query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         if (!$row) {
-            throw new GeocodingFailureException(sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
+            throw new GeocodingFailureException(\sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
         }
 
         $lonLat = json_decode($row['point'], associative: true);
@@ -218,7 +218,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Road names query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Road names query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         $roadNames = [];
@@ -238,7 +238,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                sprintf(
+                \sprintf(
                     'WITH ref AS (
                         SELECT ogc_fid, geometrie, nom_minuscule, code_insee
                         FROM voie_nommee
@@ -263,7 +263,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Intersecting road names query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Intersecting road names query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         $roadNames = [];
@@ -279,7 +279,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                sprintf(
+                \sprintf(
                     'SELECT
                         ST_X(ST_Centroid(ST_Intersection(v.geometrie, r.geometrie))) AS x,
                         ST_Y(ST_Centroid(ST_Intersection(v.geometrie, r.geometrie))) AS y
@@ -298,11 +298,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Intersecting road names query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Intersecting road names query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         if (!$rows) {
-            $message = sprintf('no intersection exists between roadName="%s" and otherRoadName="%s" in cityCode="%s"', $roadName, $otherRoadName, $cityCode);
+            $message = \sprintf('no intersection exists between roadName="%s" and otherRoadName="%s" in cityCode="%s"', $roadName, $otherRoadName, $cityCode);
             throw new GeocodingFailureException($message);
         }
 
@@ -310,7 +310,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         $y = $rows[0]['y'];
 
         if (!$x || !$y) {
-            $message = sprintf(
+            $message = \sprintf(
                 'no intersection found: one of roadName="%s" or otherRoadName="%s" does not exist in cityCode="%s"',
                 $roadName,
                 $otherRoadName,
@@ -335,7 +335,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         try {
             $row = $this->bdtopoConnection->fetchAssociative(
-                sprintf(
+                \sprintf(
                     'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(t.geometrie))) AS geom
                     FROM troncon_de_route AS t
                     WHERE ST_Intersects(t.geometrie, :areaGeometry)
@@ -352,7 +352,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(sprintf('Sections in area query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Sections in area query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         return $row['geom'];

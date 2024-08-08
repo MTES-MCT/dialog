@@ -121,7 +121,7 @@ final class GeneralInfoFormType extends AbstractType
         ];
 
         foreach (RegulationOrderCategoryEnum::cases() as $case) {
-            $choices[sprintf('regulation.category.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.category.%s', $case->value)] = $case->value;
         }
 
         return [

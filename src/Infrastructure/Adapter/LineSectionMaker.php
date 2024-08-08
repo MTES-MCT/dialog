@@ -116,7 +116,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
         );
 
         if (!$row) {
-            $msg = sprintf(
+            $msg = \sprintf(
                 'failed to find common linestring for points %s and %s on line %s',
                 $pointA,
                 $pointB,

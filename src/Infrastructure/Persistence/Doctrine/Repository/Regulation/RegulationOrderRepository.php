@@ -52,6 +52,6 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
         $nextNumber = $nextNumber ? (int) $nextNumber : 1;
 
-        return sprintf('%s-%d', $identifier, $nextNumber);
+        return \sprintf('%s-%d', $identifier, $nextNumber);
     }
 }
