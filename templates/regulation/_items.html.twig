@@ -2,9 +2,9 @@
 {% if isAuthenticated %}
     {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
     {% set deleteCsrfToken = csrf_token('delete-regulation') %}
-    {% set userOrganizationsUuids = app.user.getOrganizationUuids %}
+    {% set organizationUsersUuids = app.user.getOrganizationUuids %}
 {% else %}
-    {% set userOrganizationsUuids = [] %}
+    {% set organizationUsersUuids = [] %}
 {% endif %}
 
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
@@ -25,7 +25,7 @@
                 {% set location = regulation.location %}
                 {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
                 {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
-                {% set belongsToUserOrganizations = isAuthenticated and (regulation.organizationUuid in userOrganizationsUuids) %}
+                {% set belongsToOrganizationUsers = isAuthenticated and (regulation.organizationUuid in organizationUsersUuids) %}
                 <tr>
                     <td>
                         {{ regulation.identifier }}
@@ -78,13 +78,13 @@
                                     {{ 'common.see'|trans }}
                                 </a>
                             {% else %}
-                                {% if belongsToUserOrganizations %}
+                                {% if belongsToOrganizationUsers %}
                                     <a title="{{ 'common.update'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                                         {{ 'common.update'|trans }}
                                     </a>
                                 {% endif %}
                             {% endif %}
-                            {% if belongsToUserOrganizations %}
+                            {% if belongsToOrganizationUsers %}
                                 <form
                                     method="delete"
                                     action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"

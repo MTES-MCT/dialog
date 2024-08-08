@@ -57,7 +57,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->getResult();
     }
 
-    public function findUserOrganization(string $organizationUuid, string $userUuid): ?OrganizationUser
+    public function findOrganizationUser(string $organizationUuid, string $userUuid): ?OrganizationUser
     {
         return $this->createQueryBuilder('ou')
             ->addSelect('u', 'o')
