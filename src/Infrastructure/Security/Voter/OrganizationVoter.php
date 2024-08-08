@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Voter;
 
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
+use App\Domain\User\Specification\CanUserEditOrganization;
+use App\Domain\User\Specification\CanUserViewOrganization;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,6 +15,12 @@ final class OrganizationVoter extends Voter
 {
     public const VIEW = 'view';
     public const EDIT = 'edit';
+
+    public function __construct(
+        private readonly CanUserEditOrganization $canUserEditOrganization,
+        private readonly CanUserViewOrganization $canUserViewOrganization,
+    ) {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -40,27 +47,9 @@ final class OrganizationVoter extends Voter
         $organization = $subject;
 
         return match ($attribute) {
-            self::VIEW => $this->canView($organization, $user),
-            self::EDIT => $this->canEdit($organization, $user),
+            self::VIEW => $this->canUserViewOrganization->isSatisfiedBy($organization, $user),
+            self::EDIT => $this->canUserEditOrganization->isSatisfiedBy($organization, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
-    }
-
-    private function canView(Organization $organization, SymfonyUser $user): bool
-    {
-        return \in_array($organization->getUuid(), $user->getOrganizationUuids());
-    }
-
-    private function canEdit(Organization $organization, SymfonyUser $user): bool
-    {
-        foreach ($user->getOrganizationUsers() as $organizationUser) {
-            if ($organizationUser->uuid !== $organization->getUuid()) {
-                continue;
-            }
-
-            return \in_array(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value, $organizationUser->roles);
-        }
-
-        return false;
     }
 }
