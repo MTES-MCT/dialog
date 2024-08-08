@@ -33,6 +33,6 @@
 
 <turbo-stream action="update" target="block_publication">
     <template>
-        {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: regulationOrderRecordUuid } only %}
+        {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: regulationOrderRecordUuid, regulationOrderRecord } only %}
     </template>
 </turbo-stream>

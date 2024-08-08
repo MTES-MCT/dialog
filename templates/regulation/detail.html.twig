@@ -68,7 +68,7 @@
                                     {% if isDraft %}
                                         <li>
                                             <div id="block_publication">
-                                                {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid } only %}
+                                                {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid, regulationOrderRecord } only %}
                                             </div>
                                         </li>
                                     {% endif %}
@@ -127,14 +127,16 @@
     {{ parent() }}
     {% if not isReadOnly %}
         {% if isDraft %}
-            {% include "common/confirmation_modal.html.twig" with {
-                id: 'regulation-publish-modal',
-                title: 'regulation.publish_modal.title'|trans,
-                buttons: [
-                    { label: 'common.publish'|trans, attr: {type: 'submit', class: 'fr-btn'} },
-                    { label: 'common.do_not_publish'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
-                ],
-            } only %}
+            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\RegulationOrderRecordVoter::PUBLISH'), regulationOrderRecord) %}
+                {% include "common/confirmation_modal.html.twig" with {
+                    id: 'regulation-publish-modal',
+                    title: 'regulation.publish_modal.title'|trans,
+                    buttons: [
+                        { label: 'common.publish'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+                        { label: 'common.do_not_publish'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+                    ],
+                } only %}
+            {% endif %}
 
             {% include "common/confirmation_modal.html.twig" with {
                 id: 'measure-delete-modal',

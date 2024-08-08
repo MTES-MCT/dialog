@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +49,10 @@ final class PublishRegulationController extends AbstractRegulationController
         }
 
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+
+        if (!$this->security->isGranted(RegulationOrderRecordVoter::PUBLISH, $regulationOrderRecord)) {
+            throw new AccessDeniedHttpException();
+        }
 
         try {
             $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));

@@ -86,6 +86,7 @@ final class AddMeasureController extends AbstractRegulationController
                         context: [
                             'measure' => MeasureView::fromEntity($measure),
                             'regulationOrderRecordUuid' => $uuid,
+                            'regulationOrderRecord' => $regulationOrderRecord,
                             'generalInfo' => $generalInfo,
                             'canDelete' => ($regulationOrderRecord->countMeasures() + 1) > 1,
                             'preExistingMeasureUuids' => $preExistingMeasureUuids,
