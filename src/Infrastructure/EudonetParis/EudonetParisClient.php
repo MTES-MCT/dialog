@@ -116,4 +116,22 @@ class EudonetParisClient
 
         return $rows;
     }
+
+    public function count(int $tabId, array $listCols, array $whereCustom): int
+    {
+        $response = $this->request('POST', \sprintf('/EudoAPI/Search/%s', $tabId), [
+            'headers' => ['Content-Type: application/json'],
+            'body' => json_encode([
+                'ShowMetadata' => true,
+                'RowsPerPage' => 1,
+                'NumPage' => 1,
+                'ListCols' => $listCols,
+                'WhereCustom' => $whereCustom,
+            ]),
+        ]);
+        $data = $response->toArray();
+        $totalRows = $data['ResultMetaData']['TotalRows']; // number of rows without pagination
+
+        return $totalRows;
+    }
 }
