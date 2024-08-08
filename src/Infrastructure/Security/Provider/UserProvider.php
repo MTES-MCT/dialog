@@ -28,14 +28,14 @@ final class UserProvider implements UserProviderInterface
             throw new UserNotFoundException(\sprintf('Unable to find the user %s', $identifier));
         }
 
-        $userOrganizations = $this->organizationUserRepositoryInterface->findOrganizationsByUser($user);
+        $organizationUsers = $this->organizationUserRepositoryInterface->findOrganizationsByUser($user);
 
         return new SymfonyUser(
             $user->getUuid(),
             $user->getEmail(),
             $user->getFullName(),
             $user->getPassword(),
-            $userOrganizations,
+            $organizationUsers,
             $user->getRoles(),
         );
     }

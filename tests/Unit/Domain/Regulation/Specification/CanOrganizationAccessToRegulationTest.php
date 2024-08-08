@@ -12,7 +12,7 @@ final class CanOrganizationAccessToRegulationTest extends TestCase
 {
     public function testRegulationCanBePublished(): void
     {
-        $userOrganizationUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
+        $organizationUserUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
 
         $organization = $this->createMock(OrganizationRegulationAccessInterface::class);
         $organization
@@ -21,21 +21,21 @@ final class CanOrganizationAccessToRegulationTest extends TestCase
             ->willReturn('f35dc505-50a9-40ac-8bff-e0dff961aaf8');
 
         $specification = new CanOrganizationAccessToRegulation();
-        $this->assertTrue($specification->isSatisfiedBy($organization, $userOrganizationUuids));
+        $this->assertTrue($specification->isSatisfiedBy($organization, $organizationUserUuids));
     }
 
     public function testRegulationCanBePublishedStringOrganizationUuid(): void
     {
-        $userOrganizationUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
-        $organizationUuid = $userOrganizationUuids[0];
+        $organizationUserUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
+        $organizationUuid = $organizationUserUuids[0];
 
         $specification = new CanOrganizationAccessToRegulation();
-        $this->assertTrue($specification->isSatisfiedBy($organizationUuid, $userOrganizationUuids));
+        $this->assertTrue($specification->isSatisfiedBy($organizationUuid, $organizationUserUuids));
     }
 
     public function testRegulationCannotBePublished(): void
     {
-        $userOrganizationUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
+        $organizationUserUuids = ['f35dc505-50a9-40ac-8bff-e0dff961aaf8'];
         $otherOrganization = $this->createMock(OrganizationRegulationAccessInterface::class);
         $otherOrganization
             ->expects(self::once())
@@ -43,6 +43,6 @@ final class CanOrganizationAccessToRegulationTest extends TestCase
             ->willReturn('f10d60a0-2431-4de5-bb54-1ef6da0df671');
 
         $specification = new CanOrganizationAccessToRegulation();
-        $this->assertFalse($specification->isSatisfiedBy($otherOrganization, $userOrganizationUuids));
+        $this->assertFalse($specification->isSatisfiedBy($otherOrganization, $organizationUserUuids));
     }
 }

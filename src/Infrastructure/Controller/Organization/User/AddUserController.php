@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller\Organization\User;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
-use App\Application\User\Command\SaveUserOrganizationCommand;
+use App\Application\User\Command\SaveOrganizationUserCommand;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Infrastructure\Controller\Organization\AbstractOrganizationController;
 use App\Infrastructure\Form\User\UserFormType;
@@ -51,7 +51,7 @@ final class AddUserController extends AbstractOrganizationController
             throw new AccessDeniedHttpException();
         }
 
-        $command = new SaveUserOrganizationCommand($organization);
+        $command = new SaveOrganizationUserCommand($organization);
         $form = $this->formFactory->create(UserFormType::class, $command);
         $form->handleRequest($request);
 

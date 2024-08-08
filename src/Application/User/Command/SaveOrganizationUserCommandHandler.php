@@ -18,7 +18,7 @@ use App\Domain\User\Specification\IsEmailAlreadyExists;
 use App\Domain\User\Specification\IsUserAlreadyRegisteredInOrganization;
 use App\Domain\User\User;
 
-final class SaveUserOrganizationCommandHandler
+final class SaveOrganizationUserCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
@@ -32,7 +32,7 @@ final class SaveUserOrganizationCommandHandler
     ) {
     }
 
-    public function __invoke(SaveUserOrganizationCommand $command): void
+    public function __invoke(SaveOrganizationUserCommand $command): void
     {
         $email = $this->stringUtils->normalizeEmail($command->email);
         $organizationUser = $command->organizationUser;

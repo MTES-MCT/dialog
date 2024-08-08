@@ -8,8 +8,8 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
-use App\Application\User\Command\SaveUserOrganizationCommand;
-use App\Application\User\Command\SaveUserOrganizationCommandHandler;
+use App\Application\User\Command\SaveOrganizationUserCommand;
+use App\Application\User\Command\SaveOrganizationUserCommandHandler;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
@@ -24,7 +24,7 @@ use App\Domain\User\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class SaveUserOrganizationCommandHandlerTest extends TestCase
+final class SaveOrganizationUserCommandHandlerTest extends TestCase
 {
     private MockObject $idFactory;
     private MockObject $organizationUserRepository;
@@ -116,7 +116,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
                     ->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
             ));
 
-        $handler = new SaveUserOrganizationCommandHandler(
+        $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
@@ -126,7 +126,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             $this->isUserAlreadyRegistered,
             $this->isEmailAlreadyExists,
         );
-        $command = new SaveUserOrganizationCommand($this->organization);
+        $command = new SaveOrganizationUserCommand($this->organization);
         $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
@@ -182,7 +182,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
                     ->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
             ));
 
-        $handler = new SaveUserOrganizationCommandHandler(
+        $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
@@ -192,7 +192,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             $this->isUserAlreadyRegistered,
             $this->isEmailAlreadyExists,
         );
-        $command = new SaveUserOrganizationCommand($this->organization);
+        $command = new SaveOrganizationUserCommand($this->organization);
         $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
@@ -239,7 +239,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
-        $handler = new SaveUserOrganizationCommandHandler(
+        $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
@@ -249,7 +249,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             $this->isUserAlreadyRegistered,
             $this->isEmailAlreadyExists,
         );
-        $command = new SaveUserOrganizationCommand($this->organization);
+        $command = new SaveOrganizationUserCommand($this->organization);
         $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
@@ -311,7 +311,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
-        $handler = new SaveUserOrganizationCommandHandler(
+        $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
@@ -321,7 +321,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             $this->isUserAlreadyRegistered,
             $this->isEmailAlreadyExists,
         );
-        $command = new SaveUserOrganizationCommand($this->organization, $organizationUser);
+        $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
         $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
@@ -382,7 +382,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
-        $handler = new SaveUserOrganizationCommandHandler(
+        $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
@@ -392,7 +392,7 @@ final class SaveUserOrganizationCommandHandlerTest extends TestCase
             $this->isUserAlreadyRegistered,
             $this->isEmailAlreadyExists,
         );
-        $command = new SaveUserOrganizationCommand($this->organization, $organizationUser);
+        $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
         $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';

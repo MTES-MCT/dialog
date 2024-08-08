@@ -20,7 +20,7 @@ final class DeleteRegulationCommandHandler
     {
         $regulationOrderRecord = $command->regulationOrderRecord;
 
-        if (false === $this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $command->userOrganizationUuids)) {
+        if (false === $this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $command->organizationUserUuids)) {
             throw new RegulationOrderRecordCannotBeDeletedException();
         }
 

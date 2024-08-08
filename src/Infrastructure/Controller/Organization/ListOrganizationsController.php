@@ -30,7 +30,7 @@ final class ListOrganizationsController
         return new Response($this->twig->render(
             name: 'organization/index.html.twig',
             context: [
-                'organizations' => $user->getUserOrganizations(),
+                'organizations' => $user->getOrganizationUsers(),
             ],
         ));
     }

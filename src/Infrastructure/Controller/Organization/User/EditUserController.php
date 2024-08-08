@@ -6,10 +6,10 @@ namespace App\Infrastructure\Controller\Organization\User;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
-use App\Application\User\Command\SaveUserOrganizationCommand;
+use App\Application\User\Command\SaveOrganizationUserCommand;
 use App\Application\User\Query\GetOrganizationUserQuery;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\Exception\UserOrganizationNotFoundException;
+use App\Domain\User\Exception\OrganizationUserNotFoundException;
 use App\Infrastructure\Form\User\UserFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -47,19 +47,19 @@ final class EditUserController
     public function __invoke(Request $request, string $organizationUuid, string $uuid): Response
     {
         try {
-            $userOrganization = $this->queryBus->handle(new GetOrganizationUserQuery($organizationUuid, $uuid));
-        } catch (UserOrganizationNotFoundException) {
+            $organizationUser = $this->queryBus->handle(new GetOrganizationUserQuery($organizationUuid, $uuid));
+        } catch (OrganizationUserNotFoundException) {
             throw new NotFoundHttpException();
         }
 
-        $organization = $userOrganization->getOrganization();
-        $user = $userOrganization->getUser();
+        $organization = $organizationUser->getOrganization();
+        $user = $organizationUser->getUser();
 
         if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)) {
             throw new AccessDeniedHttpException();
         }
 
-        $command = new SaveUserOrganizationCommand($organization, $userOrganization);
+        $command = new SaveOrganizationUserCommand($organization, $organizationUser);
         $form = $this->formFactory->create(UserFormType::class, $command);
         $form->handleRequest($request);
 

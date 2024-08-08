@@ -10,7 +10,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 final class DeleteRegulationCommand implements CommandInterface
 {
     public function __construct(
-        public readonly array $userOrganizationUuids,
+        public readonly array $organizationUserUuids,
         public readonly RegulationOrderRecord $regulationOrderRecord,
     ) {
     }

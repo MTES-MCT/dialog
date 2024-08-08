@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Command\DeleteOrganizationUserCommand;
 use App\Application\User\Query\GetOrganizationUserQuery;
-use App\Domain\User\Exception\UserOrganizationNotFoundException;
+use App\Domain\User\Exception\OrganizationUserNotFoundException;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,7 +49,7 @@ final class DeleteOrganizationUserController
 
         try {
             $organizationUser = $this->queryBus->handle(new GetOrganizationUserQuery($organizationUuid, $uuid));
-        } catch (UserOrganizationNotFoundException) {
+        } catch (OrganizationUserNotFoundException) {
             throw new NotFoundHttpException();
         }
 
