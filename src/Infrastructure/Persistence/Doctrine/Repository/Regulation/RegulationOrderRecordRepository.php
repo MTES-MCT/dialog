@@ -61,9 +61,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
-            ->addSelect(sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
-            ->addSelect(sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
-            ->addSelect(sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
+            ->addSelect(\sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
+            ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
+            ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
 
         if ($organizationUuids) {
             $query
@@ -145,7 +145,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select(
-                sprintf(
+                \sprintf(
                     'NEW %s(
                     roc.uuid,
                     ro.identifier,

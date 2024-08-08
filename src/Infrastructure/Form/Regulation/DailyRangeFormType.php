@@ -39,7 +39,7 @@ final class DailyRangeFormType extends AbstractType
         $choices = [];
 
         foreach (ApplicableDayEnum::cases() as $case) {
-            $choices[sprintf('regulation.period.days.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.period.days.%s', $case->value)] = $case->value;
         }
 
         return [

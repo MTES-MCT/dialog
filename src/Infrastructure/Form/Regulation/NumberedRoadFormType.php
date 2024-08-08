@@ -94,7 +94,7 @@ final class NumberedRoadFormType extends AbstractType
         $choices = [];
 
         foreach (RoadSideEnum::cases() as $case) {
-            $choices[sprintf('regulation.location.road.side.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.location.road.side.%s', $case->value)] = $case->value;
         }
 
         return [

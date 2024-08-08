@@ -36,7 +36,7 @@ final class JOPExecutor
         try {
             $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($this->jopOrgId));
         } catch (OrganizationNotFoundException $exc) {
-            throw new \RuntimeException(sprintf('Organization not found: %s', $this->jopOrgId));
+            throw new \RuntimeException(\sprintf('Organization not found: %s', $this->jopOrgId));
         }
 
         $this->logger->info('started');

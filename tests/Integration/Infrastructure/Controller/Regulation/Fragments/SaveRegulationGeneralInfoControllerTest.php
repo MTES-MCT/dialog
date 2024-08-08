@@ -33,7 +33,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $form['general_info_form[endDate]'] = '2024-02-11';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame(sprintf('Un arrêté avec l\'identifiant "%s" existe déjà. Veuillez saisir un autre identifiant.', $identifier), $crawler->filter('#general_info_form_identifier_error')->text());
+        $this->assertSame(\sprintf('Un arrêté avec l\'identifiant "%s" existe déjà. Veuillez saisir un autre identifiant.', $identifier), $crawler->filter('#general_info_form_identifier_error')->text());
     }
 
     public function testEditDescriptionTruncated(): void

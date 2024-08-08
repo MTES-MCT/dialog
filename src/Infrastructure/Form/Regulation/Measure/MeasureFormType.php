@@ -80,7 +80,7 @@ final class MeasureFormType extends AbstractType
         $choices = [];
 
         foreach (MeasureTypeEnum::cases() as $case) {
-            $choices[sprintf('regulation.measure.type.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.measure.type.%s', $case->value)] = $case->value;
         }
 
         return [

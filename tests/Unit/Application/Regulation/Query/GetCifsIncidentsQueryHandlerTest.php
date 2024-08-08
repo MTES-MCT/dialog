@@ -85,7 +85,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period4Id = '0661e7ed-e549-7e4b-8000-945882a092c4';
 
         $incident1 = new CifsIncidentView(
-            id: sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
+            id: \sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_HAZARD',
@@ -98,7 +98,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident2 = new CifsIncidentView(
-            id: sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline2Hash),
+            id: \sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline2Hash),
             creationTime: $incident1->creationTime,
             type: $incident1->type,
             subType: $incident1->subType,
@@ -111,7 +111,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident3 = new CifsIncidentView(
-            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_CONSTRUCTION',
@@ -145,7 +145,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident4 = new CifsIncidentView(
-            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period2Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period2Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -171,7 +171,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident5 = new CifsIncidentView(
-            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period3Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period3Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -191,7 +191,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident6 = new CifsIncidentView(
-            id: sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,

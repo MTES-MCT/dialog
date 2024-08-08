@@ -92,7 +92,7 @@ final class BacIdfTransformer
         } catch (OrganizationNotFoundException) {
             $organizationCommand = new CreateOrganizationCommand();
             $organizationCommand->siret = $siret;
-            $organizationCommand->name = sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
+            $organizationCommand->name = \sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
         }
 
         $measureCommands = [];
@@ -143,7 +143,7 @@ final class BacIdfTransformer
 
             if (\count($measureCommand->locations) === 0) {
                 $errors[] = [
-                    'loc' => [...$loc, 'fieldname' => sprintf('measures.%d', $index)],
+                    'loc' => [...$loc, 'fieldname' => \sprintf('measures.%d', $index)],
                     'reason' => 'no_locations_gathered',
                     'impact' => 'skip_measure',
                 ];
@@ -409,7 +409,7 @@ final class BacIdfTransformer
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet->cityCode = $row['ARR_COMMUNE']['ARR_INSEE'];
-        $locationCommand->namedStreet->cityLabel = sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
+        $locationCommand->namedStreet->cityLabel = \sprintf('%s (%s)', $row['ARR_COMMUNE']['ARR_VILLE'], $row['ARR_COMMUNE']['ARR_CODE_POSTAL']);
         $locationCommand->namedStreet->roadName = $regVoie['VOIE_NAME'];
         $locationCommand->namedStreet->geometry = json_encode($geometry, JSON_THROW_ON_ERROR);
 

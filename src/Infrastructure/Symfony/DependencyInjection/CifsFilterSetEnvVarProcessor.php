@@ -22,7 +22,7 @@ class CifsFilterSetEnvVarProcessor implements EnvVarProcessorInterface
             $value = json_decode($env, associative: true, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new \RuntimeException(
-                sprintf('cifs_filterset: value "%s" for env var %s is not valid JSON: %s', $env, $name, $e->getMessage()),
+                \sprintf('cifs_filterset: value "%s" for env var %s is not valid JSON: %s', $env, $name, $e->getMessage()),
                 previous: $e,
             );
         }

@@ -35,7 +35,7 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame($streams->eq(1)->attr('target'), 'block_measure_' . MeasureFixture::UUID_TYPICAL);
         $this->assertSame($streams->eq(1)->attr('action'), 'remove');
 
-        $crawler = $client->request('GET', sprintf('/regulations/%s', RegulationOrderRecordFixture::UUID_TYPICAL));
+        $crawler = $client->request('GET', \sprintf('/regulations/%s', RegulationOrderRecordFixture::UUID_TYPICAL));
         $this->assertSame(1, $this->countRows($crawler));
     }
 

@@ -24,7 +24,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
     private function resolvePoint(string $roadName, string $cityCode, ?string $houseNumber, ?string $intersectingRoadName): Coordinates
     {
         if ($houseNumber) {
-            $fromAddress = sprintf('%s %s', $houseNumber, $roadName);
+            $fromAddress = \sprintf('%s %s', $houseNumber, $roadName);
 
             return $this->geocoder->computeCoordinates($fromAddress, $cityCode);
         }

@@ -59,7 +59,7 @@ final class ExportRegulationController extends AbstractRegulationController
             ->to('docx')
             ->run(),
         );
-        $disposition = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, sprintf('%s.docx', $uuid));
+        $disposition = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, \sprintf('%s.docx', $uuid));
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         $response->headers->set('Content-Disposition', $disposition);
 
