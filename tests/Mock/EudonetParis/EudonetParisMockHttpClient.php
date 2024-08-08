@@ -44,7 +44,7 @@ final class EudonetParisMockHttpClient extends MockHttpClient
 
     public function assertExpectedRequestsMade(): void
     {
-        Assert::assertCount(13, $this->requests);
+        Assert::assertCount(15, $this->requests);
 
         // Auth
         Assert::assertSame($this->baseUri . '/EudoAPI/Authenticate/Token', $this->requests[0]['url']);
@@ -180,5 +180,55 @@ final class EudonetParisMockHttpClient extends MockHttpClient
         );
 
         // Requests 9 to 13 are the same address requests as for location 1.
+
+        // 14th request : number of regulations inside Eudonet
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/1100', $this->requests[13]['url']);
+        Assert::assertEquals(
+            [
+                'WhereCustoms' => [
+                    [
+                        'Criteria' => [
+                            'Field' => 1108, // ARRETE_TYPE,
+                            'Operator' => 0, // EQUALS,
+                            'Value' => 8, // TEMPORAIRE,
+                        ],
+                    ],
+                    [
+                        'Criteria' => [
+                            'Field' => 1108, // ARRETE_TYPE,
+                            'Operator' => 5, // NOT_EQUALS,
+                            'Value' => 8, // TEMPORAIRE,
+                        ],
+                        'InterOperator' => 2, // OR,
+                    ],
+                ],
+            ],
+            json_decode($this->requests[13]['options']['body'], true)['WhereCustom'],
+        );
+
+        // 15th request : number of measures inside Eudonet
+        Assert::assertSame($this->baseUri . '/EudoAPI/Search/1200', $this->requests[14]['url']);
+        Assert::assertEquals(
+            [
+                'WhereCustoms' => [
+                    [
+                        'Criteria' => [
+                            'Field' => 1202, // MESURE_NOM,
+                            'Operator' => 0, // EQUALS,
+                            'Value' => '103', // MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE,
+                        ],
+                    ],
+                    [
+                        'Criteria' => [
+                            'Field' => 1202, // MESURE_NOM,
+                            'Operator' => 5, // NOT_EQUALS,
+                            'Value' => '103', // MEASURE_NOM_CIRCULATION_INTERDITE_DB_VALUE,
+                        ],
+                        'InterOperator' => 2, // OR,
+                    ],
+                ],
+            ],
+            json_decode($this->requests[14]['options']['body'], true)['WhereCustom'],
+        );
     }
 }
