@@ -56,7 +56,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
-        bool $isPermanent,
         ?array $organizationUuids = null,
     ): array {
         $query = $this->createQueryBuilder('roc')
@@ -83,7 +82,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         $query
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', $isPermanent ? 'ro.endDate IS NULL' : 'ro.endDate IS NOT NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->orderBy('ro.startDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc, o')

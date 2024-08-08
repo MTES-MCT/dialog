@@ -13,52 +13,27 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
 {
     use SessionHelper;
 
-    private function countRows($crawler)
+    private function countRows($crawler): int
     {
-        $numTemporary = $crawler->filter('#temporary-panel tbody > tr:not([data-testid=empty-row])')->count();
-        $numPermanent = $crawler->filter('#permanent-panel tbody > tr:not([data-testid=empty-row])')->count();
+        $num = $crawler->filter('.app-regulation-table tbody > tr:not([data-testid=empty-row])')->count();
 
-        return [$numTemporary, $numPermanent];
+        return $num;
     }
 
-    public function testDeleteTemporary(): void
+    public function testDelete(): void
     {
         $client = $this->login();
 
         $crawler = $client->request('GET', '/regulations');
-        [$numTemporary, $numPermanent] = $this->countRows($crawler);
+        $num = $this->countRows($crawler);
 
         $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
-        $this->assertResponseRedirects('/regulations?tab=temporary', 303);
+        $this->assertResponseRedirects('/regulations', 303);
         $crawler = $client->followRedirect();
         // Doesn't appear in list of temporary regulations anymore.
-        $this->assertEquals([$numTemporary - 1, $numPermanent], $this->countRows($crawler));
-    }
-
-    public function testDeletePermanent(): void
-    {
-        $client = $this->login();
-
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
-        $this->assertResponseStatusCodeSame(200);
-
-        $crawler = $client->request('GET', '/regulations');
-        [$numTemporary, $numPermanent] = $this->countRows($crawler);
-
-        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT, [
-            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
-        ]);
-        $this->assertResponseRedirects('/regulations?tab=permanent', 303);
-        $crawler = $client->followRedirect();
-
-        // Doesn't appear in list of permanent regulations anymore.
-        $this->assertSame([$numTemporary, $numPermanent - 1], $this->countRows($crawler), $crawler->html());
-
-        // Detail page doesn't exist anymore.
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertEquals($num - 1, $this->countRows($crawler));
     }
 
     public function testCannotDeleteBecauseDifferentOrganization(): void
@@ -76,7 +51,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST, [
             'token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
-        $this->assertResponseRedirects('/regulations?tab=temporary', 303);
+        $this->assertResponseRedirects('/regulations', 303);
     }
 
     public function testInvalidCsrfToken(): void

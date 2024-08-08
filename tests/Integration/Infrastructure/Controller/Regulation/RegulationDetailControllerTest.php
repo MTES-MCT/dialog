@@ -79,7 +79,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         // Go back link
         $goBackLink = $crawler->selectLink('Revenir aux arrêtés');
-        $this->assertSame('/regulations?tab=temporary', $goBackLink->extract(['href'])[0]);
+        $this->assertSame('/regulations', $goBackLink->extract(['href'])[0]);
     }
 
     public function testDraftRegulationDetailAsContributor(): void
@@ -101,7 +101,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertMetaTitle('Arrêté permanent FO3/2023 - DiaLog', $crawler);
 
         $goBackLink = $crawler->selectLink('Revenir aux arrêtés');
-        $this->assertSame('/regulations?tab=permanent', $goBackLink->extract(['href'])[0]);
+        $this->assertSame('/regulations', $goBackLink->extract(['href'])[0]);
     }
 
     public function testDraftRegulationDetailWithoutLocations(): void
@@ -136,22 +136,6 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
         $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
         $this->assertSame($formDelete->getMethod(), 'DELETE');
-    }
-
-    public function testSeeAll(): void
-    {
-        $client = $this->login();
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
-
-        $this->assertSecurityHeaders();
-        $this->assertResponseStatusCodeSame(200);
-
-        $crawler = $client->clickLink('Arrêtés de circulation');
-        $this->assertRouteSame('app_regulations_list');
-
-        // Temporary regulation order list is shown.
-        $temporaryPanel = $crawler->filter('#temporary-panel');
-        $this->assertStringContainsString('fr-tabs__panel--selected', $temporaryPanel->attr('class'));
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void
