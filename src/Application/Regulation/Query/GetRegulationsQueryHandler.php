@@ -24,7 +24,6 @@ final class GetRegulationsQueryHandler
         $rows = $this->repository->findAllRegulations(
             $query->pageSize,
             $query->page,
-            $query->isPermanent,
             $query->organizationUuids,
         );
 

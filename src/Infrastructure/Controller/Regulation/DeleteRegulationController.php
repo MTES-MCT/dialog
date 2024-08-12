@@ -58,15 +58,10 @@ final class DeleteRegulationController
             // The regulation may have been deleted before.
             // Don't fail, as DELETE is an idempotent method (see RFC 9110, 9.2.2).
             return new RedirectResponse(
-                url: $this->router->generate('app_regulations_list', [
-                    'tab' => 'temporary',
-                ]),
+                url: $this->router->generate('app_regulations_list'),
                 status: Response::HTTP_SEE_OTHER,
             );
         }
-
-        // Get before the entity gets deleted.
-        $endDate = $regulationOrderRecord->getRegulationOrder()->getEndDate();
 
         try {
             $this->commandBus->handle(new DeleteRegulationCommand($user->getOrganizationUuids(), $regulationOrderRecord));
@@ -75,9 +70,7 @@ final class DeleteRegulationController
         }
 
         return new RedirectResponse(
-            url: $this->router->generate('app_regulations_list', [
-                'tab' => $endDate ? 'temporary' : 'permanent',
-            ]),
+            url: $this->router->generate('app_regulations_list'),
             status: Response::HTTP_SEE_OTHER,
         );
     }

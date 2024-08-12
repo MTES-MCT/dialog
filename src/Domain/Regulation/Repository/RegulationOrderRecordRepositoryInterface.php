@@ -18,7 +18,6 @@ interface RegulationOrderRecordRepositoryInterface
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
-        bool $isPermanent,
         ?array $organizationUuids = null,
     ): array;
 
