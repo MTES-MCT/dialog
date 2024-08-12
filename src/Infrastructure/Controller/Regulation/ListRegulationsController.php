@@ -34,7 +34,6 @@ final class ListRegulationsController
     {
         /** @var SymfonyUser|null */
         $user = $this->security->getUser();
-        $tab = $request->query->get('tab', 'temporary');
         $pageSize = min($request->query->getInt('pageSize', 20), 100);
         $page = $request->query->getInt('page', 1);
 
@@ -46,19 +45,10 @@ final class ListRegulationsController
 
         $organizationUserUuids = $user?->getOrganizationUuids();
 
-        $temporaryRegulations = $this->queryBus->handle(
+        $regulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 pageSize: $pageSize,
-                page: $tab === 'temporary' ? $page : 1,
-                isPermanent: false,
-                organizationUuids: $organizationUserUuids,
-            ),
-        );
-        $permanentRegulations = $this->queryBus->handle(
-            new GetRegulationsQuery(
-                pageSize: $pageSize,
-                page: $tab === 'permanent' ? $page : 1,
-                isPermanent: true,
+                page: $page,
                 organizationUuids: $organizationUserUuids,
             ),
         );
@@ -66,9 +56,7 @@ final class ListRegulationsController
         return new Response($this->twig->render(
             name: 'regulation/index.html.twig',
             context: [
-                'temporaryRegulations' => $temporaryRegulations,
-                'permanentRegulations' => $permanentRegulations,
-                'tab' => $tab,
+                'regulations' => $regulations,
                 'pageSize' => $pageSize,
                 'page' => $page,
             ],

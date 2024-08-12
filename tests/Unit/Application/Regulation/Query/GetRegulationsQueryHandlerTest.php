@@ -64,7 +64,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findAllRegulations')
-            ->with(20, 1, true, ['dcab837f-4460-4355-99d5-bf4891c35f8f'])
+            ->with(20, 1, ['dcab837f-4460-4355-99d5-bf4891c35f8f'])
             ->willReturn([
                 'count' => 3,
                 'items' => $rows,
@@ -74,7 +74,6 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrders = $handler(new GetRegulationsQuery(
             pageSize: 20,
             page: 1,
-            isPermanent: true,
             organizationUuids: ['dcab837f-4460-4355-99d5-bf4891c35f8f'],
         ));
 
