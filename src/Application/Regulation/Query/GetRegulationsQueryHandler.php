@@ -24,7 +24,7 @@ final class GetRegulationsQueryHandler
         $rows = $this->repository->findAllRegulations(
             $query->pageSize,
             $query->page,
-            $query->organizationUuids,
+            $query->listFiltersDTO,
         );
 
         foreach ($rows['items'] as $row) {

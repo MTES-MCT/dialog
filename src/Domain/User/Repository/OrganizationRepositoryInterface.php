@@ -8,6 +8,8 @@ use App\Domain\User\Organization;
 
 interface OrganizationRepositoryInterface
 {
+    public function findAll(): array;
+
     public function findOneByUuid(string $uuid): ?Organization;
 
     public function findOneBySiret(string $siret): ?Organization;

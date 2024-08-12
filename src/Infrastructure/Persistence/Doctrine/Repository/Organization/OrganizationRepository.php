@@ -21,6 +21,14 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         $this->getEntityManager()->persist($organization);
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->orderBy('o.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findOneByUuid(string $uuid): ?Organization
     {
         return $this->createQueryBuilder('o')

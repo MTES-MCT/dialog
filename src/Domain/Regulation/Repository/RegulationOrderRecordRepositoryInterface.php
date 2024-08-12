@@ -6,6 +6,7 @@ namespace App\Domain\Regulation\Repository;
 
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
+use App\Infrastructure\Controller\DTO\Regulation\ListFiltersDTO;
 
 interface RegulationOrderRecordRepositoryInterface
 {
@@ -18,7 +19,7 @@ interface RegulationOrderRecordRepositoryInterface
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
-        ?array $organizationUuids = null,
+        ListFiltersDTO $listFiltersDTO,
     ): array;
 
     public function findGeneralInformation(string $uuid): ?array;

@@ -14,8 +14,8 @@
                 </a>
             {% endif %}
         </div>
-        <div class="fr-card fr-mt-2w fr-p-2w">
-            {% include "regulation/_items.html.twig" with { pagination: regulations } only %}
+        <div class="fr-card fr-mt-2w fr-pl-3w fr-pr-3w">
+            {% include "regulation/_items.html.twig" with { pagination: regulations, form } only %}
             {% include "common/pagination.html.twig" with {
                 pagination: regulations,
                 currentPage: app.request.get('page', 1),

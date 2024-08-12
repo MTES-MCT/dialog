@@ -8,6 +8,11 @@
 {% endif %}
 
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
+    <div class="fr-table__header fr-mb-3w">
+        {{ form_start(form, { attr: {'data-controller': "form-submit", 'data-action': 'change->form-submit#submit' }}) }}
+            {{ form_row(form.organization, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+        {{ form_end(form) }}
+    </div>
     <table class="app-regulation-table">
         <caption>{{ 'regulation.list.title'|trans }}</caption>
         <thead>

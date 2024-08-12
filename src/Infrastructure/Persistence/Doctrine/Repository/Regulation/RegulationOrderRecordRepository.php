@@ -12,6 +12,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
+use App\Infrastructure\Controller\DTO\Regulation\ListFiltersDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -56,7 +57,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
-        ?array $organizationUuids = null,
+        ListFiltersDTO $listFiltersDTO,
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
@@ -64,19 +65,19 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
 
-        if ($organizationUuids) {
-            $query
-                ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
-                ->setParameters([
-                    'organizationUuids' => $organizationUuids,
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
-                    'draft' => RegulationOrderRecordStatusEnum::DRAFT,
-                ]);
-        } else {  // the user is not connected -> no draft regulations
+        if (!$listFiltersDTO->logged) {
             $query
                 ->where('roc.status = :published')
                 ->setParameters([
                     'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                ]);
+        }
+
+        if ($listFiltersDTO->organization) {
+            $query
+                ->where('roc.organization = :organization')
+                ->setParameters([
+                    'organization' => $listFiltersDTO->organization,
                 ]);
         }
 

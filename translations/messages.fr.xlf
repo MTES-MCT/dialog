@@ -256,6 +256,14 @@
                 <source>regulation.list.title</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
+            <trans-unit id="regulation.list.organization">
+                <source>regulation.list.organization</source>
+                <target>Organisation</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.all_organizations">
+                <source>regulation.list.all_organizations</source>
+                <target>Toutes les organisations</target>
+            </trans-unit>
             <trans-unit id="regulation">
                 <source>regulation</source>
                 <target>Arrêté</target>
