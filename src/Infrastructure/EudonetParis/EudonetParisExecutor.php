@@ -6,25 +6,24 @@ namespace App\Infrastructure\EudonetParis;
 
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
-use App\Application\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
 final class EudonetParisExecutor
 {
     public function __construct(
-        private LoggerInterface $logger,
         private EudonetParisExtractor $eudonetParisExtractor,
         private EudonetParisTransformer $eudonetParisTransformer,
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private string $eudonetParisOrgId,
+        private EudonetParisReporterFactory $reporterFactory,
         private DateUtilsInterface $dateUtils,
     ) {
     }
@@ -35,16 +34,12 @@ final class EudonetParisExecutor
             throw new EudonetParisException('No target organization ID set. Please set APP_EUDONET_PARIS_ORG_ID in .env.local');
         }
 
-        $numProcessed = 0;
-        $numCreated = 0;
-        $numSkipped = 0;
-        $numSkippedNoLocationsGathered = 0;
-        $numErrors = 0;
-        $startTime = $this->dateUtils->getMicroTime();
         $numberOfRegulationsInsideEudonet = null;
         $numberOfMeasuresInsideEudonet = null;
 
-        $this->logger->info('started');
+        $startTime = $this->dateUtils->getNow();
+        $reporter = $this->reporterFactory->createReporter();
+        $reporter->start(startTime: $startTime);
 
         try {
             try {
@@ -57,44 +52,39 @@ final class EudonetParisExecutor
                 ->findIdentifiersForSource(RegulationOrderRecordSourceEnum::EUDONET_PARIS->value);
 
             foreach ($this->eudonetParisExtractor->iterExtract($laterThanUTC, ignoreIDs: $existingIdentifiers) as $record) {
-                $result = $this->eudonetParisTransformer->transform($record, $organization);
+                $command = $this->eudonetParisTransformer->transform($record, $organization, $reporter);
 
-                ++$numProcessed;
-
-                if (empty($result->command)) {
-                    $this->logger->info('skipped', $result->errors);
-
-                    ++$numSkipped;
-
-                    foreach ($result->errors as $error) {
-                        if ($error['reason'] == 'no_locations_gathered') {
-                            ++$numSkippedNoLocationsGathered;
-                            break;
-                        }
-                    }
-                } else {
-                    try {
-                        $this->commandBus->handle($result->command);
-                        $this->logger->info('created', ['command' => $result->command]);
-                        ++$numCreated;
-                    } catch (ImportEudonetParisRegulationFailedException $exc) {
-                        $this->logger->error('failed', ['command' => $result->command, 'exc' => $exc]);
-                        ++$numErrors;
-                    }
+                if ($command === null) { // errors may have occurred, already logged
+                    $reporter->acknowledgeNewErrors(); // we go to the next feature -> we reset the reporter's _hasNewErrors attribute
+                    continue;
                 }
+                try {
+                    $this->commandBus->handle($command);
+                } catch (\Exception $exc) {
+                    $reporter->addError($reporter::ERROR_IMPORT_COMMAND_FAILED, [
+                        'message' => $exc->getMessage(),
+                        'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
+                        'exc' => $exc,
+                        'command' => $command,
+                    ]);
+                }
+
+                $reporter->acknowledgeNewErrors(); // we go to the next feature -> we reset the reporter's _hasNewErrors attribute
             }
 
             $numberOfRegulationsInsideEudonet = $this->eudonetParisExtractor->getNumberOfRegulations();
             $numberOfMeasuresInsideEudonet = $this->eudonetParisExtractor->getNumberOfMeasures();
         } catch (\Exception $exc) {
-            $this->logger->error($exc);
-
+            $reporter->addError($reporter::ERROR_IMPORT_COMMAND_FAILED, [
+                'message' => $exc->getMessage(),
+            ]);
             throw new EudonetParisException($exc->getMessage());
         } finally {
-            $endTime = $this->dateUtils->getMicroTime();
-            $elapsedSeconds = $endTime - $startTime;
+            $endTime = $this->dateUtils->getNow();
+            $reporter->end(endTime: $endTime);
 
-            $this->logger->info('done', [
+            // return $this->reportFormatter->format($reporter->getRecords());
+            /*$this->logger->info('done', [
                 'numProcessed' => $numProcessed,
                 'numCreated' => $numCreated,
                 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
@@ -106,7 +96,8 @@ final class EudonetParisExecutor
                 'elapsedSeconds' => round($elapsedSeconds, 2),
                 'numberOfRegulationsInsideEudonet' => $numberOfRegulationsInsideEudonet,
                 'numberOfMeasuresInsideEudonet' => $numberOfMeasuresInsideEudonet,
-            ]);
+            ]);*/
+            // return;
         }
     }
 }

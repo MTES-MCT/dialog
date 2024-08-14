@@ -14,7 +14,6 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\User\Organization;
-use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
 
 final class EudonetParisTransformer
 {
@@ -22,37 +21,44 @@ final class EudonetParisTransformer
     private const CITY_CODE_TEMPLATE = '751%s';
     private const CITY_LABEL = 'Paris';
 
-    public function transform(array $row, Organization $organization): EudonetParisTransformerResult
+    public function transform(array $row, Organization $organization, EudonetParisReporter $reporter): ?ImportEudonetParisRegulationCommand
     {
-        $errors = [];
-        $loc = ['regulation_identifier' => $row['fields'][EudonetParisExtractor::ARRETE_ID]];
+        $regulationId = $row['fields'][EudonetParisExtractor::ARRETE_ID];
 
+        // if no measures (after filtering), we do not import the regulation
         if (\count($row['measures']) === 0) {
-            $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::NO_MEASURES_FOUND->value];
+            // $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::NO_MEASURES_FOUND->value];
+            $reporter->addNotice($reporter::NOTICE_NO_MEASURES_FOUND, [
+                'regulation_id' => $regulationId,
+            ]);
 
-            return new EudonetParisTransformerResult(null, $errors);
+            return null;
         }
 
-        [$generalInfoCommand, $error] = $this->buildGeneralInfoCommand($row, $organization);
+        $generalInfoCommand = $this->buildGeneralInfoCommand($row, $organization, $reporter);
 
-        if ($error) {
-            $errors[] = ['loc' => [...$loc, ...$error['loc']], 'impact' => 'skip_regulation', ...$error];
-
-            return new EudonetParisTransformerResult(null, $errors);
-        }
+        /*if ($reporter->hasNewErrors()) {
+            // $errors[] = ['loc' => [...$loc, ...$error['loc']], 'impact' => 'skip_regulation', ...$error];
+            return null;
+        }*/
 
         $measureCommands = [];
 
         foreach ($row['measures'] as $measureRow) {
-            [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow);
+            $measureCommand = $this->buildMeasureCommand($measureRow, $regulationId, $reporter);
 
-            if (empty($measureCommand)) {
+            /*if (empty($measureCommand)) {
                 $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value, 'errors' => $measureErrors];
 
-                return new EudonetParisTransformerResult(null, $errors);
-            }
+                return null;
+            }*/
 
             $measureCommands[] = $measureCommand;
+        }
+
+        // we return null if we got one or more errors
+        if ($reporter->hasNewErrors()) {
+            return null;
         }
 
         $command = new ImportEudonetParisRegulationCommand(
@@ -60,7 +66,7 @@ final class EudonetParisTransformer
             $measureCommands,
         );
 
-        return new EudonetParisTransformerResult($command, $errors);
+        return $command;
     }
 
     private function parseDate(string $value): ?\DateTimeInterface
@@ -83,10 +89,12 @@ final class EudonetParisTransformer
         return null;
     }
 
-    private function buildGeneralInfoCommand(array $row, Organization $organization): array
+    private function buildGeneralInfoCommand(array $row, Organization $organization, EudonetParisReporter $reporter): SaveRegulationGeneralInfoCommand
     {
+        $regulationId = $row['fields'][EudonetParisExtractor::ARRETE_ID];
+
         $command = new SaveRegulationGeneralInfoCommand();
-        $command->identifier = $row['fields'][EudonetParisExtractor::ARRETE_ID];
+        $command->identifier = $regulationId;
 
         $type = $row['fields'][EudonetParisExtractor::ARRETE_TYPE];
 
@@ -98,55 +106,65 @@ final class EudonetParisTransformer
 
         $command->organization = $organization;
 
-        $startDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]);
+        $regulationStartDate = $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]; // start date before parsing, useful to debug
+        $startDate = $this->parseDate($regulationStartDate);
 
         if (!$startDate) {
-            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
-
-            return [null, $error];
+            // $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
+            $reporter->addError($reporter::ERROR_REGULATION_START_DATE_PARSING_FAILED, [
+                'regulation_id' => $regulationId,
+                'regulation_start_date' => $regulationStartDate,
+            ]);
         }
 
         $command->startDate = $startDate;
 
-        $endDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]);
+        $regulationEndDate = $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]; // end date before parsing, useful to debug
+        $endDate = $this->parseDate($regulationEndDate);
 
         if (!$endDate) {
-            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
-
-            return [null, $error];
+            // $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
+            $reporter->addError($reporter::ERROR_REGULATION_END_DATE_PARSING_FAILED, [
+                'regulation_id' => $regulationId,
+                'regulation_end_date' => $regulationEndDate,
+            ]);
         }
 
         $command->endDate = $endDate;
 
-        return [$command, null];
+        return $command;
     }
 
-    private function buildMeasureCommand(array $row): array
+    private function buildMeasureCommand(array $row, string $regulationId, EudonetParisReporter $reporter): SaveMeasureCommand
     {
-        $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
-        $errors = [];
-
+        // $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
+        $measureId = $row['fields'][EudonetParisExtractor::MESURE_ID];
         $alinea = $row['fields'][EudonetParisExtractor::MESURE_ALINEA];
 
         if ($alinea) {
             // This "alinea" field contains free-form text with indications on temporal validity.
             // We cannot parse this data so we only ingest measures that do NOT have an "alinea", meaning their dates are
             // the same as the global regulation order dates.
-            $errors[] = ['loc' => $loc, 'reason' => EudonetParisErrorEnum::MEASURE_MAY_CONTAIN_DATES->value, 'alinea' => $alinea, 'impact' => 'skip_measure'];
+            // $errors[] = ['loc' => $loc, 'reason' => EudonetParisErrorEnum::MEASURE_MAY_CONTAIN_DATES->value, 'alinea' => $alinea, 'impact' => 'skip_measure'];
+            $reporter->addError($reporter::ERROR_EUDONET_MEASURE_ALINEA_MAY_CONTAIN_DATES, [
+                'regulation_id' => $regulationId,
+                'measure_id' => $measureId,
+                'alinea' => $alinea,
+            ]);
 
-            return [null, $errors];
+            // return null;
         }
 
         $locationCommands = [];
 
         foreach ($row['locations'] as $locationRow) {
-            [$locationCommand, $error] = $this->buildLocationCommand($locationRow);
+            $locationCommand = $this->buildLocationCommand($locationRow, $regulationId, $measureId, $reporter);
 
-            if (empty($locationCommand)) {
+            /*if (empty($locationCommand)) {
                 $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_measure'];
 
-                return [null, $errors];
-            }
+                continue;
+            }*/
 
             $locationCommands[] = $locationCommand;
         }
@@ -159,24 +177,25 @@ final class EudonetParisTransformer
         $command->vehicleSet = $vehicleSet;
         $command->locations = $locationCommands;
 
-        return [$command, null];
+        return $command;
     }
 
-    private function buildLocationCommand(array $row): array
+    private function buildLocationCommand(array $row, string $regulationId, string $measureId, EudonetParisReporter $reporter): SaveLocationCommand
     {
-        $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
-
+        $locationId = $row['fields'][EudonetParisExtractor::LOCALISATION_ID];
         $arrondissement = $row['fields'][EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT];
 
         if (!preg_match(self::ARRONDISSEMENT_REGEX, $arrondissement, $matches)) {
-            $error = [
-                'loc' => [...$loc, 'fieldname' => 'ARRONDISSEMENT'],
-                'reason' => EudonetParisErrorEnum::VALUE_DOES_NOT_MATCH_PATTERN->value,
+            $reporter->addError($reporter::ERROR_VALUE_DOES_NOT_MATCH_PATTERN, [
+                'regulation_id' => $regulationId,
+                'measure_id' => $measureId,
+                'location_id' => $locationId,
+                'fieldname' => 'ARRONDISSEMENT',
                 'value' => $arrondissement,
                 'pattern' => self::ARRONDISSEMENT_REGEX,
-            ];
+            ]);
 
-            return [null, $error];
+            // return null;
         }
 
         $cityCode = \sprintf(self::CITY_CODE_TEMPLATE, str_pad($matches['arrondissement'], 2, '0', STR_PAD_LEFT));
@@ -186,6 +205,8 @@ final class EudonetParisTransformer
         $libelleVoieFin = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN];
         $numAdresseDebut = $row['fields'][EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT];
         $numAdresseFin = $row['fields'][EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN];
+
+        $roadName = null;
 
         $fromHouseNumber = null;
         $toHouseNumber = null;
@@ -204,13 +225,14 @@ final class EudonetParisTransformer
             $fromRoadName = $libelleVoieDebut;
             $toRoadName = $libelleVoieFin;
         } else {
-            $error = [
-                'loc' => $loc,
-                'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
+            $reporter->addError($reporter::ERROR_UNSUPPORTED_LOCATION_FIELDSET, [
+                'regulation_id' => $regulationId,
+                'measure_id' => $measureId,
+                'location_id' => $locationId,
                 'location_raw' => json_encode($row),
-            ];
+            ]);
 
-            return [null, $error];
+            // return null;
         }
 
         $locationCommand = new SaveLocationCommand();
@@ -227,6 +249,6 @@ final class EudonetParisTransformer
         $locationCommand->namedStreet->toRoadName = $toRoadName;
         $locationCommand->namedStreet->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
 
-        return [$locationCommand, null];
+        return $locationCommand;
     }
 }

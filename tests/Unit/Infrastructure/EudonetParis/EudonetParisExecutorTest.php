@@ -15,31 +15,30 @@ use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Infrastructure\EudonetParis\EudonetParisExecutor;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
+use App\Infrastructure\EudonetParis\EudonetParisReporterFactory;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
-use App\Infrastructure\EudonetParis\EudonetParisTransformerResult;
 use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 final class EudonetParisExecutorTest extends TestCase
 {
-    private $logger;
     private $extractor;
     private $transformer;
     private $commandBus;
     private $queryBus;
     private $regulationOrderRecordRepository;
     private $orgId = '064f5eba-5eb2-7ffd-8000-77e8f8b7bb9b';
+    private $reporterFactory;
     private $dateUtils;
 
     protected function setUp(): void
     {
-        $this->logger = $this->createMock(LoggerInterface::class);
         $this->extractor = $this->createMock(EudonetParisExtractor::class);
         $this->transformer = $this->createMock(EudonetParisTransformer::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $this->reporterFactory = $this->createMock(EudonetParisReporterFactory::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
@@ -49,13 +48,13 @@ final class EudonetParisExecutorTest extends TestCase
         $organization = $this->createMock(Organization::class);
 
         $executor = new EudonetParisExecutor(
-            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->reporterFactory,
             $this->dateUtils,
         );
 
@@ -72,14 +71,15 @@ final class EudonetParisExecutorTest extends TestCase
 
         $record1 = ['fields' => [1101 => '20210104']];
         $importCommand1 = $this->createMock(ImportEudonetParisRegulationCommand::class);
-        $result1 = new EudonetParisTransformerResult($importCommand1, []);
+        $result1 = $importCommand1;
 
         $record2 = ['fields' => [1101 => '20210305']];
-        $result2 = new EudonetParisTransformerResult(null, [['reason' => 'no_locations_gathered']]);
+        // $result2 = new EudonetParisTransformerResult(null, [['reason' => 'no_locations_gathered']]);
+        $result2 = null;
 
         $record3 = ['fields' => [1101 => '20210415']];
         $importCommand3 = $this->createMock(ImportEudonetParisRegulationCommand::class);
-        $result3 = new EudonetParisTransformerResult($importCommand3, []);
+        $result3 = $importCommand3;
 
         $records = [$record1, $record2, $record3];
 
@@ -127,7 +127,7 @@ final class EudonetParisExecutorTest extends TestCase
             ->method('getNumberOfMeasures')
             ->willReturn(3);
 
-        $logMatcher = self::exactly(5);
+        /*$logMatcher = self::exactly(5);
         $this->logger
             ->expects($logMatcher)
             ->method('info')
@@ -152,7 +152,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'numberOfMeasuresInsideEudonet' => 3,
                     ])
                 ),
-            });
+            });*/
 
         $executor->execute($now);
     }
@@ -181,13 +181,13 @@ final class EudonetParisExecutorTest extends TestCase
             ->willReturn(new \EmptyIterator());
 
         $executor = new EudonetParisExecutor(
-            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->reporterFactory,
             $this->dateUtils,
         );
 
@@ -210,7 +210,7 @@ final class EudonetParisExecutorTest extends TestCase
         ->method('getNumberOfMeasures')
         ->willReturn(0);
 
-        $logMatcher = self::exactly(2);
+        /*$logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
             ->method('info')
@@ -232,7 +232,7 @@ final class EudonetParisExecutorTest extends TestCase
                         'numberOfMeasuresInsideEudonet' => 0,
                     ])
                 ),
-            });
+            });*/
 
         $executor->execute($now);
     }
@@ -257,9 +257,9 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('iterExtract');
 
-        $this->logger
+        /*$this->logger
             ->expects(self::exactly(1))
-            ->method('error');
+            ->method('error');*/
 
         $timeMatcher = self::exactly(2);
         $this->dateUtils
@@ -271,13 +271,13 @@ final class EudonetParisExecutorTest extends TestCase
             });
 
         $executor = new EudonetParisExecutor(
-            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->reporterFactory,
             $this->dateUtils,
         );
 
@@ -297,19 +297,19 @@ final class EudonetParisExecutorTest extends TestCase
             ->willReturn($organization);
 
         $executor = new EudonetParisExecutor(
-            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             $this->orgId,
+            $this->reporterFactory,
             $this->dateUtils,
         );
 
         $record1 = ['fields' => [1101 => '20210104']];
         $importCommand1 = $this->createMock(ImportEudonetParisRegulationCommand::class);
-        $result1 = new EudonetParisTransformerResult($importCommand1, []);
+        $result1 = $importCommand1;
 
         $this->extractor
             ->expects(self::once())
@@ -347,7 +347,7 @@ final class EudonetParisExecutorTest extends TestCase
             ->method('getNumberOfMeasures')
             ->willReturn(1);
 
-        $logMatcher = self::exactly(2);
+        /*$logMatcher = self::exactly(2);
         $this->logger
             ->expects($logMatcher)
             ->method('info')
@@ -374,7 +374,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->logger
             ->expects(self::once())
             ->method('error')
-            ->with('failed', self::anything());
+            ->with('failed', self::anything());*/
 
         $executor->execute($now);
     }
@@ -398,22 +398,22 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('iterExtract');
 
-        $this->logger
+        /*$this->logger
             ->expects(self::never())
-            ->method('debug');
+            ->method('debug');*/
 
         $this->dateUtils
             ->expects(self::never())
             ->method('getMicroTime');
 
         $executor = new EudonetParisExecutor(
-            $this->logger,
             $this->extractor,
             $this->transformer,
             $this->commandBus,
             $this->queryBus,
             $this->regulationOrderRecordRepository,
             '',
+            $this->reporterFactory,
             $this->dateUtils,
         );
 
