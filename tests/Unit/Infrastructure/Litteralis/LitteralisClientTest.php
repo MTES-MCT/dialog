@@ -30,6 +30,15 @@ final class LitteralisClientTest extends TestCase
         $extractor->count(null, $this->reporter);
     }
 
+    public function testCredentialsEmpty(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Credentials are empty');
+
+        $extractor = new LitteralisClient($this->httpClient);
+        $extractor->setCredentials('');
+    }
+
     public function testFetchAllPaginated(): void
     {
         $features = [

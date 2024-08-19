@@ -9,6 +9,9 @@ use App\Infrastructure\Litteralis\LitteralisReportFormatter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ *  @group only
+ */
 final class LitteralisReportFormatterTest extends KernelTestCase
 {
     private $translator;
@@ -63,8 +66,9 @@ Remarques
             [LitteralisReporter::FACT, [LitteralisReporter::FACT => 'fact1', 'value' => 'abc']],
             [LitteralisReporter::WARNING, [LitteralisReporter::WARNING => LitteralisReporter::WARNING_MISSING_GEOMETRY, 'arretesrcid' => 'arrete4']],
             [LitteralisReporter::NOTICE, [LitteralisReporter::NOTICE => LitteralisReporter::NOTICE_NO_MEASURES_FOUND, 'arretesrcid' => 'arrete3']],
-            [LitteralisReporter::ERROR, [LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_MISSING, 'arretesrcid' => 'arrete1']],
+            [LitteralisReporter::ERROR, [LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_MISSING, 'arretesrcid' => 'arrete1', 'shorturl' => 'http://testserver/arrete1']],
             [LitteralisReporter::WARNING, [LitteralisReporter::WARNING => LitteralisReporter::WARNING_MISSING_GEOMETRY, 'arretesrcid' => 'arrete2']],
+            [LitteralisReporter::WARNING, [LitteralisReporter::WARNING => LitteralisReporter::WARNING_MISSING_GEOMETRY]],
         ];
 
         $expectedResult = "Intégration Litteralis
@@ -84,24 +88,25 @@ Nombre total d'emprises dans Litteralis pour cette organisation : 10
 Erreurs
 -------
 
-Limite de vitesse manquante : 1
+Emprises avec limite de vitesse manquante : 1 (dans 1 arrêtés)
   Arrêtés :
-    arrete1
+    arrete1 (http://testserver/arrete1)
 
 
 Avertissements
 --------------
 
-Emprises sans géométrie : 2
+Emprises sans géométrie : 3 (dans 3 arrêtés)
   Arrêtés :
     arrete4
     arrete2
+    <unknown>
 
 
 Remarques
 ---------
 
-Arrêtés sans aucune mesure connue de DiaLog : 1
+Arrêtés sans aucune mesure connue de DiaLog : 1 (dans 1 arrêtés)
   Arrêtés :
     arrete3
 

@@ -2,7 +2,6 @@
 
 DiaLog dispose d'une intégration avec [Litteralis]([Litteralis](https://www.sogelink.com/solution/litteralis/)). Cette solution de gestion de réglementation de l'éditeur Sogelink est utilisée par de nombreuses collectivités notamment de plus grande taille.
 
-
 ## Description
 
 L'intégration requête l'API WFS de Litteralis. Pour cela elle a besoin d'**identifiants** ("credentials" au format "user:password") configuré par la collectivité qui nous donne accès à ses données Litteralis. Elle a aussi besoin de l'**UUID** de l'organisation dans DiaLog.
@@ -19,6 +18,7 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
 2. Créer un fichier `.env.prod.local` vide, et y définir :
     * `BDTOPO_DATABASE_URL`
     * `APP_MEL_ORG_ID=ID`, où `ID` est l'UUID de la MEL que vous venez de récupérer.
+    * `APP_MEL_LITTERALIS_CREDENTIALS` avec les identifiants MEL au format `user:password` (les demander à un membre de l'équipe dev)
 3. Ouvrir un [tunnel](./db.md#utiliser-une-db-scalingo-en-local) vers la DB de prod :
 
     ```bash

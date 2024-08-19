@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     description: 'Get "emprises" of regulation by identifier (arretesrcid) in MEL Litteralis data',
     hidden: false,
 )]
-class MELRegulationGet extends Command
+class MELRegulationGetCommand extends Command
 {
     public function __construct(
         private LitteralisClient $client,

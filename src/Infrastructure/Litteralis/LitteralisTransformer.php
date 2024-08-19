@@ -62,7 +62,7 @@ final readonly class LitteralisTransformer
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = $identifier;
         $this->setCategory($generalInfoCommand, $properties);
-        $generalInfoCommand->description = $this->parseDescription($properties);
+        $generalInfoCommand->description = $this->buildDescription($properties);
         $generalInfoCommand->organization = $organization;
         $this->setRegulationDates($generalInfoCommand, $properties, $reporter);
 
@@ -94,7 +94,10 @@ final readonly class LitteralisTransformer
         // Ça n'est pas vraiment une erreur mais dans DiaLog un arrêté sans mesures n'est pas valide.
         // Il faut donc zapper cet arrêté.
         if (\count($measureCommands) === 0) {
-            $reporter->addNotice($reporter::NOTICE_NO_MEASURES_FOUND, ['arretesrcid' => $properties['arretesrcid']]);
+            $reporter->addNotice($reporter::NOTICE_NO_MEASURES_FOUND, [
+                'arretesrcid' => $properties['arretesrcid'],
+                'shorturl' => $properties['shorturl'],
+            ]);
 
             return null;
         }
@@ -115,6 +118,13 @@ final readonly class LitteralisTransformer
         if ($generalInfoCommand->category === RegulationOrderCategoryEnum::OTHER->value) {
             $generalInfoCommand->otherCategoryText = $categoriesModeleValue;
         }
+    }
+
+    private function buildDescription(array $properties): string
+    {
+        $description = $this->parseDescription($properties);
+
+        return \sprintf('%s (URL : %s)', $description, $properties['shorturl']);
     }
 
     private function parseDescription(array $properties): string
@@ -161,6 +171,7 @@ final readonly class LitteralisTransformer
         } else {
             $reporter->addError($reporter::ERROR_REGULATION_START_DATE_PARSING_FAILED, [
                 'arretesrcid' => $properties['arretesrcid'],
+                'shorturl' => $properties['shorturl'],
                 'arretedebut' => $properties['arretedebut'],
             ]);
         }
@@ -177,6 +188,7 @@ final readonly class LitteralisTransformer
         } else {
             $reporter->addError($reporter::ERROR_REGULATION_END_DATE_PARSING_FAILED, [
                 'arretesrcid' => $properties['arretesrcid'],
+                'shorturl' => $properties['shorturl'],
                 'arretefin' => $properties['arretefin'],
             ]);
         }
@@ -308,6 +320,7 @@ final readonly class LitteralisTransformer
                     $reporter->addError($reporter::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER, [
                         'idemprise' => $properties['idemprise'],
                         'arretesrcid' => $properties['arretesrcid'],
+                        'shorturl' => $properties['shorturl'],
                         'measureName' => $name,
                         'expected' => $index + 1,
                         'actual' => $number,
@@ -424,6 +437,7 @@ final readonly class LitteralisTransformer
                 [
                     'idemprise' => $properties['idemprise'],
                     'arretesrcid' => $properties['arretesrcid'],
+                    'shorturl' => $properties['shorturl'],
                     $startDateProperty => $properties[$startDateProperty],
                     'format' => $dateFormat,
                 ],
@@ -450,6 +464,7 @@ final readonly class LitteralisTransformer
                 [
                     'idemprise' => $properties['idemprise'],
                     'arretesrcid' => $properties['arretesrcid'],
+                    'shorturl' => $properties['shorturl'],
                     $endDateProperty => $properties[$endDateProperty],
                     'format' => $dateFormat,
                 ],
@@ -476,6 +491,7 @@ final readonly class LitteralisTransformer
             $reporter->addError($reporter::ERROR_PERIOD_UNPARSABLE, [
                 'idemprise' => $properties['idemprise'],
                 'arretesrcid' => $properties['arretesrcid'],
+                'shorturl' => $properties['shorturl'],
                 'jours et horaires' => $value,
             ]);
             $periodCommand->timeSlots = [];
@@ -494,6 +510,7 @@ final readonly class LitteralisTransformer
             $reporter->addError($reporter::ERROR_MAX_SPEED_VALUE_MISSING, [
                 'idemprise' => $properties['idemprise'],
                 'arretesrcid' => $properties['arretesrcid'],
+                'shorturl' => $properties['shorturl'],
                 'mesures' => $properties['mesures'],
             ]);
 
@@ -504,6 +521,7 @@ final readonly class LitteralisTransformer
             $reporter->addError($reporter::ERROR_MAX_SPEED_VALUE_INVALID, [
                 'idemprise' => $properties['idemprise'],
                 'arretesrcid' => $properties['arretesrcid'],
+                'shorturl' => $properties['shorturl'],
                 'limite de vitesse' => $value,
             ]);
 

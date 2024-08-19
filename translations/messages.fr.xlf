@@ -2104,11 +2104,19 @@
             </trans-unit>
             <trans-unit id="litteralis.report.count.matching_features">
                 <source>litteralis.report.count.matching_features</source>
-                <target>Nombre d'emprises d'intérêt récupérées par l'API Litteralis</target>
+                <target>Emprises d'intérêt récupérées dans Litteralis</target>
             </trans-unit>
             <trans-unit id="litteralis.report.count.extracted_features">
                 <source>litteralis.report.count.extracted_features</source>
-                <target>Nombre d'emprises extraites effectivement candidates à l'import</target>
+                <target>Emprises effectivement candidates à l'import</target>
+            </trans-unit>
+            <trans-unit id="litteralis.report.count.imported_features">
+                <source>litteralis.report.count.imported_features</source>
+                <target>Emprises importées avec succès</target>
+            </trans-unit>
+            <trans-unit id="litteralis.report.among_regulations">
+                <source>litteralis.report.among_regulations</source>
+                <target>dans %count% arrêtés</target>
             </trans-unit>
             <trans-unit id="litteralis.report.section.error.title">
                 <source>litteralis.report.section.error.title</source>
@@ -2116,11 +2124,11 @@
             </trans-unit>
             <trans-unit id="litteralis.report.error.max_speed_value_missing">
                 <source>litteralis.report.error.max_speed_value_missing</source>
-                <target>Limite de vitesse manquante</target>
+                <target>Emprises avec limite de vitesse manquante</target>
             </trans-unit>
             <trans-unit id="litteralis.report.error.period_unparsable">
                 <source>litteralis.report.error.period_unparsable</source>
-                <target>Emprises avec "jours et horaires" au format inconnu</target>
+                <target>Emprises avec "jours et horaires" au format non-supporté</target>
             </trans-unit>
             <trans-unit id="litteralis.report.error.measure_parameter_inconsistent_number">
                 <source>litteralis.report.error.measure_parameter_inconsistent_number</source>

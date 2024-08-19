@@ -64,7 +64,7 @@ final class LitteralisTransformerTest extends TestCase
         $generalInfo = new SaveRegulationGeneralInfoCommand();
         $generalInfo->identifier = $identifier;
         $generalInfo->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $generalInfo->description = "de chargement d'engin de chantier";
+        $generalInfo->description = "de chargement d'engin de chantier (URL : https://dl.sogelink.fr/?0dbjHha7)";
         $generalInfo->startDate = new \DateTimeImmutable('2024-03-18T01:00:00Z');
         $generalInfo->endDate = new \DateTimeImmutable('2024-03-19T01:00:00Z');
         $generalInfo->organization = $this->organization;
@@ -159,19 +159,19 @@ final class LitteralisTransformerTest extends TestCase
         // Option 1: "Description des travaux"
         $features = [json_decode(self::feature, associative: true)];
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame('regulation description', $command->generalInfoCommand->description);
+        $this->assertSame('regulation description (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->description);
 
         // Option 2: "Description évènement"
         $feature = str_replace('Description des travaux : regulation description', 'Description évènement : event description', self::feature);
         $features = [json_decode($feature, associative: true)];
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame('event description', $command->generalInfoCommand->description);
+        $this->assertSame('event description (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->description);
 
         // Option 3: none is present, is 'nommodele' as a default
         $feature = str_replace('; Description des travaux : regulation description', '', self::feature);
         $features = [json_decode($feature, associative: true)];
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame('[MEL] - Arrêté permanent', $command->generalInfoCommand->description);
+        $this->assertSame('[MEL] - Arrêté permanent (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->description);
     }
 
     public function testTransformLocationLabelTrim(): void
@@ -297,6 +297,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::ERROR => LitteralisReporter::ERROR_REGULATION_START_DATE_PARSING_FAILED,
                     'arretedebut' => 'BAD FORMAT',
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 ],
             ],
             [
@@ -305,6 +306,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::ERROR => LitteralisReporter::ERROR_REGULATION_END_DATE_PARSING_FAILED,
                     'arretefin' => 'BAD FORMAT',
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 ],
             ],
             [
@@ -314,6 +316,7 @@ final class LitteralisTransformerTest extends TestCase
                     'arretedebut' => 'BAD FORMAT',
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'format' => \DateTimeInterface::ISO8601,
                 ],
             ],
@@ -324,6 +327,7 @@ final class LitteralisTransformerTest extends TestCase
                     'arretefin' => 'BAD FORMAT',
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'format' => \DateTimeInterface::ISO8601,
                 ],
             ],
@@ -333,6 +337,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_MISSING,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'mesures' => 'Limitation de vitesse',
                 ],
             ],
@@ -342,6 +347,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_INVALID,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'limite de vitesse' => 'foo km/h',
                 ],
             ],
@@ -351,6 +357,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::ERROR => LitteralisReporter::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'measureName' => 'Circulation interdite 4',
                     'expected' => 1,
                     'actual' => 4,
@@ -362,6 +369,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::ERROR => LitteralisReporter::ERROR_PERIOD_UNPARSABLE,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'jours et horaires' => 'foo',
                 ],
             ],
@@ -391,6 +399,7 @@ final class LitteralisTransformerTest extends TestCase
                 [
                     LitteralisReporter::NOTICE => LitteralisReporter::NOTICE_NO_MEASURES_FOUND,
                     'arretesrcid' => '24-A-0126',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 ],
             ],
         ], $this->reporter->getRecords());

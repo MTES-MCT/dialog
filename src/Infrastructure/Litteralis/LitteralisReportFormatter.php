@@ -74,7 +74,22 @@ final class LitteralisReportFormatter
         foreach ($this->findRecordsByType(LitteralisReporter::COUNT, $records) as [$name, $context]) {
             $verboseName = $this->translator->trans(\sprintf('litteralis.report.count.%s', $name));
             $value = $context['value'];
-            $lines[] = \sprintf('%s : %s', $verboseName, $value);
+            $line = \sprintf('%s : %s', $verboseName, $value);
+
+            if (\array_key_exists('regulationsCount', $context)) {
+                $line = \sprintf(
+                    '%s (%s)',
+                    $line,
+                    $this->translator->trans(
+                        'litteralis.report.among_regulations',
+                        [
+                            '%count%' => $context['regulationsCount'],
+                        ],
+                    ),
+                );
+            }
+
+            $lines[] = $line;
         }
 
         $lines[] = '';
@@ -97,15 +112,21 @@ final class LitteralisReportFormatter
             $name = $context[$type];
 
             if (!isset($caseLists[$type][$name])) {
-                $caseLists[$type][$name] = ['count' => 0, 'regulations' => []];
+                $caseLists[$type][$name] = ['count' => 0, 'regulations' => [], 'urls' => []];
             }
 
             $info = $caseLists[$type][$name];
 
             ++$info['count'];
 
-            if (\array_key_exists('arretesrcid', $context)) {
-                $info['regulations'][] = $context['arretesrcid'];
+            $regulationId = \array_key_exists('arretesrcid', $context) ? $context['arretesrcid'] : '<unknown>';
+
+            if (!\in_array($regulationId, $info['regulations'])) {
+                $info['regulations'][] = $regulationId;
+
+                if (\array_key_exists('shorturl', $context)) {
+                    $info['urls'][$regulationId] = $context['shorturl'];
+                }
             }
 
             $caseLists[$type][$name] = $info;
@@ -118,15 +139,31 @@ final class LitteralisReportFormatter
             foreach ($cases as $name => $info) {
                 // Affichage du cas et du nombre d'occurrences
                 $verboseName = $this->translator->trans(\sprintf('litteralis.report.%s.%s', $type, $name));
-                $lines[] = \sprintf('%s : %s', $verboseName, $info['count']);
 
-                if (\count($info['regulations']) > 0) {
-                    // Affichage des arrêtés concernés
-                    $lines[] = \sprintf('  %s :', $this->translator->trans('litteralis.report.regulations'));
+                $lines[] = \sprintf(
+                    '%s : %s (%s)',
+                    $verboseName,
+                    $info['count'],
+                    $this->translator->trans(
+                        'litteralis.report.among_regulations',
+                        [
+                            '%count%' => \count($info['regulations']),
+                        ],
+                    ),
+                );
 
-                    foreach ($info['regulations'] as $id) {
-                        $lines[] = \sprintf('    %s', $id);
+                // Affichage des arrêtés concernés
+                $lines[] = \sprintf('  %s :', $this->translator->trans('litteralis.report.regulations'));
+
+                foreach ($info['regulations'] as $id) {
+                    $line = \sprintf('    %s', $id);
+
+                    if (\array_key_exists($id, $info['urls'])) {
+                        $url = $info['urls'][$id];
+                        $line = \sprintf('%s (%s)', $line, $url);
                     }
+
+                    $lines[] = $line;
                 }
 
                 $lines[] = '';

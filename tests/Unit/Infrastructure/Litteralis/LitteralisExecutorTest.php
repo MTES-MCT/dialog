@@ -117,30 +117,36 @@ final class LitteralisExecutorTest extends TestCase
             ->method('start')
             ->with($startTime, $organization);
 
+        $features1 = ['feature1A', 'feature1B'];
+        $features2 = ['feature2A'];
+        $features3 = [
+            [
+                'type' => 'Feature',
+                'properties' => [
+                    'idemprise' => 'feature3A',
+                    'arretesrcid' => '1234',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
+                ],
+            ],
+            [
+                'type' => 'Feature',
+                'properties' => [
+                    'idemprise' => 'feature3B',
+                    'arretesrcid' => '1234',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
+                ],
+            ],
+        ];
+
         $this->extractor
             ->expects(self::once())
             ->method('extractFeaturesByRegulation')
             ->with($laterThan, $reporter)
             ->willReturn(
                 [
-                    'identifier1' => ['feature1A', 'feature1B'],
-                    'identifier2' => ['feature2A'],
-                    'identifier3' => [
-                        [
-                            'type' => 'Feature',
-                            'properties' => [
-                                'idemprise' => 'feature3A',
-                                'arretesrcid' => '1234',
-                            ],
-                        ],
-                        [
-                            'type' => 'Feature',
-                            'properties' => [
-                                'idemprise' => 'feature3B',
-                                'arretesrcid' => '1234',
-                            ],
-                        ],
-                    ],
+                    'identifier1' => $features1,
+                    'identifier2' => $features2,
+                    'identifier3' => $features3,
                 ],
             );
 
@@ -148,29 +154,9 @@ final class LitteralisExecutorTest extends TestCase
             ->expects(self::exactly(3))
             ->method('transform')
             ->withConsecutive(
-                [$reporter, 'identifier1', ['feature1A', 'feature1B'], $organization], // Success
-                [$reporter, 'identifier2', ['feature2A'], $organization], // Transformation error
-                [
-                    $reporter,
-                    'identifier3',
-                    [
-                        [
-                            'type' => 'Feature',
-                            'properties' => [
-                                'idemprise' => 'feature3A',
-                                'arretesrcid' => '1234',
-                            ],
-                        ],
-                        [
-                            'type' => 'Feature',
-                            'properties' => [
-                                'idemprise' => 'feature3B',
-                                'arretesrcid' => '1234',
-                            ],
-                        ],
-                    ],
-                    $organization,
-                ], // Command execution error
+                [$reporter, 'identifier1', $features1, $organization], // Success
+                [$reporter, 'identifier2', $features2, $organization], // Transformation error
+                [$reporter, 'identifier3', $features3, $organization], // Command execution error
             )
             ->willReturnOnConsecutiveCalls($command1, null, $command3);
 
@@ -195,6 +181,7 @@ final class LitteralisExecutorTest extends TestCase
             ->with($reporter::ERROR_IMPORT_COMMAND_FAILED, [
                 'message' => 'oops',
                 'arretesrcid' => '1234',
+                'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 'violations' => null,
                 'command' => $command3,
             ]);

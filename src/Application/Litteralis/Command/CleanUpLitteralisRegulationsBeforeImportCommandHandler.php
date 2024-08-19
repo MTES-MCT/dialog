@@ -27,6 +27,9 @@ final class CleanUpLitteralisRegulationsBeforeImportCommandHandler
 
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
             $this->commandBus->handle(new DeleteRegulationCommand([$command->organizationId], $regulationOrderRecord));
+
+            // RegulationOrderRecord still holds reference to RegulationOrder which has just be deleted
+            // Prevent Doctrine from trying to save RegulationOrderRecord after this command finishes
             $this->em->detach($regulationOrderRecord);
         }
     }

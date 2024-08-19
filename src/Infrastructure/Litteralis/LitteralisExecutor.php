@@ -47,6 +47,8 @@ final class LitteralisExecutor
         $this->commandBus->handle(new CleanUpLitteralisRegulationsBeforeImportCommand($organization->getUuid(), $laterThan));
 
         $featuresByRegulation = $this->extractor->extractFeaturesByRegulation($laterThan, $reporter);
+        $numImportedRegulations = 0;
+        $numImportedFeatures = 0;
 
         foreach ($featuresByRegulation as $identifier => $regulationFeatures) {
             $command = $this->transformer->transform($reporter, $identifier, $regulationFeatures, $organization);
@@ -60,9 +62,12 @@ final class LitteralisExecutor
 
             try {
                 $this->commandBus->handle($command);
+                ++$numImportedRegulations;
+                $numImportedFeatures += \count($regulationFeatures);
             } catch (\Exception $exc) {
                 $reporter->addError($reporter::ERROR_IMPORT_COMMAND_FAILED, [
                     'arretesrcid' => $regulationFeatures[0]['properties']['arretesrcid'],
+                    'shorturl' => $regulationFeatures[0]['properties']['shorturl'],
                     'message' => $exc->getMessage(),
                     'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
                     'command' => $command,
@@ -71,6 +76,8 @@ final class LitteralisExecutor
 
             $reporter->acknowledgeNewErrors();
         }
+
+        $reporter->setCount($reporter::COUNT_IMPORTED_FEATURES, $numImportedFeatures, ['regulationsCount' => $numImportedRegulations]);
 
         $reporter->end(endTime: $this->dateUtils->getNow());
         $report = $this->reportFormatter->format($reporter->getRecords());

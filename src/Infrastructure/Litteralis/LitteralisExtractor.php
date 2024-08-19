@@ -44,6 +44,7 @@ final class LitteralisExtractor
                 $reporter->addWarning($reporter::WARNING_MISSING_GEOMETRY, [
                     'idemprise' => $feature['properties']['idemprise'],
                     'arretesrcid' => $identifier,
+                    'shorturl' => $feature['properties']['shorturl'],
                 ]);
                 continue;
             }
@@ -63,7 +64,7 @@ final class LitteralisExtractor
             ++$numExtractedFeatures;
         }
 
-        $reporter->setCount($reporter::COUNT_EXTRACTED_FEATURES, $numExtractedFeatures);
+        $reporter->setCount($reporter::COUNT_EXTRACTED_FEATURES, $numExtractedFeatures, ['regulationsCount' => \count($featuresByRegulation)]);
         $reporter->onExtract(json_encode($featuresByRegulation, JSON_UNESCAPED_UNICODE & JSON_UNESCAPED_SLASHES));
 
         return $featuresByRegulation;

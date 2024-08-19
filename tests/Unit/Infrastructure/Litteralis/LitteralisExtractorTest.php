@@ -57,6 +57,7 @@ final class LitteralisExtractorTest extends TestCase
                 'properties' => [
                     'idemprise' => 'emprise4',
                     'arretesrcid' => 'arrete3',
+                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                     'collectiviteagenceid' => 173214,
                 ],
             ],
@@ -94,6 +95,7 @@ final class LitteralisExtractorTest extends TestCase
             ->with($this->reporter::WARNING_MISSING_GEOMETRY, [
                 'idemprise' => 'emprise4',
                 'arretesrcid' => 'arrete3',
+                'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
             ]);
 
         $extractor = new LitteralisExtractor($this->client);

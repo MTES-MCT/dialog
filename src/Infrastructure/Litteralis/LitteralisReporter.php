@@ -21,6 +21,7 @@ final class LitteralisReporter
     public const COUNT_TOTAL_FEATURES = 'total_features';
     public const COUNT_MATCHING_FEATURES = 'matching_features';
     public const COUNT_EXTRACTED_FEATURES = 'extracted_features';
+    public const COUNT_IMPORTED_FEATURES = 'imported_features';
 
     // Un FACT est une donnée quelconque que l'on souhaite afficher dans le rapport
     public const FACT_START_TIME = 'start_time';
