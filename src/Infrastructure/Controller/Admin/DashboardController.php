@@ -43,5 +43,6 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Autres');
         yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
+        yield MenuItem::linkToRoute('Outils Litteralis', 'fa fa-toolbox', 'app_tools_litteralis');
     }
 }

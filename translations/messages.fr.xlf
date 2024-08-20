@@ -83,6 +83,10 @@
                 <source>common.or</source>
                 <target>ou</target>
             </trans-unit>
+            <trans-unit id="common.results.empty">
+                <source>common.results.empty</source>
+                <target>Aucun résultat</target>
+            </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
                 <target>République <![CDATA[<br/>]]> Française</target>
@@ -167,6 +171,10 @@
             <trans-unit id="common.form.validate">
                 <source>common.form.validate</source>
                 <target>Valider</target>
+            </trans-unit>
+            <trans-unit id="common.form.search">
+                <source>common.form.search</source>
+                <target>Rechercher</target>
             </trans-unit>
             <trans-unit id="common.autocomplete.results_count">
                 <source>common.autocomplete.results_count</source>
@@ -1985,6 +1993,26 @@
             <trans-unit id="map.location.state">
                 <source>map.location.state</source>
                 <target>L'arrêté est :</target>
+            </trans-unit>
+            <trans-unit id="tools.litteralis.title">
+                <source>tools.litteralis.title</source>
+                <target>Outils Litteralis</target>
+            </trans-unit>
+            <trans-unit id="tools.litteralis.mel.title">
+                <source>tools.litteralis.mel.title</source>
+                <target>MEL</target>
+            </trans-unit>
+            <trans-unit id="tools.litteralis.geometry_search.title">
+                <source>tools.litteralis.geometry_search.title</source>
+                <target>Rechercher des emprises</target>
+            </trans-unit>
+            <trans-unit id="tools.litteralis.geometry_search.arretesrcid">
+                <source>tools.litteralis.geometry_search.arretesrcid</source>
+                <target>Identifiant de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="tools.litteralis.geometry_search.arretesrcid.help">
+                <source>tools.litteralis.geometry_search.arretesrcid.help</source>
+                <target>Il s'agit de la valeur de la propriété 'arretesrcid'.</target>
             </trans-unit>
             <trans-unit id="public.regulation.map">
                 <source>public.regulation.map</source>

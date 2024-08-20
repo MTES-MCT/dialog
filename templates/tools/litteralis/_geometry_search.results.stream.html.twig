@@ -1,0 +1,18 @@
+<turbo-stream action="update" target="geometry_search_results">
+    <template>
+        {% if results|length > 0 %}
+            <p>{{ 'common.results'|trans }}</p>
+            <ul>
+                {% for result in results %}
+                    <li>
+                        <a href="{{ result.href }}" target="_blank">
+                            {{ result.label }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p><em>{{ 'common.results.empty'|trans }}</em></p>
+        {% endif %}
+    </template>
+</turbo-stream>

@@ -1,0 +1,17 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}
+    {{'tools.litteralis.title'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-my-7w">
+        <h1>{{ 'tools.litteralis.title'|trans }}</h1>
+
+        <h2>{{ 'tools.litteralis.mel.title'|trans }}</h2>
+
+        <h3>{{ 'tools.litteralis.geometry_search.title'|trans }}</h3>
+
+        <turbo-frame id="geometry_search" src="{{ path('app_tools_litteralis_geometry_search') }}">
+    </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+<turbo-frame id="geometry_search">
+    <div class="fr-col fr-col-md-6 fr-col-lg-4">
+        {{ form_start(form) }}
+            {{ form_row(form.arretesrcid, {group_class: 'fr-input-group', attr: {class: 'fr-input', autocomplete: 'off'} }) }}
+            {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn-load'}}) }}
+        {{ form_end(form) }}
+    </div>
+
+    {# Will be filled by turbo stream response #}
+    <div id="geometry_search_results" class="fr-mt-3w"></div>
+</turbo-frame>
