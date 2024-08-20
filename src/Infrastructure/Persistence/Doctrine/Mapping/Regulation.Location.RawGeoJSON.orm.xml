@@ -6,7 +6,7 @@
     name="App\Domain\Regulation\Location\RawGeoJSON"
     table="raw_geojson">
     <id name="uuid" type="guid" column="uuid" />
-    <field name="label" type="string" column="label" nullable="false" length="255" />
+    <field name="label" type="text" column="label" nullable="false"/>
     <one-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="rawGeoJSON">
         <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </one-to-one>
