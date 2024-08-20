@@ -97,12 +97,6 @@ final readonly class JOPTransformer
 
             $label = implode(', ', $eventNames);
 
-            if (\strlen($label) > 255) {
-                // Adhere to DB column length
-                $suffix = ' [...]';
-                $label = substr($label, 0, 255 - \strlen($suffix)) . $suffix;
-            }
-
             // CRS is missing in the data but required by PostGIS
             $areaGeometry['crs'] = ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']];
             $sectionsGeometryCollection = $this->roadGeocoder->findSectionsInArea(
