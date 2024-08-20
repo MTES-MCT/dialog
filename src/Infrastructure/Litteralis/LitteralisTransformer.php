@@ -198,12 +198,6 @@ final readonly class LitteralisTransformer
         $properties = $feature['properties'];
         $label = trim($properties['localisations']);
 
-        // Adhere to DB column length
-        if (\strlen($label) > 255) {
-            $suffix = ' [...]';
-            $label = substr($label, 0, 255 - \strlen($suffix)) . $suffix;
-        }
-
         // La géométrie est un POLYGON ou un MULTIPOLYGON dessiné(s) par un agent dans Litteralis.
         // On convertit en linéaire en s'aidant des tronçons de route de la BDTOPO.
         $polygonGeometry = json_encode($feature['geometry']);

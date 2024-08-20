@@ -176,20 +176,6 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertSame('[MEL] - Arrêté permanent (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->description);
     }
 
-    public function testTransformLocationLabelTrim(): void
-    {
-        $feature = str_replace(
-            '"localisations": " RUE DE LA MARLACQUE (FROMELLES) ENTRE LES PR0+066 ET PR0+750"',
-            \sprintf('"localisations": "%s"', str_repeat('a', 256)),
-            self::feature,
-        );
-
-        $features = [json_decode($feature, associative: true)];
-
-        $command = $this->transformer->transform($this->reporter, 'identifeir', $features, $this->organization);
-        $this->assertSame(str_repeat('a', 249) . ' [...]', $command->measureCommands[0]->locations[0]->rawGeoJSON->label);
-    }
-
     public function testTransformComplexMeasures(): void
     {
         // Values chosen to maximize test coverage
