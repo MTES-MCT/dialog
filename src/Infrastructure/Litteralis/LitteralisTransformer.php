@@ -7,12 +7,10 @@ namespace App\Infrastructure\Litteralis;
 use App\Application\Litteralis\Command\ImportLitteralisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
-use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\RoadGeocoderInterface;
-use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -242,7 +240,7 @@ final readonly class LitteralisTransformer
             }
 
             $measureCommand->vehicleSet = $this->parseVehicleSet($parameters, $reporter);
-            $measureCommand->periods = $this->parsePeriods($parameters, $properties, $reporter);
+            $measureCommand->periods = $this->periodParser->parsePeriods($parameters, $properties, $reporter);
 
             $measureCommands[] = $measureCommand;
         }
@@ -410,97 +408,6 @@ final readonly class LitteralisTransformer
         $vehicleSetCommand->otherExemptedTypeText = $derogations;
 
         return $vehicleSetCommand;
-    }
-
-    private function parsePeriods(array $parameters, array $properties, LitteralisReporter $reporter): array
-    {
-        $periodCommand = new SavePeriodCommand();
-
-        $this->setPeriodDates($periodCommand, $properties, $reporter);
-        $this->setPeriodDaysAndTimes($periodCommand, $parameters, $properties, $reporter);
-
-        return [$periodCommand];
-    }
-
-    private function setPeriodDates(SavePeriodCommand $periodCommand, array $properties, LitteralisReporter $reporter): void
-    {
-        $dateFormat = \DateTimeInterface::ISO8601;
-
-        $startDateProperty = $properties['emprisedebut'] ? 'emprisedebut' : 'arretedebut';
-        $startDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties[$startDateProperty]);
-
-        if ($startDate) {
-            $periodCommand->startDate = $startDate;
-            $periodCommand->startTime = $startDate;
-        } else {
-            $reporter->addError(
-                $reporter::ERROR_DATE_PARSING_FAILED,
-                [
-                    'idemprise' => $properties['idemprise'],
-                    'arretesrcid' => $properties['arretesrcid'],
-                    'shorturl' => $properties['shorturl'],
-                    $startDateProperty => $properties[$startDateProperty],
-                    'format' => $dateFormat,
-                ],
-            );
-        }
-
-        $endDateProperty = $properties['emprisefin'] ? 'emprisefin' : 'arretefin';
-        $periodCommand->isPermanent = true;
-
-        if (!$properties[$endDateProperty]) {
-            return;
-        }
-
-        $periodCommand->isPermanent = false;
-
-        $endDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties[$endDateProperty]);
-
-        if ($endDate) {
-            $periodCommand->endDate = $endDate;
-            $periodCommand->endTime = $endDate;
-        } else {
-            $reporter->addError(
-                $reporter::ERROR_DATE_PARSING_FAILED,
-                [
-                    'idemprise' => $properties['idemprise'],
-                    'arretesrcid' => $properties['arretesrcid'],
-                    'shorturl' => $properties['shorturl'],
-                    $endDateProperty => $properties[$endDateProperty],
-                    'format' => $dateFormat,
-                ],
-            );
-        }
-    }
-
-    private function setPeriodDaysAndTimes(SavePeriodCommand $periodCommand, array $parameters, array $properties, LitteralisReporter $reporter): void
-    {
-        $periodCommand->dailyRange = null;
-        $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
-
-        $value = $this->findParameterValue($parameters, 'jours et horaires');
-
-        if (!$value) {
-            $periodCommand->timeSlots = [];
-
-            return;
-        }
-
-        $parsed = $this->periodParser->parse($value);
-
-        if (!$parsed) {
-            $reporter->addError($reporter::ERROR_PERIOD_UNPARSABLE, [
-                'idemprise' => $properties['idemprise'],
-                'arretesrcid' => $properties['arretesrcid'],
-                'shorturl' => $properties['shorturl'],
-                'jours et horaires' => $value,
-            ]);
-            $periodCommand->timeSlots = [];
-
-            return;
-        }
-
-        $periodCommand->timeSlots = $parsed['timeSlots'];
     }
 
     private function parseMaxSpeed(array $properties, array $parameters, LitteralisReporter $reporter): ?int

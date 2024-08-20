@@ -9,9 +9,6 @@ use App\Infrastructure\Litteralis\LitteralisReportFormatter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- *  @group only
- */
 final class LitteralisReportFormatterTest extends KernelTestCase
 {
     private $translator;

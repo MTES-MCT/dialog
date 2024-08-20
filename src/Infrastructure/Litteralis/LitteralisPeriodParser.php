@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis;
 
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 
 final class LitteralisPeriodParser
 {
@@ -24,10 +26,115 @@ final class LitteralisPeriodParser
         $this->tz = $tz ?? new \DateTimeZone('Europe/Paris');
     }
 
-    public function parse(string $value, ?\DateTimeZone $tz = null): ?array
+    public function parsePeriods(array $parameters, array $properties, LitteralisReporter $reporter): array
     {
-        $tz ??= $this->tz;
+        $periodCommand = new SavePeriodCommand();
 
+        $this->setPeriodDates($periodCommand, $properties, $reporter);
+        $this->normalizePeriodDays($periodCommand);
+        $this->setPeriodDaysAndTimes($periodCommand, $parameters, $properties, $reporter);
+
+        return [$periodCommand];
+    }
+
+    private function setPeriodDates(SavePeriodCommand $periodCommand, array $properties, LitteralisReporter $reporter): void
+    {
+        $dateFormat = \DateTimeInterface::ISO8601;
+
+        $startDateProperty = $properties['emprisedebut'] ? 'emprisedebut' : 'arretedebut';
+        $startDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties[$startDateProperty]);
+
+        if ($startDate) {
+            $periodCommand->startDate = $startDate;
+            $periodCommand->startTime = $startDate;
+        } else {
+            $reporter->addError(
+                $reporter::ERROR_DATE_PARSING_FAILED,
+                [
+                    'idemprise' => $properties['idemprise'],
+                    'arretesrcid' => $properties['arretesrcid'],
+                    'shorturl' => $properties['shorturl'],
+                    $startDateProperty => $properties[$startDateProperty],
+                    'format' => $dateFormat,
+                ],
+            );
+        }
+
+        $endDateProperty = $properties['emprisefin'] ? 'emprisefin' : 'arretefin';
+        $periodCommand->isPermanent = true;
+
+        if (!$properties[$endDateProperty]) {
+            return;
+        }
+
+        $periodCommand->isPermanent = false;
+
+        $endDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties[$endDateProperty]);
+
+        if ($endDate) {
+            $periodCommand->endDate = $endDate;
+            $periodCommand->endTime = $endDate;
+        } else {
+            $reporter->addError(
+                $reporter::ERROR_DATE_PARSING_FAILED,
+                [
+                    'idemprise' => $properties['idemprise'],
+                    'arretesrcid' => $properties['arretesrcid'],
+                    'shorturl' => $properties['shorturl'],
+                    $endDateProperty => $properties[$endDateProperty],
+                    'format' => $dateFormat,
+                ],
+            );
+        }
+    }
+
+    private function normalizePeriodDays(SavePeriodCommand $periodCommand): void
+    {
+        if (!$periodCommand->startDate || !$periodCommand->endDate) {
+            return;
+        }
+
+        // Dans les données Litteralis, une date et heure de début et de fin identiques
+        // sont parfois utilisées pour décrire un événement ponctuel, qui a lieu un jour spécifique avec des horaires précisés dans 'jours et horaires'.
+        // On gère ce cas en interprétant ça comme étant "toute la journée", donc de minuit à 23h59 ce jour-là.
+
+        if ($periodCommand->startDate == $periodCommand->endDate) {
+            $startDate = \DateTimeImmutable::createFromInterface($periodCommand->startDate)
+                ->setTimeZone($this->tz)
+                ->setTime(0, 0)
+                ->setTimeZone(new \DateTimeZone('UTC'));
+
+            $endDate = \DateTimeImmutable::createFromInterface($periodCommand->endDate)
+                ->setTimeZone($this->tz)
+                ->setTime(23, 59)
+                ->setTimeZone(new \DateTimeZone('UTC'));
+
+            $periodCommand->startDate = $startDate;
+            $periodCommand->startTime = $startDate;
+            $periodCommand->endDate = $endDate;
+            $periodCommand->endTime = $endDate;
+        }
+    }
+
+    private function setPeriodDaysAndTimes(SavePeriodCommand $periodCommand, array $parameters, array $properties, LitteralisReporter $reporter): void
+    {
+        $periodCommand->dailyRange = null;
+        $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+
+        $value = $this->findParameterValue($parameters, 'jours et horaires');
+
+        if (!$value) {
+            $periodCommand->timeSlots = [];
+
+            return;
+        }
+
+        $periodCommand->timeSlots = $this->parseTimeSlots($value, $properties, $reporter);
+    }
+
+    // Public for testing
+    public function parseTimeSlots(string $value, array $properties, LitteralisReporter $reporter): ?array
+    {
         $value = trim($value);
 
         // Les "jours et horaires" sont précisés au format texte de multiples manières.
@@ -42,10 +149,10 @@ final class LitteralisPeriodParser
 
             $timeSlot = new SaveTimeSlotCommand();
             // Store in UTC because the database column doesn't know about timezones
-            $timeSlot->startTime = \DateTimeImmutable::createFromFormat('H:i', "$startHour:$startMinute", $tz)->setTimezone(new \DateTimeZone('UTC'));
-            $timeSlot->endTime = \DateTimeImmutable::createFromFormat('H:i', "$endHour:$endMinute", $tz)->setTimezone(new \DateTimeZone('UTC'));
+            $timeSlot->startTime = \DateTimeImmutable::createFromFormat('H:i', "$startHour:$startMinute", $this->tz)->setTimezone(new \DateTimeZone('UTC'));
+            $timeSlot->endTime = \DateTimeImmutable::createFromFormat('H:i', "$endHour:$endMinute", $this->tz)->setTimezone(new \DateTimeZone('UTC'));
 
-            return ['timeSlots' => [$timeSlot]];
+            return [$timeSlot];
         }
 
         // D'autres cas non-supportés à date :
@@ -56,6 +163,26 @@ final class LitteralisPeriodParser
         // * 'de 21h00 à 05h00 du 12/02/2024 au 12/04/2024 et du 19/08/2024 au 18/10/2024'
         // * 'les nuits du 05/10/2023, 06/10/2023 et 07/10/2023 de 21h00 à 06h00'
         // * 'de 21h00 à 06h00 du lundi soir au samedi matin'
+
+        $reporter->addError($reporter::ERROR_PERIOD_UNPARSABLE, [
+            'idemprise' => $properties['idemprise'],
+            'arretesrcid' => $properties['arretesrcid'],
+            'shorturl' => $properties['shorturl'],
+            'jours et horaires' => $value,
+        ]);
+
+        return [];
+    }
+
+    // Utilities
+
+    private function findParameterValue(array $parameters, string $theKey): ?string
+    {
+        foreach ($parameters as [$key, $value]) {
+            if ($key === $theKey) {
+                return $value;
+            }
+        }
 
         return null;
     }

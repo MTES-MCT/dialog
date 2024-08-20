@@ -16,7 +16,7 @@
                         {{ ('regulation.category.' ~ generalInfo.category)|trans }}
                     {% endif %}
                 </li>
-                <li>{{ generalInfo.description|nl2br }}</li>
+                <li>{{ generalInfo.description }}</li>
                 <li>
                     {% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}
                 </li>

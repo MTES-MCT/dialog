@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Litteralis;
 
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Infrastructure\Litteralis\LitteralisPeriodParser;
+use App\Infrastructure\Litteralis\LitteralisReporter;
 use PHPUnit\Framework\TestCase;
 
 final class LitteralisPeriodParserTest extends TestCase
 {
     private $parser;
-    private $tz;
 
     protected function setUp(): void
     {
-        $this->parser = new LitteralisPeriodParser();
-        $this->tz = new \DateTimeZone('Etc/GMT-1'); // Independant of Daylight Saving Time (DST)
+        $tz = new \DateTimeZone('Etc/GMT-1'); // Independant of Daylight Saving Time (DST)
+        $this->parser = new LitteralisPeriodParser($tz);
     }
 
-    private function provideParse(): array
+    private function provideParseTimeSlots(): array
     {
         $timeSlot1 = new SaveTimeSlotCommand();
         $timeSlot1->startTime = new \DateTimeImmutable('07:00');
@@ -32,41 +34,44 @@ final class LitteralisPeriodParserTest extends TestCase
         return [
             'hours1' => [
                 'value' => 'de 08 h 00 à 18 h 00',
-                'expectedResult' => ['timeSlots' => [$timeSlot1]],
+                'timeSlots' => [$timeSlot1],
             ],
             'hours2' => [
                 'value' => '08 h 00 à 18 h 00',
-                'expectedResult' => ['timeSlots' => [$timeSlot1]],
+                'timeSlots' => [$timeSlot1],
             ],
             'hours3' => [
                 'value' => 'DE 7 H 30 À 17 H 30',
-                'expectedResult' => ['timeSlots' => [$timeSlot2]],
+                'timeSlots' => [$timeSlot2],
             ],
             'hours3-typo' => [
                 'value' => 'DE 7 H 30 0 17 H 30',
-                'expectedResult' => ['timeSlots' => [$timeSlot2]],
+                'timeSlots' => [$timeSlot2],
             ],
             'hours4' => [
                 'value' => '8h à 18h',
-                'expectedResult' => ['timeSlots' => [$timeSlot1]],
+                'timeSlots' => [$timeSlot1],
             ],
             'hours5' => [
                 'value' => 'de 8h à 18h',
-                'expectedResult' => ['timeSlots' => [$timeSlot1]],
+                'timeSlots' => [$timeSlot1],
             ],
             'hours6' => [
                 'value' => 'de 7 heures 30 à 17 heures 30',
-                'expectedResult' => ['timeSlots' => [$timeSlot2]],
+                'timeSlots' => [$timeSlot2],
             ],
         ];
     }
 
     /**
-     * @dataProvider provideParse
+     * @dataProvider provideParseTimeSlots
      */
-    public function testParse(string $value, array $expectedResult): void
+    public function testParseTimeSlots(string $value, array $expectedResult): void
     {
-        $this->assertEquals($expectedResult, $this->parser->parse($value, $this->tz));
+        $properties = [];
+        $reporter = $this->createMock(LitteralisReporter::class);
+
+        $this->assertEquals($expectedResult, $this->parser->parseTimeSlots($value, $properties, $reporter));
     }
 
     private function provideUnparsable(): array
@@ -87,6 +92,42 @@ final class LitteralisPeriodParserTest extends TestCase
      */
     public function testUnparsable(string $value): void
     {
-        $this->assertNull($this->parser->parse($value, $this->tz));
+        $properties = [
+            'idemprise' => 'id1',
+            'arretesrcid' => 'id2',
+            'shorturl' => 'url',
+        ];
+
+        $reporter = $this->createMock(LitteralisReporter::class);
+
+        $reporter
+            ->expects(self::once())
+            ->method('addError')
+            ->with($reporter::ERROR_PERIOD_UNPARSABLE);
+
+        $this->assertEquals([], $this->parser->parseTimeSlots($value, $properties, $reporter));
+    }
+
+    public function testNormalizeDates(): void
+    {
+        $parameters = [];
+
+        $properties = [
+            'arretedebut' => '2024-09-22T02:00:00Z',
+            'arretefin' => '2024-09-22T02:00:00Z',
+            'emprisedebut' => '',
+            'emprisefin' => '',
+        ];
+        $reporter = $this->createMock(LitteralisReporter::class);
+
+        $periodCommand = new SavePeriodCommand();
+        $periodCommand->startDate = new \DateTimeImmutable('2024-09-21 23:00');
+        $periodCommand->startTime = new \DateTimeImmutable('2024-09-21 23:00');
+        $periodCommand->endDate = new \DateTimeImmutable('2024-09-22 22:59');
+        $periodCommand->endTime = new \DateTimeImmutable('2024-09-22 22:59');
+        $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $periodCommand->timeSlots = [];
+
+        $this->assertEquals([$periodCommand], $this->parser->parsePeriods($parameters, $properties, $reporter));
     }
 }
