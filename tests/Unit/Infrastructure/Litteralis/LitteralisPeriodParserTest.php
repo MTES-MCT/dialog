@@ -11,21 +11,23 @@ use PHPUnit\Framework\TestCase;
 final class LitteralisPeriodParserTest extends TestCase
 {
     private $parser;
+    private $tz;
 
     protected function setUp(): void
     {
         $this->parser = new LitteralisPeriodParser();
+        $this->tz = new \DateTimeZone('Etc/GMT-1'); // Independant of Daylight Saving Time (DST)
     }
 
     private function provideParse(): array
     {
         $timeSlot1 = new SaveTimeSlotCommand();
-        $timeSlot1->startTime = new \DateTimeImmutable('08:00');
-        $timeSlot1->endTime = new \DateTimeImmutable('18:00');
+        $timeSlot1->startTime = new \DateTimeImmutable('07:00');
+        $timeSlot1->endTime = new \DateTimeImmutable('17:00');
 
         $timeSlot2 = new SaveTimeSlotCommand();
-        $timeSlot2->startTime = new \DateTimeImmutable('07:30');
-        $timeSlot2->endTime = new \DateTimeImmutable('17:30');
+        $timeSlot2->startTime = new \DateTimeImmutable('06:30');
+        $timeSlot2->endTime = new \DateTimeImmutable('16:30');
 
         return [
             'hours1' => [
@@ -64,7 +66,7 @@ final class LitteralisPeriodParserTest extends TestCase
      */
     public function testParse(string $value, array $expectedResult): void
     {
-        $this->assertEquals($expectedResult, $this->parser->parse($value));
+        $this->assertEquals($expectedResult, $this->parser->parse($value, $this->tz));
     }
 
     private function provideUnparsable(): array
@@ -85,6 +87,6 @@ final class LitteralisPeriodParserTest extends TestCase
      */
     public function testUnparsable(string $value): void
     {
-        $this->assertNull($this->parser->parse($value));
+        $this->assertNull($this->parser->parse($value, $this->tz));
     }
 }

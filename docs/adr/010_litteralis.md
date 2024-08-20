@@ -191,25 +191,26 @@ Les champs pertinents sont les suivants (les descriptions s'inspirent de la docu
 
 * `geometry` : géométrie GeoJSON de l'emprise telle que dessinée par l'agent dans Litteralis, en coordonnées standard `EPSG:4326`. Empiriquement, peut être de type `Polygon` ou bien `MultiPolygon` (voir "localisations multiples" ci-dessous).
 * `idarrete` : identifiant unique de l'arrêté dans Litteralis. En regroupant les features par `idarrete` on obtient la liste des emprises par arrêté.
-* `idemprise` : identifiant unique de l'emprise dans Litteralis. **Check qualité** : la réponse doit contenir une seule `Feature` par `idemprise`.
+* `idemprise` : identifiant unique de l'emprise dans Litteralis.
+    * **Check qualité** : la réponse doit contenir une seule `Feature` par `idemprise`.
 * `shorturl` : lien vers le PDF de l'arrêté papier.
 * `arretesrcid` : numéro de l'arrêté, non-unique et propre à l'organisation émettrice. Cela correspond à la notion d'identifiant arrêté (champ `identifier`) dans DiaLog.
-  * **Check qualité** : le `arretesrcid` des features d'un même arrêté doit être identique.
+    * **Check qualité** : le `arretesrcid` des features d'un même arrêté doit être identique.
 * `collectiviteagencelibelle` : nom de la collectivité qui a produit l'arrêté
-  * **Check qualité** : le nom de collectivité des features d'un même arrêté doit être identique.
+    * **Check qualité** : le nom de collectivité des features d'un même arrêté doit être identique.
 * `documenttype` : 3 valeurs possibles (définies dans la doc Litteralis) : `ARRETE TEMPORAIRE`, `ARRETE PERMANENT` ou `AUTORISATION VOIRIE`
 * `arretedebut` : date de début de l'arrêté dont fait partie l'emprise
- * **Check qualité** : format ISO8601
+    * **Check qualité** : format ISO8601
 * `arretefin` : date de fin de l'arrêté dont fait partie l'emprise
- * **Check qualité** : format ISO8601, non-vide si et seulement si l'arrêté est temporaire, située strictement plus tard que `arretedebut`
+   * **Check qualité** : format ISO8601, non-vide si et seulement si l'arrêté est temporaire, située strictement plus tard que `arretedebut`
 * `emprisetype` : "Le type de l’emprise parmi les valeurs suivantes : `STATIONNEMENT`, `CIRCULATION`, `OCCUPATION`, `DEVIATION`."
 * `emprisedebut` et `emprisefin` : dates de début et de fin de l'emprise, non-null uniquement si elles diffèrent de celles de l'arrêté
-   **Check qualité** : format ISO8601 ; les deux doivent être définies ou bien être `null` (pas de début sans fin ni inversement) ; `emprisefin` située strictement plus tard que `emprisedebut`.
+   * **Check qualité** : format ISO8601 ; les deux doivent être définies ou bien être `null` (pas de début sans fin ni inversement) ; `emprisefin` située strictement plus tard que `emprisedebut`.
 * `mesures` : nom des mesures qui s'appliquent sur cette emprise. Peut contenir plusieurs valeurs séparées par des `;`.
 * `localisations` : "Liste des localisations de l'emprise. Peut contenir plusieurs valeurs séparées par des `;`." Exemple : `AVENUE DENIS CORDONNIER (LILLE) - FACE AUX 7 BIS - 90 - 176 ; BOULEVARD DE VERDUN (LILLE) - OPP AU 127;`.
 * `categoriesmodele` : "Tel que défini par l’instructeur de l’arrêté dans Littéralis parmi les valeurs suivantes : travaux" (982 sur un échantillon de 1000 emprises), "réglementation permanente" (3 sur 1000), "ODP" (en fait Evenements, 15 sur 1000). Peut correspondre à la `Catégorie` au sens de DiaLog.
 * `parametresarrete` : "Liste des informations de l'emprise et leur valeur. L'information est séparée de sa valeur par un `:` et chacun des couples information / valeur est séparé par un `;`."
-  * **Check qualité** : les emprises d'un même arrêté ont des `parametresarrete` identiques
+    * **Check qualité** : les emprises d'un même arrêté ont des `parametresarrete` identiques
 * `parametresmesures` : "Liste des informations des mesures de circulation / stationnement (pour les `ARRETES`) ou des natures (pour les `AUTORISATION DE VOIRIE`) et leur valeur. Le nom de la mesure (avec un numéro à partir de la deuxième s'il y en a plusieurs) est séparé de l'information par un `|` et l'information est séparée de sa valeur par un `:`. Enfin chacun des couples « mesure | information : valeur » est séparé par un `;`."
 
 Le champ `parametresemprise` est vide la plupart du temps et contient sinon les dates de l'emprise, redondant avec `emprisedebut` et `emprisefin`.
@@ -222,7 +223,7 @@ Dans Litteralis, les géométries sont dessinées par les utilisateurs au moyen 
 
 Exemple :
 
-![](https://private-user-images.githubusercontent.com/15911462/347743938-335550d5-7209-4c20-9b35-36c820717d74.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjI4NjMyNTIsIm5iZiI6MTcyMjg2Mjk1MiwicGF0aCI6Ii8xNTkxMTQ2Mi8zNDc3NDM5MzgtMzM1NTUwZDUtNzIwOS00YzIwLTliMzUtMzZjODIwNzE3ZDc0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA4MDUlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwODA1VDEzMDIzMlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQwNmMxODE2Yzk2OTY5NjY0NDU0YmJjNjRhNWRkZTg0Nzk2MjJmNDBhNmY1OTYxMmJkOTFkNjg2YzY4NTVhMGEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.jc0LGqdniEQGFUmUI-RfkPUSqGs52rbFozSWnu4a-Hc)
+![](./010_litteralis_polygone.png)
 
 Dans DiaLog, on stockes les géométries sous forme de linéaires.
 
@@ -231,6 +232,10 @@ On souhaite donc convertir ces polygones "couloirs" en linéaires.
 Pour cela, on calculera l'intersection entre le(s) polygone(s) et `troncon_de_route`.
 
 Cette opération génèrera des portions de tronçon parasites au niveau des rues adjacentes à la voie principale couverte par le polygone. Retirer ces tronçons parasites nécessite une opération géométrique qui soit rapide et robuste. Intuitivement une comparaison entre la longueur de la portion et la "largeur" locale du "couloir" pourrait fonctionner. Mais en raison de la complexité de réaliser ce calcul de façon robuste, on propose de reporter son développement.
+
+Exemple :
+
+![](./010_litteralis_lineaire.png)
 
 #### Analyse du champ `localisations`
 
@@ -332,7 +337,7 @@ Les **périodes** sont précisées dans l'information `jours et horaires`, mais 
 * Format quasi-standardisé pour un créneau horaire seul
     * `SOGELINK - Circulation interdite | jours et horaires : de 08 h 00 à 18 h 00`
     * `jours et horaires : de 10h45 à 11h30`
-    * `jours et horaires : de 10h45 à 11h30` (H en majuscule)
+    * `jours et horaires : DE 10H45 À 11H30` (H en majuscule)
 * Format NON STANDARDISÉ dans le cas où seulement certains jours sont concernés
     * `SOGELINK - Circulation interdite | jours et horaires : la journée` (???)
     * `SOGELINK - Circulation interdite 3 | jours et horaires : du lundi au vendredi de 7h30 à 17h30`

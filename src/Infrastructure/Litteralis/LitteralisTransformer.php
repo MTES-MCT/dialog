@@ -31,6 +31,7 @@ final readonly class LitteralisTransformer
 
     public function __construct(
         private RoadGeocoderInterface $roadGeocoder,
+        private LitteralisPeriodParser $periodParser,
     ) {
     }
 
@@ -485,7 +486,7 @@ final readonly class LitteralisTransformer
             return;
         }
 
-        $parsed = LitteralisPeriodParser::parse($value);
+        $parsed = $this->periodParser->parse($value);
 
         if (!$parsed) {
             $reporter->addError($reporter::ERROR_PERIOD_UNPARSABLE, [

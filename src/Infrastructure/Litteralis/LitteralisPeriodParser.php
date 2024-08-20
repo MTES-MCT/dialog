@@ -17,8 +17,17 @@ final class LitteralisPeriodParser
     // * 'de 8 heures à 15 heures 30'
     private const HOURS_REGEX = '/^(?:la nuit |de nuit )?(?:de )?(?P<startHour>\d{1,2}) ?(?:h|heures?) ?(?P<startMinute>\d{1,2})? (?:à|À|0) ?(?P<endHour>\d{1,2}) ?(?:h|heures?) ?(?P<endMinute>\d{1,2})?\.?$/i';
 
-    public static function parse(string $value, ?\DateTimeZone $tz = null): ?array
+    private $tz;
+
+    public function __construct(?\DateTimeZone $tz = null)
     {
+        $this->tz = $tz ?? new \DateTimeZone('Europe/Paris');
+    }
+
+    public function parse(string $value, ?\DateTimeZone $tz = null): ?array
+    {
+        $tz ??= $this->tz;
+
         $value = trim($value);
 
         // Les "jours et horaires" sont précisés au format texte de multiples manières.
@@ -32,8 +41,9 @@ final class LitteralisPeriodParser
             $endMinute = ($matches['endMinute'] ?? '') ?: '00';
 
             $timeSlot = new SaveTimeSlotCommand();
-            $timeSlot->startTime = new \DateTimeImmutable("$startHour:$startMinute", $tz);
-            $timeSlot->endTime = new \DateTimeImmutable("$endHour:$endMinute", $tz);
+            // Store in UTC because the database column doesn't know about timezones
+            $timeSlot->startTime = \DateTimeImmutable::createFromFormat('H:i', "$startHour:$startMinute", $tz)->setTimezone(new \DateTimeZone('UTC'));
+            $timeSlot->endTime = \DateTimeImmutable::createFromFormat('H:i', "$endHour:$endMinute", $tz)->setTimezone(new \DateTimeZone('UTC'));
 
             return ['timeSlots' => [$timeSlot]];
         }

@@ -20,6 +20,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Domain\User\Organization;
+use App\Infrastructure\Litteralis\LitteralisPeriodParser;
 use App\Infrastructure\Litteralis\LitteralisReporter;
 use App\Infrastructure\Litteralis\LitteralisTransformer;
 use PHPUnit\Framework\TestCase;
@@ -37,8 +38,9 @@ final class LitteralisTransformerTest extends TestCase
 
     protected function setUp(): void
     {
+        $tz = new \DateTimeZone('Etc/GMT-1'); // Independant of daylight saving time (DST)
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
-        $this->transformer = new LitteralisTransformer($this->roadGeocoder);
+        $this->transformer = new LitteralisTransformer($this->roadGeocoder, new LitteralisPeriodParser($tz));
         $this->organization = $this->createMock(Organization::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->reporter = new LitteralisReporter($this->logger);
@@ -92,8 +94,8 @@ final class LitteralisTransformerTest extends TestCase
         $period1->endDate = $period1->endTime = new \DateTimeImmutable('2024-03-19T01:00:00Z');
         $period1->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
         $timeSlot1 = new SaveTimeSlotCommand();
-        $timeSlot1->startTime = new \DateTimeImmutable('10:00');
-        $timeSlot1->endTime = new \DateTimeImmutable('15:00');
+        $timeSlot1->startTime = new \DateTimeImmutable('09:00');
+        $timeSlot1->endTime = new \DateTimeImmutable('14:00');
         $period1->timeSlots = [$timeSlot1];
         $measureCommand1->periods[] = $period1;
 
@@ -123,8 +125,8 @@ final class LitteralisTransformerTest extends TestCase
         $period2->endDate = $period2->endTime = new \DateTimeImmutable('2024-03-19T01:00:00Z');
         $period2->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
         $timeSlot2 = new SaveTimeSlotCommand();
-        $timeSlot2->startTime = new \DateTimeImmutable('10:00');
-        $timeSlot2->endTime = new \DateTimeImmutable('15:00');
+        $timeSlot2->startTime = new \DateTimeImmutable('09:00');
+        $timeSlot2->endTime = new \DateTimeImmutable('14:00');
         $period2->timeSlots = [$timeSlot2];
         $measureCommand2->periods[] = $period2;
 
@@ -225,8 +227,8 @@ final class LitteralisTransformerTest extends TestCase
 
         foreach ($command->measureCommands as $measureCommand) {
             $this->assertCount(1, $measureCommand->periods);
-            $this->assertEquals(new \DateTimeImmutable('20:30'), $measureCommand->periods[0]->timeSlots[0]->startTime);
-            $this->assertEquals(new \DateTimeImmutable('06:00'), $measureCommand->periods[0]->timeSlots[0]->endTime);
+            $this->assertEquals(new \DateTimeImmutable('19:30'), $measureCommand->periods[0]->timeSlots[0]->startTime);
+            $this->assertEquals(new \DateTimeImmutable('05:00'), $measureCommand->periods[0]->timeSlots[0]->endTime);
         }
     }
 

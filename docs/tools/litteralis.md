@@ -14,6 +14,8 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
 
 ### MEL
 
+**Pour l'import en prod** :
+
 1. Récupérer le UUID de l'organisation "Métropole Européenne de Lille (MEL)" en prod. Pour cela demander à un super-admin : l'UUID est visible dans l'URL de la page de l'organisation dans l'admin.
 2. Créer un fichier `.env.prod.local` vide, et y définir :
     * `BDTOPO_DATABASE_URL`
@@ -35,6 +37,8 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
     ```
 
     L'exécution prendra plusieurs minutes. Les logs d'exécution seront ajoutés au dossier `logs/litteralis/`. En cas d'exception la commande échouera. Un rapport final "pretty print" est affiché.
+
+**Pour le dev local** : remplir `.env.local` au lieu de `.env.prod`, sauter es étapes 3 et 4 (utiliser votre DB locale), et ne pas inclure le flag `--env=prod`.
 
 ## Références
 
