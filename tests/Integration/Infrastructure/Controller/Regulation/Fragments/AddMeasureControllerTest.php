@@ -977,6 +977,28 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locations_0_numberedRoad_roadNumber_error')->text());
     }
 
+    public function testFieldsTooLongRawGeoJSON(): void
+    {
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = 'geom';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = str_repeat('a', 5001);
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 5000 caractères.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_label_error')->text());
+    }
+
     public function testCannotAccessBecauseDifferentOrganization(): void
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
