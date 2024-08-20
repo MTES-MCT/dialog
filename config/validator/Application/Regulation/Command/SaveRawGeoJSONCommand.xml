@@ -5,7 +5,7 @@
     <class name="App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand">
         <property name="label">
             <constraint name="Length">
-                <option name="max">255</option>
+                <option name="max">5000</option>
             </constraint>
             <constraint name="When">
                 <option name="expression">this.roadType === 'rawGeoJSON'</option>
