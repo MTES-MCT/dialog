@@ -64,7 +64,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findAllRegulations')
-            ->with(20, 1, ['dcab837f-4460-4355-99d5-bf4891c35f8f'])
+            ->with(20, 1, ['dcab837f-4460-4355-99d5-bf4891c35f8f'], null)
             ->willReturn([
                 'count' => 3,
                 'items' => $rows,

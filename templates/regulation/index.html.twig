@@ -14,7 +14,8 @@
                 </a>
             {% endif %}
         </div>
-        <div class="fr-card fr-mt-2w fr-p-2w">
+        <div class="fr-card fr-grid-row fr-mt-2w fr-p-2w">
+            {% include 'regulation/_list_filters_form.html.twig' with { form } only %}
             {% include "regulation/_items.html.twig" with { pagination: regulations } only %}
             {% include "common/pagination.html.twig" with {
                 pagination: regulations,

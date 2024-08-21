@@ -58,30 +58,43 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         int $maxItemsPerPage,
         int $page,
         ?array $organizationUuids = null,
+        ?string $identifier = null,
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
             ->addSelect(\sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
-            ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
+            ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
+            ->where('roc.status = :published');
+
+        $parameters = [
+            'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+        ];
 
         if ($organizationUuids) {
+            // Set when user is authenticated
             $query
-                ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
-                ->setParameters([
-                    'organizationUuids' => $organizationUuids,
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
-                    'draft' => RegulationOrderRecordStatusEnum::DRAFT,
-                ]);
-        } else {  // the user is not connected -> no draft regulations
+                ->orWhere('(roc.status = :draft AND roc.organization IN (:organizationUuids))');
+
+            $parameters = [
+                ...$parameters,
+                'organizationUuids' => $organizationUuids,
+                'draft' => RegulationOrderRecordStatusEnum::DRAFT,
+            ];
+        }
+
+        if ($identifier) {
             $query
-                ->where('roc.status = :published')
-                ->setParameters([
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
-                ]);
+                ->andWhere('ro.identifier LIKE :identifier');
+
+            $parameters = [
+                ...$parameters,
+                'identifier' => \sprintf('%s%%', $identifier),
+            ];
         }
 
         $query
+            ->setParameters($parameters)
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->orderBy('ro.startDate', 'DESC')

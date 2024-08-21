@@ -19,6 +19,7 @@ interface RegulationOrderRecordRepositoryInterface
         int $maxItemsPerPage,
         int $page,
         ?array $organizationUuids = null,
+        ?string $identifier = null,
     ): array;
 
     public function findGeneralInformation(string $uuid): ?array;

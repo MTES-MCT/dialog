@@ -25,6 +25,7 @@ final class GetRegulationsQueryHandler
             $query->pageSize,
             $query->page,
             $query->organizationUuids,
+            $query->identifier,
         );
 
         foreach ($rows['items'] as $row) {

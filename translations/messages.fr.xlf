@@ -168,6 +168,10 @@
                 <source>common.form.validate</source>
                 <target>Valider</target>
             </trans-unit>
+            <trans-unit id="common.form.search">
+                <source>common.form.search</source>
+                <target>Rechercher</target>
+            </trans-unit>
             <trans-unit id="common.autocomplete.results_count">
                 <source>common.autocomplete.results_count</source>
                 <target>{0} Aucun résultat | {1} 1 résultat | ]1,Inf[ %count% résultats</target>
@@ -255,6 +259,10 @@
             <trans-unit id="regulation.list.title">
                 <source>regulation.list.title</source>
                 <target>Arrêtés de circulation</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.identifier">
+                <source>regulation.list.filters.identifier</source>
+                <target>Identifiant de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation">
                 <source>regulation</source>

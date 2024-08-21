@@ -12,6 +12,7 @@ final readonly class GetRegulationsQuery implements QueryInterface
         public int $pageSize,
         public int $page,
         public ?array $organizationUuids = null,
+        public ?string $identifier = null,
     ) {
     }
 }

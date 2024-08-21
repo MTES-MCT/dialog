@@ -103,6 +103,26 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED, $links->eq(0)->link()->getUri());
     }
 
+    public function testIdentifierSearch(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $values = $form->getPhpValues();
+        $values['list_regulations_form']['identifier'] = 'FO2';
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $this->assertSame(2, $rows->count());
+        $this->assertSame('FO2/2023', $rows->eq(0)->filter('td')->eq(0)->text());
+        $this->assertSame('FO2/2023-1', $rows->eq(1)->filter('td')->eq(0)->text());
+    }
+
     public function testInvalidPageSize(): void
     {
         $client = $this->login();
