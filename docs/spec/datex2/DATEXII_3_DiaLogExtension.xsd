@@ -30,6 +30,11 @@
           <xs:documentation>Source of the data in DiaLog.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="publicUrl" type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Link to the public Web page where the regulation order can be viewed in DiaLog.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

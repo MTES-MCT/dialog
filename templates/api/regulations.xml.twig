@@ -215,6 +215,7 @@
                 <_trafficRegulationOrderExtension>
                     <trafficRegulationOrderExtended>
                         <dx:source>{{ regulationOrder.source }}</dx:source>
+                        <dx:publicUrl>{{ url('app_regulation_detail', { uuid: regulationOrder.regulationOrderRecordUuid }) }}</dx:publicUrl>
                     </trafficRegulationOrderExtended>
                 </_trafficRegulationOrderExtension>
             </trafficRegulationOrder>
