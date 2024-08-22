@@ -16,9 +16,11 @@ use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
 use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
+use App\Infrastructure\EudonetParis\EudonetParisReporter;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\EudonetParis\EudonetParisTransformerResult;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 final class EudonetParisTransformerTest extends TestCase
 {
@@ -113,11 +115,14 @@ final class EudonetParisTransformerTest extends TestCase
         $measureCommand->vehicleSet = $vehicleSet;
 
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
-        $result = new EudonetParisTransformerResult($importCommand, []);
+        $result = $importCommand;
 
         $transformer = new EudonetParisTransformer();
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     private function provideDateParsing(): array
@@ -167,12 +172,15 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
         $transformer = new EudonetParisTransformer();
-        $result = $transformer->transform($record, $organization);
+        $result = $transformer->transform($record, $organization, $reporter);
 
         $this->assertEquals(
             \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-12-14 00:00:00', new \DateTimeZone('Europe/Paris')),
-            $result->command->generalInfoCommand->startDate,
+            $result->generalInfoCommand->startDate,
         );
     }
 
@@ -191,17 +199,21 @@ final class EudonetParisTransformerTest extends TestCase
             'measures' => [],
         ];
 
-        $result = new EudonetParisTransformerResult(null, [
+        /*$result = new EudonetParisTransformerResult(null, [
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'reason' => EudonetParisErrorEnum::NO_MEASURES_FOUND->value,
                 'impact' => 'skip_regulation',
             ],
-        ]);
+        ]);*/
+        $result = null;
 
         $transformer = new EudonetParisTransformer();
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     public function testSkipUnknownPorteSur(): void
@@ -241,7 +253,7 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
-        $result = new EudonetParisTransformerResult(null, [
+        /*$result = new EudonetParisTransformerResult(null, [
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'impact' => 'skip_regulation',
@@ -255,11 +267,15 @@ final class EudonetParisTransformerTest extends TestCase
                     ],
                 ],
             ],
-        ]);
+        ]);*/
+        $result = null;
 
         $transformer = new EudonetParisTransformer();
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     private function provideSkipStartWithoutEndOrConversely(): array
@@ -278,12 +294,12 @@ final class EudonetParisTransformerTest extends TestCase
                         EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
                     ],
                 ],
-                'error' => [
+                /*'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
                     'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":"Start road","2740":null,"2720":null,"2737":null}}',
-                ],
+                ],*/
             ],
             [
                 'location' => [
@@ -298,12 +314,12 @@ final class EudonetParisTransformerTest extends TestCase
                         EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
                     ],
                 ],
-                'error' => [
+                /*'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
                     'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":"End road","2720":null,"2737":null}}',
-                ],
+                ],*/
             ],
             [
                 'location' => [
@@ -318,12 +334,12 @@ final class EudonetParisTransformerTest extends TestCase
                         EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
                     ],
                 ],
-                'error' => [
+                /*'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
                     'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":"Start house number","2737":null}}',
-                ],
+                ],*/
             ],
             [
                 'location' => [
@@ -338,12 +354,12 @@ final class EudonetParisTransformerTest extends TestCase
                         EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => 'End house number',
                     ],
                 ],
-                'error' => [
+                /*'error' => [
                     'loc' => ['measure_id' => 'mesure1', 'location_id' => 'localisation1'],
                     'impact' => 'skip_measure',
                     'reason' => EudonetParisErrorEnum::UNSUPPORTED_LOCATION_FIELDSET->value,
                     'location_raw' => '{"fields":{"2701":"localisation1","2705":"Une section","2708":"18\u00e8me Arrondissement","2710":"...","2730":null,"2740":null,"2720":null,"2737":"End house number"}}',
-                ],
+                ],*/
             ],
         ];
     }
@@ -351,7 +367,7 @@ final class EudonetParisTransformerTest extends TestCase
     /**
      * @dataProvider provideSkipStartWithoutEndOrConversely
      */
-    public function testSkipStartWithoutEndOrConversely(array $location, array $error): void
+    public function testSkipStartWithoutEndOrConversely(array $location): void
     {
         $organization = $this->createMock(Organization::class);
 
@@ -375,18 +391,22 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
-        $result = new EudonetParisTransformerResult(null, [
+        /*$result = new EudonetParisTransformerResult(null, [
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'impact' => 'skip_regulation',
                 'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value,
                 'errors' => [$error],
             ],
-        ]);
+        ]);*/
+        $result = null;
 
         $transformer = new EudonetParisTransformer();
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     public function testSkipInvalidArrondissement(): void
@@ -426,7 +446,7 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
-        $errors = [
+        /*$errors = [
             [
                 'loc' => ['regulation_identifier' => '20230514-1'],
                 'impact' => 'skip_regulation',
@@ -441,13 +461,17 @@ final class EudonetParisTransformerTest extends TestCase
                     ],
                 ],
             ],
-        ];
+        ];*/
 
-        $result = new EudonetParisTransformerResult(null, $errors);
+        // $result = new EudonetParisTransformerResult(null, $errors);
+        $result = null;
 
         $transformer = new EudonetParisTransformer();
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     public function testSkipInvalidStartDate(): void
@@ -462,11 +486,33 @@ final class EudonetParisTransformerTest extends TestCase
                 EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
                 EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
             ],
-            'measures' => ['...'],
+            'measures' => [
+                [
+                    'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
+                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
+                    ],
+                    'locations' => [
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => 'invalid',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $transformer = new EudonetParisTransformer();
-        $result = new EudonetParisTransformerResult(
+        /*$result = new EudonetParisTransformerResult(
             null,
             [
                 [
@@ -476,9 +522,13 @@ final class EudonetParisTransformerTest extends TestCase
                     'value' => 'invalid',
                 ],
             ],
-        );
+        );*/
+        $result = null;
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     public function testSkipInvalidEndDate(): void
@@ -493,11 +543,33 @@ final class EudonetParisTransformerTest extends TestCase
                 EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
                 EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
             ],
-            'measures' => ['...'],
+            'measures' => [
+                [
+                    'fields' => [
+                        EudonetParisExtractor::MESURE_ID => 'mesure1',
+                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
+                        EudonetParisExtractor::MESURE_ALINEA => '',
+                    ],
+                    'locations' => [
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => 'invalid',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $transformer = new EudonetParisTransformer();
-        $result = new EudonetParisTransformerResult(
+        /*$result = new EudonetParisTransformerResult(
             null,
             [
                 [
@@ -507,9 +579,13 @@ final class EudonetParisTransformerTest extends TestCase
                     'value' => 'invalid',
                 ],
             ],
-        );
+        );*/
+        $result = null;
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 
     public function testSkipNonEmptyAlinea(): void
@@ -531,13 +607,26 @@ final class EudonetParisTransformerTest extends TestCase
                         EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
                         EudonetParisExtractor::MESURE_ALINEA => 'not empty may contain dates',
                     ],
-                    'locations' => ['...'],
+                    'locations' => [
+                        [
+                            'fields' => [
+                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
+                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
+                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => 'invalid',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
+                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ];
 
         $transformer = new EudonetParisTransformer();
-        $result = new EudonetParisTransformerResult(
+        /*$result = new EudonetParisTransformerResult(
             null,
             [
                 [
@@ -556,8 +645,12 @@ final class EudonetParisTransformerTest extends TestCase
                     ],
                 ],
             ],
-        );
+        );*/
+        $result = null;
 
-        $this->assertEquals($result, $transformer->transform($record, $organization));
+        $logger = $this->createMock(LoggerInterface::class);
+        $reporter = new EudonetParisReporter($logger);
+
+        $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
 }

@@ -111,10 +111,10 @@ final class EudonetParisExecutorTest extends TestCase
         $timeMatcher = self::exactly(2);
         $this->dateUtils
             ->expects($timeMatcher)
-            ->method('getMicroTime')
+            ->method('getNow')
             ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
-                1 => 1695218778.6387,
-                2 => 1695218796.3069,
+                1 => new \DateTimeImmutable('2023-09-20 16:06:18'), // 1695218778.6387,
+                2 => new \DateTimeImmutable('2023-09-20 16:06:36'), // 1695218796.3069,
             });
 
         $this->extractor
@@ -194,10 +194,10 @@ final class EudonetParisExecutorTest extends TestCase
         $timeMatcher = self::exactly(2);
         $this->dateUtils
             ->expects($timeMatcher)
-            ->method('getMicroTime')
+            ->method('getNow')
             ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
-                1 => 1695218778.6387,
-                2 => 1695218779.3069,
+                1 => new \DateTimeImmutable('2023-09-20 16:06:18'), // 1695218778.6387,
+                2 => new \DateTimeImmutable('2023-09-20 16:06:36'), // 1695218796.3069,
             });
 
         $this->extractor
@@ -264,10 +264,10 @@ final class EudonetParisExecutorTest extends TestCase
         $timeMatcher = self::exactly(2);
         $this->dateUtils
             ->expects($timeMatcher)
-            ->method('getMicroTime')
+            ->method('getNow')
             ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
-                1 => 1695218778.6387,
-                2 => 1695218796.3069,
+                1 => new \DateTimeImmutable('2023-09-20 16:06:18'), // 1695218778.6387,
+                2 => new \DateTimeImmutable('2023-09-20 16:06:36'), // 1695218796.3069,
             });
 
         $executor = new EudonetParisExecutor(
@@ -331,10 +331,10 @@ final class EudonetParisExecutorTest extends TestCase
         $timeMatcher = self::exactly(2);
         $this->dateUtils
             ->expects($timeMatcher)
-            ->method('getMicroTime')
+            ->method('getNow')
             ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
-                1 => 1695218778.6387,
-                2 => 1695218796.3069,
+                1 => new \DateTimeImmutable('2023-09-20 16:06:18'), // 1695218778.6387,
+                2 => new \DateTimeImmutable('2023-09-20 16:06:36'), // 1695218796.3069,
             });
 
         $this->extractor
@@ -404,7 +404,7 @@ final class EudonetParisExecutorTest extends TestCase
 
         $this->dateUtils
             ->expects(self::never())
-            ->method('getMicroTime');
+            ->method('getNow');
 
         $executor = new EudonetParisExecutor(
             $this->extractor,

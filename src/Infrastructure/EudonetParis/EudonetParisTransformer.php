@@ -194,11 +194,12 @@ final class EudonetParisTransformer
                 'value' => $arrondissement,
                 'pattern' => self::ARRONDISSEMENT_REGEX,
             ]);
-
             // return null;
+            $cityCode = null;
+        } else {
+            $cityCode = \sprintf(self::CITY_CODE_TEMPLATE, str_pad($matches['arrondissement'], 2, '0', STR_PAD_LEFT));
         }
 
-        $cityCode = \sprintf(self::CITY_CODE_TEMPLATE, str_pad($matches['arrondissement'], 2, '0', STR_PAD_LEFT));
         $porteSur = $row['fields'][EudonetParisExtractor::LOCALISATION_PORTE_SUR];
         $libelleVoie = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE];
         $libelleVoieDebut = $row['fields'][EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT];
