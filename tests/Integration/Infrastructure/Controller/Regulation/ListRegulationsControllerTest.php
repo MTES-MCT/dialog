@@ -113,7 +113,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $searchButton = $crawler->selectButton('Rechercher');
         $form = $searchButton->form();
         $values = $form->getPhpValues();
-        $values['list_regulations_form']['identifier'] = 'FO2';
+        $values['list_regulations_form']['identifier'] = 'o2/20'; // Case insensitive, contained anywhere in identifier
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(200);

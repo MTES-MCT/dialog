@@ -85,11 +85,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         if ($identifier) {
             $query
-                ->andWhere('ro.identifier LIKE :identifier');
+                // Doctrine doesn't have ILIKE support for Postgres, we use https://github.com/martin-georgiev/postgresql-for-doctrine
+                ->andWhere('pg_ILIKE(ro.identifier, :identifierPattern) = TRUE');
 
             $parameters = [
                 ...$parameters,
-                'identifier' => \sprintf('%s%%', $identifier),
+                'identifierPattern' => '%' . $identifier . '%',
             ];
         }
 
