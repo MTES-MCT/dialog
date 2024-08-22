@@ -27,5 +27,7 @@ interface RoadGeocoderInterface
 
     public function findRoadNames(string $search, string $cityCode): array;
 
-    public function findSectionsInArea(string $areaGeometry, array $excludeTypes = []): string;
+    public function findSectionsInArea(string $areaGeometry, array $excludeTypes = [], ?bool $clipToArea = false): string;
+
+    public function convertPolygonRoadToLines(string $geometry): string;
 }
