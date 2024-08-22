@@ -97,8 +97,6 @@ final readonly class JOPTransformer
 
             $label = implode(', ', $eventNames);
 
-            // CRS is missing in the data but required by PostGIS
-            $areaGeometry['crs'] = ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']];
             $sectionsGeometryCollection = $this->roadGeocoder->findSectionsInArea(
                 json_encode($areaGeometry),
                 excludeTypes: [$this->roadGeocoder::HIGHWAY],

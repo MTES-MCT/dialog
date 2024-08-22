@@ -342,7 +342,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     %s
                     ',
                     $clipToArea ? 'ST_Intersection(t.geometrie, :areaGeometry)' : 't.geometrie',
-                    $bdTopoExcludeTypes ? 'AND t.nature NOT IN (:types)' : '',
+                    \count($bdTopoExcludeTypes) > 0 ? 'AND t.nature NOT IN (:types)' : '',
                 ),
                 [
                     'areaGeometry' => $areaGeometry,

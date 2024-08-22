@@ -48,6 +48,7 @@ final class JOPTransformerTest extends TestCase
                     'geometry' => [
                         'type' => 'Polygon',
                         'coordinates' => '<coords1>',
+                        'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']],
                     ],
                 ],
                 [
@@ -61,6 +62,7 @@ final class JOPTransformerTest extends TestCase
                     'geometry' => [
                         'type' => 'Polygon',
                         'coordinates' => '<coords1>',
+                        'crs' => ['type' => 'name', 'properties' => ['name' => 'EPSG:4326']],
                     ],
                 ],
                 // Feature with NULL geometry
