@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 final class BdTopoRoadGeocoderTest extends TestCase
 {
     private $conn;
-    private $roadGeocoder;
+    private BdTopoRoadGeocoder $roadGeocoder;
 
     protected function setUp(): void
     {
@@ -115,5 +115,37 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->willThrowException(new \RuntimeException('Some network error'));
 
         $this->roadGeocoder->findSectionsInArea('<geometry>');
+    }
+
+    public function testFindSectionsInAreaNoResult(): void
+    {
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willReturn(['geom' => null]);
+
+        $this->assertSame('{"type":"GeometryCollection","geometries":[]}', $this->roadGeocoder->findSectionsInArea('<geometry>'));
+    }
+
+    public function testConvertPolygonRoadToLinesUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->convertPolygonRoadToLines('<geometry>');
+    }
+
+    public function testConvertPolygonToRoadLinesNoResult(): void
+    {
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willReturn(['geom' => null]);
+
+        $this->assertSame('{"type":"GeometryCollection","geometries":[]}', $this->roadGeocoder->convertPolygonRoadToLines('<geometry>'));
     }
 }

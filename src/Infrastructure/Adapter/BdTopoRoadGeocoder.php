@@ -322,7 +322,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return Coordinates::fromLonLat((float) $x, (float) $y);
     }
 
-    public function findSectionsInArea(string $areaGeometry, array $excludeTypes = []): string
+    public function findSectionsInArea(string $areaGeometry, array $excludeTypes = [], ?bool $clipToArea = false): string
     {
         $bdTopoExcludeTypes = [];
 
@@ -336,11 +336,12 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $row = $this->bdtopoConnection->fetchAssociative(
                 \sprintf(
-                    'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(t.geometrie))) AS geom
+                    'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(%s))) AS geom
                     FROM troncon_de_route AS t
                     WHERE ST_Intersects(t.geometrie, :areaGeometry)
                     %s
                     ',
+                    $clipToArea ? 'ST_Intersection(t.geometrie, :areaGeometry)' : 't.geometrie',
                     $bdTopoExcludeTypes ? 'AND t.nature NOT IN (:types)' : '',
                 ),
                 [
@@ -353,6 +354,43 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             );
         } catch (\Exception $exc) {
             throw new GeocodingFailureException(\sprintf('Sections in area query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if (!$row['geom']) {
+            // No sections in area, return empty collection instead of null
+            return '{"type":"GeometryCollection","geometries":[]}';
+        }
+
+        return $row['geom'];
+    }
+
+    public function convertPolygonRoadToLines(string $geometry): string
+    {
+        try {
+            // Une solution basée sur ST_ApproximateMedialAxis serait meilleure, mais postgis_sfcgal n'est pas encore dispo sur Scalingo.
+            // https://postgis.net/docs/ST_ApproximateMedialAxis.html
+            // Comme on a les linéaires des tronçons dans la BDTOPO, on peut se contenter d'une intersection avec ceux-ci.
+            // À noter, cette approche génère des tronçons parasites au niveau des intersections qui donnent une forme de "peigne" au résultat.
+            $row = $this->bdtopoConnection->fetchAssociative(
+                'WITH sections AS (
+                    SELECT ST_Force2D(ST_Collect(t.geometrie)) AS geom
+                    FROM troncon_de_route AS t
+                    WHERE ST_Intersects(t.geometrie, :geom)
+                )
+                SELECT ST_AsGeoJSON(ST_Intersection(:geom, s.geom)) AS geom
+                FROM sections AS s
+                ',
+                [
+                    'geom' => $geometry,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Polygon road to lines query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if (!$row['geom']) {
+            // No sections in area, return empty collection instead of null
+            return '{"type":"GeometryCollection","geometries":[]}';
         }
 
         return $row['geom'];
