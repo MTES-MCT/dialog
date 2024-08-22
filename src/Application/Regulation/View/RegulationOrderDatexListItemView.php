@@ -8,6 +8,7 @@ final readonly class RegulationOrderDatexListItemView
 {
     public function __construct(
         public string $uuid,
+        public string $regulationOrderRecordUuid,
         public string $regulationId,
         public string $organization,
         public string $source,
