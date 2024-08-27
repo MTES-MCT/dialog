@@ -43,13 +43,13 @@ final class ListRegulationsController
             );
         }
 
-        $organizationUserUuids = $user?->getOrganizationUuids();
+        $userOrganizationUuids = $user?->getUserOrganizationUuids();
 
         $regulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 pageSize: $pageSize,
                 page: $page,
-                organizationUuids: $organizationUserUuids,
+                organizationUuids: $userOrganizationUuids,
             ),
         );
 

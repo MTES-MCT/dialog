@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
-use App\Application\User\View\OrganizationView;
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
 use Doctrine\ORM\EntityManagerInterface;
@@ -102,13 +102,13 @@ final class GeneralInfoFormType extends AbstractType
 
         $builder->get('organization')
             ->addModelTransformer(new CallbackTransformer(
-                function (?Organization $organization = null): ?OrganizationView {
+                function (?Organization $organization = null): ?UserOrganizationView {
                     return $organization
-                        ? new OrganizationView($organization->getUuid(), $organization->getName())
+                        ? new UserOrganizationView($organization->getUuid(), $organization->getName())
                         : null;
                 },
-                function (OrganizationView $organizationView): Organization {
-                    return $this->entityManager->getReference(Organization::class, $organizationView->uuid);
+                function (UserOrganizationView $view): Organization {
+                    return $this->entityManager->getReference(Organization::class, $view->uuid);
                 },
             ))
         ;

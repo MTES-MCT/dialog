@@ -64,7 +64,7 @@ final class DeleteRegulationController
         }
 
         try {
-            $this->commandBus->handle(new DeleteRegulationCommand($user->getOrganizationUuids(), $regulationOrderRecord));
+            $this->commandBus->handle(new DeleteRegulationCommand($user->getUserOrganizationUuids(), $regulationOrderRecord));
         } catch (RegulationOrderRecordCannotBeDeletedException) {
             throw new AccessDeniedHttpException();
         }
