@@ -19,6 +19,7 @@ doctrine:
                 dql:
                     string_functions:
                         FIRST: App\Infrastructure\Persistence\Doctrine\DBAL\FirstFunction
+                        pg_ILIKE: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Ilike
                 mappings:
                     Domain:
                         is_bundle: false

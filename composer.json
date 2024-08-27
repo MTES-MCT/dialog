@@ -12,6 +12,7 @@
         "easycorp/easyadmin-bundle": "^4.7",
         "jsor/doctrine-postgis": "^2.1",
         "league/commonmark": "^2.4",
+        "martin-georgiev/postgresql-for-doctrine": "^2.6",
         "nelmio/security-bundle": "^3.0",
         "sentry/sentry-symfony": "^4.5",
         "symfony/asset": "6.4.*",

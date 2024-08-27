@@ -10,6 +10,8 @@ use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +26,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             [
                 'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                 'identifier' => 'F02/2023',
-                'status' => 'draft',
+                'status' => RegulationOrderRecordStatusEnum::DRAFT,
                 'startDate' => $startDate1,
                 'endDate' => null,
                 'nbLocations' => 0,
@@ -36,7 +38,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
-                'status' => 'draft',
+                'status' => RegulationOrderRecordStatusEnum::DRAFT,
                 'startDate' => $startDate2,
                 'endDate' => null,
                 'nbLocations' => 2,
@@ -48,7 +50,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             [
                 'uuid' => 'ef5b3632-8525-41b5-9e84-3116d9089610',
                 'identifier' => 'F01/2024',
-                'status' => 'draft',
+                'status' => RegulationOrderRecordStatusEnum::DRAFT,
                 'startDate' => $startDate2,
                 'endDate' => null,
                 'nbLocations' => 1,
@@ -64,7 +66,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findAllRegulations')
-            ->with(20, 1, ['dcab837f-4460-4355-99d5-bf4891c35f8f'])
+            ->with(20, 1, '/20', ['dcab837f-4460-4355-99d5-bf4891c35f8f'], RegulationOrderTypeEnum::PERMANENT->value, RegulationOrderRecordStatusEnum::DRAFT)
             ->willReturn([
                 'count' => 3,
                 'items' => $rows,
@@ -74,7 +76,10 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrders = $handler(new GetRegulationsQuery(
             pageSize: 20,
             page: 1,
+            identifier: '/20',
             organizationUuids: ['dcab837f-4460-4355-99d5-bf4891c35f8f'],
+            regulationOrderType: RegulationOrderTypeEnum::PERMANENT->value,
+            status: RegulationOrderRecordStatusEnum::DRAFT,
         ));
 
         $pagination = new Pagination(
@@ -82,7 +87,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     'F02/2023',
-                    'draft',
+                    RegulationOrderRecordStatusEnum::DRAFT,
                     0,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
@@ -93,7 +98,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     'F01/2023',
-                    'draft',
+                    RegulationOrderRecordStatusEnum::DRAFT,
                     2,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
@@ -108,7 +113,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     'ef5b3632-8525-41b5-9e84-3116d9089610',
                     'F01/2024',
-                    'draft',
+                    RegulationOrderRecordStatusEnum::DRAFT,
                     1,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',

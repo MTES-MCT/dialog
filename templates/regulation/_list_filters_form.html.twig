@@ -1,0 +1,49 @@
+<d-auto-form>
+    {{ form_start(form, { attr: { role: 'search' } }) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-x-gap-2w">
+            {{ form_row(form.identifier, {
+                group_class: 'fr-search-bar',
+                with_label: true,
+                row_attr: {
+                    class: 'fr-mb-0',
+                },
+                attr: {
+                    class: 'fr-input',
+                    spellcheck: false,
+                    autocomplete: false,
+                    'data-auto-form-ignore': 'true',
+                }
+            }) }}
+
+            {{ form_row(form.organization, {
+                group_class: 'fr-select-group',
+                widget_class: 'fr-select',
+                row_attr: {
+                    class: 'fr-mb-0',
+                },
+            }) }}
+
+            {{ form_row(form.regulationOrderType, {
+                group_class: 'fr-select-group',
+                widget_class: 'fr-select',
+                row_attr: {
+                    class: 'fr-mb-0',
+                },
+            }) }}
+
+            {{ form_row(form.status, {
+                group_class: 'fr-select-group',
+                widget_class: 'fr-select',
+                row_attr: {
+                    class: (form.status.vars.row_attr.class|default('')) ~ ' fr-mb-0',
+                },
+            }) }}
+        
+            {{ form_row(form.save, {
+                attr: {
+                    class: 'fr-hidden fr-btn fr-btn-load',
+                },
+            }) }}
+        </div>
+    {{ form_end(form) }}
+</d-auto-form>

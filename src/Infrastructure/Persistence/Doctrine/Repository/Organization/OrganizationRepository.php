@@ -16,6 +16,15 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         parent::__construct($registry, Organization::class);
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->orderBy('o.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function add(Organization $organization): void
     {
         $this->getEntityManager()->persist($organization);

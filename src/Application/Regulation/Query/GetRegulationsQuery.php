@@ -11,7 +11,10 @@ final readonly class GetRegulationsQuery implements QueryInterface
     public function __construct(
         public int $pageSize,
         public int $page,
+        public ?string $identifier = null,
         public ?array $organizationUuids = null,
+        public ?string $regulationOrderType = null,
+        public ?string $status = null,
     ) {
     }
 }

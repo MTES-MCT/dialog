@@ -14,9 +14,15 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
-    protected function login(string $email = UserFixture::MAIN_ORG_USER_EMAIL): KernelBrowser
+    protected function login(?string $email = UserFixture::MAIN_ORG_USER_EMAIL): KernelBrowser
     {
         $client = static::createClient();
+
+        if (!$email) {
+            // Anonymous user
+            return $client;
+        }
+
         $userRepository = static::getContainer()->get(UserRepository::class);
         $organizationUserRepository = static::getContainer()->get(OrganizationUserRepository::class);
         $testUser = $userRepository->findOneByEmail($email);

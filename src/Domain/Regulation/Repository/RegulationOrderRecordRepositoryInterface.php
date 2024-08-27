@@ -18,7 +18,10 @@ interface RegulationOrderRecordRepositoryInterface
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
+        ?string $identifier = null,
         ?array $organizationUuids = null,
+        ?string $regulationOrderType = null,
+        ?string $status = null,
     ): array;
 
     public function findGeneralInformation(string $uuid): ?array;

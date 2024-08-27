@@ -15,6 +15,7 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         private string $email,
         private string $fullName,
         private string $password,
+        /** @var OrganizationView[] */
         private array $organizationUsers,
         private array $roles,
     ) {

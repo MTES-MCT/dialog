@@ -9,6 +9,7 @@ use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -57,7 +58,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
+        ?string $identifier = null,
         ?array $organizationUuids = null,
+        ?string $regulationOrderType = null,
+        ?string $status = null,
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
@@ -65,21 +69,44 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
 
+        $parameters = [];
+
+        // Identifier filter: retrieve all regulation orders whose identifier contains the $identifier search term
+        if ($identifier) {
+            $query
+                // Doctrine doesn't have ILIKE support for Postgres, we use https://github.com/martin-georgiev/postgresql-for-doctrine
+                ->andWhere('pg_ILIKE(ro.identifier, :identifierPattern) = TRUE');
+            $parameters['identifierPattern'] = "%$identifier%";
+        }
+
+        // Organization filter
         if ($organizationUuids) {
             $query
-                ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
-                ->setParameters([
-                    'organizationUuids' => $organizationUuids,
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
-                    'draft' => RegulationOrderRecordStatusEnum::DRAFT,
-                ]);
-        } else {  // the user is not connected -> no draft regulations
-            $query
-                ->where('roc.status = :published')
-                ->setParameters([
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
-                ]);
+                ->andWhere('roc.organization IN (:organizationUuids)');
+            $parameters['organizationUuids'] = $organizationUuids;
         }
+
+        // Regulation order type filter
+        if ($regulationOrderType === RegulationOrderTypeEnum::PERMANENT->value) {
+            $query
+                ->andWhere('ro.endDate IS NULL');
+        } elseif ($regulationOrderType === RegulationOrderTypeEnum::TEMPORARY->value) {
+            $query
+                ->andWhere('ro.endDate IS NOT NULL');
+        }
+
+        // Status filter
+        if ($status === RegulationOrderRecordStatusEnum::DRAFT) {
+            $query
+                ->andWhere('roc.status = :draft');
+            $parameters['draft'] = RegulationOrderRecordStatusEnum::DRAFT;
+        } elseif ($status === RegulationOrderRecordStatusEnum::PUBLISHED) {
+            $query
+                ->andWhere('roc.status = :published');
+            $parameters['published'] = RegulationOrderRecordStatusEnum::PUBLISHED;
+        }
+
+        $query->setParameters($parameters);
 
         $query
             ->innerJoin('roc.organization', 'o')
