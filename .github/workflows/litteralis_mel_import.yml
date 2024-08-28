@@ -1,16 +1,17 @@
-name: MEL Litteralis Import
+name: Litteralis MEL Import
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h00
-  # temp
+  # Décommenter quand on est prêt à intégrer les données en production.
+  # schedule:
+  #   - cron: '0 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h00 GMT
+  # TODO: Décommenter avant de merger
   push:
     branches:
       - feat/litteralis-auto
 
 jobs:
-  mel_import:
+  import:
     runs-on: ubuntu-latest
 
     steps:
@@ -55,7 +56,7 @@ jobs:
           echo "APP_MEL_ORG_ID=${{ vars.APP_MEL_ORG_ID }}" >> .env.local
 
       - name: Run import
-        run: make ci_mel_import BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
+        run: make ci_litteralis_mel_import BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
         env:
           APP_MEL_IMPORT_APP: ${{ vars.APP_MEL_IMPORT_APP }}
 

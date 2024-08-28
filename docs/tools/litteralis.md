@@ -46,7 +46,7 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
 
 Les données la MEL sont automatiquement intégrées en production tous les lundis à 16h00.
 
-Cette automatisation est réalisée au moyen de [GitHub Actions](./github_actions.md) via le workflow [`mel_import.yml`](../../workflows/mel_import.yml).
+Cette automatisation est réalisée au moyen de [GitHub Actions](./github_actions.md) via le workflow [`litteralis_mel_import.yml`](../../workflows/litteralis_mel_import.yml).
 
 La configuration passe par diverses variables d'environnement listées ci-dessous :
 
