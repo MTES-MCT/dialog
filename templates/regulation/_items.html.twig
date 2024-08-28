@@ -8,16 +8,16 @@
 {% endif %}
 
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
-    <table class="app-regulation-table">
+    <table data-testid="app-regulation-table">
         <caption>{{ 'regulation.list.title'|trans }}</caption>
         <thead>
             <tr>
-                <th scope="col" class="app-regulation-table__identifier">{{ 'regulation'|trans }}</th>
-                <th scope="col" class="app-regulation-table__identifier fr-hidden fr-x-revert-sm">{{ 'regulation.organization'|trans }}</th>
-                <th scope="col">{{ 'regulation.locations'|trans }}</th>
-                <th scope="col" class="fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
-                <th scope="col" class="fr-hidden fr-x-revert-sm app-table__actions">{{ 'regulation.status'|trans }}</th>
-                <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap">{{ 'regulation'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.organization'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap">{{ 'regulation.locations'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm app-table__actions">{{ 'regulation.status'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap">{{ 'common.actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
