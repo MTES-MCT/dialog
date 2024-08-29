@@ -7,8 +7,8 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\User\Query\GetOrganizationsQuery;
+use App\Domain\Regulation\DTO\ListRegulationsDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
-use App\Infrastructure\Controller\DTO\ListRegulationsDTO;
 use App\Infrastructure\Form\Regulation\RegulationListFiltersFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -79,16 +79,11 @@ final class ListRegulationsController
             );
         }
 
-        $organizationUserUuids = $dto->organization ? [$dto->organization] : null;
-
         $regulations = $this->queryBus->handle(
             new GetRegulationsQuery(
                 pageSize: $pageSize,
                 page: $page,
-                identifier: $dto->identifier,
-                organizationUuids: $organizationUserUuids,
-                regulationOrderType: $dto->regulationOrderType,
-                status: $dto->status,
+                dto: $dto,
             ),
         );
 

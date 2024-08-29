@@ -272,12 +272,12 @@
                 <source>regulation.list.filters.identifier.placeholder</source>
                 <target>Rechercher un identifiant</target>
             </trans-unit>
-            <trans-unit id="regulation.list.filters.organization">
-                <source>regulation.list.filters.organization</source>
+            <trans-unit id="regulation.list.filters.organizationUuid">
+                <source>regulation.list.filters.organizationUuid</source>
                 <target>Organisation</target>
             </trans-unit>
-            <trans-unit id="regulation.list.filters.organization.placeholder">
-                <source>regulation.list.filters.organization.placeholder</source>
+            <trans-unit id="regulation.list.filters.organizationUuid.placeholder">
+                <source>regulation.list.filters.organizationUuid.placeholder</source>
                 <target>Toutes les organisations</target>
             </trans-unit>
             <trans-unit id="regulation.list.filters.regulationOrderType">

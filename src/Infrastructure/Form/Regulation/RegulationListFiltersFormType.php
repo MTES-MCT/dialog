@@ -32,11 +32,11 @@ final class RegulationListFiltersFormType extends AbstractType
                 ],
             )
             ->add(
-                'organization',
+                'organizationUuid',
                 ChoiceType::class,
                 options: [
-                    'label' => 'regulation.list.filters.organization',
-                    'placeholder' => 'regulation.list.filters.organization.placeholder',
+                    'label' => 'regulation.list.filters.organizationUuid',
+                    'placeholder' => 'regulation.list.filters.organizationUuid.placeholder',
                     'choices' => $options['organizations'],
                     'choice_value' => 'uuid',
                     'choice_label' => 'name',
@@ -62,7 +62,7 @@ final class RegulationListFiltersFormType extends AbstractType
             )
         ;
 
-        $builder->get('organization')
+        $builder->get('organizationUuid')
             ->addModelTransformer(new CallbackTransformer(
                 function (?OrganizationView $organization): ?OrganizationView {
                     return $organization;

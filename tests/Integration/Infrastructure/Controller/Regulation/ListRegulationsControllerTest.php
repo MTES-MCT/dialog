@@ -155,9 +155,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         // Inspect filter field
         $searchButton = $crawler->selectButton('Rechercher');
         $form = $searchButton->form();
-        $field = $form->get('organization');
+        $field = $form->get('organizationUuid');
         $this->assertSame('Organisation', trim($field->getLabel()->nodeValue));
-        $choices = $crawler->filter('form[role="search"] select[name="organization"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $choices = $crawler->filter('form[role="search"] select[name="organizationUuid"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
         $this->assertEquals([
             ['', 'Toutes les organisations'],
             [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
@@ -166,7 +166,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('', $field->getValue());
 
         // Submit filter
-        $form['organization'] = OrganizationFixture::OTHER_ORG_ID;
+        $form['organizationUuid'] = OrganizationFixture::OTHER_ORG_ID;
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('.app-regulation-table tbody > tr');
@@ -320,7 +320,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $crawler = $client->request('GET', \sprintf(
-            '/regulations?identifier=FO2&organization=%s&regulationOrderType=%s&status=%s',
+            '/regulations?identifier=FO2&organizationUuid=%s&regulationOrderType=%s&status=%s',
             OrganizationFixture::MAIN_ORG_ID,
             RegulationOrderTypeEnum::TEMPORARY->value,
             RegulationOrderRecordStatusEnum::PUBLISHED,
