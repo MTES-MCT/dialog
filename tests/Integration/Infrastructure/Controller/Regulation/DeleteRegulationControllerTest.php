@@ -15,7 +15,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
 
     private function countRows($crawler): int
     {
-        $num = $crawler->filter('.app-regulation-table tbody > tr:not([data-testid=empty-row])')->count();
+        $num = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr:not([data-testid=empty-row])')->count();
 
         return $num;
     }
