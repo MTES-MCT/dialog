@@ -33,7 +33,10 @@
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
                             <h3 class="fr-h4">{{ 'regulation.status'|trans }}</h3>
-                                {% include 'regulation/_status_badge.html.twig' with { status: 'draft', withHint: true } %}
+                                {% include 'regulation/_status_badge.html.twig' with {
+                                    status: 'draft',
+                                    withHint: true,
+                                } %}
                             <hr class="fr-mt-2w"/>
 
                             <h3 class="fr-h4">{{ 'common.actions'|trans }}</h3>

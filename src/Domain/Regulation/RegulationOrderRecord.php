@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 
@@ -66,7 +67,7 @@ class RegulationOrderRecord implements OrganizationRegulationAccessInterface, Re
 
     public function isDraft(): bool
     {
-        return $this->status === 'draft';
+        return $this->status === RegulationOrderRecordStatusEnum::DRAFT->value;
     }
 
     public function getSource(): string

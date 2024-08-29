@@ -70,14 +70,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
                 ->setParameters([
                     'organizationUuids' => $organizationUuids,
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
-                    'draft' => RegulationOrderRecordStatusEnum::DRAFT,
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+                    'draft' => RegulationOrderRecordStatusEnum::DRAFT->value,
                 ]);
         } else {  // the user is not connected -> no draft regulations
             $query
                 ->where('roc.status = :published')
                 ->setParameters([
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 ]);
         }
 
@@ -201,7 +201,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('p.timeSlots', 't')
             ->where('roc.status = :status')
             ->setParameters([
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             ])
             ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid')
@@ -239,7 +239,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ...($allowedSources ? ['allowedSources' => $allowedSources] : []),
                 ...($excludedIdentifiers ? ['excludedIdentifiers' => $excludedIdentifiers] : []),
                 ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                 'today' => $this->dateUtils->getNow(),
                 'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
@@ -264,7 +264,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->setParameters([
                 'source' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
                 'organizationId' => $organizationId,
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'laterThan' => $laterThan,
             ])
             ->getQuery()
@@ -316,7 +316,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->andWhere('o.uuid <> :uuid')
             ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.organization', 'o')
-            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED)
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED->value)
             ->getQuery()
             ->getSingleScalarResult();
     }

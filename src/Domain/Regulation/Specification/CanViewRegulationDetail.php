@@ -10,6 +10,6 @@ final class CanViewRegulationDetail
 {
     public function isSatisfiedBy(?string $userId, string $status): bool
     {
-        return $userId || $status === RegulationOrderRecordStatusEnum::PUBLISHED;
+        return $userId || $status === RegulationOrderRecordStatusEnum::PUBLISHED->value;
     }
 }

@@ -74,7 +74,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                     new RegulationOrderRecord(
                         uuid: 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
                         source: RegulationOrderRecordSourceEnum::DIALOG->value,
-                        status: RegulationOrderRecordStatusEnum::DRAFT,
+                        status: RegulationOrderRecordStatusEnum::DRAFT->value,
                         regulationOrder: $createdRegulationOrder,
                         createdAt: $now,
                         organization: $this->organization,

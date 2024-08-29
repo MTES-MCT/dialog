@@ -43,7 +43,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                 new RegulationOrderRecord(
                     uuid: $this->idFactory->make(),
                     source: $command->source,
-                    status: RegulationOrderRecordStatusEnum::DRAFT,
+                    status: RegulationOrderRecordStatusEnum::DRAFT->value,
                     regulationOrder: $regulationOrder,
                     createdAt: $this->now,
                     organization: $command->organization,

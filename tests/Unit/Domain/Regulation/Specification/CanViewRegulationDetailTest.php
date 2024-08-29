@@ -21,17 +21,17 @@ final class CanViewRegulationDetailTest extends TestCase
     {
         $this->assertTrue($this->spec->isSatisfiedBy(
             userId: null,
-            status: RegulationOrderRecordStatusEnum::PUBLISHED,
+            status: RegulationOrderRecordStatusEnum::PUBLISHED->value,
         ));
 
         $this->assertTrue($this->spec->isSatisfiedBy(
             userId: '066868b3-accf-7f18-8000-7daddb86cc7a',
-            status: RegulationOrderRecordStatusEnum::PUBLISHED,
+            status: RegulationOrderRecordStatusEnum::PUBLISHED->value,
         ));
 
         $this->assertTrue($this->spec->isSatisfiedBy(
             userId: '066868b3-accf-7f18-8000-7daddb86cc7a',
-            status: RegulationOrderRecordStatusEnum::DRAFT,
+            status: RegulationOrderRecordStatusEnum::DRAFT->value,
         ));
     }
 
@@ -39,7 +39,7 @@ final class CanViewRegulationDetailTest extends TestCase
     {
         $this->assertFalse($this->spec->isSatisfiedBy(
             userId: null,
-            status: RegulationOrderRecordStatusEnum::DRAFT,
+            status: RegulationOrderRecordStatusEnum::DRAFT->value,
         ));
     }
 }

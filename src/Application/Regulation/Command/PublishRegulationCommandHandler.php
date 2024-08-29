@@ -21,6 +21,6 @@ final class PublishRegulationCommandHandler
             throw new RegulationOrderRecordCannotBePublishedException();
         }
 
-        $command->regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::PUBLISHED);
+        $command->regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::PUBLISHED->value);
     }
 }

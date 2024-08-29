@@ -103,7 +103,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 $regulationDatesWhereClause,
             ),
             [
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'now' => $this->dateUtils->getNow()->format('Y-m-d'),
             ],
         );
