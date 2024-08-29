@@ -18,7 +18,6 @@ final class DeleteOrganizationUserCommandHandlerTest extends TestCase
     {
         $userUuid = '066cdc8d-b941-7de0-8000-c9401c9a8f24';
         $user = $this->createMock(User::class);
-        $organizationUser2 = $this->createMock(OrganizationUser::class);
         $organizationUser = $this->createMock(OrganizationUser::class);
         $organizationUser
             ->expects(self::once())
@@ -36,10 +35,7 @@ final class DeleteOrganizationUserCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findByUserUuid')
             ->with($userUuid)
-            ->willReturn([
-                $organizationUser2,
-                $organizationUser,
-            ]);
+            ->willReturn(['org1', 'org2']);
 
         $organizationUserRepository
             ->expects(self::once())
@@ -79,9 +75,7 @@ final class DeleteOrganizationUserCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findByUserUuid')
             ->with($userUuid)
-            ->willReturn([
-                $organizationUser,
-            ]);
+            ->willReturn(['org1']);
 
         $organizationUserRepository
             ->expects(self::never())

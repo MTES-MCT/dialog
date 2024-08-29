@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Provider;
 
-use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
@@ -29,26 +28,14 @@ final class UserProvider implements UserProviderInterface
             throw new UserNotFoundException(\sprintf('Unable to find the user %s', $identifier));
         }
 
-        $organizationUsers = $this->organizationUserRepositoryInterface->findByUserUuid($user->getUuid());
-
-        $userOrganizationViews = [];
-
-        foreach ($organizationUsers as $organizationUser) {
-            $org = $organizationUser->getOrganization();
-
-            $userOrganizationViews[] = new UserOrganizationView(
-                uuid: $org->getUuid(),
-                name: $org->getName(),
-                roles: $organizationUser->getRoles(),
-            );
-        }
+        $userOrganizations = $this->organizationUserRepositoryInterface->findByUserUuid($user->getUuid());
 
         return new SymfonyUser(
             $user->getUuid(),
             $user->getEmail(),
             $user->getFullName(),
             $user->getPassword(),
-            $userOrganizationViews,
+            $userOrganizations,
             $user->getRoles(),
         );
     }

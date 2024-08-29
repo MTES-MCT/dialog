@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
+use App\Application\User\View\OrganizationUserView;
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -27,13 +29,20 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
         $this->getEntityManager()->remove($organizationUser);
     }
 
-    public function findByUserUuid(string $userUuid): array
+    public function findByUserUuid(string $uuid): array
     {
         return $this->createQueryBuilder('ou')
-            ->addSelect('o')
+            ->select(\sprintf(
+                'NEW %s(
+                    o.uuid,
+                    o.name,
+                    ou.roles
+                )',
+                UserOrganizationView::class,
+            ))
             ->where('ou.user = :userUuid')
             ->innerJoin('ou.organization', 'o')
-            ->setParameter('userUuid', $userUuid)
+            ->setParameter('userUuid', $uuid)
             ->getQuery()
             ->getResult();
     }
@@ -41,10 +50,18 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
     public function findByOrganizationUuid(string $uuid): array
     {
         return $this->createQueryBuilder('ou')
-            ->addSelect('u')
-            ->where('ou.organization = :organization')
+            ->select(\sprintf(
+                'NEW %s(
+                    u.uuid,
+                    u.fullName,
+                    u.email,
+                    ou.roles
+                )',
+                OrganizationUserView::class,
+            ))
+            ->where('ou.organization = :organizationUuid')
             ->innerJoin('ou.user', 'u')
-            ->setParameter('organization', $uuid)
+            ->setParameter('organizationUuid', $uuid)
             ->orderBy('u.fullName', 'ASC')
             ->getQuery()
             ->getResult();
