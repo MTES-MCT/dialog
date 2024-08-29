@@ -380,6 +380,7 @@ final class LitteralisTransformerTest extends TestCase
                     LitteralisReporter::NOTICE => LitteralisReporter::NOTICE_UNSUPPORTED_MEASURE,
                     'name' => 'unknown measure',
                     'idemprise' => 493136,
+                    'arretesrcid' => '24-A-0126',
                 ],
             ],
             [

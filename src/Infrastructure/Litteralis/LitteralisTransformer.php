@@ -255,7 +255,11 @@ final readonly class LitteralisTransformer
 
         foreach ($allMeasureNames as $name) {
             if (!\array_key_exists($name, self::MEASURE_MAP)) {
-                $reporter->addNotice($reporter::NOTICE_UNSUPPORTED_MEASURE, ['name' => $name, 'idemprise' => $properties['idemprise']]);
+                $reporter->addNotice($reporter::NOTICE_UNSUPPORTED_MEASURE, [
+                    'name' => $name,
+                    'idemprise' => $properties['idemprise'],
+                    'arretesrcid' => $properties['arretesrcid'],
+                ]);
                 continue;
             }
 

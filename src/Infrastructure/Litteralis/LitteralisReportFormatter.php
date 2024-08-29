@@ -119,7 +119,7 @@ final class LitteralisReportFormatter
 
             ++$info['count'];
 
-            $regulationId = \array_key_exists('arretesrcid', $context) ? $context['arretesrcid'] : '<unknown>';
+            $regulationId = $context['arretesrcid'];
 
             if (!\in_array($regulationId, $info['regulations'])) {
                 $info['regulations'][] = $regulationId;

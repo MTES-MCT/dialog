@@ -65,7 +65,6 @@ Remarques
             [LitteralisReporter::NOTICE, [LitteralisReporter::NOTICE => LitteralisReporter::NOTICE_NO_MEASURES_FOUND, 'arretesrcid' => 'arrete3']],
             [LitteralisReporter::ERROR, [LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_MISSING, 'arretesrcid' => 'arrete1', 'shorturl' => 'http://testserver/arrete1']],
             [LitteralisReporter::WARNING, [LitteralisReporter::WARNING => LitteralisReporter::WARNING_MISSING_GEOMETRY, 'arretesrcid' => 'arrete2']],
-            [LitteralisReporter::WARNING, [LitteralisReporter::WARNING => LitteralisReporter::WARNING_MISSING_GEOMETRY]],
         ];
 
         $expectedResult = "Intégration Litteralis
@@ -93,11 +92,10 @@ Emprises avec limite de vitesse manquante : 1 (dans 1 arrêtés)
 Avertissements
 --------------
 
-Emprises sans géométrie : 3 (dans 3 arrêtés)
+Emprises sans géométrie : 2 (dans 2 arrêtés)
   Arrêtés :
     arrete4
     arrete2
-    <unknown>
 
 
 Remarques
