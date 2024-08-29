@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\View;
 
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use PHPUnit\Framework\TestCase;
 
 final class GeneralInfoViewTest extends TestCase
@@ -18,7 +19,7 @@ final class GeneralInfoViewTest extends TestCase
             identifier: 'FO1/2024',
             organizationName: 'DiaLog',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-            status: 'draft',
+            status: RegulationOrderRecordStatusEnum::DRAFT->value,
             category: 'other',
             otherCategoryText: 'Other category 1',
             description: 'Description 1',
@@ -33,7 +34,7 @@ final class GeneralInfoViewTest extends TestCase
             identifier: 'FO1/2024',
             organizationName: 'DiaLog',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-            status: 'published',
+            status: RegulationOrderRecordStatusEnum::PUBLISHED->value,
             category: 'other',
             otherCategoryText: 'Other category 1',
             description: 'Description 1',

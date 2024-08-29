@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQueryHandler;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +23,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
             identifier: 'FO1/2024',
             organizationName: 'DiaLog',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
-            status: 'draft',
+            status: RegulationOrderRecordStatusEnum::DRAFT->value,
             category: 'other',
             otherCategoryText: 'Other category 1',
             description: 'Description 1',

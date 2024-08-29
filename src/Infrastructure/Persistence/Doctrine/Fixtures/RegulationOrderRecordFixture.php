@@ -42,7 +42,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $typicalRegulationOrderRecord = new RegulationOrderRecord(
             self::UUID_TYPICAL,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('typicalRegulationOrder'),
             new \DateTime('2022-01-10'),
             $this->getReference('mainOrg'),
@@ -51,7 +51,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $publishedRegulationOrderRecord = new RegulationOrderRecord(
             self::UUID_PUBLISHED,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('publishedRegulationOrder'),
             new \DateTime('2022-01-10'),
             $this->getReference('mainOrg'),
@@ -60,7 +60,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecordDuplicate = new RegulationOrderRecord(
             '0658c6bb-045e-74fd-8000-bc704e4e72cb',
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('regulationOrderDuplicate'),
             new \DateTime('2022-01-10'),
             $this->getReference('mainOrg'),
@@ -69,7 +69,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecordPermanent = new RegulationOrderRecord(
             self::UUID_PERMANENT,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('regulationOrderPermanent'),
             new \DateTime('2022-01-11'),
             $this->getReference('mainOrg'),
@@ -78,7 +78,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $otherOrgRegulationOrderRecord = new RegulationOrderRecord(
             self::UUID_OTHER_ORG,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('otherOrgRegulationOrder'),
             new \DateTime('2022-01-11'),
             $this->getReference('otherOrg'),
@@ -87,7 +87,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $fullCityRegulationOrderRecord = new RegulationOrderRecord(
             self::UUID_FULL_CITY,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('fullCityRegulationOrder'),
             new \DateTime('2022-01-11'),
             $this->getReference('mainOrg'),
@@ -96,7 +96,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecordNoLocations = new RegulationOrderRecord(
             self::UUID_NO_LOCATIONS,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('regulationOrderNoLocations'),
             new \DateTime('2022-01-10'),
             $this->getReference('mainOrg'),
@@ -105,7 +105,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecordNoMeasures = new RegulationOrderRecord(
             self::UUID_NO_MEASURES,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('regulationOrderNoMeasures'),
             new \DateTime('2022-01-10'),
             $this->getReference('mainOrg'),
@@ -114,7 +114,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $regulationOrderRecordCifs = new RegulationOrderRecord(
             self::UUID_CIFS,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('regulationOrderCifs'),
             new \DateTime('2023-09-06'),
             $this->getReference('mainOrg'),
@@ -123,7 +123,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $outDatedRegulationOrderRecordCifs = new RegulationOrderRecord(
             '9d408332-d30f-4530-be66-dfb2d98ebae5',
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('outDatedRegulationOrderCifs'),
             new \DateTime('2021-11-02'),
             $this->getReference('otherOrg'),
@@ -132,7 +132,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $rawGeoJSONRegulationOrderRecord = new RegulationOrderRecord(
             self::UUID_RAWGEOJSON,
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('rawGeoJSONRegulationOrder'),
             new \DateTime('2020-06-05'),
             $this->getReference('mainOrg'),
