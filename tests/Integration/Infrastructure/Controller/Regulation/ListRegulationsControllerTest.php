@@ -54,7 +54,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $pageOneRows = $pageOne->filter('.app-regulation-table tbody > tr');
+        $pageOneRows = $pageOne->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(1, $pageOneRows->count());
 
         $pageOneRow0 = $pageOneRows->eq(0)->filter('td');
@@ -73,7 +73,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $pageTwoRows = $pageTwo->filter('.app-regulation-table tbody > tr');
+        $pageTwoRows = $pageTwo->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(1, $pageTwoRows->count()); // One item per page
 
         $pageTwoRow0 = $pageTwoRows->eq(0)->filter('td');
@@ -91,7 +91,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(1, $rows->count());
 
         $row0 = $rows->eq(0)->filter('td');
@@ -369,7 +369,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
 
         // check that the only link of the first row is to view the regulation
-        $rows = $pageOne->filter('.app-regulation-table tbody > tr');
+        $rows = $pageOne->filter('[data-testid="app-regulation-table"] tbody > tr');
         $row = $rows->eq(0)->filter('td');
         $links = $row->filter('a');
         $this->assertCount(1, $links);
