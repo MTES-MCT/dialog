@@ -68,7 +68,7 @@ final class GetMeasureController extends AbstractRegulationController
                 context: [
                     'measure' => MeasureView::fromEntity($measure),
                     'generalInfo' => $generalInfo,
-                    'isReadOnly' => !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $currentUser->getOrganizationUuids()),
+                    'isReadOnly' => !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $currentUser->getUserOrganizationUuids()),
                     'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                 ],
             ),

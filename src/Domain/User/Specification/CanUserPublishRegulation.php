@@ -14,7 +14,7 @@ class CanUserPublishRegulation
     {
         $organization = $regulationOrderRecord->getOrganization();
 
-        foreach ($user->getOrganizationUsers() as $userOrganization) {
+        foreach ($user->getUserOrganizations() as $userOrganization) {
             if ($userOrganization->uuid !== $organization->getUuid()) {
                 continue;
             }

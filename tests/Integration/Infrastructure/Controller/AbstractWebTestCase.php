@@ -5,34 +5,22 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
-use App\Infrastructure\Persistence\Doctrine\Repository\User\OrganizationUserRepository;
-use App\Infrastructure\Persistence\Doctrine\Repository\User\UserRepository;
-use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
     protected function login(string $email = UserFixture::MAIN_ORG_USER_EMAIL): KernelBrowser
     {
         $client = static::createClient();
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $organizationUserRepository = static::getContainer()->get(OrganizationUserRepository::class);
-        $testUser = $userRepository->findOneByEmail($email);
-        $roles = $testUser->getRoles();
-        $organizationUsers = $organizationUserRepository->findOrganizationsByUser($testUser);
 
-        $client->loginUser(
-            new SymfonyUser(
-                $testUser->getUuid(),
-                $testUser->getEmail(),
-                $testUser->getFullName(),
-                $testUser->getPassword(),
-                $organizationUsers,
-                $roles,
-            ),
-        );
+        /** @var UserProviderInterface */
+        $userProvider = static::getContainer()->get(UserProviderInterface::class);
+        $user = $userProvider->loadUserByIdentifier($email);
+
+        $client->loginUser($user);
 
         return $client;
     }

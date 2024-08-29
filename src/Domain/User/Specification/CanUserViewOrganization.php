@@ -11,6 +11,6 @@ class CanUserViewOrganization
 {
     public function isSatisfiedBy(Organization $organization, SymfonyUser $user): bool
     {
-        return \in_array($organization->getUuid(), $user->getOrganizationUuids());
+        return \in_array($organization->getUuid(), $user->getUserOrganizationUuids());
     }
 }
