@@ -125,7 +125,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['identifier'] = '2024';
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(1, $rows->count());
 
         $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
@@ -169,7 +169,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['organizationUuid'] = OrganizationFixture::OTHER_ORG_ID;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(2, $rows->count());
 
         $organizations = $rows->filter('td:nth-child(2)')->each(fn ($node) => $node->text());
@@ -200,7 +200,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['regulationOrderType'] = RegulationOrderTypeEnum::PERMANENT->value;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(2, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(4)')->each(fn ($node) => $node->text());
@@ -219,7 +219,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['regulationOrderType'] = RegulationOrderTypeEnum::TEMPORARY->value;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(9, $rows->count());
     }
 
@@ -247,7 +247,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['status'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(4, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
@@ -266,7 +266,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['status'] = RegulationOrderRecordStatusEnum::DRAFT->value;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(7, $rows->count());
 
         $rows->filter('td:nth-child(5)')->each(function ($node) {
@@ -290,7 +290,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $node = $crawler->filter('form[role="search"] select[name="status"]')->first();
         $this->assertNotNull($node->closest('[class*="fr-hidden"]'));
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(4, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
@@ -309,7 +309,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form = $searchButton->form();
         $this->assertSame('published', $form->get('status')->getValue());
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(4, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
@@ -323,12 +323,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
             '/regulations?identifier=FO2&organizationUuid=%s&regulationOrderType=%s&status=%s',
             OrganizationFixture::MAIN_ORG_ID,
             RegulationOrderTypeEnum::TEMPORARY->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
         ));
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $rows = $crawler->filter('.app-regulation-table tbody > tr');
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(2, $rows->count());
 
         $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
