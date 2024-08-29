@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 
 readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
@@ -29,6 +30,6 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
 
     public function isDraft(): bool
     {
-        return $this->status === 'draft';
+        return $this->status === RegulationOrderRecordStatusEnum::DRAFT->value;
     }
 }

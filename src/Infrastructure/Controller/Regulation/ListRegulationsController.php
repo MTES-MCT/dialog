@@ -48,7 +48,7 @@ final class ListRegulationsController
 
         if (!$user) {
             // Anonymous users can only see published regulation orders
-            $dto->status = RegulationOrderRecordStatusEnum::PUBLISHED;
+            $dto->status = RegulationOrderRecordStatusEnum::PUBLISHED->value;
 
             // Prevent forcing through query parameter
             $request->query->set('status', $dto->status);

@@ -27,7 +27,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             [
                 'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                 'identifier' => 'F02/2023',
-                'status' => RegulationOrderRecordStatusEnum::DRAFT,
+                'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
                 'startDate' => $startDate1,
                 'endDate' => null,
                 'nbLocations' => 0,
@@ -39,7 +39,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             [
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
-                'status' => RegulationOrderRecordStatusEnum::DRAFT,
+                'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
                 'startDate' => $startDate2,
                 'endDate' => null,
                 'nbLocations' => 2,
@@ -51,7 +51,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             [
                 'uuid' => 'ef5b3632-8525-41b5-9e84-3116d9089610',
                 'identifier' => 'F01/2024',
-                'status' => RegulationOrderRecordStatusEnum::DRAFT,
+                'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
                 'startDate' => $startDate2,
                 'endDate' => null,
                 'nbLocations' => 1,
@@ -66,7 +66,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $dto->identifier = '/20';
         $dto->organizationUuid = 'dcab837f-4460-4355-99d5-bf4891c35f8f';
         $dto->regulationOrderType = RegulationOrderTypeEnum::PERMANENT->value;
-        $dto->status = RegulationOrderRecordStatusEnum::DRAFT;
+        $dto->status = RegulationOrderRecordStatusEnum::DRAFT->value;
 
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
@@ -91,7 +91,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     'F02/2023',
-                    RegulationOrderRecordStatusEnum::DRAFT,
+                    RegulationOrderRecordStatusEnum::DRAFT->value,
                     0,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
@@ -102,7 +102,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     'F01/2023',
-                    RegulationOrderRecordStatusEnum::DRAFT,
+                    RegulationOrderRecordStatusEnum::DRAFT->value,
                     2,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
@@ -117,7 +117,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 new RegulationOrderListItemView(
                     'ef5b3632-8525-41b5-9e84-3116d9089610',
                     'F01/2024',
-                    RegulationOrderRecordStatusEnum::DRAFT,
+                    RegulationOrderRecordStatusEnum::DRAFT->value,
                     1,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',

@@ -238,13 +238,13 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $choices = $crawler->filter('form[role="search"] select[name="status"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
         $this->assertEquals([
             ['', 'Tous les statuts'],
-            [RegulationOrderRecordStatusEnum::DRAFT, 'Brouillon'],
-            [RegulationOrderRecordStatusEnum::PUBLISHED, 'Publié'],
+            [RegulationOrderRecordStatusEnum::DRAFT->value, 'Brouillon'],
+            [RegulationOrderRecordStatusEnum::PUBLISHED->value, 'Publié'],
         ], $choices);
         $this->assertSame('', $field->getValue());
 
         // Submit filter
-        $form['status'] = RegulationOrderRecordStatusEnum::PUBLISHED;
+        $form['status'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('.app-regulation-table tbody > tr');
@@ -263,7 +263,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $searchButton = $crawler->selectButton('Rechercher');
         $form = $searchButton->form();
-        $form['status'] = RegulationOrderRecordStatusEnum::DRAFT;
+        $form['status'] = RegulationOrderRecordStatusEnum::DRAFT->value;
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('.app-regulation-table tbody > tr');

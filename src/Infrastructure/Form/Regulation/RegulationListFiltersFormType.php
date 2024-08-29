@@ -97,8 +97,8 @@ final class RegulationListFiltersFormType extends AbstractType
             'regulation.list.filters.status.placeholder' => '',
         ];
 
-        foreach (RegulationOrderRecordStatusEnum::values() as $value) {
-            $choices[\sprintf('regulation.list.filters.status.%s', $value)] = $value;
+        foreach (RegulationOrderRecordStatusEnum::cases() as $case) {
+            $choices[\sprintf('regulation.list.filters.status.%s', $case->value)] = $case->value;
         }
 
         $options = [

@@ -29,7 +29,7 @@ final class RegulationOrderRecordTest extends TestCase
         $regulationOrderRecord = new RegulationOrderRecord(
             '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $regulationOrder,
             $createdAt,
             $organization,
@@ -42,11 +42,11 @@ final class RegulationOrderRecordTest extends TestCase
         $this->assertSame('Dialog', $regulationOrderRecord->getOrganizationName());
         $this->assertSame(RegulationOrderRecordSourceEnum::DIALOG->value, $regulationOrderRecord->getSource());
         $this->assertSame($createdAt, $regulationOrderRecord->getCreatedAt());
-        $this->assertSame(RegulationOrderRecordStatusEnum::PUBLISHED, $regulationOrderRecord->getStatus());
+        $this->assertSame(RegulationOrderRecordStatusEnum::PUBLISHED->value, $regulationOrderRecord->getStatus());
         $this->assertFalse($regulationOrderRecord->isDraft());
 
-        $regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::DRAFT);
-        $this->assertSame(RegulationOrderRecordStatusEnum::DRAFT, $regulationOrderRecord->getStatus());
+        $regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::DRAFT->value);
+        $this->assertSame(RegulationOrderRecordStatusEnum::DRAFT->value, $regulationOrderRecord->getStatus());
         $this->assertTrue($regulationOrderRecord->isDraft());
     }
 }
