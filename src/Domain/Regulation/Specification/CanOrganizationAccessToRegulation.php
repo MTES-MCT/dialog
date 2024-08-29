@@ -10,12 +10,12 @@ class CanOrganizationAccessToRegulation
 {
     public function isSatisfiedBy(
         OrganizationRegulationAccessInterface|string $organizationUuid,
-        array $organizationUserUuids,
+        array $organizationUuids,
     ): bool {
         if (!\is_string($organizationUuid)) {
             $organizationUuid = $organizationUuid->getOrganizationUuid();
         }
 
-        return \in_array($organizationUuid, $organizationUserUuids);
+        return \in_array($organizationUuid, $organizationUuids);
     }
 }

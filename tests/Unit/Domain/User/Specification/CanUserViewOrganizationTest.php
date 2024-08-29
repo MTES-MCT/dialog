@@ -22,7 +22,7 @@ final class CanUserViewOrganizationTest extends TestCase
         $symfonyUser = $this->createMock(SymfonyUser::class);
         $symfonyUser
             ->expects(self::once())
-            ->method('getOrganizationUuids')
+            ->method('getUserOrganizationUuids')
             ->willReturn(['c1790745-b915-4fb5-96e7-79b104092a55']);
 
         $pattern = new CanUserViewOrganization();
@@ -40,7 +40,7 @@ final class CanUserViewOrganizationTest extends TestCase
         $symfonyUser = $this->createMock(SymfonyUser::class);
         $symfonyUser
             ->expects(self::once())
-            ->method('getOrganizationUuids')
+            ->method('getUserOrganizationUuids')
             ->willReturn(['c1790745-b915-4fb5-96e7-79b104092a55']);
 
         $pattern = new CanUserViewOrganization();

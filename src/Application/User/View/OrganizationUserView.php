@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\User\View;
 
-final readonly class UserView
+final readonly class OrganizationUserView
 {
     public function __construct(
         public string $uuid,

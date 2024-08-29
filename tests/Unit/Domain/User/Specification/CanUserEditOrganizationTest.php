@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\User\Specification;
 
-use App\Application\User\View\OrganizationView;
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Specification\CanUserEditOrganization;
@@ -24,9 +24,9 @@ final class CanUserEditOrganizationTest extends TestCase
         $symfonyUser = $this->createMock(SymfonyUser::class);
         $symfonyUser
             ->expects(self::once())
-            ->method('getOrganizationUsers')
+            ->method('getUserOrganizations')
             ->willReturn([
-                new OrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'Dialog', [OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]),
+                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'Dialog', [OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]),
             ]);
 
         $pattern = new CanUserEditOrganization();
@@ -44,9 +44,9 @@ final class CanUserEditOrganizationTest extends TestCase
         $symfonyUser = $this->createMock(SymfonyUser::class);
         $symfonyUser
             ->expects(self::once())
-            ->method('getOrganizationUsers')
+            ->method('getUserOrganizations')
             ->willReturn([
-                new OrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'Dialog', [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
+                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'Dialog', [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
             ]);
 
         $pattern = new CanUserEditOrganization();

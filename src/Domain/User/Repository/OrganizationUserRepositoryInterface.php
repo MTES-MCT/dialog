@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Repository;
 
+use App\Application\User\View\OrganizationUserView;
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\OrganizationUser;
-use App\Domain\User\User;
 
 interface OrganizationUserRepositoryInterface
 {
@@ -13,9 +14,11 @@ interface OrganizationUserRepositoryInterface
 
     public function remove(OrganizationUser $organizationUser): void;
 
-    public function findOrganizationsByUser(User $user): array;
+    /** @return UserOrganizationView[] */
+    public function findByUserUuid(string $userUuid): array;
 
-    public function findUsersByOrganizationUuid(string $uuid): array;
+    /** @return OrganizationUserView[] */
+    public function findByOrganizationUuid(string $uuid): array;
 
     public function findOrganizationUser(string $organizationUuid, string $userUuid): ?OrganizationUser;
 
