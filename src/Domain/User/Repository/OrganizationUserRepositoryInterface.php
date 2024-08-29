@@ -13,7 +13,7 @@ interface OrganizationUserRepositoryInterface
     public function remove(OrganizationUser $organizationUser): void;
 
     /** @return OrganizationUser[] */
-    public function findbyUserUuid(string $userUuid): array;
+    public function findByUserUuid(string $userUuid): array;
 
     /** @return OrganizationUser[] */
     public function findByOrganizationUuid(string $uuid): array;

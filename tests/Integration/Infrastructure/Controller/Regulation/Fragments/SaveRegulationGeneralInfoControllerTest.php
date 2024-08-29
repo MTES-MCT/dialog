@@ -11,9 +11,6 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixtur
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-/**
- * @group only
- */
 final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 {
     public function testEditWithAnAlreadyExistingIdentifier(): void

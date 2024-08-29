@@ -18,7 +18,7 @@ final class DeleteOrganizationUserCommandHandler
     public function __invoke(DeleteOrganizationUserCommand $command): void
     {
         $user = $command->organizationUser->getUser();
-        $organizationUsers = $this->organizationUserRepository->findbyUserUuid($user->getUuid());
+        $organizationUsers = $this->organizationUserRepository->findByUserUuid($user->getUuid());
 
         if (\count($organizationUsers) === 1) {
             // User belongs to only one organization, remove them and the organization user will be deleted too by CASCADE

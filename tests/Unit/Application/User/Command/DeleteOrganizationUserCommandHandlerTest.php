@@ -34,7 +34,7 @@ final class DeleteOrganizationUserCommandHandlerTest extends TestCase
 
         $organizationUserRepository
             ->expects(self::once())
-            ->method('findbyUserUuid')
+            ->method('findByUserUuid')
             ->with($userUuid)
             ->willReturn([
                 $organizationUser2,
@@ -77,7 +77,7 @@ final class DeleteOrganizationUserCommandHandlerTest extends TestCase
 
         $organizationUserRepository
             ->expects(self::once())
-            ->method('findbyUserUuid')
+            ->method('findByUserUuid')
             ->with($userUuid)
             ->willReturn([
                 $organizationUser,

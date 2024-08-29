@@ -27,7 +27,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
         $this->getEntityManager()->remove($organizationUser);
     }
 
-    public function findbyUserUuid(string $userUuid): array
+    public function findByUserUuid(string $userUuid): array
     {
         return $this->createQueryBuilder('ou')
             ->addSelect('o')
