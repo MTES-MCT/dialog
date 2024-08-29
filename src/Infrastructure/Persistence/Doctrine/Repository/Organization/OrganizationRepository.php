@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Organization;
 
+use App\Application\User\View\OrganizationView;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -19,6 +20,13 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
     public function findAll(): array
     {
         return $this->createQueryBuilder('o')
+            ->select(\sprintf(
+                'NEW %s(
+                    o.uuid,
+                    o.name
+                )',
+                OrganizationView::class,
+            ))
             ->orderBy('o.name', 'ASC')
             ->getQuery()
             ->getResult()

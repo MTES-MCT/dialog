@@ -117,7 +117,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $searchButton = $crawler->selectButton('Rechercher');
         $form = $searchButton->form();
         $field = $form->get('identifier');
-        $this->assertSame("Identifiant de l'arrêté", trim($field->getLabel()->nodeValue));
+        $this->assertSame('Identifiant', trim($field->getLabel()->nodeValue));
         $this->assertSame('Rechercher un identifiant', $crawler->filter('form[role="search"] input[name="identifier"]')->attr('placeholder'));
         $this->assertSame('', $field->getValue());
 
@@ -276,7 +276,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
     public function testStatusFilterAsAnonymousUser(): void
     {
-        $client = $this->login(null);
+        $client = static::createClient();
         $crawler = $client->request('GET', '/regulations');
 
         $this->assertResponseStatusCodeSame(200);
@@ -299,7 +299,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
     public function testStatusFilterAsAnonymousUserForceDraft(): void
     {
-        $client = $this->login(null);
+        $client = static::createClient();
         $crawler = $client->request('GET', '/regulations?status=draft'); // Try to force with query parameter
 
         $this->assertResponseStatusCodeSame(200);
@@ -363,7 +363,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
     public function testWithoutAuthenticatedUser(): void
     {
-        $client = $this->login(null);
+        $client = static::createClient();
         $pageOne = $client->request('GET', '/regulations');
 
         $this->assertResponseStatusCodeSame(200);
