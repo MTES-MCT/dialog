@@ -12,12 +12,12 @@ class CanUserEditOrganization
 {
     public function isSatisfiedBy(Organization $organization, SymfonyUser $user): bool
     {
-        foreach ($user->getOrganizationUsers() as $organizationUser) {
-            if ($organizationUser->uuid !== $organization->getUuid()) {
+        foreach ($user->getUserOrganizations() as $userOrganization) {
+            if ($userOrganization->uuid !== $organization->getUuid()) {
                 continue;
             }
 
-            return \in_array(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value, $organizationUser->roles);
+            return \in_array(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value, $userOrganization->roles);
         }
 
         return false;

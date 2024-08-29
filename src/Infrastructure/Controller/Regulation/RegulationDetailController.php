@@ -57,7 +57,7 @@ final class RegulationDetailController extends AbstractRegulationController
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid, requireUserSameOrg: false);
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
-        $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getOrganizationUuids()));
+        $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getUserOrganizationUuids()));
 
         $context = [
             'uuid' => $uuid,

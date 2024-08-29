@@ -2,9 +2,9 @@
 {% if isAuthenticated %}
     {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
     {% set deleteCsrfToken = csrf_token('delete-regulation') %}
-    {% set organizationUsersUuids = app.user.getOrganizationUuids %}
+    {% set userOrganizationUuids = app.user.getUserOrganizationUuids %}
 {% else %}
-    {% set organizationUsersUuids = [] %}
+    {% set userOrganizationUuids = [] %}
 {% endif %}
 
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
@@ -25,7 +25,7 @@
                 {% set location = regulation.location %}
                 {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
                 {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
-                {% set belongsToOrganizationUsers = isAuthenticated and (regulation.organizationUuid in organizationUsersUuids) %}
+                {% set belongsToOrganizationUsers = isAuthenticated and (regulation.organizationUuid in userOrganizationUuids) %}
                 <tr>
                     <td>
                         {{ regulation.identifier }}

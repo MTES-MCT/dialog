@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
-use App\Application\User\View\OrganizationView;
-use App\Application\User\View\UserView;
+use App\Application\User\View\OrganizationUserView;
+use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
-use App\Domain\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,28 +29,39 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
         $this->getEntityManager()->remove($organizationUser);
     }
 
-    public function findOrganizationsByUser(User $user): array
+    public function findByUserUuid(string $uuid): array
     {
         return $this->createQueryBuilder('ou')
-            ->select(
-                \sprintf('NEW %s(o.uuid, o.name, ou.roles)', OrganizationView::class),
-            )
-            ->where('ou.user = :user')
+            ->select(\sprintf(
+                'NEW %s(
+                    o.uuid,
+                    o.name,
+                    ou.roles
+                )',
+                UserOrganizationView::class,
+            ))
+            ->where('ou.user = :userUuid')
             ->innerJoin('ou.organization', 'o')
-            ->setParameter('user', $user)
+            ->setParameter('userUuid', $uuid)
             ->getQuery()
             ->getResult();
     }
 
-    public function findUsersByOrganizationUuid(string $uuid): array
+    public function findByOrganizationUuid(string $uuid): array
     {
         return $this->createQueryBuilder('ou')
-            ->select(
-                \sprintf('NEW %s(u.uuid, u.fullName, u.email, ou.roles)', UserView::class),
-            )
-            ->where('ou.organization = :organization')
+            ->select(\sprintf(
+                'NEW %s(
+                    u.uuid,
+                    u.fullName,
+                    u.email,
+                    ou.roles
+                )',
+                OrganizationUserView::class,
+            ))
+            ->where('ou.organization = :organizationUuid')
             ->innerJoin('ou.user', 'u')
-            ->setParameter('organization', $uuid)
+            ->setParameter('organizationUuid', $uuid)
             ->orderBy('u.fullName', 'ASC')
             ->getQuery()
             ->getResult();

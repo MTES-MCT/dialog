@@ -15,6 +15,6 @@ final class GetOrganizationUsersQueryHandler
 
     public function __invoke(GetOrganizationUsersQuery $query): array
     {
-        return $this->organizationUserRepository->findUsersByOrganizationUuid($query->organizationUuid);
+        return $this->organizationUserRepository->findByOrganizationUuid($query->organizationUuid);
     }
 }
