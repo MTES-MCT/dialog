@@ -781,6 +781,16 @@
                     demande.<![CDATA[</p>]]>
                 </target>
             </trans-unit>
+            <trans-unit id="profile.update.success">
+                <source>profile.update.success</source>
+                <target>
+                    <![CDATA[<h3 class="fr-alert__title">]]>Votre profil a bien été mis à jour<![CDATA[</h3>]]>
+                </target>
+            </trans-unit>
+            <trans-unit id="profile.title">
+                <source>profile.title</source>
+                <target>Mon profil</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>
                 <target>Accueil</target>

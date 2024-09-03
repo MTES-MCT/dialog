@@ -1,0 +1,18 @@
+{% extends 'layouts/app.html.twig' %}
+{% set metaTitle = user is defined ? user.fullName : 'user.form.add'|trans %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+                <h2 class="fr-mb-0">{{ 'profile.title'|trans }}</h2>
+                {{ form_start(form) }}
+                    {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {{ form_widget(form.save) }}
+                {{ form_end(form) }}
+        </div>
+    </section>
+{% endblock %}

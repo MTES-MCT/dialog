@@ -76,4 +76,14 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
     }
+
+    public function setEmail($email): void
+    {
+        $this->email = $email;
+    }
+
+    public function setfullName($fullName): void
+    {
+        $this->fullName = $fullName;
+    }
 }
