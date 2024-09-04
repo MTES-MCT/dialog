@@ -26,6 +26,16 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_users_list');
     }
 
+    public function testDeleteAdmin(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client->request('DELETE', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33', [
+            'token' => $this->generateCsrfToken($client, 'delete-user'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testInvalidCsrfToken(): void
     {
         $client = $this->login();
