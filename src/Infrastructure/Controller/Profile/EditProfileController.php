@@ -47,7 +47,7 @@ final class EditProfileController
 
                 /** @var FlashBagAwareSessionInterface */
                 $session = $request->getSession();
-                $session->getFlashBag()->add('success', $this->translator->trans('feedback.updateprofile.success'));
+                $session->getFlashBag()->add('success', $this->translator->trans('profile.update.success'));
 
                 return new RedirectResponse(
                     url: $this->router->generate('app_profile'),
