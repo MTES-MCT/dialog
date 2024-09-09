@@ -10,7 +10,7 @@ use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
-use App\Domain\Regulation\DTO\ListRegulationsDTO;
+use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -62,7 +62,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ],
         ];
 
-        $dto = new ListRegulationsDTO();
+        $dto = new RegulationListFiltersDTO();
         $dto->identifier = '/20';
         $dto->organizationUuid = 'dcab837f-4460-4355-99d5-bf4891c35f8f';
         $dto->regulationOrderType = RegulationOrderTypeEnum::PERMANENT->value;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\DTO;
 
-final class ListRegulationsDTO
+final class RegulationListFiltersDTO
 {
     public ?string $identifier = null;
     public ?string $organizationUuid = null;

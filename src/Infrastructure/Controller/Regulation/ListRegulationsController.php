@@ -7,7 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\User\Query\GetOrganizationsQuery;
-use App\Domain\Regulation\DTO\ListRegulationsDTO;
+use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Infrastructure\Form\Regulation\RegulationListFiltersFormType;
 use App\Infrastructure\Security\SymfonyUser;
@@ -40,7 +40,7 @@ final class ListRegulationsController
     )]
     public function __invoke(Request $request): Response
     {
-        $dto = new ListRegulationsDTO();
+        $dto = new RegulationListFiltersDTO();
 
         /** @var SymfonyUser|null */
         $user = $this->security->getUser();
