@@ -77,12 +77,12 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
     {
     }
 
-    public function setEmail($email): void
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    public function setfullName($fullName): void
+    public function setfullName(string $fullName): void
     {
         $this->fullName = $fullName;
     }

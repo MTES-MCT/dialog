@@ -789,7 +789,11 @@
             </trans-unit>
             <trans-unit id="profile.title">
                 <source>profile.title</source>
-                <target>Mon profil</target>
+                <target>Mon compte</target>
+            </trans-unit>
+            <trans-unit id="profile.subtitle">
+                <source>profile.subtitle</source>
+                <target>Mise à jour de mes informations</target>
             </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>

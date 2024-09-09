@@ -15,7 +15,7 @@ final class EditProfileControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Mon profil', $crawler->filter('h2')->text());
+        $this->assertSame('Mon compte', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Mathieu FERNANDEZ - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');
@@ -43,7 +43,7 @@ final class EditProfileControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['profile_form']['fullName'] = 'Leaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Lefoulon';
+        $values['profile_form']['fullName'] = str_repeat('a', 256);
         $values['profile_form']['email'] = 'mathieu.fernandez@beta.gouv.fr';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
@@ -71,7 +71,6 @@ final class EditProfileControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette adresse email est déjà associée à un autre compte.', $crawler->filter('#profile_form_email_error')->text());
     }
 
-    /**      * @group only      */
     public function testBadFormValues(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');

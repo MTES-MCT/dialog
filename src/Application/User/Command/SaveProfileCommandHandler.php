@@ -21,8 +21,6 @@ final class SaveProfileCommandHandler
         $email = $this->stringUtils->normalizeEmail($command->email);
         $user = $command->user;
 
-        // Update user
-
         if ($email !== $user->getEmail() && true === $this->isEmailAlreadyExists->isSatisfiedBy($email)) {
             throw new EmailAlreadyExistsException();
         }

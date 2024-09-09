@@ -7,12 +7,31 @@
 {% block body %}
     <section class="fr-container fr-py-5w">
         <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-3">
+                <nav class="fr-sidemenu" role="navigation" aria-labelledby="sidemenu-title">
+                    <div class="fr-sidemenu__inner">
+                        <div class="fr-collapse" id="sidemenu">
+                            <p class="fr-sidemenu__title" id="sidemenu-title">{{ user.fullName }}</p>
+                            <ul class="fr-sidemenu__list">
+                                <li class="fr-sidemenu__item">
+                                    <a class="fr-sidemenu__link" href="#">
+                                        Mon compte
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="fr-col-12 fr-col-md-9">
                 <h2 class="fr-mb-0">{{ 'profile.title'|trans }}</h2>
+                <p>{{ 'profile.subtitle'|trans }}</p>
                 {{ form_start(form) }}
                     {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                     {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                     {{ form_widget(form.save) }}
                 {{ form_end(form) }}
+            </div>
         </div>
     </section>
 {% endblock %}
