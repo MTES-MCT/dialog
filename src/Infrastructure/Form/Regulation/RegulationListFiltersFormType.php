@@ -64,10 +64,13 @@ final class RegulationListFiltersFormType extends AbstractType
 
         $builder->get('organizationUuid')
             ->addModelTransformer(new CallbackTransformer(
-                function (?OrganizationView $organization): ?OrganizationView {
+                transform: function (?OrganizationView $organization): ?OrganizationView {
+                    // This comes from the 'organizations' option, and goes to the Twig template
                     return $organization;
                 },
-                function (?OrganizationView $organizationView): ?string {
+                reverseTransform: function (?OrganizationView $organizationView): ?string {
+                    // Null means "All organizations" was selected
+                    // We want only want to store the UUID in the DTO
                     return $organizationView?->uuid;
                 },
             ))
