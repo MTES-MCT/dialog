@@ -143,10 +143,9 @@ final class LitteralisPeriodParser
         // Quand ce champ ne contient que des heures, on peut utiliser une regex.
         if (preg_match(self::HOURS_REGEX, $value, $matches)) {
             $startHour = $matches['startHour'];
-            $startMinute = ($matches['startMinute'] ?? '') ?: '00';
+            $startMinute = !empty($matches['startMinute']) ? $matches['startMinute'] : '00';
             $endHour = $matches['endHour'];
-            $endMinute = ($matches['endMinute'] ?? '') ?: '00';
-
+            $endMinute = !empty($matches['endMinute']) ? $matches['endMinute'] : '00';
             $timeSlot = new SaveTimeSlotCommand();
             // Store in UTC because the database column doesn't know about timezones
             $timeSlot->startTime = \DateTimeImmutable::createFromFormat('H:i', "$startHour:$startMinute", $this->tz)->setTimezone(new \DateTimeZone('UTC'));
