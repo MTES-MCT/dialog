@@ -83,7 +83,7 @@ services:
     # Eudonet Paris
     # --------------
 
-    App\Infrastructure\EudonetParis\EudonetParisExecutor:
+    App\Infrastructure\EudonetParis\EudonetParisReporterFactory:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: eudonet_paris_import }
