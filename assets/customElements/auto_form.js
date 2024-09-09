@@ -7,10 +7,6 @@ customElements.define('d-auto-form', class extends HTMLElement {
         }
 
         for (let formControl of form.elements) {
-            if (formControl.hasAttribute('data-auto-form-ignore')) {
-                continue;
-            }
-
             formControl.addEventListener('change', () => {
                 form.requestSubmit();
             });

@@ -1,4 +1,5 @@
 /* When the custom element doesn't load we want the submit button to be visible even if it has 'fr-hidden'.  */
 d-auto-form:not(:defined) button[type="submit"].fr-hidden {
+    /* Need !important because .fr-hidden uses it too */
     display: block !important;
 }
