@@ -40,6 +40,24 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
 
 **Pour le dev local** : remplir `.env.local` au lieu de `.env.prod`, sauter es étapes 3 et 4 (utiliser votre DB locale), et ne pas inclure le flag `--env=prod`.
 
+## Déploiement périodique automatique
+
+### MEL
+
+Les données la MEL sont automatiquement intégrées en production tous les lundis à 16h00.
+
+Cette automatisation est réalisée au moyen de [GitHub Actions](./github_actions.md) via le workflow [`litteralis_mel_import.yml`](../../workflows/litteralis_mel_import.yml).
+
+La configuration passe par diverses variables d'environnement listées ci-dessous :
+
+| Variable d'environnement | Configuration | Description |
+|---|---|---|
+| `APP_MEL_IMPORT_APP` | [Variable](https://docs.github.com/fr/actions/learn-github-actions/variables) au sens GitHub Actions | L'application Scalingo cible (par exemple `dialog` pour la production) |
+| `APP_MEL_LITTERALIS_CREDENTIALS` | [Secret](https://docs.github.com/fr/actions/security-guides/using-secrets-in-github-actions) au sens GitHub Actions | Les identifiants d'accès à l'API Litteralis de la MEL |
+| `APP_MEL_IMPORT_DATABASE_URL` | Secret | L'URL d'accès à la base de données par la CI (`./tools/scalingodbtunnel APP  --host-url`|
+| `APP_MEL_ORG_ID` | Variable | Le UUID de l'organisation "Métropole Européenne de Lille" dans l'environnement défini par `APP_MEL_IMPORT_APP` |
+| `GH_SCALINGO_SSH_PRIVATE_KEY` | Secret | Clé SSH privée permettant l'accès à Scalingo par la CI |
+
 ## Références
 
 * [ADR-010 - Litteralis](../adr/010_litteralis.md)
