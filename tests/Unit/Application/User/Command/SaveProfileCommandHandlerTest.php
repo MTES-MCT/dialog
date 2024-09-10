@@ -29,7 +29,7 @@ final class SaveProfileCommandHandlerTest extends TestCase
             ->willReturn('lea.lefoulon@beta.gouv.fr');
     }
 
-    public function updateFullNameAndEmail(): void
+    public function testUpdateFullNameAndEmail(): void
     {
         $user = $this->createMock(User::class);
 

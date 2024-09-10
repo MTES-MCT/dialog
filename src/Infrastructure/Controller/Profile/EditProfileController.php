@@ -43,7 +43,7 @@ final class EditProfileController
             try {
                 $this->commandBus->handle($command);
                 $symfonyUser = $this->authenticatedUser->getSymfonyUser();
-                $symfonyUser->setfullName($user->getFullName());
+                $symfonyUser->setFullName($user->getFullName());
                 $symfonyUser->setEmail($user->getEmail());
 
                 /** @var FlashBagAwareSessionInterface */

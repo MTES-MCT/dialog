@@ -82,7 +82,7 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
     }
 
-    public function setfullName(string $fullName): void
+    public function setFullName(string $fullName): void
     {
         $this->fullName = $fullName;
     }

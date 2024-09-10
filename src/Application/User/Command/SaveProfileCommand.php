@@ -11,7 +11,6 @@ final class SaveProfileCommand implements CommandInterface
 {
     public ?string $fullName = null;
     public ?string $email = null;
-    public ?string $password = null;
 
     public function __construct(
         public User $user,

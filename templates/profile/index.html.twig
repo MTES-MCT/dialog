@@ -1,5 +1,5 @@
 {% extends 'layouts/app.html.twig' %}
-{% set metaTitle = user is defined ? user.fullName : 'user.form.add'|trans %}
+{% set metaTitle = user.fullName %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -15,7 +15,7 @@
                             <ul class="fr-sidemenu__list">
                                 <li class="fr-sidemenu__item">
                                     <a class="fr-sidemenu__link" href="#">
-                                        Mon compte
+                                        {{'profile.title'|trans}}
                                     </a>
                                 </li>
                             </ul>

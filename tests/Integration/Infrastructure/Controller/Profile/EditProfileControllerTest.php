@@ -89,10 +89,23 @@ final class EditProfileControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#profile_form_fullName_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#profile_form_email_error')->text());
+    }
 
-        $values['user_form']['email'] = 'abc';
+    public function testBadEmail(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/profile');
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['profile_form']['fullName'] = 'Lea';
+        $values['profile_form']['email'] = 'lea.l@beta';
+
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#profile_form_email_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#profile_form_email_error')->text());
     }
 }
