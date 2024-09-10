@@ -150,4 +150,9 @@ final class EudonetParisReporter
         $this->logger->log('info', 'extract:done');
         $this->logger->log('debug', 'extract:done:details', ['result' => $result]);
     }
+
+    public function onReport(string $report): void
+    {
+        $this->logger->log('info', 'report', ['content' => $report]);
+    }
 }

@@ -29,7 +29,7 @@ final class EudonetParisReporterTest extends TestCase
         $endDate = new \DateTimeImmutable('2024-08-01 16:02');
 
         $this->logger
-            ->expects(self::exactly(13))
+            ->expects(self::exactly(14))
             ->method('log')
             ->withConsecutive(
                 [LogLevel::INFO, 'started'],
@@ -45,6 +45,7 @@ final class EudonetParisReporterTest extends TestCase
                 [LogLevel::INFO, 'end_time', ['value' => '2024-08-01T16:02:00+0000']],
                 [LogLevel::INFO, 'elapsed_seconds', ['value' => 120]],
                 [LogLevel::INFO, 'done'],
+                [LogLevel::INFO, 'report', ['content' => 'report content']],
             );
 
         $this->assertEquals([], $this->reporter->getRecords());
@@ -58,6 +59,7 @@ final class EudonetParisReporterTest extends TestCase
         $this->reporter->setCount('some_count', 42, ['%filter%' => 'endDate IS NULL']);
         $this->reporter->onExtract('some_result');
         $this->reporter->end($endDate);
+        $this->reporter->onReport('report content');
 
         $this->assertEquals([
             [EudonetParisReporter::FACT, [EudonetParisReporter::FACT => 'start_time', 'value' => '2024-08-01T16:00:00+0000']],
