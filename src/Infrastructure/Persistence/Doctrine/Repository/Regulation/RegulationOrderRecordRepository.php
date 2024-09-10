@@ -6,9 +6,11 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -57,7 +59,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findAllRegulations(
         int $maxItemsPerPage,
         int $page,
-        ?array $organizationUuids = null,
+        RegulationListFiltersDTO $dto,
     ): array {
         $query = $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
@@ -65,21 +67,44 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY));
 
-        if ($organizationUuids) {
+        $parameters = [];
+
+        // Identifier filter: retrieve all regulation orders whose identifier contains the $identifier search term
+        if ($dto->identifier) {
             $query
-                ->where('(roc.status = :published) OR (roc.status = :draft AND roc.organization IN (:organizationUuids))')
-                ->setParameters([
-                    'organizationUuids' => $organizationUuids,
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                    'draft' => RegulationOrderRecordStatusEnum::DRAFT->value,
-                ]);
-        } else {  // the user is not connected -> no draft regulations
-            $query
-                ->where('roc.status = :published')
-                ->setParameters([
-                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                ]);
+                // Doctrine doesn't have ILIKE support for Postgres, we use https://github.com/martin-georgiev/postgresql-for-doctrine
+                ->andWhere('PG_ILIKE(ro.identifier, :identifierPattern) = TRUE');
+            $parameters['identifierPattern'] = '%' . $dto->identifier . '%';
         }
+
+        // Organization filter
+        if ($dto->organizationUuid) {
+            $query
+                ->andWhere('roc.organization = :organizationUuid');
+            $parameters['organizationUuid'] = $dto->organizationUuid;
+        }
+
+        // Regulation order type filter
+        if ($dto->regulationOrderType === RegulationOrderTypeEnum::PERMANENT->value) {
+            $query
+                ->andWhere('ro.endDate IS NULL');
+        } elseif ($dto->regulationOrderType === RegulationOrderTypeEnum::TEMPORARY->value) {
+            $query
+                ->andWhere('ro.endDate IS NOT NULL');
+        }
+
+        // Status filter
+        if ($dto->status === RegulationOrderRecordStatusEnum::DRAFT->value) {
+            $query
+                ->andWhere('roc.status = :draft');
+            $parameters['draft'] = RegulationOrderRecordStatusEnum::DRAFT->value;
+        } elseif ($dto->status === RegulationOrderRecordStatusEnum::PUBLISHED->value) {
+            $query
+                ->andWhere('roc.status = :published');
+            $parameters['published'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
+        }
+
+        $query->setParameters($parameters);
 
         $query
             ->innerJoin('roc.organization', 'o')

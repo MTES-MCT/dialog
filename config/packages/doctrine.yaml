@@ -21,6 +21,9 @@ doctrine:
                 dql:
                     string_functions:
                         FIRST: App\Infrastructure\Persistence\Doctrine\DBAL\FirstFunction
+                        # Doctrine functions for PostgreSQL
+                        # https://github.com/martin-georgiev/postgresql-for-doctrine
+                        PG_ILIKE: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Ilike
                 mappings:
                     Domain:
                         is_bundle: false

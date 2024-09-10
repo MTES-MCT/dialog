@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -33,7 +36,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
         $this->assertSame('...', $navLi->eq(5)->text());
-        $this->assertSame('10', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('11', $navLi->eq(6)->filter('a')->text());
         $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
         $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
 
@@ -46,7 +49,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $client = $this->login();
 
         // First item
-        $pageOne = $client->request('GET', '/regulations?pageSize=1&page=1');
+        $pageOne = $client->request('GET', '/regulations?pageSize=1&page=2');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -66,7 +69,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS, $links->eq(0)->link()->getUri());
 
         // Second item
-        $pageTwo = $client->request('GET', '/regulations?pageSize=1&page=2');
+        $pageTwo = $client->request('GET', '/regulations?pageSize=1&page=3');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -84,7 +87,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testPublishedRegulationRendering(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations?pageSize=1&page=6');
+        $crawler = $client->request('GET', '/regulations?pageSize=1&page=7');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -101,6 +104,235 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $links = $row0->eq(5)->filter('a');
         $this->assertSame('Voir le détail', $links->eq(0)->text());
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED, $links->eq(0)->link()->getUri());
+    }
+
+    public function testIdentifierFilter(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Inspect filter field
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $field = $form->get('identifier');
+        $this->assertSame('Identifiant', trim($field->getLabel()->nodeValue));
+        $this->assertSame('Rechercher un identifiant', $crawler->filter('form[role="search"] input[name="identifier"]')->attr('placeholder'));
+        $this->assertSame('', $field->getValue());
+
+        // Submit filter
+        $form['identifier'] = '2024';
+        $crawler = $client->submit($form);
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(1, $rows->count());
+
+        $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
+        $this->assertSame('F2024/RAWGEOJSON', implode(', ', $identifiers));
+    }
+
+    public function testFiltersForm(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Inspect form
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $this->assertSame('search', $form->getFormNode()->getAttribute('role'));
+    }
+
+    public function testOrganizationFilter(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Inspect filter field
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $field = $form->get('organizationUuid');
+        $this->assertSame('Organisation', trim($field->getLabel()->nodeValue));
+        $choices = $crawler->filter('form[role="search"] select[name="organizationUuid"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertEquals([
+            ['', 'Toutes les organisations'],
+            [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
+            [OrganizationFixture::OTHER_ORG_ID, 'Mairie de Savenay'],
+        ], $choices);
+        $this->assertSame('', $field->getValue());
+
+        // Submit filter
+        $form['organizationUuid'] = OrganizationFixture::OTHER_ORG_ID;
+        $crawler = $client->submit($form);
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(2, $rows->count());
+
+        $organizations = $rows->filter('td:nth-child(2)')->each(fn ($node) => $node->text());
+        $this->assertSame('Mairie de Savenay, Mairie de Savenay', implode(', ', $organizations));
+    }
+
+    public function testRegulationOrderTypeFilterPermanent(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Inspect filter field
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $field = $form->get('regulationOrderType');
+        $this->assertSame("Type d'arrêté", trim($field->getLabel()->nodeValue));
+        $choices = $crawler->filter('form[role="search"] select[name="regulationOrderType"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertEquals([
+            ['', 'Tous les arrêtés'],
+            [RegulationOrderTypeEnum::PERMANENT->value, 'Arrêtés permanents'],
+            [RegulationOrderTypeEnum::TEMPORARY->value, 'Arrêtés temporaires'],
+        ], $choices);
+        $this->assertSame('', $field->getValue());
+
+        // Submit filter
+        $form['regulationOrderType'] = RegulationOrderTypeEnum::PERMANENT->value;
+        $crawler = $client->submit($form);
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(2, $rows->count());
+
+        $statuses = $rows->filter('td:nth-child(4)')->each(fn ($node) => $node->text());
+        $this->assertSame(', à partir du 11/03/2023 en cours', implode(', ', $statuses));
+    }
+
+    public function testRegulationOrderTypeFilterTemporary(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $form['regulationOrderType'] = RegulationOrderTypeEnum::TEMPORARY->value;
+        $crawler = $client->submit($form);
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(9, $rows->count());
+    }
+
+    public function testStatusFilterPublished(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Inspect filter field
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $field = $form->get('status');
+        $this->assertSame('Statut des arrêtés', trim($field->getLabel()->nodeValue));
+        $choices = $crawler->filter('form[role="search"] select[name="status"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertEquals([
+            ['', 'Tous les statuts'],
+            [RegulationOrderRecordStatusEnum::DRAFT->value, 'Brouillon'],
+            [RegulationOrderRecordStatusEnum::PUBLISHED->value, 'Publié'],
+        ], $choices);
+        $this->assertSame('', $field->getValue());
+
+        // Submit filter
+        $form['status'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
+        $crawler = $client->submit($form);
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(4, $rows->count());
+
+        $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertSame('Publié, Publié, Publié, Publié', implode(', ', $statuses));
+    }
+
+    public function testStatusFilterDraft(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $form['status'] = RegulationOrderRecordStatusEnum::DRAFT->value;
+        $crawler = $client->submit($form);
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(7, $rows->count());
+
+        $rows->filter('td:nth-child(5)')->each(function ($node) {
+            $this->assertSame('Brouillon', $node->text());
+        });
+    }
+
+    public function testStatusFilterAsAnonymousUser(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Filter is hidden in form
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $field = $form->get('status');
+        $this->assertSame('published', $field->getValue());
+        $node = $crawler->filter('form[role="search"] select[name="status"]')->first();
+        $this->assertNotNull($node->closest('[class*="fr-hidden"]'));
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(4, $rows->count());
+
+        $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertSame('Publié, Publié, Publié, Publié', implode(', ', $statuses));
+    }
+
+    public function testStatusFilterAsAnonymousUserForceDraft(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations?status=draft'); // Try to force with query parameter
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $this->assertSame('published', $form->get('status')->getValue());
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(4, $rows->count());
+
+        $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertSame('Publié, Publié, Publié, Publié', implode(', ', $statuses));
+    }
+
+    public function testFilterCombinationViaUrl(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', \sprintf(
+            '/regulations?identifier=FO2&organizationUuid=%s&regulationOrderType=%s&status=%s',
+            OrganizationFixture::MAIN_ORG_ID,
+            RegulationOrderTypeEnum::TEMPORARY->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
+        ));
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(2, $rows->count());
+
+        $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
+        $this->assertSame('FO2/2023, FO2/2023-1', implode(', ', $identifiers));
     }
 
     public function testInvalidPageSize(): void
