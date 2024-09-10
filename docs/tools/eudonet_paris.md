@@ -66,7 +66,7 @@ Notes :
 
 Les données Eudonet Paris sont automatiquement intégrées en production tous les lundis à 16h30.
 
-Cette automatisation est réalisée au moyen de la GitHub Action [`eudonet_paris_import.yml`](../../workflows/eudonet_paris_import.yml).
+Cette automatisation est réalisée au moyen de [GitHub Actions](./github_actions.md) via le workflow [`eudonet_paris_import.yml`](../../workflows/eudonet_paris_import.yml).
 
 La configuration passe par diverses variables d'environnement résumées ci-dessous :
 
@@ -77,41 +77,3 @@ La configuration passe par diverses variables d'environnement résumées ci-dess
 | `EUDONET_PARIS_IMPORT_DATABASE_URL` | Secret | L'URL d'accès à la base de données par la CI (voir ci-dessous) |
 | `EUDONET_PARIS_IMPORT_ORG_ID` | Variable | Le UUID de l'organisation "Ville de Paris" dans l'environnement défini apr `EUDONET_PARIS_IMPORT_APP` |
 | `GH_SCALINGO_SSH_PRIVATE_KEY` | Secret | Clé SSH privée permettant l'accès à Scalingo par la CI |
-
-### Configuration de l'organisation cible
-
-L'organisation cible de l'import est configurée via la variable `EUDONET_PARIS_IMPORT_ORG_ID` sur GitHub Actions.
-
-### Accès SSH de GitHub Actions à Scalingo
-
-La GitHub Action d'import a besoin d'un accès SSH à Scalingo pour accéder à la base de données de façon sécurisée.
-
-Pour cela des clés SSH ont été générées comme suit :
-
-```bash
-ssh-keygen -t ed25519 -q -N "" -f ~/.ssh/id_dialog_gh_scalingo
-```
-
-La clé publique `~/.ssh/id_dialog_gh_scalingo.pub` ainsi générée a été enregistrée sur Scalingo dans la section [Mes clés SSH](https://dashboard.scalingo.com/account/keys) du compte Scalingo professionnel de @florimondmanca.
-
-> 💡 Pour renouveler les clés, ou en cas de perte, de nouvelles clés peuvent être régénérées en utilisant la méthode ci-dessus, puis rattachées au compte de toute personne ayant un accès "Collaborator" sur l'app Scalingo `dialog`.
-
-La clé privée a été ajoutée comme secret `GH_SCALINGO_SSH_PRIVATE_KEY` au dépôt GitHub et est utilisée par la GitHub Action.
-
-### Accès de GitHub Actions à la base de données sur Scalingo
-
-L'accès à la base de données lors de l'import se fait via un [tunnel chiffré Scalingo](https://doc.scalingo.com/platform/databases/access#encrypted-tunnel).
-
-Le secret `EUDONET_PARIS_IMPORT_DATABASE_URL` doit contenir la `DATABASE_URL` de production où `host:port` est remplacé par `127.0.0.1:10000`.
-
-Si besoin de la reconfigurer, pour obtenir automatiquement cette URL, exécutez :
-
-```bash
-./tools/scalingodbtunnel dialog --host-url
-```
-
-Et recopiez l'URL qui s'affiche.
-
-> Cette commande nécessite le CLI Scalingo, voir [Utiliser une DB Scalingo en local](./db.md#utiliser-une-db-scalingo-en-local).
-
-Sinon il vous faut récupérer la `DATABASE_URL` dans l'interface web Scalingo.
