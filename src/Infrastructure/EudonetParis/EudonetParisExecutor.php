@@ -34,20 +34,20 @@ final class EudonetParisExecutor
             throw new EudonetParisException('No target organization ID set. Please set APP_EUDONET_PARIS_ORG_ID in .env.local');
         }
 
+        try {
+            $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($this->eudonetParisOrgId));
+        } catch (OrganizationNotFoundException $exc) {
+            throw new EudonetParisException("Organization not found: $this->eudonetParisOrgId");
+        }
+
         $numberOfRegulationsInsideEudonet = null;
         $numberOfMeasuresInsideEudonet = null;
 
         $startTime = $this->dateUtils->getNow();
         $reporter = $this->reporterFactory->createReporter();
-        $reporter->start(startTime: $startTime);
+        $reporter->start($startTime, $organization);
 
         try {
-            try {
-                $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($this->eudonetParisOrgId));
-            } catch (OrganizationNotFoundException $exc) {
-                throw new EudonetParisException("Organization not found: $this->eudonetParisOrgId");
-            }
-
             $existingIdentifiers = $this->regulationOrderRecordRepository
                 ->findIdentifiersForSource(RegulationOrderRecordSourceEnum::EUDONET_PARIS->value);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\EudonetParis;
 
+use App\Domain\User\Organization;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -93,18 +94,18 @@ final class EudonetParisReporter
         $this->_hasNewErrors = false;
     }
 
-    public function addError(string $name, array $context): void
+    public function addError(string $name, array $context = []): void
     {
         $this->pushRecord(self::ERROR, $name, $context);
         $this->_hasNewErrors = true;
     }
 
-    public function addWarning(string $name, array $context): void
+    public function addWarning(string $name, array $context = []): void
     {
         $this->pushRecord(self::WARNING, $name, $context);
     }
 
-    public function addNotice(string $name, array $context): void
+    public function addNotice(string $name, array $context = []): void
     {
         $this->pushRecord(self::NOTICE, $name, $context);
     }
@@ -119,11 +120,11 @@ final class EudonetParisReporter
         return $this->records;
     }
 
-    public function start(\DateTimeInterface $startTime): void
+    public function start(\DateTimeInterface $startTime, Organization $organization): void
     {
         $this->startTime = $startTime;
+        $this->logger->log('info', 'started', ['organization' => ['uuid' => $organization->getUuid(), 'name' => $organization->getName()]]);
         $this->pushRecord(self::FACT, 'start_time', ['value' => $startTime->format(\DateTimeInterface::ISO8601)]);
-        $this->logger->info('started');
     }
 
     public function end(\DateTimeInterface $endTime): void
@@ -131,22 +132,22 @@ final class EudonetParisReporter
         $elapsedSeconds = $endTime->getTimestamp() - $this->startTime->getTimestamp();
         $this->pushRecord(self::FACT, 'end_time', ['value' => $endTime->format(\DateTimeInterface::ISO8601)]);
         $this->pushRecord(self::FACT, 'elapsed_seconds', ['value' => $elapsedSeconds]);
-        $this->logger->info('done');
+        $this->logger->log('info', 'done');
     }
 
     public function onRequest(string $method, string $path, array $options): void
     {
-        $this->logger->debug('request', ['method' => $method, 'path' => $path, 'options' => $options]);
+        $this->logger->log('debug', 'request', ['method' => $method, 'path' => $path, 'options' => $options]);
     }
 
     public function onResponse(ResponseInterface $response): void
     {
-        $this->logger->debug('response', ['status' => $response->getStatusCode()]);
+        $this->logger->log('debug', 'response', ['status' => $response->getStatusCode()]);
     }
 
     public function onExtract(mixed $result): void
     {
-        $this->logger->info('extract:done');
-        $this->logger->debug('extract:done:details', ['result' => $result]);
+        $this->logger->log('info', 'extract:done');
+        $this->logger->log('debug', 'extract:done:details', ['result' => $result]);
     }
 }

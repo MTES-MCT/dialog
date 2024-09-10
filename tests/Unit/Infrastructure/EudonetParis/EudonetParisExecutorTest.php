@@ -253,22 +253,19 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('findIdentifiersForSource');
 
+        $this->reporterFactory
+            ->expects(self::never())
+            ->method('createReporter');
         $this->extractor
             ->expects(self::never())
             ->method('iterExtract');
+        $this->transformer
+            ->expects(self::never())
+            ->method('transform');
 
         /*$this->logger
             ->expects(self::exactly(1))
             ->method('error');*/
-
-        $timeMatcher = self::exactly(2);
-        $this->dateUtils
-            ->expects($timeMatcher)
-            ->method('getNow')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
-                1 => new \DateTimeImmutable('2023-09-20 16:06:18'), // 1695218778.6387,
-                2 => new \DateTimeImmutable('2023-09-20 16:06:36'), // 1695218796.3069,
-            });
 
         $executor = new EudonetParisExecutor(
             $this->extractor,
