@@ -27,7 +27,5 @@ final class SaveProfileCommandHandler
 
         $user->setEmail($email);
         $user->setFullName($command->fullName);
-
-        return;
     }
 }
