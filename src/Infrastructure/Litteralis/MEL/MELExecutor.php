@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\MEL;
+namespace App\Infrastructure\Litteralis\MEL;
 
 use App\Infrastructure\Litteralis\LitteralisExecutor;
 
