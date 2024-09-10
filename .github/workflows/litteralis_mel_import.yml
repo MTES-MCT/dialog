@@ -5,10 +5,6 @@ on:
   # Décommenter quand on est prêt à intégrer les données en production.
   # schedule:
   #   - cron: '0 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h00 GMT
-  # TODO: Décommenter avant de merger
-  push:
-    branches:
-      - feat/litteralis-auto
 
 jobs:
   import:
