@@ -10,7 +10,9 @@ use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
+use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -60,12 +62,18 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ],
         ];
 
+        $dto = new RegulationListFiltersDTO();
+        $dto->identifier = '/20';
+        $dto->organizationUuid = 'dcab837f-4460-4355-99d5-bf4891c35f8f';
+        $dto->regulationOrderType = RegulationOrderTypeEnum::PERMANENT->value;
+        $dto->status = RegulationOrderRecordStatusEnum::DRAFT->value;
+
         $regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
 
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findAllRegulations')
-            ->with(20, 1, ['dcab837f-4460-4355-99d5-bf4891c35f8f'])
+            ->with(20, 1, $dto)
             ->willReturn([
                 'count' => 3,
                 'items' => $rows,
@@ -75,7 +83,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrders = $handler(new GetRegulationsQuery(
             pageSize: 20,
             page: 1,
-            organizationUuids: ['dcab837f-4460-4355-99d5-bf4891c35f8f'],
+            dto: $dto,
         ));
 
         $pagination = new Pagination(
@@ -120,7 +128,10 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     $startDate2,
                     null,
                 ),
-            ], 3, 1, 20,
+            ],
+            3,
+            1,
+            20,
         );
 
         $this->assertEquals($pagination, $regulationOrders);

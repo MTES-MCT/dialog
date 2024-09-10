@@ -134,6 +134,28 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
   {{ parent() }}
 {%- endblock textarea_widget -%}
 
+{%- block search_row -%}
+  {# https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/barre-de-recherche/ #}
+  {# .fr-search-bar will hide the <label>. If we want it to be possible, we put it in a separate <div> to keep the field semantics. #}
+  {%- if with_label|default(false) -%}
+    <div>
+      <div class="fr-grid-row fr-label">
+        {{ form.vars.label|trans }}
+      </div>
+      <div class="fr-grid-row fr-mt-1w">
+        {{ form_row(form) }}
+      </div>
+    </div>
+  {%- else -%}
+    {{ form_row(form) }}
+  {%- endif -%}
+{%- endblock search_row -%}
+
+{%- block search_widget -%}
+  {{ parent() }}
+  <button class="fr-btn" aria-label="{{ 'common.form.search'|trans }}">{{ 'common.form.search'|trans }}</button>
+{%- endblock search_widget -%}
+
 {% block date_widget %}
   {% set attr = attr|merge({'data-controller': ('datepicker-toggle ' ~ attr['data-controller']|default(''))|trim}) %}
   {%- if widget == 'single_text' -%}
