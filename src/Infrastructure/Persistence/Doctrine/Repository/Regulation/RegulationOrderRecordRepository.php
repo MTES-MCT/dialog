@@ -57,8 +57,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             )";
 
     public function findAllRegulations(
-        int $maxItemsPerPage,
-        int $page,
         RegulationListFiltersDTO $dto,
     ): array {
         $query = $this->createQueryBuilder('roc')
@@ -112,8 +110,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->orderBy('ro.startDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc, o')
-            ->setFirstResult($maxItemsPerPage * ($page - 1))
-            ->setMaxResults($maxItemsPerPage)
+            ->setFirstResult($dto->pageSize * ($dto->page - 1))
+            ->setMaxResults($dto->pageSize)
             ->getQuery();
 
         $paginator = new Paginator($query, false);

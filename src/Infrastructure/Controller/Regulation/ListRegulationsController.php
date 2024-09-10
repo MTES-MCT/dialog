@@ -42,6 +42,15 @@ final class ListRegulationsController
     {
         $dto = new RegulationListFiltersDTO();
 
+        $dto->pageSize = min($request->query->getInt('pageSize', RegulationListFiltersDTO::DEFAULT_PAGE_SIZE), 100);
+        $dto->page = $request->query->getInt('page', RegulationListFiltersDTO::DEFAULT_PAGE);
+
+        if ($dto->pageSize <= 0 || $dto->page <= 0) {
+            throw new BadRequestHttpException(
+                $this->translator->trans('invalid.page_or_page_size', [], 'validators'),
+            );
+        }
+
         /** @var SymfonyUser|null */
         $user = $this->security->getUser();
         $organizations = $this->queryBus->handle(new GetOrganizationsQuery());
@@ -70,30 +79,15 @@ final class ListRegulationsController
 
         $form->handleRequest($request);
 
-        $pageSize = min($request->query->getInt('pageSize', 20), 100);
-        $page = $request->query->getInt('page', 1);
-
-        if ($pageSize <= 0 || $page <= 0) {
-            throw new BadRequestHttpException(
-                $this->translator->trans('invalid.page_or_page_size', [], 'validators'),
-            );
-        }
-
-        $regulations = $this->queryBus->handle(
-            new GetRegulationsQuery(
-                pageSize: $pageSize,
-                page: $page,
-                dto: $dto,
-            ),
-        );
+        $regulations = $this->queryBus->handle(new GetRegulationsQuery($dto));
 
         return new Response($this->twig->render(
             name: 'regulation/index.html.twig',
             context: [
                 'form' => $form->createView(),
                 'regulations' => $regulations,
-                'pageSize' => $pageSize,
-                'page' => $page,
+                'pageSize' => $dto->pageSize,
+                'page' => $dto->page,
             ],
         ));
     }

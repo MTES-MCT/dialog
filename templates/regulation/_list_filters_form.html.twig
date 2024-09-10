@@ -37,6 +37,9 @@
                     class: (form.status.vars.row_attr.class|default('')) ~ ' fr-mb-0',
                 },
             }) }}
+
+            {# Propagate pageSize when the filters are used #}
+            <input type="hidden" name="pageSize" value="{{ pageSize }}">
         
             {{ form_row(form.save, {
                 attr: {
