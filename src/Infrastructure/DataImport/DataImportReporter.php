@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\EudonetParis;
+namespace App\Infrastructure\DataImport;
 
 use App\Domain\User\Organization;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-final class EudonetParisReporter
+final class DataImportReporter
 {
     public const COUNT = 'count';
     public const ERROR = 'error';

@@ -11,6 +11,7 @@ use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
+use App\Infrastructure\DataImport\DataImportReporterFactory;
 use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
@@ -23,7 +24,7 @@ final class EudonetParisExecutor
         private QueryBusInterface $queryBus,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private string $eudonetParisOrgId,
-        private EudonetParisReporterFactory $reporterFactory,
+        private DataImportReporterFactory $reporterFactory,
         private DateUtilsInterface $dateUtils,
     ) {
     }

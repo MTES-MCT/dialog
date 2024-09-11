@@ -13,9 +13,9 @@ use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
+use App\Infrastructure\DataImport\DataImportReporterFactory;
 use App\Infrastructure\EudonetParis\EudonetParisExecutor;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
-use App\Infrastructure\EudonetParis\EudonetParisReporterFactory;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +38,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
-        $this->reporterFactory = $this->createMock(EudonetParisReporterFactory::class);
+        $this->reporterFactory = $this->createMock(DataImportReporterFactory::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 

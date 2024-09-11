@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Infrastructure\EudonetParis;
+namespace App\Tests\Unit\Infrastructure\DataImport;
 
 use App\Domain\User\Organization;
-use App\Infrastructure\EudonetParis\EudonetParisReporter;
+use App\Infrastructure\DataImport\DataImportReporter;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class EudonetParisReporterTest extends TestCase
+final class DataImportReporterTest extends TestCase
 {
     private $logger;
     private $reporter;
@@ -19,7 +19,7 @@ final class EudonetParisReporterTest extends TestCase
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->reporter = new EudonetParisReporter($this->logger);
+        $this->reporter = new DataImportReporter($this->logger);
     }
 
     public function testReport(): void
@@ -62,13 +62,13 @@ final class EudonetParisReporterTest extends TestCase
         $this->reporter->onReport('report content');
 
         $this->assertEquals([
-            [EudonetParisReporter::FACT, [EudonetParisReporter::FACT => 'start_time', 'value' => '2024-08-01T16:00:00+0000']],
-            [EudonetParisReporter::ERROR, [EudonetParisReporter::ERROR => 'some_error', 'message' => 'oops!']],
-            [EudonetParisReporter::WARNING, [EudonetParisReporter::WARNING => 'some_warning', 'message' => 'beware!']],
-            [EudonetParisReporter::NOTICE, [EudonetParisReporter::NOTICE => 'some_notice', 'msg' => 'here is some info']],
-            [EudonetParisReporter::COUNT, [EudonetParisReporter::COUNT => 'some_count', 'value' => 42, '%filter%' => 'endDate IS NULL']],
-            [EudonetParisReporter::FACT, [EudonetParisReporter::FACT => 'end_time', 'value' => '2024-08-01T16:02:00+0000']],
-            [EudonetParisReporter::FACT, [EudonetParisReporter::FACT => 'elapsed_seconds', 'value' => 120]],
+            [DataImportReporter::FACT, [DataImportReporter::FACT => 'start_time', 'value' => '2024-08-01T16:00:00+0000']],
+            [DataImportReporter::ERROR, [DataImportReporter::ERROR => 'some_error', 'message' => 'oops!']],
+            [DataImportReporter::WARNING, [DataImportReporter::WARNING => 'some_warning', 'message' => 'beware!']],
+            [DataImportReporter::NOTICE, [DataImportReporter::NOTICE => 'some_notice', 'msg' => 'here is some info']],
+            [DataImportReporter::COUNT, [DataImportReporter::COUNT => 'some_count', 'value' => 42, '%filter%' => 'endDate IS NULL']],
+            [DataImportReporter::FACT, [DataImportReporter::FACT => 'end_time', 'value' => '2024-08-01T16:02:00+0000']],
+            [DataImportReporter::FACT, [DataImportReporter::FACT => 'elapsed_seconds', 'value' => 120]],
         ], $this->reporter->getRecords());
     }
 

@@ -14,6 +14,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\User\Organization;
+use App\Infrastructure\DataImport\DataImportReporter;
 
 final class EudonetParisTransformer
 {
@@ -21,7 +22,7 @@ final class EudonetParisTransformer
     private const CITY_CODE_TEMPLATE = '751%s';
     private const CITY_LABEL = 'Paris';
 
-    public function transform(array $row, Organization $organization, EudonetParisReporter $reporter): ?ImportEudonetParisRegulationCommand
+    public function transform(array $row, Organization $organization, DataImportReporter $reporter): ?ImportEudonetParisRegulationCommand
     {
         $regulationId = $row['fields'][EudonetParisExtractor::ARRETE_ID];
 
@@ -89,7 +90,7 @@ final class EudonetParisTransformer
         return null;
     }
 
-    private function buildGeneralInfoCommand(array $row, Organization $organization, EudonetParisReporter $reporter): SaveRegulationGeneralInfoCommand
+    private function buildGeneralInfoCommand(array $row, Organization $organization, DataImportReporter $reporter): SaveRegulationGeneralInfoCommand
     {
         $regulationId = $row['fields'][EudonetParisExtractor::ARRETE_ID];
 
@@ -135,7 +136,7 @@ final class EudonetParisTransformer
         return $command;
     }
 
-    private function buildMeasureCommand(array $row, string $regulationId, EudonetParisReporter $reporter): SaveMeasureCommand
+    private function buildMeasureCommand(array $row, string $regulationId, DataImportReporter $reporter): SaveMeasureCommand
     {
         // $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
         $measureId = $row['fields'][EudonetParisExtractor::MESURE_ID];
@@ -180,7 +181,7 @@ final class EudonetParisTransformer
         return $command;
     }
 
-    private function buildLocationCommand(array $row, string $regulationId, string $measureId, EudonetParisReporter $reporter): SaveLocationCommand
+    private function buildLocationCommand(array $row, string $regulationId, string $measureId, DataImportReporter $reporter): SaveLocationCommand
     {
         $locationId = $row['fields'][EudonetParisExtractor::LOCALISATION_ID];
         $arrondissement = $row['fields'][EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT];

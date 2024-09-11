@@ -14,9 +14,9 @@ use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\User\Organization;
+use App\Infrastructure\DataImport\DataImportReporter;
 use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
-use App\Infrastructure\EudonetParis\EudonetParisReporter;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\EudonetParis\EudonetParisTransformerResult;
 use PHPUnit\Framework\TestCase;
@@ -120,7 +120,7 @@ final class EudonetParisTransformerTest extends TestCase
         $transformer = new EudonetParisTransformer();
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -173,7 +173,7 @@ final class EudonetParisTransformerTest extends TestCase
         ];
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $transformer = new EudonetParisTransformer();
         $result = $transformer->transform($record, $organization, $reporter);
@@ -211,7 +211,7 @@ final class EudonetParisTransformerTest extends TestCase
         $transformer = new EudonetParisTransformer();
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -273,7 +273,7 @@ final class EudonetParisTransformerTest extends TestCase
         $transformer = new EudonetParisTransformer();
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -404,7 +404,7 @@ final class EudonetParisTransformerTest extends TestCase
         $transformer = new EudonetParisTransformer();
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -469,7 +469,7 @@ final class EudonetParisTransformerTest extends TestCase
         $transformer = new EudonetParisTransformer();
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -526,7 +526,7 @@ final class EudonetParisTransformerTest extends TestCase
         $result = null;
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -583,7 +583,7 @@ final class EudonetParisTransformerTest extends TestCase
         $result = null;
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
@@ -649,7 +649,7 @@ final class EudonetParisTransformerTest extends TestCase
         $result = null;
 
         $logger = $this->createMock(LoggerInterface::class);
-        $reporter = new EudonetParisReporter($logger);
+        $reporter = new DataImportReporter($logger);
 
         $this->assertEquals($result, $transformer->transform($record, $organization, $reporter));
     }
