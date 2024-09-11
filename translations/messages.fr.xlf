@@ -851,6 +851,18 @@
                 <source>profile.subtitle</source>
                 <target>Mise à jour de mes informations</target>
             </trans-unit>
+            <trans-unit id="profile.password.title">
+                <source>profile.password.title</source>
+                <target>Modifier mon mot de passe</target>
+            </trans-unit>
+            <trans-unit id="profile.password.first_option">
+                <source>profile.password.first_option</source>
+                <target>Nouveau mot de passe</target>
+            </trans-unit>
+            <trans-unit id="profile.password.second_option">
+                <source>profile.password.second_option</source>
+                <target>Confirmation du nouveau mot de passe</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>
                 <target>Accueil</target>
