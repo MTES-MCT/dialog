@@ -80,24 +80,22 @@ final class EudonetParisExecutor
             ]);
             throw new EudonetParisException($exc->getMessage());
         } finally {
-            $endTime = $this->dateUtils->getNow();
-            $reporter->end(endTime: $endTime);
-
-            // return $this->reportFormatter->format($reporter->getRecords());
-            /*$this->logger->info('done', [
-                'numProcessed' => $numProcessed,
-                'numCreated' => $numCreated,
-                'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
-                'numSkipped' => $numSkipped,
-                'numSkippedNoLocationsGathered' => $numSkippedNoLocationsGathered,
-                'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
-                'numErrors' => $numErrors,
-                'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
-                'elapsedSeconds' => round($elapsedSeconds, 2),
+            $reporter->addNotice('report', [
+                // 'numProcessed' => $numProcessed,
+                // 'numCreated' => $numCreated,
+                // 'percentCreated' => round($numProcessed > 0 ? 100 * $numCreated / $numProcessed : 0, 1),
+                // 'numSkipped' => $numSkipped,
+                // 'numSkippedNoLocationsGathered' => $numSkippedNoLocationsGathered,
+                // 'percentSkipped' => round($numProcessed > 0 ? 100 * $numSkipped / $numProcessed : 0, 1),
+                // 'numErrors' => $numErrors,
+                // 'percentErrors' => round($numProcessed > 0 ? 100 * $numErrors / $numProcessed : 0, 1),
+                // 'elapsedSeconds' => round($elapsedSeconds, 2),
                 'numberOfRegulationsInsideEudonet' => $numberOfRegulationsInsideEudonet,
                 'numberOfMeasuresInsideEudonet' => $numberOfMeasuresInsideEudonet,
-            ]);*/
-            // return;
+            ]);
+
+            $endTime = $this->dateUtils->getNow();
+            $reporter->end(endTime: $endTime);
         }
     }
 }
