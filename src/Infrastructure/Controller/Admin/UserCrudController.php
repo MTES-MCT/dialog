@@ -63,8 +63,7 @@ final class UserCrudController extends AbstractCrudController
                 ->setLabel('Rôles')
                 ->allowMultipleChoices()
                 ->setChoices(array_combine($roles, $roles))
-                ->renderAsBadges()
-                ->setDisabled($pageName === Crud::PAGE_EDIT),
+                ->renderAsBadges(),
         ];
 
         $password = TextField::new('password')
