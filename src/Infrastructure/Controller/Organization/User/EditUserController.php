@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Command\SaveOrganizationUserCommand;
 use App\Application\User\Query\GetOrganizationUserQuery;
+use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationUserNotFoundException;
 use App\Infrastructure\Form\User\UserFormType;
@@ -55,7 +56,8 @@ final class EditUserController
         $organization = $organizationUser->getOrganization();
         $user = $organizationUser->getUser();
 
-        if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)) {
+        if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)
+            || $organizationUser->getRole() === OrganizationRolesEnum::ROLE_ORGA_ADMIN->value) {
             throw new AccessDeniedHttpException();
         }
 

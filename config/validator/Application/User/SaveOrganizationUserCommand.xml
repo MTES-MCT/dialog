@@ -10,7 +10,7 @@
             <constraint name="NotBlank"/>
             <constraint name="Email"/>
         </property>
-        <property name="roles">
+        <property name="role">
             <constraint name="NotBlank"/>
         </property>
         <property name="password">

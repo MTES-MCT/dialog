@@ -27,12 +27,20 @@ final class EditUserControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['user_form']['fullName'] = 'Mathieu MARCHOIS';
         $values['user_form']['email'] = 'mathieu.marchois@beta.gouv.fr';
-        $values['user_form']['roles'] = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $values['user_form']['role'] = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_users_list');
+    }
+
+    public function testEditAdmin(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client->request('GET', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33/edit');
+
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testBadEmail(): void
@@ -65,12 +73,12 @@ final class EditUserControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['user_form']['fullName'] = '';
         $values['user_form']['email'] = '';
-        $values['user_form']['roles'] = [];
+        $values['user_form']['role'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_roles_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_role_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_email_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_fullName_error')->text());
 
