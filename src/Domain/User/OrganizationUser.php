@@ -44,14 +44,19 @@ class OrganizationUser
         return $this;
     }
 
-    public function getRoles(): array
+    public function getRoles(): string
     {
-        return $this->roles;
+        return $this->getRole();
     }
 
-    public function setRoles(array $roles): self
+    public function getRole(): ?string
     {
-        $this->roles = $roles;
+        return \count($this->roles) > 0 ? current($this->roles) : null;
+    }
+
+    public function setRoles(string $role): self
+    {
+        $this->roles = [$role];
 
         return $this;
     }

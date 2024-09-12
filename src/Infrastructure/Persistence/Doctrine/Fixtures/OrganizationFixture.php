@@ -28,17 +28,17 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
         $organizationUser1->setUser($this->getReference('mainOrgUser'));
         $organizationUser1->setOrganization($mainOrg);
-        $organizationUser1->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]);
+        $organizationUser1->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $organizationUser2 = new OrganizationUser('cf72ca91-3446-410f-b563-74085516180d');
         $organizationUser2->setUser($this->getReference('mainOrgAdmin'));
         $organizationUser2->setOrganization($mainOrg);
-        $organizationUser2->setRoles([OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]);
+        $organizationUser2->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
 
         $organizationUser3 = new OrganizationUser('890615e1-bcb0-4623-a2fa-362435109030');
         $organizationUser3->setUser($this->getReference('otherOrgUser'));
         $organizationUser3->setOrganization($otherOrg);
-        $organizationUser3->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]);
+        $organizationUser3->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $manager->persist($mainOrg);
         $manager->persist($otherOrg);

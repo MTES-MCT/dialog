@@ -48,7 +48,7 @@ final class SaveOrganizationUserCommandHandler
 
             $user->setEmail($email);
             $user->setFullName($command->fullName);
-            $organizationUser->setRoles($command->roles);
+            $organizationUser->setRoles($command->role);
 
             return;
         }
@@ -77,7 +77,7 @@ final class SaveOrganizationUserCommandHandler
             (new OrganizationUser($this->idFactory->make()))
                 ->setUser($user)
                 ->setOrganization($command->organization)
-                ->setRoles($command->roles),
+                ->setRoles($command->role),
         );
     }
 }

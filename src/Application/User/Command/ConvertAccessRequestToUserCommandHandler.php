@@ -69,7 +69,7 @@ final class ConvertAccessRequestToUserCommandHandler
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
             ->setOrganization($organization)
-            ->setRoles([$organizationRole]);
+            ->setRoles($organizationRole);
 
         $this->userRepository->add($user);
         $this->organizationUserRepository->add($organizationUser);

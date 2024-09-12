@@ -29,7 +29,7 @@ final class AddUserControllerTest extends AbstractWebTestCase
         $values['user_form']['email'] = 'test@beta.gouv.fr';
         $values['user_form']['password']['first'] = 'password';
         $values['user_form']['password']['second'] = 'password';
-        $values['user_form']['roles'] = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $values['user_form']['role'] = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $client->followRedirect();
 
@@ -51,7 +51,7 @@ final class AddUserControllerTest extends AbstractWebTestCase
         $values['user_form']['password']['first'] = 'password';
         $values['user_form']['password']['second'] = 'password';
         $values['user_form']['email'] = 'mathieu.fernandez@beta.gouv.fr';
-        $values['user_form']['roles'] = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $values['user_form']['role'] = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
@@ -70,14 +70,14 @@ final class AddUserControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['user_form']['fullName'] = '';
         $values['user_form']['email'] = '';
-        $values['user_form']['roles'] = [];
+        $values['user_form']['role'] = '';
         $values['user_form']['password']['first'] = 'abc';
         $values['user_form']['password']['second'] = 'def';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_roles_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_role_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_email_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#user_form_fullName_error')->text());
         $this->assertSame('Les valeurs ne correspondent pas.', $crawler->filter('#user_form_password_first_error')->text());

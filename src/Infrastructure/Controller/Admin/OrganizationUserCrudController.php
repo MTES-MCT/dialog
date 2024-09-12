@@ -48,7 +48,6 @@ final class OrganizationUserCrudController extends AbstractCrudController
             ChoiceField::new('roles')
                 ->setLabel('Rôles')
                 ->setChoices(array_combine($roles, $roles))
-                ->allowMultipleChoices()
                 ->renderAsBadges(),
         ];
     }

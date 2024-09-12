@@ -48,13 +48,10 @@
                                         {{ user.email }}
                                     </td>
                                     <td>
-                                        {% for role in user.roles %}
-                                            {{ ('roles.' ~ role)|trans }}
-                                            {% if not loop.last %}, {% endif %}
-                                        {% endfor %}
+                                        {{ ('roles.' ~ user.role)|trans }}
                                     </td>
                                     <td>
-                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and user.role != 'ROLE_ORGA_ADMIN' %}
                                             <div class="fr-btns-group fr-btns-group--inline-sm">
                                                 <a title="{{ 'common.update'|trans }}" href="{{ path('app_users_edit', { uuid: user.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                                                     {{ 'common.update'|trans }}

@@ -13,4 +13,9 @@ final readonly class OrganizationUserView
         public array $roles = [],
     ) {
     }
+
+    public function getRole(): string
+    {
+        return $this->roles[0];
+    }
 }

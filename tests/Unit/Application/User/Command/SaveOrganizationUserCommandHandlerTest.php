@@ -113,7 +113,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
                 (new OrganizationUser('0de5692b-cab1-494c-804d-765dc14df674'))
                     ->setUser($user)
                     ->setOrganization($this->organization)
-                    ->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
+                    ->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value),
             ));
 
         $handler = new SaveOrganizationUserCommandHandler(
@@ -127,7 +127,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->isEmailAlreadyExists,
         );
         $command = new SaveOrganizationUserCommand($this->organization);
-        $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $command->role = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';
@@ -179,7 +179,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
                 (new OrganizationUser('0de5692b-cab1-494c-804d-765dc14df674'))
                     ->setUser($user)
                     ->setOrganization($this->organization)
-                    ->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
+                    ->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value),
             ));
 
         $handler = new SaveOrganizationUserCommandHandler(
@@ -193,7 +193,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->isEmailAlreadyExists,
         );
         $command = new SaveOrganizationUserCommand($this->organization);
-        $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $command->role = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';
@@ -250,7 +250,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->isEmailAlreadyExists,
         );
         $command = new SaveOrganizationUserCommand($this->organization);
-        $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $command->role = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';
@@ -283,7 +283,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
         $organizationUser
             ->expects(self::once())
             ->method('setRoles')
-            ->with([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]);
+            ->with(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $this->isEmailAlreadyExists
             ->expects(self::once())
@@ -322,7 +322,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->isEmailAlreadyExists,
         );
         $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
-        $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $command->role = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';
@@ -393,7 +393,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->isEmailAlreadyExists,
         );
         $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
-        $command->roles = [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value];
+        $command->roles = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';
