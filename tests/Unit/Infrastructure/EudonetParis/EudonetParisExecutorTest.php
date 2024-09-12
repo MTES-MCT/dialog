@@ -14,6 +14,7 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Infrastructure\DataImport\DataImportReporterFactory;
+use App\Infrastructure\DataImport\DataImportReportFormatter;
 use App\Infrastructure\EudonetParis\EudonetParisExecutor;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
 use App\Infrastructure\EudonetParis\EudonetParisTransformer;
@@ -29,6 +30,7 @@ final class EudonetParisExecutorTest extends TestCase
     private $regulationOrderRecordRepository;
     private $orgId = '064f5eba-5eb2-7ffd-8000-77e8f8b7bb9b';
     private $reporterFactory;
+    private $reportFormatter;
     private $dateUtils;
 
     protected function setUp(): void
@@ -39,6 +41,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->reporterFactory = $this->createMock(DataImportReporterFactory::class);
+        $this->reportFormatter = $this->createMock(DataImportReportFormatter::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
@@ -55,6 +58,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->reporterFactory,
+            $this->reportFormatter,
             $this->dateUtils,
         );
 
@@ -188,6 +192,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->reporterFactory,
+            $this->reportFormatter,
             $this->dateUtils,
         );
 
@@ -275,6 +280,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->reporterFactory,
+            $this->reportFormatter,
             $this->dateUtils,
         );
 
@@ -301,6 +307,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->reporterFactory,
+            $this->reportFormatter,
             $this->dateUtils,
         );
 
@@ -411,6 +418,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             '',
             $this->reporterFactory,
+            $this->reportFormatter,
             $this->dateUtils,
         );
 

@@ -12,6 +12,7 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Infrastructure\DataImport\DataImportReporterFactory;
+use App\Infrastructure\DataImport\DataImportReportFormatter;
 use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
@@ -25,11 +26,12 @@ final class EudonetParisExecutor
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private string $eudonetParisOrgId,
         private DataImportReporterFactory $reporterFactory,
+        private DataImportReportFormatter $reportFormatter,
         private DateUtilsInterface $dateUtils,
     ) {
     }
 
-    public function execute(\DateTimeInterface $laterThanUTC): void
+    public function execute(\DateTimeInterface $laterThanUTC): string
     {
         if (!$this->eudonetParisOrgId) {
             throw new EudonetParisException('No target organization ID set. Please set APP_EUDONET_PARIS_ORG_ID in .env.local');
@@ -79,7 +81,6 @@ final class EudonetParisExecutor
             $reporter->addError($reporter::ERROR_IMPORT_COMMAND_FAILED, [
                 'message' => $exc->getMessage(),
             ]);
-            throw new EudonetParisException($exc->getMessage());
         } finally {
             $reporter->addNotice('report', [
                 // 'numProcessed' => $numProcessed,
@@ -97,6 +98,10 @@ final class EudonetParisExecutor
 
             $endTime = $this->dateUtils->getNow();
             $reporter->end(endTime: $endTime);
+            $report = $this->reportFormatter->format($reporter->getRecords());
+            $reporter->onReport($report);
+
+            return $report;
         }
     }
 }

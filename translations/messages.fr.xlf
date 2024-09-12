@@ -2070,6 +2070,94 @@
                 <source>user.myarea</source>
                 <target>Mon espace</target>
             </trans-unit>
+            <trans-unit id="dataimport.report.title">
+                <source>dataimport.report.title</source>
+                <target>Intégration %entity%</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.regulations">
+                <source>dataimport.report.regulations</source>
+                <target>Arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.section.fact.title">
+                <source>dataimport.report.section.fact.title</source>
+                <target>Informations d'exécution</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.fact.start_time">
+                <source>dataimport.report.fact.start_time</source>
+                <target>Date et heure de début</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.fact.end_time">
+                <source>dataimport.report.fact.end_time</source>
+                <target>Date et heure de fin</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.fact.elapsed_seconds">
+                <source>dataimport.report.fact.elapsed_seconds</source>
+                <target>Temps d'exécution</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.section.count.title">
+                <source>dataimport.report.section.count.title</source>
+                <target>Décomptes</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.count.total_features">
+                <source>dataimport.report.count.total_features</source>
+                <target>Nombre total d'emprises dans %entity% pour cette organisation</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.count.matching_features">
+                <source>dataimport.report.count.matching_features</source>
+                <target>Emprises d'intérêt récupérées dans %entity%</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.count.extracted_features">
+                <source>dataimport.report.count.extracted_features</source>
+                <target>Emprises effectivement candidates à l'import</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.count.imported_features">
+                <source>dataimport.report.count.imported_features</source>
+                <target>Emprises importées avec succès</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.among_regulations">
+                <source>dataimport.report.among_regulations</source>
+                <target>dans %count% arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.section.error.title">
+                <source>dataimport.report.section.error.title</source>
+                <target>Erreurs</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.error.max_speed_value_missing">
+                <source>dataimport.report.error.max_speed_value_missing</source>
+                <target>Emprises avec limite de vitesse manquante</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.error.period_unparsable">
+                <source>dataimport.report.error.period_unparsable</source>
+                <target>Emprises avec "jours et horaires" au format non-supporté</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.error.measure_parameter_inconsistent_number">
+                <source>dataimport.report.error.measure_parameter_inconsistent_number</source>
+                <target>Emprises avec numéros de mesures incohérents</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.error.import_command_failed">
+                <source>dataimport.report.error.import_command_failed</source>
+                <target>Commandes d'import d'arrêté qui ont échoué</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.section.warning.title">
+                <source>dataimport.report.section.warning.title</source>
+                <target>Avertissements</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.warning.missing_geometry">
+                <source>dataimport.report.warning.missing_geometry</source>
+                <target>Emprises sans géométrie</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.section.notice.title">
+                <source>dataimport.report.section.notice.title</source>
+                <target>Remarques</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.notice.unsupported_measure">
+                <source>dataimport.report.notice.unsupported_measure</source>
+                <target>Mesures de type non-supporté par DiaLog</target>
+            </trans-unit>
+            <trans-unit id="dataimport.report.notice.no_measures_found">
+                <source>dataimport.report.notice.no_measures_found</source>
+                <target>Arrêtés sans aucune mesure connue de DiaLog</target>
+            </trans-unit>
             <trans-unit id="litteralis.report.title">
                 <source>litteralis.report.title</source>
                 <target>Intégration Litteralis</target>
