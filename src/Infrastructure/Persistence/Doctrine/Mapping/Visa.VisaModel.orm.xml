@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Visa\VisaModel"
+    table="visa_model">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="name" type="string" length="100" nullable="false"/>
+    <field name="description" type="string" nullable="true"/>
+    <field name="visas" type="array" nullable="false"/>
+    <many-to-one field="organization" target-entity="App\Domain\User\Organization">
+      <join-columns>
+          <join-column name="organization_uuid" referenced-column-name="uuid" nullable="true" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
