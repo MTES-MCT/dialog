@@ -20,7 +20,6 @@ final class UserFormType extends AbstractType
     {
         $roleContributor = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $rolePublisher = OrganizationRolesEnum::ROLE_ORGA_PUBLISHER->value;
-        $roleAdmin = OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
 
         $builder
             ->add(
@@ -39,18 +38,17 @@ final class UserFormType extends AbstractType
                 ],
             )
             ->add(
-                'roles',
+                'role',
                 ChoiceType::class,
                 options: [
                     'choices' => [
                         "roles.$roleContributor" => $roleContributor,
                         "roles.$rolePublisher" => $rolePublisher,
-                        "roles.$roleAdmin" => $roleAdmin,
                     ],
                     'label' => 'user.form.roles',
                     'help' => 'user.form.roles.help',
                     'expanded' => true,
-                    'multiple' => true,
+                    'multiple' => false,
                 ],
             )
             ->add('save', SubmitType::class,
