@@ -83,6 +83,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period2Id = '0661e7ed-1a09-7c77-8000-17281ececeba';
         $period3Id = '0661e7ed-806d-75f0-8000-7107c838edb5';
         $period4Id = '0661e7ed-e549-7e4b-8000-945882a092c4';
+        $period5Id = '066e2bff-d436-7f16-8000-57d9f6b99960';
 
         $incident1 = new CifsIncidentView(
             id: \sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
@@ -192,6 +193,26 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 
         $incident6 = new CifsIncidentView(
             id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
+            creationTime: $incident3->creationTime,
+            type: $incident3->type,
+            subType: $incident3->subType,
+            street: $incident3->street,
+            direction: $incident3->direction,
+            polyline: $incident3->polyline,
+            startTime: $incident4->startTime,
+            endTime: $incident4->endTime,
+            schedule: [
+                'everyday' => [
+                    [
+                        'startTime' => new \DateTimeImmutable('14:00'),
+                        'endTime' => new \DateTimeImmutable('16:00'),
+                    ],
+                ],
+            ],
+        );
+
+        $incident7 = new CifsIncidentView(
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period5Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -417,6 +438,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getTimeSlots')
             ->willReturn([]); // Whole day
 
+        // Daily range with all days
         $period4 = $this->createMock(Period::class);
         $period4
             ->expects(self::once())
@@ -463,10 +485,43 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getTimeSlots')
             ->willReturn([$timeSlot4]);
 
+        // Time slots without daily range
+        $period5 = $this->createMock(Period::class);
+        $period5
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn($period5Id);
+        $period5
+            ->expects(self::once())
+            ->method('getStartDateTime')
+            ->willReturn(new \DateTimeImmutable('2023-11-03 00:00:00'));
+        $period5
+            ->expects(self::once())
+            ->method('getEndDateTime')
+            ->willReturn(new \DateTimeImmutable('2023-11-04 23:59:00'));
+        $period5
+            ->expects(self::once())
+            ->method('getDailyRange')
+            ->willReturn(null);
+
+        $timeSlot5 = $this->createMock(TimeSlot::class);
+        $timeSlot5
+            ->expects(self::once())
+            ->method('getStartTime')
+            ->willReturn(new \DateTimeImmutable('14:00'));
+        $timeSlot5
+            ->expects(self::once())
+            ->method('getEndTime')
+            ->willReturn(new \DateTimeImmutable('16:00'));
+        $period5
+            ->expects(self::once())
+            ->method('getTimeSlots')
+            ->willReturn([$timeSlot5]);
+
         $measure2
             ->expects(self::once())
             ->method('getPeriods')
-            ->willReturn([$period1, $period2, $period3, $period4]);
+            ->willReturn([$period1, $period2, $period3, $period4, $period5]);
 
         $location2 = $this->createMock(Location::class);
         $namedStreet2 = $this->createMock(NamedStreet::class);
@@ -517,7 +572,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
-            [$incident1, $incident2, $incident3, $incident4, $incident5, $incident6],
+            [$incident1, $incident2, $incident3, $incident4, $incident5, $incident6, $incident7],
             $incidents,
         );
     }
