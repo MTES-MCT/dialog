@@ -21,11 +21,7 @@ final class GetRegulationsQueryHandler
     {
         $regulationOrderViews = [];
 
-        $rows = $this->repository->findAllRegulations(
-            $query->pageSize,
-            $query->page,
-            $query->dto,
-        );
+        $rows = $this->repository->findAllRegulations($query->dto);
 
         foreach ($rows['items'] as $row) {
             $locationView = null;
@@ -54,8 +50,8 @@ final class GetRegulationsQueryHandler
         return new Pagination(
             $regulationOrderViews,
             $rows['count'],
-            $query->page,
-            $query->pageSize,
+            $query->dto->page,
+            $query->dto->pageSize,
         );
     }
 }
