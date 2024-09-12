@@ -70,6 +70,10 @@ final class GetCifsIncidentsQueryHandler
                         /** @var TimeSlot[] $timeSlots */
                         $timeSlots = $period->getTimeSlots();
 
+                        if (!$applicableDays && $timeSlots) {
+                            $applicableDays = ['everyday'];
+                        }
+
                         if ($timeSlots) {
                             $timeSpans = [];
 
