@@ -31,8 +31,10 @@ class EudonetParisImportCommand extends Command
         $nowUTC = $this->dateUtils->getNow();
 
         try {
-            $this->eudonetParisExecutor->execute(laterThanUTC: $nowUTC);
-        } catch (EudonetParisException) {
+            $report = $this->eudonetParisExecutor->execute(laterThanUTC: $nowUTC);
+            $output->write($report);
+        } catch (EudonetParisException $exc) {
+            $output->writeln($exc->getMessage());
             return Command::FAILURE;
         }
 
