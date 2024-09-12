@@ -20,7 +20,6 @@ final class EditPasswordFormType extends AbstractType
                 RepeatedType::class,
                 [
                     'type' => PasswordType::class,
-                    'invalid_message' => 'The password fields must match.',
                     'options' => ['attr' => ['class' => 'password-field']],
                     'required' => true,
                     'first_options' => ['label' => 'profile.password.first_option'],
