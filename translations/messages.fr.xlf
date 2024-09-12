@@ -847,13 +847,9 @@
                 <source>profile.title</source>
                 <target>Mon compte</target>
             </trans-unit>
-            <trans-unit id="profile.subtitle">
-                <source>profile.subtitle</source>
-                <target>Mise à jour de mes informations</target>
-            </trans-unit>
             <trans-unit id="profile.password.title">
                 <source>profile.password.title</source>
-                <target>Modifier mon mot de passe</target>
+                <target>Modification du mot de passe</target>
             </trans-unit>
             <trans-unit id="profile.password.first_option">
                 <source>profile.password.first_option</source>
@@ -862,6 +858,14 @@
             <trans-unit id="profile.password.second_option">
                 <source>profile.password.second_option</source>
                 <target>Confirmation du nouveau mot de passe</target>
+            </trans-unit>
+            <trans-unit id="profile.password.help">
+                <source>profile.password.help</source>
+                <target>Ce mot de passe doit contenir au minimum 12 caractères</target>
+            </trans-unit>
+            <trans-unit id="profile.password.update.success">
+                <source>profile.password.update.success</source>
+                <target><![CDATA[<h3 class="fr-alert__title">]]>Votre mot de passe a bien été mis à jour<![CDATA[</h3>]]></target>
             </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>

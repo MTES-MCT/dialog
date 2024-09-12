@@ -22,7 +22,7 @@ final class EditPasswordFormType extends AbstractType
                     'type' => PasswordType::class,
                     'options' => ['attr' => ['class' => 'password-field']],
                     'required' => true,
-                    'first_options' => ['label' => 'profile.password.first_option'],
+                    'first_options' => ['label' => 'profile.password.first_option', 'help' => 'profile.password.help'],
                     'second_options' => ['label' => 'profile.password.second_option'],
                 ],
             )

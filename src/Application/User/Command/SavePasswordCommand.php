@@ -14,6 +14,5 @@ final class SavePasswordCommand implements CommandInterface
     public function __construct(
         public User $user,
     ) {
-        $this->password = $user->getPassword();
     }
 }

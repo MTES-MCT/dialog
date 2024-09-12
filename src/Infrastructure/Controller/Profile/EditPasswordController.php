@@ -12,10 +12,10 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 final class EditPasswordController
 {
@@ -44,7 +44,7 @@ final class EditPasswordController
 
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();
-            $session->getFlashBag()->add('success', $this->translator->trans('profile.update.success'));
+            $session->getFlashBag()->add('success', $this->translator->trans('profile.password.update.success'));
 
             return new RedirectResponse(
                 url: $this->router->generate('app_profile_password'),
@@ -54,7 +54,7 @@ final class EditPasswordController
 
         return new Response(
             content: $this->twig->render(
-                name: 'profile/editPassword.html.twig',
+                name: 'profile/edit-password.html.twig',
                 context: [
                     'user' => $user,
                     'form' => $form->createView(),
