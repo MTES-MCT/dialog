@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Admin;
 
 use App\Application\IdFactoryInterface;
+use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -49,11 +51,19 @@ final class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $roles = array_column(UserRolesEnum::cases(), 'value');
+
         $fields = [
             TextField::new('fullName')->setLabel('Prénom / Nom'),
             EmailField::new('email'),
             DateField::new('registrationDate')
                 ->setLabel('Date d\'inscription')
+                ->setDisabled($pageName === Crud::PAGE_EDIT),
+            ChoiceField::new('roles')
+                ->setLabel('Rôles')
+                ->allowMultipleChoices()
+                ->setChoices(array_combine($roles, $roles))
+                ->renderAsBadges()
                 ->setDisabled($pageName === Crud::PAGE_EDIT),
         ];
 
