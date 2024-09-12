@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\User\Query\GetOrganizationsQuery;
+use App\Domain\Pagination;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Infrastructure\Form\Regulation\RegulationListFiltersFormType;
@@ -42,8 +43,8 @@ final class ListRegulationsController
     {
         $dto = new RegulationListFiltersDTO();
 
-        $dto->pageSize = min($request->query->getInt('pageSize', RegulationListFiltersDTO::DEFAULT_PAGE_SIZE), 100);
-        $dto->page = $request->query->getInt('page', RegulationListFiltersDTO::DEFAULT_PAGE);
+        $dto->pageSize = min($request->query->getInt('pageSize', Pagination::DEFAULT_PAGE_SIZE), 100);
+        $dto->page = $request->query->getInt('page', Pagination::DEFAULT_PAGE);
 
         if ($dto->pageSize <= 0 || $dto->page <= 0) {
             throw new BadRequestHttpException(
