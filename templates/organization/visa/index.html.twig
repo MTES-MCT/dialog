@@ -1,0 +1,51 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}
+    {{'visa.list.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w" aria-labelledby="user-list">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_organizations_list'},
+                    { title: organization.name, url: path('app_users_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'visa.list.title'|trans },
+                ]} %}
+                <div class="fr-grid-row">
+                    <h2 id="user-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
+                </div>
+                <p class="fr-text--sm">{{ 'visa.list.help'|trans }}</p>
+                <div class="fr-table" id="table-md-component">
+                    <div class="fr-table__wrapper">
+                        <div class="fr-table__container">
+                            <div class="fr-table__content">
+                                <table id="table-md">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">{{ 'visa.name'|trans }}</th>
+                                        <th scope="col">{{ 'visa.description'|trans }}</th>
+                                        <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-testid="visa-list">
+                                    {% for visa in visas %}
+                                        <tr>
+                                            <td>{{ visa.name }}</td>
+                                            <td>{{ visa.description }}</td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
