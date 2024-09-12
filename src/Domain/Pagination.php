@@ -6,6 +6,9 @@ namespace App\Domain;
 
 final class Pagination
 {
+    public const DEFAULT_PAGE = 1;
+    public const DEFAULT_PAGE_SIZE = 20;
+
     public readonly array $windowPages;
     public readonly int $lastPage;
     public readonly bool $hasFirstPageLandmark;

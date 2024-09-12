@@ -63,6 +63,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         ];
 
         $dto = new RegulationListFiltersDTO();
+        $dto->page = 2;
+        $dto->pageSize = 12;
         $dto->identifier = '/20';
         $dto->organizationUuid = 'dcab837f-4460-4355-99d5-bf4891c35f8f';
         $dto->regulationOrderType = RegulationOrderTypeEnum::PERMANENT->value;
@@ -73,18 +75,14 @@ final class GetRegulationsQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findAllRegulations')
-            ->with(20, 1, $dto)
+            ->with($dto)
             ->willReturn([
                 'count' => 3,
                 'items' => $rows,
             ]);
 
         $handler = new GetRegulationsQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationsQuery(
-            pageSize: 20,
-            page: 1,
-            dto: $dto,
-        ));
+        $regulationOrders = $handler(new GetRegulationsQuery($dto));
 
         $pagination = new Pagination(
             [
@@ -130,8 +128,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 ),
             ],
             3,
-            1,
-            20,
+            2,
+            12,
         );
 
         $this->assertEquals($pagination, $regulationOrders);

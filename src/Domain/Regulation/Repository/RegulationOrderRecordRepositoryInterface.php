@@ -17,8 +17,6 @@ interface RegulationOrderRecordRepositoryInterface
     public function findOneUuidByIdentifierInOrganization(string $identifier, Organization $organization): ?string;
 
     public function findAllRegulations(
-        int $maxItemsPerPage,
-        int $page,
         RegulationListFiltersDTO $dto,
     ): array;
 
