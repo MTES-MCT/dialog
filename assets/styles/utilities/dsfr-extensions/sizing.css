@@ -2,6 +2,10 @@
     max-width: calc(32 * 0.5rem);
 }
 
+.fr-x-max-w-37w {
+    max-width: calc(37 * 0.5rem);
+}
+
 .fr-x-h-full {
     height: 100%;
 }
