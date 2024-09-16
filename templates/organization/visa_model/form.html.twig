@@ -1,5 +1,9 @@
 {% extends 'layouts/app.html.twig' %}
+<<<<<<< HEAD
 {% set metaTitle = visaModel is defined ? visaModel.name : 'visa.add.title'|trans %}
+=======
+{% set metaTitle = 'visa.add.title'|trans %}
+>>>>>>> beaa6ec (Add visa model)
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -36,7 +40,11 @@
                 {% include "common/breadcrumb.html.twig" with { items: [
                     { title: 'user.myarea'|trans, path: 'app_organizations_list'},
                     { title: organization.name, url: path('app_users_list', {uuid: organization.uuid}), generatedPath: true },
+<<<<<<< HEAD
                     { title: 'visa.list.title'|trans, url: path('app_config_visa_models_list', {uuid: organization.uuid}), generatedPath: true },
+=======
+                    { title: 'visa.list.title'|trans, url: path('app_config_visas_list', {uuid: organization.uuid}), generatedPath: true },
+>>>>>>> beaa6ec (Add visa model)
                     { title: metaTitle },
                 ]} %}
                 <h2>{{ metaTitle }}</h2>
@@ -55,7 +63,10 @@
                             <h3 class="app-card__title fr-h4 fr-mb-0">{{ 'visas.form.visas'|trans }}</h3>
                         </div>
                         <div class="app-card__content">
+<<<<<<< HEAD
                             <p class="fr-text--sm">{{ 'visas.form.visas.help'|trans }}</p>
+=======
+>>>>>>> beaa6ec (Add visa model)
                             {{ form_errors(form.visas) }}
                             <ul
                                 id="visa-list"
@@ -79,7 +90,11 @@
                             </button>
                         </div>
                     </div>
+<<<<<<< HEAD
                     <a href="{{ path('app_config_visa_models_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+=======
+                    <a href="{{ path('app_config_visas_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+>>>>>>> beaa6ec (Add visa model)
                         {{ "common.cancel"|trans }}
                     </a>
                     {{ form_widget(form.save) }}
