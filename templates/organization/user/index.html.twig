@@ -9,10 +9,10 @@
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="user-list">
         <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-3">
+            <div class="fr-col-12 fr-col-md-4">
                 {% include 'organization/_menu.html.twig' with { organization } only %}
             </div>
-            <div class="fr-col-12 fr-col-md-9">
+            <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
                     { title: 'user.myarea'|trans, path: 'app_organizations_list'},
                     { title: organization.name, url: path('app_users_list', {uuid: organization.uuid}), generatedPath: true },

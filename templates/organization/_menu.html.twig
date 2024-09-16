@@ -8,23 +8,28 @@
             <ul class="fr-sidemenu__list">
                 <li class="fr-sidemenu__item">
                     <a class="fr-sidemenu__link" href="#">
-                        Mon organisation
+                        {{ 'config.menu.organization'|trans }}
                     </a>
                 </li>
                 <li class="fr-sidemenu__item {% if 'app_users' in routeName %}fr-sidemenu__item--active{% endif %}">
                     <a class="fr-sidemenu__link" href="{{ path('app_users_list', { uuid: organization.uuid }) }}" {% if 'app_users' in routeName %}aria-current="page"{% endif%}>
-                        {{ 'user.list.title'|trans }}
+                        {{ 'config.menu.users'|trans }}
                     </a>
                 </li>
                 <li class="fr-sidemenu__item">
-                    <a class="fr-sidemenu__link" href="#">
-                        Modèles de visas
-                    </a>
-                </li>
-                <li class="fr-sidemenu__item">
-                    <a class="fr-sidemenu__link" href="#">
-                        Signatures / cachet
-                    </a>
+                    <button class="fr-sidemenu__btn" aria-expanded="{{ 'app_config' in routeName ? 'true' : 'false' }}" aria-controls="sidemenu-config">{{ 'config.menu.regulations'|trans }}</button>
+                    <div class="fr-collapse" id="sidemenu-config">
+                        <ul class="fr-sidemenu__list">
+                            <li class="fr-sidemenu__item">
+                                <a class="fr-sidemenu__link" href="{{ path('app_config_visas_list', { uuid: organization.uuid }) }}" aria-current="{{ routeName == 'app_config_visas_list' ? 'true' : 'false' }}">
+                                    {{ 'config.menu.visas'|trans }}
+                                </a>
+                            </li>
+                            <li class="fr-sidemenu__item">
+                                <a class="fr-sidemenu__link href="#" target="_self">{{ 'config.menu.authority'|trans }}</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>
