@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\Visa\Query;
+namespace App\Tests\Unit\Application\VisaModel\Query;
 
-use App\Application\Visa\Query\GetOrganizationVisaModelsQuery;
-use App\Application\Visa\Query\GetOrganizationVisaModelsQueryHandler;
-use App\Application\Visa\View\VisaModelView;
-use App\Domain\Visa\Repository\VisaModelRepositoryInterface;
+use App\Application\VisaModel\Query\GetOrganizationVisaModelsQuery;
+use App\Application\VisaModel\Query\GetOrganizationVisaModelsQueryHandler;
+use App\Application\VisaModel\View\VisaModelView;
+use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
