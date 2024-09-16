@@ -25,23 +25,24 @@
                         <div class="fr-table__container">
                             <div class="fr-table__content">
                                 <table id="table-md">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">{{ 'visa.name'|trans }}</th>
-                                        <th scope="col">{{ 'visa.description'|trans }}</th>
-                                        <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody data-testid="visa-list">
-                                    {% for visa in visaModels %}
+                                    <thead>
                                         <tr>
-                                            <td>{{ visa.name }}</td>
-                                            <td>{{ visa.description }}</td>
-                                            <td></td>
+                                            <th scope="col">{{ 'visa.name'|trans }}</th>
+                                            <th scope="col">{{ 'visa.description'|trans }}</th>
+                                            <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
                                         </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody data-testid="visa-list">
+                                        {% for visa in visaModels %}
+                                            <tr>
+                                                <td>{{ visa.name }}</td>
+                                                <td>{{ visa.description }}</td>
+                                                <td></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
