@@ -44,7 +44,7 @@ final class AddVisaControllerTest extends AbstractWebTestCase
         $values['visa_model_form']['name'] = $name;
         $values['visa_model_form']['description'] = $description;
         $values['visa_model_form']['visas'][0] = 'Vu 1';
-        $values['visa_model_form']['visas'][0] = 'Vu 2';
+        $values['visa_model_form']['visas'][1] = 'Vu 2';
         $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $client->followRedirect();
 

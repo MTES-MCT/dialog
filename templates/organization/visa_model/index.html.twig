@@ -19,7 +19,7 @@
                 <div class="fr-grid-row">
                     <h2 id="visa-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
                     {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                        <a href="{{ path('app_config_visa_models_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'visa.add.title'|trans }}">
+                        <a href="{{ path('app_config_visas_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'visa.add.title'|trans }}">
                             {{ 'visa.add.title'|trans }}
                         </a>
                     {% endif %}
