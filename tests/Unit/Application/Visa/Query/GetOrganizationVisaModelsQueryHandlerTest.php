@@ -14,13 +14,13 @@ final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
 {
     public function testGet(): void
     {
-        $visa1 = new VisaModelView(
+        $visaModel1 = new VisaModelView(
             '42a1888f-29cb-4e32-a02f-49d278b6d128',
             'Interdiction de circulation',
             'Circulation interdite dans toute l\'agglomération',
         );
 
-        $visa2 = new VisaModelView(
+        $visaModel2 = new VisaModelView(
             '42a1888f-29cb-4e32-a02f-49d278b6d128',
             'Interdiction de circulation',
             'Circulation interdite dans toute l\'agglomération',
@@ -31,12 +31,12 @@ final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findOrganizationVisaModels')
             ->with('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf')
-            ->willReturn([$visa1, $visa2]);
+            ->willReturn([$visaModel1, $visaModel2]);
 
         $handler = new GetOrganizationVisaModelsQueryHandler($visaModelRepository);
         $result = $handler(new GetOrganizationVisaModelsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
-        $expectedResults = [$visa1, $visa2];
+        $expectedResults = [$visaModel1, $visaModel2];
 
         $this->assertEquals($expectedResults, $result);
     }

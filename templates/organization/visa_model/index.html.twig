@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <section class="fr-container fr-py-5w" aria-labelledby="user-list">
+    <section class="fr-container fr-py-5w" aria-labelledby="visa-list">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-4">
                 {% include 'organization/_menu.html.twig' with { organization } only %}
@@ -17,7 +17,7 @@
                     { title: 'visa.list.title'|trans },
                 ]} %}
                 <div class="fr-grid-row">
-                    <h2 id="user-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
+                    <h2 id="visa-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
                 </div>
                 <p class="fr-text--sm">{{ 'visa.list.help'|trans }}</p>
                 <div class="fr-table" id="table-md-component">
@@ -33,7 +33,7 @@
                                     </tr>
                                 </thead>
                                 <tbody data-testid="visa-list">
-                                    {% for visa in visas %}
+                                    {% for visa in visaModels %}
                                         <tr>
                                             <td>{{ visa.name }}</td>
                                             <td>{{ visa.description }}</td>

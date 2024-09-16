@@ -31,12 +31,12 @@ final class ListVisaModelsController extends AbstractOrganizationController
     public function __invoke(string $uuid): Response
     {
         $organization = $this->getOrganization($uuid);
-        $visas = $this->queryBus->handle(new GetOrganizationVisaModelsQuery($uuid));
+        $visaModels = $this->queryBus->handle(new GetOrganizationVisaModelsQuery($uuid));
 
         return new Response($this->twig->render(
-            name: 'organization/visa/index.html.twig',
+            name: 'organization/visa_model/index.html.twig',
             context: [
-                'visas' => $visas,
+                'visaModels' => $visaModels,
                 'organization' => $organization,
             ],
         ));
