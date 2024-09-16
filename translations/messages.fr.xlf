@@ -2244,6 +2244,42 @@
                 <source>litteralis.report.notice.no_measures_found</source>
                 <target>Arrêtés sans aucune mesure connue de DiaLog</target>
             </trans-unit>
+            <trans-unit id="config.menu.organization">
+                <source>config.menu.organization</source>
+                <target>Mon organisation</target>
+            </trans-unit>
+            <trans-unit id="config.menu.regulations">
+                <source>config.menu.regulations</source>
+                <target>Configuration des arrếtés</target>
+            </trans-unit>
+            <trans-unit id="config.menu.users">
+                <source>config.menu.users</source>
+                <target>Utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="config.menu.visas">
+                <source>config.menu.visas</source>
+                <target>Modèle de visas</target>
+            </trans-unit>
+            <trans-unit id="config.menu.authority">
+                <source>config.menu.authority</source>
+                <target>Autorité signataire</target>
+            </trans-unit>
+            <trans-unit id="visa.list.title">
+                <source>visa.list.title</source>
+                <target>Modèles de visas</target>
+            </trans-unit>
+            <trans-unit id="visa.list.help">
+                <source>visa.list.help</source>
+                <target>Créer des modèles de visas à utiliser par les agents dans les arrếtés de circulation créés dans DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="visa.name">
+                <source>visa.name</source>
+                <target>Nom</target>
+            </trans-unit>
+            <trans-unit id="visa.description">
+                <source>visa.description</source>
+                <target>Description</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
