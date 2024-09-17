@@ -1,0 +1,37 @@
+{% set routeName = app.request.get('_route') %}
+
+<nav class="fr-sidemenu" role="navigation" aria-labelledby="sidemenu-title">
+    <div class="fr-sidemenu__inner">
+        <button class="fr-sidemenu__btn" aria-controls="sidemenu" aria-expanded="false">{{ organization.name }}</button>
+        <div class="fr-collapse" id="sidemenu">
+            <p class="fr-sidemenu__title" id="sidemenu-title">{{ organization.name }}</p>
+            <ul class="fr-sidemenu__list">
+                <li class="fr-sidemenu__item">
+                    <a class="fr-sidemenu__link" href="#">
+                        {{ 'config.menu.organization'|trans }}
+                    </a>
+                </li>
+                <li class="fr-sidemenu__item {% if 'app_users' in routeName %}fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{{ path('app_users_list', { uuid: organization.uuid }) }}" {% if 'app_users' in routeName %}aria-current="page"{% endif%}>
+                        {{ 'config.menu.users'|trans }}
+                    </a>
+                </li>
+                <li class="fr-sidemenu__item">
+                    <button class="fr-sidemenu__btn" aria-expanded="{{ 'app_config' in routeName ? 'true' : 'false' }}" aria-controls="sidemenu-config">{{ 'config.menu.regulations'|trans }}</button>
+                    <div class="fr-collapse" id="sidemenu-config">
+                        <ul class="fr-sidemenu__list">
+                            <li class="fr-sidemenu__item">
+                                <a class="fr-sidemenu__link" href="{{ path('app_config_visa_models_list', { uuid: organization.uuid }) }}" aria-current="{{ 'app_config_visa_models' in routeName  ? 'true' : 'false' }}">
+                                    {{ 'config.menu.visas'|trans }}
+                                </a>
+                            </li>
+                            <li class="fr-sidemenu__item">
+                                <a class="fr-sidemenu__link href="#" target="_self">{{ 'config.menu.authority'|trans }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
