@@ -24,6 +24,17 @@ final class VisaModelRepository extends ServiceEntityRepository implements VisaM
         return $visaModel;
     }
 
+    public function findOneByUuid(string $uuid): ?VisaModel
+    {
+        return $this->createQueryBuilder('v')
+            ->where('v.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function findOrganizationVisaModels(string $organizationUuid): array
     {
         return $this->createQueryBuilder('v')

@@ -19,7 +19,7 @@
                 <div class="fr-grid-row">
                     <h2 id="visa-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
                     {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                        <a href="{{ path('app_config_visas_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'visa.add.title'|trans }}">
+                        <a href="{{ path('app_config_visa_models_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'visa.add.title'|trans }}">
                             {{ 'visa.add.title'|trans }}
                         </a>
                     {% endif %}
@@ -42,7 +42,15 @@
                                             <tr>
                                                 <td>{{ visa.name }}</td>
                                                 <td>{{ visa.description }}</td>
-                                                <td></td>
+                                                <td>
+                                                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                                        <div class="fr-btns-group fr-btns-group--inline-sm">
+                                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_visa_models_edit', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                                {{ 'common.update'|trans }}
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
