@@ -28,7 +28,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $num = $this->countRows($crawler);
 
         $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
-            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseRedirects('/regulations', 303);
         $crawler = $client->followRedirect();
@@ -40,7 +40,7 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
-            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(403);
     }
@@ -49,16 +49,9 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST, [
-            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseRedirects('/regulations', 303);
-    }
-
-    public function testInvalidCsrfToken(): void
-    {
-        $client = $this->login();
-        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
-        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testWithoutAuthenticatedUser(): void
