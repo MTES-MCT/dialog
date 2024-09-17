@@ -17,3 +17,4 @@ doctrine:
         dql:
             string_functions:
                 ST_AsGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_AsGeoJSON'
+                ST_ApproximateMedialAxis: 'App\Infrastructure\Persistence\Doctrine\PostGIS\Functions\ST_ApproximateMedialAxis'

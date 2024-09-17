@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Doctrine\Repository\Visa;
+namespace App\Infrastructure\Persistence\Doctrine\Repository\VisaModel;
 
-use App\Application\Visa\View\VisaModelView;
-use App\Domain\Visa\Repository\VisaModelRepositoryInterface;
-use App\Domain\Visa\VisaModel;
+use App\Application\VisaModel\View\VisaModelView;
+use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\VisaModel\VisaModel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +15,24 @@ final class VisaModelRepository extends ServiceEntityRepository implements VisaM
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, VisaModel::class);
+    }
+
+    public function add(VisaModel $visaModel): VisaModel
+    {
+        $this->getEntityManager()->persist($visaModel);
+
+        return $visaModel;
+    }
+
+    public function findOneByUuid(string $uuid): ?VisaModel
+    {
+        return $this->createQueryBuilder('v')
+            ->where('v.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     public function findOrganizationVisaModels(string $organizationUuid): array

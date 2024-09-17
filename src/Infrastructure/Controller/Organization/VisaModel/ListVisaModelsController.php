@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Organization\Visa;
+namespace App\Infrastructure\Controller\Organization\VisaModel;
 
 use App\Application\QueryBusInterface;
-use App\Application\Visa\Query\GetOrganizationVisaModelsQuery;
+use App\Application\VisaModel\Query\GetOrganizationVisaModelsQuery;
 use App\Infrastructure\Controller\Organization\AbstractOrganizationController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +23,8 @@ final class ListVisaModelsController extends AbstractOrganizationController
     }
 
     #[Route(
-        '/organizations/{uuid}/visas',
-        name: 'app_config_visas_list',
+        '/organizations/{uuid}/visa_models',
+        name: 'app_config_visa_models_list',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]

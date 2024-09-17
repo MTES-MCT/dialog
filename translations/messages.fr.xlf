@@ -2290,11 +2290,39 @@
             </trans-unit>
             <trans-unit id="visa.name">
                 <source>visa.name</source>
-                <target>Nom</target>
+                <target>Nom du modèle</target>
+            </trans-unit>
+            <trans-unit id="visa.name.help">
+                <source>visa.name.help</source>
+                <target>Entrez un nom, par exemple "Réglementation de vitesse"</target>
             </trans-unit>
             <trans-unit id="visa.description">
                 <source>visa.description</source>
                 <target>Description</target>
+            </trans-unit>
+            <trans-unit id="visa.add.title">
+                <source>visa.add.title</source>
+                <target>Ajouter un modèle</target>
+            </trans-unit>
+            <trans-unit id="visa.add">
+                <source>visa.add</source>
+                <target>Ajouter un visa</target>
+            </trans-unit>
+            <trans-unit id="visa.remove">
+                <source>visa.remove</source>
+                <target>Supprimer</target>
+            </trans-unit>
+            <trans-unit id="visas.form.visa">
+                <source>visas.form.visa</source>
+                <target>Visa (Vu...)</target>
+            </trans-unit>
+            <trans-unit id="visas.form.visas">
+                <source>visas.form.visas</source>
+                <target>Visas</target>
+            </trans-unit>
+            <trans-unit id="visas.form.visas.help">
+                <source>visas.form.visas.help</source>
+                <target>Définissez le texte qui apparaîtra en tant que visas (Vu...) dans les arrêtés</target>
             </trans-unit>
         </body>
     </file>

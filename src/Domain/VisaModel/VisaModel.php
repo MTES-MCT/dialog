@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Visa;
+namespace App\Domain\VisaModel;
 
 use App\Domain\User\Organization;
 
@@ -40,5 +40,15 @@ class VisaModel
     public function getOrganization(): ?Organization
     {
         return $this->organization;
+    }
+
+    public function update(
+        string $name,
+        array $visas,
+        ?string $description = null,
+    ) {
+        $this->name = $name;
+        $this->visas = $visas;
+        $this->description = $description;
     }
 }
