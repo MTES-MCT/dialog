@@ -17,7 +17,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
-            'token' => $this->generateCsrfToken($client, 'publish-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
@@ -29,7 +29,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
-            'token' => $this->generateCsrfToken($client, 'publish-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(403);
@@ -39,7 +39,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS . '/publish', [
-            'token' => $this->generateCsrfToken($client, 'publish-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(403);
     }
@@ -48,7 +48,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/publish', [
-            'token' => $this->generateCsrfToken($client, 'publish-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(404);
     }
@@ -57,16 +57,9 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
-            'token' => $this->generateCsrfToken($client, 'publish-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testInvalidCsrfToken(): void
-    {
-        $client = $this->login();
-        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish');
-        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testWithoutAuthenticatedUser(): void

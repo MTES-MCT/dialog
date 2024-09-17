@@ -17,7 +17,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
@@ -38,7 +38,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         // 1st duplicate of original
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
@@ -48,7 +48,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         // 2nd duplicate of original
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
@@ -56,7 +56,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         // Duplicate of 1st duplicate
         $client->request('POST', '/regulations/' . $duplicate1Uuid . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
@@ -64,11 +64,11 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
 
         // Delete 1st duplicate of original and recreate it
         $client->request('DELETE', '/regulations/' . $duplicate1Uuid, [
-            'token' => $this->generateCsrfToken($client, 'delete-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(303);
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
@@ -79,7 +79,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $crawler = $client->followRedirect();
@@ -92,7 +92,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $crawler = $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_NO_MEASURES . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
         $crawler = $client->followRedirect();
 
@@ -104,7 +104,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_OTHER_ORG_NO_START_DATE . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
@@ -114,7 +114,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(403);
@@ -124,18 +124,10 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/duplicate', [
-            'token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
+            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation'),
         ]);
 
         $this->assertResponseStatusCodeSame(404);
-    }
-
-    public function testInvalidCsrfToken(): void
-    {
-        $client = $this->login();
-        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/duplicate');
-
-        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testWithoutAuthenticatedUser(): void

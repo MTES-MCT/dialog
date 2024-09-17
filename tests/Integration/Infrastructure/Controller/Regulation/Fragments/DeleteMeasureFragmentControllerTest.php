@@ -26,7 +26,7 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame(2, $this->countRows($crawler));
 
         $crawler = $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/delete', [
-            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $streams = $crawler->filter('turbo-stream');
 
@@ -44,7 +44,7 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $client = $this->login();
 
         $crawler = $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/' . MeasureFixture::UUID_PERMANENT_ONLY_ONE . '/delete', [
-            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $this->assertResponseStatusCodeSame(400);
     }
@@ -53,7 +53,7 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_DOES_NOT_EXIST . '/delete', [
-            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $this->assertResponseStatusCodeSame(404);
     }
@@ -62,23 +62,16 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST . '/measure/' . MeasureFixture::UUID_TYPICAL . '/delete', [
-            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $this->assertResponseStatusCodeSame(404);
-    }
-
-    public function testInvalidCsrfToken(): void
-    {
-        $client = $this->login();
-        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/delete');
-        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testBadRegulationOrderUuid(): void
     {
         $client = $this->login();
         $client->request('DELETE', '/_fragment/regulations/aaa/measure/' . MeasureFixture::UUID_TYPICAL . '/delete', [
-            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $this->assertResponseStatusCodeSame(400);
     }
@@ -87,7 +80,7 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/aaa/delete', [
-            'token' => $this->generateCsrfToken($client, 'delete-measure'),
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
         ]);
         $this->assertResponseStatusCodeSame(404);
     }

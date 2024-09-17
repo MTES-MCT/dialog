@@ -15,19 +15,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 final class PublishRegulationController extends AbstractRegulationController
 {
     public function __construct(
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
-        private CsrfTokenManagerInterface $csrfTokenManager,
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -41,13 +38,9 @@ final class PublishRegulationController extends AbstractRegulationController
         requirements: ['uuid' => Requirement::UUID],
         methods: ['POST'],
     )]
+    #[IsCsrfTokenValid('publish-regulation')]
     public function __invoke(Request $request, string $uuid): Response
     {
-        $csrfToken = new CsrfToken('publish-regulation', $request->request->get('token'));
-        if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
-            throw new BadRequestHttpException('Invalid CSRF token');
-        }
-
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
 
         if (!$this->security->isGranted(RegulationOrderRecordVoter::PUBLISH, $regulationOrderRecord)) {
