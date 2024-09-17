@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Visa\Query;
+namespace App\Application\VisaModel\Query;
 
 use App\Application\QueryInterface;
 

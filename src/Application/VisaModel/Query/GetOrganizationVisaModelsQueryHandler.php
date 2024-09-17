@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Visa\Query;
+namespace App\Application\VisaModel\Query;
 
-use App\Domain\Visa\Repository\VisaModelRepositoryInterface;
+use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
 
 final class GetOrganizationVisaModelsQueryHandler
 {

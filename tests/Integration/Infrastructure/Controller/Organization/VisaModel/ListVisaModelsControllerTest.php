@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Controller\Organization\Visa;
+namespace App\Tests\Integration\Infrastructure\Controller\Organization\VisaModel;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
@@ -13,7 +13,7 @@ final class ListVisaModelsControllerTest extends AbstractWebTestCase
     public function testIndex(): void
     {
         $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
-        $crawler = $client->request('GET', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visas');
+        $crawler = $client->request('GET', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -31,21 +31,21 @@ final class ListVisaModelsControllerTest extends AbstractWebTestCase
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/visas');
+        $client->request('GET', '/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/visa_models');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotFound(): void
     {
         $client = $this->login();
-        $client->request('GET', '/organizations/f5c1cea8-a61d-43a7-9b5d-4b8c9557c673/visas');
+        $client->request('GET', '/organizations/f5c1cea8-a61d-43a7-9b5d-4b8c9557c673/visa_models');
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visas');
+        $client->request('GET', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

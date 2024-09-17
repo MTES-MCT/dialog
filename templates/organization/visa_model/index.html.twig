@@ -18,8 +18,13 @@
                 ]} %}
                 <div class="fr-grid-row">
                     <h2 id="visa-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
+                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                        <a href="{{ path('app_config_visa_models_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'visa.add.title'|trans }}">
+                            {{ 'visa.add.title'|trans }}
+                        </a>
+                    {% endif %}
                 </div>
-                <p class="fr-text--sm">{{ 'visa.list.help'|trans }}</p>
+                <p class="fr-text--sm fr-mt-2w">{{ 'visa.list.help'|trans }}</p>
                 <div class="fr-table" id="table-md-component">
                     <div class="fr-table__wrapper">
                         <div class="fr-table__container">
