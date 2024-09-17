@@ -367,19 +367,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function convertPolygonRoadToLines(string $geometry): string
     {
         try {
-            // Une solution basée sur ST_ApproximateMedialAxis serait meilleure, mais postgis_sfcgal n'est pas encore dispo sur Scalingo.
-            // https://postgis.net/docs/ST_ApproximateMedialAxis.html
-            // Comme on a les linéaires des tronçons dans la BDTOPO, on peut se contenter d'une intersection avec ceux-ci.
-            // À noter, cette approche génère des tronçons parasites au niveau des intersections qui donnent une forme de "peigne" au résultat.
             $row = $this->bdtopoConnection->fetchAssociative(
-                'WITH sections AS (
-                    SELECT ST_Force2D(ST_Collect(t.geometrie)) AS geom
-                    FROM troncon_de_route AS t
-                    WHERE ST_Intersects(t.geometrie, :geom)
-                )
-                SELECT ST_AsGeoJSON(ST_Intersection(:geom, s.geom)) AS geom
-                FROM sections AS s
-                ',
+                // ST_ApproximateMedialAxis permet de calculer la "ligne centrale" d'un polygone
+                // https://postgis.net/docs/ST_ApproximateMedialAxis.html
+                // Ici on l'utilise pour approximer le linéaire de voie à partir d'un polygone qui définit l'enveloppe de cette voie.
+                'SELECT ST_AsGeoJSON(ST_ApproximateMedialAxis(ST_MakeValid(:geom))) AS geom',
                 [
                     'geom' => $geometry,
                 ],
