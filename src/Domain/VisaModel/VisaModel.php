@@ -41,4 +41,14 @@ class VisaModel
     {
         return $this->organization;
     }
+
+    public function update(
+        string $name,
+        array $visas,
+        ?string $description = null,
+    ) {
+        $this->name = $name;
+        $this->visas = $visas;
+        $this->description = $description;
+    }
 }
