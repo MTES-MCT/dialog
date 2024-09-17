@@ -71,6 +71,24 @@ final class LocationTest extends TestCase
         $this->assertSame($numberedRoad, $numberedRoadLocation->getNumberedRoad());
         $this->assertSame($namedStreet, $namedStreetLocation->getNamedStreet());
 
+        $namedStreet
+            ->expects(self::once())
+            ->method('getRoadName')
+            ->willReturn('road name');
+        $this->assertSame('road name', $namedStreetLocation->getCifsStreetLabel());
+
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getRoadNumber')
+            ->willReturn('road number');
+        $this->assertSame('road number', $numberedRoadLocation->getCifsStreetLabel());
+
+        $rawGeoJSON
+            ->expects(self::once())
+            ->method('getLabel')
+            ->willReturn('label');
+        $this->assertSame('label', $rawGeoJSONLocation->getCifsStreetLabel());
+
         $numberedRoadLocation->setNumberedRoad($numberedRoad2);
         $namedStreetLocation->setNamedStreet($namedStreet2);
         $rawGeoJSONLocation->setRawGeoJSON($rawGeoJSON2);

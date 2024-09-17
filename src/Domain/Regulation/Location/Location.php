@@ -54,6 +54,19 @@ class Location
         return $this->rawGeoJSON;
     }
 
+    public function getCifsStreetLabel(): string
+    {
+        if ($this->namedStreet) {
+            return $this->namedStreet->getRoadName();
+        }
+
+        if ($this->numberedRoad) {
+            return $this->numberedRoad->getRoadNumber();
+        }
+
+        return $this->rawGeoJSON->getLabel();
+    }
+
     public function update(string $roadType, ?string $geometry): void
     {
         $this->roadType = $roadType;
