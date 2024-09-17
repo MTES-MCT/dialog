@@ -75,7 +75,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $crawler->selectButton('Valider')->count()); // Location form
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', $publishBtn->form()->getUri());
         $this->assertSame('POST', $publishBtn->form()->getMethod());
-        $this->assertCount(1, $publishBtn->siblings()->filter('input[name="token"]'));
+        $this->assertCount(1, $publishBtn->siblings()->filter('input[name="_token"]'));
 
         // Go back link
         $goBackLink = $crawler->selectLink('Revenir aux arrêtés');

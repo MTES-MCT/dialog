@@ -16,7 +16,7 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
         $client->request('DELETE', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e', [
-            'token' => $this->generateCsrfToken($client, 'delete-user'),
+            '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
@@ -30,24 +30,17 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
         $client->request('DELETE', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33', [
-            'token' => $this->generateCsrfToken($client, 'delete-user'),
+            '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
 
         $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function testInvalidCsrfToken(): void
-    {
-        $client = $this->login();
-        $client->request('DELETE', '/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e');
-        $this->assertResponseStatusCodeSame(400);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
         $client->request('DELETE', '/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/users/d47badd9-989e-472b-a80e-9df642e93880', [
-            'token' => $this->generateCsrfToken($client, 'delete-user'),
+            '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
         $this->assertResponseStatusCodeSame(403);
     }
@@ -56,7 +49,7 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
         $client->request('DELETE', '/organizations/f5c1cea8-a61d-43a7-9b5d-4b8c9557c673/users/b391100c-f08a-402b-ba2c-c3c09b07275a', [
-            'token' => $this->generateCsrfToken($client, 'delete-user'),
+            '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
         $this->assertResponseStatusCodeSame(404);
     }

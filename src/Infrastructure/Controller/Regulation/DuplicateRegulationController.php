@@ -13,13 +13,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DuplicateRegulationController extends AbstractRegulationController
@@ -27,7 +25,6 @@ final class DuplicateRegulationController extends AbstractRegulationController
     public function __construct(
         private CommandBusInterface $commandBus,
         private RouterInterface $router,
-        private CsrfTokenManagerInterface $csrfTokenManager,
         private TranslatorInterface $translator,
         Security $security,
         QueryBusInterface $queryBus,
@@ -42,13 +39,9 @@ final class DuplicateRegulationController extends AbstractRegulationController
         requirements: ['uuid' => Requirement::UUID],
         methods: ['POST'],
     )]
+    #[IsCsrfTokenValid('duplicate-regulation')]
     public function __invoke(Request $request, string $uuid): Response
     {
-        $csrfToken = new CsrfToken('duplicate-regulation', $request->request->get('token'));
-        if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
-            throw new BadRequestHttpException('Invalid CSRF token');
-        }
-
         /** @var FlashBagAwareSessionInterface */
         $session = $request->getSession();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
