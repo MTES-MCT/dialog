@@ -393,7 +393,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->isEmailAlreadyExists,
         );
         $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
-        $command->roles = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
+        $command->role = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';

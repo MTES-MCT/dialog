@@ -1,5 +1,5 @@
 {% extends 'layouts/app.html.twig' %}
-{% set metaTitle = 'visa.add.title'|trans %}
+{% set metaTitle = visaModel is defined ? visaModel.name : 'visa.add.title'|trans %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
