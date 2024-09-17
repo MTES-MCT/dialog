@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Visa\Repository;
+namespace App\Domain\VisaModel\Repository;
+
+use App\Domain\VisaModel\VisaModel;
 
 interface VisaModelRepositoryInterface
 {
     public function findOrganizationVisaModels(string $organizationUuid): array;
+
+    public function add(VisaModel $visaModel): VisaModel;
 }
