@@ -86,4 +86,9 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->fullName = $fullName;
     }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
+    }
 }

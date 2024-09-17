@@ -1,0 +1,21 @@
+{% set routeName = app.request.get('_route') %}
+
+<nav class="fr-sidemenu" role="navigation" aria-labelledby="sidemenu-title">
+    <div class="fr-sidemenu__inner">
+        <div class="fr-collapse" id="sidemenu">
+            <p class="fr-sidemenu__title" id="sidemenu-title">{{ user.fullName }}</p>
+            <ul class="fr-sidemenu__list">
+                <li class="fr-sidemenu__item {% if 'app_profile' in routeName %}fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{{ path('app_profile') }}" {% if 'app_profile' == routeName %}aria-current="page"{% endif%}>
+                        {{'profile.title'|trans}}
+                    </a>
+                </li>
+                <li class="fr-sidemenu__item {% if 'app_profile_password' in routeName %}fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{{ path('app_profile_password') }}" {% if 'app_profile_password' == routeName %}aria-current="page"{% endif%}>
+                        {{'profile.password.title'|trans}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
