@@ -7,10 +7,10 @@
 {% block body %}
     <section class="fr-container fr-py-5w">
         <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-3">
+            <div class="fr-col-12 fr-col-md-4">
                 {% include 'organization/_menu.html.twig' with { organization } only %}
             </div>
-            <div class="fr-col-12 fr-col-md-9">
+            <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
                     { title: 'user.myarea'|trans, path: 'app_organizations_list'},
                     { title: organization.name, url: path('app_users_list', {uuid: organization.uuid}), generatedPath: true },
@@ -25,8 +25,25 @@
                     {% if form.password is defined %}
                         {{ form_row(form.password, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                     {% endif %}
-                    {{ form_row(form.roles) }}
-
+                    <fieldset class="fr-fieldset {% if form.role.vars.errors|length > 0 %}fr-fieldset--error{% endif %}" id="user-role" aria-labelledby="user-role-legend">
+                        {{ form_errors(form.role) }}
+                        {{ form_label(form.role, null, {
+                            element: 'legend',
+                            label_attr: { 'id': 'user-role-legend', 'class': 'fr-fieldset__legend' }
+                        }) }}
+                        <div class="fr-fieldset__element">
+                            {% for option in form.role %}
+                                <div class="fr-radio-group fr-radio-rich fr-mt-2w">
+                                    {{ form_widget(option) }}
+                                    {{ form_label(option, null, { help: (option.vars.label ~ '.help')|trans }) }}
+                                    <div class="fr-radio-rich__pictogram fr-text-center">
+                                        <img src="{{ asset('images/roles/' ~ option.vars.value ~ '.svg') }}"/>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <p class="fr-mt-2w fr-message fr-message--info">{{ 'user.form.roles.info'|trans }}</p>
+                        </div>
+                    </fieldset>
                     <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                         {{ "common.cancel"|trans }}
                     </a>

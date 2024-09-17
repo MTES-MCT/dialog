@@ -112,7 +112,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
         $organizationUser = (new OrganizationUser('f40f95eb-a7dd-4232-9f03-2db10f04f37f'))
             ->setOrganization($organization)
             ->setUser($user)
-            ->setRoles([OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]);
+            ->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $this->organizationUserRepository
             ->expects(self::once())
@@ -198,7 +198,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
         $organizationUser = (new OrganizationUser('f40f95eb-a7dd-4232-9f03-2db10f04f37f'))
             ->setOrganization($organization)
             ->setUser($user)
-            ->setRoles([OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]);
+            ->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
 
         $this->organizationUserRepository
             ->expects(self::once())

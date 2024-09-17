@@ -2096,13 +2096,25 @@
                 <source>roles.ROLE_ORGA_CONTRIBUTOR</source>
                 <target>Contributeur</target>
             </trans-unit>
+            <trans-unit id="roles.ROLE_ORGA_CONTRIBUTOR.help">
+                <source>roles.ROLE_ORGA_CONTRIBUTOR.help</source>
+                <target>Peut créer des arrêtés pour son organisation</target>
+            </trans-unit>
             <trans-unit id="roles.ROLE_ORGA_PUBLISHER">
                 <source>roles.ROLE_ORGA_PUBLISHER</source>
-                <target>Editeur</target>
+                <target>Validateur</target>
+            </trans-unit>
+            <trans-unit id="roles.ROLE_ORGA_PUBLISHER.help">
+                <source>roles.ROLE_ORGA_PUBLISHER.help</source>
+                <target>Peut créer des arrêtés et les valider pour qu'ils soient disponibles aux GPS</target>
             </trans-unit>
             <trans-unit id="roles.ROLE_ORGA_ADMIN">
                 <source>roles.ROLE_ORGA_ADMIN</source>
                 <target>Administrateur</target>
+            </trans-unit>
+            <trans-unit id="roles.ROLE_ORGA_ADMIN.help">
+                <source>roles.ROLE_ORGA_ADMIN.help</source>
+                <target>Peut créer et valider des arrếtés et administrer l'organisation et ses utilisateurs</target>
             </trans-unit>
             <trans-unit id="user.list.title">
                 <source>user.list.title</source>
@@ -2138,11 +2150,15 @@
             </trans-unit>
             <trans-unit id="user.form.roles">
                 <source>user.form.roles</source>
-                <target>Rôles</target>
+                <target>Rôle</target>
             </trans-unit>
             <trans-unit id="user.form.roles.help">
                 <source>user.form.roles.help</source>
-                <target>Assigner un ou plusieurs rôles à l'utilisateur</target>
+                <target>Assigner un rôle à l'utilisateur</target>
+            </trans-unit>
+            <trans-unit id="user.form.roles.info">
+                <source>user.form.roles.info</source>
+                <target>Pour demander l'ajout ou le transfert du rôle d'administrateur de votre organisation, adressez un mail à dialog@beta.gouv.fr.</target>
             </trans-unit>
             <trans-unit id="user.list.roles">
                 <source>user.list.roles</source>
@@ -2243,6 +2259,42 @@
             <trans-unit id="litteralis.report.notice.no_measures_found">
                 <source>litteralis.report.notice.no_measures_found</source>
                 <target>Arrêtés sans aucune mesure connue de DiaLog</target>
+            </trans-unit>
+            <trans-unit id="config.menu.organization">
+                <source>config.menu.organization</source>
+                <target>Mon organisation</target>
+            </trans-unit>
+            <trans-unit id="config.menu.regulations">
+                <source>config.menu.regulations</source>
+                <target>Configuration des arrếtés</target>
+            </trans-unit>
+            <trans-unit id="config.menu.users">
+                <source>config.menu.users</source>
+                <target>Utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="config.menu.visas">
+                <source>config.menu.visas</source>
+                <target>Modèle de visas</target>
+            </trans-unit>
+            <trans-unit id="config.menu.authority">
+                <source>config.menu.authority</source>
+                <target>Autorité signataire</target>
+            </trans-unit>
+            <trans-unit id="visa.list.title">
+                <source>visa.list.title</source>
+                <target>Modèles de visas</target>
+            </trans-unit>
+            <trans-unit id="visa.list.help">
+                <source>visa.list.help</source>
+                <target>Créer des modèles de visas à utiliser par les agents dans les arrếtés de circulation créés dans DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="visa.name">
+                <source>visa.name</source>
+                <target>Nom</target>
+            </trans-unit>
+            <trans-unit id="visa.description">
+                <source>visa.description</source>
+                <target>Description</target>
             </trans-unit>
         </body>
     </file>
