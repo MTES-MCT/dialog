@@ -887,6 +887,14 @@
                 <source>profile.password.update.success</source>
                 <target><![CDATA[<h3 class="fr-alert__title">]]>Votre mot de passe a bien été mis à jour<![CDATA[</h3>]]></target>
             </trans-unit>
+            <trans-unit id="profile.description">
+                <source>profile.description</source>
+                <target>Modifier mes informations personnelles (nom, email)</target>
+            </trans-unit>
+            <trans-unit id="profile.subtitle">
+                <source>profile.subtitle</source>
+                <target>Mise à jour de mes informations</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>
                 <target>Accueil</target>
@@ -2192,6 +2200,10 @@
                 <source>user.myarea</source>
                 <target>Mon espace</target>
             </trans-unit>
+            <trans-unit id="user.myarea.description">
+                <source>user.myarea.description</source>
+                <target>Retrouvez vos informations personnelles et les organisations dont vous faites parties.</target>
+            </trans-unit>
             <trans-unit id="litteralis.report.title">
                 <source>litteralis.report.title</source>
                 <target>Intégration Litteralis</target>
@@ -2343,6 +2355,10 @@
             <trans-unit id="visas.form.visas.help">
                 <source>visas.form.visas.help</source>
                 <target>Définissez le texte qui apparaîtra en tant que visas (Vu...) dans les arrêtés</target>
+            </trans-unit>
+            <trans-unit id="myarea.title">
+                <source>myarea.title</source>
+                <target>Mon espace</target>
             </trans-unit>
         </body>
     </file>

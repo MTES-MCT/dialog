@@ -15,7 +15,7 @@ final class DeleteProfileFormType extends AbstractType
         $builder
             ->add('save', SubmitType::class,
                 options: [
-                    'label' => 'common.save',
+                    'label' => 'profile.delete.title',
                     'attr' => ['class' => 'fr-btn'],
                 ],
             )

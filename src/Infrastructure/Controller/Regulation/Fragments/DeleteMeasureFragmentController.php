@@ -19,8 +19,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class DeleteMeasureFragmentController extends AbstractRegulationController
@@ -28,7 +27,6 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
     public function __construct(
         private \Twig\Environment $twig,
         private CommandBusInterface $commandBus,
-        private CsrfTokenManagerInterface $csrfTokenManager,
         private CanDeleteMeasures $canDeleteMeasures,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
@@ -43,13 +41,9 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
         requirements: ['uuid' => Requirement::UUID],
         methods: ['DELETE'],
     )]
+    #[IsCsrfTokenValid('delete-measure')]
     public function __invoke(Request $request, string $regulationOrderRecordUuid, string $uuid): Response
     {
-        $csrfToken = new CsrfToken('delete-measure', $request->request->get('token'));
-        if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
-            throw new BadRequestHttpException('Invalid CSRF token');
-        }
-
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
 
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));

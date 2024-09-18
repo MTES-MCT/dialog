@@ -1,0 +1,65 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}
+    {{'visa.list.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w" aria-labelledby="visa-list">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: organization.name, url: path('app_users_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'visa.list.title'|trans },
+                ]} %}
+                <div class="fr-grid-row">
+                    <h2 id="visa-list" class="fr-col fr-mb-0">{{ 'visa.list.title'|trans }}</h2>
+                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                        <a href="{{ path('app_config_visa_models_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'visa.add.title'|trans }}">
+                            {{ 'visa.add.title'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+                <p class="fr-text--sm fr-mt-2w">{{ 'visa.list.help'|trans }}</p>
+                <div class="fr-table fr-table--no-scroll" id="table-md-component">
+                    <div class="fr-table__wrapper">
+                        <div class="fr-table__container">
+                            <div class="fr-table__content">
+                                <table id="table-md">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">{{ 'visa.name'|trans }}</th>
+                                            <th scope="col">{{ 'visa.description'|trans }}</th>
+                                            <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-testid="visa-list">
+                                        {% for visa in visaModels %}
+                                            <tr>
+                                                <td>{{ visa.name }}</td>
+                                                <td>{{ visa.description }}</td>
+                                                <td>
+                                                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                                        <div class="fr-btns-group fr-btns-group--inline-sm">
+                                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_visa_models_edit', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                                {{ 'common.update'|trans }}
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

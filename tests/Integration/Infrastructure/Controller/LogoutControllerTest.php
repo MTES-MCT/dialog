@@ -9,7 +9,7 @@ final class LogoutControllerTest extends AbstractWebTestCase
     public function testLogout(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations');
+        $crawler = $client->request('GET', '/mon-espace');
 
         $logoutLink = $crawler->filter('[data-testid="logout-link"]');
         $this->assertSame('Se déconnecter', $logoutLink->text());

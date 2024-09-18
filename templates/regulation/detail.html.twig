@@ -76,7 +76,7 @@
                                         {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
                                         <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInfo.uuid })}}">
                                             <button class="fr-btn fr-btn--secondary" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
-                                            <input type="hidden" name="token" value="{{ duplicateCsrfToken }}"/>
+                                            <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}"/>
                                         </form>
                                     </li>
                                     <li>
@@ -96,7 +96,7 @@
                                                 </button>
                                             </d-modal-trigger>
 
-                                            <input type="hidden" name="token" value="{{ deleteCsrfToken }}" />
+                                            <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
                                         </form>
                                     </li>
                                 </ul>
