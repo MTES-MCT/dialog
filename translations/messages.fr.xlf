@@ -851,6 +851,26 @@
                 <source>profile.password.title</source>
                 <target>Modification du mot de passe</target>
             </trans-unit>
+            <trans-unit id="profile.delete.title">
+                <source>profile.delete.title</source>
+                <target>Suppression du compte</target>
+            </trans-unit>
+            <trans-unit id="profile.delete.help">
+                <source>profile.delete.help</source>
+                <target>Vous pouvez à tout moment décider de supprimer votre compte Dialog.</target>
+            </trans-unit>
+            <trans-unit id="profile.delete.details">
+                <source>profile.delete.details</source>
+                <target>Si vous supprimez votre compte : </target>
+            </trans-unit>
+            <trans-unit id="profile.delete.first.item">
+                <source>profile.delete.first.item</source>
+                <target>Vous n’aurez plus accès à l’édition des arrêtés dans Dialog pour votre organisation.</target>
+            </trans-unit>
+            <trans-unit id="profile.delete.second.item">
+                <source>profile.delete.second.item</source>
+                <target>Vous ne pourrez plus voir les arrêtés qui ne sont pas publiés.</target>
+            </trans-unit>
             <trans-unit id="profile.password.first_option">
                 <source>profile.password.first_option</source>
                 <target>Nouveau mot de passe</target>
