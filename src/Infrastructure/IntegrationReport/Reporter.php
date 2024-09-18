@@ -84,11 +84,13 @@ final class Reporter
         return $this->records;
     }
 
-    public function start(\DateTimeInterface $startTime, Organization $organization): void
+    public function start(string $name, \DateTimeInterface $startTime, Organization $organization): void
     {
         $this->startTime = $startTime;
-        $this->logger->log('info', 'started', ['organization' => ['uuid' => $organization->getUuid(), 'name' => $organization->getName()]]);
+        $this->logger->log('info', 'started');
         $this->addFact(CommonRecordEnum::FACT_START_TIME->value, $startTime->format(\DateTimeInterface::ISO8601));
+        $this->addFact(CommonRecordEnum::FACT_INTEGRATION_NAME->value, $name);
+        $this->addFact(CommonRecordEnum::FACT_ORGANIZATION->value, ['uuid' => $organization->getUuid(), 'name' => $organization->getName()]);
     }
 
     public function end(\DateTimeInterface $endTime): void

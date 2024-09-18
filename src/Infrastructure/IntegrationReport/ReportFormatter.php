@@ -40,6 +40,17 @@ final class ReportFormatter
         return $matchingRecords;
     }
 
+    private function arrayEncode(array $array): string
+    {
+        $items = [];
+
+        foreach ($array as $key => $value) {
+            $items[] = implode(': ', [$key, $value]);
+        }
+
+        return implode(' ; ', $items);
+    }
+
     public function format(array $records): string
     {
         $lines = [];
@@ -60,6 +71,10 @@ final class ReportFormatter
                 $seconds = $value;
                 [$minutes, $seconds] = [intdiv($seconds, 60), $seconds % 60];
                 $value = \sprintf('%s min %s s', $minutes, $seconds);
+            }
+
+            if (\is_array($value)) {
+                $value = $this->arrayEncode($value);
             }
 
             $lines[] = \sprintf('%s : %s', $verboseName, $value);

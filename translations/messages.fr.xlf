@@ -2184,6 +2184,14 @@
                 <source>integration.report.section.fact.title</source>
                 <target>Informations d'exécution</target>
             </trans-unit>
+            <trans-unit id="integration.report.fact.common.integration_name">
+                <source>integration.report.fact.common.integration_name</source>
+                <target>Nom de l'intégration</target>
+            </trans-unit>
+            <trans-unit id="integration.report.fact.common.organization">
+                <source>integration.report.fact.common.organization</source>
+                <target>Organisation cible</target>
+            </trans-unit>
             <trans-unit id="integration.report.fact.common.start_time">
                 <source>integration.report.fact.common.start_time</source>
                 <target>Date et heure de début</target>

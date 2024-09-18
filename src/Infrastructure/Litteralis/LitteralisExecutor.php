@@ -33,7 +33,7 @@ final class LitteralisExecutor
         $this->extractor->configure($credentials);
     }
 
-    public function execute(string $orgId, \DateTimeInterface $laterThan, Reporter $reporter): string
+    public function execute(string $name, string $orgId, \DateTimeInterface $laterThan, Reporter $reporter): string
     {
         try {
             /** @var Organization */
@@ -43,7 +43,7 @@ final class LitteralisExecutor
         }
 
         $startTime = $this->dateUtils->getNow();
-        $reporter->start($startTime, $organization);
+        $reporter->start($name, $startTime, $organization);
 
         $this->commandBus->handle(new CleanUpLitteralisRegulationsBeforeImportCommand($organization->getUuid(), $laterThan));
 
