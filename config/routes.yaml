@@ -2,6 +2,12 @@ controllers:
     resource: ../src/Infrastructure/Controller/
     type: attribute
 
+my_area_controllers:
+    resource: ../src/Infrastructure/Controller/MyArea
+    type: attribute
+    prefix: /mon-espace
+    trailing_slash_on_root: false
+
 app_logout:
     path: /logout
     methods: GET

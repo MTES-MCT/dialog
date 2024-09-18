@@ -1,0 +1,30 @@
+{% extends 'layouts/app.html.twig' %}
+{% set metaTitle = user.fullName %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-3">
+                {{ include ('my_area/profile/_menu.html.twig') }}
+            </div>
+            <div class="fr-col-12 fr-col-md-9">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: 'profile.title'|trans, url: path('app_profile'), generatedPath: true },
+                    { title: metaTitle },
+                ]} %}
+                <h2 class="fr-mb-2w">{{ 'profile.title'|trans }}</h2>
+                {{ form_start(form) }}
+                    {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    {{ form_widget(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+

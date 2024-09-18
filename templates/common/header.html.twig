@@ -37,16 +37,9 @@
                                         {{ 'common.feedback'|trans }}
                                     </a>
                                 </li>
-                                {% if is_granted('ROLE_SUPER_ADMIN') %}
-                                    <li>
-                                        <a class="fr-btn fr-icon-settings-5-line" href="{{ path('app_admin') }}">
-                                            Administration
-                                        </a>
-                                    </li>
-                                {% endif %}
                                 <li>
-                                    <a class="fr-btn fr-icon-lock-unlock-line" href="{{ path('app_logout') }}" data-testid="logout-link">
-                                        {{ 'common.logout'|trans }}
+                                    <a class="fr-btn fr-icon-account-circle-fill" href="{{ path('app_my_area') }}">
+                                        {{ 'myarea.title'|trans }}
                                     </a>
                                 </li>
                             {% else %}
