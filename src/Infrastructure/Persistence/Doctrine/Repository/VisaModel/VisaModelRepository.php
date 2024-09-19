@@ -24,6 +24,11 @@ final class VisaModelRepository extends ServiceEntityRepository implements VisaM
         return $visaModel;
     }
 
+    public function remove(VisaModel $visaModel): void
+    {
+        $this->getEntityManager()->remove($visaModel);
+    }
+
     public function findOneByUuid(string $uuid): ?VisaModel
     {
         return $this->createQueryBuilder('v')
