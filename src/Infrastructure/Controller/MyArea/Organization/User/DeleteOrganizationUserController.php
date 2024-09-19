@@ -13,7 +13,6 @@ use App\Domain\User\Exception\OrganizationUserNotFoundException;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,7 +38,7 @@ final class DeleteOrganizationUserController
         methods: ['DELETE'],
     )]
     #[IsCsrfTokenValid('delete-user')]
-    public function __invoke(Request $request, string $organizationUuid, string $uuid): RedirectResponse
+    public function __invoke(string $organizationUuid, string $uuid): RedirectResponse
     {
         try {
             $organizationUser = $this->queryBus->handle(new GetOrganizationUserQuery($organizationUuid, $uuid));

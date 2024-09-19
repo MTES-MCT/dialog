@@ -2344,6 +2344,14 @@
                 <source>myarea.title</source>
                 <target>Mon espace</target>
             </trans-unit>
+            <trans-unit id="visa.delete_modal.title">
+                <source>visa.delete_modal.title</source>
+                <target>Supprimer ce modèle ?</target>
+            </trans-unit>
+            <trans-unit id="visa.list.delete">
+                <source>visa.list.delete</source>
+                <target>Supprimer le modèle "%name%" de l'organisation</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
