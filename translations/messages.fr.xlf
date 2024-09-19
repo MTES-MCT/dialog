@@ -18,6 +18,10 @@
                 <source>common.blog</source>
                 <target>Blog</target>
             </trans-unit>
+            <trans-unit id="common.admin">
+                <source>common.admin</source>
+                <target>Administration</target>
+            </trans-unit>
             <trans-unit id="common.and">
                 <source>common.and</source>
                 <target>et</target>
