@@ -8,18 +8,26 @@ use App\Domain\User\Organization;
 
 class VisaModel
 {
+    private string $name;
+    private array $visas;
+    private ?string $description;
+    private ?Organization $organization;
+
     public function __construct(
         private string $uuid,
-        private string $name,
-        private array $visas,
-        private ?string $description,
-        private ?Organization $organization,
     ) {
     }
 
     public function getUuid(): string
     {
         return $this->uuid;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     public function getName(): string
@@ -32,9 +40,23 @@ class VisaModel
         return $this->description;
     }
 
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getVisas(): array
     {
         return $this->visas;
+    }
+
+    public function setVisas(array $visas): self
+    {
+        $this->visas = $visas;
+
+        return $this;
     }
 
     public function getOrganization(): ?Organization
@@ -42,11 +64,18 @@ class VisaModel
         return $this->organization;
     }
 
+    public function setOrganization(Organization $organization): self
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
     public function update(
         string $name,
         array $visas,
         ?string $description = null,
-    ) {
+    ): void {
         $this->name = $name;
         $this->visas = $visas;
         $this->description = $description;
