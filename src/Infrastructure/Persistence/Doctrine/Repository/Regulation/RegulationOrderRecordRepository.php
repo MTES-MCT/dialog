@@ -251,7 +251,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.status = :status',
                 'ro.endDate >= :today',
                 'loc.geometry IS NOT NULL',
-                'loc.roadType NOT IN (:excludedRoadTypes)',
+                'loc.roadType NOT IN (:excludedRoadTypes) OR (loc.roadType = :rawGeoJSONRoadType AND roc.source = :litteralisSource)',
                 $allowedSources ? 'roc.source in (:allowedSources)' : null,
                 $excludedIdentifiers ? 'ro.identifier NOT IN (:excludedIdentifiers)' : null,
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
@@ -266,6 +266,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                 'today' => $this->dateUtils->getNow(),
                 'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
+                // Allow RawGeoJSON locations only for Litteralis source
+                'rawGeoJSONRoadType' => RoadTypeEnum::RAW_GEOJSON->value,
+                'litteralisSource' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
             ])
             ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
