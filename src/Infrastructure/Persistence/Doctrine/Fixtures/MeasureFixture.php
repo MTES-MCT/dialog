@@ -80,6 +80,13 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2023-01-06'),
         );
 
+        $litteralisMeasure = new Measure(
+            '066e984c-9939-76ed-8000-d070d574f378',
+            $this->getReference('litteralisRegulationOrder'),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-06-01'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
@@ -88,6 +95,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($cifsMeasure);
         $manager->persist($outDatedCifsMeasure);
         $manager->persist($rawGeoJSONMeasure);
+        $manager->persist($litteralisMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
@@ -97,6 +105,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('cifsMeasure', $cifsMeasure);
         $this->addReference('outDatedCifsMeasure', $outDatedCifsMeasure);
         $this->addReference('rawGeoJSONMeasure', $rawGeoJSONMeasure);
+        $this->addReference('litteralisMeasure', $litteralisMeasure);
 
         $manager->flush();
     }

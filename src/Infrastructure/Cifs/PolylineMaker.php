@@ -14,6 +14,18 @@ final class PolylineMaker implements PolylineMakerInterface
     ) {
     }
 
+    public function attemptMergeLines(string $geometry): ?string
+    {
+        $row = $this->em
+            ->getConnection()
+            ->fetchAssociative(
+                'SELECT ST_AsGeoJSON(ST_LineMerge(:geom)) AS geom',
+                ['geom' => $geometry],
+            );
+
+        return $row['geom'] ?? $geometry;
+    }
+
     public function getPolylines(string $geometry): array
     {
         $rows = $this->em

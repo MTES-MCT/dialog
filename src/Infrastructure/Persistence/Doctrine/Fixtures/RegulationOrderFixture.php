@@ -116,6 +116,15 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2020-06-10'),
         );
 
+        $litteralisRegulationOrder = new RegulationOrder(
+            uuid: '066e9849-f802-7a4c-8000-845f47c4b0de',
+            identifier: '117374#24-A-0473',
+            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            description: 'Arrêté de voirie (URL : https://dl.sogelink.fr/?iX5UN3GL)',
+            startDate: new \DateTimeImmutable('2023-06-03'),
+            endDate: new \DateTimeImmutable('2023-11-10'),
+        );
+
         $manager->persist($typicalRegulationOrder);
         $manager->persist($publishedRegulationOrder);
         $manager->persist($regulationOrderDuplicate);
@@ -127,6 +136,7 @@ final class RegulationOrderFixture extends Fixture
         $manager->persist($regulationOrderCifs);
         $manager->persist($outDatedRegulationOrderCifs);
         $manager->persist($rawGeoJSONRegulationOrder);
+        $manager->persist($litteralisRegulationOrder);
         $manager->flush();
 
         $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
@@ -140,5 +150,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('regulationOrderCifs', $regulationOrderCifs);
         $this->addReference('outDatedRegulationOrderCifs', $outDatedRegulationOrderCifs);
         $this->addReference('rawGeoJSONRegulationOrder', $rawGeoJSONRegulationOrder);
+        $this->addReference('litteralisRegulationOrder', $litteralisRegulationOrder);
     }
 }

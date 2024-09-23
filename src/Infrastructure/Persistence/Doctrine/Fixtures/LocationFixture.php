@@ -261,6 +261,19 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             label: 'Zone Olympique',
         );
 
+        $litteralisLocation1 = new Location(
+            '066e984f-4746-78f8-8000-dce555b28604',
+            $this->getReference('litteralisMeasure'),
+            roadType: RoadTypeEnum::RAW_GEOJSON->value,
+            geometry: '{"type":"MultiLineString","coordinates":[[[3.023890325,50.570177599],[3.023850386,50.570151247]],[[3.023890325,50.570177599],[3.024458944,50.570503315]],[[3.024458944,50.570503315],[3.024500711,50.570527945]],[[3.024500711,50.570527945],[3.024501619,50.570528488]],[[3.024501619,50.570528488],[3.025116052,50.570901355]],[[3.025116052,50.570901355],[3.02515503,50.570929555]],[[3.023850386,50.570151247],[3.02384667,50.570148629]],[[3.023475742,50.569868822],[3.023440948,50.569835923]],[[3.023475742,50.569868822],[3.02384667,50.570148629]],[[3.02515503,50.570929555],[3.025159053,50.570932711]],[[3.025159053,50.570932711],[3.025653937,50.571355649]],[[3.025653937,50.571355649],[3.02569009,50.57138952]],[[3.02569009,50.57138952],[3.025691455,50.571390856]],[[3.025691455,50.571390856],[3.026131049,50.571842058]],[[3.026131049,50.571842058],[3.026159516,50.571877523]],[[3.023440948,50.569835923],[3.02343789,50.569832708]],[[3.023149663,50.569492048],[3.023119275,50.569455721]],[[3.023149663,50.569492048],[3.02343789,50.569832708]],[[3.022717354,50.568969715],[3.023119183,50.56945561]],[[3.023119275,50.569455721],[3.023119183,50.56945561]],[[3.026159516,50.571877523],[3.02616073,50.571879188]],[[3.02616073,50.571879188],[3.027150974,50.57338937]]]}',
+        );
+
+        $litteralisLocation1RawGeoJSON = new RawGeoJSON(
+            uuid: '066e9850-3f1e-7735-8000-dacea1fe4ff1',
+            location: $litteralisLocation1,
+            label: 'ROUTE 147 (NOYELLES-LÈS-SECLIN) DU PR7 +779 AU PR8 +413',
+        );
+
         $manager->persist($namedStreetTypicalMeasureLocation1);
         $manager->persist($namedStreetTypicalMeasureLocation2);
         $manager->persist($namedStreetTypicalMeasureLocation3);
@@ -289,6 +302,8 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($cifsLocationDepartmentalRoad);
         $manager->persist($rawGeoJSONLocation);
         $manager->persist($rawGeoJSON);
+        $manager->persist($litteralisLocation1);
+        $manager->persist($litteralisLocation1RawGeoJSON);
         $manager->flush();
 
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);
