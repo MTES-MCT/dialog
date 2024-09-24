@@ -7,8 +7,9 @@ namespace App\Tests\Unit\Infrastructure\Litteralis;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
+use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisPeriodParser;
-use App\Infrastructure\Litteralis\LitteralisReporter;
+use App\Infrastructure\Litteralis\LitteralisRecordEnum;
 use PHPUnit\Framework\TestCase;
 
 final class LitteralisPeriodParserTest extends TestCase
@@ -69,7 +70,7 @@ final class LitteralisPeriodParserTest extends TestCase
     public function testParseTimeSlots(string $value, array $expectedResult): void
     {
         $properties = [];
-        $reporter = $this->createMock(LitteralisReporter::class);
+        $reporter = $this->createMock(Reporter::class);
 
         $this->assertEquals($expectedResult, $this->parser->parseTimeSlots($value, $properties, $reporter));
     }
@@ -98,12 +99,12 @@ final class LitteralisPeriodParserTest extends TestCase
             'shorturl' => 'url',
         ];
 
-        $reporter = $this->createMock(LitteralisReporter::class);
+        $reporter = $this->createMock(Reporter::class);
 
         $reporter
             ->expects(self::once())
             ->method('addError')
-            ->with($reporter::ERROR_PERIOD_UNPARSABLE);
+            ->with(LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value);
 
         $this->assertEquals([], $this->parser->parseTimeSlots($value, $properties, $reporter));
     }
@@ -118,7 +119,7 @@ final class LitteralisPeriodParserTest extends TestCase
             'emprisedebut' => '',
             'emprisefin' => '',
         ];
-        $reporter = $this->createMock(LitteralisReporter::class);
+        $reporter = $this->createMock(Reporter::class);
 
         $periodCommand = new SavePeriodCommand();
         $periodCommand->startDate = new \DateTimeImmutable('2024-09-21 23:00');

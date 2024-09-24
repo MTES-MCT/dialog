@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Litteralis;
 
+use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisClient;
-use App\Infrastructure\Litteralis\LitteralisReporter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -18,7 +18,7 @@ final class LitteralisClientTest extends TestCase
     protected function setUp(): void
     {
         $this->httpClient = new MockHttpClient(baseUri: 'http://testserver');
-        $this->reporter = $this->createMock(LitteralisReporter::class);
+        $this->reporter = $this->createMock(Reporter::class);
     }
 
     public function testNotConfigured(): void

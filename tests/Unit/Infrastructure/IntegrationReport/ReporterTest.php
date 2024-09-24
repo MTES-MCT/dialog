@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Infrastructure\Litteralis;
+namespace App\Tests\Unit\Infrastructure\IntegrationReport;
 
 use App\Domain\User\Organization;
-use App\Infrastructure\Litteralis\LitteralisReporter;
+use App\Infrastructure\IntegrationReport\RecordTypeEnum;
+use App\Infrastructure\IntegrationReport\Reporter;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class LitteralisReporterTest extends TestCase
+final class ReporterTest extends TestCase
 {
     private $logger;
     private $reporter;
@@ -19,7 +20,7 @@ final class LitteralisReporterTest extends TestCase
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->reporter = new LitteralisReporter($this->logger);
+        $this->reporter = new Reporter($this->logger);
     }
 
     public function testReport(): void
@@ -33,7 +34,7 @@ final class LitteralisReporterTest extends TestCase
             ->method('log')
             ->withConsecutive(
                 [LogLevel::INFO, 'started'],
-                [LogLevel::INFO, 'start_time', ['value' => '2024-08-01T16:00:00+0000']],
+                [LogLevel::INFO, 'common.start_time', ['value' => '2024-08-01T16:00:00+0000']],
                 [LogLevel::DEBUG, 'request', ['method' => 'GET', 'path' => '/example', 'options' => ['headers' => ['Accept-Encoding' => 'gzip']]]],
                 [LogLevel::DEBUG, 'response', ['status' => 200]],
                 [LogLevel::ERROR, 'some_error', ['message' => 'oops!']],
@@ -43,8 +44,8 @@ final class LitteralisReporterTest extends TestCase
                 [LogLevel::INFO, 'extract:done', []],
                 [LogLevel::DEBUG, 'extract:done:details', ['result' => 'some_result']],
                 [LogLevel::INFO, 'end'],
-                [LogLevel::INFO, 'end_time', ['value' => '2024-08-01T16:02:00+0000']],
-                [LogLevel::INFO, 'elapsed_seconds', ['value' => 120]],
+                [LogLevel::INFO, 'common.end_time', ['value' => '2024-08-01T16:02:00+0000']],
+                [LogLevel::INFO, 'common.elapsed_seconds', ['value' => 120]],
                 [LogLevel::INFO, 'report', ['content' => 'report content']],
             );
 
@@ -56,19 +57,19 @@ final class LitteralisReporterTest extends TestCase
         $this->reporter->addError('some_error', ['message' => 'oops!']);
         $this->reporter->addWarning('some_warning', ['message' => 'beware!']);
         $this->reporter->addNotice('some_notice', ['msg' => 'here is some info']);
-        $this->reporter->setCount('some_count', 42, ['%filter%' => 'endDate IS NULL']);
+        $this->reporter->addCount('some_count', 42, ['%filter%' => 'endDate IS NULL']);
         $this->reporter->onExtract('some_result');
         $this->reporter->end($endDate);
         $this->reporter->onReport('report content');
 
         $this->assertEquals([
-            [LitteralisReporter::FACT, [LitteralisReporter::FACT => 'start_time', 'value' => '2024-08-01T16:00:00+0000']],
-            [LitteralisReporter::ERROR, [LitteralisReporter::ERROR => 'some_error', 'message' => 'oops!']],
-            [LitteralisReporter::WARNING, [LitteralisReporter::WARNING => 'some_warning', 'message' => 'beware!']],
-            [LitteralisReporter::NOTICE, [LitteralisReporter::NOTICE => 'some_notice', 'msg' => 'here is some info']],
-            [LitteralisReporter::COUNT, [LitteralisReporter::COUNT => 'some_count', 'value' => 42, '%filter%' => 'endDate IS NULL']],
-            [LitteralisReporter::FACT, [LitteralisReporter::FACT => 'end_time', 'value' => '2024-08-01T16:02:00+0000']],
-            [LitteralisReporter::FACT, [LitteralisReporter::FACT => 'elapsed_seconds', 'value' => 120]],
+            [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => 'common.start_time', 'value' => '2024-08-01T16:00:00+0000']],
+            [RecordTypeEnum::ERROR->value, [RecordTypeEnum::ERROR->value => 'some_error', 'message' => 'oops!']],
+            [RecordTypeEnum::WARNING->value, [RecordTypeEnum::WARNING->value => 'some_warning', 'message' => 'beware!']],
+            [RecordTypeEnum::NOTICE->value, [RecordTypeEnum::NOTICE->value => 'some_notice', 'msg' => 'here is some info']],
+            [RecordTypeEnum::COUNT->value, [RecordTypeEnum::COUNT->value => 'some_count', 'value' => 42, '%filter%' => 'endDate IS NULL']],
+            [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => 'common.end_time', 'value' => '2024-08-01T16:02:00+0000']],
+            [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => 'common.elapsed_seconds', 'value' => 120]],
         ], $this->reporter->getRecords());
     }
 

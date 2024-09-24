@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Litteralis;
 
+use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisClient;
 use App\Infrastructure\Litteralis\LitteralisExtractor;
-use App\Infrastructure\Litteralis\LitteralisReporter;
+use App\Infrastructure\Litteralis\LitteralisRecordEnum;
 use PHPUnit\Framework\TestCase;
 
 final class LitteralisExtractorTest extends TestCase
@@ -17,7 +18,7 @@ final class LitteralisExtractorTest extends TestCase
     protected function setUp(): void
     {
         $this->client = $this->createMock(LitteralisClient::class);
-        $this->reporter = $this->createMock(LitteralisReporter::class);
+        $this->reporter = $this->createMock(Reporter::class);
     }
 
     public function testExtractFeaturesByRegulation(): void
@@ -82,17 +83,17 @@ final class LitteralisExtractorTest extends TestCase
 
         $this->reporter
             ->expects(self::exactly(3))
-            ->method('setCount')
+            ->method('addCount')
             ->withConsecutive(
-                [$this->reporter::COUNT_TOTAL_FEATURES, 10],
-                [$this->reporter::COUNT_MATCHING_FEATURES, 4],
-                [$this->reporter::COUNT_EXTRACTED_FEATURES, 3],
+                [LitteralisRecordEnum::COUNT_TOTAL_FEATURES->value, 10],
+                [LitteralisRecordEnum::COUNT_MATCHING_FEATURES->value, 4],
+                [LitteralisRecordEnum::COUNT_EXTRACTED_FEATURES->value, 3],
             );
 
         $this->reporter
             ->expects(self::once())
             ->method('addWarning')
-            ->with($this->reporter::WARNING_MISSING_GEOMETRY, [
+            ->with(LitteralisRecordEnum::WARNING_MISSING_GEOMETRY->value, [
                 'idemprise' => 'emprise4',
                 'arretesrcid' => 'arrete3',
                 'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',

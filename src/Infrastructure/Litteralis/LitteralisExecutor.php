@@ -11,6 +11,9 @@ use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
+use App\Infrastructure\IntegrationReport\Reporter;
+use App\Infrastructure\IntegrationReport\ReportFormatter;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
 final class LitteralisExecutor
@@ -20,8 +23,7 @@ final class LitteralisExecutor
         private QueryBusInterface $queryBus,
         private LitteralisExtractor $extractor,
         private LitteralisTransformer $transformer,
-        private LitteralisReporterFactory $reporterFactory,
-        private LitteralisReportFormatter $reportFormatter,
+        private ReportFormatter $reportFormatter,
         private DateUtilsInterface $dateUtils,
     ) {
     }
@@ -31,7 +33,7 @@ final class LitteralisExecutor
         $this->extractor->configure($credentials);
     }
 
-    public function execute(string $orgId, \DateTimeInterface $laterThan): string
+    public function execute(string $orgId, \DateTimeInterface $laterThan, Reporter $reporter): string
     {
         try {
             /** @var Organization */
@@ -40,7 +42,6 @@ final class LitteralisExecutor
             throw new \RuntimeException(\sprintf('Organization not found: %s', $orgId));
         }
 
-        $reporter = $this->reporterFactory->createReporter();
         $startTime = $this->dateUtils->getNow();
         $reporter->start($startTime, $organization);
 
@@ -65,9 +66,9 @@ final class LitteralisExecutor
                 ++$numImportedRegulations;
                 $numImportedFeatures += \count($regulationFeatures);
             } catch (\Exception $exc) {
-                $reporter->addError($reporter::ERROR_IMPORT_COMMAND_FAILED, [
-                    'arretesrcid' => $regulationFeatures[0]['properties']['arretesrcid'],
-                    'shorturl' => $regulationFeatures[0]['properties']['shorturl'],
+                $reporter->addError(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationFeatures[0]['properties']['arretesrcid'],
+                    CommonRecordEnum::ATTR_URL->value => $regulationFeatures[0]['properties']['shorturl'],
                     'message' => $exc->getMessage(),
                     'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
                     'command' => $command,
@@ -77,7 +78,7 @@ final class LitteralisExecutor
             $reporter->acknowledgeNewErrors();
         }
 
-        $reporter->setCount($reporter::COUNT_IMPORTED_FEATURES, $numImportedFeatures, ['regulationsCount' => $numImportedRegulations]);
+        $reporter->addCount(LitteralisRecordEnum::COUNT_IMPORTED_FEATURES->value, $numImportedFeatures, ['regulationsCount' => $numImportedRegulations]);
 
         $reporter->end(endTime: $this->dateUtils->getNow());
         $report = $this->reportFormatter->format($reporter->getRecords());

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis;
 
+use App\Infrastructure\IntegrationReport\Reporter;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -25,7 +26,7 @@ final class LitteralisClient
         $this->credentials = $credentials;
     }
 
-    private function makeRequest(string $method, string $path, array $options, ?LitteralisReporter $reporter = null): ResponseInterface
+    private function makeRequest(string $method, string $path, array $options, ?Reporter $reporter = null): ResponseInterface
     {
         if (!isset($this->credentials)) {
             throw new \RuntimeException('Credentials not set, call `setCredentials()` first');
@@ -45,7 +46,7 @@ final class LitteralisClient
         return $response;
     }
 
-    public function fetchAllPaginated(string $cqlFilter, ?LitteralisReporter $reporter = null): array
+    public function fetchAllPaginated(string $cqlFilter, ?Reporter $reporter = null): array
     {
         $features = [];
 
@@ -87,7 +88,7 @@ final class LitteralisClient
         return $features;
     }
 
-    public function count(?string $cqlFilter = null, ?LitteralisReporter $reporter = null): int
+    public function count(?string $cqlFilter = null, ?Reporter $reporter = null): int
     {
         $method = 'GET';
         $path = '/maplink/public/wfs';

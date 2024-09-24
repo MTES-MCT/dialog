@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Litteralis;
+namespace App\Infrastructure\IntegrationReport;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class LitteralisReportFormatter
+final class ReportFormatter
 {
     public function __construct(
         private TranslatorInterface $translator,
@@ -45,18 +45,18 @@ final class LitteralisReportFormatter
         $lines = [];
 
         // Une entête pour le rapport
-        $lines[] = $this->header('=', $this->translator->trans('litteralis.report.title'));
+        $lines[] = $this->header('=', $this->translator->trans('integration.report.title'));
         $lines[] = '';
 
         // Une section avec les infos d'exécution
-        $lines[] = $this->header('-', $this->translator->trans('litteralis.report.section.fact.title'));
+        $lines[] = $this->header('-', $this->translator->trans('integration.report.section.fact.title'));
         $lines[] = '';
 
-        foreach ($this->findRecordsByType(LitteralisReporter::FACT, $records) as [$name, $context]) {
-            $verboseName = $this->translator->trans(\sprintf('litteralis.report.fact.%s', $name));
+        foreach ($this->findRecordsByType(RecordTypeEnum::FACT->value, $records) as [$name, $context]) {
+            $verboseName = $this->translator->trans(\sprintf('integration.report.fact.%s', $name));
             $value = $context['value'];
 
-            if ($name === 'elapsed_seconds') {
+            if ($name === CommonRecordEnum::FACT_ELAPSED_SECONDS->value) {
                 $seconds = $value;
                 [$minutes, $seconds] = [intdiv($seconds, 60), $seconds % 60];
                 $value = \sprintf('%s min %s s', $minutes, $seconds);
@@ -68,11 +68,11 @@ final class LitteralisReportFormatter
         $lines[] = '';
 
         // Une section avec les décomptes
-        $lines[] = $this->header('-', $this->translator->trans('litteralis.report.section.count.title'));
+        $lines[] = $this->header('-', $this->translator->trans('integration.report.section.count.title'));
         $lines[] = '';
 
-        foreach ($this->findRecordsByType(LitteralisReporter::COUNT, $records) as [$name, $context]) {
-            $verboseName = $this->translator->trans(\sprintf('litteralis.report.count.%s', $name));
+        foreach ($this->findRecordsByType(RecordTypeEnum::COUNT->value, $records) as [$name, $context]) {
+            $verboseName = $this->translator->trans(\sprintf('integration.report.count.%s', $name));
             $value = $context['value'];
             $line = \sprintf('%s : %s', $verboseName, $value);
 
@@ -81,7 +81,7 @@ final class LitteralisReportFormatter
                     '%s (%s)',
                     $line,
                     $this->translator->trans(
-                        'litteralis.report.among_regulations',
+                        'integration.report.among_regulations',
                         [
                             '%count%' => $context['regulationsCount'],
                         ],
@@ -98,9 +98,9 @@ final class LitteralisReportFormatter
         // Au sein de chaque section, on affiche chaque cas rencontré, son nombre d'occurrence, et les arrêtés concernés.
 
         $caseLists = [
-            LitteralisReporter::ERROR => [],
-            LitteralisReporter::WARNING => [],
-            LitteralisReporter::NOTICE => [],
+            RecordTypeEnum::ERROR->value => [],
+            RecordTypeEnum::WARNING->value => [],
+            RecordTypeEnum::NOTICE->value => [],
         ];
 
         // Pour chaque type de cas, calcul des nombres d'occurrence et arrêtés concernés
@@ -119,13 +119,13 @@ final class LitteralisReportFormatter
 
             ++$info['count'];
 
-            $regulationId = $context['arretesrcid'];
+            $regulationId = $context[CommonRecordEnum::ATTR_REGULATION_ID->value];
 
             if (!\in_array($regulationId, $info['regulations'])) {
                 $info['regulations'][] = $regulationId;
 
-                if (\array_key_exists('shorturl', $context)) {
-                    $info['urls'][$regulationId] = $context['shorturl'];
+                if (\array_key_exists(CommonRecordEnum::ATTR_URL->value, $context)) {
+                    $info['urls'][$regulationId] = $context[CommonRecordEnum::ATTR_URL->value];
                 }
             }
 
@@ -133,19 +133,19 @@ final class LitteralisReportFormatter
         }
 
         foreach ($caseLists as $type => $cases) {
-            $lines[] = $this->header('-', $this->translator->trans(\sprintf('litteralis.report.section.%s.title', $type)));
+            $lines[] = $this->header('-', $this->translator->trans(\sprintf('integration.report.section.%s.title', $type)));
             $lines[] = '';
 
             foreach ($cases as $name => $info) {
                 // Affichage du cas et du nombre d'occurrences
-                $verboseName = $this->translator->trans(\sprintf('litteralis.report.%s.%s', $type, $name));
+                $verboseName = $this->translator->trans(\sprintf('integration.report.%s.%s', $type, $name));
 
                 $lines[] = \sprintf(
                     '%s : %s (%s)',
                     $verboseName,
                     $info['count'],
                     $this->translator->trans(
-                        'litteralis.report.among_regulations',
+                        'integration.report.among_regulations',
                         [
                             '%count%' => \count($info['regulations']),
                         ],
@@ -153,7 +153,7 @@ final class LitteralisReportFormatter
                 );
 
                 // Affichage des arrêtés concernés
-                $lines[] = \sprintf('  %s :', $this->translator->trans('litteralis.report.regulations'));
+                $lines[] = \sprintf('  %s :', $this->translator->trans('integration.report.regulations'));
 
                 foreach ($info['regulations'] as $id) {
                     $line = \sprintf('    %s', $id);
