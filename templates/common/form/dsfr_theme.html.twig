@@ -4,6 +4,13 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 #}
 {% use "form_div_layout.html.twig" %}
 
+{% block form_start %}
+  {% set attr = attr|default({}) %}
+  {% set attr = attr|merge({'data-controller': (attr['data-controller']|default('')) ~ ' viewport'}) %}
+
+  {{ parent() }}
+{% endblock form_start %}
+
 {% block form_row %}
   {%- set widget_attr = {} -%}
   {%- if errors|length > 0 -%}
@@ -171,7 +178,7 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
   {% if errors|length > 0 %}
     <div class="fr-messages-group" id="{{ id }}_error" aria-live="polite">
       {%- for error in errors -%}
-        <p class="fr-message fr-message--error">
+        <p class="fr-message fr-message--error" data-viewport-target="scroll">
           {{ error.message }}
         </p>
       {%- endfor -%}
