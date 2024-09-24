@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Cifs\PolylineMakerInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
@@ -21,6 +22,7 @@ final class GetCifsIncidentsQueryHandler
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
+        private DateUtilsInterface $dateUtils,
         private CifsFilterSet $cifsFilterSet = new CifsFilterSet(),
     ) {
     }
@@ -108,7 +110,8 @@ final class GetCifsIncidentsQueryHandler
                     $incidentPeriods[] = [
                         'id' => '0',
                         'start' => $regulationStart,
-                        'end' => $regulationEnd,
+                        // Use next day to include the end date
+                        'end' => $this->dateUtils->addDays($regulationEnd, 1),
                         'schedule' => [],
                     ];
                 }
