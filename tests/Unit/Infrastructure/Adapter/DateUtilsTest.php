@@ -38,4 +38,40 @@ final class DateUtilsTest extends TestCase
 
         $this->assertEquals(new \DateTime('2023-10-10 08:00:00'), $dateUtils->mergeDateAndTime($date1, $date2));
     }
+
+    private function provideAddDays(): array
+    {
+        return [
+            [
+                'date' => new \DateTime('2023-10-09 23:00:00 UTC'),
+                'days' => 0,
+                'result' => new \DateTime('2023-10-09 23:00:00 UTC'),
+            ],
+            [
+                'date' => new \DateTime('2023-10-09 23:00:00 UTC'),
+                'days' => 1,
+                'result' => new \DateTime('2023-10-10 23:00:00 UTC'),
+            ],
+            [
+                'date' => new \DateTime('2023-10-01 23:00:00 UTC'),
+                'days' => -1,
+                'result' => new \DateTime('2023-09-30 23:00:00 UTC'),
+            ],
+            [
+                'date' => new \DateTime('2024-02-29 23:00:00 UTC'),
+                'days' => 3,
+                'result' => new \DateTime('2024-03-03 23:00:00 UTC'),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideAddDays
+     */
+    public function testAddDays(\DateTimeInterface $date, int $days, \DateTimeInterface $result): void
+    {
+        $dateUtils = new DateUtils('Etc/GMT-1');
+
+        $this->assertEquals($result, $dateUtils->addDays($date, $days));
+    }
 }

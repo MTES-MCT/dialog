@@ -53,4 +53,10 @@ final class DateUtils implements DateUtilsInterface
             ->setTime($hour, $min)
             ->setTimeZone(new \DateTimeZone('UTC'));
     }
+
+    public function addDays(\DateTimeInterface $dateTime, int $numDays): \DateTimeInterface
+    {
+        return \DateTimeImmutable::createFromInterface($dateTime)
+            ->add(\DateInterval::createFromDateString(\sprintf('%d day', $numDays)));
+    }
 }

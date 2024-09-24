@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Cifs\PolylineMakerInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
@@ -26,11 +27,13 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
     private $regulationOrderRecordRepository;
     private $polylineMaker;
+    private $dateUtils;
 
     protected function setUp(): void
     {
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
     public function testGetAllEmpty(): void
@@ -40,7 +43,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -98,7 +101,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             direction: 'BOTH_DIRECTIONS',
             polyline: $polyline1,
             startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
-            endTime: new \DateTimeImmutable('2023-11-06T00:00:00+00:00'),
+            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: [],
         );
 
@@ -111,7 +114,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             direction: $incident1->direction,
             polyline: $polyline2,
             startTime: $incident1->startTime,
-            endTime: $incident1->endTime,
+            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: $incident1->schedule,
         );
 
@@ -124,7 +127,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             direction: $incident1->direction,
             polyline: $polyline1bis,
             startTime: $incident1->startTime,
-            endTime: $incident1->endTime,
+            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: $incident1->schedule,
         );
 
@@ -278,6 +281,12 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getPeriods')
             ->willReturn([]);
+
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('addDays')
+            ->with(new \DateTimeImmutable('2023-11-06 00:00:00'), 1)
+            ->willReturn(new \DateTimeImmutable('2023-11-07 00:00:00'));
 
         $location1 = $this->createMock(Location::class);
         $location1
@@ -600,7 +609,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
@@ -620,6 +629,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $handler = new GetCifsIncidentsQueryHandler(
             $this->regulationOrderRecordRepository,
             $this->polylineMaker,
+            $this->dateUtils,
             new CifsFilterSet(
                 allowedSources: ['my_source'],
                 excludedIdentifiers: ['identifier1'],

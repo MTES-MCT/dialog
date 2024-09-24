@@ -13,4 +13,6 @@ interface DateUtilsInterface
     public function getMicroTime(): float;
 
     public function mergeDateAndTime(\DateTimeInterface $date, \DateTimeInterface $time): \DateTimeInterface;
+
+    public function addDays(\DateTimeInterface $dateTime, int $numDays): \DateTimeInterface;
 }
