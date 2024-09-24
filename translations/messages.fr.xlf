@@ -2290,7 +2290,7 @@
             </trans-unit>
             <trans-unit id="config.menu.visas">
                 <source>config.menu.visas</source>
-                <target>Modèle de visas</target>
+                <target>Modèles de visas</target>
             </trans-unit>
             <trans-unit id="config.menu.authority">
                 <source>config.menu.authority</source>
