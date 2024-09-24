@@ -14,13 +14,11 @@ final class VisaModelTest extends TestCase
     {
         $organization = $this->createMock(Organization::class);
 
-        $visaModel = new VisaModel(
-            uuid: '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
-            name: 'Réglementation de circulation',
-            visas: ['Vu que 1', 'Vu que 2'],
-            description: 'Limitation de vitesse dans la commune',
-            organization: $organization,
-        );
+        $visaModel = (new VisaModel('9cebe00d-04d8-48da-89b1-059f6b7bfe44'))
+            ->setName('Réglementation de circulation')
+            ->setDescription('Limitation de vitesse dans la commune')
+            ->setOrganization($organization)
+            ->setVisas(['Vu que 1', 'Vu que 2']);
 
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $visaModel->getUuid());
         $this->assertSame('Réglementation de circulation', $visaModel->getName());

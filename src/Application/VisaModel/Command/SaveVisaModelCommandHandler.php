@@ -28,14 +28,12 @@ final class SaveVisaModelCommandHandler
             return $visaModel;
         }
 
-        return $this->visaModelRepository->add(
-            new VisaModel(
-                uuid: $this->idFactory->make(),
-                name: $command->name,
-                visas: $command->visas,
-                description: $command->description,
-                organization: $command->organization,
-            ),
-        );
+        $visaModel = (new VisaModel($this->idFactory->make()))
+            ->setName($command->name)
+            ->setDescription($command->description)
+            ->setVisas($command->visas)
+            ->setOrganization($command->organization);
+
+        return $this->visaModelRepository->add($visaModel);
     }
 }
