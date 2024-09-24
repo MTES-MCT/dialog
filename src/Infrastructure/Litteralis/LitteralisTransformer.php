@@ -17,6 +17,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Domain\User\Organization;
+use App\Infrastructure\IntegrationReport\Reporter;
 
 final readonly class LitteralisTransformer
 {
@@ -34,7 +35,7 @@ final readonly class LitteralisTransformer
     }
 
     public function transform(
-        LitteralisReporter $reporter,
+        Reporter $reporter,
         string $identifier,
         array $regulationFeatures,
         Organization $organization,
@@ -93,7 +94,7 @@ final readonly class LitteralisTransformer
         // Ça n'est pas vraiment une erreur mais dans DiaLog un arrêté sans mesures n'est pas valide.
         // Il faut donc zapper cet arrêté.
         if (\count($measureCommands) === 0) {
-            $reporter->addNotice($reporter::NOTICE_NO_MEASURES_FOUND, [
+            $reporter->addNotice(LitteralisRecordEnum::NOTICE_NO_MEASURES_FOUND->value, [
                 'arretesrcid' => $properties['arretesrcid'],
                 'shorturl' => $properties['shorturl'],
             ]);
@@ -161,14 +162,14 @@ final readonly class LitteralisTransformer
         return $parameters;
     }
 
-    private function setRegulationDates(SaveRegulationGeneralInfoCommand $command, array $properties, LitteralisReporter $reporter): void
+    private function setRegulationDates(SaveRegulationGeneralInfoCommand $command, array $properties, Reporter $reporter): void
     {
         $startDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties['arretedebut']);
 
         if ($startDate) {
             $command->startDate = $startDate;
         } else {
-            $reporter->addError($reporter::ERROR_REGULATION_START_DATE_PARSING_FAILED, [
+            $reporter->addError(LitteralisRecordEnum::ERROR_REGULATION_START_DATE_PARSING_FAILED->value, [
                 'arretesrcid' => $properties['arretesrcid'],
                 'shorturl' => $properties['shorturl'],
                 'arretedebut' => $properties['arretedebut'],
@@ -185,7 +186,7 @@ final readonly class LitteralisTransformer
         if ($endDate) {
             $command->endDate = $endDate;
         } else {
-            $reporter->addError($reporter::ERROR_REGULATION_END_DATE_PARSING_FAILED, [
+            $reporter->addError(LitteralisRecordEnum::ERROR_REGULATION_END_DATE_PARSING_FAILED->value, [
                 'arretesrcid' => $properties['arretesrcid'],
                 'shorturl' => $properties['shorturl'],
                 'arretefin' => $properties['arretefin'],
@@ -215,7 +216,7 @@ final readonly class LitteralisTransformer
     /**
      * @return SaveMeasureCommand[]
      */
-    private function parseMeasures(array $properties, LitteralisReporter $reporter): array
+    private function parseMeasures(array $properties, Reporter $reporter): array
     {
         // D'abord on rassemble les "paramètres" de chaque mesure.
 
@@ -242,7 +243,7 @@ final readonly class LitteralisTransformer
         return $measureCommands;
     }
 
-    private function gatherMeasureParameters(array $properties, LitteralisReporter $reporter): array
+    private function gatherMeasureParameters(array $properties, Reporter $reporter): array
     {
         // NOTE: Ces commentaires sont en français pour faciliter la compréhension.
 
@@ -255,7 +256,7 @@ final readonly class LitteralisTransformer
 
         foreach ($allMeasureNames as $name) {
             if (!\array_key_exists($name, self::MEASURE_MAP)) {
-                $reporter->addNotice($reporter::NOTICE_UNSUPPORTED_MEASURE, [
+                $reporter->addNotice(LitteralisRecordEnum::NOTICE_UNSUPPORTED_MEASURE->value, [
                     'name' => $name,
                     'idemprise' => $properties['idemprise'],
                     'arretesrcid' => $properties['arretesrcid'],
@@ -314,7 +315,7 @@ final readonly class LitteralisTransformer
                 if ($number !== $index + 1) {
                     // Le numéro indiqué ne correspond pas au 1-index de la mesure dans 'mesures'.
                     // On traite ce cas comme une erreur car on ne peut pas savoir à quelle mesure ces paramètres se rattachent.
-                    $reporter->addError($reporter::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER, [
+                    $reporter->addError(LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER->value, [
                         'idemprise' => $properties['idemprise'],
                         'arretesrcid' => $properties['arretesrcid'],
                         'shorturl' => $properties['shorturl'],
@@ -354,7 +355,7 @@ final readonly class LitteralisTransformer
         return $parametersByMeasureName;
     }
 
-    private function parseVehicleSet(array $parameters, LitteralisReporter $reporter): SaveVehicleSetCommand
+    private function parseVehicleSet(array $parameters, Reporter $reporter): SaveVehicleSetCommand
     {
         $vehicleSetCommand = new SaveVehicleSetCommand();
 
@@ -408,12 +409,12 @@ final readonly class LitteralisTransformer
         return $vehicleSetCommand;
     }
 
-    private function parseMaxSpeed(array $properties, array $parameters, LitteralisReporter $reporter): ?int
+    private function parseMaxSpeed(array $properties, array $parameters, Reporter $reporter): ?int
     {
         $value = $this->findParameterValue($parameters, 'limite de vitesse');
 
         if (!$value) {
-            $reporter->addError($reporter::ERROR_MAX_SPEED_VALUE_MISSING, [
+            $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_MISSING->value, [
                 'idemprise' => $properties['idemprise'],
                 'arretesrcid' => $properties['arretesrcid'],
                 'shorturl' => $properties['shorturl'],
@@ -424,7 +425,7 @@ final readonly class LitteralisTransformer
         }
 
         if (!preg_match('/^(?P<speed>\d+)/i', $value, $matches)) {
-            $reporter->addError($reporter::ERROR_MAX_SPEED_VALUE_INVALID, [
+            $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_INVALID->value, [
                 'idemprise' => $properties['idemprise'],
                 'arretesrcid' => $properties['arretesrcid'],
                 'shorturl' => $properties['shorturl'],

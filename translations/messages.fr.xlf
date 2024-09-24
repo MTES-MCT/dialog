@@ -2192,92 +2192,92 @@
                 <source>user.myarea.description</source>
                 <target>Retrouvez vos informations personnelles et les organisations dont vous faites parties.</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.title">
-                <source>litteralis.report.title</source>
-                <target>Intégration Litteralis</target>
+            <trans-unit id="integration.report.title">
+                <source>integration.report.title</source>
+                <target>Rapport d'intégration</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.regulations">
-                <source>litteralis.report.regulations</source>
+            <trans-unit id="integration.report.regulations">
+                <source>integration.report.regulations</source>
                 <target>Arrêtés</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.section.fact.title">
-                <source>litteralis.report.section.fact.title</source>
+            <trans-unit id="integration.report.section.fact.title">
+                <source>integration.report.section.fact.title</source>
                 <target>Informations d'exécution</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.fact.start_time">
-                <source>litteralis.report.fact.start_time</source>
+            <trans-unit id="integration.report.fact.common.start_time">
+                <source>integration.report.fact.common.start_time</source>
                 <target>Date et heure de début</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.fact.end_time">
-                <source>litteralis.report.fact.end_time</source>
+            <trans-unit id="integration.report.fact.common.end_time">
+                <source>integration.report.fact.common.end_time</source>
                 <target>Date et heure de fin</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.fact.elapsed_seconds">
-                <source>litteralis.report.fact.elapsed_seconds</source>
+            <trans-unit id="integration.report.fact.common.elapsed_seconds">
+                <source>integration.report.fact.common.elapsed_seconds</source>
                 <target>Temps d'exécution</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.section.count.title">
-                <source>litteralis.report.section.count.title</source>
+            <trans-unit id="integration.report.section.count.title">
+                <source>integration.report.section.count.title</source>
                 <target>Décomptes</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.count.total_features">
-                <source>litteralis.report.count.total_features</source>
+            <trans-unit id="integration.report.count.litteralis.total_features">
+                <source>integration.report.count.litteralis.total_features</source>
                 <target>Nombre total d'emprises dans Litteralis pour cette organisation</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.count.matching_features">
-                <source>litteralis.report.count.matching_features</source>
+            <trans-unit id="integration.report.count.litteralis.matching_features">
+                <source>integration.report.count.litteralis.matching_features</source>
                 <target>Emprises d'intérêt récupérées dans Litteralis</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.count.extracted_features">
-                <source>litteralis.report.count.extracted_features</source>
+            <trans-unit id="integration.report.count.litteralis.extracted_features">
+                <source>integration.report.count.litteralis.extracted_features</source>
                 <target>Emprises effectivement candidates à l'import</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.count.imported_features">
-                <source>litteralis.report.count.imported_features</source>
+            <trans-unit id="integration.report.count.litteralis.imported_features">
+                <source>integration.report.count.litteralis.imported_features</source>
                 <target>Emprises importées avec succès</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.among_regulations">
-                <source>litteralis.report.among_regulations</source>
+            <trans-unit id="integration.report.among_regulations">
+                <source>integration.report.among_regulations</source>
                 <target>dans %count% arrêtés</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.section.error.title">
-                <source>litteralis.report.section.error.title</source>
+            <trans-unit id="integration.report.section.error.title">
+                <source>integration.report.section.error.title</source>
                 <target>Erreurs</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.error.max_speed_value_missing">
-                <source>litteralis.report.error.max_speed_value_missing</source>
+            <trans-unit id="integration.report.error.litteralis.max_speed_value_missing">
+                <source>integration.report.error.litteralis.max_speed_value_missing</source>
                 <target>Emprises avec limite de vitesse manquante</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.error.period_unparsable">
-                <source>litteralis.report.error.period_unparsable</source>
+            <trans-unit id="integration.report.error.litteralis.period_unparsable">
+                <source>integration.report.error.litteralis.period_unparsable</source>
                 <target>Emprises avec "jours et horaires" au format non-supporté</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.error.measure_parameter_inconsistent_number">
-                <source>litteralis.report.error.measure_parameter_inconsistent_number</source>
+            <trans-unit id="integration.report.error.litteralis.measure_parameter_inconsistent_number">
+                <source>integration.report.error.litteralis.measure_parameter_inconsistent_number</source>
                 <target>Emprises avec numéros de mesures incohérents</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.error.import_command_failed">
-                <source>litteralis.report.error.import_command_failed</source>
+            <trans-unit id="integration.report.error.litteralis.import_command_failed">
+                <source>integration.report.error.litteralis.import_command_failed</source>
                 <target>Commandes d'import d'arrêté qui ont échoué</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.section.warning.title">
-                <source>litteralis.report.section.warning.title</source>
+            <trans-unit id="integration.report.section.warning.title">
+                <source>integration.report.section.warning.title</source>
                 <target>Avertissements</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.warning.missing_geometry">
-                <source>litteralis.report.warning.missing_geometry</source>
+            <trans-unit id="integration.report.warning.litteralis.missing_geometry">
+                <source>integration.report.warning.litteralis.missing_geometry</source>
                 <target>Emprises sans géométrie</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.section.notice.title">
-                <source>litteralis.report.section.notice.title</source>
+            <trans-unit id="integration.report.section.notice.title">
+                <source>integration.report.section.notice.title</source>
                 <target>Remarques</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.notice.unsupported_measure">
-                <source>litteralis.report.notice.unsupported_measure</source>
+            <trans-unit id="integration.report.notice.litteralis.unsupported_measure">
+                <source>integration.report.notice.litteralis.unsupported_measure</source>
                 <target>Mesures de type non-supporté par DiaLog</target>
             </trans-unit>
-            <trans-unit id="litteralis.report.notice.no_measures_found">
-                <source>litteralis.report.notice.no_measures_found</source>
+            <trans-unit id="integration.report.notice.litteralis.no_measures_found">
+                <source>integration.report.notice.litteralis.no_measures_found</source>
                 <target>Arrêtés sans aucune mesure connue de DiaLog</target>
             </trans-unit>
             <trans-unit id="config.menu.organization">
