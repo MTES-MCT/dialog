@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis;
 
+use App\Infrastructure\IntegrationReport\Reporter;
+
 final class LitteralisExtractor
 {
     public function __construct(
@@ -16,7 +18,7 @@ final class LitteralisExtractor
         $this->client->setCredentials($credentials);
     }
 
-    public function extractFeaturesByRegulation(\DateTimeInterface $laterThan, LitteralisReporter $reporter): array
+    public function extractFeaturesByRegulation(\DateTimeInterface $laterThan, Reporter $reporter): array
     {
         $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%') AND " . \sprintf(
             "(arretefin IS NULL OR arretefin >= '%s')",
@@ -26,10 +28,10 @@ final class LitteralisExtractor
         // On calcule des totaux qui seront affichés dans le rapport final
 
         $numTotalFeatures = $this->client->count(null, $reporter);
-        $reporter->setCount($reporter::COUNT_TOTAL_FEATURES, $numTotalFeatures);
+        $reporter->addCount(LitteralisRecordEnum::COUNT_TOTAL_FEATURES->value, $numTotalFeatures);
 
         $numMatchingFeatures = $this->client->count($cqlFilter, $reporter);
-        $reporter->setCount($reporter::COUNT_MATCHING_FEATURES, $numMatchingFeatures);
+        $reporter->addCount(LitteralisRecordEnum::COUNT_MATCHING_FEATURES->value, $numMatchingFeatures);
 
         // On récupère les emprises et on les regroupe par arrêté
         $featuresByRegulation = [];
@@ -41,7 +43,7 @@ final class LitteralisExtractor
 
             if (empty($feature['geometry'])) {
                 // Parfois la 'geometry' est absente
-                $reporter->addWarning($reporter::WARNING_MISSING_GEOMETRY, [
+                $reporter->addWarning(LitteralisRecordEnum::WARNING_MISSING_GEOMETRY->value, [
                     'idemprise' => $feature['properties']['idemprise'],
                     'arretesrcid' => $identifier,
                     'shorturl' => $feature['properties']['shorturl'],
@@ -64,7 +66,7 @@ final class LitteralisExtractor
             ++$numExtractedFeatures;
         }
 
-        $reporter->setCount($reporter::COUNT_EXTRACTED_FEATURES, $numExtractedFeatures, ['regulationsCount' => \count($featuresByRegulation)]);
+        $reporter->addCount(LitteralisRecordEnum::COUNT_EXTRACTED_FEATURES->value, $numExtractedFeatures, ['regulationsCount' => \count($featuresByRegulation)]);
         $reporter->onExtract(json_encode($featuresByRegulation, JSON_UNESCAPED_UNICODE & JSON_UNESCAPED_SLASHES));
 
         return $featuresByRegulation;

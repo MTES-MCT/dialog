@@ -12,11 +12,12 @@ use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
+use App\Infrastructure\IntegrationReport\Reporter;
+use App\Infrastructure\IntegrationReport\ReportFormatter;
 use App\Infrastructure\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Litteralis\LitteralisExtractor;
-use App\Infrastructure\Litteralis\LitteralisReporter;
-use App\Infrastructure\Litteralis\LitteralisReporterFactory;
-use App\Infrastructure\Litteralis\LitteralisReportFormatter;
+use App\Infrastructure\Litteralis\LitteralisRecordEnum;
 use App\Infrastructure\Litteralis\LitteralisTransformer;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +27,7 @@ final class LitteralisExecutorTest extends TestCase
     private $queryBus;
     private $extractor;
     private $transformer;
-    private $reporterFactory;
+    private $reporter;
     private $reportFormatter;
     private $dateUtils;
     private $orgId = '066b4d97-016e-77f9-8000-1e8dfaaba586';
@@ -37,8 +38,8 @@ final class LitteralisExecutorTest extends TestCase
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->extractor = $this->createMock(LitteralisExtractor::class);
         $this->transformer = $this->createMock(LitteralisTransformer::class);
-        $this->reporterFactory = $this->createMock(LitteralisReporterFactory::class);
-        $this->reportFormatter = $this->createMock(LitteralisReportFormatter::class);
+        $this->reporter = $this->createMock(Reporter::class);
+        $this->reportFormatter = $this->createMock(ReportFormatter::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
@@ -55,9 +56,6 @@ final class LitteralisExecutorTest extends TestCase
             ->with(new GetOrganizationByUuidQuery($this->orgId))
             ->willThrowException(new OrganizationNotFoundException());
 
-        $this->reporterFactory
-            ->expects(self::never())
-            ->method('createReporter');
         $this->extractor
             ->expects(self::never())
             ->method('extractFeaturesByRegulation');
@@ -70,12 +68,11 @@ final class LitteralisExecutorTest extends TestCase
             $this->queryBus,
             $this->extractor,
             $this->transformer,
-            $this->reporterFactory,
             $this->reportFormatter,
             $this->dateUtils,
         );
 
-        $executor->execute($this->orgId, $laterThan);
+        $executor->execute($this->orgId, $laterThan, $this->reporter);
     }
 
     public function testExecute(): void
@@ -84,7 +81,6 @@ final class LitteralisExecutorTest extends TestCase
         $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
 
         $organization = $this->createMock(Organization::class);
-        $reporter = $this->createMock(LitteralisReporter::class);
         $command1 = $this->createMock(ImportLitteralisRegulationCommand::class);
         $command3 = $this->createMock(ImportLitteralisRegulationCommand::class);
 
@@ -102,17 +98,12 @@ final class LitteralisExecutorTest extends TestCase
             ->with(new GetOrganizationByUuidQuery($this->orgId))
             ->willReturn($organization);
 
-        $this->reporterFactory
-            ->expects(self::once())
-            ->method('createReporter')
-            ->willReturn($reporter);
-
         $this->dateUtils
             ->expects(self::exactly(2))
             ->method('getNow')
             ->willReturnOnConsecutiveCalls($startTime, $endTime);
 
-        $reporter
+        $this->reporter
             ->expects(self::once())
             ->method('start')
             ->with($startTime, $organization);
@@ -141,7 +132,7 @@ final class LitteralisExecutorTest extends TestCase
         $this->extractor
             ->expects(self::once())
             ->method('extractFeaturesByRegulation')
-            ->with($laterThan, $reporter)
+            ->with($laterThan, $this->reporter)
             ->willReturn(
                 [
                     'identifier1' => $features1,
@@ -154,9 +145,9 @@ final class LitteralisExecutorTest extends TestCase
             ->expects(self::exactly(3))
             ->method('transform')
             ->withConsecutive(
-                [$reporter, 'identifier1', $features1, $organization], // Success
-                [$reporter, 'identifier2', $features2, $organization], // Transformation error
-                [$reporter, 'identifier3', $features3, $organization], // Command execution error
+                [$this->reporter, 'identifier1', $features1, $organization], // Success
+                [$this->reporter, 'identifier2', $features2, $organization], // Transformation error
+                [$this->reporter, 'identifier3', $features3, $organization], // Command execution error
             )
             ->willReturnOnConsecutiveCalls($command1, null, $command3);
 
@@ -175,27 +166,27 @@ final class LitteralisExecutorTest extends TestCase
                 },
             );
 
-        $reporter
+        $this->reporter
             ->expects(self::once())
             ->method('addError')
-            ->with($reporter::ERROR_IMPORT_COMMAND_FAILED, [
+            ->with(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
                 'message' => 'oops',
-                'arretesrcid' => '1234',
-                'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
+                CommonRecordEnum::ATTR_REGULATION_ID->value => '1234',
+                CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
                 'violations' => null,
                 'command' => $command3,
             ]);
 
-        $reporter
+        $this->reporter
             ->expects(self::exactly(3))
             ->method('acknowledgeNewErrors');
 
-        $reporter
+        $this->reporter
             ->expects(self::once())
             ->method('end')
             ->with($endTime);
 
-        $reporter
+        $this->reporter
             ->expects(self::once())
             ->method('getRecords')
             ->willReturn(['record1', 'record2', '...']);
@@ -206,7 +197,7 @@ final class LitteralisExecutorTest extends TestCase
             ->with(['record1', 'record2', '...'])
             ->willReturn('report');
 
-        $reporter
+        $this->reporter
             ->expects(self::once())
             ->method('onReport')
             ->with('report');
@@ -216,11 +207,10 @@ final class LitteralisExecutorTest extends TestCase
             $this->queryBus,
             $this->extractor,
             $this->transformer,
-            $this->reporterFactory,
             $this->reportFormatter,
             $this->dateUtils,
         );
 
-        $this->assertSame('report', $executor->execute($this->orgId, $laterThan));
+        $this->assertSame('report', $executor->execute($this->orgId, $laterThan, $this->reporter));
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis\MEL;
 
+use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisExecutor;
 
 final class MELExecutor
@@ -16,8 +17,8 @@ final class MELExecutor
         $this->executor->configure($melCredentials);
     }
 
-    public function execute(\DateTimeInterface $laterThan): string
+    public function execute(\DateTimeInterface $laterThan, Reporter $reporter): string
     {
-        return $this->executor->execute($this->melOrgId, $laterThan);
+        return $this->executor->execute($this->melOrgId, $laterThan, $reporter);
     }
 }

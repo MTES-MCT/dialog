@@ -20,8 +20,10 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Domain\User\Organization;
+use App\Infrastructure\IntegrationReport\RecordTypeEnum;
+use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisPeriodParser;
-use App\Infrastructure\Litteralis\LitteralisReporter;
+use App\Infrastructure\Litteralis\LitteralisRecordEnum;
 use App\Infrastructure\Litteralis\LitteralisTransformer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -43,7 +45,7 @@ final class LitteralisTransformerTest extends TestCase
         $this->transformer = new LitteralisTransformer($this->roadGeocoder, new LitteralisPeriodParser($tz));
         $this->organization = $this->createMock(Organization::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->reporter = new LitteralisReporter($this->logger);
+        $this->reporter = new Reporter($this->logger);
         $this->realWorldFeatures = json_decode(file_get_contents(__DIR__ . '/LitteralisTransformerTest.data.json'), associative: true);
     }
 
@@ -280,27 +282,27 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertTrue($this->reporter->hasNewErrors());
         $this->assertEquals([
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_REGULATION_START_DATE_PARSING_FAILED,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_REGULATION_START_DATE_PARSING_FAILED->value,
                     'arretedebut' => 'BAD FORMAT',
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_REGULATION_END_DATE_PARSING_FAILED,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_REGULATION_END_DATE_PARSING_FAILED->value,
                     'arretefin' => 'BAD FORMAT',
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_DATE_PARSING_FAILED,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                     'arretedebut' => 'BAD FORMAT',
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
@@ -309,9 +311,9 @@ final class LitteralisTransformerTest extends TestCase
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_DATE_PARSING_FAILED,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                     'arretefin' => 'BAD FORMAT',
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
@@ -320,9 +322,9 @@ final class LitteralisTransformerTest extends TestCase
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_MISSING,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_MISSING->value,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
@@ -330,9 +332,9 @@ final class LitteralisTransformerTest extends TestCase
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_MAX_SPEED_VALUE_INVALID,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_INVALID->value,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
@@ -340,9 +342,9 @@ final class LitteralisTransformerTest extends TestCase
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER->value,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
@@ -352,9 +354,9 @@ final class LitteralisTransformerTest extends TestCase
                 ],
             ],
             [
-                LitteralisReporter::ERROR,
+                RecordTypeEnum::ERROR->value,
                 [
-                    LitteralisReporter::ERROR => LitteralisReporter::ERROR_PERIOD_UNPARSABLE,
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value,
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
@@ -375,18 +377,18 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertFalse($this->reporter->hasNewErrors());
         $this->assertEquals([
             [
-                LitteralisReporter::NOTICE,
+                RecordTypeEnum::NOTICE->value,
                 [
-                    LitteralisReporter::NOTICE => LitteralisReporter::NOTICE_UNSUPPORTED_MEASURE,
+                    RecordTypeEnum::NOTICE->value => LitteralisRecordEnum::NOTICE_UNSUPPORTED_MEASURE->value,
                     'name' => 'unknown measure',
                     'idemprise' => 493136,
                     'arretesrcid' => '24-A-0126',
                 ],
             ],
             [
-                LitteralisReporter::NOTICE,
+                RecordTypeEnum::NOTICE->value,
                 [
-                    LitteralisReporter::NOTICE => LitteralisReporter::NOTICE_NO_MEASURES_FOUND,
+                    RecordTypeEnum::NOTICE->value => LitteralisRecordEnum::NOTICE_NO_MEASURES_FOUND->value,
                     'arretesrcid' => '24-A-0126',
                     'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
                 ],

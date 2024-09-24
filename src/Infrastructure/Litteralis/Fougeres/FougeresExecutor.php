@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis\Fougeres;
 
+use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisExecutor;
 
 final class FougeresExecutor
@@ -16,8 +17,8 @@ final class FougeresExecutor
         $this->executor->configure($fougeresCredentials);
     }
 
-    public function execute(\DateTimeInterface $laterThan): string
+    public function execute(\DateTimeInterface $laterThan, Reporter $reporter): string
     {
-        return $this->executor->execute($this->fougeresOrgId, $laterThan);
+        return $this->executor->execute($this->fougeresOrgId, $laterThan, $reporter);
     }
 }
