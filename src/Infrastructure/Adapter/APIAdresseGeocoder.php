@@ -126,6 +126,12 @@ final class APIAdresseGeocoder implements GeocoderInterface
             $cities = [];
 
             foreach ($data['features'] as $feature) {
+                if ($feature['properties']['citycode'] === '75056') {
+                    // Prevent user from trying to search for roads in the city of Paris itself (75056),
+                    // because BDTOPO only knows about the Paris arrondissements (75101, 75102...))
+                    continue;
+                }
+
                 $label = \sprintf('%s (%s)', $feature['properties']['city'], $feature['properties']['postcode']);
 
                 $cities[] = [

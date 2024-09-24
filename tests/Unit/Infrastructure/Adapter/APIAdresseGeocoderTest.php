@@ -133,6 +133,34 @@ final class APIAdresseGeocoderTest extends TestCase
         $this->assertEquals([['code' => '93007', 'label' => 'Blanc Mesnil (93150)']], $cities);
     }
 
+    public function testFindCitiesIgnoreParis75056(): void
+    {
+        $expectedRequests = [
+            function ($method, $url, $options) {
+                return new MockResponse(
+                    json_encode([
+                        'features' => [
+                            [
+                                'properties' => [
+                                    'city' => 'Paris (75001)',
+                                    'postcode' => '75001',
+                                    'citycode' => '75056',
+                                ],
+                            ],
+                        ],
+                    ]),
+                    ['http_code' => 200],
+                );
+            },
+        ];
+
+        $http = new MockHttpClient($expectedRequests, 'http://testserver');
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $cities = $geocoder->findCities('Paris');
+        $this->assertEquals([], $cities);
+    }
+
     public function testfindCitiesIncompleteFeature(): void
     {
         $body = json_encode(['features' => [[]]]);
