@@ -11,14 +11,14 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class Reporter
 {
-    private bool $_hasNewErrors;
+    private bool $haveNewErrorsBeenReceived;
     private \DateTimeInterface $startTime;
     private array $records;
 
     public function __construct(
         private LoggerInterface $logger,
     ) {
-        $this->_hasNewErrors = false;
+        $this->haveNewErrorsBeenReceived = false;
         $this->records = [];
     }
 
@@ -45,18 +45,18 @@ final class Reporter
      */
     public function hasNewErrors(): bool
     {
-        return $this->_hasNewErrors;
+        return $this->haveNewErrorsBeenReceived;
     }
 
     public function acknowledgeNewErrors(): void
     {
-        $this->_hasNewErrors = false;
+        $this->haveNewErrorsBeenReceived = false;
     }
 
     public function addError(string $name, array $context = []): void
     {
         $this->pushRecord(RecordTypeEnum::ERROR, $name, $context);
-        $this->_hasNewErrors = true;
+        $this->haveNewErrorsBeenReceived = true;
     }
 
     public function addWarning(string $name, array $context = []): void
