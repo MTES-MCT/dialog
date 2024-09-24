@@ -119,7 +119,7 @@ services:
     # Litteralis
     # --------------
 
-    App\Infrastructure\Litteralis\LitteralisReporterFactory:
+    App\Infrastructure\Symfony\Command\MELImportCommand:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: litteralis_import }
