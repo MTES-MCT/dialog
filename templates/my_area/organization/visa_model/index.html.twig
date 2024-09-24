@@ -49,6 +49,22 @@
                                                     {{ 'common.update'|trans }}
                                                 </a>
                                                 <form
+                                                    method="post"
+                                                    action="{{ path('app_config_visa_models_duplicate', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}"
+                                                    data-controller="form-submit"
+                                                    data-action="modal-trigger:submit->form-submit#submit"
+                                                >
+                                                    <d-modal-trigger modal="visa-duplicate-modal" submitValue="visa-duplicate-{{ visa.uuid }}">
+                                                        <button
+                                                            class="fr-btn fr-btn--tertiary-no-outline"
+                                                            aria-controls="visa-duplicate-modal"
+                                                            aria-label="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
+                                                            title="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
+                                                        ><i class="ri-file-copy-line" style="font-size:24px"></i></button>
+                                                    </d-modal-trigger>
+                                                    <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
+                                                </form>
+                                                <form
                                                     method="delete"
                                                     action="{{ path('app_config_visa_models_delete', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}"
                                                     data-controller="form-submit"
@@ -63,22 +79,6 @@
                                                         ></button>
                                                     </d-modal-trigger>
                                                     <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
-                                                </form>
-                                                <form
-                                                    method="post"
-                                                    action="{{ path('app_config_visa_models_duplicate', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}"
-                                                    data-controller="form-submit"
-                                                    data-action="modal-trigger:submit->form-submit#submit"
-                                                >
-                                                    <d-modal-trigger modal="visa-duplicate-modal" submitValue="visa-duplicate-{{ visa.uuid }}">
-                                                        <button
-                                                            class="fr-btn fr-btn--tertiary-no-outline fr-custom-icon-copy"
-                                                            aria-controls="visa-duplicate-modal"
-                                                            aria-label="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
-                                                            title="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
-                                                        ></button>
-                                                    </d-modal-trigger>
-                                                    <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
                                                 </form>
                                             </div>
                                         {% endif %}
