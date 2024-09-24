@@ -75,6 +75,10 @@
                 <source>common.duplicate</source>
                 <target>Dupliquer</target>
             </trans-unit>
+            <trans-unit id="common.do_not_duplicate">
+                <source>common.do_not_duplicate</source>
+                <target>Ne pas dupliquer</target>
+            </trans-unit>
             <trans-unit id="common.delete">
                 <source>common.delete</source>
                 <target>Supprimer</target>
@@ -2304,6 +2308,10 @@
                 <source>visa.list.help</source>
                 <target>Créer des modèles de visas à utiliser par les agents dans les arrếtés de circulation créés dans DiaLog.</target>
             </trans-unit>
+            <trans-unit id="visa.duplicated.success">
+                <source>visa.duplicated.success</source>
+                <target>Le modèle de visa a bien été dupliqué.</target>
+            </trans-unit>
             <trans-unit id="visa.name">
                 <source>visa.name</source>
                 <target>Nom du modèle</target>
@@ -2348,9 +2356,17 @@
                 <source>visa.delete_modal.title</source>
                 <target>Supprimer ce modèle ?</target>
             </trans-unit>
+            <trans-unit id="visa.duplicate_modal.title">
+                <source>visa.duplicate_modal.title</source>
+                <target>Dupliquer ce modèle ?</target>
+            </trans-unit>
             <trans-unit id="visa.list.delete">
                 <source>visa.list.delete</source>
                 <target>Supprimer le modèle "%name%" de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="visa.list.duplicate">
+                <source>visa.list.duplicate</source>
+                <target>Duppliquer le modèle "%name%"</target>
             </trans-unit>
         </body>
     </file>
