@@ -8,15 +8,15 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
-final class DeleteVisaModelControllerTest extends AbstractWebTestCase
+final class DuplicateVisaModelControllerTest extends AbstractWebTestCase
 {
     use SessionHelper;
 
-    public function testDelete(): void
+    public function testDuplicate(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
-            '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
+        $client->request('POST', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-visa-model'),
         ]);
 
         $this->assertResponseStatusCodeSame(303);
@@ -29,8 +29,8 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testNotFound(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/e18d61be-1797-4d6b-aa58-cd75e623a821', [
-            '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
+        $client->request('POST', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/e18d61be-1797-4d6b-aa58-cd75e623a821/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-visa-model'),
         ]);
 
         $this->assertResponseStatusCodeSame(404);
@@ -39,8 +39,8 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
-            '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
+        $client->request('POST', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-visa-model'),
         ]);
 
         $this->assertResponseStatusCodeSame(403);
@@ -49,18 +49,18 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testBadAccessToken(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
+        $client->request('POST', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/duplicate', [
             '_token' => 'abc',
         ]);
 
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 
-    public function testOrganizationOrUserNotFound(): void
+    public function testOrganizationNotFound(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/mon-espace/organizations/f5c1cea8-a61d-43a7-9b5d-4b8c9557c673/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
-            '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
+        $client->request('POST', '/mon-espace/organizations/f5c1cea8-a61d-43a7-9b5d-4b8c9557c673/visa_models/65c12316-e210-445d-9169-0298b13b3b30/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-visa-model'),
         ]);
         $this->assertResponseStatusCodeSame(404);
     }
@@ -68,7 +68,7 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30');
+        $client->request('POST', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/duplicate');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }
