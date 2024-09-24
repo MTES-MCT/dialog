@@ -30,6 +30,6 @@ final class DateUtilsMock implements DateUtilsInterface
 
     public function addDays(\DateTimeInterface $dateTime, int $numDays): \DateTimeInterface
     {
-        return new \DateTimeImmutable('2023-06-10 09:00:00');
+        return new \DateTimeImmutable('2023-06-10');
     }
 }
