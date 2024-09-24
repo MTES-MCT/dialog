@@ -116,8 +116,16 @@ final class GetCifsIncidentsQueryHandler
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
                     $locationId = $location->getUuid();
-                    $street = $location->getNamedStreet() ? $location->getNamedStreet()->getRoadName() : $location->getNumberedRoad()->getRoadNumber();
-                    $polylines = $this->polylineMaker->getPolylines($location->getGeometry());
+                    $street = $location->getCifsStreetLabel();
+
+                    $geometry = $location->getGeometry();
+
+                    if ($location->getRawGeoJSON()) {
+                        // Simplify the geometry to a (MULTI)LINESTRING with deduplicated segments.
+                        $geometry = $this->polylineMaker->attemptMergeLines($geometry);
+                    }
+
+                    $polylines = $this->polylineMaker->getPolylines($geometry);
 
                     foreach ($incidentPeriods as $incidentPeriod) {
                         foreach ($polylines as $polyline) {

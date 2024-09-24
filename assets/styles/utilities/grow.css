@@ -1,0 +1,4 @@
+.fr-x-grow-32w {
+    flex-basis: calc(32 * 8px);
+    flex-grow: 1;
+}

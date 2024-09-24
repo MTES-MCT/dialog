@@ -453,21 +453,17 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-09-03T00:00:00+00:00</com:overallStartTime>
-
-                                    <com:overallEndTime>2023-09-06T00:00:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2023-09-03T08:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-09-05T10:00:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
-                                        </com:recurringTimePeriodOfDay>
-                                        <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
+                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
                                         </com:recurringTimePeriodOfDay>
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>tuesday</com:applicableDay>
+                                            <com:applicableDay>thursday</com:applicableDay>
                                         </com:recurringDayWeekMonthPeriod>
                                     </com:validPeriod>
                                 </com:validityTimeSpecification>
@@ -502,17 +498,21 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-09-03T08:00:00+00:00</com:overallStartTime>
-                                    <com:overallEndTime>2023-09-05T10:00:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2023-09-03T00:00:00+00:00</com:overallStartTime>
+
+                                    <com:overallEndTime>2023-09-06T00:00:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
+                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
                                         </com:recurringTimePeriodOfDay>
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>tuesday</com:applicableDay>
-                                            <com:applicableDay>thursday</com:applicableDay>
                                         </com:recurringDayWeekMonthPeriod>
                                     </com:validPeriod>
                                 </com:validityTimeSpecification>
@@ -560,6 +560,61 @@
                 <trafficRegulationOrderExtended>
                     <dx:source>dialog</dx:source>
                     <dx:publicUrl>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</dx:publicUrl>
+                </trafficRegulationOrderExtended>
+            </_trafficRegulationOrderExtension>
+        </trafficRegulationOrder>
+        <trafficRegulationOrder id="066e9849-f802-7a4c-8000-845f47c4b0de" version="1">
+            <description>
+                <com:values>
+                    <com:value>Arrêté de voirie (URL : https://dl.sogelink.fr/?iX5UN3GL)</com:value>
+                </com:values>
+            </description>
+            <issuingAuthority>
+                <com:values>
+                    <com:value>Main Org</com:value>
+                </com:values>
+            </issuingAuthority>
+            <regulationId>117374#24-A-0473#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
+            <status>madeAndImplemented</status>
+            <validityByOrder>
+                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                <com:validityTimeSpecification>
+                    <com:overallStartTime>2023-06-03T00:00:00.000Z</com:overallStartTime>
+                    <com:overallEndTime>2023-11-10T23:59:59.000Z</com:overallEndTime>
+                </com:validityTimeSpecification>
+            </validityByOrder>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation xsi:type="AccessRestriction">
+                    <accessRestrictionType>noEntry</accessRestrictionType>
+                </typeOfRegulation>
+                <condition xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions xsi:type="ConditionSet">
+                        <operator>or</operator>
+                        <conditions xsi:type="LocationCondition">
+                            <locationByOrder xsi:type="loc:LinearLocation">
+                                <loc:supplementaryPositionalDescription>
+                                    <loc:locationDescription>
+                                        <com:values>
+                                            <com:value>ROUTE 147 (NOYELLES-LÈS-SECLIN) DU PR7 +779 AU PR8 +413</com:value>
+                                        </com:values>
+                                    </loc:locationDescription>
+                                </loc:supplementaryPositionalDescription>
+                                <loc:_linearLocationExtension>
+                                    <loc:linearLocationExtended>
+                                        <dx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[3.023890325,50.570177599],[3.023850386,50.570151247]],[[3.023890325,50.570177599],[3.024458944,50.570503315]],[[3.024458944,50.570503315],[3.024500711,50.570527945]],[[3.024500711,50.570527945],[3.024501619,50.570528488]],[[3.024501619,50.570528488],[3.025116052,50.570901355]],[[3.025116052,50.570901355],[3.02515503,50.570929555]],[[3.023850386,50.570151247],[3.02384667,50.570148629]],[[3.023475742,50.569868822],[3.023440948,50.569835923]],[[3.023475742,50.569868822],[3.02384667,50.570148629]],[[3.02515503,50.570929555],[3.025159053,50.570932711]],[[3.025159053,50.570932711],[3.025653937,50.571355649]],[[3.025653937,50.571355649],[3.02569009,50.57138952]],[[3.02569009,50.57138952],[3.025691455,50.571390856]],[[3.025691455,50.571390856],[3.026131049,50.571842058]],[[3.026131049,50.571842058],[3.026159516,50.571877523]],[[3.023440948,50.569835923],[3.02343789,50.569832708]],[[3.023149663,50.569492048],[3.023119275,50.569455721]],[[3.023149663,50.569492048],[3.02343789,50.569832708]],[[3.022717354,50.568969715],[3.023119183,50.56945561]],[[3.023119275,50.569455721],[3.023119183,50.56945561]],[[3.026159516,50.571877523],[3.02616073,50.571879188]],[[3.02616073,50.571879188],[3.027150974,50.57338937]]]}</dx:geoJsonGeometry>
+                                    </loc:linearLocationExtended>
+                                </loc:_linearLocationExtension>
+                            </locationByOrder>
+                        </conditions>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+            <_trafficRegulationOrderExtension>
+                <trafficRegulationOrderExtended>
+                    <dx:source>litteralis</dx:source>
+                    <dx:publicUrl>http://localhost/regulations/066e9849-1457-7a1e-8000-3142ece4a7de</dx:publicUrl>
                 </trafficRegulationOrderExtended>
             </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>

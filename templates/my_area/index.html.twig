@@ -1,0 +1,76 @@
+{% extends 'layouts/app.html.twig' %}
+
+{% block title %}
+    {{'user.myarea'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w" aria-labelledby="myarea">
+        <div class="fr-grid-row fr-x-gap-2w">
+            <div class="fr-x-grow-32w">
+                <h2 id="myarea">{{ 'user.myarea'|trans }}</h2>
+                <p>{{ 'user.myarea.description'|trans }}</p>
+            </div>
+            <div class="fr-mb-3w">
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <a class="fr-btn fr-btn--icon-left fr-icon-settings-5-line fr-btn--secondary" href="{{ path('app_admin') }}" data-testid="admin-link">
+                        {{ 'common.admin'|trans }}
+                    </a>
+                {% endif %}
+                <a class="fr-btn fr-btn--icon-left fr-icon-logout-box-r-line fr-btn--secondary" href="{{ path('app_logout') }}" data-testid="logout-link">
+                    {{ 'common.logout'|trans }}
+                </a>
+            </div>
+        </div>
+
+        <h3>{{ 'profile.title'|trans }}</h2>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4 fr-col-lg-4">
+                <div class="fr-tile fr-tile--horizontal fr-enlarge-link">
+                    <div class="fr-tile__body">
+                        <div class="fr-tile__content">
+                            <h3 class="fr-tile__title">
+                                <a href="{{ path('app_profile') }}">{{ 'profile.title'|trans }}</a>
+                            </h3>
+                            <p class="fr-tile__detail">
+                                {{ 'profile.description'|trans }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fr-tile__header">
+                        <div class="fr-tile__pictogram">
+                            <img src="{{ asset('images/mail-send.png') }}" alt="mail-send" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="fr-mt-3w" id="organization-list">{{ 'organization.list.title'|trans }}</h2>
+        <div class="fr-grid-row fr-grid-row--gutters" data-testid="organization-list">
+            {% for organization in organizations %}
+                <div class="fr-col-12 fr-col-md-4 fr-col-lg-4" data-testid="organization-detail">
+                    <div class="fr-tile fr-tile--horizontal fr-enlarge-link">
+                        <div class="fr-tile__body">
+                            <div class="fr-tile__content">
+                                <h3 class="fr-tile__title">
+                                    <a href="{{ path('app_users_list', { uuid: organization.uuid }) }}">{{ organization.name }}</a>
+                                </h3>
+                                <p class="fr-tile__detail">
+                                    {% for role in organization.roles %}
+                                        {{ ('roles.' ~ role)|trans }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-tile__header">
+                            <div class="fr-tile__pictogram">
+                                <img src="{{ asset('images/city-hall.png') }}" alt="city-hall" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
