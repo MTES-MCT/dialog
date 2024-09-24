@@ -4,6 +4,8 @@
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
 
+{% set deleteCsrfToken = csrf_token('delete-user') %}
+
 {% block body %}
     <section class="fr-container fr-py-5w">
         <div class="fr-grid-row fr-grid-row--gutters">
@@ -23,8 +25,36 @@
                     <li>{{ 'profile.delete.first.item'|trans }}</li>
                     <li>{{ 'profile.delete.second.item'|trans }}</li>
                 </ul>
-                {{ form(form) }}
+                <form
+                method="delete"
+                action="{{ path('app_profile_delete', { uuid: user.uuid } ) }}"
+                data-controller="form-submit"
+                data-action="modal-trigger:submit->form-submit#submit"
+                >
+                    <d-modal-trigger modal="user-delete-modal" submitValue="user-delete-{{ user.uuid }}">
+                        <button
+                            class="fr-btn fr-x-btn-sm--icon-left fr-icon-delete-bin-line"
+                            aria-controls="user-delete-modal"
+                            aria-label="{{ 'profile.delete.title'|trans }}"
+                            title="{{ 'profile.delete.title'|trans }}"
+                        >{{ 'profile.delete.title'|trans }}</button>
+                    </d-modal-trigger>
+                    
+                    <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                </form>
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block body_end %}
+    {{ parent() }}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'user-delete-modal',
+        title: 'user.delete_modal.title'|trans,
+        buttons: [
+            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
+    } only %}
 {% endblock %}
