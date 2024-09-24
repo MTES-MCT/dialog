@@ -9,6 +9,7 @@ use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\User;
+use App\Domain\VisaModel\VisaModel;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -40,6 +41,9 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Gestion des organisations');
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
+
+        yield MenuItem::section('Configuration des arrếtés');
+        yield MenuItem::linkToCrud('Modèles de visas', 'fa fa-toolbox', VisaModel::class);
 
         yield MenuItem::section('Autres');
         yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
