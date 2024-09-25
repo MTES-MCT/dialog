@@ -12,6 +12,11 @@
                 <p>{{ 'user.myarea.description'|trans }}</p>
             </div>
             <div class="fr-mb-3w">
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <a class="fr-btn fr-btn--icon-left fr-icon-settings-5-line fr-btn--secondary" href="{{ path('app_admin') }}" data-testid="admin-link">
+                        {{ 'common.admin'|trans }}
+                    </a>
+                {% endif %}
                 <a class="fr-btn fr-btn--icon-left fr-icon-logout-box-r-line fr-btn--secondary" href="{{ path('app_logout') }}" data-testid="logout-link">
                     {{ 'common.logout'|trans }}
                 </a>

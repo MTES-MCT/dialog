@@ -26,7 +26,10 @@ class RegulationOrderRecordRepositoryTest extends KernelTestCase
     public function testCifsFiltersEmpty(): void
     {
         $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat();
-        $this->assertEquals([RegulationOrderRecordFixture::UUID_CIFS], array_map(fn ($roc) => $roc->getUuid(), $regulationOrderRecords));
+        $this->assertEquals([
+            RegulationOrderRecordFixture::UUID_CIFS,
+            RegulationOrderRecordFixture::UUID_LITTERALIS,
+        ], array_map(fn ($roc) => $roc->getUuid(), $regulationOrderRecords));
         $this->assertEquals(
             [LocationFixture::UUID_CIFS_NAMED_STREET, LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD],
             array_map(fn ($loc) => $loc->getUuid(), $regulationOrderRecords[0]->getRegulationOrder()->getMeasures()[0]->getLocations()->toArray()),
@@ -48,7 +51,7 @@ class RegulationOrderRecordRepositoryTest extends KernelTestCase
             excludedIdentifiers: [RegulationOrderFixture::IDENTIFIER_CIFS],
         );
 
-        $this->assertEquals([], $regulationOrderRecords);
+        $this->assertEquals([RegulationOrderRecordFixture::UUID_LITTERALIS], array_map(fn ($roc) => $roc->getUuid(), $regulationOrderRecords));
     }
 
     public function testCifsFiltersAllowedLocationIds(): void

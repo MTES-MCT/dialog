@@ -7,6 +7,7 @@ namespace App\Infrastructure\Litteralis;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
+use App\Infrastructure\IntegrationReport\Reporter;
 
 final class LitteralisPeriodParser
 {
@@ -26,7 +27,7 @@ final class LitteralisPeriodParser
         $this->tz = $tz ?? new \DateTimeZone('Europe/Paris');
     }
 
-    public function parsePeriods(array $parameters, array $properties, LitteralisReporter $reporter): array
+    public function parsePeriods(array $parameters, array $properties, Reporter $reporter): array
     {
         $periodCommand = new SavePeriodCommand();
 
@@ -37,7 +38,7 @@ final class LitteralisPeriodParser
         return [$periodCommand];
     }
 
-    private function setPeriodDates(SavePeriodCommand $periodCommand, array $properties, LitteralisReporter $reporter): void
+    private function setPeriodDates(SavePeriodCommand $periodCommand, array $properties, Reporter $reporter): void
     {
         $dateFormat = \DateTimeInterface::ISO8601;
 
@@ -49,7 +50,7 @@ final class LitteralisPeriodParser
             $periodCommand->startTime = $startDate;
         } else {
             $reporter->addError(
-                $reporter::ERROR_DATE_PARSING_FAILED,
+                LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                 [
                     'idemprise' => $properties['idemprise'],
                     'arretesrcid' => $properties['arretesrcid'],
@@ -76,7 +77,7 @@ final class LitteralisPeriodParser
             $periodCommand->endTime = $endDate;
         } else {
             $reporter->addError(
-                $reporter::ERROR_DATE_PARSING_FAILED,
+                LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                 [
                     'idemprise' => $properties['idemprise'],
                     'arretesrcid' => $properties['arretesrcid'],
@@ -116,7 +117,7 @@ final class LitteralisPeriodParser
         }
     }
 
-    private function setPeriodDaysAndTimes(SavePeriodCommand $periodCommand, array $parameters, array $properties, LitteralisReporter $reporter): void
+    private function setPeriodDaysAndTimes(SavePeriodCommand $periodCommand, array $parameters, array $properties, Reporter $reporter): void
     {
         $periodCommand->dailyRange = null;
         $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
@@ -133,7 +134,7 @@ final class LitteralisPeriodParser
     }
 
     // Public for testing
-    public function parseTimeSlots(string $value, array $properties, LitteralisReporter $reporter): ?array
+    public function parseTimeSlots(string $value, array $properties, Reporter $reporter): ?array
     {
         $value = trim($value);
 
@@ -163,7 +164,7 @@ final class LitteralisPeriodParser
         // * 'les nuits du 05/10/2023, 06/10/2023 et 07/10/2023 de 21h00 à 06h00'
         // * 'de 21h00 à 06h00 du lundi soir au samedi matin'
 
-        $reporter->addError($reporter::ERROR_PERIOD_UNPARSABLE, [
+        $reporter->addError(LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value, [
             'idemprise' => $properties['idemprise'],
             'arretesrcid' => $properties['arretesrcid'],
             'shorturl' => $properties['shorturl'],

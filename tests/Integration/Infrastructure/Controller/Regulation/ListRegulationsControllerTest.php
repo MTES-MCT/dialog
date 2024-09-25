@@ -36,7 +36,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
         $this->assertSame('...', $navLi->eq(5)->text());
-        $this->assertSame('11', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('12', $navLi->eq(6)->filter('a')->text());
         $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
         $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
 
@@ -69,11 +69,11 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS, $links->eq(0)->link()->getUri());
 
         // Second item
-        $pageTwo = $client->request('GET', '/regulations?pageSize=1&page=3');
+        $otherPage = $client->request('GET', '/regulations?pageSize=1&page=4');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $pageTwoRows = $pageTwo->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $pageTwoRows = $otherPage->filter('[data-testid="app-regulation-table"] tbody > tr');
         $this->assertSame(1, $pageTwoRows->count()); // One item per page
 
         $pageTwoRow0 = $pageTwoRows->eq(0)->filter('td');
@@ -87,7 +87,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testPublishedRegulationRendering(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations?pageSize=1&page=7');
+        $crawler = $client->request('GET', '/regulations?pageSize=1&page=8');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -220,7 +220,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(9, $rows->count());
+        $this->assertSame(10, $rows->count());
     }
 
     public function testStatusFilterPublished(): void
@@ -248,10 +248,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(4, $rows->count());
+        $this->assertSame(5, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertSame('Publié, Publié, Publié, Publié', implode(', ', $statuses));
+        $this->assertSame('Publié, Publié, Publié, Publié, Publié', implode(', ', $statuses));
     }
 
     public function testStatusFilterDraft(): void
@@ -291,10 +291,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertNotNull($node->closest('[class*="fr-hidden"]'));
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(4, $rows->count());
+        $this->assertSame(5, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertSame('Publié, Publié, Publié, Publié', implode(', ', $statuses));
+        $this->assertSame('Publié, Publié, Publié, Publié, Publié', implode(', ', $statuses));
     }
 
     public function testStatusFilterAsAnonymousUserForceDraft(): void
@@ -310,10 +310,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('published', $form->get('status')->getValue());
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(4, $rows->count());
+        $this->assertSame(5, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertSame('Publié, Publié, Publié, Publié', implode(', ', $statuses));
+        $this->assertSame('Publié, Publié, Publié, Publié, Publié', implode(', ', $statuses));
     }
 
     public function testFilterCombinationViaUrl(): void

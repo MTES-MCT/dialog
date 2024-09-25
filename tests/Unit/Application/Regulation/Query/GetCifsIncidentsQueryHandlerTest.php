@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Cifs\PolylineMakerInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
@@ -15,7 +16,7 @@ use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Location\Location;
-use App\Domain\Regulation\Location\NamedStreet;
+use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -26,11 +27,13 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
     private $regulationOrderRecordRepository;
     private $polylineMaker;
+    private $dateUtils;
 
     protected function setUp(): void
     {
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
     public function testGetAllEmpty(): void
@@ -40,7 +43,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -50,6 +53,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     {
         $polyline1 = '44.0289961 1.362275 44.0256652 1.359310';
         $polyline1Hash = md5($polyline1);
+        $polyline1bis = '44.028906 1.3621753 44.045665 1.3533105';
+        $polyline1bisHash = md5($polyline1bis);
         $polyline2 = '44.0256652 1.359310 44.1545432 1.34541242';
         $polyline2Hash = md5($polyline2);
         $polyline3 = '44.028996 1.3622753 44.025665 1.3593105';
@@ -68,6 +73,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 ],
             ],
         ]);
+
+        $geometry1bis = '...geometry1bis...';
 
         $geometry2 = json_encode([
             'type' => 'LineString',
@@ -94,7 +101,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             direction: 'BOTH_DIRECTIONS',
             polyline: $polyline1,
             startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
-            endTime: new \DateTimeImmutable('2023-11-06T00:00:00+00:00'),
+            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: [],
         );
 
@@ -107,7 +114,20 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             direction: $incident1->direction,
             polyline: $polyline2,
             startTime: $incident1->startTime,
-            endTime: $incident1->endTime,
+            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
+            schedule: $incident1->schedule,
+        );
+
+        $incident1bis = new CifsIncidentView(
+            id: \sprintf('2024T1:066e98a9-0ce0-7e4b-8000-677c1eafc53d:%s:0', $polyline1bisHash),
+            creationTime: $incident1->creationTime,
+            type: $incident1->type,
+            subType: $incident1->subType,
+            street: 'Zone Olympique',
+            direction: $incident1->direction,
+            polyline: $polyline1bis,
+            startTime: $incident1->startTime,
+            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: $incident1->schedule,
         );
 
@@ -262,29 +282,55 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getPeriods')
             ->willReturn([]);
 
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('addDays')
+            ->with(new \DateTimeImmutable('2023-11-06 00:00:00'), 1)
+            ->willReturn(new \DateTimeImmutable('2023-11-07 00:00:00'));
+
         $location1 = $this->createMock(Location::class);
-        $namedStreet1 = $this->createMock(NamedStreet::class);
         $location1
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('02d5eb61-9ca3-4e67-aacd-726f124382d0');
         $location1
-            ->expects(self::exactly(2))
-            ->method('getNamedStreet')
-            ->willReturn($namedStreet1);
-        $namedStreet1
             ->expects(self::once())
-            ->method('getRoadName')
+            ->method('getCifsStreetLabel')
             ->willReturn('Rue des Arts');
         $location1
             ->expects(self::once())
             ->method('getGeometry')
             ->willReturn($geometry1);
 
+        $location1bis = $this->createMock(Location::class);
+        $rawGeoJSON = $this->createMock(RawGeoJSON::class);
+        $location1bis
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('066e98a9-0ce0-7e4b-8000-677c1eafc53d');
+        $location1bis
+            ->expects(self::once())
+            ->method('getRawGeoJSON')
+            ->willReturn($rawGeoJSON);
+        $location1bis
+            ->expects(self::once())
+            ->method('getCifsStreetLabel')
+            ->willReturn('Zone Olympique');
+        $location1bis
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn($geometry1bis);
+
+        $this->polylineMaker
+            ->expects(self::once())
+            ->method('attemptMergeLines')
+            ->with($geometry1bis)
+            ->willReturn('mergedGeometry1bis');
+
         $measure1
             ->expects(self::once())
             ->method('getLocations')
-            ->willReturn([$location1]);
+            ->willReturn([$location1, $location1bis]);
 
         $regulationOrder1
             ->expects(self::once())
@@ -524,18 +570,13 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn([$period1, $period2, $period3, $period4, $period5]);
 
         $location2 = $this->createMock(Location::class);
-        $namedStreet2 = $this->createMock(NamedStreet::class);
         $location2
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('9698b212-705c-4c46-8968-63b5a55a4d66');
         $location2
-            ->expects(self::exactly(2))
-            ->method('getNamedStreet')
-            ->willReturn($namedStreet2);
-        $namedStreet2
             ->expects(self::once())
-            ->method('getRoadName')
+            ->method('getCifsStreetLabel')
             ->willReturn('Avenue de Fonneuve');
         $location2
             ->expects(self::once())
@@ -558,21 +599,21 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn($regulationOrder2);
 
         $this->polylineMaker
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('getPolylines')
-            ->withConsecutive([$geometry1], [$geometry2])
-            ->willReturnOnConsecutiveCalls([$polyline1, $polyline2], [$polyline3]);
+            ->withConsecutive([$geometry1], ['mergedGeometry1bis'], [$geometry2])
+            ->willReturnOnConsecutiveCalls([$polyline1, $polyline2], [$polyline1bis], [$polyline3]);
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
-            [$incident1, $incident2, $incident3, $incident4, $incident5, $incident6, $incident7],
+            [$incident1, $incident2, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
             $incidents,
         );
     }
@@ -588,6 +629,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $handler = new GetCifsIncidentsQueryHandler(
             $this->regulationOrderRecordRepository,
             $this->polylineMaker,
+            $this->dateUtils,
             new CifsFilterSet(
                 allowedSources: ['my_source'],
                 excludedIdentifiers: ['identifier1'],
