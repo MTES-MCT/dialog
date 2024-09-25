@@ -4,7 +4,7 @@
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
 
-{% set deleteCsrfToken = csrf_token('delete-user') %}
+{% set deleteCsrfToken = csrf_token('delete-profile') %}
 
 {% block body %}
     <section class="fr-container fr-py-5w">
@@ -24,6 +24,7 @@
                 <ul>
                     <li>{{ 'profile.delete.first.item'|trans }}</li>
                     <li>{{ 'profile.delete.second.item'|trans }}</li>
+                    <li>{{ 'profile.delete.third.item'|trans }}</li>
                 </ul>
                 <form
                 method="delete"
@@ -31,13 +32,13 @@
                 data-controller="form-submit"
                 data-action="modal-trigger:submit->form-submit#submit"
                 >
-                    <d-modal-trigger modal="user-delete-modal" submitValue="user-delete-{{ user }}">
+                    <d-modal-trigger modal="user-profile-delete-modal" submitValue="user-profile-delete-{{ user }}">
                         <button
-                            class="fr-btn fr-x-btn-sm--icon-left fr-icon-delete-bin-line"
-                            aria-controls="user-delete-modal"
-                            aria-label="{{ 'profile.delete.title'|trans }}"
-                            title="{{ 'profile.delete.title'|trans }}"
-                        >{{ 'profile.delete.title'|trans }}</button>
+                            class="fr-btn fr-x-btn-sm--icon-left fr-icon-delete-bin-line fr-mt-3w"
+                            aria-controls="user-profile-delete-modal"
+                            aria-label="{{ 'profile.delete.btn'|trans }}"
+                            title="{{ 'profile.delete.btn'|trans }}"
+                        >{{ 'profile.delete.btn'|trans }}</button>
                     </d-modal-trigger>
 
                     <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
@@ -50,8 +51,8 @@
 {% block body_end %}
     {{ parent() }}
     {% include 'common/confirmation_modal.html.twig' with {
-        id: 'user-delete-modal',
-        title: 'user.delete_modal.title'|trans,
+        id: 'user-profile-delete-modal',
+        title: 'user.profile.delete.confirm.title'|trans,
         buttons: [
             { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
             { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },

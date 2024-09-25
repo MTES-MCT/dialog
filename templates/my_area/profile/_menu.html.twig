@@ -15,7 +15,7 @@
                         {{'profile.password.title'|trans}}
                     </a>
                 </li>
-                <li>
+                <li class="fr-sidemenu__item" {% if 'app_profile_delete_detail' in routeName %}fr-sidemenu__item--active{% endif %}>
                     <a class="fr-sidemenu__link" href="{{ path('app_profile_delete_detail') }}" {% if 'app_profile_delete_detail' == routeName %}aria-current="page"{% endif%}>
                         {{'profile.delete.title'|trans}}
                     </a>

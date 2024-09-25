@@ -871,6 +871,18 @@
                 <source>profile.delete.second.item</source>
                 <target>Vous ne pourrez plus voir les arrêtés qui ne sont pas publiés.</target>
             </trans-unit>
+            <trans-unit id="profile.delete.third.item">
+                <source>profile.delete.third.item</source>
+                <target>Les arrêtés que vous avez créés seront conservés.</target>
+            </trans-unit>
+            <trans-unit id="profile.delete.btn">
+                <source>profile.delete.btn</source>
+                <target>Supprimer mon compte</target>
+            </trans-unit>
+            <trans-unit id="user.profile.delete.confirm.title">
+                <source>user.profile.delete.confirm.title</source>
+                <target>Supprimer mon compte ?</target>
+            </trans-unit>
             <trans-unit id="profile.password.first_option">
                 <source>profile.password.first_option</source>
                 <target>Nouveau mot de passe</target>

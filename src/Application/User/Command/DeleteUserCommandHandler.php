@@ -15,7 +15,7 @@ final class DeleteUserCommandHandler
 
     public function __invoke(DeleteUserCommand $command): void
     {
-        $user = $command->User;
+        $user = $command->user;
         $this->userRepository->remove($user);
     }
 }

@@ -10,7 +10,7 @@ use App\Domain\User\User;
 final class DeleteUserCommand implements CommandInterface
 {
     public function __construct(
-        public readonly User $User,
+        public readonly User $user,
     ) {
     }
 }
