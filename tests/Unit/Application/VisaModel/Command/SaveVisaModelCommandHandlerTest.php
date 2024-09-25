@@ -29,18 +29,16 @@ final class SaveVisaModelCommandHandlerTest extends TestCase
         $organization = $this->createMock(Organization::class);
         $visaModel = $this->createMock(VisaModel::class);
 
+        $visaModel = (new VisaModel('f8216679-5a0b-4dd5-9e2b-b382d298c3b4'))
+            ->setName('Réglementation de circulation')
+            ->setDescription('Limitation de vitesse')
+            ->setVisas(['vu 1', 'vu 2'])
+            ->setOrganization($organization);
+
         $this->visaModelRepository
             ->expects(self::once())
             ->method('add')
-            ->with($this->equalTo(
-                new VisaModel(
-                    uuid: 'f8216679-5a0b-4dd5-9e2b-b382d298c3b4',
-                    name: 'Réglementation de circulation',
-                    description: 'Limitation de vitesse',
-                    visas: ['vu 1', 'vu 2'],
-                    organization: $organization,
-                ),
-            ))
+            ->with($visaModel)
             ->willReturn($visaModel);
 
         $this->idFactory

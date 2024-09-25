@@ -36,6 +36,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
     public const UUID_NO_MEASURES = '0650037d-3e90-7a99-8000-a2099e71ae4a';
     public const UUID_CIFS = '0654905d-6771-75d8-8000-d523184d0b55';
     public const UUID_RAWGEOJSON = '06672e5e-8322-739f-8000-9ebfcd86e29a';
+    public const UUID_LITTERALIS = '066e9849-1457-7a1e-8000-3142ece4a7de';
 
     public function load(ObjectManager $manager): void
     {
@@ -138,6 +139,15 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('mainOrg'),
         );
 
+        $litteralisRegulationOrderRecord = new RegulationOrderRecord(
+            self::UUID_LITTERALIS,
+            RegulationOrderRecordSourceEnum::LITTERALIS->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            $this->getReference('litteralisRegulationOrder'),
+            new \DateTime('2024-09-05'),
+            $this->getReference('mainOrg'),
+        );
+
         $manager->persist($typicalRegulationOrderRecord);
         $manager->persist($publishedRegulationOrderRecord);
         $manager->persist($regulationOrderRecordDuplicate);
@@ -149,6 +159,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $manager->persist($regulationOrderRecordCifs);
         $manager->persist($outDatedRegulationOrderRecordCifs);
         $manager->persist($rawGeoJSONRegulationOrderRecord);
+        $manager->persist($litteralisRegulationOrderRecord);
         $manager->flush();
     }
 

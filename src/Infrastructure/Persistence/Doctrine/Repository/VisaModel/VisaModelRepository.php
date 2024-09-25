@@ -24,10 +24,17 @@ final class VisaModelRepository extends ServiceEntityRepository implements VisaM
         return $visaModel;
     }
 
+    public function remove(VisaModel $visaModel): void
+    {
+        $this->getEntityManager()->remove($visaModel);
+    }
+
     public function findOneByUuid(string $uuid): ?VisaModel
     {
         return $this->createQueryBuilder('v')
+            ->addSelect('o')
             ->where('v.uuid = :uuid')
+            ->innerJoin('v.organization', 'o')
             ->setParameter('uuid', $uuid)
             ->setMaxResults(1)
             ->getQuery()

@@ -13,4 +13,6 @@ interface VisaModelRepositoryInterface
     public function findOrganizationVisaModels(string $organizationUuid): array;
 
     public function add(VisaModel $visaModel): VisaModel;
+
+    public function remove(VisaModel $visaModel): void;
 }

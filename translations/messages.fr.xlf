@@ -18,6 +18,10 @@
                 <source>common.blog</source>
                 <target>Blog</target>
             </trans-unit>
+            <trans-unit id="common.admin">
+                <source>common.admin</source>
+                <target>Administration</target>
+            </trans-unit>
             <trans-unit id="common.and">
                 <source>common.and</source>
                 <target>et</target>
@@ -70,6 +74,10 @@
             <trans-unit id="common.duplicate">
                 <source>common.duplicate</source>
                 <target>Dupliquer</target>
+            </trans-unit>
+            <trans-unit id="common.do_not_duplicate">
+                <source>common.do_not_duplicate</source>
+                <target>Ne pas dupliquer</target>
             </trans-unit>
             <trans-unit id="common.delete">
                 <source>common.delete</source>
@@ -866,6 +874,14 @@
             <trans-unit id="profile.password.update.success">
                 <source>profile.password.update.success</source>
                 <target><![CDATA[<h3 class="fr-alert__title">]]>Votre mot de passe a bien été mis à jour<![CDATA[</h3>]]></target>
+            </trans-unit>
+            <trans-unit id="profile.description">
+                <source>profile.description</source>
+                <target>Modifier mes informations personnelles (nom, email)</target>
+            </trans-unit>
+            <trans-unit id="profile.subtitle">
+                <source>profile.subtitle</source>
+                <target>Mise à jour de mes informations</target>
             </trans-unit>
             <trans-unit id="landing.menu.button.home">
                 <source>landing.menu.button.home</source>
@@ -2172,6 +2188,10 @@
                 <source>user.myarea</source>
                 <target>Mon espace</target>
             </trans-unit>
+            <trans-unit id="user.myarea.description">
+                <source>user.myarea.description</source>
+                <target>Retrouvez vos informations personnelles et les organisations dont vous faites parties.</target>
+            </trans-unit>
             <trans-unit id="integration.report.title">
                 <source>integration.report.title</source>
                 <target>Rapport d'intégration</target>
@@ -2282,7 +2302,7 @@
             </trans-unit>
             <trans-unit id="config.menu.visas">
                 <source>config.menu.visas</source>
-                <target>Modèle de visas</target>
+                <target>Modèles de visas</target>
             </trans-unit>
             <trans-unit id="config.menu.authority">
                 <source>config.menu.authority</source>
@@ -2295,6 +2315,10 @@
             <trans-unit id="visa.list.help">
                 <source>visa.list.help</source>
                 <target>Créer des modèles de visas à utiliser par les agents dans les arrếtés de circulation créés dans DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="visa.duplicated.success">
+                <source>visa.duplicated.success</source>
+                <target>Le modèle de visa a bien été dupliqué.</target>
             </trans-unit>
             <trans-unit id="visa.name">
                 <source>visa.name</source>
@@ -2331,6 +2355,26 @@
             <trans-unit id="visas.form.visas.help">
                 <source>visas.form.visas.help</source>
                 <target>Définissez le texte qui apparaîtra en tant que visas (Vu...) dans les arrêtés</target>
+            </trans-unit>
+            <trans-unit id="myarea.title">
+                <source>myarea.title</source>
+                <target>Mon espace</target>
+            </trans-unit>
+            <trans-unit id="visa.delete_modal.title">
+                <source>visa.delete_modal.title</source>
+                <target>Supprimer ce modèle ?</target>
+            </trans-unit>
+            <trans-unit id="visa.duplicate_modal.title">
+                <source>visa.duplicate_modal.title</source>
+                <target>Dupliquer ce modèle ?</target>
+            </trans-unit>
+            <trans-unit id="visa.list.delete">
+                <source>visa.list.delete</source>
+                <target>Supprimer le modèle "%name%" de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="visa.list.duplicate">
+                <source>visa.list.duplicate</source>
+                <target>Duppliquer le modèle "%name%"</target>
             </trans-unit>
         </body>
     </file>
