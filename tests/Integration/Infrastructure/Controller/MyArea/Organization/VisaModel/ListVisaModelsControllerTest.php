@@ -24,7 +24,7 @@ final class ListVisaModelsControllerTest extends AbstractWebTestCase
         $tr0 = $users->filter('tr')->eq(0)->filter('td');
         $this->assertCount(1, $users->filter('tr'));
 
-        $this->assertSame('Interdication de circulation', $tr0->eq(0)->text());
+        $this->assertSame('Interdiction de circulation', $tr0->eq(0)->text());
         $this->assertSame('Interdiction pour tous les véhicules', $tr0->eq(1)->text());
     }
 

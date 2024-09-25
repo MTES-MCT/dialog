@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% set deleteCsrfToken = csrf_token('delete-visa-model') %}
+{% set duplicateCsrfToken = csrf_token('duplicate-visa-model') %}
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="visa-list">
@@ -48,6 +49,22 @@
                                                     {{ 'common.update'|trans }}
                                                 </a>
                                                 <form
+                                                    method="post"
+                                                    action="{{ path('app_config_visa_models_duplicate', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}"
+                                                    data-controller="form-submit"
+                                                    data-action="modal-trigger:submit->form-submit#submit"
+                                                >
+                                                    <d-modal-trigger modal="visa-duplicate-modal" submitValue="visa-duplicate-{{ visa.uuid }}">
+                                                        <button
+                                                            class="fr-btn fr-btn--tertiary-no-outline"
+                                                            aria-controls="visa-duplicate-modal"
+                                                            aria-label="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
+                                                            title="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
+                                                        ><i class="ri-file-copy-line" style="font-size:24px"></i></button>
+                                                    </d-modal-trigger>
+                                                    <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
+                                                </form>
+                                                <form
                                                     method="delete"
                                                     action="{{ path('app_config_visa_models_delete', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}"
                                                     data-controller="form-submit"
@@ -84,6 +101,14 @@
         buttons: [
             { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
             { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
+    } only %}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'visa-duplicate-modal',
+        title: 'visa.duplicate_modal.title'|trans,
+        buttons: [
+            { label: 'common.duplicate'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_duplicate'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
         ]
     } only %}
 {% endblock %}
