@@ -6,7 +6,7 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Infrastructure\IntegrationReport\Reporter;
-use App\Infrastructure\Litteralis\MEL\MELExecutor;
+use App\Infrastructure\Litteralis\Fougeres\FougeresExecutor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -14,15 +14,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'app:mel:import',
-    description: 'Import Litteralis data of Métropole Européenne de Lille (MEL)',
+    name: 'app:fougeres:import',
+    description: 'Import Litteralis data of Fougères',
     hidden: false,
 )]
-class MELImportCommand extends Command
+class FougeresImportCommand extends Command
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MELExecutor $executor,
+        private FougeresExecutor $executor,
         private DateUtilsInterface $dateUtils,
     ) {
         parent::__construct();
@@ -34,7 +34,7 @@ class MELImportCommand extends Command
         $now = $this->dateUtils->getNow();
 
         try {
-            $report = $this->executor->execute(laterThan: $now, reporter: $reporter);
+            $report = $this->executor->execute($now, $reporter);
 
             $output->write($report);
         } catch (\RuntimeException $exc) {
