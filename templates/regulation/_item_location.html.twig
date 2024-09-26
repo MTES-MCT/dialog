@@ -1,0 +1,12 @@
+{% if location.roadType == 'lane' %}
+    {{ location.cityLabel }}<br/>
+    <b>{{ location.roadName }}</b>
+{% elseif location.roadType == 'departmentalRoad' %}
+    {{ location.administrator }} ({{location.roadNumber}})<br/>
+{% elseif location.roadType == 'rawGeoJSON' %}
+    {{ location.label|capitalize|u.truncate(36, ' [...]', false)  }}
+{% endif %}
+
+{% if numLocations > 1 %}
+    <em>{{ 'regulation.locations.more'|trans({'%count%': numLocations - 1}) }}</em>
+{% endif %}

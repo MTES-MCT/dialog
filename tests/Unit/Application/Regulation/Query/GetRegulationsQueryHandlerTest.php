@@ -8,6 +8,7 @@ use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\Regulation\Query\GetRegulationsQueryHandler;
 use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
+use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
@@ -33,6 +34,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'nbLocations' => 0,
                 'namedStreet' => null,
                 'numberedRoad' => null,
+                'rawGeoJSON' => 'rawgeojson label',
                 'organizationName' => 'DiaLog',
                 'organizationUuid' => 'dcab837f-4460-4355-99d5-bf4891c35f8f',
             ],
@@ -93,7 +95,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     0,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
-                    null,
+                    new RawGeoJSONView('rawgeojson label'),
                     $startDate1,
                     null,
                 ),

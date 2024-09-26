@@ -35,15 +35,7 @@
                     </td>
                     <td>
                         {% if location %}
-                            {% if location.roadType == 'lane' %}
-                                {{ location.cityLabel }}<br/>
-                                <b>{{ location.roadName }}</b>
-                            {% elseif location.roadType == 'departmentalRoad' %}
-                                {{ location.administrator }} ({{location.roadNumber}})<br/>
-                            {% endif %}
-                            {% if regulation.numLocations > 1%}
-                                <em>{{ 'regulation.locations.more'|trans({'%count%': regulation.numLocations - 1}) }}</em>
-                            {% endif %}
+                            {% include 'regulation/_item_location.html.twig' with { location, numLocations: regulation.numLocations } only %}
                         {% endif %}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
