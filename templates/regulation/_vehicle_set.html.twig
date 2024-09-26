@@ -19,7 +19,7 @@
                 {{ vehicleType.name }}
             {%- else -%}
                 {%- set vehicleName = ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans -%}
-                {{ vehicleType.name starts with 'critair' ? vehicleName : vehicleName|lower }}
+                {{ (vehicleType.name starts with 'critair' ? vehicleName : vehicleName|lower)|raw }}
             {%- endif -%}
             {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
         {%- endfor -%}
@@ -34,7 +34,7 @@
         {%- if vehicleType.isOther|default(false) -%}
             {{ vehicleType.name|lower }}
         {%- else -%}
-            {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower }}
+            {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower|raw }}
         {%- endif -%}
         {%- if loop.revindex0 == 1 %} {{ 'regulation.vehicles.and'|trans }} {% elseif not loop.last %}, {% endif -%}
     {%- endfor -%}
