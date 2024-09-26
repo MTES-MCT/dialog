@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Integration\Infrastructure\Controller\MyArea\Profile;
+namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Profile;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Domain\Regulation;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
+use App\Domain\VisaModel\VisaModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 
@@ -16,6 +17,7 @@ final class RegulationOrderTest extends TestCase
     {
         $start = new \DateTimeImmutable('2023-03-13');
         $end = new \DateTimeImmutable('2023-03-15');
+        $visaModel = $this->createMock(VisaModel::class);
 
         $regulationOrder = new RegulationOrder(
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
@@ -24,6 +26,10 @@ final class RegulationOrderTest extends TestCase
             description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             startDate: $start,
             endDate: $end,
+            otherCategoryText: null,
+            visaModel: $visaModel,
+            additionalVisas: ['vu que 1'],
+            additionalReasons: ['considérant que'],
         );
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrder->getUuid());
@@ -36,6 +42,9 @@ final class RegulationOrderTest extends TestCase
         $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getOtherCategoryText());
         $this->assertFalse($regulationOrder->isPermanent());
+        $this->assertSame($visaModel, $regulationOrder->getVisaModel());
+        $this->assertSame(['vu que 1'], $regulationOrder->getAdditionalVisas());
+        $this->assertSame(['considérant que'], $regulationOrder->getaAdditionalReasons());
     }
 
     public function testUpdate(): void
