@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use App\Domain\VisaModel\VisaModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -20,6 +21,9 @@ class RegulationOrder
         private ?\DateTimeInterface $startDate,
         private ?\DateTimeInterface $endDate = null,
         private ?string $otherCategoryText = null,
+        private ?VisaModel $visaModel = null,
+        private ?array $additionalVisas = [],
+        private ?array $additionalReasons = [],
     ) {
         $this->measures = new ArrayCollection();
     }
@@ -79,6 +83,21 @@ class RegulationOrder
     public function isPermanent(): bool
     {
         return !$this->endDate;
+    }
+
+    public function getVisaModel(): ?VisaModel
+    {
+        return $this->visaModel;
+    }
+
+    public function getAdditionalVisas(): ?array
+    {
+        return $this->additionalVisas;
+    }
+
+    public function getaAdditionalReasons(): ?array
+    {
+        return $this->additionalReasons;
     }
 
     public function update(
