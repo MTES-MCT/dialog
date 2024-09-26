@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
-use App\Infrastructure\IntegrationReport\Reporter;
-use App\Infrastructure\Litteralis\MEL\MELExecutor;
-use App\Infrastructure\Symfony\Command\MELImportCommand;
+use App\Infrastructure\Litteralis\Fougeres\FougeresExecutor;
+use App\Infrastructure\Symfony\Command\FougeresImportCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class MELImportCommandTest extends TestCase
+class FougeresImportCommandTest extends TestCase
 {
     private $logger;
     private $executor;
@@ -22,41 +21,32 @@ class MELImportCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->executor = $this->createMock(MELExecutor::class);
+        $this->executor = $this->createMock(FougeresExecutor::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
-    public function testExecute(): void
+    public function testExecute()
     {
-        $now = new \DateTimeImmutable('now');
-        $reporter = new Reporter($this->logger);
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($now);
-
         $this->executor
             ->expects(self::once())
-            ->method('execute')
-            ->with($now, self::equalTo($reporter));
+            ->method('execute');
 
-        $command = new MELImportCommand($this->logger, $this->executor, $this->dateUtils);
-        $this->assertSame('app:mel:import', $command->getName());
+        $command = new FougeresImportCommand($this->logger, $this->executor, $this->dateUtils);
+        $this->assertSame('app:fougeres:import', $command->getName());
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testExecuteError(): void
+    public function testExecuteError()
     {
         $this->executor
             ->expects(self::once())
             ->method('execute')
             ->willThrowException(new \RuntimeException('Failed'));
 
-        $command = new MELImportCommand($this->logger, $this->executor, $this->dateUtils);
+        $command = new FougeresImportCommand($this->logger, $this->executor, $this->dateUtils);
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 

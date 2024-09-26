@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
+use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -32,6 +33,9 @@ final class GetRegulationsQueryHandler
             } elseif ($row['numberedRoad']) {
                 [$roadNumber, $administrator] = explode('#', $row['numberedRoad']);
                 $locationView = new NumberedRoadView($roadNumber, $administrator);
+            } elseif ($row['rawGeoJSON']) {
+                $label = $row['rawGeoJSON'];
+                $locationView = new RawGeoJSONView($label);
             }
 
             $regulationOrderViews[] = new RegulationOrderListItemView(
