@@ -251,6 +251,12 @@ ci_litteralis_mel_import: ## Run CI steps for Litteralis MEL Import workflow
 	./tools/scalingodbtunnel ${APP_MEL_IMPORT_APP} --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
 	make console CMD="app:mel:import"
 
+ci_litteralis_mel_import: ## Run CI steps for Litteralis Fougeres Import workflow
+	make composer CMD="install -n --prefer-dist"
+	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel ${APP_FOUGERES_IMPORT_APP} --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
+	make console CMD="app:fougeres:import"
+
 ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	make bdtopo_migrate
