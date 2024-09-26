@@ -12,6 +12,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class APIAdresseGeocoder implements GeocoderInterface
 {
+    // Prevent user from trying to search for roads using these city codes.
+    // For example, BDTOPO only knows about the Paris arrondissements (75101, 75102...), not about the city of Paris (75056).
+    private const IGNORE_CITY_CODES = [
+        '75056', // Paris
+        '13055', // Marseille
+        '69123', // Lyon
+    ];
+
     public function __construct(
         private HttpClientInterface $apiAdresseClient,
     ) {
@@ -126,6 +134,10 @@ final class APIAdresseGeocoder implements GeocoderInterface
             $cities = [];
 
             foreach ($data['features'] as $feature) {
+                if (\in_array($feature['properties']['citycode'], self::IGNORE_CITY_CODES)) {
+                    continue;
+                }
+
                 $label = \sprintf('%s (%s)', $feature['properties']['city'], $feature['properties']['postcode']);
 
                 $cities[] = [
