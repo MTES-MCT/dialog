@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Symfony\Command;
 
-use App\Infrastructure\Symfony\Command\MELImportCommand;
+use App\Infrastructure\Symfony\Command\FougeresImportCommand;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-final class MELImportCommandTest extends KernelTestCase
+final class FougeresImportCommandTest extends KernelTestCase
 {
     public function testExecute(): void
     {
         self::bootKernel();
         $container = static::getContainer();
 
-        $command = $container->get(MELImportCommand::class);
+        $command = $container->get(FougeresImportCommand::class);
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([]);

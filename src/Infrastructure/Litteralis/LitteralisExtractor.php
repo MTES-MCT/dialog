@@ -20,7 +20,7 @@ final class LitteralisExtractor
 
     public function extractFeaturesByRegulation(\DateTimeInterface $laterThan, Reporter $reporter): array
     {
-        $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%') AND " . \sprintf(
+        $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%') AND " . \sprintf(
             "(arretefin IS NULL OR arretefin >= '%s')",
             $laterThan->format(\DateTimeInterface::ISO8601),
         );
