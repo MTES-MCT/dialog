@@ -9,7 +9,7 @@ use App\Infrastructure\Litteralis\LitteralisExecutor;
 
 final class MELExecutor
 {
-    public const INTEGRATION_NAME = 'Litteralis MEL';
+    private const INTEGRATION_NAME = 'Litteralis MEL';
 
     public function __construct(
         private LitteralisExecutor $executor,
