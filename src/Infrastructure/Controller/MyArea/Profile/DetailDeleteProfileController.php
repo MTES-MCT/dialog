@@ -25,9 +25,6 @@ final class DetailDeleteProfileController
         return new Response(
             content: $this->twig->render(
                 name: '/my_area/profile/delete-profile.html.twig',
-                context: [
-                    'user' => $user,
-                ],
             ),
         );
     }

@@ -3,7 +3,7 @@
 <nav class="fr-sidemenu" role="navigation" aria-labelledby="sidemenu-title">
     <div class="fr-sidemenu__inner">
         <div class="fr-collapse" id="sidemenu">
-            <p class="fr-sidemenu__title" id="sidemenu-title">{{ user.fullName }}</p>
+            <p class="fr-sidemenu__title" id="sidemenu-title">{{ app.user.getFullName() }}</p>
             <ul class="fr-sidemenu__list">
                 <li class="fr-sidemenu__item {% if 'app_profile' in routeName %}fr-sidemenu__item--active{% endif %}">
                     <a class="fr-sidemenu__link" href="{{ path('app_profile') }}" {% if 'app_profile' == routeName %}aria-current="page"{% endif%}>

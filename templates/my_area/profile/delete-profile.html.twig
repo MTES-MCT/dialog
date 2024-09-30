@@ -1,5 +1,5 @@
 {% extends 'layouts/app.html.twig' %}
-{% set metaTitle = user.fullName %}
+{% set metaTitle = app.user.getFullName() %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -32,7 +32,7 @@
                 data-controller="form-submit"
                 data-action="modal-trigger:submit->form-submit#submit"
                 >
-                    <d-modal-trigger modal="user-profile-delete-modal" submitValue="user-profile-delete-{{ user }}">
+                    <d-modal-trigger modal="user-profile-delete-modal" submitValue="user-profile-delete-{{ app.user.getFullName() }}">
                         <button
                             class="fr-btn fr-x-btn-sm--icon-left fr-icon-delete-bin-line fr-mt-3w"
                             aria-controls="user-profile-delete-modal"
