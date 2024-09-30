@@ -1,0 +1,7 @@
+{% for result in results %}
+    <li role="option" data-autocomplete-value="{{ result.value|json_encode }}">{{ result.label }}</li>
+{% endfor %}
+
+<template id="status">
+    {{ 'common.autocomplete.results_count'|trans({ '%count%': results|length }) }}
+</template>

@@ -2106,6 +2106,14 @@
                 <source>map.loading</source>
                 <target>Chargement de la carte en cours...</target>
             </trans-unit>
+            <trans-unit id="map.search_form.search">
+                <source>map.search_form.search</source>
+                <target>Rechercher un lieu</target>
+            </trans-unit>
+            <trans-unit id="map.search_form.search.placeholder">
+                <source>map.search_form.search.placeholder</source>
+                <target>Rechercher un lieu</target>
+            </trans-unit>
             <trans-unit id="map.filters.title">
                 <source>map.filters.title</source>
                 <target>Filtres</target>
