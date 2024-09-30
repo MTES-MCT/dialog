@@ -1,0 +1,5 @@
+{% if measure.type == 'speedLimitation' %}
+    {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
+{% else %}
+    {{ ('regulation.measure.type.' ~ measure.type)|trans }}
+{% endif %}

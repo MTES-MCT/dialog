@@ -2,3 +2,8 @@
     flex-basis: calc(32 * 8px);
     flex-grow: 1;
 }
+
+.fr-x-grow {
+    flex-basis: 0;
+    flex-grow: 1;
+}

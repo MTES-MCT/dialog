@@ -17,3 +17,12 @@ main {
 #content {
     height: 100%;
 }
+
+.maplibregl-map {
+    // By default MaplibreJS uses Helvetica
+    font: inherit;
+}
+
+.d-map-popup .maplibregl-popup-content {
+    padding: var(--2w);
+}

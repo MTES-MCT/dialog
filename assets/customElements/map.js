@@ -53,7 +53,7 @@ class MapLibreMap {
     /** @type {Promise<maplibregl.Map>} */
     #prom;
 
-    /** @type {any} */
+    /** @type {maplibregl} */
     #maplibregl;
 
     /** @type {maplibregl.Map} */
@@ -229,7 +229,11 @@ class MapLibreMap {
         locationTurboFrame.id = `location_turbo_frame_${uuid}`;
         locationTurboFrame.setAttribute('src', `${this.#locationPopupUrl}/${uuid}`);
 
-        const locationPopUp = new this.#maplibregl.Popup({ closeButton: false })
+        const locationPopUp = new this.#maplibregl.Popup({
+            closeButton: false,
+            className: 'd-map-popup',
+            maxWidth: '320px',
+        })
             .setLngLat(pos)
             .setDOMContent(locationTurboFrame)
             .addTo(this.#map);

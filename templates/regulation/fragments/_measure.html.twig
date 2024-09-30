@@ -6,11 +6,7 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {% if measure.type == 'speedLimitation' %}
-                    {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
-                {% else %}
-                    {{ ('regulation.measure.type.' ~ measure.type)|trans }}
-                {% endif %}
+                {% include 'regulation/_measure_title.html.twig' with { measure } only %}
             </h3>
         </div>
         <div

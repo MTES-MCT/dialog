@@ -1,3 +1,7 @@
+.fr-x-gap-1w {
+    gap: var(--1w);
+}
+
 .fr-x-gap-2w {
     gap: var(--2w);
 }

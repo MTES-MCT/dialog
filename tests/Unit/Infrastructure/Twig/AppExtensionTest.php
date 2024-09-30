@@ -37,6 +37,11 @@ class AppExtensionTest extends TestCase
         $this->assertCount(8, $this->extension->getFunctions());
     }
 
+    public function testGetFilters(): void
+    {
+        $this->assertCount(1, $this->extension->getFilters());
+    }
+
     public function testFormatDateTimeDateOnly(): void
     {
         $this->assertSame('06/01/2023', $this->extension->formatDateTime(new \DateTimeImmutable('2023-01-06')));
@@ -227,5 +232,13 @@ class AppExtensionTest extends TestCase
             ->willReturn($enabled);
 
         $this->assertSame($enabled, $this->extension->isFeatureEnabled('MY_FEATURE'));
+    }
+
+    public function testCapFirst(): void
+    {
+        $this->assertSame('', $this->extension->capFirst(''));
+        $this->assertSame('Test', $this->extension->capFirst('test'));
+        $this->assertSame('Test me', $this->extension->capFirst('test me'));
+        $this->assertSame('Test me First', $this->extension->capFirst('test me First'));
     }
 }

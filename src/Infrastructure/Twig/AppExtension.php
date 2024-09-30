@@ -35,6 +35,13 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         ];
     }
 
+    public function getFilters(): array
+    {
+        return [
+            new \Twig\TwigFilter('app_capfirst', [$this, 'capFirst']),
+        ];
+    }
+
     /**
      * Format a $date with an optional $time
      */
@@ -121,5 +128,14 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     public function isFeatureEnabled(string $featureName, ?Request $request = null): bool
     {
         return $this->featureFlagService->isFeatureEnabled($featureName, $request);
+    }
+
+    public function capFirst(string $text): string
+    {
+        if (!$text) {
+            return '';
+        }
+
+        return strtoupper(substr($text, 0, 1)) . substr($text, 1);
     }
 }

@@ -1,5 +1,5 @@
 <turbo-frame id="location_turbo_frame_{{ location.uuid }}">
-    <div class="fr-container--fluid">
+    <div class="fr-container--fluid fr-mb-1w">
         <div class="fr-grid-row fr-grid-row--right">
             <button id="close_location_popup_{{ location.uuid }}" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-btn--icon-right fr-icon-close-line">
                 {{ 'common.close'|trans }}
@@ -7,53 +7,37 @@
         </div>
     </div>
     <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
-        <li class="fr-grid-row">
-            <span class="fr-icon-x-restriction fr-x-icon--primary fr-x-icon--sm fr-pr-1w" aria-hidden="true"></span>
-            {% if measure.type == 'speedLimitation' %}
-                {{ 'regulation.measure.maxSpeed'|trans({ '%maxSpeed%': measure.maxSpeed }) }}
-            {% else %}
-                {{ ('regulation.measure.type.' ~ measure.type)|trans }}
-            {% endif %}
+        <li class="fr-grid-row fr-text--bold">
+            {% include 'regulation/_measure_title.html.twig' with { measure } only %}
         </li>
 
-        <li>
-            <span class="fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
-            {% include 'regulation/_location_line.html.twig' with { location } only %}
+        <li class="fr-grid-row fr-x-gap-1w fr-text--sm">
+            <span class="fr-icon-map-pin-2-line fr-x-icon--dark-border" aria-hidden="true"></span>
+            <span class="fr-x-grow">
+                {% include 'regulation/_location_line.html.twig' with { location } only %}
+            </span>
         </li>
 
-        <li>
-            <span class="fr-icon-car-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
-            {% include 'regulation/_vehicle_set.html.twig' with {
-                vehicleSet: measure.vehicleSet,
-            } only %}
+        <li class="fr-grid-row fr-x-gap-1w fr-text--sm">
+            <span class="fr-icon-car-line fr-x-icon--dark-border" aria-hidden="true"></span>
+            <span class="fr-x-grow">
+                {{ include('regulation/_vehicle_set.html.twig', { vehicleSet: measure.vehicleSet }, with_context = false)|trim|app_capfirst }}
+            </span>
         </li>
 
-        <li>
-            <span class="fr-icon-calendar-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
-            {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
-        </li>
-
-        <li>
-            {% include 'regulation/_overall_period.html.twig' with { generalInfo: regulation } only %}
-        </li>
-
-        <li>
-            {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
-            {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
-            {{ 'map.location.state'|trans }}
-            {% if isUpcoming %}
-                {{ 'common.date.upcoming'|trans }}
-            {% elseif hasPassed %}
-                {{ 'common.date.passed'|trans }}
-            {% else %}
-                {{ 'common.date.ongoing'|trans }}
-            {% endif %}
-        </li>
-
-        <li>
-            <a href="{{ path('app_regulation_detail', {'uuid' : regulationOrderRecordId}) }}" target="_blank">
-                {{ 'map.location.popup.details'|trans }}
-            </a>
+        <li class="fr-grid-row fr-x-gap-1w fr-text--sm">
+            <span class="fr-icon-calendar-2-line fr-x-icon--dark-border" aria-hidden="true"></span>
+            <span class="fr-x-grow">
+                {{ include('regulation/_period.html.twig', { periods: measure.periods }, with_context = false)|trim|app_capfirst }}
+            </span>
         </li>
     </ul>
+
+    <div class="fr-container--fluid fr-mt-1w">
+        <div class="fr-grid-row fr-grid-row--right">
+            <a class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline" href="{{ path('app_regulation_detail', {'uuid' : regulationOrderRecordId}) }}" target="_blank">
+                {{ 'map.location.popup.details'|trans }}
+            </a>
+        </div>
+    </div>
 </turbo-frame>
