@@ -39,7 +39,7 @@ class VehicleSetTemplateTest extends KernelTestCase
         $text = $twig->render('regulation/_vehicle_set.html.twig', $context);
 
         $this->assertSame(
-            'pour les véhicules de plus de 3,5 tonnes, 4 mètres de large ou 2,4 mètres de haut, sauf véhicules d&#039;urgence',
+            'pour les véhicules de plus de 3,5 tonnes, 4 mètres de large ou 2,4 mètres de haut, sauf véhicules d\'urgence',
             $text,
         );
     }
