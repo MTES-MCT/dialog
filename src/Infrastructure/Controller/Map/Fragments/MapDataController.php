@@ -46,8 +46,8 @@ final class MapDataController
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
             $dto->displayPermanentRegulations,
             $dto->displayTemporaryRegulations,
-            $dto->displayFutureRegulations,
-            $dto->displayPastRegulations,
+            $dto->displayMeasureTypeNoEntry,
+            $dto->displayMeasureTypeSpeedLimitation,
         );
 
         return new Response(

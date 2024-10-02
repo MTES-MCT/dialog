@@ -13,26 +13,33 @@
     <div class="fr-x-container--fluid fr-x-h-full">
         <div class="fr-grid-row fr-x-h-full">
             <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-pt-2w fr-pb-6w">
-                <h1 class="fr-h4">{{ 'map.title'|trans }} </h1>
-                <h2 class="fr-h6">{{ 'map.filters.title'|trans }}</h2>
-
-                <d-map-form target="map" urlAttribute="dataUrl">
-                    {{ form_start(form, {
-                        attr: {
-                            class: 'd-stack',
-                            style: '--stack-gap: var(--1w)',
-                        },
-                    }) }}
-                        {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group'}) }}
-                        {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}
-                        <hr />
-                        {{ form_row(form.displayFutureRegulations, {group_class: 'fr-checkbox-group'}) }}
-                        {{ form_row(form.displayPastRegulations, {group_class: 'fr-checkbox-group'}) }}
-                        <noscript>
-                            {{ form_row(form.save) }}
-                        </noscript>
-                    {{ form_end(form) }}
-                </d-map-form>
+                <h1 class="fr-h4">{{ 'map.title'|trans }}</h1>
+                <section class="fr-accordion">
+                    <h2 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="true" aria-controls="accordion-1040"><span class="fr-icon-filter-line" aria-hidden="true"></span>{{ 'map.filters.title'|trans }}</button>
+                    </h2>
+                    <div class="fr-collapse" id="accordion-1040">
+                        <h3 class="fr-h6 fr-my-2w">{{ 'map.filters.title.restriction'|trans }}</h3>
+                        <d-map-form target="map" urlAttribute="dataUrl">
+                            {{ form_start(form, {
+                                attr: {
+                                    class: 'd-stack',
+                                    style: '--stack-gap: var(--1w)',
+                                },
+                            }) }}
+                            <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.type.restriction'|trans }}</h4>
+                            {{ form_row(form.displayMeasureTypeNoEntry, {group_class: 'fr-checkbox-group'}) }}
+                            {{ form_row(form.displayMeasureTypeSpeedLimitation, {group_class: 'fr-checkbox-group'}) }}
+                            <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.type.regulation'|trans }}</h4>
+                            {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group'}) }}
+                            {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}
+                            <noscript>
+                                {{ form_row(form.save) }}
+                            </noscript>
+                            {{ form_end(form) }}
+                        </d-map-form>
+                    </div>
+                </section>
             </div>
 
             <d-map

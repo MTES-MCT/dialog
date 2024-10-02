@@ -8,6 +8,6 @@ final class MapFilterDTO
 {
     public bool $displayPermanentRegulations = true;
     public bool $displayTemporaryRegulations = true;
-    public bool $displayFutureRegulations = false;
-    public bool $displayPastRegulations = false;
+    public bool $displayMeasureTypeNoEntry = false;
+    public bool $displayMeasureTypeSpeedLimitation = false;
 }

@@ -2052,14 +2052,6 @@
                 <source>map.meta.title</source>
                 <target>Carte</target>
             </trans-unit>
-            <trans-unit id="map.form.displayFutureRegulations">
-                <source>map.form.displayFutureRegulations</source>
-                <target>Restrictions à venir</target>
-            </trans-unit>
-            <trans-unit id="map.form.displayPastRegulations">
-                <source>map.form.displayPastRegulations</source>
-                <target>Restrictions passées</target>
-            </trans-unit>
             <trans-unit id="map.title">
                 <source>map.title</source>
                 <target>Visualiser les restrictions</target>
@@ -2071,6 +2063,26 @@
             <trans-unit id="map.filters.title">
                 <source>map.filters.title</source>
                 <target>Filtres</target>
+            </trans-unit>
+            <trans-unit id="map.filters.title.restriction">
+                <source>map.filters.title.restriction</source>
+                <target>Restriction</target>
+            </trans-unit>
+            <trans-unit id="map.filters.title.type.restriction">
+                <source>map.filters.title.type.restriction</source>
+                <target>Types de restriction</target>
+            </trans-unit>
+            <trans-unit id="map.filters.title.type.regulation">
+                <source>map.filters.title.type.regulation</source>
+                <target>Réglementation</target>
+            </trans-unit>
+            <trans-unit id="map.filter.type.noEntry">
+                <source>map.filter.type.noEntry</source>
+                <target>Interdiction de circulation</target>
+            </trans-unit>
+            <trans-unit id="map.filter.type.speedLimitation">
+                <source>map.filter.type.speedLimitation</source>
+                <target>Limitation de vitesse</target>
             </trans-unit>
             <trans-unit id="map.filter.permanents">
                 <source>map.filter.permanents</source>

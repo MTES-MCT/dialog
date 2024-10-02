@@ -14,6 +14,24 @@ final class MapFilterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+        ->add(
+            'displayMeasureTypeNoEntry',
+            CheckboxType::class,
+            options: [
+                'label' => 'map.filter.type.noEntry',
+                'value' => 'yes',
+                'required' => false,
+            ],
+        )
+        ->add(
+            'displayMeasureTypeSpeedLimitation',
+            CheckboxType::class,
+            options: [
+                'label' => 'map.filter.type.speedLimitation',
+                'value' => 'yes',
+                'required' => false,
+            ],
+        )
             ->add(
                 'displayPermanentRegulations',
                 CheckboxType::class,
@@ -28,24 +46,6 @@ final class MapFilterFormType extends AbstractType
                 CheckboxType::class,
                 options: [
                     'label' => 'map.filter.temporaries',
-                    'value' => 'yes',
-                    'required' => false,
-                ],
-            )
-            ->add(
-                'displayFutureRegulations',
-                CheckboxType::class,
-                options: [
-                    'label' => 'map.form.displayFutureRegulations',
-                    'value' => 'yes',
-                    'required' => false,
-                ],
-            )
-            ->add(
-                'displayPastRegulations',
-                CheckboxType::class,
-                options: [
-                    'label' => 'map.form.displayPastRegulations',
                     'value' => 'yes',
                     'required' => false,
                 ],
