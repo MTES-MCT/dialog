@@ -10,9 +10,11 @@ use App\Infrastructure\Security\AuthenticatedUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DeleteProfileController
 {
@@ -20,6 +22,7 @@ final class DeleteProfileController
         private CommandBusInterface $commandBus,
         private AuthenticatedUser $authenticatedUser,
         private RouterInterface $router,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -31,6 +34,10 @@ final class DeleteProfileController
         $command = new DeleteUserCommand($user);
 
         $this->commandBus->handle($command);
+
+        /** @var FlashBagAwareSessionInterface */
+        $session = $request->getSession();
+        $session->getFlashBag()->add('success', $this->translator->trans('profile.delete.success'));
 
         return new RedirectResponse(
             url: $this->router->generate('app_landing'),
