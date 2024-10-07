@@ -16,7 +16,7 @@ customElements.define('d-map-search-form', class extends HTMLElement {
                 const { coordinates, kind } = JSON.parse(searchValueField.value);
 
                 // Zoom closer on streets
-                const zoom = kind === 'street' ? 15 : 12;
+                const zoom = kind === 'street' ? 17 : 14;
 
                 map.flyTo(coordinates, zoom);
             });
