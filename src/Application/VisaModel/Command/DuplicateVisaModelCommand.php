@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Application\VisaModel\Command;
 
 use App\Application\CommandInterface;
+use App\Domain\User\Organization;
 
-final class DuplicateVisaModelCommand implements CommandInterface
+final readonly class DuplicateVisaModelCommand implements CommandInterface
 {
     public function __construct(
-        public readonly string $uuid,
+        public Organization $organization,
+        public string $uuid,
     ) {
     }
 }
