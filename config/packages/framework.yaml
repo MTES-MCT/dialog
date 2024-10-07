@@ -27,6 +27,8 @@ framework:
                 base_uri: '%env(APP_EUDONET_PARIS_BASE_URL)%'
             litteralis.wfs.http.client:
                 base_uri: '%env(APP_LITTERALIS_WFS_BASE_URL)%'
+            ign.geocoder.client:
+                base_uri: '%env(APP_IGN_GEOCODER_BASE_URL)%'
 
 when@test:
     framework:

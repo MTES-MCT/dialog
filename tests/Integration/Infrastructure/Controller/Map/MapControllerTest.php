@@ -16,5 +16,9 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertMetaTitle('Carte - DiaLog', $crawler);
+
+        // Search form is present
+        $this->assertNotNull($crawler->selectButton('Rechercher'));
+        $this->assertNotNull($crawler->filter('#search[name=search][autocomplete=off][spellcheck=false]')->first());
     }
 }

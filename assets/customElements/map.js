@@ -261,7 +261,7 @@ class MapLibreMap {
 
 const METROPOLITAN_FRANCE_CENTER = '[2.725, 47.16]';
 
-class MapElement extends HTMLElement {
+export class MapElement extends HTMLElement {
     connectedCallback() {
         const mapHeight = this.getAttribute('mapHeight') || '100%';
         const mapMinHeight = this.getAttribute('mapMinHeight') || '600px';
@@ -309,6 +309,21 @@ class MapElement extends HTMLElement {
         });
 
         observer.observe(this, { attributes: true });
+    }
+
+    /**
+     * Center map on given coordinates
+     * @param {[number, number]} coordinates 
+     * @param {number} zoom
+     */
+    flyTo(coordinates, zoom) {
+        this.map?.flyTo({
+            center: coordinates,
+            zoom,
+            // Animation options
+            duration: 2000, // ms
+            essential: false, // Disable if browser has [prefers-reduced-motion]
+        });
     }
 }
 
