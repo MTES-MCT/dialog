@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -15,7 +14,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 {
     public function __construct(
         ManagerRegistry $registry,
-        private DateUtilsInterface $dateUtils,
     ) {
         parent::__construct($registry, Location::class);
     }
@@ -47,10 +45,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function findAllForMapAsGeoJSON(
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
-        bool $includeUpcomingRegulations = false,
-        bool $includePastRegulations = false,
+        bool $includeMeasureTypeNoEntry = false,
+        bool $includeMeasureTypeSpeedLimitation = false,
     ): string {
-        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations;
+        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && !$includeMeasureTypeSpeedLimitation && !$includeMeasureTypeNoEntry;
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
         $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
 
@@ -68,19 +66,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 ? 'AND ro.end_date IS NOT NULL'
                 : '');
 
-        $upcomingOnly = $includeUpcomingRegulations && !$includePastRegulations;
-        $pastOnly = !$includeUpcomingRegulations && $includePastRegulations;
-        $presentOnly = !$includeUpcomingRegulations && !$includePastRegulations;
-
-        $regulationDatesWhereClause =
-            $upcomingOnly
-            ? 'AND (((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.start_date > :now)'
-            : ($pastOnly
-                ? 'AND (((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.end_date < :now)'
-                : ($presentOnly
-                    ? 'AND ((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now)'
-                    : ''));
-
+        $noEntry = $includeMeasureTypeNoEntry && !$includeMeasureTypeSpeedLimitation;
+        $speedLimitation = $includeMeasureTypeSpeedLimitation && !$includeMeasureTypeNoEntry;
+        $regulationType = $noEntry ? 'AND m.type = \'noEntry\'' : ($speedLimitation ? 'AND m.max_speed IS NOT NULL' : '');
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
                 'SELECT ST_AsGeoJSON(
@@ -100,11 +88,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 %s
                 ',
                 $regulationTypeWhereClause,
-                $regulationDatesWhereClause,
+                $regulationType,
             ),
             [
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                'now' => $this->dateUtils->getNow()->format('Y-m-d'),
             ],
         );
 
