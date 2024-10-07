@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Map\Fragments;
 
 use App\Application\MapGeocoderInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class MapSearchController
@@ -19,19 +18,14 @@ final class MapSearchController
     }
 
     #[Route(
-        '/carte/search',
+        '/_fragment/map/search',
         name: 'fragment_carto_search',
         methods: ['GET'],
     )]
-    public function __invoke(Request $request): Response
-    {
-        $search = $request->query->get('search');
-
-        if (!$search) {
-            throw new BadRequestHttpException();
-        }
-
-        $results = $this->mapGeocoder->findPlaces($search);
+    public function __invoke(
+        #[MapQueryParameter] string $search = '',
+    ): Response {
+        $results = $search ? $this->mapGeocoder->findPlaces($search) : [];
 
         return new Response(
             $this->twig->render(

@@ -11,15 +11,21 @@ final class MapSearchControllerTest extends AbstractWebTestCase
     public function testGetNoSearch(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/search');
+        $crawler = $client->request('GET', '/_fragment/map/search');
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $this->assertSame('Aucun résultat', $crawler->filter('#status')->innerText());
+
+        $items = $crawler->filter('li');
+        $this->assertCount(0, $items);
     }
 
     public function testGetEmpty(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/carte/search?search=EmptyPlease');
+        $crawler = $client->request('GET', '/_fragment/map/search?search=EmptyPlease');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -33,7 +39,7 @@ final class MapSearchControllerTest extends AbstractWebTestCase
     public function testGet(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/carte/search?search=Par');
+        $crawler = $client->request('GET', '/_fragment/map/search?search=Par');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
