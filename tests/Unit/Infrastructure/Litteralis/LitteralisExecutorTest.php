@@ -72,7 +72,7 @@ final class LitteralisExecutorTest extends TestCase
             $this->dateUtils,
         );
 
-        $executor->execute($this->orgId, $laterThan, $this->reporter);
+        $executor->execute('test', $this->orgId, $laterThan, $this->reporter);
     }
 
     public function testExecute(): void
@@ -106,7 +106,7 @@ final class LitteralisExecutorTest extends TestCase
         $this->reporter
             ->expects(self::once())
             ->method('start')
-            ->with($startTime, $organization);
+            ->with('test', $startTime, $organization);
 
         $features1 = ['feature1A', 'feature1B'];
         $features2 = ['feature2A'];
@@ -211,6 +211,6 @@ final class LitteralisExecutorTest extends TestCase
             $this->dateUtils,
         );
 
-        $this->assertSame('report', $executor->execute($this->orgId, $laterThan, $this->reporter));
+        $this->assertSame('report', $executor->execute('test', $this->orgId, $laterThan, $this->reporter));
     }
 }

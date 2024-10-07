@@ -58,9 +58,11 @@ Remarques
         $reportFormatter = new ReportFormatter($this->translator);
 
         $records = [
-            // Out of order to test the grouping of records
+            // Out of order to test the grouping of records by type
             [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => CommonRecordEnum::FACT_START_TIME->value, 'value' => 'start']],
             [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => CommonRecordEnum::FACT_ELAPSED_SECONDS->value, 'value' => 90]],
+            [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => CommonRecordEnum::FACT_INTEGRATION_NAME->value, 'value' => 'Litteralis TEST']],
+            [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => CommonRecordEnum::FACT_ORGANIZATION->value, 'value' => ['uuid' => '<uuid>', 'name' => 'Test org']]],
             [RecordTypeEnum::COUNT->value, [RecordTypeEnum::COUNT->value => 'example.total_features', 'value' => '10']],
             [RecordTypeEnum::FACT->value, [RecordTypeEnum::FACT->value => 'example.fact1', 'value' => 'abc']],
             [RecordTypeEnum::WARNING->value, [RecordTypeEnum::WARNING->value => 'example.missing_geometry', CommonRecordEnum::ATTR_REGULATION_ID->value => 'arrete4']],
@@ -85,6 +87,8 @@ Informations d'exécution
 
 Date et heure de début : start
 Temps d'exécution : 1 min 30 s
+Nom de l'intégration : Litteralis TEST
+Organisation cible : uuid: <uuid> ; name: Test org
 integration.report.fact.example.fact1 : abc
 Date et heure de fin : end
 

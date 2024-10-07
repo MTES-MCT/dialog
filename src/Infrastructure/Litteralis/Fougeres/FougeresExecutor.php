@@ -9,6 +9,8 @@ use App\Infrastructure\Litteralis\LitteralisExecutor;
 
 final class FougeresExecutor
 {
+    private const INTEGRATION_NAME = 'Litteralis MEL';
+
     public function __construct(
         private LitteralisExecutor $executor,
         private string $fougeresOrgId,
@@ -19,6 +21,6 @@ final class FougeresExecutor
 
     public function execute(\DateTimeInterface $laterThan, Reporter $reporter): string
     {
-        return $this->executor->execute($this->fougeresOrgId, $laterThan, $reporter);
+        return $this->executor->execute(self::INTEGRATION_NAME, $this->fougeresOrgId, $laterThan, $reporter);
     }
 }
