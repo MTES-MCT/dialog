@@ -53,22 +53,32 @@ L'infrastructure d'un environnement est déployée et gérée par Scalingo et s'
 * Le serveur PHP communique avec la base de données Redis, notamment pour le stockage des sessions utilisateurs.
 * Le serveur PHP communique avec des services tiers :
   * API Adresse : géocodage d'adresses.
-  * Sentry : collecte et analyse des erreurs applicatives.
-  * Matomo : collecte et analyse de données de trafic utilisateur.
+  * [BD TOPO](../tools/bdtopo.md) : données géographiques (hébergées sur l'app `dialog-bdtopo`).
+  * [Sentry](../tools/monitoring.md) : collecte et analyse des erreurs applicatives.
+  * [Matomo](../tools/analytics.md) : collecte et analyse de données de trafic utilisateur.
+  * [Metabase](../tools/metabase.md) : statistiques et suivi d'indicateurs (hébergé sur l'app `dialog-metabase`).
 
 Diagramme :
 
 ```
-                    Scalingo
-        ┌---------------------------------┐  ┌ - - - - - - ┐
-WWW ------ nginx (:443) --- php --------┬----  API Adresse
+                                            dialog-bdtopo
+                                             ┌ - - - - ┐
+                                        ┌----  BD TOPO
+                                        |    └ - - - - ┘
+                      dialog            |
+        ┌-------------------------------|-┐  ┌ - - - - - - ┐
+WWW ------ nginx (:443) --- php --------┼----  API Adresse
         |                    |          | |  └ - - - - - - ┘
         |               ┌----┴----┐     | |  ┌ - - - -┐
         |           ┌ - ┴ - ┐ ┌ - ┴ - ┐ ├----  Sentry
         |             PgSQL     Redis   | |  └ - - - -┘
-        |           └ - - - ┘ └ - - - ┘ | |  ┌ - - - -┐
-        |                               └----  Matomo
-        └---------------------------------┘  └ - - - -┘
+        |           └ - ┬ - ┘ └ - - - ┘ | |  ┌ - - - -┐
+        |               |               └----  Matomo
+        └---------------|-----------------┘  └ - - - -┘
+                        | dialog-metabase
+                        |  ┌ - - - - -┐ 
+                        └--  Metabase
+                           └ - - - - -┘
 ```
 
 ### Ressources
@@ -77,12 +87,14 @@ Voici, à date, une liste des ressources utilisées dans un environnement.
 
 | Ressource | Localisation | Contact |
 |-----------|------|---------|
-| Application Scalingo | Scalingo BetaGouv | tristan.robert[ @ ]beta.gouv.fr |
-| Base de données PostgreSQL | Scalingo BetaGouv (add-on) | tristan.robert[ @ ]beta.gouv.fr |
-| Serveur Redis | Scalingo BetaGouv (add-on) | tristan.robert[ @ ]beta.gouv.fr |
+| Application Scalingo | Scalingo BetaGouv (`dialog`) | tristan.robert[ @ ]beta.gouv.fr |
+| Base de données PostgreSQL | Scalingo BetaGouv (`dialog`, add-on) | tristan.robert[ @ ]beta.gouv.fr |
+| Serveur Redis | Scalingo BetaGouv (`dialog`, add-on) | tristan.robert[ @ ]beta.gouv.fr |
 | Enregistrement DNS | Zone DNS de BetaGouv | tristan.robert[ @ ]beta.gouv.fr |
+| BD TOPO | Scalingo BetaGouv (`dialog-bdtopo`) |  tristan.robert[ @ ]beta.gouv.fr
 | Projet Sentry | [Sentry de BetaGouv](https://sentry.incubateur.net) | tristan.robert[ @ ]beta.gouv.fr |
 | Site Matomo | [Matomo BetaGouv](https://stats.beta.gouv.fr) | ~incubateur-ops |
+| Metabase et son PostgreSQL | Scalingo BetaGouv (`dialog-metabase`) |  tristan.robert[ @ ]beta.gouv.fr |
 
 ### Configuration
 
