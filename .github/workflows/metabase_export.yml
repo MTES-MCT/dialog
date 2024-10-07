@@ -1,0 +1,39 @@
+name: Metabase Export
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ## TODO retirer avant de merger
+      - feat/metabase-user
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Init environment variables
+        run: |
+          echo "SRC_DATABASE_URL=${{ secrets.METABASE_EXPORT_SRC_DATABASE_URL }}" >> .env.metabase
+          echo "DEST_METABASE_DATABASE_URL=${{ secrets.METABASE_EXPORT_DEST_METABASE_DATABASE_URL }}" >> .env.metabase
+
+      - name: Run export
+        run: make ci_metabase_export
+        env:
+          METABASE_SRC_APP: ${{ vars.METABASE_EXPORT_SRC_APP }}
+          METABASE_DEST_APP: ${{ vars.METABASE_EXPORT_DEST_APP }}
