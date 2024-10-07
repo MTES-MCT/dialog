@@ -97,6 +97,7 @@ Encore
                 /^fr-icon-x-/,
                 /^fr-modal--/,
                 /^fr-alert--/,
+                /^d-map-popup/,
                 // Map libre classes
                 /^maplibregl/
             ],
