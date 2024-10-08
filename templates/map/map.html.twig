@@ -14,6 +14,11 @@
         <div class="fr-grid-row fr-x-h-full">
             <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-pt-2w fr-pb-6w">
                 <h1 class="fr-h4">{{ 'map.title'|trans }}</h1>
+
+                <d-map-search-form target="map">
+                    {% include 'map/_search_form.html.twig' with {} only %}
+                </d-map-search-form>
+                
                 <section class="fr-accordion">
                     <h2 class="fr-accordion__title">
                         <button class="fr-accordion__btn" aria-expanded="true" aria-controls="accordion-1040"><span class="fr-icon-filter-line" aria-hidden="true"></span>{{ 'map.filters.title'|trans }}</button>
