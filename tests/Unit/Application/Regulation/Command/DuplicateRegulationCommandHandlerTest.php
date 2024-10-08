@@ -284,6 +284,16 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
             ->willReturn($endDate);
 
         $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getAdditionalVisas')
+            ->willReturn(['Vu 1']);
+
+        $this->originalRegulationOrder
+            ->expects(self::once())
+            ->method('getAdditionalReasons')
+            ->willReturn(['Motif 1']);
+
+        $this->originalRegulationOrder
             ->expects(self::exactly(2))
             ->method('getMeasures')
             ->willReturn([$measure1, $measure2]);
@@ -308,6 +318,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->startDate = $startDate;
         $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $originalOrganization;
+        $generalInfoCommand->additionalVisas = ['Vu 1'];
+        $generalInfoCommand->additionalReasons = ['Motif 1'];
 
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = true;

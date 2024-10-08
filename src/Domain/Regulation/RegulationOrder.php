@@ -95,7 +95,7 @@ class RegulationOrder
         return $this->additionalVisas;
     }
 
-    public function getaAdditionalReasons(): ?array
+    public function getAdditionalReasons(): ?array
     {
         return $this->additionalReasons;
     }
@@ -107,6 +107,8 @@ class RegulationOrder
         \DateTimeInterface $startDate,
         ?\DateTimeInterface $endDate = null,
         ?string $otherCategoryText = null,
+        array $additionalVisas = [],
+        array $additionalReasons = [],
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;
@@ -114,5 +116,7 @@ class RegulationOrder
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->otherCategoryText = $otherCategoryText;
+        $this->additionalVisas = $additionalVisas;
+        $this->additionalReasons = $additionalReasons;
     }
 }
