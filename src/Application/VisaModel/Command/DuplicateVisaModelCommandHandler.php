@@ -24,7 +24,7 @@ final class DuplicateVisaModelCommandHandler
             throw new VisaModelNotFoundException();
         }
 
-        $visaModelCommand = new SaveVisaModelCommand($orginalVisaModel->getOrganization());
+        $visaModelCommand = new SaveVisaModelCommand($command->organization);
         $visaModelCommand->name = \sprintf('%s (copie)', $orginalVisaModel->getName());
         $visaModelCommand->description = $orginalVisaModel->getDescription();
         $visaModelCommand->visas = $orginalVisaModel->getVisas();

@@ -42,10 +42,6 @@ final class DuplicateVisaModelCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getVisas')
             ->willReturn(['vu que 1']);
-        $visaModel
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
 
         $this->visaModelRepository
             ->expects(self::once())
@@ -67,7 +63,7 @@ final class DuplicateVisaModelCommandHandlerTest extends TestCase
             $this->visaModelRepository,
             $this->commandBus,
         );
-        $command = new DuplicateVisaModelCommand('f8216679-5a0b-4dd5-9e2b-b382d298c3b4');
+        $command = new DuplicateVisaModelCommand($organization, 'f8216679-5a0b-4dd5-9e2b-b382d298c3b4');
 
         $handler($command);
     }
@@ -75,6 +71,8 @@ final class DuplicateVisaModelCommandHandlerTest extends TestCase
     public function testNotFound(): void
     {
         $this->expectException(VisaModelNotFoundException::class);
+
+        $organization = $this->createMock(Organization::class);
 
         $this->visaModelRepository
             ->expects(self::once())
@@ -90,7 +88,7 @@ final class DuplicateVisaModelCommandHandlerTest extends TestCase
             $this->visaModelRepository,
             $this->commandBus,
         );
-        $command = new DuplicateVisaModelCommand('f8216679-5a0b-4dd5-9e2b-b382d298c3b4');
+        $command = new DuplicateVisaModelCommand($organization, 'f8216679-5a0b-4dd5-9e2b-b382d298c3b4');
 
         $handler($command);
     }

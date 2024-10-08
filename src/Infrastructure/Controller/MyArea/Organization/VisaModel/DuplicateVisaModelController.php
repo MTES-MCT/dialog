@@ -53,7 +53,7 @@ final class DuplicateVisaModelController extends AbstractOrganizationController
         try {
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();
-            $this->commandBus->handle(new DuplicateVisaModelCommand($uuid));
+            $this->commandBus->handle(new DuplicateVisaModelCommand($organization, $uuid));
             $session->getFlashBag()->add('success', $this->translator->trans('visa.duplicated.success'));
 
             return new RedirectResponse(

@@ -10,6 +10,7 @@ final readonly class VisaModelView
         public string $uuid,
         public string $name,
         public ?string $description,
+        public ?string $organizationUuid,
     ) {
     }
 }
