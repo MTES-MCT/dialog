@@ -7,7 +7,9 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\User\Command\MarkUserActiveCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
+use App\Infrastructure\Security\AuthenticatedUser;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -21,6 +23,7 @@ final class AddRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
+        private AuthenticatedUser $authenticatedUser,
         private FormFactoryInterface $formFactory,
         private Security $security,
         private RouterInterface $router,
@@ -59,6 +62,10 @@ final class AddRegulationController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $regulationOrderRecord = $this->commandBus->handle($command);
+
+            // User just created a regulation order, this is a sign of activity.
+            $user = $this->authenticatedUser->getUser();
+            $this->commandBus->handle(new MarkUserActiveCommand($user));
 
             return new RedirectResponse(
                 url: $this->router->generate('app_regulation_detail', [
