@@ -18,12 +18,14 @@ final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
             '42a1888f-29cb-4e32-a02f-49d278b6d128',
             'Interdiction de circulation',
             'Circulation interdite dans toute l\'agglomération',
+            '0b8d5e82-536d-4de3-a0e8-a17c99748724',
         );
 
         $visaModel2 = new VisaModelView(
             '42a1888f-29cb-4e32-a02f-49d278b6d128',
             'Interdiction de circulation',
             'Circulation interdite dans toute l\'agglomération',
+            '0b8d5e82-536d-4de3-a0e8-a17c99748724',
         );
 
         $visaModelRepository = $this->createMock(VisaModelRepositoryInterface::class);
