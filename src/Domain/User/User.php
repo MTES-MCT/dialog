@@ -11,6 +11,7 @@ class User
     private string $password;
     private array $roles = [];
     private \DateTimeInterface $registrationDate;
+    private ?\DateTimeInterface $lastActiveAt;
 
     public function __construct(
         private string $uuid,
@@ -80,6 +81,16 @@ class User
         $this->registrationDate = $date;
 
         return $this;
+    }
+
+    public function getLastActiveAt(): ?\DateTimeInterface
+    {
+        return $this->lastActiveAt;
+    }
+
+    public function setLastActiveAt(\DateTimeInterface $date): void
+    {
+        $this->lastActiveAt = $date;
     }
 
     public function __toString(): string

@@ -59,6 +59,9 @@ final class UserCrudController extends AbstractCrudController
             DateField::new('registrationDate')
                 ->setLabel('Date d\'inscription')
                 ->setDisabled($pageName === Crud::PAGE_EDIT),
+            DateField::new('lastActiveAt')
+                ->setLabel('Dernière activité')
+                ->setDisabled(true),
             ChoiceField::new('roles')
                 ->setLabel('Rôles')
                 ->allowMultipleChoices()
