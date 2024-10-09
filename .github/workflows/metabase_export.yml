@@ -27,13 +27,10 @@ jobs:
         run: |
           ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
 
-      - name: Init environment variables
-        run: |
-          echo "SRC_DATABASE_URL=${{ secrets.METABASE_EXPORT_SRC_DATABASE_URL }}" >> .env.metabase
-          echo "DEST_METABASE_DATABASE_URL=${{ secrets.METABASE_EXPORT_DEST_METABASE_DATABASE_URL }}" >> .env.metabase
-
       - name: Run export
         run: make ci_metabase_export
         env:
           METABASE_SRC_APP: ${{ vars.METABASE_EXPORT_SRC_APP }}
+          METABASE_SRC_DATABASE_URL: ${{ secrets.METABASE_EXPORT_SRC_DATABASE_URL }}
           METABASE_DEST_APP: ${{ vars.METABASE_EXPORT_DEST_APP }}
+          METABASE_DEST_DATABASE_URL: ${{ secrets.METABASE_EXPORT_DEST_DATABASE_URL }}
