@@ -2,21 +2,15 @@
 # Inspiré de : https://doc.incubateur.net/communaute/les-outils-de-la-communaute/autres-services/metabase/metabase#connecter-metabase-a-une-base-de-donnees-anonymisee
 set -euxo pipefail
 
-source .env.metabase ## Créé dans le workflow GitHub Actions
+# URL de la DB DiaLog du point de vue de la DB Metabase (sera utilisé avec dblink) 
+SRC_DATABASE_URL=$1
 
-# Création des tables (persistera dans la DB source jusqu'à prochaine exécution de ce script)
+# URL de la DB Metabase du point de vue de ce script
+DEST_DATABASE_URL=$2
 
-psql $SRC_DATABASE_URL -c "DROP TABLE IF EXISTS analytics_user"
-psql $SRC_DATABASE_URL -c "
-CREATE TABLE analytics_user AS
-SELECT
-  uuid_generate_v4() AS id,
-  u.registration_date
-FROM \"user\" AS u"
-psql $SRC_DATABASE_URL -c "ALTER TABLE analytics_user ADD PRIMARY KEY (id)"
+export PGOPTIONS="-c custom.src_database_url=${SRC_DATABASE_URL}"
 
-# Création des index
-
-# Copie vers la DB Metabase
-
-pg_dump $SRC_DATABASE_URL -O -x -t analytics_user -c | psql "$DEST_METABASE_DATABASE_URL"
+# ON_ERROR_STOP=1 s'assure que cette commande échoue (return code != 0) si le script SQL a des statements qui échouent.
+# (Par défaut avec -f on a toujours un return code 0 et un statement en échec n'empêche pas les suivants de s'exécuter.)
+# https://engineering.nordeus.com/psql-exit-on-first-error/
+psql $DEST_DATABASE_URL -v ON_ERROR_STOP=1 -f ./tools/metabase-export.sql
