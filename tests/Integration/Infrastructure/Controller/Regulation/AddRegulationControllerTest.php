@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
 {
     public function testAdd(): void
     {
-        $client = $this->login();
+        $email = UserFixture::MAIN_ORG_USER_EMAIL;
+        $client = $this->login($email);
         $crawler = $client->request('GET', '/regulations/add');
 
         $this->assertResponseStatusCodeSame(200);
@@ -37,8 +40,13 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[startDate]'] = '2023-02-14';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
         $form['general_info_form[otherCategoryText]'] = 'Trou en formation';
+
+        /** @var UserRepositoryInterface */
+        $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
+        $this->assertNull($userRepository->findOneByEmail($email)->getLastActiveAt());
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
+        $this->assertEquals(new \DateTimeImmutable('2023-06-09'), $userRepository->findOneByEmail($email)->getLastActiveAt());
 
         $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
