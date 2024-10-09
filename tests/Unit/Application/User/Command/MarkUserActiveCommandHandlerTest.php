@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\User\Command;
 
 use App\Application\DateUtilsInterface;
-use App\Application\User\Command\MarkUserActiveCommand;
-use App\Application\User\Command\MarkUserActiveCommandHandler;
+use App\Application\User\Command\MarkUserAsActiveCommand;
+use App\Application\User\Command\MarkUserAsActiveCommandHandler;
 use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
 
@@ -24,8 +24,8 @@ final class MarkUserActiveCommandHandlerTest extends TestCase
             ->method('getNow')
             ->willReturn($now);
 
-        $command = new MarkUserActiveCommand($user);
-        $handler = new MarkUserActiveCommandHandler($dateUtils);
+        $command = new MarkUserAsActiveCommand($user);
+        $handler = new MarkUserAsActiveCommandHandler($dateUtils);
         $handler($command);
     }
 }

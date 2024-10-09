@@ -6,14 +6,14 @@ namespace App\Application\User\Command;
 
 use App\Application\DateUtilsInterface;
 
-final class MarkUserActiveCommandHandler
+final class MarkUserAsActiveCommandHandler
 {
     public function __construct(
         private DateUtilsInterface $dateUtils,
     ) {
     }
 
-    public function __invoke(MarkUserActiveCommand $command): void
+    public function __invoke(MarkUserAsActiveCommand $command): void
     {
         $command->user
             ->setLastActiveAt($this->dateUtils->getNow());

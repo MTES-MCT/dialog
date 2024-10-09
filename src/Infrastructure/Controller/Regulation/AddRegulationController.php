@@ -7,7 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\User\Command\MarkUserActiveCommand;
+use App\Application\User\Command\MarkUserAsActiveCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use App\Infrastructure\Security\SymfonyUser;
@@ -65,7 +65,7 @@ final class AddRegulationController
 
             // User just created a regulation order, this is a sign of activity.
             $user = $this->authenticatedUser->getUser();
-            $this->commandBus->handle(new MarkUserActiveCommand($user));
+            $this->commandBus->handle(new MarkUserAsActiveCommand($user));
 
             return new RedirectResponse(
                 url: $this->router->generate('app_regulation_detail', [
