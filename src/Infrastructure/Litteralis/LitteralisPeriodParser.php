@@ -7,6 +7,7 @@ namespace App\Infrastructure\Litteralis;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\IntegrationReport\Reporter;
 
 final class LitteralisPeriodParser
@@ -52,9 +53,9 @@ final class LitteralisPeriodParser
             $reporter->addError(
                 LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                 [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                    CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                     'idemprise' => $properties['idemprise'],
-                    'arretesrcid' => $properties['arretesrcid'],
-                    'shorturl' => $properties['shorturl'],
                     $startDateProperty => $properties[$startDateProperty],
                     'format' => $dateFormat,
                 ],
@@ -79,9 +80,9 @@ final class LitteralisPeriodParser
             $reporter->addError(
                 LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                 [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                    CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                     'idemprise' => $properties['idemprise'],
-                    'arretesrcid' => $properties['arretesrcid'],
-                    'shorturl' => $properties['shorturl'],
                     $endDateProperty => $properties[$endDateProperty],
                     'format' => $dateFormat,
                 ],
@@ -165,9 +166,9 @@ final class LitteralisPeriodParser
         // * 'de 21h00 à 06h00 du lundi soir au samedi matin'
 
         $reporter->addError(LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value, [
+            CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+            CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
             'idemprise' => $properties['idemprise'],
-            'arretesrcid' => $properties['arretesrcid'],
-            'shorturl' => $properties['shorturl'],
             'jours et horaires' => $value,
         ]);
 
