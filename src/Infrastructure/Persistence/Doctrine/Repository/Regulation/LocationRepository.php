@@ -8,6 +8,7 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class LocationRepository extends ServiceEntityRepository implements LocationRepositoryInterface
@@ -64,7 +65,17 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             : ($temporaryOnly
                 ? 'AND ro.end_date IS NOT NULL'
                 : '');
-        $regulationTypeCondition = $measureTypes ? \sprintf('AND m.type IN (%s)', "'" . implode("', '", $measureTypes) . "'") : '';
+        /* $regulationTypeCondition = $measureTypes ? 'AND m.type IN (:measureTypes)' : ''; */
+
+        $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
+        $regulationTypeCondition = '';
+        $types = [];
+
+        if ($measureTypes) {
+            $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
+            $parameters['measureTypes'] = $measureTypes;
+            $types = ['measureTypes' => ArrayParameterType::STRING];
+        }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
@@ -87,9 +98,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 $regulationTypeWhereClause,
                 $regulationTypeCondition,
             ),
-            [
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-            ],
+            $parameters,
+            $types,
         );
 
         $features = [];

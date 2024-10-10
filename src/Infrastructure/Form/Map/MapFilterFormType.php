@@ -16,11 +16,11 @@ final class MapFilterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add(
-            'measureTypes',
-            ChoiceType::class,
-            options: $this->getMeasureTypesOptions(),
-        )
+            ->add(
+                'measureTypes',
+                ChoiceType::class,
+                options: $this->getMeasureTypesOptions(),
+            )
             ->add(
                 'displayPermanentRegulations',
                 CheckboxType::class,
@@ -47,7 +47,7 @@ final class MapFilterFormType extends AbstractType
     {
         $choices = [];
 
-        foreach (MeasureTypeEnum::typeCases() as $case) {
+        foreach (MeasureTypeEnum::cases() as $case) {
             $choices[\sprintf('map.filter.type.%s', $case->value)] = $case->value;
         }
 

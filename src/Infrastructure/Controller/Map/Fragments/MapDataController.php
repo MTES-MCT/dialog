@@ -30,7 +30,6 @@ final class MapDataController
     public function __invoke(Request $request): Response
     {
         $dto = new MapFilterDTO();
-        dump($dto);
         $form = $this->formFactory->create(
             type: MapFilterFormType::class,
             data: $dto,
