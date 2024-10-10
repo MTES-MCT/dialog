@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -91,6 +92,38 @@ final class GeneralInfoFormType extends AbstractType
                 options: [
                     'label' => 'regulation.general_info.description',
                     'help' => 'regulation.general_info.description.help',
+                ],
+            )
+            ->add(
+                'additionalVisas',
+                CollectionType::class,
+                options: [
+                    'entry_type' => TextareaType::class,
+                    'label' => null,
+                    'prototype_name' => '__visa_name__',
+                    'entry_options' => [
+                        'label' => 'regulation.general_info.visa',
+                    ],
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'keep_as_list' => true,
+                    'error_bubbling' => false,
+                ],
+            )
+            ->add(
+                'additionalReasons',
+                CollectionType::class,
+                options: [
+                    'entry_type' => TextareaType::class,
+                    'label' => null,
+                    'prototype_name' => '__reason_name__',
+                    'entry_options' => [
+                        'label' => 'regulation.general_info.reason',
+                    ],
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'keep_as_list' => true,
+                    'error_bubbling' => false,
                 ],
             )
             ->add(

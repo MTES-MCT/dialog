@@ -66,6 +66,20 @@
                 <option name="type">\DateTimeInterface</option>
             </constraint>
         </property>
+        <property name="additionalVisas">
+            <constraint name="All">
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                </option>
+            </constraint>
+        </property>
+        <property name="additionalReasons">
+            <constraint name="All">
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                </option>
+            </constraint>
+        </property>
         <constraint name="App\Infrastructure\Validator\SaveRegulationGeneralInfoCommandConstraint" />
     </class>
 </constraint-mapping>

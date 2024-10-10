@@ -44,7 +44,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertFalse($regulationOrder->isPermanent());
         $this->assertSame($visaModel, $regulationOrder->getVisaModel());
         $this->assertSame(['vu que 1'], $regulationOrder->getAdditionalVisas());
-        $this->assertSame(['considérant que'], $regulationOrder->getaAdditionalReasons());
+        $this->assertSame(['considérant que'], $regulationOrder->getAdditionalReasons());
     }
 
     public function testUpdate(): void

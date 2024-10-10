@@ -36,6 +36,8 @@ final class SaveRegulationGeneralInfoCommandHandler
                     startDate: $command->startDate,
                     endDate: $command->endDate,
                     otherCategoryText: $command->otherCategoryText,
+                    additionalVisas: $command->additionalVisas,
+                    additionalReasons: $command->additionalReasons,
                 ),
             );
 
@@ -61,6 +63,8 @@ final class SaveRegulationGeneralInfoCommandHandler
             startDate: $command->startDate,
             endDate: $command->endDate,
             otherCategoryText: $command->otherCategoryText,
+            additionalVisas: $command->additionalVisas,
+            additionalReasons: $command->additionalReasons,
         );
 
         return $command->regulationOrderRecord;
