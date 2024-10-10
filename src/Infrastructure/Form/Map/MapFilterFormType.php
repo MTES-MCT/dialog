@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Map;
 
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -15,22 +17,9 @@ final class MapFilterFormType extends AbstractType
     {
         $builder
         ->add(
-            'displayMeasureTypeNoEntry',
-            CheckboxType::class,
-            options: [
-                'label' => 'map.filter.type.noEntry',
-                'value' => 'yes',
-                'required' => false,
-            ],
-        )
-        ->add(
-            'displayMeasureTypeSpeedLimitation',
-            CheckboxType::class,
-            options: [
-                'label' => 'map.filter.type.speedLimitation',
-                'value' => 'yes',
-                'required' => false,
-            ],
+            'measureTypes',
+            ChoiceType::class,
+            options: $this->getMeasureTypesOptions(),
         )
             ->add(
                 'displayPermanentRegulations',
@@ -52,5 +41,22 @@ final class MapFilterFormType extends AbstractType
             )
             ->add('save', SubmitType::class)
         ;
+    }
+
+    private function getMeasureTypesOptions(): array
+    {
+        $choices = [];
+
+        foreach (MeasureTypeEnum::typeCases() as $case) {
+            $choices[\sprintf('map.filter.type.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'map.filters.title.type.restriction',
+            'multiple' => true,
+            'expanded' => true,
+            'required' => false,
+        ];
     }
 }

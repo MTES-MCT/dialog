@@ -33,9 +33,7 @@
                                     style: '--stack-gap: var(--1w)',
                                 },
                             }) }}
-                            <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.type.restriction'|trans }}</h4>
-                            {{ form_row(form.displayMeasureTypeNoEntry, {group_class: 'fr-checkbox-group'}) }}
-                            {{ form_row(form.displayMeasureTypeSpeedLimitation, {group_class: 'fr-checkbox-group'}) }}
+                            {{ form_row(form.measureTypes, {group_class: 'fr-checkbox-group'}) }}
                             <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.type.regulation'|trans }}</h4>
                             {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group'}) }}
                             {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}

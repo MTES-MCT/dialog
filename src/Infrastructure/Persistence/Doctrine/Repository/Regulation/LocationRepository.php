@@ -45,10 +45,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function findAllForMapAsGeoJSON(
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
-        bool $includeMeasureTypeNoEntry = false,
-        bool $includeMeasureTypeSpeedLimitation = false,
+        array $measureTypes = [],
     ): string {
-        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && !$includeMeasureTypeSpeedLimitation && !$includeMeasureTypeNoEntry;
+        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
         $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
 
@@ -65,10 +64,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             : ($temporaryOnly
                 ? 'AND ro.end_date IS NOT NULL'
                 : '');
+        $regulationTypeCondition = $measureTypes ? \sprintf('AND m.type IN (%s)', "'" . implode("', '", $measureTypes) . "'") : '';
 
-        $noEntry = $includeMeasureTypeNoEntry && !$includeMeasureTypeSpeedLimitation;
-        $speedLimitation = $includeMeasureTypeSpeedLimitation && !$includeMeasureTypeNoEntry;
-        $regulationType = $noEntry ? 'AND m.type = \'noEntry\'' : ($speedLimitation ? 'AND m.max_speed IS NOT NULL' : '');
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
                 'SELECT ST_AsGeoJSON(
@@ -88,7 +85,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 %s
                 ',
                 $regulationTypeWhereClause,
-                $regulationType,
+                $regulationTypeCondition,
             ),
             [
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
