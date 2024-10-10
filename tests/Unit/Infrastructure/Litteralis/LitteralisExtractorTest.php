@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Litteralis;
 
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisClient;
 use App\Infrastructure\Litteralis\LitteralisExtractor;
@@ -95,8 +96,8 @@ final class LitteralisExtractorTest extends TestCase
             ->method('addWarning')
             ->with(LitteralisRecordEnum::WARNING_MISSING_GEOMETRY->value, [
                 'idemprise' => 'emprise4',
-                'arretesrcid' => 'arrete3',
-                'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
+                CommonRecordEnum::ATTR_REGULATION_ID->value => 'arrete3',
+                CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
             ]);
 
         $extractor = new LitteralisExtractor($this->client);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis;
 
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\IntegrationReport\Reporter;
 
 final class LitteralisExtractor
@@ -44,9 +45,9 @@ final class LitteralisExtractor
             if (empty($feature['geometry'])) {
                 // Parfois la 'geometry' est absente
                 $reporter->addWarning(LitteralisRecordEnum::WARNING_MISSING_GEOMETRY->value, [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => $identifier,
+                    CommonRecordEnum::ATTR_URL->value => $feature['properties']['shorturl'],
                     'idemprise' => $feature['properties']['idemprise'],
-                    'arretesrcid' => $identifier,
-                    'shorturl' => $feature['properties']['shorturl'],
                 ]);
                 continue;
             }
