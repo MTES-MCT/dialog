@@ -40,26 +40,32 @@ final class VisaModelRepository extends ServiceEntityRepository implements VisaM
         ;
     }
 
-    public function findOrganizationVisaModels(string $organizationUuid): array
+    public function findOrganizationVisaModels(?string $organizationUuid = null): array
     {
-        return $this->createQueryBuilder('v')
+        $query = $this->createQueryBuilder('v')
             ->select(
                 \sprintf(
                     'NEW %s(
                         v.uuid,
                         v.name,
                         v.description,
-                        o.uuid
+                        o.uuid,
+                        o.name
                     )',
                     VisaModelView::class,
                 ),
             )
-            ->where('o.uuid = :uuid OR v.organization IS NULL')
-            ->setParameter('uuid', $organizationUuid)
             ->leftJoin('v.organization', 'o')
-            ->orderBy('v.organization', 'DESC')
-            ->getQuery()
-            ->getResult()
-        ;
+            ->orderBy('v.organization', 'DESC');
+
+        if ($organizationUuid) {
+            $query
+                ->where('o.uuid = :uuid OR v.organization IS NULL')
+                ->setParameter('uuid', $organizationUuid);
+        } else {
+            $query->where('v.organization IS NULL');
+        }
+
+        return $query->getQuery()->getResult();
     }
 }

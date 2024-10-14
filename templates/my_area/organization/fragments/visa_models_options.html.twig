@@ -1,0 +1,8 @@
+<option value="">Sélectionner un modèle de visas</option>
+{% for organizationUuid, organization in options%}
+    <optgroup label="{{ organizationUuid }}">
+        {% for visaModelUuid, visaModel in organization %}
+            <option value="{{ visaModelUuid }}">{{ visaModel }}</option>
+        {% endfor %}
+    </optgroup>
+{% endfor %}

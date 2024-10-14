@@ -22,6 +22,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
     public ?\DateTimeInterface $endDate = null;
     public array $additionalVisas = [];
     public array $additionalReasons = [];
+    public ?string $visaModel = null;
 
     public function __construct(
         public readonly ?RegulationOrderRecord $regulationOrderRecord = null,
@@ -44,6 +45,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command->endDate = $regulationOrder?->getEndDate();
         $command->additionalVisas = $regulationOrder?->getAdditionalVisas() ?? [];
         $command->additionalReasons = $regulationOrder?->getAdditionalReasons() ?? [];
+        $command->visaModel = $regulationOrder?->getVisaModel()?->getUuid();
 
         return $command;
     }

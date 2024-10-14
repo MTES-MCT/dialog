@@ -19,6 +19,7 @@ final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
             'Interdiction de circulation',
             'Circulation interdite dans toute l\'agglomération',
             '0b8d5e82-536d-4de3-a0e8-a17c99748724',
+            'DiaLog',
         );
 
         $visaModel2 = new VisaModelView(
@@ -26,6 +27,7 @@ final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
             'Interdiction de circulation',
             'Circulation interdite dans toute l\'agglomération',
             '0b8d5e82-536d-4de3-a0e8-a17c99748724',
+            'Mairie de Savenay',
         );
 
         $visaModelRepository = $this->createMock(VisaModelRepositoryInterface::class);

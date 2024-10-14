@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\IdFactoryInterface;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
+use App\Application\VisaModel\Query\GetVisaModelQuery;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -15,6 +17,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
+use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
@@ -22,14 +25,18 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     private $idFactory;
     private $regulationOrderRecordRepository;
     private $regulationOrderRepository;
+    private $queryBus;
     private $organization;
+    private $visaModel;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
+        $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
+        $this->visaModel = $this->createMock(VisaModel::class);
     }
 
     public function testCreate(): void
@@ -66,6 +73,10 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             )
             ->willReturn($createdRegulationOrder);
 
+        $this->queryBus
+                ->expects(self::never())
+                ->method('handle');
+
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('add')
@@ -88,6 +99,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
             $now,
+            $this->queryBus,
         );
 
         $command = new SaveRegulationGeneralInfoCommand();
@@ -127,6 +139,12 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetVisaModelQuery('b748e11a-e76f-4aba-b94c-c9f08cabd7d6'))
+            ->willReturn($this->visaModel);
+
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder
             ->expects(self::once())
@@ -138,6 +156,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                 new \DateTimeImmutable('2023-03-13'),
                 new \DateTimeImmutable('2023-03-15'),
                 'Trou en formation',
+                [],
+                [],
+                $this->visaModel,
             );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -155,6 +176,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
             $now,
+            $this->queryBus,
         );
 
         $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
@@ -165,6 +187,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->startDate = $start;
         $command->endDate = $end;
         $command->otherCategoryText = 'Trou en formation';
+        $command->visaModel = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 
         $result = $handler($command);
 

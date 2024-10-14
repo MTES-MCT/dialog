@@ -18,6 +18,7 @@ final class GetVisaModelQueryHandler
     public function __invoke(GetVisaModelQuery $query): VisaModel
     {
         $visaModel = $this->visaModelRepository->findOneByUuid($query->uuid);
+
         if (!$visaModel instanceof VisaModel) {
             throw new VisaModelNotFoundException();
         }
