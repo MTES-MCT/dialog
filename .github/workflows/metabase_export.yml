@@ -5,6 +5,8 @@ on:
   push:
     branches: ## TODO retirer avant de merger
       - feat/metabase-user
+  schedule:
+    - cron: '0 9 * * 1' # Voir https://crontab.guru/ : tous les lundis à 9h00 GMT
 
 jobs:
   build:
