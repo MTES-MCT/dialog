@@ -17,7 +17,6 @@ interface LocationRepositoryInterface
     public function findAllForMapAsGeoJSON(
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
-        bool $includeUpcomingRegulations = false,
-        bool $includePastRegulations = false,
+        array $measureTypes = [],
     ): string;
 }

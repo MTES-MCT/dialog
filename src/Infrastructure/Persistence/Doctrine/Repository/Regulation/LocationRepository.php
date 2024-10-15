@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class LocationRepository extends ServiceEntityRepository implements LocationRepositoryInterface
 {
     public function __construct(
         ManagerRegistry $registry,
-        private DateUtilsInterface $dateUtils,
     ) {
         parent::__construct($registry, Location::class);
     }
@@ -47,10 +46,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function findAllForMapAsGeoJSON(
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
-        bool $includeUpcomingRegulations = false,
-        bool $includePastRegulations = false,
+        array $measureTypes = [],
     ): string {
-        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations;
+        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
         $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
 
@@ -68,18 +66,15 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 ? 'AND ro.end_date IS NOT NULL'
                 : '');
 
-        $upcomingOnly = $includeUpcomingRegulations && !$includePastRegulations;
-        $pastOnly = !$includeUpcomingRegulations && $includePastRegulations;
-        $presentOnly = !$includeUpcomingRegulations && !$includePastRegulations;
+        $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
+        $regulationTypeCondition = '';
+        $types = [];
 
-        $regulationDatesWhereClause =
-            $upcomingOnly
-            ? 'AND (((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.start_date > :now)'
-            : ($pastOnly
-                ? 'AND (((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now) OR ro.end_date < :now)'
-                : ($presentOnly
-                    ? 'AND ((ro.end_date >= :now OR ro.end_date IS NULL) AND ro.start_date <= :now)'
-                    : ''));
+        if ($measureTypes) {
+            $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
+            $parameters['measureTypes'] = $measureTypes;
+            $types['measureTypes'] = ArrayParameterType::STRING;
+        }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
@@ -100,12 +95,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 %s
                 ',
                 $regulationTypeWhereClause,
-                $regulationDatesWhereClause,
+                $regulationTypeCondition,
             ),
-            [
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                'now' => $this->dateUtils->getNow()->format('Y-m-d'),
-            ],
+            $parameters,
+            $types,
         );
 
         $features = [];

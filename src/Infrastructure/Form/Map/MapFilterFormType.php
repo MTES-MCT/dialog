@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Map;
 
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -14,6 +16,11 @@ final class MapFilterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add(
+                'measureTypes',
+                ChoiceType::class,
+                options: $this->getMeasureTypesOptions(),
+            )
             ->add(
                 'displayPermanentRegulations',
                 CheckboxType::class,
@@ -32,25 +39,24 @@ final class MapFilterFormType extends AbstractType
                     'required' => false,
                 ],
             )
-            ->add(
-                'displayFutureRegulations',
-                CheckboxType::class,
-                options: [
-                    'label' => 'map.form.displayFutureRegulations',
-                    'value' => 'yes',
-                    'required' => false,
-                ],
-            )
-            ->add(
-                'displayPastRegulations',
-                CheckboxType::class,
-                options: [
-                    'label' => 'map.form.displayPastRegulations',
-                    'value' => 'yes',
-                    'required' => false,
-                ],
-            )
             ->add('save', SubmitType::class)
         ;
+    }
+
+    private function getMeasureTypesOptions(): array
+    {
+        $choices = [];
+
+        foreach (MeasureTypeEnum::cases() as $case) {
+            $choices[\sprintf('map.filter.type.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'map.filters.title.type.restriction',
+            'multiple' => true,
+            'expanded' => true,
+            'required' => false,
+        ];
     }
 }
