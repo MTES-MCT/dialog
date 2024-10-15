@@ -126,6 +126,11 @@ services:
         tags:
             - { name: monolog.logger, channel: litteralis_import }
 
+    App\Infrastructure\Symfony\Command\FougeresImportCommand:
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger, channel: litteralis_import }
+
 when@test:
     services:
         App\Tests\Mock\APIAdresseMockClient:

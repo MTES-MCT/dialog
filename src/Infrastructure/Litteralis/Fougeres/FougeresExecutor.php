@@ -9,7 +9,7 @@ use App\Infrastructure\Litteralis\LitteralisExecutor;
 
 final class FougeresExecutor
 {
-    private const INTEGRATION_NAME = 'Litteralis MEL';
+    private const INTEGRATION_NAME = 'Litteralis Fougères';
 
     public function __construct(
         private LitteralisExecutor $executor,
