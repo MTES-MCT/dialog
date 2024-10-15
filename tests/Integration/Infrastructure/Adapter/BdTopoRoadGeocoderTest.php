@@ -152,7 +152,15 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '34',
                 'U',
                 500,
-                Coordinates::fromLonLat(3.905982782, 44.596555025),
+                Coordinates::fromLonLat(3.906088321, 44.596375194),
+            ],
+            'pr-and-line-inverted-order' => [
+                'D978',
+                'Corrèze',
+                '1',
+                'U',
+                100,
+                Coordinates::fromLonLat(2.182054281, 45.221764408),
             ],
         ];
     }
