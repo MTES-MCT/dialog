@@ -1,0 +1,35 @@
+name: Metabase Export
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 1' # Voir https://crontab.guru/ : tous les lundis à 9h00 GMT
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Run export
+        run: make ci_metabase_export
+        env:
+          METABASE_SRC_APP: ${{ vars.METABASE_EXPORT_SRC_APP }}
+          METABASE_SRC_DATABASE_URL: ${{ secrets.METABASE_EXPORT_SRC_DATABASE_URL }}
+          METABASE_DEST_APP: ${{ vars.METABASE_EXPORT_DEST_APP }}
+          METABASE_DEST_DATABASE_URL: ${{ secrets.METABASE_EXPORT_DEST_DATABASE_URL }}
