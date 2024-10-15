@@ -26,14 +26,21 @@
                     </h2>
                     <div class="fr-collapse" id="accordion-1040">
                         <h3 class="fr-h6 fr-my-2w">{{ 'map.filters.title.restriction'|trans }}</h3>
-                        <d-map-form target="map" urlAttribute="dataUrl" class="fr-mb-2w">
+                        <d-map-form target="map" urlAttribute="dataUrl" class="fr-x-block fr-mb-2w">
                             {{ form_start(form, {
                                 attr: {
                                     class: 'd-stack',
                                     style: '--stack-gap: var(--1w)',
                                 },
                             }) }}
-                            {{ form_row(form.measureTypes, {group_class: 'fr-checkbox-group'}) }}
+                            <fieldset class="fr-fieldset" id="measureTypes" aria-labelledby="measureTypes-legend">
+                                {{ form_label(form.measureTypes, null, {
+                                    element: 'legend',
+                                    label_attr: { id: 'measureTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
+                                }) }}
+                                {{ form_widget(form.measureTypes) }}
+                            </fieldset>
+                            
                             <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.type.regulation'|trans }}</h4>
                             {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group'}) }}
                             {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}

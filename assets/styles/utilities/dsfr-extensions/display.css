@@ -9,3 +9,7 @@
         display: revert !important;
     }
 }
+
+.fr-x-block {
+    display: block;
+}

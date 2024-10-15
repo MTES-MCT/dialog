@@ -65,7 +65,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             : ($temporaryOnly
                 ? 'AND ro.end_date IS NOT NULL'
                 : '');
-        /* $regulationTypeCondition = $measureTypes ? 'AND m.type IN (:measureTypes)' : ''; */
 
         $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
         $regulationTypeCondition = '';
@@ -74,7 +73,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         if ($measureTypes) {
             $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
             $parameters['measureTypes'] = $measureTypes;
-            $types = ['measureTypes' => ArrayParameterType::STRING];
+            $types['measureTypes'] = ArrayParameterType::STRING;
         }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
