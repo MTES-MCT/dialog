@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
 {
     public function testAdd(): void
     {
-        $client = $this->login();
+        $email = UserFixture::MAIN_ORG_USER_EMAIL;
+        $client = $this->login($email);
         $crawler = $client->request('GET', '/regulations/add');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Nouvel arrêté', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Nouvel arrêté - DiaLog', $crawler);
-        $this->assertSame('Informations générales', $crawler->filter('h3')->text());
 
         $this->assertSame('Brouillon', $crawler->filter('[data-testid="status-badge"]')->text());
         $this->assertSame('', $crawler->selectButton('Publier')->attr('disabled'));
@@ -31,16 +33,29 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $this->assertSame('2023-05-10', $form->get('general_info_form[startDate]')->getValue()); // Init with tomorrow date
-        $form['general_info_form[identifier]'] = 'F022023';
-        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
-        $form['general_info_form[description]'] = 'Interdiction de circuler dans Paris';
-        $form['general_info_form[startDate]'] = '2023-02-14';
-        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
-        $form['general_info_form[otherCategoryText]'] = 'Trou en formation';
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(303);
 
+        /** @var UserRepositoryInterface */
+        $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
+        $this->assertNull($userRepository->findOneByEmail($email)->getLastActiveAt());
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['general_info_form']['identifier'] = 'F022023';
+        $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
+        $values['general_info_form']['description'] = 'Interdiction de circuler dans Paris';
+        $values['general_info_form']['startDate'] = '2023-02-14';
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::OTHER->value;
+        $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
+        $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
+        $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
+        $values['general_info_form']['additionalReasons'][0] = 'Motif 1';
+        $values['general_info_form']['additionalReasons'][1] = 'Motif 2';
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(303);
+        $this->assertEquals(new \DateTimeImmutable('2023-06-09'), $userRepository->findOneByEmail($email)->getLastActiveAt());
         $client->followRedirect();
+
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulation_detail');
     }

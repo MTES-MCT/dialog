@@ -17,6 +17,7 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Domain\User\Organization;
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\IntegrationReport\Reporter;
 
 final readonly class LitteralisTransformer
@@ -95,8 +96,8 @@ final readonly class LitteralisTransformer
         // Il faut donc zapper cet arrêté.
         if (\count($measureCommands) === 0) {
             $reporter->addNotice(LitteralisRecordEnum::NOTICE_NO_MEASURES_FOUND->value, [
-                'arretesrcid' => $properties['arretesrcid'],
-                'shorturl' => $properties['shorturl'],
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
             ]);
 
             return null;
@@ -170,8 +171,8 @@ final readonly class LitteralisTransformer
             $command->startDate = $startDate;
         } else {
             $reporter->addError(LitteralisRecordEnum::ERROR_REGULATION_START_DATE_PARSING_FAILED->value, [
-                'arretesrcid' => $properties['arretesrcid'],
-                'shorturl' => $properties['shorturl'],
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                 'arretedebut' => $properties['arretedebut'],
             ]);
         }
@@ -187,8 +188,8 @@ final readonly class LitteralisTransformer
             $command->endDate = $endDate;
         } else {
             $reporter->addError(LitteralisRecordEnum::ERROR_REGULATION_END_DATE_PARSING_FAILED->value, [
-                'arretesrcid' => $properties['arretesrcid'],
-                'shorturl' => $properties['shorturl'],
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                 'arretefin' => $properties['arretefin'],
             ]);
         }
@@ -257,9 +258,9 @@ final readonly class LitteralisTransformer
         foreach ($allMeasureNames as $name) {
             if (!\array_key_exists($name, self::MEASURE_MAP)) {
                 $reporter->addNotice(LitteralisRecordEnum::NOTICE_UNSUPPORTED_MEASURE->value, [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                     'name' => $name,
                     'idemprise' => $properties['idemprise'],
-                    'arretesrcid' => $properties['arretesrcid'],
                 ]);
                 continue;
             }
@@ -316,9 +317,9 @@ final readonly class LitteralisTransformer
                     // Le numéro indiqué ne correspond pas au 1-index de la mesure dans 'mesures'.
                     // On traite ce cas comme une erreur car on ne peut pas savoir à quelle mesure ces paramètres se rattachent.
                     $reporter->addError(LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER->value, [
+                        CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                        CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                         'idemprise' => $properties['idemprise'],
-                        'arretesrcid' => $properties['arretesrcid'],
-                        'shorturl' => $properties['shorturl'],
                         'measureName' => $name,
                         'expected' => $index + 1,
                         'actual' => $number,
@@ -415,9 +416,9 @@ final readonly class LitteralisTransformer
 
         if (!$value) {
             $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_MISSING->value, [
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                 'idemprise' => $properties['idemprise'],
-                'arretesrcid' => $properties['arretesrcid'],
-                'shorturl' => $properties['shorturl'],
                 'mesures' => $properties['mesures'],
             ]);
 
@@ -426,9 +427,9 @@ final readonly class LitteralisTransformer
 
         if (!preg_match('/^(?P<speed>\d+)/i', $value, $matches)) {
             $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_INVALID->value, [
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
                 'idemprise' => $properties['idemprise'],
-                'arretesrcid' => $properties['arretesrcid'],
-                'shorturl' => $properties['shorturl'],
                 'limite de vitesse' => $value,
             ]);
 

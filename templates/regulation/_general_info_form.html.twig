@@ -1,33 +1,128 @@
+{% macro collection_item(form, index) %}
+    <li
+        class="app-card app-card--no-header fr-mb-2w"
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+    >
+        <div class="app-card__content">
+            {{ form_row(form, {group_class: 'fr-input-group', attr: {class: 'fr-input'}}) }}
+        </div>
+        <div class="app-card__actions">
+            <button
+                type="button"
+                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                data-action="remove#removeElement"
+                aria-label="{{ 'common.delete'|trans }}"
+            >
+            </button>
+        </div>
+    </li>
+{% endmacro %}
+
 <div class="app-card app-card--raised">
-    <div class="app-card__header">
-        <span class="app-card__img fr-icon-article-fill fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
-        <h3 class="app-card__title fr-h4 fr-mb-0">
-            {{ form.description.vars.value|default('regulation.general_info'|trans)|u.truncate(36, '...', false) }}
-        </h3>
-    </div>
     <div class="app-card__content">
         {{ form_start(form) }}
-            {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-            {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
-            <div class="fr-fieldset" data-controller="form-reveal">
-                <div class="fr-fieldset__element">
-                    {{ form_row(form.category, {
-                        group_class: 'fr-select-group',
-                        widget_class: 'fr-select',
-                        attr: {
-                            'data-controller': 'condition',
-                            'data-condition-equals-value': 'other',
-                            'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
-                        }
-                    }) }}
+            <div class="fr-tabs fr-mb-3w">
+                <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.general_info'|trans }}">
+                    <li role="presentation">
+                        <button type="button" id="general-form" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="general-form-panel">
+                            {{ 'regulation.general_info'|trans }}
+                        </button>
+                    </li>
+                    <li role="presentation">
+                        <button type="button" id="reasons" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="reasons-panel">
+                            {{ 'regulation.general_info.visas_and_reasons'|trans }}
+                        </button>
+                    </li>
+                </ul>
+                <div id="general-form-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="general-form" tabindex="0">
+                    {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+                    {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
+                    <div class="fr-fieldset" data-controller="form-reveal">
+                        <div class="fr-fieldset__element">
+                            {{ form_row(form.category, {
+                                group_class: 'fr-select-group',
+                                widget_class: 'fr-select',
+                                attr: {
+                                    'data-controller': 'condition',
+                                    'data-condition-equals-value': 'other',
+                                    'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                                }
+                            }) }}
+                        </div>
+                        <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
+                            {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
+                        </div>
+                    </div>
+                    {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
+                    {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-5'}}) }}
+                    {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-5'}}) }}
                 </div>
-                <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
-                    {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
+                <div id="reasons-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="reasons" tabindex="0">
+                    <p>{{ 'regulation.general_info.visas_and_reasons.description'|trans }}</p>
+                    <div
+                        class="fr-mb-2w"
+                        data-controller="form-collection"
+                        data-form-collection-prototype-key-value="visa"
+                        data-form-collection-next-index-value="{{ form.additionalVisas|length > 0 ? form.additionalVisas|last.vars.name + 1 : 0 }}"
+                        data-form-collection-prototype-value="{{ _self.collection_item(form.additionalVisas.vars.prototype, '__visa_name__')|e('html_attr') }}"
+                    >
+                        <h3 class="fr-h4">{{ 'regulation.general_info.visas'|trans }}</h3>
+                        <p class="fr-text--sm">{{ 'regulation.general_info.visas.help'|trans }}</p>
+                        {{ form_errors(form.additionalVisas) }}
+                        <ul
+                            id="visa-list"
+                            class="fr-raw-list"
+                            data-form-collection-target="collectionContainer"
+                        >
+                            {% for item in form.additionalVisas %}
+                                {{ _self.collection_item(item) }}
+                            {% else %}
+                                {% do form.additionalVisas.setRendered %}
+                            {% endfor %}
+                        </ul>
+                        <button
+                            type="button"
+                            class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
+                            data-action="form-collection#addCollectionElement"
+                            aria-controls="visa-list"
+                        >
+                            {{ 'visa.add'|trans }}
+                        </button>
+                    </div>
+                    <div
+                        class="fr-mb-2w"
+                        data-controller="form-collection"
+                        data-form-collection-prototype-key-value="reason"
+                        data-form-collection-next-index-value="{{ form.additionalReasons|length > 0 ? form.additionalReasons|last.vars.name + 1 : 0 }}"
+                        data-form-collection-prototype-value="{{ _self.collection_item(form.additionalReasons.vars.prototype, '__reason_name__')|e('html_attr') }}"
+                    >
+                        <h3 class="fr-h4">{{ 'regulation.general_info.reasons'|trans }}</h3>
+                        <p class="fr-text--sm">{{ 'regulation.general_info.reasons.help'|trans }}</p>
+                        {{ form_errors(form.additionalReasons) }}
+                        <ul
+                            id="reason-list"
+                            class="fr-raw-list"
+                            data-form-collection-target="collectionContainer"
+                        >
+                            {% for item in form.additionalReasons %}
+                                {{ _self.collection_item(item) }}
+                            {% else %}
+                                {% do form.additionalReasons.setRendered %}
+                            {% endfor %}
+                        </ul>
+                        <button
+                            type="button"
+                            class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line"
+                            data-action="form-collection#addCollectionElement"
+                            aria-controls="reason-list"
+                        >
+                            {{ 'regulation.general_info.reasons.add'|trans }}
+                        </button>
+                    </div>
                 </div>
             </div>
-            {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
-            {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-5'}}) }}
-            {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input', row_attr: {class: 'fr-col-12 fr-col-sm-6 fr-col-lg-5'}}) }}
             <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                 {{ "common.cancel"|trans }}
             </a>
