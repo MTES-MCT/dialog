@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Map\Fragment;
 
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class MapDataControllerTest extends AbstractWebTestCase
@@ -33,10 +34,10 @@ final class MapDataControllerTest extends AbstractWebTestCase
         $jsonData = $client->getResponse()->getContent();
         $dataArray = json_decode($jsonData, true);
 
-        $measureType = [];
+        $this->assertCount(8, $dataArray['features']);
+
         foreach ($dataArray['features'] as $feature) {
-            $measureType[] = $feature['properties']['measure_type'];
+            $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $feature['properties']['measure_type']);
         }
-        $this->assertContains('noEntry', $measureType);
     }
 }
