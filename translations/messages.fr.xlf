@@ -2175,6 +2175,26 @@
                 <source>map.filter.temporaries</source>
                 <target>Restrictions temporaires</target>
             </trans-unit>
+            <trans-unit id="map.filters.title.application.period">
+                <source>map.filters.title.application.period</source>
+                <target>Période d'application</target>
+            </trans-unit>
+            <trans-unit id="map.filter.start_date">
+                <source>map.filter.start_date</source>
+                <target>À partir de</target>
+            </trans-unit>
+            <trans-unit id="map.filter.start_date.help">
+                <source>map.filter.start_date.help</source>
+                <target>Afficher les restrictions à partir de cette date</target>
+            </trans-unit>
+            <trans-unit id="map.filter.end_date">
+                <source>map.filter.end_date</source>
+                <target>Jusqu'à</target>
+            </trans-unit>
+            <trans-unit id="map.filter.end_date.help">
+                <source>map.filter.end_date.help</source>
+                <target>Afficher les restrictions jusqu’à cette date</target>
+            </trans-unit>
             <trans-unit id="map.location.popup.details">
                 <source>map.location.popup.details</source>
                 <target>Voir les détails</target>
