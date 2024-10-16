@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\VisaModel\Query;
 
-use App\Application\VisaModel\Query\GetOrganizationVisaModelsQuery;
-use App\Application\VisaModel\Query\GetOrganizationVisaModelsQueryHandler;
+use App\Application\VisaModel\Query\GetVisaModelsQuery;
+use App\Application\VisaModel\Query\GetVisaModelsQueryHandler;
 use App\Application\VisaModel\View\VisaModelView;
 use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
-final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
+final class GetVisaModelsQueryHandlerTest extends TestCase
 {
     public function testGet(): void
     {
@@ -33,12 +33,12 @@ final class GetOrganizationVisaModelsQueryHandlerTest extends TestCase
         $visaModelRepository = $this->createMock(VisaModelRepositoryInterface::class);
         $visaModelRepository
             ->expects(self::once())
-            ->method('findOrganizationVisaModels')
+            ->method('findAll')
             ->with('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf')
             ->willReturn([$visaModel1, $visaModel2]);
 
-        $handler = new GetOrganizationVisaModelsQueryHandler($visaModelRepository);
-        $result = $handler(new GetOrganizationVisaModelsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
+        $handler = new GetVisaModelsQueryHandler($visaModelRepository);
+        $result = $handler(new GetVisaModelsQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $expectedResults = [$visaModel1, $visaModel2];
 

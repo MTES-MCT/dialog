@@ -6,7 +6,7 @@ namespace App\Application\VisaModel\Query;
 
 use App\Application\QueryInterface;
 
-final class GetOrganizationVisaModelsQuery implements QueryInterface
+final class GetVisaModelsQuery implements QueryInterface
 {
     public function __construct(
         public readonly ?string $organizationUuid = null,

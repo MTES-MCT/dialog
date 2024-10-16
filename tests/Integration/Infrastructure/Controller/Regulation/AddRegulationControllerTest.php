@@ -46,7 +46,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $values['general_info_form']['startDate'] = '2023-02-14';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::OTHER->value;
         $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
-        $values['general_info_form']['visaModel'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
+        $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
         $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
         $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
         $values['general_info_form']['additionalReasons'][0] = 'Motif 1';

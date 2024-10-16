@@ -187,7 +187,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->startDate = $start;
         $command->endDate = $end;
         $command->otherCategoryText = 'Trou en formation';
-        $command->visaModel = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
+        $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 
         $result = $handler($command);
 

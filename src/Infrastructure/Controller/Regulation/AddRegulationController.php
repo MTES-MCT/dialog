@@ -9,7 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\User\Command\MarkUserAsActiveCommand;
-use App\Application\VisaModel\Query\GetOrganizationVisaModelsQuery;
+use App\Application\VisaModel\Query\GetVisaModelsQuery;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use App\Infrastructure\Security\SymfonyUser;
@@ -45,7 +45,7 @@ final class AddRegulationController
         /** @var SymfonyUser */
         $user = $this->security->getUser();
         $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow());
-        $visaModels = $this->queryBus->handle(new GetOrganizationVisaModelsQuery());
+        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,

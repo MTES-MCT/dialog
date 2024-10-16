@@ -444,16 +444,16 @@
                 <source>regulation.general_info.reasons.help</source>
                 <target>Ajouter les motifs que vous souhaitez voir dans votre arrêté. Par exemple, “Considérant qu'en raison du déroulement des travaux de...”.</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visa">
-                <source>regulation.general_info.visa</source>
+            <trans-unit id="regulation.general_info.visa_model">
+                <source>regulation.general_info.visa_model</source>
                 <target>Modèle de visas</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visa.placeholder">
-                <source>regulation.general_info.visa.placeholder</source>
+            <trans-unit id="regulation.general_info.visa_model.placeholder">
+                <source>regulation.general_info.visa_model.placeholder</source>
                 <target>Sélectionner un modèle de visas</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visa.help">
-                <source>regulation.general_info.visa.help</source>
+            <trans-unit id="regulation.general_info.visa_model.help">
+                <source>regulation.general_info.visa_model.help</source>
                 <target>Sélectionnez le modèle de visa qui correspond à votre arrếté.</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.visa.add">
@@ -468,8 +468,8 @@
                 <source>regulation.general_info.reasons.add</source>
                 <target>Ajouter un motif</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visa.sample">
-                <source>regulation.general_info.visa.sample</source>
+            <trans-unit id="regulation.general_info.additional_visas.entry">
+                <source>regulation.general_info.additional_visas.entry</source>
                 <target>Visa (Vu ...)</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.reason">

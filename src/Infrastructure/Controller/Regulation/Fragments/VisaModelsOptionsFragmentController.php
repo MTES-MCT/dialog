@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\MyArea\Organization\Fragments;
+namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Query\GetOrganizationVisaModelsQuery;
+use App\Application\VisaModel\Query\GetVisaModelsQuery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,20 +25,17 @@ final class VisaModelsOptionsFragmentController
     )]
     public function __invoke(#[MapQueryParameter] string $organizationUuid): Response
     {
-        $visaModels = $this->queryBus->handle(new GetOrganizationVisaModelsQuery($organizationUuid));
+        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($organizationUuid));
         $options = [];
 
         foreach ($visaModels as $visaModel) {
-            if (!$visaModel->organizationUuid) {
-                $options['DiaLog'][$visaModel->uuid] = $visaModel->name;
-            } else {
-                $options[$visaModel->organizationName][$visaModel->uuid] = $visaModel->name;
-            }
+            $organizationName = $visaModel->organizationUuid ? $visaModel->organizationName : 'DiaLog';
+            $options[$organizationName][$visaModel->uuid] = $visaModel->name;
         }
 
         return new Response(
             $this->twig->render(
-                name: 'my_area/organization/fragments/visa_models_options.html.twig',
+                name: 'regulation/fragments/visa_models_options.html.twig',
                 context: [
                     'options' => $options,
                 ],

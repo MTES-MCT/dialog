@@ -78,7 +78,7 @@ final class GeneralInfoFormType extends AbstractType
                 options: $this->getCategoryOptions(),
             )
             ->add(
-                'visaModel',
+                'visaModelUuid',
                 ChoiceType::class,
                 options: $this->getVisaModels($options['visaModels']),
             )
@@ -109,7 +109,7 @@ final class GeneralInfoFormType extends AbstractType
                     'label' => null,
                     'prototype_name' => '__visa_name__',
                     'entry_options' => [
-                        'label' => 'regulation.general_info.visa.sample',
+                        'label' => 'regulation.general_info.additional_visas.entry',
                     ],
                     'allow_add' => true,
                     'allow_delete' => true,
@@ -164,8 +164,8 @@ final class GeneralInfoFormType extends AbstractType
      */
     public function onPreSubmit(FormEvent $event): void
     {
-        $input = $event->getData()['visaModel'];
-        $event->getForm()->add('visaModel', ChoiceType::class, ['choices' => [$input]]);
+        $input = $event->getData()['visaModelUuid'];
+        $event->getForm()->add('visaModelUuid', ChoiceType::class, ['choices' => [$input]]);
     }
 
     private function getCategoryOptions(): array
@@ -187,22 +187,19 @@ final class GeneralInfoFormType extends AbstractType
     private function getVisaModels(array $visaModels = []): array
     {
         $choices = [
-            'regulation.general_info.visa.placeholder' => '',
+            'regulation.general_info.visa_model.placeholder' => '',
             'DiaLog' => [],
         ];
 
         foreach ($visaModels as $visaModel) {
-            if ($visaModel->organizationUuid) {
-                $choices[$visaModel->organizationName][$visaModel->name] = $visaModel->uuid;
-            } else {
-                $choices['DiaLog'][$visaModel->name] = $visaModel->uuid;
-            }
+            $organizationName = $visaModel->organizationUuid ? $visaModel->organizationName : 'DiaLog';
+            $choices[$organizationName][$visaModel->name] = $visaModel->uuid;
         }
 
         return [
             'choices' => $choices,
-            'label' => 'regulation.general_info.visa',
-            'help' => 'regulation.general_info.visa.help',
+            'label' => 'regulation.general_info.visa_model',
+            'help' => 'regulation.general_info.visa_model.help',
             'required' => false,
         ];
     }

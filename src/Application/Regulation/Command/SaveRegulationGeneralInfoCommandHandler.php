@@ -27,8 +27,8 @@ final class SaveRegulationGeneralInfoCommandHandler
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
         $command->cleanOtherCategoryText();
-        $visaModel = $command->visaModel
-            ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModel))
+        $visaModel = $command->visaModelUuid
+            ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
             : null;
 
         // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
