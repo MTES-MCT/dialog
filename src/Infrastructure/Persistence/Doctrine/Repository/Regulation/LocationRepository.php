@@ -47,6 +47,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
+        ?\DateTimeInterface $startDate = null,
+        ?\DateTimeInterface $endDate = null,
     ): string {
         $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
@@ -59,6 +61,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
+        /* if($startDate | $endDate) {
+
+        } */
         $regulationTypeWhereClause =
             $permanentOnly
             ? 'AND ro.end_date IS NULL'
@@ -76,6 +81,23 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $types['measureTypes'] = ArrayParameterType::STRING;
         }
 
+        $measureDatesCondition = '';
+
+        if ($startDate || $endDate) {
+            $measureDatesCondition = 'AND EXISTS (
+                SELECT p.uuid
+                FROM period AS p
+                WHERE p.measure_uuid = m.uuid 
+                AND (
+                    ((:startDate)::date IS NOT NULL AND p.end_datetime > (:startDate)::date)
+                    OR
+                    ((:endDate)::date IS NOT NULL AND p.start_datetime < (:endDate)::date)
+                )
+            )';
+            $parameters['startDate'] = $startDate->format(\DateTimeInterface::ISO8601);
+            $parameters['endDate'] = $endDate->format(\DateTimeInterface::ISO8601);
+        }
+
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
                 'SELECT ST_AsGeoJSON(
@@ -90,12 +112,14 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
                 WHERE roc.status = :status
-                AND l.geometry IS NOT NULL
+                AND l.geometry IS NOT NULL 
+                %s
                 %s
                 %s
                 ',
                 $regulationTypeWhereClause,
                 $regulationTypeCondition,
+                $measureDatesCondition,
             ),
             $parameters,
             $types,

@@ -9,4 +9,6 @@ final class MapFilterDTO
     public bool $displayPermanentRegulations = true;
     public bool $displayTemporaryRegulations = true;
     public array $measureTypes = [];
+    public ?\DateTimeInterface $startDate = null;
+    public ?\DateTimeInterface $endDate = null;
 }
