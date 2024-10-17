@@ -6,9 +6,11 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\QueryBusInterface;
 use App\Application\VisaModel\Query\GetVisaModelsQuery;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class VisaModelsOptionsFragmentController
 {
@@ -23,8 +25,11 @@ final class VisaModelsOptionsFragmentController
         name: 'fragment_visa_models_options',
         methods: ['GET'],
     )]
-    public function __invoke(#[MapQueryParameter] string $organizationUuid): Response
-    {
+    public function __invoke(
+        Request $request,
+        #[MapQueryParameter] string $organizationUuid,
+        #[MapQueryParameter] string $targetId,
+    ): Response {
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($organizationUuid));
         $options = [];
 
@@ -33,11 +38,14 @@ final class VisaModelsOptionsFragmentController
             $options[$organizationName][$visaModel->uuid] = $visaModel->name;
         }
 
+        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/visa_models_options.html.twig',
+                name: 'regulation/fragments/visa_models_options.stream.html.twig',
                 context: [
                     'options' => $options,
+                    'targetId' => $targetId,
                 ],
             ),
         );

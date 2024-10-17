@@ -24,9 +24,9 @@
     <div class="app-card__content">
         {{ form_start(form) }}
             <div
-                data-controller="async-select"
-                data-async-select-url-value="{{ path('fragment_visa_models_options') }}"
-                data-async-select-query-parameter-value="organizationUuid"
+                data-controller="fetch"
+                data-fetch-extra-query-params-value="{{ { targetId: form.visaModelUuid.vars.id, organizationUuid: '#' ~ form.organization.vars.id }|json_encode }}"
+                data-fetch-url-value="{{ url('fragment_visa_models_options') }}"
             >
                 <div class="fr-tabs fr-mb-3w">
                     <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'regulation.general_info'|trans }}">
@@ -48,8 +48,7 @@
                             {
                                 group_class: 'fr-select-group', widget_class: 'fr-select',
                                 attr: {
-                                    'data-async-select-target': 'fromSelect',
-                                    'data-action': 'change->async-select#fetch'
+                                    'data-action': 'change->fetch#fetch'
                                 }
                             }
                         ) }}
@@ -84,14 +83,7 @@
                         >
                             <h3 class="fr-h4">{{ 'regulation.general_info.visas'|trans }}</h3>
                             <p class="fr-text--sm">{{ 'regulation.general_info.visas.help'|trans }}</p>
-                            {{ form_row(
-                                form.visaModelUuid, {
-                                    group_class: 'fr-select-group',
-                                    widget_class: 'fr-select',
-                                    attr: {
-                                        'data-async-select-target': 'toSelect',
-                                    }
-                            }) }}
+                            {{ form_row(form.visaModelUuid, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
                             <p class="fr-mt-2w fr-mb-2w fr-message fr-message--info">{{ 'regulation.general_info.visa.info'|trans }}</p>
                             <p class="fr-text--sm">{{ 'regulation.general_info.visa.add'|trans }}</p>
                             {{ form_errors(form.additionalVisas) }}
