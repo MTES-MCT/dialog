@@ -68,7 +68,7 @@ final class BacIdfTransformer
             ]);
         }
 
-        $generalInfo->startDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
+        $overallStartDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
 
         $inseeCode = $row['ARR_COMMUNE']['ARR_INSEE'];
         $siret = $this->cityProcessor->getSiretFromInseeCode($inseeCode);
@@ -150,7 +150,7 @@ final class BacIdfTransformer
                 continue;
             }
 
-            $periodCommands = $this->parsePeriods($circReg, startDate: $generalInfo->startDate);
+            $periodCommands = $this->parsePeriods($circReg, startDate: $overallStartDate);
 
             foreach ($periodCommands as $periodCommand) {
                 $measureCommand->periods[] = $periodCommand;

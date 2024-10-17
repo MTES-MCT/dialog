@@ -46,8 +46,8 @@ final class GetRegulationsQueryHandler
                 organizationName: $row['organizationName'],
                 organizationUuid: $row['organizationUuid'],
                 location: $locationView,
-                startDate: $row['startDate'],
-                endDate: $row['endDate'],
+                startDate: $row['overallStartDate'] ? new \DateTimeImmutable($row['overallStartDate']) : null,
+                endDate: $row['overallEndDate'] ? new \DateTimeImmutable($row['overallEndDate']) : null,
             );
         }
 

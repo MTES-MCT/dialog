@@ -18,8 +18,6 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
     public ?string $otherCategoryText = null;
     public ?string $description;
     public ?Organization $organization;
-    public ?\DateTimeInterface $startDate;
-    public ?\DateTimeInterface $endDate = null;
     public array $additionalVisas = [];
     public array $additionalReasons = [];
 
@@ -40,8 +38,6 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command->category = $regulationOrder?->getCategory();
         $command->otherCategoryText = $regulationOrder?->getOtherCategoryText();
         $command->description = $regulationOrder?->getDescription();
-        $command->startDate = $startDate ?? $regulationOrder?->getStartDate();
-        $command->endDate = $regulationOrder?->getEndDate();
         $command->additionalVisas = $regulationOrder?->getAdditionalVisas() ?? [];
         $command->additionalReasons = $regulationOrder?->getAdditionalReasons() ?? [];
 

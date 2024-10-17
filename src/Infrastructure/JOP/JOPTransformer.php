@@ -119,9 +119,6 @@ final readonly class JOPTransformer
             $measureCommands[] = $measureCommand;
         }
 
-        $generalInfoCommand->startDate = min($startDates);
-        $generalInfoCommand->endDate = max($endDates);
-
         return new ImportJOPRegulationCommand($generalInfoCommand, $measureCommands);
     }
 }
