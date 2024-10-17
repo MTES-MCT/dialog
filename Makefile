@@ -261,6 +261,11 @@ ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	make bdtopo_migrate
 
+ci_metabase_export: ## Export data to Metabase
+	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel ${METABASE_DEST_APP} --host-url --port 10001 & ./tools/wait-for-it.sh 127.0.0.1:10001
+	./tools/metabase-export.sh ${METABASE_SRC_DATABASE_URL} ${METABASE_DEST_DATABASE_URL}
+
 ##
 ## ----------------
 ## Prod
