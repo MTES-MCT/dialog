@@ -1,12 +1,17 @@
 {% set startDate = generalInfo.startDate %}
 {% set endDate = generalInfo.endDate %}
-{% set isFuture = app_is_client_future_day(startDate) %}
 
-{% if startDate and endDate %}
-    {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
-    {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
-{% elseif isFuture %}
-    {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+{% if startDate %}
+    {% set isFuture = app_is_client_future_day(startDate) %}
+
+    {% if startDate and endDate %}
+        {{ 'common.date.from'|trans({ '%date%': app_datetime(startDate) })|capitalize }}
+        {{ 'common.date.to'|trans({ '%date%': app_datetime(endDate) }) }}
+    {% elseif isFuture %}
+        {{ 'common.date.starting'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+    {% else %}
+        {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+    {% endif %}
 {% else %}
-    {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
+    <em>{{ 'regulation.overall_period.tbd'|trans }}</em>
 {% endif %}

@@ -315,8 +315,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->identifier = 'F01/2023-1';
         $generalInfoCommand->description = 'Description';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $generalInfoCommand->startDate = $startDate;
-        $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $originalOrganization;
         $generalInfoCommand->additionalVisas = ['Vu 1'];
         $generalInfoCommand->additionalReasons = ['Motif 1'];

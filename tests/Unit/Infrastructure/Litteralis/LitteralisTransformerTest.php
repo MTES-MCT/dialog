@@ -70,8 +70,6 @@ final class LitteralisTransformerTest extends TestCase
         $generalInfo->identifier = $identifier;
         $generalInfo->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $generalInfo->description = "de chargement d'engin de chantier (URL : https://dl.sogelink.fr/?0dbjHha7)";
-        $generalInfo->startDate = new \DateTimeImmutable('2024-03-18T01:00:00Z');
-        $generalInfo->endDate = new \DateTimeImmutable('2024-03-19T01:00:00Z');
         $generalInfo->organization = $this->organization;
 
         $measureCommands = [];

@@ -29,6 +29,20 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         parent::__construct($registry, RegulationOrderRecord::class);
     }
 
+    private const OVERALL_START_DATE_QUERY_TEMPLATE = '
+        SELECT MIN(_p%%n.startDateTime)
+        FROM App\Domain\Condition\Period\Period _p%%n
+        INNER JOIN _p%%n.measure _m%%n
+        INNER JOIN _m%%n.regulationOrder _ro%%n
+        WHERE _ro%%n.uuid = ro.uuid';
+
+    private const OVERALL_END_DATE_QUERY_TEMPLATE = '
+        SELECT MAX(_p%%n.endDateTime)
+        FROM App\Domain\Condition\Period\Period _p%%n
+        INNER JOIN _p%%n.measure _m%%n
+        INNER JOIN _m%%n.regulationOrder _ro%%n
+        WHERE _ro%%n.uuid = ro.uuid';
+
     private const COUNT_LOCATIONS_QUERY = '
         SELECT count(DISTINCT(_loc.uuid))
         FROM App\Domain\Regulation\Location\Location _loc
@@ -70,7 +84,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         RegulationListFiltersDTO $dto,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
+            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid')
+            ->addSelect(\sprintf('(%s) AS overallStartDate', str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
+            ->addSelect(\sprintf('(%s) AS overallEndDate', str_replace('%%n', '11', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
             ->addSelect(\sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
@@ -97,10 +113,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         // Regulation order type filter
         if ($dto->regulationOrderType === RegulationOrderTypeEnum::PERMANENT->value) {
             $query
-                ->andWhere('ro.endDate IS NULL');
+                ->andWhere(\sprintf('NOT EXISTS (%s)', str_replace('%%n', '12', self::OVERALL_END_DATE_QUERY_TEMPLATE)));
         } elseif ($dto->regulationOrderType === RegulationOrderTypeEnum::TEMPORARY->value) {
             $query
-                ->andWhere('ro.endDate IS NOT NULL');
+            ->andWhere(\sprintf('EXISTS (%s)', str_replace('%%n', '12', self::OVERALL_END_DATE_QUERY_TEMPLATE)));
         }
 
         // Status filter
@@ -119,7 +135,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $query
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->orderBy('ro.startDate', 'DESC')
+            ->orderBy('overallEndDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc, o')
             ->setFirstResult($dto->pageSize * ($dto->page - 1))
@@ -181,19 +197,20 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select(
                 \sprintf(
-                    'NEW %s(
+                    '
                     roc.uuid,
                     ro.identifier,
-                    org.name,
-                    org.uuid,
+                    org.name as organizationName,
+                    org.uuid as organizationUuid,
                     roc.status,
                     ro.category,
                     ro.otherCategoryText,
                     ro.description,
-                    ro.startDate,
-                    ro.endDate
-                )',
-                    GeneralInfoView::class,
+                    (%s) as overallStartDate,
+                    (%s) as overallEndDate
+                ',
+                    str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE),
+                    str_replace('%%n', '11', self::OVERALL_END_DATE_QUERY_TEMPLATE),
                 ),
             )
             ->where('roc.uuid = :uuid')
@@ -201,7 +218,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->getQuery()
-            ->getResult()
+            ->getOneOrNullResult()
         ;
     }
 
@@ -261,7 +278,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('p.timeSlots', 't')
             ->where(
                 'roc.status = :status',
-                'ro.endDate >= :today',
+                \sprintf('%s >= :today', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE)),
                 'loc.geometry IS NOT NULL',
                 'loc.roadType NOT IN (:excludedRoadTypes) OR (loc.roadType = :rawGeoJSONRoadType AND roc.source = :litteralisSource)',
                 $allowedSources ? 'roc.source in (:allowedSources)' : null,
