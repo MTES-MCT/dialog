@@ -61,9 +61,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
-/* if($startDate | $endDate) {
-    $periodCondition = 'AND (:startDate)<=ro.start_date<=(:endDate) AND (:startDate)<=ro.end_date <= :endDate'; il faut rajouter si au moins une des deux dates est comprise dans la période
-} */
+        /* if($startDate | $endDate) {
+
+        } */
         $regulationTypeWhereClause =
             $permanentOnly
             ? 'AND ro.end_date IS NULL'
@@ -95,7 +95,14 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
                 WHERE roc.status = :status
-                AND l.geometry IS NOT NULL
+                AND l.geometry IS NOT NULL 
+                AND EXISTS (
+                    SELECT 1 
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                    AND ((:startDate IS NOT NULL AND p.endDate > :startDate)
+                    OR (:endDate IS NOT NULL AND p.startDate < :endDate))
+                )
                 %s
                 %s
                 ',
