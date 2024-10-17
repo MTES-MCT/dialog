@@ -1,0 +1,9 @@
+.app-visas {
+    background-color: var(--x-grey);
+    padding: 1rem;
+    list-style: none;
+}
+
+.app-visas li{
+    margin-bottom: 0.5rem;
+}
