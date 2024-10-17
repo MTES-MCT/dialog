@@ -35,11 +35,21 @@ final class GetCifsIncidentsQueryHandler
             $this->cifsFilterSet->allowedLocationIds,
         );
 
+        $uuids = [];
+
+        /** @var RegulationOrderRecord $regulationOrderRecord */
+        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            $uuids[] = $regulationOrderRecord->getUuid();
+        }
+
+        $overallDates = $this->repository->getOverallDatesByRegulationUuids($uuids);
+
         // Reference: https://developers.google.com/waze/data-feed/cifs-specification?hl=fr
         $incidents = [];
 
         /** @var RegulationOrderRecord $regulationOrderRecord */
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            $uuid = $regulationOrderRecord->getUuid();
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
             $identifier = $regulationOrder->getIdentifier();
 
@@ -51,8 +61,8 @@ final class GetCifsIncidentsQueryHandler
             };
 
             $incidentCreationTime = $regulationOrderRecord->getCreatedAt();
-            $regulationStart = $regulationOrder->getStartDate();
-            $regulationEnd = $regulationOrder->getEndDate();
+            $regulationStart = $overallDates[$uuid]['overallStartDate'];
+            $regulationEnd = $overallDates[$uuid]['overallEndDate'];
 
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
@@ -72,11 +82,15 @@ final class GetCifsIncidentsQueryHandler
                         /** @var TimeSlot[] $timeSlots */
                         $timeSlots = $period->getTimeSlots();
 
+                        $isEveryDay = false;
+                        $isAllTheTime = false;
+
                         if (!$applicableDays && $timeSlots) {
+                            $isEveryDay = true;
                             $applicableDays = ['everyday'];
                         }
 
-                        if ($timeSlots) {
+                        if (\count($timeSlots) > 0) {
                             $timeSpans = [];
 
                             foreach ($timeSlots as $timeSlot) {
@@ -86,13 +100,16 @@ final class GetCifsIncidentsQueryHandler
                                 ];
                             }
                         } else {
+                            $isAllTheTime = true;
                             $timeSpans = [['startTime' => new \DateTimeImmutable('00:00'), 'endTime' => new \DateTimeImmutable('23:59')]];
                         }
 
                         $schedule = [];
 
-                        foreach ($applicableDays as $day) {
-                            $schedule[$day] = $timeSpans;
+                        if (!$isEveryDay || !$isAllTheTime) {
+                            foreach ($applicableDays as $day) {
+                                $schedule[$day] = $timeSpans;
+                            }
                         }
 
                         // Adhere to key order in CIFS <schedule> XML element

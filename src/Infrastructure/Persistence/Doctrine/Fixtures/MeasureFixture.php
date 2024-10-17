@@ -19,6 +19,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
     public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
     public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
     public const UUID_PERMANENT_ONLY_ONE = 'fa8f07e7-2db6-444d-bb41-3815b46198be';
+    public const UUID_CIFS = '06548f88-56a9-70e2-8000-a06baed6a93d';
     public const UUID_RAWGEOJSON = '06672e2d-669d-7593-8000-7cfd59230dc2';
 
     public function load(ObjectManager $manager): void
@@ -60,7 +61,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         );
 
         $cifsMeasure = new Measure(
-            '06548f88-56a9-70e2-8000-a06baed6a93d',
+            self::UUID_CIFS,
             $this->getReference('regulationOrderCifs'),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-09-06'),

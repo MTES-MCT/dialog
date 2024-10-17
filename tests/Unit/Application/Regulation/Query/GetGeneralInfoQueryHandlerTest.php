@@ -16,8 +16,9 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
 {
     public function testGetGeneralInformation(): void
     {
-        $startDate = new \DateTime('2022-12-07');
-        $endDate = new \DateTime('2022-12-17');
+        $startDate = '2022-12-07';
+        $endDate = '2022-12-17';
+
         $generalInfo = new GeneralInfoView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
             identifier: 'FO1/2024',
@@ -28,15 +29,27 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
             category: 'other',
             otherCategoryText: 'Other category 1',
             description: 'Description 1',
-            startDate: $startDate,
-            endDate: $endDate,
+            startDate: new \DateTimeImmutable($startDate),
+            endDate: new \DateTimeImmutable($endDate),
         );
 
         $repository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $repository
             ->expects(self::once())
             ->method('findGeneralInformation')
-            ->willReturn([$generalInfo]);
+            ->willReturn([
+                'uuid' => $generalInfo->uuid,
+                'identifier' => $generalInfo->identifier,
+                'organizationName' => $generalInfo->organizationName,
+                'organizationUuid' => $generalInfo->organizationUuid,
+                'status' => $generalInfo->status,
+                'regulationOrderUuid' => 'fce8177b-3737-4b4e-933d-fe29d0092c89',
+                'category' => $generalInfo->category,
+                'otherCategoryText' => $generalInfo->otherCategoryText,
+                'description' => $generalInfo->description,
+                'overallStartDate' => $startDate,
+                'overallEndDate' => $endDate,
+            ]);
 
         $handler = new GetGeneralInfoQueryHandler($repository);
 

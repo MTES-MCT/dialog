@@ -66,6 +66,7 @@ final class RegulationDetailController extends AbstractRegulationController
             'canDelete' => !$isReadOnly && $this->canDeleteMeasures->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
             'isReadOnly' => $isReadOnly,
             'generalInfo' => $generalInfo,
+            'isPermanent' => $regulationOrderRecord->getRegulationOrder()->isPermanent(),
             'measures' => $measures,
             'regulationOrderRecord' => $regulationOrderRecord,
         ];

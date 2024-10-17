@@ -26,10 +26,20 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
     {
         $regulationOrderRecords = $this->repository->findRegulationOrdersForDatexFormat();
 
+        $uuids = [];
+
+        /** @var RegulationOrderRecord $regulationOrderRecord */
+        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            $uuids[] = $regulationOrderRecord->getUuid();
+        }
+
+        $overallDates = $this->repository->getOverallDatesByRegulationUuids($uuids);
+
         $regulationOrderViews = [];
 
         /** @var RegulationOrderRecord $regulationOrderRecord */
         foreach ($regulationOrderRecords as $regulationOrderRecord) {
+            $uuid = $regulationOrderRecord->getUuid();
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
             $trafficRegulations = [];
@@ -108,7 +118,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     $dailyRange = $period->getDailyRange();
                     $timeSlots = $period->getTimeSlots() ?? [];
 
-                    if ($dailyRange || $timeSlots) {
+                    if ($dailyRange || \count($timeSlots) > 0) {
                         $recurringTimePeriods = [];
 
                         foreach ($timeSlots as $timeSlot) {
@@ -139,13 +149,13 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
             $regulationOrderViews[] = new RegulationOrderDatexListItemView(
                 uuid: $regulationOrder->getUuid(),
-                regulationOrderRecordUuid: $regulationOrderRecord->getUuid(),
+                regulationOrderRecordUuid: $uuid,
                 regulationId: $regulationOrder->getIdentifier() . '#' . $regulationOrderRecord->getOrganizationUuid(),
                 organization: $regulationOrderRecord->getOrganizationName(),
                 source: $regulationOrderRecord->getSource(),
                 description: $regulationOrder->getDescription(),
-                startDate: $regulationOrder->getStartDate(),
-                endDate: $regulationOrder->getEndDate(),
+                startDate: $overallDates[$uuid]['overallStartDate'],
+                endDate: $overallDates[$uuid]['overallEndDate'],
                 trafficRegulations: $trafficRegulations,
             );
         }
