@@ -43,9 +43,9 @@
                 <validityByOrder>
                     <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                     <com:validityTimeSpecification>
-                        <com:overallStartTime>{{ startDate|date('Y-m-d') }}T00:00:00.000Z</com:overallStartTime>
+                        <com:overallStartTime>{{ startDate|date('Y-m-d\\TH:i:sP') }}</com:overallStartTime>
                         {% if endDate %}
-                            <com:overallEndTime>{{ endDate|date('Y-m-d') }}T23:59:59.000Z</com:overallEndTime>
+                            <com:overallEndTime>{{ endDate|date('Y-m-d\\TH:i:sP') }}</com:overallEndTime>
                         {% endif %}
                     </com:validityTimeSpecification>
                 </validityByOrder>

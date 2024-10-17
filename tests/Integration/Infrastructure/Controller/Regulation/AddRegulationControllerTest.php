@@ -32,7 +32,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
-        $this->assertSame('2023-05-10', $form->get('general_info_form[startDate]')->getValue()); // Init with tomorrow date
 
         /** @var UserRepositoryInterface */
         $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
@@ -43,7 +42,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $values['general_info_form']['identifier'] = 'F022023';
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
         $values['general_info_form']['description'] = 'Interdiction de circuler dans Paris';
-        $values['general_info_form']['startDate'] = '2023-02-14';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::OTHER->value;
         $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
         $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
@@ -83,32 +81,11 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
-        $form['general_info_form[startDate]'] = '';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_identifier_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_description_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_startDate_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#general_info_form_category_error')->text());
-    }
-
-    public function testBadPeriod(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/regulations/add');
-
-        $saveButton = $crawler->selectButton('Continuer');
-        $form = $saveButton->form();
-        $form['general_info_form[identifier]'] = 'F022030';
-        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
-        $form['general_info_form[description]'] = 'Travaux';
-        $form['general_info_form[startDate]'] = '2023-02-12';
-        $form['general_info_form[endDate]'] = '2023-02-11';
-        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-
-        $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('La date de fin doit être après le 12/02/2023.', $crawler->filter('#general_info_form_endDate_error')->text());
     }
 
     public function testAddWithAnAlreadyExistingIdentifier(): void
@@ -122,8 +99,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[identifier]'] = $identifier;
         $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[description]'] = 'Travaux';
-        $form['general_info_form[startDate]'] = '2023-02-12';
-        $form['general_info_form[endDate]'] = '2024-02-11';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
 
         $crawler = $client->submit($form);

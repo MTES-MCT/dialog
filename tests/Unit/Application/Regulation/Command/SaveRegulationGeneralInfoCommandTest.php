@@ -22,8 +22,6 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
         $this->assertSame(RegulationOrderRecordSourceEnum::DIALOG->value, $command->source);
         $this->assertEmpty($command->organization);
         $this->assertEmpty($command->description);
-        $this->assertEmpty($command->startDate);
-        $this->assertEmpty($command->endDate);
     }
 
     public function testWithRegulationOrderRecord(): void
@@ -42,16 +40,6 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
             ->expects(self::once())
             ->method('getDescription')
             ->willReturn('Description');
-
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($start);
-
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($end);
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord
@@ -74,8 +62,6 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
         $this->assertSame($command->identifier, 'F02/2023');
         $this->assertSame('my_source', $command->source);
         $this->assertSame($command->description, 'Description');
-        $this->assertSame($command->startDate, $start);
-        $this->assertSame($command->endDate, $end);
         $this->assertSame($command->organization, $organization);
     }
 

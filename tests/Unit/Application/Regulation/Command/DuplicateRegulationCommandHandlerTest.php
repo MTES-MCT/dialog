@@ -282,16 +282,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate);
-
-        $this->originalRegulationOrder
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($endDate);
-
-        $this->originalRegulationOrder
-            ->expects(self::once())
             ->method('getAdditionalVisas')
             ->willReturn(null);
         $this->originalRegulationOrder
@@ -326,8 +316,6 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->identifier = 'F01/2023-1';
         $generalInfoCommand->description = 'Description';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $generalInfoCommand->startDate = $startDate;
-        $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $originalOrganization;
         $generalInfoCommand->additionalVisas = [];
         $generalInfoCommand->additionalReasons = ['Motif 1'];

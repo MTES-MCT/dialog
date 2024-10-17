@@ -12,7 +12,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -24,7 +23,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 final class GeneralInfoFormType extends AbstractType
 {
     public function __construct(
-        private string $clientTimezone,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -38,27 +36,6 @@ final class GeneralInfoFormType extends AbstractType
                 options: [
                     'label' => 'regulation.general_info.identifier',
                     'help' => 'regulation.general_info.identifier.help',
-                ],
-            )
-            ->add(
-                'startDate',
-                DateType::class,
-                options: [
-                    'label' => 'regulation.general_info.start_date',
-                    'help' => 'regulation.general_info.start_date.help',
-                    'widget' => 'single_text',
-                    'view_timezone' => $this->clientTimezone,
-                ],
-            )
-            ->add(
-                'endDate',
-                DateType::class,
-                options: [
-                    'label' => 'regulation.general_info.end_date',
-                    'help' => 'regulation.general_info.end_date.help',
-                    'widget' => 'single_text',
-                    'view_timezone' => $this->clientTimezone,
-                    'required' => false,
                 ],
             )
             ->add(
