@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class MapFilterFormType extends AbstractType
 {
@@ -47,6 +48,7 @@ final class MapFilterFormType extends AbstractType
                     'label' => 'map.filter.start_date',
                     'help' => 'map.filter.start_date.help',
                     'widget' => 'single_text',
+                    // 'data' => $options['default_start_date'],
                     'required' => false,
                 ],
             )
@@ -80,4 +82,12 @@ final class MapFilterFormType extends AbstractType
             'required' => false,
         ];
     }
+
+    // public function configureOptions(OptionsResolver $resolver)
+    // {
+    //     $resolver->setDefaults([
+    //         'data_class' => null,
+    //         'default_start_date' => new \DateTime('now'),
+    //     ]);
+    // }
 }
