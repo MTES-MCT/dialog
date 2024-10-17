@@ -47,6 +47,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
+        \DateTimeInterface $startDate,
+        \DateTimeInterface $endDate,
     ): string {
         $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
@@ -59,6 +61,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
+/* if($startDate | $endDate) {
+    $periodCondition = 'AND (:startDate)<=ro.start_date<=(:endDate) AND (:startDate)<=ro.end_date <= :endDate'; il faut rajouter si au moins une des deux dates est comprise dans la période
+} */
         $regulationTypeWhereClause =
             $permanentOnly
             ? 'AND ro.end_date IS NULL'
