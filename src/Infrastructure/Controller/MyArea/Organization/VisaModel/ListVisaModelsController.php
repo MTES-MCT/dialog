@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\MyArea\Organization\VisaModel;
 
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Query\GetOrganizationVisaModelsQuery;
+use App\Application\VisaModel\Query\GetVisaModelsQuery;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +31,7 @@ final class ListVisaModelsController extends AbstractOrganizationController
     public function __invoke(string $uuid): Response
     {
         $organization = $this->getOrganization($uuid);
-        $visaModels = $this->queryBus->handle(new GetOrganizationVisaModelsQuery($uuid));
+        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($uuid));
 
         return new Response($this->twig->render(
             name: 'my_area/organization/visa_model/index.html.twig',

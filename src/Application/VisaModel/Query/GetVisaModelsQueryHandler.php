@@ -6,15 +6,15 @@ namespace App\Application\VisaModel\Query;
 
 use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
 
-final class GetOrganizationVisaModelsQueryHandler
+final class GetVisaModelsQueryHandler
 {
     public function __construct(
         private VisaModelRepositoryInterface $visaModelRepository,
     ) {
     }
 
-    public function __invoke(GetOrganizationVisaModelsQuery $query): array
+    public function __invoke(GetVisaModelsQuery $query): array
     {
-        return $this->visaModelRepository->findOrganizationVisaModels($query->organizationUuid);
+        return $this->visaModelRepository->findAll($query->organizationUuid);
     }
 }
