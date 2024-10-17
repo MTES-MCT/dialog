@@ -1,0 +1,12 @@
+<turbo-stream action="update" target="{{ targetId }}">
+    <template>
+        <option value="">{{ 'regulation.general_info.visa_model.placeholder'|trans }}</option>
+        {% for organizationUuid, organization in options %}
+            <optgroup label="{{ organizationUuid }}">
+                {% for visaModelUuid, visaModel in organization %}
+                    <option value="{{ visaModelUuid }}">{{ visaModel }}</option>
+                {% endfor %}
+            </optgroup>
+        {% endfor %}
+    </template>
+</turbo-stream>
