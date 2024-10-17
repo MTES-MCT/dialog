@@ -18,5 +18,7 @@ interface LocationRepositoryInterface
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
+        \DateTimeInterface $startDate,
+        \DateTimeInterface $endDate,
     ): string;
 }
