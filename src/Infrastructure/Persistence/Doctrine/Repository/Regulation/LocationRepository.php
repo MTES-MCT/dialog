@@ -50,7 +50,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string {
-        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
+        $includeNone = empty($measureTypes);
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
         $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
 
@@ -61,9 +61,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
-        /* if($startDate | $endDate) {
-
-        } */
         $regulationTypeWhereClause =
             $permanentOnly
             ? 'AND ro.end_date IS NULL'
@@ -75,7 +72,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         $regulationTypeCondition = '';
         $types = [];
 
-        if ($measureTypes) {
+        if (\count($measureTypes) != 0) {
             $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
             $parameters['measureTypes'] = $measureTypes;
             $types['measureTypes'] = ArrayParameterType::STRING;
