@@ -24,6 +24,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
             organizationName: 'DiaLog',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
             status: RegulationOrderRecordStatusEnum::DRAFT->value,
+            regulationOrderUuid: 'fce8177b-3737-4b4e-933d-fe29d0092c89',
             category: 'other',
             otherCategoryText: 'Other category 1',
             description: 'Description 1',
