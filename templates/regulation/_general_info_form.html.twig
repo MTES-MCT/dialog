@@ -82,8 +82,20 @@
                             data-form-collection-prototype-value="{{ _self.collection_item(form.additionalVisas.vars.prototype, '__visa_name__')|e('html_attr') }}"
                         >
                             <h3 class="fr-h4">{{ 'regulation.general_info.visas'|trans }}</h3>
-                            <p class="fr-text--sm">{{ 'regulation.general_info.visas.help'|trans }}</p>
-                            {{ form_row(form.visaModelUuid, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+                            <div
+                                data-controller="fetch"
+                                data-fetch-extra-query-params-value="{{ { visaModelUuid: '#' ~ form.visaModelUuid.vars.id }|json_encode }}"
+                                data-fetch-url-value="{{ url('fragment_visa_model') }}"
+                            >
+                                {{ form_row(form.visaModelUuid, {
+                                    group_class: 'fr-select-group',
+                                    widget_class: 'fr-select',
+                                    attr: {
+                                        'data-action': 'change->fetch#fetch',
+                                    }
+                                }) }}
+                                <div id="visa_model_detail"></div>
+                            </div>
                             <p class="fr-mt-2w fr-mb-2w fr-message fr-message--info">{{ 'regulation.general_info.visa.info'|trans }}</p>
                             <p class="fr-text--sm">{{ 'regulation.general_info.visa.add'|trans }}</p>
                             {{ form_errors(form.additionalVisas) }}

@@ -1,0 +1,9 @@
+<turbo-stream action="update" target="visa_model_detail">
+    <template>
+        <ul class="fr-mb-2w fr-mt-2w fr-raw-list fr-p-2w fr-background-alt--grey">
+            {% for visa in visaModel.visas %}
+                <li class="fr-mb-1w">{{ visa}}</li>
+            {% endfor %}
+        </ul>
+    </template>
+</turbo-stream>
