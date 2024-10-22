@@ -47,4 +47,10 @@ class Organization
     {
         return $this->name;
     }
+
+    public function update(string $name, string $siret): void
+    {
+        $this->name = $name;
+        $this->siret = $siret;
+    }
 }

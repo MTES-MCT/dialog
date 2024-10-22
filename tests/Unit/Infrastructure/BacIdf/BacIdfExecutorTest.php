@@ -9,7 +9,7 @@ use App\Application\BacIdf\Exception\ImportBacIdfRegulationFailedException;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\User\Command\CreateOrganizationCommand;
+use App\Application\User\Command\SaveOrganizationCommand;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use App\Infrastructure\BacIdf\BacIdfExecutor;
@@ -42,7 +42,7 @@ final class BacIdfExecutorTest extends TestCase
     {
         $organization = $this->createMock(Organization::class);
 
-        $organizationCommand = new CreateOrganizationCommand();
+        $organizationCommand = new SaveOrganizationCommand();
         $organizationCommand->siret = '93123';
         $organizationCommand->name = 'Ville Nouvelle';
         $createdOrganization = $this->createMock(Organization::class);
