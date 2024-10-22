@@ -981,6 +981,10 @@
                 <source>landing.menu.button.home</source>
                 <target>Accueil</target>
             </trans-unit>
+            <trans-unit id="landing.menu.button.map">
+                <source>landing.menu.button.map</source>
+                <target>Carte des restrictions</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.authorities">
                 <source>landing.menu.button.authorities</source>
                 <target>Collectivités</target>
@@ -2178,7 +2182,7 @@
                 <source>map.filters.title.type.regulation</source>
                 <target>Réglementation</target>
             </trans-unit>
-           
+
             <trans-unit id="map.filter.type.noEntry">
                 <source>map.filter.type.noEntry</source>
                 <target>Interdiction de circulation</target>

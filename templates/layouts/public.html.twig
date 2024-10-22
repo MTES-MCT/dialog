@@ -30,6 +30,11 @@
                         </a>
                     </li>
                     <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
+                            {{ 'landing.menu.button.map'|trans }}
+                        </a>
+                    </li>
+                    <li class="fr-nav__item">
                         <a class="fr-nav__link" href="/blog/fr/" target="_blank">
                             {{ 'common.blog'|trans }}
                         </a>
