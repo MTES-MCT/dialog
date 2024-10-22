@@ -44,7 +44,8 @@
                                         {{ visa.name }}
                                         {% if not visa.organizationUuid %}<span class="fr-tag fr-tag--sm">DiaLog</span>{% endif %}
                                     </td>
-                                    <td>{{ visa.description }}</td>
+                                    <td>
+                                        {{ visa.description|u.truncate(50, '...', false) }}</td>
                                     <td>
                                         {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                                             <div class="fr-btns-group fr-btns-group--center fr-btns-group--inline-sm">

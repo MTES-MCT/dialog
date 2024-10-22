@@ -15,7 +15,7 @@ final class VisaModelFixture extends Fixture implements DependentFixtureInterfac
     {
         $genericVisa = (new VisaModel('7eca6579-c07e-4e8e-8f10-fda610d7ee73'))
             ->setName('Réglementation de vitesse en agglomération')
-            ->setDescription('Limitation de vitesse dans toute la commune')
+            ->setDescription('Limitation de vitesse dans toute la commune de l\'agglomération truc muche')
             ->setVisas(['vu que 1', 'vu que 2']);
 
         $visa1 = (new VisaModel('65c12316-e210-445d-9169-0298b13b3b30'))
