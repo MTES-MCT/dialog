@@ -74,6 +74,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
 
@@ -84,6 +85,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => 'page']],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
 
@@ -94,6 +96,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
 
@@ -104,6 +107,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
     }
