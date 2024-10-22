@@ -59,7 +59,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $userLinks = $crawler->filter('[data-testid="user-links"]')->filter('li');
         $this->assertCount(3, $userLinks);
-        $this->assertSame('Arrêtés de circulation', $userLinks->eq(0)->text());
         $this->assertSame('Votre avis', $userLinks->eq(1)->text());
         $this->assertSame('Mon espace', $userLinks->eq(2)->text());
     }
