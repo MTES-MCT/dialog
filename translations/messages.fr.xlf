@@ -38,10 +38,6 @@
                 <source>common.title</source>
                 <target>DiaLog</target>
             </trans-unit>
-            <trans-unit id="common.site_name">
-                <source>common.site_name</source>
-                <target>DiaLog</target>
-            </trans-unit>
             <trans-unit id="common.feedback">
                 <source>common.feedback</source>
                 <target>Votre avis</target>
@@ -482,7 +478,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.visas_and_reasons.description">
                 <source>regulation.general_info.visas_and_reasons.description</source>
-                <target>Vous pouvez exporter votre arrêté de circulation à partir de Dialog, pour cela vous devez spécifier les visas (Vu le ...) et les motifs (Considérant...).</target>
+                <target>Vous pouvez exporter votre arrêté de circulation à partir de DiaLog, pour cela vous devez spécifier les visas (Vu le ...) et les motifs (Considérant...).</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
@@ -921,7 +917,7 @@
             </trans-unit>
             <trans-unit id="profile.delete.help">
                 <source>profile.delete.help</source>
-                <target>Vous pouvez à tout moment décider de supprimer votre compte Dialog.</target>
+                <target>Vous pouvez à tout moment décider de supprimer votre compte DiaLog.</target>
             </trans-unit>
             <trans-unit id="profile.delete.details">
                 <source>profile.delete.details</source>
@@ -929,7 +925,7 @@
             </trans-unit>
             <trans-unit id="profile.delete.first.item">
                 <source>profile.delete.first.item</source>
-                <target>Vous n’aurez plus accès à l’édition des arrêtés dans Dialog pour votre organisation.</target>
+                <target>Vous n’aurez plus accès à l’édition des arrêtés dans DiaLog pour votre organisation.</target>
             </trans-unit>
             <trans-unit id="profile.delete.second.item">
                 <source>profile.delete.second.item</source>
@@ -1319,7 +1315,7 @@
             <trans-unit id="landing.digital_services.qualitative_data.description3">
                 <source>landing.digital_services.qualitative_data.description3</source>
                 <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr" target="_blank" rel="noopener">]]>point
-                    d’accès national aux données de transport<![CDATA[</a>]]>. Dialog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]>
+                    d’accès national aux données de transport<![CDATA[</a>]]>. DiaLog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]>
                     afin d’être facilement intégrable dans votre solution numérique. D’autres
                     formats sont en cours d’élaboration.</target>
             </trans-unit>
@@ -1369,7 +1365,7 @@
             </trans-unit>
             <trans-unit id="landing.digital_services.deployment.description">
                 <source>landing.digital_services.deployment.description</source>
-                <target>Dialog se donne 3 ans pour devenir la <![CDATA[<strong>]]>solution de référence d’accès à la
+                <target>DiaLog se donne 3 ans pour devenir la <![CDATA[<strong>]]>solution de référence d’accès à la
                     réglementation routière<![CDATA[</strong>]]> :</target>
             </trans-unit>
             <trans-unit id="landing.digital_services.deployment.test.title">
