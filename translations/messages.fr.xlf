@@ -2094,6 +2094,14 @@
                 <source>accessRequest.comment</source>
                 <target>Message</target>
             </trans-unit>
+            <trans-unit id="organization.name">
+                <source>organization.name</source>
+                <target>Organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.siret">
+                <source>organization.siret</source>
+                <target>SIRET</target>
+            </trans-unit>
             <trans-unit id="accessRequest.organizationSiret">
                 <source>accessRequest.organizationSiret</source>
                 <target>Numéro SIRET de l'organisation</target>
@@ -2178,7 +2186,7 @@
                 <source>map.filters.title.type.regulation</source>
                 <target>Réglementation</target>
             </trans-unit>
-           
+
             <trans-unit id="map.filter.type.noEntry">
                 <source>map.filter.type.noEntry</source>
                 <target>Interdiction de circulation</target>

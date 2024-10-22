@@ -23,7 +23,8 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
             ->setName(self::MAIN_ORG_NAME);
 
         $otherOrg = (new Organization(self::OTHER_ORG_ID))
-            ->setName('Mairie de Savenay');
+            ->setName('Mairie de Savenay')
+            ->setSiret('12345678909876');
 
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
         $organizationUser1->setUser($this->getReference('mainOrgUser'));
