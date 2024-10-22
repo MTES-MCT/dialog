@@ -81,18 +81,38 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         $measureDatesCondition = '';
 
         if ($startDate || $endDate) {
-            $measureDatesCondition = 'AND EXISTS (
-                SELECT p.uuid
-                FROM period AS p
-                WHERE p.measure_uuid = m.uuid 
-                AND (
-                    ((:startDate)::date IS NOT NULL AND p.end_datetime > (:startDate)::date)
-                    OR
-                    ((:endDate)::date IS NOT NULL AND p.start_datetime < (:endDate)::date)
+            $measureDatesCondition = 'AND CASE 
+                WHEN EXISTS (--On verifie que la mesure possède une plage 
+                    SELECT p.uuid
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                ) 
+                THEN  EXISTS (
+                    SELECT p.uuid
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                    AND CASE
+                        WHEN (:startDate)::date IS NULL
+                            THEN p.start_datetime < (:endDate)::date
+                        WHEN (:endDate)::date IS NULL
+                            THEN p.end_datetime > (:startDate)::date
+                        ELSE-- le filtre date de début et de fin sont renseignés
+                            p.start_datetime < (:endDate)::date AND (:startDate)::date < p.end_datetime
+                    END
                 )
-            )';
-            $parameters['startDate'] = $startDate->format(\DateTimeInterface::ISO8601);
-            $parameters['endDate'] = $endDate->format(\DateTimeInterface::ISO8601);
+                ELSE (--La mesure ne possède pas de plage on compare les dates du filtre avec les dates de l arrêté 
+                    CASE
+                    WHEN (:startDate)::date IS NULL
+                        THEN ro.start_date < (:endDate)::date
+                    WHEN (:endDate)::date IS NULL
+                        THEN ro.end_date > (:startDate)::date
+                    ELSE
+                        ro.start_date < (:endDate)::date AND (:startDate)::date < ro.end_date
+                    END
+                )
+                END';
+            $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
+            $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
         }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
