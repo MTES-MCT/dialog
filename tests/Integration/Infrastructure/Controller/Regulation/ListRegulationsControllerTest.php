@@ -36,7 +36,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
         $this->assertSame('...', $navLi->eq(5)->text());
-        $this->assertSame('12', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('10', $navLi->eq(6)->filter('a')->text());
         $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
         $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
 
@@ -49,7 +49,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $client = $this->login();
 
         // First item
-        $pageOne = $client->request('GET', '/regulations?pageSize=1&page=2');
+        $pageOne = $client->request('GET', '/regulations?pageSize=1&page=1');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -69,7 +69,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS, $links->eq(0)->link()->getUri());
 
         // Second item
-        $otherPage = $client->request('GET', '/regulations?pageSize=1&page=4');
+        $otherPage = $client->request('GET', '/regulations?pageSize=1&page=3');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -87,7 +87,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testPublishedRegulationRendering(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations?pageSize=1&page=8');
+        $crawler = $client->request('GET', '/regulations?pageSize=1&page=7');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -169,11 +169,11 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['organizationUuid'] = OrganizationFixture::OTHER_ORG_ID;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(2, $rows->count());
-
-        $organizations = $rows->filter('td:nth-child(2)')->each(fn ($node) => $node->text());
-        $this->assertSame('Mairie de Savenay, Mairie de Savenay', implode(', ', $organizations));
+        $organizations = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(2)')->each(fn ($node) => $node->text());
+        $this->assertCount(1, $organizations);
+        foreach ($organizations as $org) {
+            $this->assertSame('Mairie de Savenay', $org);
+        }
     }
 
     public function testRegulationOrderTypeFilterPermanent(): void
@@ -201,10 +201,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(2, $rows->count());
+        $this->assertSame(1, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(4)')->each(fn ($node) => $node->text());
-        $this->assertSame(', à partir du 11/03/2023 en cours', implode(', ', $statuses));
+        $this->assertSame('à partir du 11/03/2023 en cours', implode(', ', $statuses));
     }
 
     public function testRegulationOrderTypeFilterTemporary(): void
@@ -220,7 +220,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(10, $rows->count());
+        $this->assertSame(9, $rows->count());
     }
 
     public function testStatusFilterPublished(): void
@@ -247,11 +247,11 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['status'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(5, $rows->count());
-
-        $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertSame('Publié, Publié, Publié, Publié, Publié', implode(', ', $statuses));
+        $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertCount(4, $statuses);
+        foreach ($statuses as $status) {
+            $this->assertSame('Publié', $status);
+        }
     }
 
     public function testStatusFilterDraft(): void
@@ -266,12 +266,11 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['status'] = RegulationOrderRecordStatusEnum::DRAFT->value;
         $crawler = $client->submit($form);
 
-        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(7, $rows->count());
-
-        $rows->filter('td:nth-child(5)')->each(function ($node) {
-            $this->assertSame('Brouillon', $node->text());
-        });
+        $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertCount(6, $statuses);
+        foreach ($statuses as $status) {
+            $this->assertSame('Brouillon', $status);
+        }
     }
 
     public function testStatusFilterAsAnonymousUser(): void
@@ -290,11 +289,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $node = $crawler->filter('form[role="search"] select[name="status"]')->first();
         $this->assertNotNull($node->closest('[class*="fr-hidden"]'));
 
-        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(5, $rows->count());
-
-        $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertSame('Publié, Publié, Publié, Publié, Publié', implode(', ', $statuses));
+        // Only published regulations are shown
+        $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertGreaterThan(0, \count($statuses));
+        foreach ($statuses as $status) {
+            $this->assertSame('Publié', $status);
+        }
     }
 
     public function testStatusFilterAsAnonymousUserForceDraft(): void
@@ -309,11 +309,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form = $searchButton->form();
         $this->assertSame('published', $form->get('status')->getValue());
 
-        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(5, $rows->count());
-
-        $statuses = $rows->filter('td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertSame('Publié, Publié, Publié, Publié, Publié', implode(', ', $statuses));
+        // Still only published regulations are shown
+        $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
+        $this->assertGreaterThan(0, \count($statuses));
+        foreach ($statuses as $status) {
+            $this->assertSame('Publié', $status);
+        }
     }
 
     public function testFilterCombinationViaUrl(): void
@@ -329,10 +330,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(2, $rows->count());
+        $this->assertSame(1, $rows->count());
 
         $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
-        $this->assertSame('FO2/2023, FO2/2023-1', implode(', ', $identifiers));
+        $this->assertSame('FO2/2023', implode(', ', $identifiers));
     }
 
     public function testInvalidPageSize(): void

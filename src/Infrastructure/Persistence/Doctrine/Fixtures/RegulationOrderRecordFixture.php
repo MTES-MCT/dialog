@@ -58,15 +58,6 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('mainOrg'),
         );
 
-        $regulationOrderRecordDuplicate = new RegulationOrderRecord(
-            '0658c6bb-045e-74fd-8000-bc704e4e72cb',
-            RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::PUBLISHED->value,
-            $this->getReference('regulationOrderDuplicate'),
-            new \DateTime('2022-01-10'),
-            $this->getReference('mainOrg'),
-        );
-
         $regulationOrderRecordPermanent = new RegulationOrderRecord(
             self::UUID_PERMANENT,
             RegulationOrderRecordSourceEnum::DIALOG->value,
@@ -74,15 +65,6 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('regulationOrderPermanent'),
             new \DateTime('2022-01-11'),
             $this->getReference('mainOrg'),
-        );
-
-        $otherOrgRegulationOrderRecord = new RegulationOrderRecord(
-            self::UUID_OTHER_ORG,
-            RegulationOrderRecordSourceEnum::DIALOG->value,
-            RegulationOrderRecordStatusEnum::DRAFT->value,
-            $this->getReference('otherOrgRegulationOrder'),
-            new \DateTime('2022-01-11'),
-            $this->getReference('otherOrg'),
         );
 
         $fullCityRegulationOrderRecord = new RegulationOrderRecord(
@@ -150,9 +132,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
 
         $manager->persist($typicalRegulationOrderRecord);
         $manager->persist($publishedRegulationOrderRecord);
-        $manager->persist($regulationOrderRecordDuplicate);
         $manager->persist($regulationOrderRecordPermanent);
-        $manager->persist($otherOrgRegulationOrderRecord);
         $manager->persist($fullCityRegulationOrderRecord);
         $manager->persist($regulationOrderRecordNoLocations);
         $manager->persist($regulationOrderRecordNoMeasures);

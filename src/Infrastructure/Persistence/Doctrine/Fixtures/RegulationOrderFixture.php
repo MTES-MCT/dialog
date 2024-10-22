@@ -34,30 +34,12 @@ final class RegulationOrderFixture extends Fixture
             endDate: new \DateTimeImmutable('2023-03-20'),
         );
 
-        $regulationOrderDuplicate = new RegulationOrder(
-            uuid: '0658c6ab-6b49-7a3b-8000-0683622905a3',
-            identifier: 'FO2/2023-1',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-            description: 'Description 2',
-            startDate: new \DateTimeImmutable('2023-03-10'),
-            endDate: new \DateTimeImmutable('2023-03-20'),
-        );
-
         $regulationOrderPermanent = new RegulationOrder(
             uuid: 'c147cc20-ed02-4bd9-9f6b-91b67df296bd',
             identifier: 'FO3/2023',
             category: RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
             description: 'Description 3',
             startDate: new \DateTimeImmutable('2023-03-11'),
-            endDate: null,
-        );
-
-        $otherOrgRegulationOrder = new RegulationOrder(
-            uuid: 'fd5d2e24-64e4-45c9-a8fc-097c7df796b2',
-            identifier: 'FO4/2023',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-            description: 'Description 4',
-            startDate: null, // Simulate a regulation order before migration
             endDate: null,
         );
 
@@ -127,9 +109,7 @@ final class RegulationOrderFixture extends Fixture
 
         $manager->persist($typicalRegulationOrder);
         $manager->persist($publishedRegulationOrder);
-        $manager->persist($regulationOrderDuplicate);
         $manager->persist($regulationOrderPermanent);
-        $manager->persist($otherOrgRegulationOrder);
         $manager->persist($fullCityRegulationOrder);
         $manager->persist($regulationOrderNoLocations);
         $manager->persist($regulationOrderNoMeasures);
@@ -142,11 +122,9 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
         $this->addReference('publishedRegulationOrder', $publishedRegulationOrder);
         $this->addReference('regulationOrderPermanent', $regulationOrderPermanent);
-        $this->addReference('otherOrgRegulationOrder', $otherOrgRegulationOrder);
         $this->addReference('fullCityRegulationOrder', $fullCityRegulationOrder);
         $this->addReference('regulationOrderNoLocations', $regulationOrderNoLocations);
         $this->addReference('regulationOrderNoMeasures', $regulationOrderNoMeasures);
-        $this->addReference('regulationOrderDuplicate', $regulationOrderDuplicate);
         $this->addReference('regulationOrderCifs', $regulationOrderCifs);
         $this->addReference('outDatedRegulationOrderCifs', $outDatedRegulationOrderCifs);
         $this->addReference('rawGeoJSONRegulationOrder', $rawGeoJSONRegulationOrder);
