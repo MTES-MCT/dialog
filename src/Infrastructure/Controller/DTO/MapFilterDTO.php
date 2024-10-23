@@ -10,7 +10,9 @@ final class MapFilterDTO
 {
     public bool $displayPermanentRegulations = true;
     public bool $displayTemporaryRegulations = true;
-    public array $measureTypes = [MeasureTypeEnum::NO_ENTRY->value, MeasureTypeEnum::SPEED_LIMITATION->value];
+    public array $measureTypes = [
+        MeasureTypeEnum::NO_ENTRY->value, MeasureTypeEnum::SPEED_LIMITATION->value,
+    ];
     public ?\DateTimeInterface $endDate = null;
 
     public function __construct(
