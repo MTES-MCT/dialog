@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div class="fr-header__service">
-                        <a href="{{ path('app_landing') }}" title="{{ 'common.site_name'|trans }}">
+                        <a href="{{ app.user ? path('app_regulations_list') : path('app_landing') }}" title="{{ 'common.site_name'|trans }}">
                             <p class="fr-header__service-title">
                                 {{ 'common.site_name'|trans }}
                                 <span class="fr-badge fr-badge--new">bêta</span>
@@ -26,11 +26,6 @@
                 <div class="fr-header__tools" data-testid="user-links">
                     <div class="fr-header__tools-links">
                         <ul class="fr-btns-group">
-                            <li>
-                                <a class="fr-btn fr-icon-file-text-line" href="{{ path('app_regulations_list') }}">
-                                    {{ 'regulation.list.title'|trans }}
-                                </a>
-                            </li>
                             {% if app.user %}
                                 <li>
                                     <a class="fr-btn fr-icon-edit-line" href="{{ path('app_feedback') }}">

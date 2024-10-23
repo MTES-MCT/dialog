@@ -985,6 +985,10 @@
                 <source>landing.menu.button.map</source>
                 <target>Carte des restrictions</target>
             </trans-unit>
+            <trans-unit id="landing.menu.button.restrictions">
+                <source>landing.menu.button.restrictions</source>
+                <target>Arrêtés de circulation</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.authorities">
                 <source>landing.menu.button.authorities</source>
                 <target>Collectivités</target>
