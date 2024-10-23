@@ -132,40 +132,78 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     ): Coordinates {
         try {
             $row = $this->bdtopoConnection->fetchAssociative(
-                '
-                    WITH pr as (
-                        SELECT abscisse + :abscisse as abscisse
-                        FROM point_de_repere
-                        WHERE route = :route
-                        AND gestionnaire = :gestionnaire
-                        AND cote = :cote
-                        AND numero = :numero
-                        LIMIT 1
-                    )
-                    SELECT ST_AsGeoJSON(
-                        ST_LocateAlong(
-                            ST_AddMeasure(
-                                ST_LineMerge(:geom),
-                                0,
-                                ST_Length(
-                                    -- Convert to meters
-                                    ST_Transform(
-                                        ST_GeomFromGeoJSON(:geom),
-                                        2154
-                                    )
-                                )
-                            ),
-                            pr.abscisse
+                // Principe : partir du PR indiqué, puis marcher **dans le sens
+                // des PR croissants** d'une distance en mètres définie par `$abscissa`.
+                'WITH route_prs AS (
+                    SELECT *
+                    FROM point_de_repere
+                    WHERE route = :route
+                    AND gestionnaire = :gestionnaire
+                ),
+                matching_pr as (
+                    SELECT pr.abscisse as abscisse
+                    FROM route_prs AS pr
+                    WHERE pr.cote = :cote
+                    AND pr.numero = :numero
+                    LIMIT 1
+                ),
+                -- Attention : tous les calculs doivent être faits en mètres (unité des abscisses)
+                -- Le système de coordonnées habituel EPSG:4326 est en angles / degrés
+                -- On passe dans le système EPSG:2154 qui est en mètres
+                first_pr_in_meters AS (
+                    SELECT ST_Transform(pr.geometrie, 2154) AS geom
+                    FROM route_prs AS pr
+                    WHERE pr.ordre >= 0
+                    ORDER BY pr.ordre ASC
+                    LIMIT 1
+                ),
+                line_geom_in_meters AS (
+                    SELECT ST_Transform(ST_LineMerge(ST_GeomFromGeoJSON(:geom)), 2154) AS geom
+                ),
+                line_order AS (
+                    -- L\'ordre de numérisation (points de la géométrie) est le même que celui de numérotation (PR)
+                    -- SI ET SEULEMENT SI le premier point de repère est dans la première moitié du linéaire ("côté début").
+                    -- On se base sur la distance à vol d\'oiseau entre le premier PR et le premier point du linéaire pour éviter de devoir
+                    -- calculer les abscisses curvilignes (car justement leur définition dépend du sens qu\'on essaie de déterminer ici).
+                    -- Mais si la route est courbée, la distance à vol d\'oiseau est une moins bonne approximation de la distance curviligne.
+                    -- Donc on s\'intéresse au premier quart de la route plutôt qu\'à la première moitié.
+                    SELECT ST_Distance(ST_StartPoint(l.geom), fp.geom) < ST_Length(l.geom) / 4 AS is_aligned
+                    FROM line_geom_in_meters AS l, first_pr_in_meters AS fp
+                ),
+                line_measure AS (
+                    -- On associe une échelle ("measure" en postgis) au linéaire de route
+                    -- allant de 0 à la longueur totale de la route,
+                    -- dans le sens déterminé ci-dessus.
+                    SELECT (
+                        CASE WHEN o.is_aligned THEN ST_AddMeasure(
+                            l.geom,
+                            0,
+                            ST_Length(l.geom)
                         )
-                    ) as point
-                    FROM pr
+                        ELSE ST_AddMeasure(
+                            l.geom,
+                            ST_Length(l.geom),
+                            0
+                        )
+                        END
+                    ) AS geom
+                    FROM line_geom_in_meters AS l, line_order AS o
+                ),
+                -- ST_LocateAlong permet alors de trouver les coordonnées du point le long de cette échelle à partir du couple PR+abs indiqué.
+                point_in_meters AS (
+                    SELECT ST_LocateAlong(lm.geom, p.abscisse + :abscissa) AS geom
+                    FROM matching_pr AS p, line_measure AS lm
+                )
+                -- On repasse en EPSG:4326
+                SELECT ST_AsGeoJSON(ST_Transform(p.geom, 4326)) AS geom
+                FROM point_in_meters AS p
                 ',
                 [
                     'geom' => $lineGeometry,
                     'route' => $roadNumber,
                     'gestionnaire' => $administrator,
                     'numero' => $pointNumber,
-                    'abscisse' => $abscissa,
+                    'abscissa' => $abscissa,
                     'cote' => $side,
                 ],
             );
@@ -177,7 +215,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingFailureException(\sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
         }
 
-        $lonLat = json_decode($row['point'], associative: true);
+        $lonLat = json_decode($row['geom'], associative: true);
         $coordinates = $lonLat['coordinates'];
 
         if (empty($coordinates)) {

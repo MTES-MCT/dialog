@@ -109,6 +109,7 @@ class RegulationOrder
         ?string $otherCategoryText = null,
         array $additionalVisas = [],
         array $additionalReasons = [],
+        ?VisaModel $visaModel = null,
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;
@@ -118,5 +119,6 @@ class RegulationOrder
         $this->otherCategoryText = $otherCategoryText;
         $this->additionalVisas = $additionalVisas;
         $this->additionalReasons = $additionalReasons;
+        $this->visaModel = $visaModel;
     }
 }

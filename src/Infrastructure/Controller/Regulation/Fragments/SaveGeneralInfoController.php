@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\VisaModel\Query\GetVisaModelsQuery;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
@@ -43,7 +44,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         /** @var SymfonyUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-
+        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($regulationOrderRecord->getOrganizationUuid()));
         $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $form = $this->formFactory->create(
@@ -51,6 +52,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
             data: $command,
             options: [
                 'organizations' => $user->getUserOrganizations(),
+                'visaModels' => $visaModels,
                 'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
                 'save_options' => [
                     'label' => 'common.form.validate',

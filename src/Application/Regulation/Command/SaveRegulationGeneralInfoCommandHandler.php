@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\IdFactoryInterface;
+use App\Application\QueryBusInterface;
+use App\Application\VisaModel\Query\GetVisaModelQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -18,12 +20,16 @@ final class SaveRegulationGeneralInfoCommandHandler
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private \DateTimeInterface $now,
+        private QueryBusInterface $queryBus,
     ) {
     }
 
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
         $command->cleanOtherCategoryText();
+        $visaModel = $command->visaModelUuid
+            ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
+            : null;
 
         // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
@@ -38,6 +44,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                     otherCategoryText: $command->otherCategoryText,
                     additionalVisas: $command->additionalVisas,
                     additionalReasons: $command->additionalReasons,
+                    visaModel: $visaModel,
                 ),
             );
 
@@ -65,6 +72,7 @@ final class SaveRegulationGeneralInfoCommandHandler
             otherCategoryText: $command->otherCategoryText,
             additionalVisas: $command->additionalVisas,
             additionalReasons: $command->additionalReasons,
+            visaModel: $visaModel,
         );
 
         return $command->regulationOrderRecord;

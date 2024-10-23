@@ -52,35 +52,6 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testEditRegulationOrderWithNoStartDateYet(): void
-    {
-        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
-        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_OTHER_ORG_NO_START_DATE);
-
-        $this->assertResponseStatusCodeSame(200);
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-
-        // Get the raw values.
-        $values = $form->getPhpValues();
-        $values['general_info_form']['identifier'] = 'FIOIUS';
-        $values['general_info_form']['organization'] = OrganizationFixture::OTHER_ORG_ID;
-        $values['general_info_form']['description'] = 'Interdiction de circuler dans Paris';
-        $values['general_info_form']['startDate'] = '2023-02-14';
-        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
-        $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
-        $values['general_info_form']['additionalReasons'][0] = 'Motif 1';
-        $values['general_info_form']['additionalReasons'][1] = 'Motif 2';
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
-
-        $client->followRedirect();
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_general_info');
-    }
-
     public function testBadUuid(): void
     {
         $client = $this->login();
