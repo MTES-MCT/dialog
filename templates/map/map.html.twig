@@ -1,4 +1,4 @@
-{% extends 'layouts/public.html.twig' %}
+{% extends 'layouts/layout.html.twig' %}
 
 {% block title %}
     {{'map.meta.title'|trans}} - {{ parent() }}
@@ -40,7 +40,7 @@
                                 }) }}
                                 {{ form_widget(form.measureTypes) }}
                             </fieldset>
-                            
+
                             <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.type.regulation'|trans }}</h4>
                             {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group'}) }}
                             {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}

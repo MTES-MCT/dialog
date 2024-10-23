@@ -1,4 +1,4 @@
-{% extends 'layouts/app.html.twig' %}
+{% extends 'layouts/layout.html.twig' %}
 {% set metaTitle = user is defined ? user.fullName : 'user.form.add'|trans %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
