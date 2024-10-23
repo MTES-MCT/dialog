@@ -293,7 +293,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->originalRegulationOrder
             ->expects(self::once())
             ->method('getAdditionalVisas')
-            ->willReturn(['Vu 1']);
+            ->willReturn(null);
         $this->originalRegulationOrder
             ->expects(self::once())
             ->method('getVisaModel')
@@ -329,7 +329,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $generalInfoCommand->startDate = $startDate;
         $generalInfoCommand->endDate = $endDate;
         $generalInfoCommand->organization = $originalOrganization;
-        $generalInfoCommand->additionalVisas = ['Vu 1'];
+        $generalInfoCommand->additionalVisas = [];
         $generalInfoCommand->additionalReasons = ['Motif 1'];
         $generalInfoCommand->visaModelUuid = 'P67f7f275-51b2-4f7f-914a-45168a28d4c2';
 

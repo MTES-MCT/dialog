@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
-use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
-
 final class LandingControllerTest extends AbstractWebTestCase
 {
     public function testLanding(): void
@@ -44,23 +42,11 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $userLinks = $crawler->filter(selector: '[data-testid="user-links"]')->filter('li');
-        $this->assertCount(3, $userLinks);
-        $this->assertSame('Arrêtés de circulation', $userLinks->eq(0)->text());
+        $this->assertCount(2, $userLinks);
+        $this->assertSame('Votre avis', $userLinks->eq(0)->text());
 
         $enterLink = $crawler->selectLink("Participer à l'expérimentation");
         $this->assertSame('/collectivites', $enterLink->attr('href'));
-    }
-
-    public function testLandingWithRoleAdmin(): void
-    {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
-        $crawler = $client->request('GET', '/');
-
-        $this->assertResponseStatusCodeSame(200);
-        $userLinks = $crawler->filter('[data-testid="user-links"]')->filter('li');
-        $this->assertCount(3, $userLinks);
-        $this->assertSame('Votre avis', $userLinks->eq(1)->text());
-        $this->assertSame('Mon espace', $userLinks->eq(2)->text());
     }
 
     public function testNavigationLink(): void
@@ -69,10 +55,36 @@ final class LandingControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertNavStructure([
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/regulations');
+
+        $this->assertNavStructure([
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => 'page']],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
+        ], $crawler);
+
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertNavStructure([
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
+            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => 'page']],
+        ], $crawler);
+    }
+
+    public function testLogoutNavigationLink(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/');
+
+        $this->assertNavStructure([
             ['Accueil', ['href' => '/', 'aria-current' => 'page']],
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
@@ -84,6 +96,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => 'page']],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
@@ -95,6 +108,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);
@@ -106,6 +120,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
+            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
         ], $crawler);

@@ -1,10 +1,41 @@
-{% extends 'layouts/_base.html.twig' %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% set _nonce = csp_nonce('script') %}
+    {% set _nonce = csp_nonce('style') %}
+    <meta name="csp-nonce" content="{{ _nonce }}">
 
-{% set skipLinks = [
-    {href: '#header-navigation', label: 'public.skiplinks.menu'|trans},
-] %}
+    <link rel="apple-touch-icon" href="{{ asset('build/dsfr/favicon/apple-touch-icon.png') }}"><!-- 180×180 -->
+    <link rel="icon" href="{{ asset('build/dsfr/favicon/favicon.svg') }}" type="image/svg+xml">
+    <link rel="shortcut icon" href="{{ asset('build/dsfr/favicon/favicon.ico') }}" type="image/x-icon"><!-- 32×32 -->
+    <link rel="manifest" href="{{ asset('build/dsfr/favicon/manifest.webmanifest') }}" crossorigin="use-credentials">
 
-{% block header %}
+    <title>{% block title %}{{ 'common.title'|trans }}{% endblock %}</title>
+
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}" defer></script>
+        <script type="text/javascript" nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}" defer></script>
+    {% endblock %}
+  </head>
+  <body>
+
+    {% set skipLinks = [
+        {href: '#header-navigation', label: 'public.skiplinks.menu'|trans},
+    ] %}
+
+    {% include 'common/skiplinks.html.twig' with { skipLinks: [
+        {href: '#content', label: 'common.skiplinks.content'|trans},
+        ...(skipLinks|default([])),
+        {href: '#footer', label: 'common.skiplinks.footer'|trans},
+    ]} only %}
+
     {% embed 'common/header.html.twig' %}
         {% block navigation %}
             <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
@@ -28,6 +59,11 @@
                         <li class="fr-nav__item">
                             <a class="fr-nav__link" href="{{ path('app_landing_road_users') }}" {% if 'app_landing_road_users' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.road_users'|trans }}
+                            </a>
+                        </li>
+                        <li class="fr-nav__item">
+                            <a class="fr-nav__link" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
+                                {{ 'landing.menu.button.restrictions'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
@@ -56,4 +92,31 @@
             </nav>
         {% endblock %}
     {% endembed %}
-{% endblock header %}
+
+    <main class="{% block page_class %}{% endblock page_class %}">
+        <noscript>
+            <section class="fr-container fr-mt-3w">
+                <div class="fr-alert fr-alert--info">
+                    {{ 'common.javascript_required'|trans|raw }}
+                </div>
+            </section>
+        </noscript>
+        {% for label, messages in app.flashes %}
+            {% if loop.first %}<div class="fr-container fr-pt-4w">{% endif %}
+            {% for message in messages %}
+                <div class="fr-alert fr-alert--{{ label }}">
+                    {{ message|raw }}
+                </div>
+            {% endfor %}
+            {% if loop.last %}</div>{% endif %}
+        {% endfor %}
+
+        <div {% if not definesContentSkiplink|default(false) %}id="content"{% endif %}>
+            {% block body %}{% endblock %}
+        </div>
+    </main>
+    {% include 'common/footer.html.twig' %}
+
+    {% block body_end %}{% endblock %}
+  </body>
+</html>
