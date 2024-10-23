@@ -1,3 +1,4 @@
+{% set mainPath = app.user ? path('app_regulations_list') : path('app_landing') %}
 <header role="banner" class="fr-header">
     <div class="fr-header__body">
         <div class="fr-container">
@@ -7,6 +8,11 @@
                         <div class="fr-header__logo">
                             <p class="fr-logo">{{ 'common.ministry'|trans|raw }}</p>
                         </div>
+                        <div class="fr-header__operator">
+                            <a href="{{ mainPath }}" title="{{ 'common.title'|trans }}">
+                                <img class="fr-responsive-img" src="{{ asset('images/logo.png') }}" alt="{{ 'common.title'|trans }}" />
+                            </a>
+                        </div>
                         <div class="fr-header__navbar">
                             <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-499" aria-haspopup="menu" id="button-500" title="Menu">
                                 {{ 'common.menu'|trans }}
@@ -14,10 +20,9 @@
                         </div>
                     </div>
                     <div class="fr-header__service">
-                        <a href="{{ app.user ? path('app_regulations_list') : path('app_landing') }}" title="{{ 'common.site_name'|trans }}">
+                        <a href="{{ mainPath }}" title="{{ 'common.site_name'|trans }}">
                             <p class="fr-header__service-title">
-                                {{ 'common.site_name'|trans }}
-                                <span class="fr-badge fr-badge--new">bêta</span>
+                                {{ 'common.title'|trans }}
                             </p>
                         </a>
                         <p class="fr-header__service-tagline">{{ 'common.baseline'|trans }}</p>
@@ -39,12 +44,12 @@
                                 </li>
                             {% else %}
                                 <li>
-                                    <a class="fr-btn fr-icon-user-fill" href="{{ path('app_access_request') }}">
+                                    <a class="fr-btn fr-icon-user-line fr-btn--secondary" href="{{ path('app_access_request') }}">
                                         {{ 'common.accessRequest'|trans }}
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="fr-btn fr-icon-lock-line" href="{{ path('app_login') }}">
+                                    <a class="fr-btn" href="{{ path('app_login') }}">
                                         {{ 'common.login'|trans }}
                                     </a>
                                 </li>
