@@ -39,15 +39,14 @@ Arrếté {{ endDate ? 'temporaire' : 'permanent' }} [{{ generalInfo.identifier 
 Le maire de [{{ generalInfo.organizationName }}]{custom-style="Dialog_ACompleter"}
 :::
 
-[Vu]{custom-style="Dialog_GrasMajuscules"} :
+{% for visa in visasAndReasons.visas %}
+[Vu]{custom-style="Dialog_GrasMajuscules"} : [{{ visa|raw }}]{custom-style="Dialog_ACompleter"}
 
-[Vu]{custom-style="Dialog_GrasMajuscules"} :
+{% endfor %}
+{% for reason in visasAndReasons.reasons %}
+[Considérant]{custom-style="Dialog_GrasMajuscules"} [{{ reason|raw }}]{custom-style="Dialog_ACompleter"}
 
-[Vu]{custom-style="Dialog_GrasMajuscules"} :
-
-[Vu]{custom-style="Dialog_GrasMajuscules"} :
-
-[Considérant]{custom-style="Dialog_GrasMajuscules"} [que...]{custom-style="Dialog_ACompleter"}
+{% endfor %}
 
 ::: {custom-style="Dialog_ArreteTitre"}
 Arrête

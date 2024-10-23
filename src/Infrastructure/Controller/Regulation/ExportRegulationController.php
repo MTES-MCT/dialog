@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
+use App\Application\Regulation\Query\Visa\GetVisasAndReasonsByRegulationOrderQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -41,10 +42,12 @@ final class ExportRegulationController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
+        $visasAndReasons = $this->queryBus->handle(new GetVisasAndReasonsByRegulationOrderQuery($generalInfo->regulationOrderUuid));
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $content = $this->twig->render(
             name: 'regulation/export.md.twig',
             context: [
+                'visasAndReasons' => $visasAndReasons,
                 'generalInfo' => $generalInfo,
                 'measures' => $measures,
             ],
