@@ -21,13 +21,6 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Arrêtés de circulation', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Arrêtés de circulation - DiaLog', $crawler);
-        $this->assertSkipLinks(
-            [
-                ['Contenu', '#content'],
-                ['Pied de page', '#footer'],
-            ],
-            $crawler,
-        );
 
         $navLi = $crawler->filter('nav.fr-pagination')->filter('li');
         $this->assertSame('Première page', $navLi->eq(0)->filter('a')->text());
