@@ -14,7 +14,7 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\User\Command\CreateOrganizationCommand;
+use App\Application\User\Command\SaveOrganizationCommand;
 use App\Application\User\Query\GetOrganizationBySiretQuery;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
@@ -90,7 +90,7 @@ final class BacIdfTransformer
         try {
             $organization = $this->queryBus->handle(new GetOrganizationBySiretQuery($siret));
         } catch (OrganizationNotFoundException) {
-            $organizationCommand = new CreateOrganizationCommand();
+            $organizationCommand = new SaveOrganizationCommand();
             $organizationCommand->siret = $siret;
             $organizationCommand->name = \sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
         }

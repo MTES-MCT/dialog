@@ -7,7 +7,7 @@ namespace App\Application\User\Command;
 use App\Application\CommandInterface;
 use App\Domain\User\Organization;
 
-final class CreateOrganizationCommand implements CommandInterface
+final class SaveOrganizationCommand implements CommandInterface
 {
     public ?string $siret;
     public ?string $name;

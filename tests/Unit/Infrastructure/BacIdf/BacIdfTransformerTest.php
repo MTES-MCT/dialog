@@ -14,7 +14,7 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\User\Command\CreateOrganizationCommand;
+use App\Application\User\Command\SaveOrganizationCommand;
 use App\Application\User\Query\GetOrganizationBySiretQuery;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
@@ -124,7 +124,7 @@ final class BacIdfTransformerTest extends TestCase
             ->with(new GetOrganizationBySiretQuery($this->siret))
             ->willThrowException(new OrganizationNotFoundException());
 
-        $organizationCommand = new CreateOrganizationCommand();
+        $organizationCommand = new SaveOrganizationCommand();
         $organizationCommand->siret = $this->siret;
         $organizationCommand->name = 'Mairie de La Courneuve';
 
