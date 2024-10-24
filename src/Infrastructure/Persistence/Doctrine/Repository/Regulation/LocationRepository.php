@@ -44,15 +44,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     }
 
     public function findAllForMapAsGeoJSON(
-        bool $includePermanentRegulations = false,
-        bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string {
         $includeNone = empty($measureTypes);
-        $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
-        $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
 
         if ($includeNone) {
             return json_encode([
@@ -60,13 +56,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 'features' => [],
             ]); // we return no regulations
         }
-
-        $regulationTypeWhereClause =
-            $permanentOnly
-            ? 'AND ro.end_date IS NULL'
-            : ($temporaryOnly
-                ? 'AND ro.end_date IS NOT NULL'
-                : '');
 
         $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
         $regulationTypeCondition = '';
@@ -83,31 +72,31 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         if ($startDate || $endDate) {
             $measureDatesCondition = 'AND CASE 
                 WHEN EXISTS (--On verifie que la mesure possède une plage 
-                    SELECT p.uuid
+                    SELECT 1
                     FROM period AS p
                     WHERE p.measure_uuid = m.uuid 
-                ) 
-                THEN  EXISTS (
-                    SELECT p.uuid
+                )
+                THEN EXISTS (
+                    SELECT 1
                     FROM period AS p
                     WHERE p.measure_uuid = m.uuid 
                     AND CASE
-                        WHEN (:startDate)::date IS NULL
-                            THEN p.start_datetime < (:endDate)::date
-                        WHEN (:endDate)::date IS NULL
+                        WHEN (:startDate)::date IS NOT NULL AND (:endDate)::date IS NOT NULL
+                            THEN p.start_datetime < (:endDate)::date AND p.end_datetime > (:startDate)::date
+                        WHEN (:startDate)::date IS NOT NULL
                             THEN p.end_datetime > (:startDate)::date
-                        ELSE-- le filtre date de début et de fin sont renseignés
-                            p.start_datetime < (:endDate)::date AND (:startDate)::date < p.end_datetime
+                        ELSE -- c\'est-à-dire (:endDate)::date IS NOT NULL
+                            p.start_datetime > (:endDate)::date
                     END
                 )
-                ELSE (--La mesure ne possède pas de plage on compare les dates du filtre avec les dates de l arrêté 
+                ELSE ( --La mesure ne possède pas de plage on compare les dates du filtre avec les dates de l arrêté 
                     CASE
-                    WHEN (:startDate)::date IS NULL
-                        THEN ro.start_date < (:endDate)::date
-                    WHEN (:endDate)::date IS NULL
-                        THEN ro.end_date > (:startDate)::date
-                    ELSE
-                        ro.start_date < (:endDate)::date AND (:startDate)::date < ro.end_date
+                    WHEN (:startDate)::date IS NOT NULL AND (:endDate)::date IS NOT NULL
+                        THEN ro.start_date < (:endDate)::date AND (ro.end_date IS NULL OR ro.end_date > (:startDate)::date)
+                    WHEN (:startDate)::date IS NOT NULL
+                        THEN ro.end_date IS NULL OR ro.end_date > (:startDate)::date
+                    ELSE -- c\'est-à-dire (:endDate)::date IS NOT NULL
+                        ro.start_date < (:endDate)::date
                     END
                 )
                 END';
@@ -132,9 +121,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 AND l.geometry IS NOT NULL 
                 %s
                 %s
-                %s
                 ',
-                $regulationTypeWhereClause,
                 $regulationTypeCondition,
                 $measureDatesCondition,
             ),
