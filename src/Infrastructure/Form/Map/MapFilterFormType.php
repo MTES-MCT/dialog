@@ -6,8 +6,8 @@ namespace App\Infrastructure\Form\Map;
 
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -22,20 +22,22 @@ final class MapFilterFormType extends AbstractType
                 options: $this->getMeasureTypesOptions(),
             )
             ->add(
-                'displayPermanentRegulations',
-                CheckboxType::class,
+                'startDate',
+                DateType::class,
                 options: [
-                    'label' => 'map.filter.permanents',
-                    'value' => 'yes',
+                    'label' => 'map.filter.start_date',
+                    'help' => 'map.filter.start_date.help',
+                    'widget' => 'single_text',
                     'required' => false,
                 ],
             )
             ->add(
-                'displayTemporaryRegulations',
-                CheckboxType::class,
+                'endDate',
+                DateType::class,
                 options: [
-                    'label' => 'map.filter.temporaries',
-                    'value' => 'yes',
+                    'label' => 'map.filter.end_date',
+                    'help' => 'map.filter.end_date.help',
+                    'widget' => 'single_text',
                     'required' => false,
                 ],
             )

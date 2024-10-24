@@ -44,13 +44,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     }
 
     public function findAllForMapAsGeoJSON(
-        bool $includePermanentRegulations = false,
-        bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
+        ?\DateTimeInterface $startDate = null,
+        ?\DateTimeInterface $endDate = null,
     ): string {
-        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
-        $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
-        $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
+        $includeNone = empty($measureTypes);
 
         if ($includeNone) {
             return json_encode([
@@ -59,21 +57,49 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
-        $regulationTypeWhereClause =
-            $permanentOnly
-            ? 'AND ro.end_date IS NULL'
-            : ($temporaryOnly
-                ? 'AND ro.end_date IS NOT NULL'
-                : '');
+        $parameters = [
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'measureTypes' => $measureTypes,
+        ];
+        $types = [
+            'measureTypes' => ArrayParameterType::STRING,
+        ];
 
-        $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
-        $regulationTypeCondition = '';
-        $types = [];
+        $measureDatesCondition = '';
 
-        if ($measureTypes) {
-            $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
-            $parameters['measureTypes'] = $measureTypes;
-            $types['measureTypes'] = ArrayParameterType::STRING;
+        if ($startDate || $endDate) {
+            $measureDatesCondition = 'AND CASE 
+                WHEN EXISTS (--On verifie que la mesure possède une plage 
+                    SELECT 1
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                )
+                THEN EXISTS (
+                    SELECT 1
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                    AND CASE
+                        WHEN (:startDate)::date IS NOT NULL AND (:endDate)::date IS NOT NULL
+                            THEN p.start_datetime < (:endDate)::date AND p.end_datetime > (:startDate)::date
+                        WHEN (:startDate)::date IS NOT NULL
+                            THEN p.end_datetime > (:startDate)::date
+                        ELSE -- c\'est-à-dire (:endDate)::date IS NOT NULL
+                            p.start_datetime > (:endDate)::date
+                    END
+                )
+                ELSE ( --La mesure ne possède pas de plage on compare les dates du filtre avec les dates de l arrêté 
+                    CASE
+                    WHEN (:startDate)::date IS NOT NULL AND (:endDate)::date IS NOT NULL
+                        THEN ro.start_date < (:endDate)::date AND (ro.end_date IS NULL OR ro.end_date > (:startDate)::date)
+                    WHEN (:startDate)::date IS NOT NULL
+                        THEN ro.end_date IS NULL OR ro.end_date > (:startDate)::date
+                    ELSE -- c\'est-à-dire (:endDate)::date IS NOT NULL
+                        ro.start_date < (:endDate)::date
+                    END
+                )
+                END';
+            $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
+            $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
         }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
@@ -91,11 +117,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
                 WHERE roc.status = :status
                 AND l.geometry IS NOT NULL
-                %s
+                AND m.type IN (:measureTypes)
                 %s
                 ',
-                $regulationTypeWhereClause,
-                $regulationTypeCondition,
+                $measureDatesCondition,
             ),
             $parameters,
             $types,
