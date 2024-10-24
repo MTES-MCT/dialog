@@ -9,19 +9,6 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class MapDataControllerTest extends AbstractWebTestCase
 {
-    public function testGetFilters(): void
-    {
-        $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form%5Bcategory%5D=permanents_only&map_filter_form%5B_token%5D=4ef8515d4d5e05fb9f.8Zo-nuv_uVZHlzVSYd0sF6Lgr2Sv0ZOEh2efPahYS6g.vP9H-bO00Wcm51QbUuUdfe6SwwnmptT00QLoBJ87CuTF7kTqparQYCLQRg');
-
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
-
-        $data = $client->getResponse()->getContent();
-        $this->assertSame('{"type":"FeatureCollection","features":[]}', $data);
-    }
-
     public function testMeasureTypesFilter(): void
     {
         $client = static::createClient();
@@ -44,7 +31,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
     public function testMeasureDatesFilter(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[startDate]=2023-05-11&map_filter_form[endDate]=2023-06-02');
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[startDate]=2023-09-06&map_filter_form[endDate]=2023-06-02');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -56,7 +43,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
     public function testMeasureDatesFilterWithoutEndDate(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[startDate]=2023-09-06&map_filter_form[endDate]=');
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[startDate]=2023-09-06&map_filter_form[endDate]=');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -68,7 +55,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
     public function testMeasureDatesFilterWithoutStartDate(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[startDate]=&map_filter_form[endDate]=2021-09-02');
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=speedLimitation&map_filter_form[startDate]=&map_filter_form[endDate]=2021-09-02');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();

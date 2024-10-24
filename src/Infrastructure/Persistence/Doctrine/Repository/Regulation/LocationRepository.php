@@ -57,15 +57,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
-        $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
-        $regulationTypeCondition = '';
-        $types = [];
-
-        if (\count($measureTypes) != 0) {
-            $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
-            $parameters['measureTypes'] = $measureTypes;
-            $types['measureTypes'] = ArrayParameterType::STRING;
-        }
+        $parameters = [
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'measureTypes' => $measureTypes,
+        ];
+        $types = [
+            'measureTypes' => ArrayParameterType::STRING,
+        ];
 
         $measureDatesCondition = '';
 
@@ -118,11 +116,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
                 WHERE roc.status = :status
-                AND l.geometry IS NOT NULL 
-                %s
+                AND l.geometry IS NOT NULL
+                AND m.type IN (:measureTypes)
                 %s
                 ',
-                $regulationTypeCondition,
                 $measureDatesCondition,
             ),
             $parameters,
