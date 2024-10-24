@@ -2197,14 +2197,6 @@
                 <source>map.filter.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
             </trans-unit>
-            <trans-unit id="map.filter.permanents">
-                <source>map.filter.permanents</source>
-                <target>Restrictions permanentes</target>
-            </trans-unit>
-            <trans-unit id="map.filter.temporaries">
-                <source>map.filter.temporaries</source>
-                <target>Restrictions temporaires</target>
-            </trans-unit>
             <trans-unit id="map.filters.title.application.period">
                 <source>map.filters.title.application.period</source>
                 <target>Période d'application</target>
