@@ -54,6 +54,7 @@ final class SaveMeasureCommand implements CommandInterface
             }
         } else {
             $command->addLocation(new SaveLocationCommand());
+            $command->periods[] = new SavePeriodCommand();
         }
 
         return $command;

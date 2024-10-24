@@ -9,6 +9,7 @@ use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationsQueryHandler
@@ -38,6 +39,14 @@ final class GetRegulationsQueryHandler
                 $locationView = new RawGeoJSONView($label);
             }
 
+            $startDate = $row['overallStartDate'] ? new \DateTimeImmutable($row['overallStartDate']) : null;
+            $endDate = null;
+
+            // Returning overallEndDate = NULL for permanent regulation orders is too complex in SQL, we do it here in PHP.
+            if ($row['overallEndDate'] && $row['category'] !== RegulationOrderCategoryEnum::PERMANENT_REGULATION->value) {
+                $endDate = new \DateTimeImmutable($row['overallEndDate']);
+            }
+
             $regulationOrderViews[] = new RegulationOrderListItemView(
                 uuid: $row['uuid'],
                 identifier: $row['identifier'],
@@ -46,8 +55,8 @@ final class GetRegulationsQueryHandler
                 organizationName: $row['organizationName'],
                 organizationUuid: $row['organizationUuid'],
                 location: $locationView,
-                startDate: $row['startDate'],
-                endDate: $row['endDate'],
+                startDate: $startDate,
+                endDate: $endDate,
             );
         }
 

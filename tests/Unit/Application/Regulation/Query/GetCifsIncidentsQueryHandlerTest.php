@@ -252,6 +252,13 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $regulationOrderRecord1 = $this->createMock(RegulationOrderRecord::class);
+
+        $uuid1 = '06716514-0a0d-7bde-8000-f23df39a6693';
+        $regulationOrderRecord1
+            ->expects(self::exactly(2))
+            ->method('getUuid')
+            ->willReturn($uuid1);
+
         $regulationOrderRecord1
             ->expects(self::once())
             ->method('getCreatedAt')
@@ -266,14 +273,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCategory')
             ->willReturn(RegulationOrderCategoryEnum::INCIDENT->value);
-        $regulationOrder1
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn(new \DateTimeImmutable('2023-11-02 00:00:00'));
-        $regulationOrder1
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn(new \DateTimeImmutable('2023-11-06 00:00:00'));
 
         $measure1 = $this->createMock(Measure::class);
 
@@ -343,6 +342,13 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn($regulationOrder1);
 
         $regulationOrderRecord2 = $this->createMock(RegulationOrderRecord::class);
+
+        $uuid2 = '06716514-6035-7f92-8000-b1afcab7d3cf';
+        $regulationOrderRecord2
+            ->expects(self::exactly(2))
+            ->method('getUuid')
+            ->willReturn($uuid2);
+
         $regulationOrderRecord2
             ->expects(self::once())
             ->method('getCreatedAt')
@@ -357,14 +363,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCategory')
             ->willReturn(RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value);
-        $regulationOrder2
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn(new \DateTimeImmutable('2023-11-02 00:00:00'));
-        $regulationOrder2
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn(new \DateTimeImmutable('2023-11-06 00:00:00'));
 
         $measure2 = $this->createMock(Measure::class);
 
@@ -608,6 +606,20 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2]);
+
+        $startDate1 = new \DateTimeImmutable('2023-11-02 00:00:00');
+        $endDate1 = new \DateTimeImmutable('2023-11-06 00:00:00');
+        $startDate2 = new \DateTimeImmutable('2023-11-02 00:00:00');
+        $endDate2 = new \DateTimeImmutable('2023-11-06 00:00:00');
+
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('getOverallDatesByRegulationUuids')
+            ->with([$uuid1, $uuid2])
+            ->willReturn([
+                $uuid1 => ['uuid' => $uuid1, 'overallStartDate' => $startDate1, 'overallEndDate' => $endDate1],
+                $uuid2 => ['uuid' => $uuid2, 'overallStartDate' => $startDate2, 'overallEndDate' => $endDate2],
+            ]);
 
         $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $incidents = $handler(new GetCifsIncidentsQuery());

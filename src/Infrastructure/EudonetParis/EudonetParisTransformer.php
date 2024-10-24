@@ -63,26 +63,6 @@ final class EudonetParisTransformer
         return new EudonetParisTransformerResult($command, $errors);
     }
 
-    private function parseDate(string $value): ?\DateTimeInterface
-    {
-        if ($date = \DateTimeImmutable::createFromFormat('Y/m/d H:i:s', $value, new \DateTimeZone('Europe/Paris'))) {
-            return $date;
-        }
-
-        if (\DateTimeImmutable::createFromFormat('Y/m/d', $value, new \DateTimeZone('Europe/Paris'))) {
-            // Need to add a datetime otherwise PHP would use the current server time, not midnight.
-            return $this->parseDate($value . ' 00:00:00');
-        }
-
-        if (\DateTimeImmutable::createFromFormat('d/m/Y', $value, new \DateTimeZone('Europe/Paris'))) {
-            // This format is somtimes used by some Eudonet Paris data input users.
-            // Again, we need to ensure there is a datetime.
-            return \DateTimeImmutable::createFromFormat('d/m/Y H:i:s', $value . ' 00:00:00', new \DateTimeZone('Europe/Paris'));
-        }
-
-        return null;
-    }
-
     private function buildGeneralInfoCommand(array $row, Organization $organization): array
     {
         $command = new SaveRegulationGeneralInfoCommand();
@@ -97,26 +77,6 @@ final class EudonetParisTransformer
         $command->description = mb_substr($row['fields'][EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE], 0, 255);
 
         $command->organization = $organization;
-
-        $startDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]);
-
-        if (!$startDate) {
-            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
-
-            return [null, $error];
-        }
-
-        $command->startDate = $startDate;
-
-        $endDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]);
-
-        if (!$endDate) {
-            $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
-
-            return [null, $error];
-        }
-
-        $command->endDate = $endDate;
 
         return [$command, null];
     }

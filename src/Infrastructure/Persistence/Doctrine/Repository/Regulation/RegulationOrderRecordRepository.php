@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
@@ -16,6 +17,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,6 +30,20 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     ) {
         parent::__construct($registry, RegulationOrderRecord::class);
     }
+
+    private const OVERALL_START_DATE_QUERY_TEMPLATE = '
+        SELECT MIN(_p%%n.startDateTime)
+        FROM App\Domain\Condition\Period\Period _p%%n
+        INNER JOIN _p%%n.measure _m%%n
+        INNER JOIN _m%%n.regulationOrder _ro%%n
+        WHERE _ro%%n.uuid = ro.uuid';
+
+    private const OVERALL_END_DATE_QUERY_TEMPLATE = "
+        SELECT MAX(_p%%n.endDateTime)
+        FROM App\Domain\Condition\Period\Period _p%%n
+        INNER JOIN _p%%n.measure _m%%n
+        INNER JOIN _m%%n.regulationOrder _ro%%n
+        WHERE _ro%%n.uuid = ro.uuid";
 
     private const COUNT_LOCATIONS_QUERY = '
         SELECT count(DISTINCT(_loc.uuid))
@@ -70,7 +86,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         RegulationListFiltersDTO $dto,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.identifier, roc.status, o.name as organizationName, o.uuid as organizationUuid, ro.startDate, ro.endDate')
+            ->select('roc.uuid, ro.identifier, ro.category, roc.status, o.name as organizationName, o.uuid as organizationUuid')
+            ->addSelect(\sprintf('(%s) AS overallStartDate', str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
+            ->addSelect(\sprintf('(%s) AS overallEndDate', str_replace('%%n', '11', self::OVERALL_END_DATE_QUERY_TEMPLATE)))
             ->addSelect(\sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
@@ -96,11 +114,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         // Regulation order type filter
         if ($dto->regulationOrderType === RegulationOrderTypeEnum::PERMANENT->value) {
-            $query
-                ->andWhere('ro.endDate IS NULL');
+            $query->andWhere('ro.category = :permanentCategory');
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         } elseif ($dto->regulationOrderType === RegulationOrderTypeEnum::TEMPORARY->value) {
-            $query
-                ->andWhere('ro.endDate IS NOT NULL');
+            $query->andWhere('ro.category <> :permanentCategory');
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         }
 
         // Status filter
@@ -119,7 +137,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $query
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->orderBy('ro.startDate', 'DESC')
+            ->orderBy('overallEndDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc, o')
             ->setFirstResult($dto->pageSize * ($dto->page - 1))
@@ -181,20 +199,21 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $this->createQueryBuilder('roc')
             ->select(
                 \sprintf(
-                    'NEW %s(
+                    '
                     roc.uuid,
                     ro.identifier,
-                    org.name,
-                    org.uuid,
+                    org.name as organizationName,
+                    org.uuid as organizationUuid,
                     roc.status,
-                    ro.uuid,
+                    ro.uuid as regulationOrderUuid,
                     ro.category,
                     ro.otherCategoryText,
                     ro.description,
-                    ro.startDate,
-                    ro.endDate
-                )',
-                    GeneralInfoView::class,
+                    (%s) as overallStartDate,
+                    (%s) as overallEndDate
+                ',
+                    str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE),
+                    str_replace('%%n', '11', self::OVERALL_END_DATE_QUERY_TEMPLATE),
                 ),
             )
             ->where('roc.uuid = :uuid')
@@ -202,7 +221,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'org')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->getQuery()
-            ->getResult()
+            ->getOneOrNullResult()
         ;
     }
 
@@ -246,6 +265,40 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function getOverallDatesByRegulationUuids(array $uuids): array
+    {
+        $rows = $this->createQueryBuilder('roc')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->select('roc.uuid, ro.category')
+            ->addSelect(\sprintf('(%s) AS overallStartDate', str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
+            ->addSelect(\sprintf('(%s) AS overallEndDate', str_replace('%%n', '11', self::OVERALL_END_DATE_QUERY_TEMPLATE)))
+            ->where('roc.uuid IN (:uuids)')
+            ->setParameter('uuids', $uuids, ArrayParameterType::STRING)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        // Return array of $uuid => {overallStartDate, overallEndDate}
+        $result = [];
+
+        foreach ($rows as $row) {
+            $startDate = $row['overallStartDate'] ? new \DateTimeImmutable($row['overallStartDate']) : null;
+            $endDate = null;
+
+            if ($row['overallEndDate'] && $row['category'] !== RegulationOrderCategoryEnum::PERMANENT_REGULATION->value) {
+                $endDate = new \DateTimeImmutable($row['overallEndDate']);
+            }
+
+            $result[$row['uuid']] = [
+                'uuid' => $row['uuid'],
+                'overallStartDate' => $startDate,
+                'overallEndDate' => $endDate,
+            ];
+        }
+
+        return $result;
+    }
+
     public function findRegulationOrdersForCifsIncidentFormat(
         array $allowedSources = [],
         array $excludedIdentifiers = [],
@@ -262,7 +315,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('p.timeSlots', 't')
             ->where(
                 'roc.status = :status',
-                'ro.endDate >= :today',
+                \sprintf('(%s) >= :today', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE)),
                 'loc.geometry IS NOT NULL',
                 'loc.roadType NOT IN (:excludedRoadTypes) OR (loc.roadType = :rawGeoJSONRoadType AND roc.source = :litteralisSource)',
                 $allowedSources ? 'roc.source in (:allowedSources)' : null,
@@ -298,13 +351,14 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.source = :source',
                 'roc.organization = :organizationId',
                 'roc.status = :status',
-                'ro.endDate IS NULL OR ro.endDate >= :laterThan',
+                \sprintf('ro.category = :permanentCategory OR (%s) >= :laterThan', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE)),
             )
             ->setParameters([
                 'source' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
                 'organizationId' => $organizationId,
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'laterThan' => $laterThan,
+                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
             ])
             ->getQuery()
             ->getResult()
@@ -364,10 +418,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select('count(DISTINCT(roc.uuid))')
-            ->where('o.uuid <> :uuid')
-            ->setParameter('uuid', $this->dialogOrgId)
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where(
+                'o.uuid <> :uuid',
+                'ro.category = :permanentCategory',
+            )
+            ->setParameters([
+                'uuid' => $this->dialogOrgId,
+                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
+            ])
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -376,10 +436,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     {
         return $this->createQueryBuilder('roc')
             ->select('count(DISTINCT(roc.uuid))')
-            ->where('o.uuid <> :uuid')
-            ->setParameter('uuid', $this->dialogOrgId)
-            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.endDate IS NOT NULL')
+            ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
+            ->where(
+                'o.uuid <> :uuid',
+                'ro.category <> :permanentCategory',
+            )
+            ->setParameters([
+                'uuid' => $this->dialogOrgId,
+                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
+            ])
             ->getQuery()
             ->getSingleScalarResult();
     }

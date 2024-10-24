@@ -75,10 +75,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder1);
+        $uuid1 = '066c603a-ca34-75b9-8000-62c82cc0ed11';
         $regulationOrderRecord1
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getUuid')
-            ->willReturn('066c603a-ca34-75b9-8000-62c82cc0ed11');
+            ->willReturn($uuid1);
         $regulationOrder1
             ->expects(self::once())
             ->method('getUuid')
@@ -99,14 +100,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDescription')
             ->willReturn('Description 1');
-        $regulationOrder1
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate1);
-        $regulationOrder1
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($endDate1);
 
         $measure1 = $this->createMock(Measure::class);
         $measure1
@@ -340,10 +333,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder2);
+        $uuid2 = '066c603b-c507-75fd-8000-66acdc0f7ba1';
         $regulationOrderRecord2
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getUuid')
-            ->willReturn('066c603b-c507-75fd-8000-66acdc0f7ba1');
+            ->willReturn($uuid2);
         $regulationOrder2
             ->expects(self::once())
             ->method('getUuid')
@@ -364,14 +358,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDescription')
             ->willReturn('Description 2');
-        $regulationOrder2
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate2);
-        $regulationOrder2
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn(null);
 
         $measure3 = $this->createMock(Measure::class);
         $measure3
@@ -470,10 +456,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder3);
+        $uuid3 = '066c6040-ab2d-70d6-8000-1de4ad5ed312';
         $regulationOrderRecord3
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getUuid')
-            ->willReturn('066c6040-ab2d-70d6-8000-1de4ad5ed312');
+            ->willReturn($uuid3);
         $regulationOrder3
             ->expects(self::once())
             ->method('getUuid')
@@ -494,14 +481,6 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getDescription')
             ->willReturn('Description 3');
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getStartDate')
-            ->willReturn($startDate3);
-        $regulationOrder3
-            ->expects(self::once())
-            ->method('getEndDate')
-            ->willReturn($endDate3);
 
         $measure4 = $this->createMock(Measure::class);
         $measure4
@@ -584,6 +563,16 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('findRegulationOrdersForDatexFormat')
             ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2, $regulationOrderRecord3]);
+
+        $regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('getOverallDatesByRegulationUuids')
+            ->with([$uuid1, $uuid2, $uuid3])
+            ->willReturn([
+                $uuid1 => ['uuid' => $uuid1, 'overallStartDate' => $startDate1, 'overallEndDate' => $endDate1],
+                $uuid2 => ['uuid' => $uuid2, 'overallStartDate' => $startDate2, 'overallEndDate' => null],
+                $uuid3 => ['uuid' => $uuid3, 'overallStartDate' => $startDate3, 'overallEndDate' => $endDate3],
+            ]);
 
         $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
         $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());

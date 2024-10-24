@@ -26,6 +26,12 @@
         </property>
         <property name="periods">
             <constraint name="Valid"/>
+            <constraint name="NotBlank">
+                <option name="message">measure.periods.error.not_blank</option>
+                <option name="groups">
+                    <value>html_form</value>
+                </option>
+            </constraint>
        </property>
        <property name="locations">
         <constraint name="NotBlank">

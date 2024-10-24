@@ -48,7 +48,7 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Circulation interdite', $measure1Header->filter('h3')->text());
         $this->assertSame('pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, matières dangereuses, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels', $measure1Content->filter('li')->eq(0)->text());
-        $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
+        $this->assertSame('du 10/03/2023 à 00h00 au 20/03/2023 à 23h59', $measure1Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue de l\'Hôtel de Ville du n° 30 au n° 12 à Montauban (82000)', $measure1Content->filter('li')->eq(3)->text());
         $this->assertSame('Rue Gamot à Montauban (82000)', $measure1Content->filter('li')->eq(4)->text());
         $this->assertSame('D322 (Ardennes) du PR 1+0 (côté U) au PR 4+0 (côté U)', $measure1Content->filter('li')->eq(5)->text());
