@@ -26,7 +26,7 @@ final class CanUserEditOrganizationTest extends TestCase
             ->expects(self::once())
             ->method('getUserOrganizations')
             ->willReturn([
-                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'Dialog', [OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]),
+                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'DiaLog', [OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]),
             ]);
 
         $pattern = new CanUserEditOrganization();
@@ -46,7 +46,7 @@ final class CanUserEditOrganizationTest extends TestCase
             ->expects(self::once())
             ->method('getUserOrganizations')
             ->willReturn([
-                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'Dialog', [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
+                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'DiaLog', [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
             ]);
 
         $pattern = new CanUserEditOrganization();
