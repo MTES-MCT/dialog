@@ -6,6 +6,10 @@
     max-width: calc(37 * 0.5rem);
 }
 
+.fr-x-max-w-156w {
+    max-width: calc(156 * 0.5rem);
+}
+
 .fr-x-h-full {
     height: 100%;
 }

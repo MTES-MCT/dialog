@@ -5,12 +5,32 @@
 {% endblock %}
 
 {% block body %}
-    <div class="fr-container fr-py-2w fr-py-md-5w">
+    <div class="fr-container fr-x-max-w-156w fr-py-2w fr-py-md-5w">
         <h1>{{ 'statistics.title'|trans }}</h1>
+
+        <div class="fr-grid-row fr-mb-3w">
+            <div class="fr-col">
+                <d-responsive-iframe
+                    maxWidth="1200" {# Corresponds to 156w #}
+                    extraPadding="32"
+                    targetOrigin="{{ app.request.schemeAndHttpHost }}"
+                >
+                    <iframe
+                        src="{{ dashboardEmbedUrl }}"
+                        frameborder="0"
+                        width="1200"
+                        height="800"
+                        allowtransparency
+                        title="{{ 'statistics.dashboard.title'|trans }}"
+                        data-testid="stat"
+                    ></iframe>
+                </d-responsive-iframe>
+            </div>
+        </div>
 
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-3w">
             <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card">
+                <div class="fr-card" data-testid="stat">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'statistics.users'|trans }}</h3>
@@ -20,7 +40,7 @@
                 </div>
             </div>
             <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card">
+                <div class="fr-card" data-testid="stat">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'statistics.organizations'|trans }}</h3>
@@ -30,7 +50,7 @@
                 </div>
             </div>
             <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card">
+                <div class="fr-card" data-testid="stat">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'statistics.totalRegulationOrderRecords'|trans }}</h3>
@@ -40,7 +60,7 @@
                 </div>
             </div>
             <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card">
+                <div class="fr-card" data-testid="stat">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'statistics.publishedRegulationOrderRecords'|trans }}</h3>
@@ -50,7 +70,7 @@
                 </div>
             </div>
             <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card">
+                <div class="fr-card" data-testid="stat">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'statistics.permanentRegulationOrderRecords'|trans }}</h3>
@@ -60,7 +80,7 @@
                 </div>
             </div>
             <div class="fr-col fr-col-12 fr-col-md-6">
-                <div class="fr-card">
+                <div class="fr-card" data-testid="stat">
                     <div class="fr-card__body">
                         <div class="fr-card__content">
                             <h3 class="fr-card__title">{{ 'statistics.temporaryRegulationOrderRecords'|trans }}</h3>
