@@ -1772,7 +1772,7 @@
             </trans-unit>
             <trans-unit id="regulation.period.recurrenceType">
                 <source>regulation.period.recurrenceType</source>
-                <target>Quels jours sont concernés ?</target>
+                <target>Jours concernés</target>
             </trans-unit>
             <trans-unit id="regulation.period.recurrenceType.everyDay">
                 <source>regulation.period.recurrenceType.everyDay</source>
@@ -1796,21 +1796,15 @@
             </trans-unit>
             <trans-unit id="regulation.period_list">
                 <source>regulation.period_list</source>
-                <target>Jours et horaires</target>
+                <target>Périodes d'application</target>
             </trans-unit>
             <trans-unit id="regulation.period_list.help">
                 <source>regulation.period_list.help</source>
-                <target>Pour cette restriction seulement, vous pouvez spécifier les jours et
-                    créneaux applicables. Par défaut la restriction s'applique tous les jours sur la
-                    période de validité de l'arrêté.</target>
-            </trans-unit>
-            <trans-unit id="regulation.period.title">
-                <source>regulation.period.title</source>
-                <target>Quelle est la date ou période d’application ?</target>
+                <target>Quand la perturbation est-elle prévue ?</target>
             </trans-unit>
             <trans-unit id="regulation.period.add">
                 <source>regulation.period.add</source>
-                <target>Ajouter une plage</target>
+                <target>Ajouter une période d'application</target>
             </trans-unit>
             <trans-unit id="regulation.timeSlot.add">
                 <source>regulation.timeSlot.add</source>
@@ -1842,7 +1836,7 @@
             </trans-unit>
             <trans-unit id="regulation.timeSlots.help">
                 <source>regulation.timeSlots.help</source>
-                <target>Par exemple de 9h00 à 12h00 et de 14h00 à 18h00</target>
+                <target>Par exemple de 9h00 à 12h00 et de 14h00 à 18h00. Par défaut la restriction s'applique sur la journée entière.</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.all_vehicles">
                 <source>regulation.vehicle_set.all_vehicles</source>
