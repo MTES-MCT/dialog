@@ -40,11 +40,11 @@ Le maire de [{{ generalInfo.organizationName }}]{custom-style="Dialog_ACompleter
 :::
 
 {% for visa in visasAndReasons.visas %}
-[Vu]{custom-style="Dialog_GrasMajuscules"} : [{{ visa|raw }}]{custom-style="Dialog_ACompleter"}
+[{{ visa|raw|app_capfirst }}]{custom-style="Dialog_ACompleter"}
 
 {% endfor %}
 {% for reason in visasAndReasons.reasons %}
-[Considérant]{custom-style="Dialog_GrasMajuscules"} [{{ reason|raw }}]{custom-style="Dialog_ACompleter"}
+[{{ reason|raw|app_capfirst }}]{custom-style="Dialog_ACompleter"}
 
 {% endfor %}
 
