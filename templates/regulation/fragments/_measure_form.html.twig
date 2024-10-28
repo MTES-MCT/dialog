@@ -7,15 +7,13 @@
 
 {% macro periods_list_item(form, index, isPermanent) %}
     <li
-        class="app-card"
+        class="app-card app-card--no-header"
         data-controller="remove"
         data-remove-target="this"
         data-form-collection-target="collectionItem"
+        style="--card-padding: 1.5rem"
     >
-        <div class="app-card__header">
-            <div class="app-card__title fr-text--heavy">
-                {{ 'regulation.period.title'|trans }}
-            </div>
+        <div class="app-card__actions">
             <button
                 type="button"
                 aria-label="{{ 'common.delete'|trans }}"
@@ -506,7 +504,33 @@
                         </div>
 
                         {% include 'regulation/_vehicle_set_form.html.twig' with { form: form.vehicleSet, index: 0 } only %}
+                    </div>
+                </div>
 
+                <div class="app-card fr-mt-3w">
+                    <div class="app-card__header">
+                        <span class="app-card__img fr-icon-calendar-2-line fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
+                        <div class="app-card__title">
+                            {{ form_label(form.periods, null, {
+                                element: 'legend',
+                                required: false,
+                                label_attr: {
+                                    id: 'periods-legend',
+                                },
+                                label_content_attr: {
+                                    class: 'fr-h4 fr-mb-0'
+                                },
+                                help_attr: {
+                                    class: 'fr-text--md',
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div
+                        class="app-card__content"
+                        style="--card-padding: 0 1.5rem 1.5rem 1.5rem"
+                    >
                         <div
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="period"
@@ -514,10 +538,9 @@
                             data-form-collection-prototype-value="{{ _self.periods_list_item(form.periods.vars.prototype, '__period_name__', isPermanent)|e('html_attr') }}"
                         >
                             <fieldset
-                                class="fr-fieldset"
+                                class="fr-fieldset fr-mb-0"
                                 aria-labelledby="periods-legend"
-                                >
-                                {{ form_label(form.periods, null, { element: 'legend', required: false, label_attr: { id: 'periods-legend', class: 'fr-fieldset__legend' } }) }}
+                            >
                                 <ul
                                     id="period-list"
                                     class="fr-raw-list fr-fieldset__element"
@@ -543,6 +566,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="app-card fr-mt-3w">
                     <div class="app-card__header">
                         <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
@@ -564,7 +588,6 @@
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
                             data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__')|e('html_attr') }}"
-                            class="fr-mb-4w"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-2w d-stack"
