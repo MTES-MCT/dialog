@@ -1,0 +1,66 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% set title = 'common.cgu'|trans %}
+
+{% block title %}
+    {{ title }} - {{ parent() }}
+{% endblock %}
+
+{% set definesContentSkiplink = true %}
+
+{% block body %}
+    <div class="fr-container fr-py-2w fr-py-md-5w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing'},
+            { title },
+        ]} %}
+
+        <div id="content">
+            {% apply markdown_to_html %}
+            # {{ title }}
+
+            ## Vocabulaire
+
+            - « Nous » se réfère à l’éditeur du service.
+            - « Vous » se réfère à un utilisateur du service.
+            - « Le service » se réfère au site web donnant accès aux données de réglementation et permettant la saisie de cette réglementation.
+
+            ## Missions du site dialog.beta.gouv.fr
+
+            Le service est un site web permettant :
+            - Aux autorités publiques investies du pouvoir de police de circulation de contribuer à enrichir une base de données nationale de la réglementation de circulation et de stationnement.
+            - A toute personne intéressée d’accéder à ces données dans des formats et standards adaptés à leur utilisation.
+
+            ## Qualité des informations publiées
+
+            Nous publions sur [dialog.beta.gouv.fr](https://dialog.beta.gouv.fr) des données publiques à titre informatif. Seules les publications légales font foi, notamment au Journal officiel de la République française ou aux recueils des actes administratifs des autorités responsables de la voirie.
+
+            Par conséquent, les informations publiées sur [dialog.beta.gouv.fr](https://dialog.beta.gouv.fr) ne sauraient engager la responsabilité de leur éditeur ou d’un quelconque service de l’État, l’utilisateur y ayant recours en ayant conscience des potentielles erreurs ou omissions qu’elles peuvent comporter.
+
+            Nous nous efforçons de livrer des données de la meilleure qualité possible. Toutefois, malgré toute notre attention, elles peuvent encore comporter des erreurs ou omissions.
+
+            Si vous constatez une erreur ou omission parmi ces données, nous vous invitons à nous écrire par courriel à dialog@beta.gouv.fr.
+
+            ## Cookies et trackers
+
+            [dialog.beta.gouv.fr](https://dialog.beta.gouv.fr) utilise des cookies afin d’assurer le fonctionnement des sessions utilisateurs. Les adresses IP qui se connectent au service sont par ailleurs conservées dans des logs par l’hébergeur Scalingo pendant une durée d’un an, dans des conditions conformes aux prescriptions du la Loi pour la Confiance dans l’Economie Numérique (Article 6-8.II), au Code des postes et des communications électroniques (Article R10-13.III), et aux recommandations sur la journalisation de la CNIL (2021).
+
+            ## Evolution du service
+
+            Nous pouvons faire évoluer [dialog.beta.gouv.fr](https://dialog.beta.gouv.fr) sans information préalable ou préavis. Nous ajoutons régulièrement des données, retravaillons l’interface et modifions les formulations sur la base de vos retours et des évolutions réglementaires et législatives.
+
+            ## Disponibilité du service
+
+            Nous pouvons suspendre l’accès à [dialog.beta.gouv.fr](https://dialog.beta.gouv.fr) sans information préalable ni préavis, notamment pour des raisons de maintenance. Nous mettons l’application à jour régulièrement. Nous mettons [dialog.beta.gouv.fr](https://dialog.beta.gouv.fr) à disposition sans garantie sur sa disponibilité. Même si nous faisons en sorte que le service soit toujours opérationnel, cela signifie que d’éventuelles indisponibilités n’ouvriront pas droit à compensation financière.
+
+            Nous nous réservons également le droit de bloquer, sans information préalable ni compensation financière, les usages mettant en péril l’utilisation du logiciel par d’autres usagers. Cela nous permet d’anticiper d’éventuelles attaques par déni de service.
+
+            ## Evolution des conditions d’utilisation
+
+            Les termes des présentes conditions d’utilisation peuvent être modifiés ou complétés à tout moment, sans préavis, en fonction des modifications apportées au service, de l’évolution de la législation ou pour tout autre motif jugé nécessaire. Ces modifications et mises à jour s’imposent à l’utilisateur qui doit, en conséquence, se référer régulièrement à cette rubrique pour vérifier les conditions générales en vigueur.
+
+            Nous rendons accessible sur demande l’historique de ces conditions.
+            {% endapply %}
+        </div>
+    </div>
+{% endblock body %}

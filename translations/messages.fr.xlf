@@ -38,6 +38,10 @@
                 <source>common.title</source>
                 <target>DiaLog</target>
             </trans-unit>
+            <trans-unit id="common.cgu">
+                <source>common.cgu</source>
+                <target>Conditions générales d’utilisation</target>
+            </trans-unit>
             <trans-unit id="common.feedback">
                 <source>common.feedback</source>
                 <target>Votre avis</target>
