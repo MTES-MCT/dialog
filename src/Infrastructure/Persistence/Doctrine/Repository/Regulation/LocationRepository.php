@@ -68,38 +68,37 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         $measureDatesCondition = '';
 
         if ($startDate || $endDate) {
-            $measureDatesCondition = 'AND CASE 
-                WHEN EXISTS (--On verifie que la mesure possède une plage 
-                    SELECT 1
-                    FROM period AS p
-                    WHERE p.measure_uuid = m.uuid 
-                )
-                THEN EXISTS (
-                    SELECT 1
-                    FROM period AS p
-                    WHERE p.measure_uuid = m.uuid 
-                    AND CASE
-                        WHEN (:startDate)::date IS NOT NULL AND (:endDate)::date IS NOT NULL
-                            THEN p.start_datetime < (:endDate)::date AND p.end_datetime > (:startDate)::date
-                        WHEN (:startDate)::date IS NOT NULL
-                            THEN p.end_datetime > (:startDate)::date
-                        ELSE -- c\'est-à-dire (:endDate)::date IS NOT NULL
-                            p.start_datetime > (:endDate)::date
-                    END
-                )
-                ELSE ( --La mesure ne possède pas de plage on compare les dates du filtre avec les dates de l arrêté 
-                    CASE
-                    WHEN (:startDate)::date IS NOT NULL AND (:endDate)::date IS NOT NULL
-                        THEN ro.start_date < (:endDate)::date AND (ro.end_date IS NULL OR ro.end_date > (:startDate)::date)
-                    WHEN (:startDate)::date IS NOT NULL
-                        THEN ro.end_date IS NULL OR ro.end_date > (:startDate)::date
-                    ELSE -- c\'est-à-dire (:endDate)::date IS NOT NULL
-                        ro.start_date < (:endDate)::date
-                    END
-                )
-                END';
-            $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
-            $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
+            if ($startDate && $endDate && $startDate > $endDate) {
+                // Renvoie un résultat vide pour éviter une erreur dans le cas où la date de fin est avant la date de début
+                $measureDatesCondition = 'AND FALSE';
+            } else {
+                // Principe : on garde une localisation si l'intervalle défini apr ses dates (provenant des périodes ou de l'arrêté)
+                // intersecte au moins partiellement l'intervalle défini par les filters de dates
+                // En PostgreSQL, daterange permet de représenter un intervalle de date
+                // https://www.postgresql.org/docs/13/rangetypes.html
+                $measureDatesCondition = 'AND CASE 
+                    WHEN EXISTS (
+                        -- On verifie que la mesure possède au moins une période
+                        SELECT 1
+                        FROM period AS p
+                        WHERE p.measure_uuid = m.uuid 
+                    )
+                    THEN EXISTS (
+                        -- Si oui on compare les dates du filtre avec les dates des périodes
+                        SELECT 1
+                        FROM period AS p
+                        WHERE p.measure_uuid = m.uuid 
+                        AND daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(p.start_datetime::date, p.end_datetime::date)
+                    )
+                    ELSE (
+                        -- La mesure ne possède pas de période, on compare les dates du filtre avec les dates de l arrêté 
+                        daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(ro.start_date::date, ro.end_date::date)
+                    )
+                    END';
+
+                $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
+                $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
+            }
         }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
