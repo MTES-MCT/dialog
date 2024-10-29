@@ -1,0 +1,7 @@
+{% set _visas_target = 'regulation.general_info.visa.info.target'|trans %}
+
+{% if organization_uuid %}
+    {% set _visas_target = '<a target="_top" href="' ~ path('app_config_visa_models_list', { uuid: organization_uuid }) ~ '">' ~ _visas_target ~ '</a>' %}
+{% endif %}
+
+{{ 'regulation.general_info.visa.info'|trans({'%visas_target%': _visas_target})|raw }}

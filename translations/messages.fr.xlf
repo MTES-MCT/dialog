@@ -462,7 +462,11 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.visa.info">
                 <source>regulation.general_info.visa.info</source>
-                <target>Les modèles de visas sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
+                <target>Les %visas_target% sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.visa.info.target">
+                <source>regulation.general_info.visa.info.target</source>
+                <target>modèles de visas</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.reasons.add">
                 <source>regulation.general_info.reasons.add</source>
