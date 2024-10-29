@@ -16,6 +16,9 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
+        // NOTE : les dates sont à saisir "prêtes à enregistrer en DB", donc faire attention à la timezone
+        $tz = new \DateTimeZone('Etc/GMT-1');
+
         $typicalPeriod = new Period(
             uuid: '76680fcb-0d80-491b-b245-0c326eaef37b',
             measure: $this->getReference('typicalMeasure'),
@@ -26,15 +29,15 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $outDatedCifsPeriod = new Period(
             uuid: 'e1591887-1de6-4362-a5d7-3f2553cb49dd',
             measure: $this->getReference('outDatedCifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2021-11-02'),
-            endDateTime: new \DateTimeImmutable('2021-11-06'),
+            startDateTime: new \DateTimeImmutable('2021-11-02 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2021-11-06 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
         $cifsPeriod1 = new Period(
             uuid: '06548fe3-7bfb-73af-8000-f7f34af31312',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2023-09-05'),
-            endDateTime: new \DateTimeImmutable('2023-09-06'),
+            startDateTime: new \DateTimeImmutable('2023-09-05 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-09-06 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
 
@@ -58,8 +61,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $cifsPeriod2 = new Period(
             uuid: '0654b639-cd33-7507-8000-e2ea21673135',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2023-09-03'),
-            endDateTime: new \DateTimeImmutable('2023-09-06'),
+            startDateTime: new \DateTimeImmutable('2023-09-03 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-09-06 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
         $cifsDailyRange2 = new DailyRange(
