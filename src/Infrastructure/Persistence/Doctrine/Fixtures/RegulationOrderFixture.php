@@ -16,13 +16,15 @@ final class RegulationOrderFixture extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        // NOTE : les dates sont à saisir en UTC
+
         $typicalRegulationOrder = new RegulationOrder(
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
             identifier: self::TYPICAL_IDENTIFIER,
             category: RegulationOrderCategoryEnum::EVENT->value,
             description: 'Description 1',
-            startDate: new \DateTimeImmutable('2023-03-13'),
-            endDate: new \DateTimeImmutable('2023-03-15'),
+            startDate: new \DateTimeImmutable('2023-03-12 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-03-14 23:00:00'),
         );
 
         $publishedRegulationOrder = new RegulationOrder(
@@ -30,8 +32,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'FO2/2023',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Description 2',
-            startDate: new \DateTimeImmutable('2023-03-10'),
-            endDate: new \DateTimeImmutable('2023-03-20'),
+            startDate: new \DateTimeImmutable('2023-03-09 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-03-19 23:00:00'),
         );
 
         $regulationOrderPermanent = new RegulationOrder(
@@ -39,7 +41,7 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'FO3/2023',
             category: RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
             description: 'Description 3',
-            startDate: new \DateTimeImmutable('2023-03-11'),
+            startDate: new \DateTimeImmutable('2023-03-10 23:00:00'),
             endDate: null,
         );
 
@@ -48,8 +50,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'F2023/full-city',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Description 2',
-            startDate: new \DateTimeImmutable('2023-03-11'),
-            endDate: new \DateTimeImmutable('2023-03-21'),
+            startDate: new \DateTimeImmutable('2023-03-10 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-03-20 23:00:00'),
         );
 
         $regulationOrderNoLocations = new RegulationOrder(
@@ -58,8 +60,8 @@ final class RegulationOrderFixture extends Fixture
             description: 'Description 5 that is very long and will be truncated',
             category: RegulationOrderCategoryEnum::OTHER->value,
             otherCategoryText: 'Dérogation préfectorale',
-            startDate: new \DateTimeImmutable('2023-07-13'),
-            endDate: new \DateTimeImmutable('2023-07-15'),
+            startDate: new \DateTimeImmutable('2023-07-12 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-07-14 23:00:00'),
         );
 
         $regulationOrderNoMeasures = new RegulationOrder(
@@ -67,8 +69,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'FO14/2023',
             description: 'No measures',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-            startDate: new \DateTimeImmutable('2023-01-13'),
-            endDate: new \DateTimeImmutable('2023-01-15'),
+            startDate: new \DateTimeImmutable('2023-01-12 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-01-14 23:00:00'),
         );
 
         $regulationOrderCifs = new RegulationOrder(
@@ -76,8 +78,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: self::IDENTIFIER_CIFS,
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Arrêté exporté vers CIFS',
-            startDate: new \DateTimeImmutable('2023-06-02'),
-            endDate: new \DateTimeImmutable('2023-06-10'),
+            startDate: new \DateTimeImmutable('2023-06-01 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-06-09 23:00:00'),
         );
 
         $outDatedRegulationOrderCifs = new RegulationOrder(
@@ -85,8 +87,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'F/OUTDATED/CIFS/2021',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Arrêté exporté vers CIFS',
-            startDate: new \DateTimeImmutable('2021-06-02'),
-            endDate: new \DateTimeImmutable('2021-06-10'),
+            startDate: new \DateTimeImmutable('2021-06-01 23:00:00'),
+            endDate: new \DateTimeImmutable('2021-06-09 23:00:00'),
         );
 
         $rawGeoJSONRegulationOrder = new RegulationOrder(
@@ -94,8 +96,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'F2024/RAWGEOJSON',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Arrêté avec données brutes GeoJSON',
-            startDate: new \DateTimeImmutable('2020-06-02'),
-            endDate: new \DateTimeImmutable('2020-06-10'),
+            startDate: new \DateTimeImmutable('2020-06-01 23:00:00'),
+            endDate: new \DateTimeImmutable('2020-06-09 23:00:00'),
         );
 
         $litteralisRegulationOrder = new RegulationOrder(
@@ -103,8 +105,8 @@ final class RegulationOrderFixture extends Fixture
             identifier: '117374#24-A-0473',
             category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
             description: 'Arrêté de voirie (URL : https://dl.sogelink.fr/?iX5UN3GL)',
-            startDate: new \DateTimeImmutable('2023-06-03'),
-            endDate: new \DateTimeImmutable('2023-11-10'),
+            startDate: new \DateTimeImmutable('2023-06-02 23:00:00'),
+            endDate: new \DateTimeImmutable('2023-11-09 23:00:00'),
         );
 
         $manager->persist($typicalRegulationOrder);
