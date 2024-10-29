@@ -10,9 +10,6 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class ListVisaModelsControllerTest extends AbstractWebTestCase
 {
-    /**
-     *  @group only
-     */
     public function testIndex(): void
     {
         $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
