@@ -14,6 +14,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class MapFilterFormType extends AbstractType
 {
+    public function __construct(
+        private string $clientTimezone,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -47,6 +52,7 @@ final class MapFilterFormType extends AbstractType
                     'label' => 'map.filter.start_date',
                     'help' => 'map.filter.start_date.help',
                     'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
                     'required' => false,
                 ],
             )
@@ -57,6 +63,7 @@ final class MapFilterFormType extends AbstractType
                     'label' => 'map.filter.end_date',
                     'help' => 'map.filter.end_date.help',
                     'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
                     'required' => false,
                 ],
             )
