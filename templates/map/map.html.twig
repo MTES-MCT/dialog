@@ -41,9 +41,14 @@
                                 {{ form_widget(form.measureTypes) }}
                             </fieldset>
 
-                            <h4 class="fr-h6 fr-my-2w">{{ 'map.filters.title.application.period'|trans }}</h4>
+                            <h4 class="fr-h6 fr-mb-2w">{{ 'map.filters.title.type.regulation'|trans }}</h4>
+                            {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group', row_attr: {class: 'fr-mb-2w'}}) }}
+                            {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}
+
+                            <h4 class="fr-h6 fr-mt-3w fr-mb-2w">{{ 'map.filters.title.application.period'|trans }}</h4>
                             {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
                             {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+
                             <noscript>
                                 {{ form_row(form.save) }}
                             </noscript>

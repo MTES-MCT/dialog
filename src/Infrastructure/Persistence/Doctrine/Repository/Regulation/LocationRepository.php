@@ -44,17 +44,29 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     }
 
     public function findAllForMapAsGeoJSON(
+        bool $includePermanentRegulations = false,
+        bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string {
-        $includeNone = empty($measureTypes);
+        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
+        $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
+        $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
 
         if ($includeNone) {
             return json_encode([
                 'type' => 'FeatureCollection',
                 'features' => [],
             ]); // we return no regulations
+        }
+
+        $regulationTypeWhereClause = '';
+
+        if ($permanentOnly) {
+            $regulationTypeWhereClause = 'AND ro.end_date IS NULL';
+        } elseif ($temporaryOnly) {
+            $regulationTypeWhereClause = 'AND ro.end_date IS NOT NULL';
         }
 
         $parameters = [
@@ -118,7 +130,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 AND l.geometry IS NOT NULL
                 AND m.type IN (:measureTypes)
                 %s
+                %s
                 ',
+                $regulationTypeWhereClause,
                 $measureDatesCondition,
             ),
             $parameters,

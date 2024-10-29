@@ -2188,7 +2188,14 @@
                 <source>map.filters.title.type.regulation</source>
                 <target>Réglementation</target>
             </trans-unit>
-
+            <trans-unit id="map.filter.permanents">
+                <source>map.filter.permanents</source>
+                <target>Restrictions permanentes</target>
+            </trans-unit>
+            <trans-unit id="map.filter.temporaries">
+                <source>map.filter.temporaries</source>
+                <target>Restrictions temporaires</target>
+            </trans-unit>
             <trans-unit id="map.filter.type.noEntry">
                 <source>map.filter.type.noEntry</source>
                 <target>Interdiction de circulation</target>
