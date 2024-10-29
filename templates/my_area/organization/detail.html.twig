@@ -1,0 +1,34 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = organization.name %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: metaTitle },
+                ]} %}
+                <div class="fr-grid-row fr-x-gap-2w">
+                    <div class="fr-x-grow-32w">
+                        <h2 class="fr-mb-0">{{ metaTitle }}</h2>
+                        <p>{{ 'organization.siret'|trans }} : {{ organization.siret }}</p>
+                    </div>
+                    <div class="fr-mb-3w">
+                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                            <a href="{{ path('app_config_organization_edit', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                                {{ 'common.update'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

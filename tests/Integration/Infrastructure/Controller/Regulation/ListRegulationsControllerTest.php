@@ -154,6 +154,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertEquals([
             ['', 'Toutes les organisations'],
             [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
+            [OrganizationFixture::OTHER_ORG_ID_2, 'Mairie de Saint Ouen'],
             [OrganizationFixture::OTHER_ORG_ID, 'Mairie de Savenay'],
         ], $choices);
         $this->assertSame('', $field->getValue());
