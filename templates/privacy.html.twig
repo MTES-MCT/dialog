@@ -1,0 +1,81 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% set title = 'Vie privée'|trans %}
+
+{% block title %}
+    {{ title }} - {{ parent() }}
+{% endblock %}
+
+{% set definesContentSkiplink = true %}
+
+{% block body %}
+    <div class="fr-container fr-py-2w fr-py-md-5w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing'},
+            { title },
+        ]} %}
+
+        <div id="content">
+            {% apply markdown_to_html %}
+            # {{ title }}
+
+            ## Données à caractère personnel
+
+            Nous nous engageons à ce que la collecte et le traitement de vos données, effectués à partir du site soient conformes au règlement général sur la protection des données du 27 avril 2016, applicable depuis le 25 mai 2018, et à la loi informatique et libertés dans sa dernière version modifiée du 20 juin 2018.
+
+            Ces dispositions fixent des règles strictes de confidentialité et de sécurité à toute organisation, publique et privée, dans le cadre du traitement des données à caractère personnel de leurs utilisateurs, et ce afin de protéger la vie privée de ceux-ci.
+
+            ## Responsable du traitement
+
+            Le responsable du traitement de vos données à caractère personnel est la [Direction générale des infrastructures, des transports et des mobilités (DGITM)](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm) du Ministère de la transition Ecologique, domiciliée à l’adresse suivante :
+
+            Le Ministère de la Transition Ecologique,<br/>
+            Direction Générale des Infrastructures, des Transports et des Mobilités ([DGITM](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm))<br/>
+            Sous-direction Multimodalité, Innovation, Numérique et Territoires ([SDMINT](https://lannuaire.service-public.fr/gouvernement/1861e8f3-ba7d-43a2-acca-fe99b07e0919)),<br/>
+            Tour Séquoïa 1, place Carpeaux 92055 La Défense Cedex.
+
+            ## Traitement des données et utilisation
+
+            Nous ne pouvons utiliser vos données à caractère personnel qu’à des fins à la fois légitimes et nécessaires. Cela signifie concrètement que nous traitons vos données à caractère personnel pour des finalités de :
+
+            - L’exécution d’un contrat ou de mesures pré-contractuelles demandées (dans le cadre des mécanismes d’appels d’offres par exemple).
+            - L’exécution d’une mission d’intérêt public ou relevant de l’exercice de l’autorité publique (dans le cadre du suivi de la programmation pluriannuelle de l’énergie par exemple)
+            - La nature des opérations réalisées sur les données est : collecte, enregistrement, organisation, conservation, modification, consultation, utilisation, effacement ou destruction.
+            - Les données à caractère personnel traitées sont : prénoms, nom, nom usuel, adresse email professionnelle.
+
+            Les données sont conservées pour une durée de : 22 ans ou jusqu’à l’expiration du contrat, à compter de la notification.
+
+            ## Vos droits
+
+            Nous nous engageons à prendre les mesures techniques et organisationnelles appropriées afin de garantir la sécurité du traitement des données à caractère personnel de chacun.
+
+            En application du Règlement Général sur la Protection des Données (RGPD) et de la loi informatique et libertés, vous disposez d’un droit d’accès, de rectification, de suppression et d’opposition.
+
+            Par mail :
+
+            [dialog@beta.gouv.fr](mailto:dialog@beta.gouv.fr)
+
+            Par voie postale :
+
+            Ministère de la Transition Ecologique,<br/>
+            Direction Générale des Infrastructures, des Transports et des Mobilités ([DGITM](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm))<br/>
+            Sous-direction Multimodalité, Innovation, Numérique et Territoires ([SDMINT](https://lannuaire.service-public.fr/gouvernement/1861e8f3-ba7d-43a2-acca-fe99b07e0919)),<br/>
+            Tour Séquoïa 1, place Carpeaux 92055 La Défense Cedex.
+
+            Cette demande écrite doit être accompagnée d’une copie du titre d’identité avec signature du titulaire de la pièce, en précisant l’adresse à laquelle la réponse doit être envoyée.
+
+            Le délégué à la protection des données (DPD) du Ministère de la Transition Ecologique peut également être contacté à l’adresse suivante :
+
+            [dpd.daj.sg@developpement-durable.gouv.fr](mailto:dpd.daj.sg@developpement-durable.gouv.fr)
+
+            Conformément au règlement général sur la protection des données, vous disposez du droit d’introduire une réclamation auprès de la CNIL (3 place de Fontenoy – TSA 80715 – 75334 PARIS CEDEX 07). Les modalités de réclamation sont précisées sur le site de la CNIL : [www.cnil.fr](https://www.cnil.fr).
+
+            ## Procédure en cas de violations de données à caractère personnel
+
+            En cas de destruction, de perte, d’altération, de divulgation non autorisée de données à caractère personnel transmises, conservées ou traitées d’une autre manière, ou d’accès non autorisé à de telles données, de manière accidentelle ou illicite, susceptible d’engendrer un risque élevé pour les droits et libertés de l’utilisateur, nous vous en informerons des faits et des mesures prises, dans les meilleurs délais.
+
+            Nous nous assurerons également que le nécessaire soit fait quant à la notification de la violation en question à la CNIL dans les 72 heures après en avoir pris connaissance, à moins que la violation ne présente pas un risque élevé pour vos droits et libertés.
+            {% endapply %}
+        </div>
+    </div>
+{% endblock body %}
