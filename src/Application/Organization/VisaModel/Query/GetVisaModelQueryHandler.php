@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\VisaModel\Query;
+namespace App\Application\Organization\VisaModel\Query;
 
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
-use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
-use App\Domain\VisaModel\VisaModel;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 
 final class GetVisaModelQueryHandler
 {

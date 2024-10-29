@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\VisaModel\Command;
 
-use App\Application\VisaModel\Command\DeleteVisaModelCommand;
-use App\Application\VisaModel\Command\DeleteVisaModelCommandHandler;
+use App\Application\Organization\VisaModel\Command\DeleteVisaModelCommand;
+use App\Application\Organization\VisaModel\Command\DeleteVisaModelCommandHandler;
+use App\Domain\Organization\VisaModel\Exception\VisaModelCannotBeDeletedException;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\Exception\VisaModelCannotBeDeletedException;
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
-use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
-use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

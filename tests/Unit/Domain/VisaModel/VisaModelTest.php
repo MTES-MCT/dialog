@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\VisaModel;
 
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\TestCase;
 
 final class VisaModelTest extends TestCase

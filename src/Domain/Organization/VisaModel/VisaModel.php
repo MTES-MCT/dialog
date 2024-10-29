@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\VisaModel;
+namespace App\Domain\Organization\VisaModel;
 
 use App\Domain\User\Organization;
 

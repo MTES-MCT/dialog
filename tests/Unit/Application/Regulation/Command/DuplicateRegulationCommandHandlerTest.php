@@ -25,6 +25,7 @@ use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -36,7 +37,6 @@ use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\TestCase;
 
 final class DuplicateRegulationCommandHandlerTest extends TestCase
