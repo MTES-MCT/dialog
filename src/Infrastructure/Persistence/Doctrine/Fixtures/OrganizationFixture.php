@@ -16,6 +16,7 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
     public const MAIN_ORG_NAME = 'Main Org';
     public const MAIN_ORG_ID = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66'; // DiaLog
     public const OTHER_ORG_ID = '3c46e94d-7ca2-4253-a9ea-0ce5fdb966a4';
+    public const OTHER_ORG_ID_2 = 'ea9c0cfe-165f-49cf-934b-3a11c6e96b79';
 
     public function load(ObjectManager $manager): void
     {
@@ -23,7 +24,12 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
             ->setName(self::MAIN_ORG_NAME);
 
         $otherOrg = (new Organization(self::OTHER_ORG_ID))
-            ->setName('Mairie de Savenay');
+            ->setName('Mairie de Savenay')
+            ->setSiret('12345678909876');
+
+        $otherOrg2 = (new Organization(self::OTHER_ORG_ID_2))
+            ->setName('Mairie de Saint Ouen')
+            ->setSiret('67876540989876');
 
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
         $organizationUser1->setUser($this->getReference('mainOrgUser'));
@@ -40,11 +46,18 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
         $organizationUser3->setOrganization($otherOrg);
         $organizationUser3->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
+        $organizationUser4 = new OrganizationUser('5d054f87-f55b-49fa-8761-e52e37a44ac0');
+        $organizationUser4->setUser($this->getReference('otherOrgUser'));
+        $organizationUser4->setOrganization($otherOrg2);
+        $organizationUser4->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
+
         $manager->persist($mainOrg);
         $manager->persist($otherOrg);
+        $manager->persist($otherOrg2);
         $manager->persist($organizationUser1);
         $manager->persist($organizationUser2);
         $manager->persist($organizationUser3);
+        $manager->persist($organizationUser4);
         $manager->flush();
 
         $this->addReference('mainOrg', $mainOrg);

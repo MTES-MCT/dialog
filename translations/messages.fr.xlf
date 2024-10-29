@@ -2096,6 +2096,14 @@
                 <source>accessRequest.comment</source>
                 <target>Message</target>
             </trans-unit>
+            <trans-unit id="organization.name">
+                <source>organization.name</source>
+                <target>Organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.siret">
+                <source>organization.siret</source>
+                <target>SIRET</target>
+            </trans-unit>
             <trans-unit id="accessRequest.organizationSiret">
                 <source>accessRequest.organizationSiret</source>
                 <target>Numéro SIRET de l'organisation</target>
@@ -2404,6 +2412,10 @@
             <trans-unit id="config.menu.organization">
                 <source>config.menu.organization</source>
                 <target>Mon organisation</target>
+            </trans-unit>
+            <trans-unit id="config.menu.organization.edit">
+                <source>config.menu.organization.edit</source>
+                <target>Modifier mon organisation</target>
             </trans-unit>
             <trans-unit id="config.menu.regulations">
                 <source>config.menu.regulations</source>

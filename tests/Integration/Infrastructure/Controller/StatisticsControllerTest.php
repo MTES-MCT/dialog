@@ -20,7 +20,7 @@ final class StatisticsControllerTest extends AbstractWebTestCase
         $this->assertSame(6, $stats->count());
 
         $this->assertSame("Nombre total d'utilisateurs 3", $stats->eq(0)->text());
-        $this->assertSame("Nombre total d'organisations 1", $stats->eq(1)->text());
+        $this->assertSame("Nombre total d'organisations 2", $stats->eq(1)->text());
         $this->assertSame("Nombre total d'arrếtés 1", $stats->eq(2)->text());
         $this->assertSame("Nombre total d'arrếtés publiés 1", $stats->eq(3)->text());
         $this->assertSame("Nombre total d'arrếtés permanents 0", $stats->eq(4)->text());
