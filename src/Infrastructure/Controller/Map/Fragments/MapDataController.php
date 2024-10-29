@@ -42,7 +42,6 @@ final class MapDataController
             ],
         );
         $form->handleRequest($request);
-        dump($dto);
 
         $locationsAsGeoJson = $this->locationRepository->findAllForMapAsGeoJSON(
             $dto->displayPermanentRegulations,

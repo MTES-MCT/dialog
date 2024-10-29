@@ -94,20 +94,22 @@ final class MapDataControllerTest extends AbstractWebTestCase
                     LocationFixture::UUID_LITTERALIS,
                 ],
             ],
-            // 'no-startDate' => [
-            //     'queryString' => '&endDate=2023-06-02',
-            //     'locationUuids' => [],
-            // ],
-            // 'no-endDate' => [
-            //     'queryString' => '&startDate=2023-06-02',
-            //     'locationUuids' => [],
-            // ],
+            'start-only' => [
+                'queryString' => '&map_filter_form[startDate]=2023-11-02',
+                'locationUuids' => [
+                    LocationFixture::UUID_LITTERALIS,
+                ],
+            ],
+            'end-only' => [
+                'queryString' => '&map_filter_form[endDate]=2021-12-01',
+                'locationUuids' => [
+                    LocationFixture::UUID_OUTDATED_CIFS,
+                ],
+            ],
         ];
     }
 
     /**
-     * @group only
-     *
      * @dataProvider provideTestMeasureDatesFilter
      */
     public function testMeasureDatesFilter(string $queryString, array $locationUuids): void

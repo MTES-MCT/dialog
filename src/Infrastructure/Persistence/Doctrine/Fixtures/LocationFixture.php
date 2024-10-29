@@ -29,6 +29,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
     public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
     public const UUID_CIFS_NAMED_STREET = '06548f85-d545-7b45-8000-8a23c45850b3';
     public const UUID_CIFS_DEPARTMENTAL_ROAD = '065f94ef-ea0a-7ab5-8000-bd5686102151';
+    public const UUID_OUTDATED_CIFS = 'ad7b675a-92d8-4556-a0e6-09cc66eb259a';
     public const UUID_LITTERALIS = '066e984f-4746-78f8-8000-dce555b28604';
 
     public function load(ObjectManager $manager): void
@@ -215,7 +216,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         );
 
         $outDatedCifsLocation = new Location(
-            'ad7b675a-92d8-4556-a0e6-09cc66eb259a',
+            self::UUID_OUTDATED_CIFS,
             $this->getReference('outDatedCifsMeasure'),
             roadType: RoadTypeEnum::LANE->value,
             geometry: '{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}',
