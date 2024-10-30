@@ -137,7 +137,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         $query
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->orderBy('overallEndDate', 'DESC')
+            ->orderBy('overallStartDate', 'DESC')
             ->addOrderBy('ro.identifier', 'ASC')
             ->addGroupBy('ro, roc, o')
             ->setFirstResult($dto->pageSize * ($dto->page - 1))

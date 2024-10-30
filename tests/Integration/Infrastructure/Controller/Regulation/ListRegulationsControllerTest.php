@@ -37,6 +37,22 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_regulation_add');
     }
 
+    public function testOrdering(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?pageSize=5&page=1');
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(5, $rows->count());
+        // Les arrêtés sont triés par date de début décroissante
+        // Les 2 premiers n'en ont pas pour des raisons de test
+        $this->assertSame('', $rows->eq(0)->filter('td')->eq(3)->text());
+        $this->assertSame('', $rows->eq(1)->filter('td')->eq(3)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(2)->filter('td')->eq(3)->text());
+        $this->assertSame('du 03/06/2023 au 10/11/2023 passé', $rows->eq(3)->filter('td')->eq(3)->text());
+        $this->assertSame('du 02/06/2023 au 10/06/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
+    }
+
     public function testRegulationRendering(): void
     {
         $client = $this->login();
