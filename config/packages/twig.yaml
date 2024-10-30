@@ -1,7 +1,8 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     form_themes: ['common/form/dsfr_theme.html.twig']
-
+    globals:
+        dialogOrgId: '%env(DIALOG_ORG_ID)%'
 when@test:
     twig:
         strict_variables: true
