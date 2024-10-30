@@ -12,13 +12,13 @@ Le Metabase de DiaLog est hébergé sur Scalingo sous l'application `dialog-meta
 
 Cette application dispose de sa propre base de données où nous stockons les données nécessaires au calcul des indicateurs, conformément aux [recommendations Beta](https://doc.incubateur.net/communaute/les-outils-de-la-communaute/autres-services/metabase/metabase#connecter-metabase-a-une-base-de-donnees-anonymisee)
 
-La collecte des données d'indicateur est réalisée au moyen d'un [script](../../tools/metabase-export.sh). Ce script exécute des requêtes SQL depuis la base Metabase vers la base applicative. Pour cela un utilisateur `dialog_metabase` avec droits en lecture seule a été créé sur la base applicative (identifiants dans le Vaultwarden de l'équipe DiaLog).
+La collecte des données d'indicateurs est réalisée au moyen d'un [script](../../tools/metabase-export.sh). Ce script exécute des requêtes SQL depuis la base Metabase vers la base applicative. Pour cela un utilisateur `dialog_metabase` avec droits en lecture seule a été créé sur la base applicative (identifiants dans le Vaultwarden de l'équipe DiaLog).
 
 ## Lancer l'export depuis GitHub Actions
 
 L'export Metabase peut être déclenché via [GitHub Actions](./github_actions.md) à l'aide du workflow [`metabase_export.yml`](../../.github/workflows/metabase_export.yml).
 
-### Configuration
+### Configuration de la GitHub Action
 
 La configuration de la GitHub Action passe par diverses variables d'environnement listées ci-dessous :
 

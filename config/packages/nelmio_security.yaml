@@ -30,15 +30,15 @@ nelmio_security:
         enabled: true
         enforce:
             default-src: ['self']
-            script-src: ['self']
-            style-src: ['self']
+            script-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io']
+            style-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io']
             connect-src: ['self', 'https://data.geopf.fr']
             font-src: ['self']
             img-src: ['self', 'data:', 'blob:']
             # maplibre-gl
             # https://maplibre.org/maplibre-gl-js/docs/#csp-directives
             worker-src: ['blob:']
-            child-src: ['blob:']
+            child-src: ['blob:', 'https://dialog-metabase.osc-fr1.scalingo.io']
             block-all-mixed-content: true
 
 when@dev:

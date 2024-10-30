@@ -27,6 +27,8 @@ services:
             $melCredentials: '%env(APP_MEL_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
             $fougeresOrgId: '%env(APP_FOUGERES_ORG_ID)%'
             $fougeresCredentials: '%env(APP_FOUGERES_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
+            $metabaseSiteUrl: '%env(APP_METABASE_SITE_URL)%'
+            $metabaseSecretKey: '%env(APP_METABASE_SECRET_KEY)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
