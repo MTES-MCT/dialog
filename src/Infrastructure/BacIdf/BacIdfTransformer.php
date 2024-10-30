@@ -428,12 +428,12 @@ final class BacIdfTransformer
             $periodCommand->endDate = null;
             $periodCommand->endTime = null;
 
-            $heureDeb = \array_key_exists('HEURE_DEB', $periodItem) ? $periodItem['HEURE_DEB'] : null;
-            $heureFin = \array_key_exists('HEURE_FIN', $periodItem) ? $periodItem['HEURE_FIN'] : null;
+            $startHour = \array_key_exists('HEURE_DEB', $periodItem) ? $periodItem['HEURE_DEB'] : null;
+            $endHour = \array_key_exists('HEURE_FIN', $periodItem) ? $periodItem['HEURE_FIN'] : null;
 
             $isEveryDay = $periodItem['JOUR'] === [1, 2, 3, 4, 5, 6, 0];
 
-            if ($isEveryDay && ((!$heureDeb && !$heureFin) || ($heureDeb === '00:00' && $heureFin === '23:59'))) {
+            if ($isEveryDay && ((!$startHour && !$endHour) || ($startHour === '00:00' && $endHour === '23:59'))) {
                 $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
                 $periodCommand->dailyRange = null;
                 $periodCommand->timeSlots = [];
@@ -467,10 +467,10 @@ final class BacIdfTransformer
 
             $timeSlotCommands = [];
 
-            if ($heureDeb !== '00:00' && $heureFin !== '23:59') {
+            if ($startHour !== '00:00' && $endHour !== '23:59') {
                 $timeSlotCommand = new SaveTimeSlotCommand();
-                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $heureDeb, new \DateTimeZone('Europe/Paris'));
-                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $heureFin, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $startHour, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $endHour, new \DateTimeZone('Europe/Paris'));
                 $timeSlotCommands[] = $timeSlotCommand;
             }
 
