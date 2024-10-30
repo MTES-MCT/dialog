@@ -109,6 +109,7 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | `APP_JOP_ORG_ID` | UUID de l'organisation où intégrer les données JOP | _Vide_ | |
 | `APP_SECRET` | Correspond au paramètre Symfony [`secret`](https://symfony.com/doc/current/reference/configuration/framework.html#secret) | _(Obligatoire)_ | Longueur recommandée : 32 caractères. Exemple : générer avec `python3 -c 'import secrets; print(secrets.token_hex(16))'` |
 | `APP_CIFS_FILTERS` | Filtre les données exportées vers CIFS | `{}` | Format JSON, champs acceptés : `allowed_sources`, `excluded_identifiers`, `allowed_location_isd`. L'objet vide `{}` a pour effet de continuer de toute exporter. |
+| `METABASE_SECRET_KEY` | Clé secrète pour la signature JWT des graphiques Metabase | _(Obligatoire)_ | À récupérer dans [l'administration Metabase](https://dialog-metabase.osc-fr1.scalingo.io/admin/settings/embedding-in-other-applications/standalone) |
 | `DATABASE_URL` | URL vers le serveur PostgreSQL | _(Obligatoire)_ `$SCALINGO_POSTGRESQL_URL` | La variable `$SCALINGO_POSTGRESQL_URL` est configurée automatiquement par Scalingo |
 | `MATOMO_ENABLED` | `true` (ou autre valeur truthy) pour activer les [analytics](../tools/analytics.md), `false` pour ne pas les activer | `false` | |
 | `PHP_BUILDPACK_NO_NODE` | Désactive le support Node.js dans le buildpack PHP, puisqu'on utilise le buildpack Node.js complet (voir `.buildpacks`). | _(Obligatoire)_ `true` | Voir : [PHP application with Node.js (Scalingo docs)](https://doc.scalingo.com/languages/php/php-nodejs) |

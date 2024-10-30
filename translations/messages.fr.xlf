@@ -2028,6 +2028,10 @@
                 <source>statistics.title</source>
                 <target>Statistiques</target>
             </trans-unit>
+            <trans-unit id="statistics.dashboard.title">
+                <source>statistics.dashboard.title</source>
+                <target>Tableau de bord des indicateurs</target>
+            </trans-unit>
             <trans-unit id="statistics.users">
                 <source>statistics.users</source>
                 <target>Nombre total d'utilisateurs</target>
