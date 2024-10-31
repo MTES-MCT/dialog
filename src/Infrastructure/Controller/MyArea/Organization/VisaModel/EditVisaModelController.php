@@ -38,7 +38,7 @@ final class EditVisaModelController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{organizationUuid}/visa_models/{uuid}/edit',
-        name: 'app_config_visa_models_edit',
+        name: 'app_my_area_config_visa_models_edit',
         requirements: ['organizationUuid' => Requirement::UUID, 'uuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
@@ -64,7 +64,7 @@ final class EditVisaModelController extends AbstractOrganizationController
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_config_visa_models_list', ['uuid' => $organizationUuid]),
+                url: $this->router->generate('app_my_area_config_visa_models_list', ['uuid' => $organizationUuid]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

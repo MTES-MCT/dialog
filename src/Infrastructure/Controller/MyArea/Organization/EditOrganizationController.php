@@ -39,7 +39,7 @@ final class EditOrganizationController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{uuid}/edit',
-        name: 'app_config_organization_edit',
+        name: 'app_my_area_organization_edit',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
@@ -61,7 +61,7 @@ final class EditOrganizationController extends AbstractOrganizationController
                 $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->router->generate('app_config_organization_detail', ['uuid' => $uuid]),
+                    url: $this->router->generate('app_my_area_organization_detail', ['uuid' => $uuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (SiretAlreadyExistException) {

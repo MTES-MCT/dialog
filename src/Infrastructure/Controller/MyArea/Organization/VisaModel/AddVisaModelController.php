@@ -35,7 +35,7 @@ final class AddVisaModelController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{organizationUuid}/visa_models/add',
-        name: 'app_config_visa_models_add',
+        name: 'app_my_area_config_visa_models_add',
         requirements: ['organizationUuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
@@ -55,7 +55,7 @@ final class AddVisaModelController extends AbstractOrganizationController
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_config_visa_models_list', ['uuid' => $organizationUuid]),
+                url: $this->router->generate('app_my_area_config_visa_models_list', ['uuid' => $organizationUuid]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

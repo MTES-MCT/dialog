@@ -50,7 +50,7 @@ final class AddVisaModelControllerTest extends AbstractWebTestCase
         $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_config_visa_models_list');
+        $this->assertRouteSame('app_my_area_config_visa_models_list');
     }
 
     public function testBadFormValues(): void

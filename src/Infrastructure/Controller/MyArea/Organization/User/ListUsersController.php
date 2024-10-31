@@ -24,7 +24,7 @@ final class ListUsersController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{uuid}/users',
-        name: 'app_users_list',
+        name: 'app_my_area_users_list',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]

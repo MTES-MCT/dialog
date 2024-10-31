@@ -22,7 +22,7 @@
                     </div>
                     <div class="fr-mb-3w">
                         {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}
-                            <a href="{{ path('app_config_organization_edit', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                            <a href="{{ path('app_my_area_organization_edit', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
                                 {{ 'common.update'|trans }}
                             </a>
                         {% endif %}

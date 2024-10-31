@@ -22,7 +22,7 @@ final class OrganizationDetailController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{uuid}',
-        name: 'app_config_organization_detail',
+        name: 'app_my_area_organization_detail',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]

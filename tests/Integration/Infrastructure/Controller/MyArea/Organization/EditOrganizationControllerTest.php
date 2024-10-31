@@ -30,7 +30,7 @@ final class EditOrganizationControllerTest extends AbstractWebTestCase
         $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_config_organization_detail');
+        $this->assertRouteSame('app_my_area_organization_detail');
     }
 
     public function testBadFormValues(): void

@@ -24,7 +24,7 @@ final class ListVisaModelsController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{uuid}/visa_models',
-        name: 'app_config_visa_models_list',
+        name: 'app_my_area_config_visa_models_list',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]

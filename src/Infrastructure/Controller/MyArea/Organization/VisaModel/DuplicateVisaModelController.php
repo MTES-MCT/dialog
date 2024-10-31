@@ -37,7 +37,7 @@ final class DuplicateVisaModelController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{organizationUuid}/visa_models/{uuid}/duplicate',
-        name: 'app_config_visa_models_duplicate',
+        name: 'app_my_area_config_visa_models_duplicate',
         requirements: ['organizationUuid' => Requirement::UUID, 'uuid' => Requirement::UUID],
         methods: ['POST'],
     )]
@@ -57,7 +57,7 @@ final class DuplicateVisaModelController extends AbstractOrganizationController
             $session->getFlashBag()->add('success', $this->translator->trans('visa.duplicated.success'));
 
             return new RedirectResponse(
-                url: $this->router->generate('app_config_visa_models_list', ['uuid' => $organizationUuid]),
+                url: $this->router->generate('app_my_area_config_visa_models_list', ['uuid' => $organizationUuid]),
                 status: Response::HTTP_SEE_OTHER,
             );
         } catch (VisaModelNotFoundException $e) {

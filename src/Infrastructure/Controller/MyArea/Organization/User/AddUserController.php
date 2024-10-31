@@ -39,7 +39,7 @@ final class AddUserController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{organizationUuid}/users/add',
-        name: 'app_users_add',
+        name: 'app_my_area_users_add',
         requirements: ['organizationUuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
@@ -60,7 +60,7 @@ final class AddUserController extends AbstractOrganizationController
                 $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->router->generate('app_users_list', ['uuid' => $organizationUuid]),
+                    url: $this->router->generate('app_my_area_users_list', ['uuid' => $organizationUuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (UserAlreadyRegisteredException) {

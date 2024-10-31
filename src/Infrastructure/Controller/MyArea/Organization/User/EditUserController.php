@@ -41,7 +41,7 @@ final class EditUserController
 
     #[Route(
         '/organizations/{organizationUuid}/users/{uuid}/edit',
-        name: 'app_users_edit',
+        name: 'app_my_area_users_edit',
         requirements: ['organizationUuid' => Requirement::UUID, 'uuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
@@ -70,7 +70,7 @@ final class EditUserController
                 $this->commandBus->handle($command);
 
                 return new RedirectResponse(
-                    url: $this->router->generate('app_users_list', ['uuid' => $organizationUuid]),
+                    url: $this->router->generate('app_my_area_users_list', ['uuid' => $organizationUuid]),
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (EmailAlreadyExistsException) {

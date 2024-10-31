@@ -34,7 +34,7 @@ final class AddUserControllerTest extends AbstractWebTestCase
         $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_users_list');
+        $this->assertRouteSame('app_my_area_users_list');
     }
 
     public function testAccountAlreadyInOrganization(): void

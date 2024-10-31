@@ -48,7 +48,7 @@
             data-value="intersection"
             {% if form.namedStreet.fromPointType.vars.value != 'intersection' %}hidden{% endif %}
             data-controller="autocomplete"
-            data-autocomplete-url-value="{{ path('fragment_intersection_completion') }}"
+            data-autocomplete-url-value="{{ path('fragment_intersection_completions') }}"
             data-autocomplete-query-param-value="search"
             data-autocomplete-extra-query-params-value="{{ {
                 roadName: '#' ~ form.namedStreet.roadName.vars.id,

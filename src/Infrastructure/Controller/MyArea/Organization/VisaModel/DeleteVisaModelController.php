@@ -34,7 +34,7 @@ final class DeleteVisaModelController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{organizationUuid}/visa_models/{uuid}',
-        name: 'app_config_visa_models_delete',
+        name: 'app_my_area_config_visa_models_delete',
         requirements: ['organizationUuid' => Requirement::UUID, 'uuid' => Requirement::UUID],
         methods: ['DELETE'],
     )]
@@ -54,7 +54,7 @@ final class DeleteVisaModelController extends AbstractOrganizationController
         }
 
         return new RedirectResponse(
-            url: $this->router->generate('app_config_visa_models_list', ['uuid' => $organizationUuid]),
+            url: $this->router->generate('app_my_area_config_visa_models_list', ['uuid' => $organizationUuid]),
             status: Response::HTTP_SEE_OTHER,
         );
     }

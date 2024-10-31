@@ -13,8 +13,8 @@
             <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
                     { title: 'user.myarea'|trans, path: 'app_my_area'},
-                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
-                    { title: 'user.list.title'|trans, url: path('app_users_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: organization.name, url: path('app_my_area_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'user.list.title'|trans, url: path('app_my_area_users_list', {uuid: organization.uuid}), generatedPath: true },
                     { title: metaTitle },
                 ]} %}
                 <h2 class="fr-mb-0">{{ metaTitle }}</h2>
@@ -44,7 +44,7 @@
                             <p class="fr-mt-2w fr-message fr-message--info">{{ 'user.form.roles.info'|trans }}</p>
                         </div>
                     </fieldset>
-                    <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                    <a href="{{ path('app_my_area_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                         {{ "common.cancel"|trans }}
                     </a>
                     {{ form_widget(form.save) }}

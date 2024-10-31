@@ -57,7 +57,7 @@ final class AccessRequestController
 
         return new Response(
             $this->twig->render(
-                name: 'accessRequest.html.twig',
+                name: 'access_request.html.twig',
                 context: [
                     'form' => $form->createView(),
                 ],
