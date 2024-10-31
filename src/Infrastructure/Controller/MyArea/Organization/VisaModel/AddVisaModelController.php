@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\MyArea\Organization\VisaModel;
 
 use App\Application\CommandBusInterface;
+use App\Application\Organization\VisaModel\Command\SaveVisaModelCommand;
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Command\SaveVisaModelCommand;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use App\Infrastructure\Form\User\VisaModelFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;

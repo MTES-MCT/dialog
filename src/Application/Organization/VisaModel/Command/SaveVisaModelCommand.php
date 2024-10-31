@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\VisaModel\Command;
+namespace App\Application\Organization\VisaModel\Command;
 
 use App\Application\CommandInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\VisaModel;
 
 final class SaveVisaModelCommand implements CommandInterface
 {

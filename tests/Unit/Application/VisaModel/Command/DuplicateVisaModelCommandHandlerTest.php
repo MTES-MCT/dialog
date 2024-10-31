@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\VisaModel\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\VisaModel\Command\DuplicateVisaModelCommand;
-use App\Application\VisaModel\Command\DuplicateVisaModelCommandHandler;
-use App\Application\VisaModel\Command\SaveVisaModelCommand;
+use App\Application\Organization\VisaModel\Command\DuplicateVisaModelCommand;
+use App\Application\Organization\VisaModel\Command\DuplicateVisaModelCommandHandler;
+use App\Application\Organization\VisaModel\Command\SaveVisaModelCommand;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
-use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
-use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

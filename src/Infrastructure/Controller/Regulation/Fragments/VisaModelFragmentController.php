@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Query\GetVisaModelQuery;
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;

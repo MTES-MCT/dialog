@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\VisaModel\Query;
 
-use App\Application\VisaModel\Query\GetVisaModelQuery;
-use App\Application\VisaModel\Query\GetVisaModelQueryHandler;
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
-use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
-use App\Domain\VisaModel\VisaModel;
+use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
+use App\Application\Organization\VisaModel\Query\GetVisaModelQueryHandler;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 use PHPUnit\Framework\TestCase;
 
 final class GetVisaModelQueryHandlerTest extends TestCase
