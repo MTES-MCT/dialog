@@ -37,12 +37,28 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_regulation_add');
     }
 
+    public function testOrdering(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?pageSize=5&page=1');
+
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(5, $rows->count());
+        // Les arrêtés sont triés par date de début décroissante
+        // Les 2 premiers n'en ont pas pour des raisons de test
+        $this->assertSame('', $rows->eq(0)->filter('td')->eq(3)->text());
+        $this->assertSame('', $rows->eq(1)->filter('td')->eq(3)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(2)->filter('td')->eq(3)->text());
+        $this->assertSame('du 03/06/2023 au 10/11/2023 passé', $rows->eq(3)->filter('td')->eq(3)->text());
+        $this->assertSame('du 02/06/2023 au 10/06/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
+    }
+
     public function testRegulationRendering(): void
     {
         $client = $this->login();
 
         // First item
-        $pageOne = $client->request('GET', '/regulations?pageSize=1&page=1');
+        $pageOne = $client->request('GET', '/regulations?identifier=FO1%2F2023');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -51,18 +67,18 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $pageOneRows->count());
 
         $pageOneRow0 = $pageOneRows->eq(0)->filter('td');
-        $this->assertSame('F2023/no-locations', $pageOneRow0->eq(0)->text());
+        $this->assertSame('FO1/2023', $pageOneRow0->eq(0)->text());
         $this->assertSame('Main Org', $pageOneRow0->eq(1)->text());
-        $this->assertEmpty($pageOneRow0->eq(2)->text()); // No location set
-        $this->assertSame('du 13/07/2023 au 15/07/2023 passé', $pageOneRow0->eq(3)->text());
+        $this->assertSame('Savenay (44260) Route du Grand Brossais + 3 localisations', $pageOneRow0->eq(2)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $pageOneRow0->eq(3)->text());
         $this->assertSame('Brouillon', $pageOneRow0->eq(4)->text());
 
         $links = $pageOneRow0->eq(5)->filter('a');
         $this->assertSame('Modifier', $links->eq(0)->text());
-        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS, $links->eq(0)->link()->getUri());
+        $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, $links->eq(0)->link()->getUri());
 
         // Second item
-        $otherPage = $client->request('GET', '/regulations?pageSize=1&page=3');
+        $otherPage = $client->request('GET', '/regulations?identifier=F%2FCIFS%2F2023');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -80,7 +96,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
     public function testPublishedRegulationRendering(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/regulations?pageSize=1&page=7');
+        $crawler = $client->request('GET', '/regulations?identifier=FO2%2F2023');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 

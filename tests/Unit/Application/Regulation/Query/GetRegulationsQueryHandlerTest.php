@@ -21,16 +21,16 @@ final class GetRegulationsQueryHandlerTest extends TestCase
 {
     public function testGetAll(): void
     {
-        $startDate1 = new \DateTime('2022-12-07');
-        $startDate2 = new \DateTime('2022-12-10');
+        $startDate1 = '2022-12-07';
+        $startDate2 = '2022-12-10';
 
         $rows = [
             [
                 'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                 'identifier' => 'F02/2023',
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
-                'startDate' => $startDate1,
-                'endDate' => null,
+                'overallStartDate' => $startDate1,
+                'overallEndDate' => null,
                 'nbLocations' => 0,
                 'namedStreet' => null,
                 'numberedRoad' => null,
@@ -42,8 +42,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
-                'startDate' => $startDate2,
-                'endDate' => null,
+                'overallStartDate' => $startDate2,
+                'overallEndDate' => null,
                 'nbLocations' => 2,
                 'namedStreet' => 'Avenue de Fonneuve#Montauban#82121',
                 'numberedRoad' => null,
@@ -54,8 +54,8 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'uuid' => 'ef5b3632-8525-41b5-9e84-3116d9089610',
                 'identifier' => 'F01/2024',
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
-                'startDate' => $startDate2,
-                'endDate' => null,
+                'overallStartDate' => $startDate2,
+                'overallEndDate' => null,
                 'nbLocations' => 1,
                 'namedStreet' => null,
                 'numberedRoad' => 'D123#Ardennes',
@@ -96,7 +96,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
                     new RawGeoJSONView('rawgeojson label'),
-                    $startDate1,
+                    new \DateTimeImmutable($startDate1),
                     null,
                 ),
                 new RegulationOrderListItemView(
@@ -111,7 +111,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                         cityLabel: 'Montauban',
                         roadName: 'Avenue de Fonneuve',
                     ),
-                    $startDate2,
+                    new \DateTimeImmutable($startDate2),
                     null,
                 ),
                 new RegulationOrderListItemView(
@@ -125,7 +125,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                         administrator: 'Ardennes',
                         roadNumber: 'D123',
                     ),
-                    $startDate2,
+                    new \DateTimeImmutable($startDate2),
                     null,
                 ),
             ],

@@ -26,6 +26,27 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'everyDay',
         );
+        $publishedPeriod = new Period(
+            uuid: '067164f2-cbd3-7fc6-8000-7ce25ec9c17b',
+            measure: $this->getReference('publishedMeasure'),
+            startDateTime: new \DateTimeImmutable('2023-03-10 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-03-20 23:59:00', $tz),
+            recurrenceType: 'everyDay',
+        );
+        $permanentPeriod = new Period(
+            uuid: '06717be6-ddb3-7635-8000-431d53fcd535',
+            measure: $this->getReference('permanentMeasure'),
+            startDateTime: new \DateTimeImmutable('2023-03-11 00:00:00', $tz),
+            endDateTime: null,
+            recurrenceType: 'everyDay',
+        );
+        $fullCityPeriod = new Period(
+            uuid: '06718fa9-91b2-74a2-8000-4a5d3c841d67',
+            measure: $this->getReference('fullCityMeasure'),
+            startDateTime: new \DateTimeImmutable('2023-03-11 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-03-21 23:59:00', $tz),
+            recurrenceType: 'everyDay',
+        );
         $outDatedCifsPeriod = new Period(
             uuid: 'e1591887-1de6-4362-a5d7-3f2553cb49dd',
             measure: $this->getReference('outDatedCifsMeasure'),
@@ -36,8 +57,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $cifsPeriod1 = new Period(
             uuid: '06548fe3-7bfb-73af-8000-f7f34af31312',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2023-09-05 00:00:00', $tz),
-            endDateTime: new \DateTimeImmutable('2023-09-06 23:59:00', $tz),
+            startDateTime: new \DateTimeImmutable('2023-06-05 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-06-10 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
 
@@ -61,8 +82,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $cifsPeriod2 = new Period(
             uuid: '0654b639-cd33-7507-8000-e2ea21673135',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2023-09-03 00:00:00', $tz),
-            endDateTime: new \DateTimeImmutable('2023-09-06 23:59:00', $tz),
+            startDateTime: new \DateTimeImmutable('2023-06-02 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-06-06 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
         $cifsDailyRange2 = new DailyRange(
@@ -86,8 +107,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $cifsPeriod3 = new Period(
             uuid: '0654b63a-838d-798b-8000-044b619f225d',
             measure: $this->getReference('cifsMeasure'),
-            startDateTime: new \DateTimeImmutable('2023-09-03 08:00:00'),
-            endDateTime: new \DateTimeImmutable('2023-09-05 10:00:00'),
+            startDateTime: new \DateTimeImmutable('2023-06-03 08:00:00'),
+            endDateTime: new \DateTimeImmutable('2023-06-05 10:00:00'),
             recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
         );
         $cifsDailyRange3 = new DailyRange(
@@ -102,7 +123,26 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endTime: \DateTimeImmutable::createFromFormat('H:i', '10:00'),
         );
 
+        $rawGeoJSONPeriod = new Period(
+            uuid: '06718fb1-ef69-7120-8000-27d815e502fd',
+            measure: $this->getReference('rawGeoJSONMeasure'),
+            startDateTime: new \DateTimeImmutable('2020-06-02 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2020-06-10 23:59:00', $tz),
+            recurrenceType: 'everyDay',
+        );
+
+        $litteralisPeriod = new Period(
+            uuid: '0671628e-04f8-7c89-8000-43928d1376ba',
+            measure: $this->getReference('litteralisMeasure'),
+            startDateTime: new \DateTimeImmutable('2023-06-03 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-11-10 23:59:00', $tz),
+            recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
+        );
+
         $manager->persist($typicalPeriod);
+        $manager->persist($publishedPeriod);
+        $manager->persist($permanentPeriod);
+        $manager->persist($fullCityPeriod);
         $manager->persist($cifsPeriod1);
         $manager->persist($cifsDailyRange1);
         $manager->persist($cifsTimeSlot1);
@@ -115,6 +155,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($cifsTimeSlot3);
         $manager->persist($outDatedCifsPeriod);
         $manager->persist($outDatedCifsDailyRange);
+        $manager->persist($rawGeoJSONPeriod);
+        $manager->persist($litteralisPeriod);
 
         $manager->flush();
     }

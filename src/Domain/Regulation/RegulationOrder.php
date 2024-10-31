@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\VisaModel\VisaModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,8 +19,6 @@ class RegulationOrder
         private string $identifier,
         private string $category,
         private string $description,
-        private ?\DateTimeInterface $startDate,
-        private ?\DateTimeInterface $endDate = null,
         private ?string $otherCategoryText = null,
         private ?VisaModel $visaModel = null,
         private ?array $additionalVisas = [],
@@ -53,16 +52,6 @@ class RegulationOrder
         return $this->description;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
-    {
-        return $this->startDate;
-    }
-
-    public function getEndDate(): ?\DateTimeInterface
-    {
-        return $this->endDate;
-    }
-
     public function getMeasures(): iterable
     {
         return $this->measures;
@@ -82,7 +71,7 @@ class RegulationOrder
 
     public function isPermanent(): bool
     {
-        return !$this->endDate;
+        return $this->category === RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
     }
 
     public function getVisaModel(): ?VisaModel
@@ -104,8 +93,6 @@ class RegulationOrder
         string $identifier,
         string $category,
         string $description,
-        \DateTimeInterface $startDate,
-        ?\DateTimeInterface $endDate = null,
         ?string $otherCategoryText = null,
         array $additionalVisas = [],
         array $additionalReasons = [],
@@ -114,8 +101,6 @@ class RegulationOrder
         $this->identifier = $identifier;
         $this->category = $category;
         $this->description = $description;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
         $this->otherCategoryText = $otherCategoryText;
         $this->additionalVisas = $additionalVisas;
         $this->additionalReasons = $additionalReasons;

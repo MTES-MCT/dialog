@@ -45,7 +45,6 @@ final class DuplicateRegulationController extends AbstractRegulationController
         /** @var FlashBagAwareSessionInterface */
         $session = $request->getSession();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
         try {
             $duplicatedRegulationOrderRecord = $this->commandBus->handle(
@@ -65,9 +64,7 @@ final class DuplicateRegulationController extends AbstractRegulationController
         }
 
         return new RedirectResponse(
-            url: $this->router->generate('app_regulations_list', [
-                'tab' => $regulationOrder->getEndDate() ? 'temporary' : 'permanent',
-            ]),
+            url: $this->router->generate('app_regulations_list'),
             status: Response::HTTP_SEE_OTHER,
         );
     }

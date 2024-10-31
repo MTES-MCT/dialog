@@ -7,9 +7,11 @@ namespace App\Tests\Unit\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
@@ -81,8 +83,6 @@ final class EudonetParisTransformerTest extends TestCase
         $generalInfoCommand->otherCategoryText = 'Temporaire';
         $generalInfoCommand->description = str_repeat('a', 255);
         $generalInfoCommand->organization = $organization;
-        $generalInfoCommand->startDate = new \DateTimeImmutable('2023-06-05 14:30:00 Europe/Paris');
-        $generalInfoCommand->endDate = new \DateTimeImmutable('2023-07-12 18:00:00 Europe/Paris');
 
         $locationCommand1 = new SaveLocationCommand();
         $locationCommand1->roadType = 'lane';
@@ -111,6 +111,14 @@ final class EudonetParisTransformerTest extends TestCase
         $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
         $measureCommand->locations = [$locationCommand1, $locationCommand2];
         $measureCommand->vehicleSet = $vehicleSet;
+        $periodCommand = new SavePeriodCommand();
+        $periodCommand->startDate = new \DateTimeImmutable('2023-06-05 14:30:00 Europe/Paris');
+        $periodCommand->startTime = new \DateTimeImmutable('2023-06-05 14:30:00 Europe/Paris');
+        $periodCommand->endDate = new \DateTimeImmutable('2023-07-12 18:00:00 Europe/Paris');
+        $periodCommand->endTime = new \DateTimeImmutable('2023-07-12 18:00:00 Europe/Paris');
+        $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $periodCommand->timeSlots = [];
+        $measureCommand->periods[] = $periodCommand;
 
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new EudonetParisTransformerResult($importCommand, []);
@@ -127,53 +135,6 @@ final class EudonetParisTransformerTest extends TestCase
             'no-datetime' => ['2023/12/14'],
             'dmy-no-datetime' => ['14/12/2023'],
         ];
-    }
-
-    /** @dataProvider provideDateParsing */
-    public function testDateParsing($startDateValue): void
-    {
-        $organization = $this->createMock(Organization::class);
-
-        $record = [
-            'fields' => [
-                EudonetParisExtractor::ARRETE_ID => '20230514-1',
-                EudonetParisExtractor::ARRETE_DATE_DEBUT => $startDateValue,
-                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
-                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
-                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
-            ],
-            'measures' => [
-                [
-                    'fields' => [
-                        EudonetParisExtractor::MESURE_ID => 'mesure1',
-                        EudonetParisExtractor::MESURE_NOM => 'circulation interdite',
-                        EudonetParisExtractor::MESURE_ALINEA => '',
-                    ],
-                    'locations' => [
-                        [
-                            'fields' => [
-                                EudonetParisExtractor::LOCALISATION_ID => 'localisation1',
-                                EudonetParisExtractor::LOCALISATION_PORTE_SUR => 'La totalité de la voie',
-                                EudonetParisExtractor::LOCALISATION_ARRONDISSEMENT => '18ème Arrondissement',
-                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE => 'Rue Eugène Berthoud',
-                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_DEBUT => null,
-                                EudonetParisExtractor::LOCALISATION_LIBELLE_VOIE_FIN => null,
-                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_DEBUT => null,
-                                EudonetParisExtractor::LOCALISATION_N_ADRESSE_FIN => null,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $transformer = new EudonetParisTransformer();
-        $result = $transformer->transform($record, $organization);
-
-        $this->assertEquals(
-            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-12-14 00:00:00', new \DateTimeZone('Europe/Paris')),
-            $result->command->generalInfoCommand->startDate,
-        );
     }
 
     public function testSkipNoMeasures(): void
@@ -446,68 +407,6 @@ final class EudonetParisTransformerTest extends TestCase
         $result = new EudonetParisTransformerResult(null, $errors);
 
         $transformer = new EudonetParisTransformer();
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
-    }
-
-    public function testSkipInvalidStartDate(): void
-    {
-        $organization = $this->createMock(Organization::class);
-
-        $record = [
-            'fields' => [
-                EudonetParisExtractor::ARRETE_ID => '20230514-1',
-                EudonetParisExtractor::ARRETE_DATE_DEBUT => 'invalid',
-                EudonetParisExtractor::ARRETE_DATE_FIN => '2023/07/12 18:00:00',
-                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
-                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
-            ],
-            'measures' => ['...'],
-        ];
-
-        $transformer = new EudonetParisTransformer();
-        $result = new EudonetParisTransformerResult(
-            null,
-            [
-                [
-                    'loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'],
-                    'impact' => 'skip_regulation',
-                    'reason' => EudonetParisErrorEnum::PARSING_FAILED->value,
-                    'value' => 'invalid',
-                ],
-            ],
-        );
-
-        $this->assertEquals($result, $transformer->transform($record, $organization));
-    }
-
-    public function testSkipInvalidEndDate(): void
-    {
-        $organization = $this->createMock(Organization::class);
-
-        $record = [
-            'fields' => [
-                EudonetParisExtractor::ARRETE_ID => '20230514-1',
-                EudonetParisExtractor::ARRETE_DATE_DEBUT => '2023/07/12 18:00:00',
-                EudonetParisExtractor::ARRETE_DATE_FIN => 'invalid',
-                EudonetParisExtractor::ARRETE_TYPE => 'Temporaire',
-                EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE => str_repeat('a', 256),
-            ],
-            'measures' => ['...'],
-        ];
-
-        $transformer = new EudonetParisTransformer();
-        $result = new EudonetParisTransformerResult(
-            null,
-            [
-                [
-                    'loc' => ['fieldname' => 'ARRETE_DATE_FIN'],
-                    'impact' => 'skip_regulation',
-                    'reason' => EudonetParisErrorEnum::PARSING_FAILED->value,
-                    'value' => 'invalid',
-                ],
-            ],
-        );
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }

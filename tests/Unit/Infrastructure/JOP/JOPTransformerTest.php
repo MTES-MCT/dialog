@@ -96,8 +96,6 @@ final class JOPTransformerTest extends TestCase
         $generalInfoCommand->category = RegulationOrderCategoryEnum::EVENT->value;
         $generalInfoCommand->description = 'Description arrêté JOP';
         $generalInfoCommand->organization = $organization;
-        $generalInfoCommand->startDate = new \DateTimeImmutable('2024-09-08 05:30:00 Europe/Paris');
-        $generalInfoCommand->endDate = new \DateTimeImmutable('2024-09-12 11:00:00 Europe/Paris');
 
         $locationCommand1 = new SaveLocationCommand();
         $locationCommand1->roadType = RoadTypeEnum::RAW_GEOJSON->value;
