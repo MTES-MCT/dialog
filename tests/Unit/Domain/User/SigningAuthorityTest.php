@@ -18,7 +18,7 @@ final class SigningAuthorityTest extends TestCase
             uuid: '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
             name: 'Monsieur le maire de Savenay',
             address: '3 rue de la Concertation',
-            madeIn: 'Savenay',
+            placeOfSignature: 'Savenay',
             signatoryName: 'Monsieur X, Maire de Savenay',
             organization: $organization,
         );
@@ -26,7 +26,7 @@ final class SigningAuthorityTest extends TestCase
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $signatoryAuthority->getUuid());
         $this->assertSame($organization, $signatoryAuthority->getOrganization());
         $this->assertSame('Monsieur le maire de Savenay', $signatoryAuthority->getName());
-        $this->assertSame('Savenay', $signatoryAuthority->getMadeIn());
+        $this->assertSame('Savenay', $signatoryAuthority->getPlaceOfSignature());
         $this->assertSame('Monsieur X, Maire de Savenay', $signatoryAuthority->getSignatoryName());
         $this->assertSame('3 rue de la Concertation', $signatoryAuthority->getAddress());
     }
