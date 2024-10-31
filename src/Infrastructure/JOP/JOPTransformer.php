@@ -42,8 +42,6 @@ final readonly class JOPTransformer
         $generalInfoCommand->description = $this->translator->trans('jop.regulation_order.description');
 
         $measureCommands = [];
-        $startDates = [];
-        $endDates = [];
         $tz = new \DateTimeZone('Europe/Paris');
 
         // Many features share the same polygon geometry.
@@ -89,9 +87,6 @@ final readonly class JOPTransformer
                 $periodCommand->dailyRange = null;
                 $periodCommand->timeSlots = [];
 
-                $startDates[] = $startDate;
-                $endDates[] = $endDate;
-
                 $measureCommand->periods[] = $periodCommand;
             }
 
@@ -118,9 +113,6 @@ final readonly class JOPTransformer
 
             $measureCommands[] = $measureCommand;
         }
-
-        $generalInfoCommand->startDate = min($startDates);
-        $generalInfoCommand->endDate = max($endDates);
 
         return new ImportJOPRegulationCommand($generalInfoCommand, $measureCommands);
     }

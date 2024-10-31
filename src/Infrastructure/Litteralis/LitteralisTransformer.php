@@ -65,7 +65,6 @@ final readonly class LitteralisTransformer
         $this->setCategory($generalInfoCommand, $properties);
         $generalInfoCommand->description = $this->buildDescription($properties);
         $generalInfoCommand->organization = $organization;
-        $this->setRegulationDates($generalInfoCommand, $properties, $reporter);
 
         // (2) Parsing des mesures et leur contenu
 
@@ -161,38 +160,6 @@ final readonly class LitteralisTransformer
         }
 
         return $parameters;
-    }
-
-    private function setRegulationDates(SaveRegulationGeneralInfoCommand $command, array $properties, Reporter $reporter): void
-    {
-        $startDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties['arretedebut']);
-
-        if ($startDate) {
-            $command->startDate = $startDate;
-        } else {
-            $reporter->addError(LitteralisRecordEnum::ERROR_REGULATION_START_DATE_PARSING_FAILED->value, [
-                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
-                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                'arretedebut' => $properties['arretedebut'],
-            ]);
-        }
-
-        if ($properties['arretefin'] === null) {
-            // It's a temporary regulation
-            return;
-        }
-
-        $endDate = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ISO8601, $properties['arretefin']);
-
-        if ($endDate) {
-            $command->endDate = $endDate;
-        } else {
-            $reporter->addError(LitteralisRecordEnum::ERROR_REGULATION_END_DATE_PARSING_FAILED->value, [
-                CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
-                CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                'arretefin' => $properties['arretefin'],
-            ]);
-        }
     }
 
     private function parseLocation(array $feature): SaveLocationCommand

@@ -51,21 +51,6 @@
                 <option name="max">255</option>
             </constraint>
         </property>
-        <property name="startDate">
-            <constraint name="NotBlank">
-                <option name="groups">
-                    <value>html_form</value>
-                </option>
-            </constraint>
-            <constraint name="Type">
-                <option name="type">\DateTimeInterface</option>
-            </constraint>
-        </property>
-        <property name="endDate">
-            <constraint name="Type">
-                <option name="type">\DateTimeInterface</option>
-            </constraint>
-        </property>
         <property name="additionalVisas">
             <constraint name="All">
                 <option name="constraints">

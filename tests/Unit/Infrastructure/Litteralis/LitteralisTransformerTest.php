@@ -70,8 +70,6 @@ final class LitteralisTransformerTest extends TestCase
         $generalInfo->identifier = $identifier;
         $generalInfo->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $generalInfo->description = "de chargement d'engin de chantier (URL : https://dl.sogelink.fr/?0dbjHha7)";
-        $generalInfo->startDate = new \DateTimeImmutable('2024-03-18T01:00:00Z');
-        $generalInfo->endDate = new \DateTimeImmutable('2024-03-19T01:00:00Z');
         $generalInfo->organization = $this->organization;
 
         $measureCommands = [];
@@ -282,24 +280,6 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertNull($command);
         $this->assertTrue($this->reporter->hasNewErrors());
         $this->assertEquals([
-            [
-                RecordTypeEnum::ERROR->value,
-                [
-                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_REGULATION_START_DATE_PARSING_FAILED->value,
-                    CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
-                    CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'arretedebut' => 'BAD FORMAT',
-                ],
-            ],
-            [
-                RecordTypeEnum::ERROR->value,
-                [
-                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_REGULATION_END_DATE_PARSING_FAILED->value,
-                    CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
-                    CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'arretefin' => 'BAD FORMAT',
-                ],
-            ],
             [
                 RecordTypeEnum::ERROR->value,
                 [

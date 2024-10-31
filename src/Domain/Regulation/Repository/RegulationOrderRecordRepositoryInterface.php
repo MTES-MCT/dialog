@@ -26,6 +26,8 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findRegulationOrdersForDatexFormat(): array;
 
+    public function getOverallDatesByRegulationUuids(array $uuids): array;
+
     public function findRegulationOrdersForCifsIncidentFormat(
         array $allowedSources = [],
         array $excludedIdentifiers = [],

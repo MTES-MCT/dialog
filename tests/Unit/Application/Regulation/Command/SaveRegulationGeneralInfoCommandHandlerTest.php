@@ -42,8 +42,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     public function testCreate(): void
     {
         $now = new \DateTimeImmutable('2022-01-09');
-        $start = new \DateTimeImmutable('2023-03-13');
-        $end = new \DateTimeImmutable('2023-03-15');
 
         $this->idFactory
             ->expects(self::exactly(2))
@@ -66,8 +64,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                         identifier: 'FO2/2023',
                         category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
                         description: 'Interdiction de circuler',
-                        startDate: $start,
-                        endDate: $end,
                     ),
                 ),
             )
@@ -106,8 +102,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->identifier = 'FO2/2023';
         $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $command->description = 'Interdiction de circuler';
-        $command->startDate = $start;
-        $command->endDate = $end;
         $command->organization = $this->organization;
 
         $result = $handler($command);
@@ -118,8 +112,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     public function testUpdate(): void
     {
         $now = new \DateTimeImmutable('2022-01-09');
-        $start = new \DateTimeImmutable('2023-03-13');
-        $end = new \DateTimeImmutable('2023-03-15');
         $organization = $this->createMock(Organization::class);
 
         $this->idFactory
@@ -153,8 +145,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                 'FO2/2030',
                 RegulationOrderCategoryEnum::OTHER->value,
                 'Interdiction de circuler',
-                new \DateTimeImmutable('2023-03-13'),
-                new \DateTimeImmutable('2023-03-15'),
                 'Trou en formation',
                 [],
                 [],
@@ -184,8 +174,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->organization = $organization;
         $command->category = RegulationOrderCategoryEnum::OTHER->value;
         $command->description = 'Interdiction de circuler';
-        $command->startDate = $start;
-        $command->endDate = $end;
         $command->otherCategoryText = 'Trou en formation';
         $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 

@@ -101,12 +101,22 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
     public function testDeletePeriod(): void
     {
+        function ensureRegularSpaces(string $text): string
+        {
+            // Period text may contain non-breaking spaces
+            // Credit: https://stackoverflow.com/a/62082195
+            return preg_replace('/\s+/u', ' ', $text);
+        }
+
         $client = $this->login();
 
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL);
-        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $crawler->filter('li')->eq(1)->text());
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_CIFS . '/measure/' . MeasureFixture::UUID_CIFS);
+        $this->assertSame(
+            'du 05/06/2023 à 00h00 au 10/06/2023 à 23h59, du lundi au dimanche (19h00-23h00) du 02/06/2023 à 00h00 au 06/06/2023 à 23h59, le mardi (13h00-15h00 et 20h00-22h00) du 03/06/2023 à 09h00 au 05/06/2023 à 11h00, le mardi et le jeudi (09h00-11h00)',
+            ensureRegularSpaces($crawler->filter('li')->eq(1)->text()),
+        );
 
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_CIFS . '/measure/' . MeasureFixture::UUID_CIFS . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $saveButton = $crawler->selectButton('Valider');
@@ -114,15 +124,19 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['periods'] = []; // Remove period
+        unset($values['measure_form']['periods'][0]); // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
-        $this->assertSame('tous les jours', $crawler->filter('li')->eq(1)->text());
+        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_CIFS]);
+        $this->assertSame(
+            // 09/06/2023 comes from DateUtilsMock
+            'du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le mardi (13h00-15h00 et 20h00-22h00) du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le mardi et le jeudi (09h00-11h00)',
+            ensureRegularSpaces($crawler->filter('li')->eq(1)->text()),
+        );
     }
 
     public function testRemoveDailyRange(): void

@@ -28,7 +28,7 @@
                     {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
                     {{ form_row(form.startTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
                 </div>
-                {% if not isPermanent %}
+                {% if not form.isPermanent.vars.value %}
                     <div class="fr-grid-row fr-grid-row--gutters">
                         {{ form_row(form.endDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 '}, attr: {class: 'fr-input'}}) }}
                         {{ form_row(form.endTime, {group_class: 'fr-input-group', row_attr: {class: 'fr-col fr-mb-3w fr-col-md-6 fr-mt-1w'} }) }}
@@ -563,6 +563,7 @@
                             >
                                 {{ 'regulation.period.add'|trans }}
                             </button>
+                            {{ form_errors(form.periods) }}
                         </div>
                     </div>
                 </div>

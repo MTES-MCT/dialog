@@ -192,6 +192,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
@@ -221,6 +224,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'houseNumber';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -251,6 +257,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'houseNumber';
         $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = '15';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-31';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '23';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '59';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -280,6 +292,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = '15';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'intersection';
         $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = '';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-31';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '23';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '59';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -308,6 +326,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '999'; // Mock will return no result
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -336,6 +357,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '80';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '44'; // Not on same section than 80
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -367,6 +391,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
         $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -402,6 +429,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'D';
         $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -433,6 +463,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
         $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100000000;
         $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 650;
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -464,6 +497,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['numberedRoad']['toSide'] = 'U';
         $values['measure_form']['locations'][0]['numberedRoad']['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['numberedRoad']['toAbscissa'] = 100000000;
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -501,6 +537,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
         $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Village olympique';
         $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"type": "Point", "coordinates": [42, 4]}';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-31';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '23';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '59';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 

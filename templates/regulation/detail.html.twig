@@ -1,6 +1,6 @@
 {% extends 'layouts/layout.html.twig' %}
 
-{% set title = (generalInfo.endDate ? 'regulation.temporary' : 'regulation.permanent')|trans ~ ' ' ~ generalInfo.identifier  %}
+{% set title = (isPermanent ? 'regulation.permanent' : 'regulation.temporary')|trans ~ ' ' ~ generalInfo.identifier  %}
 
 {% block title %}
     {{ title }}

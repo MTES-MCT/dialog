@@ -7,9 +7,11 @@ namespace App\Infrastructure\EudonetParis;
 use App\Application\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -33,7 +35,7 @@ final class EudonetParisTransformer
             return new EudonetParisTransformerResult(null, $errors);
         }
 
-        [$generalInfoCommand, $error] = $this->buildGeneralInfoCommand($row, $organization);
+        [$generalInfoCommand, $regulationPeriodCommand, $error] = $this->buildGeneralInfoCommand($row, $organization);
 
         if ($error) {
             $errors[] = ['loc' => [...$loc, ...$error['loc']], 'impact' => 'skip_regulation', ...$error];
@@ -44,7 +46,7 @@ final class EudonetParisTransformer
         $measureCommands = [];
 
         foreach ($row['measures'] as $measureRow) {
-            [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow);
+            [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow, $regulationPeriodCommand);
 
             if (empty($measureCommand)) {
                 $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value, 'errors' => $measureErrors];
@@ -98,30 +100,37 @@ final class EudonetParisTransformer
 
         $command->organization = $organization;
 
+        $regulationPeriodCommand = new SavePeriodCommand();
+        $regulationPeriodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $regulationPeriodCommand->dailyRange = null;
+        $regulationPeriodCommand->timeSlots = [];
+
         $startDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]);
 
         if (!$startDate) {
             $error = ['loc' => ['fieldname' => 'ARRETE_DATE_DEBUT'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_DEBUT]];
 
-            return [null, $error];
+            return [null, null, $error];
         }
 
-        $command->startDate = $startDate;
+        $regulationPeriodCommand->startDate = $startDate;
+        $regulationPeriodCommand->startTime = $startDate;
 
         $endDate = $this->parseDate($row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]);
 
         if (!$endDate) {
             $error = ['loc' => ['fieldname' => 'ARRETE_DATE_FIN'], 'reason' => EudonetParisErrorEnum::PARSING_FAILED->value, 'value' => $row['fields'][EudonetParisExtractor::ARRETE_DATE_FIN]];
 
-            return [null, $error];
+            return [null, null, $error];
         }
 
-        $command->endDate = $endDate;
+        $regulationPeriodCommand->endDate = $endDate;
+        $regulationPeriodCommand->endTime = $endDate;
 
-        return [$command, null];
+        return [$command, $regulationPeriodCommand, null];
     }
 
-    private function buildMeasureCommand(array $row): array
+    private function buildMeasureCommand(array $row, SavePeriodCommand $regulationPeriodCommand): array
     {
         $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
         $errors = [];
@@ -158,6 +167,7 @@ final class EudonetParisTransformer
         $command->type = MeasureTypeEnum::NO_ENTRY->value;
         $command->vehicleSet = $vehicleSet;
         $command->locations = $locationCommands;
+        $command->periods[] = $regulationPeriodCommand;
 
         return [$command, null];
     }

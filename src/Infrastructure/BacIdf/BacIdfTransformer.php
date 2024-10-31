@@ -68,7 +68,7 @@ final class BacIdfTransformer
             ]);
         }
 
-        $generalInfo->startDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
+        $overallStartDate = new \DateTimeImmutable($date); // $date already contains the timezone (UTC)
 
         $inseeCode = $row['ARR_COMMUNE']['ARR_INSEE'];
         $siret = $this->cityProcessor->getSiretFromInseeCode($inseeCode);
@@ -150,7 +150,7 @@ final class BacIdfTransformer
                 continue;
             }
 
-            $periodCommands = $this->parsePeriods($circReg, startDate: $generalInfo->startDate);
+            $periodCommands = $this->parsePeriods($circReg, startDate: $overallStartDate);
 
             foreach ($periodCommands as $periodCommand) {
                 $measureCommand->periods[] = $periodCommand;
@@ -421,25 +421,25 @@ final class BacIdfTransformer
         $periodCommands = [];
 
         foreach ($circReg['PERIODE_JH'] as $periodItem) {
-            $heureDeb = \array_key_exists('HEURE_DEB', $periodItem) ? $periodItem['HEURE_DEB'] : null;
-            $heureFin = \array_key_exists('HEURE_FIN', $periodItem) ? $periodItem['HEURE_FIN'] : null;
-
-            $isEveryDay = $periodItem['JOUR'] === [1, 2, 3, 4, 5, 6, 0];
-
-            if ($isEveryDay && !$heureDeb && !$heureFin) {
-                return [];
-            }
-
-            if ($isEveryDay && $heureDeb === '00:00' && $heureFin === '23:59') {
-                return [];
-            }
-
             $periodCommand = new SavePeriodCommand();
             $periodCommand->isPermanent = true;
             $periodCommand->startDate = $startDate;
             $periodCommand->startTime = $startDate;
             $periodCommand->endDate = null;
             $periodCommand->endTime = null;
+
+            $startHour = \array_key_exists('HEURE_DEB', $periodItem) ? $periodItem['HEURE_DEB'] : null;
+            $endHour = \array_key_exists('HEURE_FIN', $periodItem) ? $periodItem['HEURE_FIN'] : null;
+
+            $isEveryDay = $periodItem['JOUR'] === [1, 2, 3, 4, 5, 6, 0];
+
+            if ($isEveryDay && ((!$startHour && !$endHour) || ($startHour === '00:00' && $endHour === '23:59'))) {
+                $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+                $periodCommand->dailyRange = null;
+                $periodCommand->timeSlots = [];
+
+                return [$periodCommand];
+            }
 
             $days = $periodItem['JOUR'];
 
@@ -467,10 +467,10 @@ final class BacIdfTransformer
 
             $timeSlotCommands = [];
 
-            if ($heureDeb !== '00:00' && $heureFin !== '23:59') {
+            if ($startHour !== '00:00' && $endHour !== '23:59') {
                 $timeSlotCommand = new SaveTimeSlotCommand();
-                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $heureDeb, new \DateTimeZone('Europe/Paris'));
-                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $heureFin, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $startHour, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $endHour, new \DateTimeZone('Europe/Paris'));
                 $timeSlotCommands[] = $timeSlotCommand;
             }
 

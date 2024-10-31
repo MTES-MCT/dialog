@@ -63,8 +63,6 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->identifier = '15.248-circ';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfoCommand->description = 'Circulation passage Pierre Curie';
-        $generalInfoCommand->startDate = new \DateTimeImmutable('2015-08-17 00:00');
-        $generalInfoCommand->endDate = null;
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
@@ -102,6 +100,15 @@ final class BacIdfTransformerTest extends TestCase
         $vehicleSet->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value];
         $vehicleSet->otherExemptedTypeText = "Véhicules de déménagement justifiant d'une dérogation, véhicules de services";
         $measureCommand->vehicleSet = $vehicleSet;
+        $periodCommand = new SavePeriodCommand();
+        $periodCommand->isPermanent = true;
+        $periodCommand->startDate = new \DateTimeImmutable('2015-08-17T00:00:00Z');
+        $periodCommand->startTime = new \DateTimeImmutable('2015-08-17T00:00:00Z');
+        $periodCommand->endDate = null;
+        $periodCommand->endTime = null;
+        $periodCommand->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $periodCommand->timeSlots = [];
+        $measureCommand->periods[] = $periodCommand;
 
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
@@ -175,8 +182,6 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfoCommand->description = 'nom_1';
-        $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
-        $generalInfoCommand->endDate = null;
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
@@ -589,8 +594,6 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         $generalInfoCommand->description = 'nom_1';
-        $generalInfoCommand->startDate = new \DateTimeImmutable('2024-02-06 17:25:00');
-        $generalInfoCommand->endDate = null;
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
@@ -828,18 +831,33 @@ final class BacIdfTransformerTest extends TestCase
 
     private function provideTransformPeriods(): \Iterator
     {
+        $periodCommand0 = new SavePeriodCommand();
+        $periodCommand0->isPermanent = true;
+        $periodCommand0->startDate = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand0->startTime = new \DateTimeImmutable('2024-02-06T17:25:00Z');
+        $periodCommand0->endDate = null;
+        $periodCommand0->endTime = null;
+        $periodCommand0->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $periodCommand0->timeSlots = [];
+
         yield [
             [
                 [
                     'JOUR' => [1, 2, 3, 4, 5, 6, 0],
                 ],
+            ],
+            [$periodCommand0],
+        ];
+
+        yield [
+            [
                 [
                     'JOUR' => [1, 2, 3, 4, 5, 6, 0],
                     'HEURE_DEB' => '00:00',
                     'HEURE_FIN' => '23:59',
                 ],
             ],
-            [],
+            [$periodCommand0],
         ];
 
         $periodCommand1 = new SavePeriodCommand();
