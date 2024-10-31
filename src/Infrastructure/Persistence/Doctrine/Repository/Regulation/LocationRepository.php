@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -47,6 +48,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
+        ?\DateTimeInterface $startDate = null,
+        ?\DateTimeInterface $endDate = null,
     ): string {
         $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
         $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
@@ -59,21 +62,47 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
-        $regulationTypeWhereClause =
-            $permanentOnly
-            ? 'AND ro.end_date IS NULL'
-            : ($temporaryOnly
-                ? 'AND ro.end_date IS NOT NULL'
-                : '');
+        $parameters = [
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'measureTypes' => $measureTypes,
+        ];
 
-        $parameters = ['status' => RegulationOrderRecordStatusEnum::PUBLISHED->value];
-        $regulationTypeCondition = '';
-        $types = [];
+        $regulationTypeWhereClause = '';
 
-        if ($measureTypes) {
-            $regulationTypeCondition = 'AND m.type IN (:measureTypes)';
-            $parameters['measureTypes'] = $measureTypes;
-            $types['measureTypes'] = ArrayParameterType::STRING;
+        if ($permanentOnly) {
+            $regulationTypeWhereClause = 'AND ro.category = :permanentCategory';
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        } elseif ($temporaryOnly) {
+            $regulationTypeWhereClause = 'AND ro.category <> :permanentCategory';
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        }
+
+        $types = [
+            'measureTypes' => ArrayParameterType::STRING,
+        ];
+
+        $measureDatesCondition = '';
+
+        if ($startDate || $endDate) {
+            if ($startDate && $endDate && $startDate > $endDate) {
+                // Renvoie un résultat vide pour éviter une erreur dans le cas où la date de fin est avant la date de début
+                $measureDatesCondition = 'AND FALSE';
+            } else {
+                // Principe : on garde une localisation si l'intervalle défini par les dates des périodes
+                // intersecte au moins partiellement l'intervalle défini par les filtres.
+                // En PostgreSQL, daterange permet de représenter un intervalle de date.
+                // https://www.postgresql.org/docs/13/rangetypes.html
+                // NB : si l'arrêté n'a pas encore de période, EXISTS renverra FALSE, donc on ne retiendra pas ses localisations, comme attendu.
+                $measureDatesCondition = 'AND EXISTS (
+                    SELECT 1
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                    AND daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(p.start_datetime::date, p.end_datetime::date)
+                )';
+
+                $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
+                $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
+            }
         }
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
@@ -91,11 +120,12 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
                 WHERE roc.status = :status
                 AND l.geometry IS NOT NULL
+                AND m.type IN (:measureTypes)
                 %s
                 %s
                 ',
                 $regulationTypeWhereClause,
-                $regulationTypeCondition,
+                $measureDatesCondition,
             ),
             $parameters,
             $types,

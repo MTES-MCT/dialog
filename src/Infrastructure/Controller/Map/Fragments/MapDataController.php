@@ -47,6 +47,8 @@ final class MapDataController
             $dto->displayPermanentRegulations,
             $dto->displayTemporaryRegulations,
             $dto->measureTypes,
+            $dto->startDate,
+            $dto->endDate,
         );
 
         return new Response(
