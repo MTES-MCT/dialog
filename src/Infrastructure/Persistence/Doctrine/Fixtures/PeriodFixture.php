@@ -134,7 +134,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $litteralisPeriod = new Period(
             uuid: '0671628e-04f8-7c89-8000-43928d1376ba',
             measure: $this->getReference('litteralisMeasure'),
-            startDateTime: new \DateTimeImmutable('2023-06-03 00:00:00', $tz),
+            startDateTime: new \DateTimeImmutable('2023-07-03 00:00:00', $tz),
             endDateTime: new \DateTimeImmutable('2023-11-10 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
         );

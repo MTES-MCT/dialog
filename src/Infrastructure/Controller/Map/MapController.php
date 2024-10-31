@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Map;
 
+use App\Application\DateUtilsInterface;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -18,6 +19,7 @@ final class MapController
         private \Twig\Environment $twig,
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -28,7 +30,7 @@ final class MapController
     )]
     public function __invoke(Request $request): Response
     {
-        $dto = new MapFilterDTO();
+        $dto = new MapFilterDTO($this->dateUtils->getNow());
         $form = $this->formFactory->create(
             type: MapFilterFormType::class,
             data: $dto,

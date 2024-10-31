@@ -8,11 +8,17 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 final class MapFilterFormType extends AbstractType
 {
+    public function __construct(
+        private string $clientTimezone,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -36,6 +42,28 @@ final class MapFilterFormType extends AbstractType
                 options: [
                     'label' => 'map.filter.temporaries',
                     'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'startDate',
+                DateType::class,
+                options: [
+                    'label' => 'map.filter.start_date',
+                    'help' => 'map.filter.start_date.help',
+                    'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'endDate',
+                DateType::class,
+                options: [
+                    'label' => 'map.filter.end_date',
+                    'help' => 'map.filter.end_date.help',
+                    'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
                     'required' => false,
                 ],
             )
