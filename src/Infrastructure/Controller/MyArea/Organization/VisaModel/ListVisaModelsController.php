@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\MyArea\Organization\VisaModel;
 
+use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Query\GetVisaModelsQuery;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;

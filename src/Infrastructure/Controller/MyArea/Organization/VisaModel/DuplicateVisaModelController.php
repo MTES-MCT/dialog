@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\MyArea\Organization\VisaModel;
 
 use App\Application\CommandBusInterface;
+use App\Application\Organization\VisaModel\Command\DuplicateVisaModelCommand;
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Command\DuplicateVisaModelCommand;
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;

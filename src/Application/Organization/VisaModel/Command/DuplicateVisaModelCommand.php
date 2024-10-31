@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\VisaModel\Command;
+namespace App\Application\Organization\VisaModel\Command;
 
 use App\Application\CommandInterface;
 use App\Domain\User\Organization;
