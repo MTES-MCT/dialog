@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\VisaModel\Command;
 
 use App\Application\IdFactoryInterface;
-use App\Application\VisaModel\Command\SaveVisaModelCommand;
-use App\Application\VisaModel\Command\SaveVisaModelCommandHandler;
+use App\Application\Organization\VisaModel\Command\SaveVisaModelCommand;
+use App\Application\Organization\VisaModel\Command\SaveVisaModelCommandHandler;
+use App\Domain\Organization\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
-use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

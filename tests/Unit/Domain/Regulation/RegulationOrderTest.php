@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation;
 
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
-use App\Domain\VisaModel\VisaModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 

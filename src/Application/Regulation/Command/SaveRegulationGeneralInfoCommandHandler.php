@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\IdFactoryInterface;
+use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
-use App\Application\VisaModel\Query\GetVisaModelQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;

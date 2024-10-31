@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Application\VisaModel\Command;
+namespace App\Application\Organization\VisaModel\Command;
 
-use App\Domain\VisaModel\Exception\VisaModelCannotBeDeletedException;
-use App\Domain\VisaModel\Exception\VisaModelNotFoundException;
-use App\Domain\VisaModel\Repository\VisaModelRepositoryInterface;
-use App\Domain\VisaModel\VisaModel;
+use App\Domain\Organization\VisaModel\Exception\VisaModelCannotBeDeletedException;
+use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\VisaModel\Repository\VisaModelRepositoryInterface;
+use App\Domain\Organization\VisaModel\VisaModel;
 
 final class DeleteVisaModelCommandHandler
 {

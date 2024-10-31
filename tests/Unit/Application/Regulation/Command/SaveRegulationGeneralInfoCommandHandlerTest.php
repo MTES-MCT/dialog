@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\IdFactoryInterface;
+use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
-use App\Application\VisaModel\Query\GetVisaModelQuery;
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -17,7 +18,6 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
-use App\Domain\VisaModel\VisaModel;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase

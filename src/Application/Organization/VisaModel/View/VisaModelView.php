@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\VisaModel\View;
+namespace App\Application\Organization\VisaModel\View;
 
 final readonly class VisaModelView
 {

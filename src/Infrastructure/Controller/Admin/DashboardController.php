@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Admin;
 
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\User\AccessRequest;
 use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\User;
-use App\Domain\VisaModel\VisaModel;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;

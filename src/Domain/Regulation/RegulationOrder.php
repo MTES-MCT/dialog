@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
+use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
-use App\Domain\VisaModel\VisaModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 

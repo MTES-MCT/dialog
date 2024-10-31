@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Admin;
 
 use App\Application\IdFactoryInterface;
-use App\Domain\VisaModel\VisaModel;
+use App\Domain\Organization\VisaModel\VisaModel;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
