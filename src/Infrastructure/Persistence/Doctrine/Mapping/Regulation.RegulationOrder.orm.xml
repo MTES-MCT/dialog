@@ -3,16 +3,11 @@
   <entity
     name="App\Domain\Regulation\RegulationOrder"
     table="regulation_order">
-    <indexes>
-        <index columns="end_date"/>
-    </indexes>
     <id name="uuid" type="guid" column="uuid"/>
     <field name="identifier" type="string" column="identifier" length="60" nullable="false"/>
     <field name="category" type="string" column="category" length="50" nullable="false"/>
     <field name="otherCategoryText" type="string" column="other_category_text" length="100" nullable="true"/>
     <field name="description" type="text" column="description" nullable="false"/>
-    <field name="startDate" type="datetimetz" column="start_date" nullable="true"/>
-    <field name="endDate" type="datetimetz" column="end_date" nullable="true"/>
     <field name="additionalVisas" type="array" nullable="true"/>
     <field name="additionalReasons" type="array" nullable="true"/>
     <one-to-many field="measures" target-entity="App\Domain\Regulation\Measure" mapped-by="regulationOrder"/>

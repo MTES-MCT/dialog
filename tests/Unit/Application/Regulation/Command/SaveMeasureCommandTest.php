@@ -27,7 +27,7 @@ final class SaveMeasureCommandTest extends TestCase
         $this->assertEmpty($command->type);
         $this->assertSame($regulationOrder, $command->regulationOrder);
         $this->assertEquals([new SaveLocationCommand()], $command->locations);
-        $this->assertEmpty($command->periods);
+        $this->assertEquals([new SavePeriodCommand()], $command->periods);
     }
 
     public function testCreateWithMeasure(): void

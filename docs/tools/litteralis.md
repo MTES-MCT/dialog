@@ -38,7 +38,7 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
 
     L'exécution prendra plusieurs minutes. Les logs d'exécution seront ajoutés au dossier `logs/litteralis/`. En cas d'exception la commande échouera. Un rapport final "pretty print" est affiché.
 
-**Pour le dev local** : remplir `.env.local` au lieu de `.env.prod`, sauter es étapes 3 et 4 (utiliser votre DB locale), et ne pas inclure le flag `--env=prod`.
+**Pour le dev local** : remplir `.env.local` au lieu de `.env.prod`, sauter les étapes 3 et 4 (utiliser votre DB locale), et ne pas inclure le flag `--env=prod`.
 
 ## Déploiement périodique automatique
 

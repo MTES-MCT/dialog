@@ -53,8 +53,6 @@ final class DuplicateRegulationCommandHandler
         $generalInfo->organization = $organization;
         $generalInfo->identifier = $identifier;
         $generalInfo->description = $originalRegulationOrder->getDescription();
-        $generalInfo->startDate = $originalRegulationOrder->getStartDate();
-        $generalInfo->endDate = $originalRegulationOrder->getEndDate();
         $generalInfo->additionalVisas = $originalRegulationOrder->getAdditionalVisas() ?? [];
         $generalInfo->additionalReasons = $originalRegulationOrder->getAdditionalReasons() ?? [];
         $generalInfo->visaModelUuid = $originalRegulationOrder->getVisaModel()?->getUuid();
