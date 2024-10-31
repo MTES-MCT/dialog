@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Organization\SigningAuthority\Command\SaveSigningAuthorityCommand">
+        <property name="name">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="max">100</option>
+            </constraint>
+        </property>
+        <property name="placeOfSignature">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="max">100</option>
+            </constraint>
+        </property>
+        <property name="signatoryName">
+            <constraint name="NotBlank"/>
+            <constraint name="Length">
+                <option name="max">100</option>
+            </constraint>
+        </property>
+        <property name="address">
+            <constraint name="NotBlank"/>
+        </property>
+    </class>
+</constraint-mapping>
