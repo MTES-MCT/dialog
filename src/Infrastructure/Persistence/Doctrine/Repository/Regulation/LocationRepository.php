@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -61,18 +62,21 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ]); // we return no regulations
         }
 
-        $regulationTypeWhereClause = '';
-
-        if ($permanentOnly) {
-            $regulationTypeWhereClause = 'AND ro.end_date IS NULL';
-        } elseif ($temporaryOnly) {
-            $regulationTypeWhereClause = 'AND ro.end_date IS NOT NULL';
-        }
-
         $parameters = [
             'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             'measureTypes' => $measureTypes,
         ];
+
+        $regulationTypeWhereClause = '';
+
+        if ($permanentOnly) {
+            $regulationTypeWhereClause = 'AND ro.category = :permanentCategory';
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        } elseif ($temporaryOnly) {
+            $regulationTypeWhereClause = 'AND ro.category <> :permanentCategory';
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        }
+
         $types = [
             'measureTypes' => ArrayParameterType::STRING,
         ];
@@ -84,29 +88,17 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 // Renvoie un résultat vide pour éviter une erreur dans le cas où la date de fin est avant la date de début
                 $measureDatesCondition = 'AND FALSE';
             } else {
-                // Principe : on garde une localisation si l'intervalle défini apr ses dates (provenant des périodes ou de l'arrêté)
-                // intersecte au moins partiellement l'intervalle défini par les filters de dates
-                // En PostgreSQL, daterange permet de représenter un intervalle de date
+                // Principe : on garde une localisation si l'intervalle défini par les dates des périodes
+                // intersecte au moins partiellement l'intervalle défini par les filtres.
+                // En PostgreSQL, daterange permet de représenter un intervalle de date.
                 // https://www.postgresql.org/docs/13/rangetypes.html
-                $measureDatesCondition = 'AND CASE 
-                    WHEN EXISTS (
-                        -- On verifie que la mesure possède au moins une période
-                        SELECT 1
-                        FROM period AS p
-                        WHERE p.measure_uuid = m.uuid 
-                    )
-                    THEN EXISTS (
-                        -- Si oui on compare les dates du filtre avec les dates des périodes
-                        SELECT 1
-                        FROM period AS p
-                        WHERE p.measure_uuid = m.uuid 
-                        AND daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(p.start_datetime::date, p.end_datetime::date)
-                    )
-                    ELSE (
-                        -- La mesure ne possède pas de période, on compare les dates du filtre avec les dates de l arrêté 
-                        daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(ro.start_date::date, ro.end_date::date)
-                    )
-                    END';
+                // NB : si l'arrêté n'a pas encore de période, EXISTS renverra FALSE, donc on ne retiendra pas ses localisations, comme attendu.
+                $measureDatesCondition = 'AND EXISTS (
+                    SELECT 1
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid 
+                    AND daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(p.start_datetime::date, p.end_datetime::date)
+                )';
 
                 $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
                 $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);

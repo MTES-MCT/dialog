@@ -39,11 +39,11 @@ customElements.define('d-map-form', class extends HTMLElement {
     #setUrlFromFormValues() {
         const formData = new FormData(this.#form);
         const searchParams = new URLSearchParams();
-    
+
         for (const [key, value] of formData.entries()) {
             searchParams.append(key, value.toString());
         }
-    
+
         const url = this.#form.action + '?' + searchParams.toString();
 
         this.#map.setAttribute(this.#urlAttribute, url);

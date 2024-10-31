@@ -36,62 +36,54 @@ final class MapDataControllerTest extends AbstractWebTestCase
                 'queryString' => '&map_filter_form[startDate]=2018-12-10&map_filter_form[endDate]=2018-12-10',
                 'locationUuids' => [],
             ],
-            // Test on cifsPeriod2 (2023-09-03 -> 2023-09-06)
-            // and litteralisRegulationOrder (2023-06-03 -> 2023-11-10, no periods)
+            // Test on cifsPeriod2 (2023-06-02 -> 2023-06-06)
             'interval-start-exact' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-01&map_filter_form[endDate]=2023-09-03',
+                'queryString' => '&map_filter_form[startDate]=2023-06-01&map_filter_form[endDate]=2023-06-02',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'interval-start-cover' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-01&map_filter_form[endDate]=2023-09-04',
+                'queryString' => '&map_filter_form[startDate]=2023-06-01&map_filter_form[endDate]=2023-06-03',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'interval-cover' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-01&map_filter_form[endDate]=2023-09-08',
+                'queryString' => '&map_filter_form[startDate]=2023-06-01&map_filter_form[endDate]=2023-06-08',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'interval-exact' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-03&map_filter_form[endDate]=2023-09-06',
+                'queryString' => '&map_filter_form[startDate]=2023-06-02&map_filter_form[endDate]=2023-06-06',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'interval-contained' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-04&map_filter_form[endDate]=2023-09-05',
+                'queryString' => '&map_filter_form[startDate]=2023-06-03&map_filter_form[endDate]=2023-06-05',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'interval-end-cover' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-04&map_filter_form[endDate]=2023-09-08',
+                'queryString' => '&map_filter_form[startDate]=2023-06-04&map_filter_form[endDate]=2023-06-08',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'interval-end-exact' => [
-                'queryString' => '&map_filter_form[startDate]=2023-09-06&map_filter_form[endDate]=2023-09-08',
+                'queryString' => '&map_filter_form[startDate]=2023-06-06&map_filter_form[endDate]=2023-06-08',
                 'locationUuids' => [
                     LocationFixture::UUID_CIFS_NAMED_STREET,
                     LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD,
-                    LocationFixture::UUID_LITTERALIS,
                 ],
             ],
             'start-only' => [
