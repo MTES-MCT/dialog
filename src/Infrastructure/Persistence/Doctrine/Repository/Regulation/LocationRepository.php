@@ -67,6 +67,10 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             'measureTypes' => $measureTypes,
         ];
 
+        $types = [
+            'measureTypes' => ArrayParameterType::STRING,
+        ];
+
         $regulationTypeWhereClause = '';
 
         if ($permanentOnly) {
@@ -76,10 +80,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $regulationTypeWhereClause = 'AND ro.category <> :permanentCategory';
             $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         }
-
-        $types = [
-            'measureTypes' => ArrayParameterType::STRING,
-        ];
 
         $measureDatesCondition = '';
 
@@ -107,13 +107,17 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
-                'SELECT ST_AsGeoJSON(
-                    ST_SimplifyPreserveTopology(
-                        l.geometry,
-                        -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
-                        3 * 0.00001
-                    )
-                ) AS geometry, m.type AS measure_type, l.uuid AS location_uuid
+                'SELECT
+                    ST_AsGeoJSON(
+                        ST_SimplifyPreserveTopology(
+                            l.geometry,
+                            -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
+                            3 * 0.00001
+                        )
+                    ) AS geometry,
+                    m.type AS measure_type,
+                    l.uuid AS location_uuid,
+                    ro.category AS regulation_category
                 FROM location AS l
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
@@ -140,6 +144,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 'properties' => [
                     'location_uuid' => $row['location_uuid'],
                     'measure_type' => $row['measure_type'],
+                    'regulation_category' => $row['regulation_category'],
                 ],
             ];
         }

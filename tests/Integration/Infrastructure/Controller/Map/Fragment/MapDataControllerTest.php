@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Map\Fragment;
 
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -26,6 +27,25 @@ final class MapDataControllerTest extends AbstractWebTestCase
 
         foreach ($dataArray['features'] as $feature) {
             $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $feature['properties']['measure_type']);
+        }
+    }
+
+    public function testRegulationTypeFilterTemporaryOnly(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayTemporaryRegulations]=yes');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $jsonData = $client->getResponse()->getContent();
+        $dataArray = json_decode($jsonData, true);
+
+        $this->assertCount(8, $dataArray['features']);
+
+        foreach ($dataArray['features'] as $feature) {
+            $this->assertNotSame(RegulationOrderCategoryEnum::PERMANENT_REGULATION->value, $feature['properties']['regulation_category']);
         }
     }
 
