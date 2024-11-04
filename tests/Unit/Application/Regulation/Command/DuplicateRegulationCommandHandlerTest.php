@@ -283,7 +283,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
         $this->originalRegulationOrder
             ->expects(self::once())
             ->method('getAdditionalVisas')
-            ->willReturn(null);
+            ->willReturn([]);
         $this->originalRegulationOrder
             ->expects(self::once())
             ->method('getVisaModel')
