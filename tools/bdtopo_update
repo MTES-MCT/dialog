@@ -78,7 +78,7 @@ def main(
         print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
         return 1
 
-    search_pattern = "*/BDTOPO/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*"
+    search_pattern = "**/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*.gpkg"
 
     tables_by_name = {table.name: table for table in config.tables}
     geopackages = []
@@ -201,7 +201,7 @@ def main(
                     "FID=ogc_fid",
                 ]
 
-                if table.name not in tables_seen:
+                if overwrite and table.name not in tables_seen:
                     options.extend(
                         [
                             # Remove existing tuples before importing (saves disk space
