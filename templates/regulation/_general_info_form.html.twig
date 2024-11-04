@@ -94,7 +94,7 @@
                                 }) }}
                                 <div id="visa_model_detail"></div>
                             </div>
-                            <p class="fr-mt-2w fr-mb-2w fr-text--sm fr-message--info" data-testid="visa-info">
+                            <p id="visa-info" class="fr-mt-2w fr-mb-2w fr-text--sm fr-message--info" data-testid="visa-info">
                                 {% include 'regulation/_general_info_visa_info.html.twig' with {organization_uuid: form.organization.vars.value} only %}
                             </p>
                             <p class="fr-text--sm">{{ 'regulation.general_info.visa.add'|trans }}</p>

@@ -17,7 +17,11 @@ final class VisaModelsOptionsFragmentControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame(trim($crawler->text()), 'Sélectionner un modèle de visas Réglementation de vitesse en agglomération Interdiction de circulation');
+        $this->assertSame(
+            'Sélectionner un modèle de visas Réglementation de vitesse en agglomération Interdiction de circulation',
+            trim($crawler->filter('[target=general_info_form_visaModelUuid]')->text()),
+        );
+        $this->assertStringStartsWith('Les modèles de visas sont gérés', trim($crawler->filter('[target=visa-info]')->text()));
     }
 
     public function testNotFound(): void
