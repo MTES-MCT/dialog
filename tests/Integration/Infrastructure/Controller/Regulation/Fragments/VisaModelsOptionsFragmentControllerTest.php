@@ -21,7 +21,7 @@ final class VisaModelsOptionsFragmentControllerTest extends AbstractWebTestCase
             'Sélectionner un modèle de visas Réglementation de vitesse en agglomération Interdiction de circulation',
             trim($crawler->filter('[target=general_info_form_visaModelUuid]')->text()),
         );
-        $this->assertStringStartsWith('Les modèles de visas sont gérés', trim($crawler->filter('[target=visa-info]')->text()));
+        $this->assertStringStartsWith('Les modèles de visas sont gérés', trim($crawler->filter('[target=visa_models_management_notice]')->text()));
     }
 
     public function testNotFound(): void

@@ -52,7 +52,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $this->assertStringContainsString(
             'Les <a target="_top" href="/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models">modèles de visas</a>',
-            trim($crawler->filter('[data-testid="visa-info"]')->html()),
+            trim($crawler->filter('#visa_models_management_notice')->html()),
         );
     }
 
