@@ -79,14 +79,14 @@ class RegulationOrder
         return $this->visaModel;
     }
 
-    public function getAdditionalVisas(): ?array
+    public function getAdditionalVisas(): array
     {
-        return $this->additionalVisas;
+        return $this->additionalVisas ?? [];
     }
 
-    public function getAdditionalReasons(): ?array
+    public function getAdditionalReasons(): array
     {
-        return $this->additionalReasons;
+        return $this->additionalReasons ?? [];
     }
 
     public function update(
