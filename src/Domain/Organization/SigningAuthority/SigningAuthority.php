@@ -12,7 +12,7 @@ class SigningAuthority
         private string $uuid,
         private string $name,
         private string $address,
-        private string $madeIn,
+        private string $placeOfSignature,
         private string $signatoryName,
         private Organization $organization,
     ) {
@@ -33,9 +33,9 @@ class SigningAuthority
         return $this->address;
     }
 
-    public function getMadeIn(): string
+    public function getPlaceOfSignature(): string
     {
-        return $this->madeIn;
+        return $this->placeOfSignature;
     }
 
     public function getSignatoryName(): string
