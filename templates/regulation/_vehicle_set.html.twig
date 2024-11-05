@@ -16,7 +16,7 @@
         {% if continued %}, {% endif -%}
         {%- for vehicleType in vehicleSet.restrictedTypes -%}
             {%- if vehicleType.isOther|default(false) -%}
-                {{ vehicleType.name }}
+                {{ vehicleType.name|raw }}
             {%- else -%}
                 {%- set vehicleName = ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans -%}
                 {{ (vehicleType.name starts with 'critair' ? vehicleName : vehicleName|lower)|raw }}
@@ -32,7 +32,7 @@
     , {{ 'regulation.vehicles.except'|trans }}{{ ' ' }}
     {%- for vehicleType in vehicleSet.exemptedTypes -%}
         {%- if vehicleType.isOther|default(false) -%}
-            {{ vehicleType.name|lower }}
+            {{ vehicleType.name|lower|raw }}
         {%- else -%}
             {{ ('regulation.vehicle_set.type.' ~ vehicleType.name)|trans|lower|raw }}
         {%- endif -%}
