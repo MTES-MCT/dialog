@@ -27,7 +27,10 @@
                         </a>
                     {% endif %}
                 </div>
-                <p class="fr-text--sm fr-mt-2w">{{ 'visa.list.help'|trans }}</p>
+                <p class="fr-text--sm fr-my-2w">{{ 'visa.list.help'|trans }}</p>
+                <p id="visa_models_management_notice" class="fr-my-2w fr-text--sm fr-message--info">
+                    {% include 'regulation/_visa_models_management_notice.html.twig' with {organization_uuid: null} only %}
+                </p>
                 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
                     <table>
                         <thead>

@@ -31,10 +31,14 @@ final class VisaModelFragmentController
         Request $request,
         #[MapQueryParameter] string $visaModelUuid,
     ): Response {
-        try {
-            $visaModel = $this->queryBus->handle(new GetVisaModelQuery($visaModelUuid));
-        } catch (VisaModelNotFoundException) {
-            throw new NotFoundHttpException();
+        $visaModel = null;
+
+        if ($visaModelUuid) {
+            try {
+                $visaModel = $this->queryBus->handle(new GetVisaModelQuery($visaModelUuid));
+            } catch (VisaModelNotFoundException) {
+                throw new NotFoundHttpException();
+            }
         }
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

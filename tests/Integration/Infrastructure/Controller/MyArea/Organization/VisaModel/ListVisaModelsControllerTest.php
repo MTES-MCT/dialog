@@ -19,6 +19,7 @@ final class ListVisaModelsControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertSame('Modèles de visas', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Modèles de visas - DiaLog', $crawler);
+        $this->assertStringStartsWith('Les modèles de visas sont gérés', trim($crawler->filter('#visa_models_management_notice')->text()));
 
         $users = $crawler->filter('[data-testid="visa-list"]');
         $tr0 = $users->filter('tr')->eq(0)->filter('td');

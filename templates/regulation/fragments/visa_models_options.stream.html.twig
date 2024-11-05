@@ -10,3 +10,9 @@
         {% endfor %}
     </template>
 </turbo-stream>
+
+<turbo-stream action="update" target="visa_models_management_notice">
+    <template>
+        {% include 'regulation/_visa_models_management_notice.html.twig' with {organization_uuid: organizationUuid} only %}
+    </template>
+</turbo-stream>

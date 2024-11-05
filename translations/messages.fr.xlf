@@ -460,9 +460,13 @@
                 <source>regulation.general_info.visa.add</source>
                 <target>Ajoutez les visas que vous souhaitez voir dans votre arrếté. Par exemple, "Vu le code de la route...".</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visa.info">
-                <source>regulation.general_info.visa.info</source>
-                <target>Les modèles de visas sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
+            <trans-unit id="regulation.visa_models.management_notice">
+                <source>regulation.visa_models.management_notice</source>
+                <target>Les %visa_models% sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
+            </trans-unit>
+            <trans-unit id="regulation.visa_models.management_notice.visa_models">
+                <source>regulation.visa_models.management_notice.visa_models</source>
+                <target>modèles de visas</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.reasons.add">
                 <source>regulation.general_info.reasons.add</source>
