@@ -6,6 +6,10 @@
                 <source>common.error.not_blank</source>
                 <target>Cette valeur ne doit pas être vide.</target>
             </trans-unit>
+            <trans-unit id="geojson.error.invalid">
+                <source>geojson.error.invalid</source>
+                <target>Cette valeur doit être un GeoJSON valide. (Vous pouvez vous aider d'un validateur tel que https://geojson.io.)</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.geocoding_failed">
                 <source>regulation.location.error.geocoding_failed</source>
                 <target>Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.</target>

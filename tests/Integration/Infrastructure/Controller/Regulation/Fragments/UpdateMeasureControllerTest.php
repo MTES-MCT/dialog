@@ -417,7 +417,18 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
     }
 
-    public function testEditRawGeoJSONWithInvalidJSON(): void
+    private function provideTestEditRawGeoJSONWithInvalidJSON(): array
+    {
+        return [
+            'invalid-json' => ['geometry' => '{"fuoiu}'],
+            'invalid-geojson' => ['geometry' => '{"type": "Point"}'], // JSON valide, mais pas conforme à la spec GeoJSON
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestEditRawGeoJSONWithInvalidJSON
+     */
+    public function testEditRawGeoJSONWithInvalidJSON(string $geometry): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
@@ -433,12 +444,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
         $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Invalide';
-        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"dfuji';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = $geometry;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur doit être un JSON valide.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
+        $this->assertSame("Cette valeur doit être un GeoJSON valide. (Vous pouvez vous aider d'un validateur tel que https://geojson.io.)", $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
