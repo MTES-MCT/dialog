@@ -30,6 +30,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $deleteLink = $crawler->selectLink('Supprimer');
         $this->assertSame('http://localhost/regulations', $deleteLink->link()->getUri());
 
+        $this->assertStringContainsString('Les modèles de visas sont gérés', trim($crawler->filter('#visa_models_management_notice')->html()));
+
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
 

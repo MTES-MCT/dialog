@@ -19,6 +19,17 @@ final class VisaModelFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame(trim($crawler->text()), 'vu que 1 vu que 2');
     }
 
+    public function testGetEmpty(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/visa_models/detail?visaModelUuid=');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $this->assertSame(trim($crawler->text()), '');
+    }
+
     public function testNotFound(): void
     {
         $client = $this->login();

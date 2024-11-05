@@ -42,6 +42,20 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSame(\sprintf('Un arrêté avec l\'identifiant "%s" existe déjà. Veuillez saisir un autre identifiant.', $identifier), $crawler->filter('#general_info_form_identifier_error')->text());
     }
 
+    public function testVisaInfo(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_PERMANENT);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $this->assertStringContainsString(
+            'Les <a target="_top" href="/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models">modèles de visas</a>',
+            trim($crawler->filter('#visa_models_management_notice')->html()),
+        );
+    }
+
     public function testRegulationOrderRecordNotFound(): void
     {
         $client = $this->login();
