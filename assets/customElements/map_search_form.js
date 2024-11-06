@@ -3,6 +3,23 @@
 import { getAttributeOrError, querySelectorOrError } from "./util";
 import { MapElement } from './map';
 
+// Hélas les types de lieux ne sont pas documentés par l'IGN.
+// On peut les redécouvrir à partir des réponses de l'API.
+// Voir la doc : https://geoservices.ign.fr/documentation/services/services-geoplateforme/autocompletion
+const ZOOM_MAP = {
+    housenumber: 18, // Adresse
+    street: 17, // Rue
+    default: 14, // Tout le reste
+};
+
+/**
+ * @param {string} kind 
+ * @returns {number}
+ */
+function getZoom(kind) {
+    return ZOOM_MAP[kind] ?? ZOOM_MAP['default'];
+}
+
 customElements.define('d-map-search-form', class extends HTMLElement {
     connectedCallback() {
         requestAnimationFrame(() => {
@@ -14,10 +31,7 @@ customElements.define('d-map-search-form', class extends HTMLElement {
 
             searchValueField.addEventListener('change', () => {
                 const { coordinates, kind } = JSON.parse(searchValueField.value);
-
-                // Zoom closer on streets
-                const zoom = kind === 'street' ? 17 : 14;
-
+                const zoom = getZoom(kind);
                 map.flyTo(coordinates, zoom);
             });
         });
