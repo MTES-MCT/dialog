@@ -29,5 +29,17 @@ final class SigningAuthorityTest extends TestCase
         $this->assertSame('Savenay', $signatoryAuthority->getPlaceOfSignature());
         $this->assertSame('Monsieur X, Maire de Savenay', $signatoryAuthority->getSignatoryName());
         $this->assertSame('3 rue de la Concertation', $signatoryAuthority->getAddress());
+
+        $signatoryAuthority->update(
+            name: 'Madame la maire de Savenay',
+            address: '4 rue de la Concertation',
+            placeOfSignature: 'Savenay 2',
+            signatoryName: 'Madame X, Maire de Savenay',
+        );
+
+        $this->assertSame('Madame la maire de Savenay', $signatoryAuthority->getName());
+        $this->assertSame('Savenay 2', $signatoryAuthority->getPlaceOfSignature());
+        $this->assertSame('Madame X, Maire de Savenay', $signatoryAuthority->getSignatoryName());
+        $this->assertSame('4 rue de la Concertation', $signatoryAuthority->getAddress());
     }
 }
