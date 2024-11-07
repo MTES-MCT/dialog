@@ -1,7 +1,7 @@
 .PHONY: assets
 
 # Allow non-Docker overrides for CI.
-_DOCKER_EXEC_PHP = docker-compose exec php
+_DOCKER_EXEC_PHP = docker compose exec php
 _SYMFONY = ${_DOCKER_EXEC_PHP} symfony
 BIN_PHP = ${_DOCKER_EXEC_PHP} php
 BIN_CONSOLE = ${_SYMFONY} console
@@ -10,7 +10,7 @@ BIN_NPM = ${_DOCKER_EXEC_PHP} npm
 BIN_NPX = ${_DOCKER_EXEC_PHP} npx
 
 # No TTY commands.
-_DOCKER_EXEC_PHP_NO_TTY = docker-compose exec -T php
+_DOCKER_EXEC_PHP_NO_TTY = docker compose exec -T php
 _SYMFONY_NO_TTY = ${_DOCKER_EXEC_PHP_NO_TTY} symfony
 BIN_PHP_NO_TTY = ${_DOCKER_EXEC_PHP_NO_TTY} php
 BIN_CONSOLE_NO_TTY = ${_SYMFONY_NO_TTY} console
@@ -37,23 +37,23 @@ update_deps:
 	$(BIN_NPM) update
 
 start: ## Start container
-	docker-compose up -d
-	docker-compose start
+	docker compose up -d
+	docker compose start
 
 stop: ## Stop containers
-	docker-compose stop
+	docker compose stop
 
 ps: ## Display containers
-	docker-compose ps
+	docker compose ps
 
 restart: stop start ## Restart containers
 
 build: ## Build containers
-	docker-compose build
+	docker compose build
 
 rm: ## Remove containers
 	make stop
-	docker-compose rm
+	docker compose rm
 
 ##
 ## ----------------
@@ -88,13 +88,13 @@ bdtopo_migrate_redo: ## Revert db migrations for bdtopo and run them again
 	make bdtopo_migrate
 
 dbshell: ## Connect to the database
-	docker-compose exec database psql postgresql://dialog:dialog@database:5432/dialog
+	docker compose exec database psql postgresql://dialog:dialog@database:5432/dialog
 
 dbfixtures: ## Load tests fixtures
 	make console CMD="doctrine:fixtures:load --env=test -n --purge-with-truncate"
 
 redisshell: ## Connect to the Redis container
-	docker-compose exec redis redis-cli
+	docker compose exec redis redis-cli
 
 data_install: data_init ## Load data into database
 	make console CMD="app:data:fr_city ${ARGS}"
@@ -139,7 +139,7 @@ assets: ## Build assets
 	$(BIN_NPM) run build
 
 shell: ## Connect to the container
-	docker-compose exec php bash
+	docker compose exec php bash
 
 ##
 ## ----------------
