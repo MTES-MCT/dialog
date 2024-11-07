@@ -26,11 +26,14 @@
                             {{ form_row(form.signatoryName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                         </div>
                         <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">
-                            <p class="fr-mt-2w fr-mb-1w fr-text--xs">{{ 'signing_authority.form.image_description'|trans }}</p>
-                            <img src="{{ asset('images/signing_authority.png') }}"  alt="{{ metaTitle }}" width="350"/>
+                            <figure>
+                                {% set imageTitle = 'signing_authority.form.image_description'|trans %}
+                                <figcaption class="fr-mt-2w fr-mb-1w fr-text--xs">{{ imageTitle }}</figcaption>
+                                <img src="{{ asset('images/signing_authority.png') }}"  alt="{{ imageTitle }}" width="350"/>
+                            </figure>
                         </div>
                     </div>
-                    <a href="{{ path('app_config_visa_models_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                    <a href="{{ path('app_config_visa_models_list', {uuid: organization.uuid}) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                         {{ "common.cancel"|trans }}
                     </a>
                     {{ form_widget(form.save) }}

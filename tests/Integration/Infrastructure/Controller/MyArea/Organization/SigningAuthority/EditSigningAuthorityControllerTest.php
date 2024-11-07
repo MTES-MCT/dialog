@@ -24,9 +24,9 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['signing_authority_form']['name'] = 'Madame la maire';
+        $values['signing_authority_form']['name'] = 'Madame la maire de Pau';
         $values['signing_authority_form']['address'] = '3 rue de la Concertation';
-        $values['signing_authority_form']['signatoryName'] = 'Madame la maire';
+        $values['signing_authority_form']['signatoryName'] = 'Madame X, maire de Pau';
         $values['signing_authority_form']['placeOfSignature'] = 'Savenay';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());

@@ -17,7 +17,7 @@
                     </a>
                 </li>
                 <li class="fr-sidemenu__item">
-                    <button class="fr-sidemenu__btn" aria-expanded="{{ 'app_config_visa' in routeName ? 'true' : 'false' or 'app_config_signing_authority' in routeName ? 'true' : 'false' }}" aria-controls="sidemenu-config">{{ 'config.menu.regulations'|trans }}</button>
+                    <button class="fr-sidemenu__btn" aria-expanded="{{ 'app_config_visa' in routeName or 'app_config_signing_authority' in routeName ? 'true' : 'false' }}" aria-controls="sidemenu-config">{{ 'config.menu.regulations'|trans }}</button>
                     <div class="fr-collapse" id="sidemenu-config">
                         <ul class="fr-sidemenu__list">
                             <li class="fr-sidemenu__item">
