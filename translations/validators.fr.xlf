@@ -16,7 +16,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.cityCode.error.blank">
                 <source>regulation.location.cityCode.error.blank</source>
-                <target>Veuillez choisir une ville ou commune parmi la liste.</target>
+                <target>Veuillez choisir une ville ou code postal parmi la liste.</target>
             </trans-unit>
             <trans-unit id="regulation.location.error.abscissa_out_of_range">
                 <source>regulation.location.error.abscissa_out_of_range</source>

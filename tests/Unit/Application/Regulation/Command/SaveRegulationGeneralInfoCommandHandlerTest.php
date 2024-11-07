@@ -174,7 +174,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->organization = $organization;
         $command->category = RegulationOrderCategoryEnum::OTHER->value;
         $command->description = 'Interdiction de circuler';
-        $command->otherCategoryText = 'Trou en formation';
+        $command->otherObjectText = 'Trou en formation';
         $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 
         $result = $handler($command);
@@ -182,3 +182,4 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->assertSame($regulationOrderRecord, $result);
     }
 }
+otherObjectText

@@ -80,7 +80,7 @@ final class EudonetParisTransformerTest extends TestCase
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = '20230514-1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::OTHER->value;
-        $generalInfoCommand->otherCategoryText = 'Temporaire';
+        $generalInfoCommand->otherObjectText = 'Temporaire';
         $generalInfoCommand->description = str_repeat('a', 255);
         $generalInfoCommand->organization = $organization;
 

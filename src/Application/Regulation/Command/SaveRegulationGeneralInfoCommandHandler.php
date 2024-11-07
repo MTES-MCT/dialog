@@ -26,7 +26,7 @@ final class SaveRegulationGeneralInfoCommandHandler
 
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
-        $command->cleanOtherCategoryText();
+        $command->cleanOtherObjectText();
         $visaModel = $command->visaModelUuid
             ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
             : null;
@@ -38,10 +38,11 @@ final class SaveRegulationGeneralInfoCommandHandler
                     uuid: $this->idFactory->make(),
                     identifier: $command->identifier,
                     category: $command->category,
+                    object: $command->object,
                     description: $command->description,
-                    otherCategoryText: $command->otherCategoryText,
+                    otherObjectText: $command->otherObjectText,
                     additionalVisas: $command->additionalVisas,
-                    additionalReasons: $command->additionalReasons,
+                    additionalReasons: $command->otherObjectText,
                     visaModel: $visaModel,
                 ),
             );
@@ -64,12 +65,13 @@ final class SaveRegulationGeneralInfoCommandHandler
         $command->regulationOrderRecord->getRegulationOrder()->update(
             identifier: $command->identifier,
             category: $command->category,
+            object: $command->object,
             description: $command->description,
-            otherCategoryText: $command->otherCategoryText,
+            otherObjectText: $command->otherObjectText,
             additionalVisas: $command->additionalVisas,
             additionalReasons: $command->additionalReasons,
             visaModel: $visaModel,
-        );
+        );otherObjectText
 
         return $command->regulationOrderRecord;
     }

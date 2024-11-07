@@ -277,7 +277,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
-            ->method('getOtherCategoryText')
+            ->method('getOtherObjectText')
             ->willReturn(null);
 
         $this->originalRegulationOrder

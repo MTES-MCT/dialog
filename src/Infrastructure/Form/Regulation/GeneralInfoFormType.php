@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\User\View\UserOrganizationView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationOrderObjectEnum;
 use App\Domain\User\Organization;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -39,6 +40,14 @@ final class GeneralInfoFormType extends AbstractType
                 ],
             )
             ->add(
+                'description',
+                TextareaType::class,
+                options: [
+                    'label' => 'regulation.general_info.description',
+                    'help' => 'regulation.general_info.description.help',
+                ],
+            )
+            ->add(
                 'organization',
                 ChoiceType::class,
                 options: [
@@ -55,12 +64,17 @@ final class GeneralInfoFormType extends AbstractType
                 options: $this->getCategoryOptions(),
             )
             ->add(
+                'object',
+                ChoiceType::class,
+                options: $this->getObjectOptions(),
+            )
+            ->add(
                 'visaModelUuid',
                 ChoiceType::class,
                 options: $this->getVisaModels($options['visaModels']),
             )
             ->add(
-                'otherCategoryText',
+                'otherObjectText',
                 TextType::class,
                 options: [
                     'required' => false,
@@ -68,14 +82,6 @@ final class GeneralInfoFormType extends AbstractType
                     'label_attr' => [
                         'class' => 'required',
                     ],
-                ],
-            )
-            ->add(
-                'description',
-                TextareaType::class,
-                options: [
-                    'label' => 'regulation.general_info.description',
-                    'help' => 'regulation.general_info.description.help',
                 ],
             )
             ->add(
@@ -158,6 +164,22 @@ final class GeneralInfoFormType extends AbstractType
         return [
             'choices' => $choices,
             'label' => 'regulation.general_info.category',
+        ];
+    }
+
+    private function getObjectOptions(): array
+    {
+        $choices = [
+            'regulation.object.placeholder' => '',
+        ];
+
+        foreach (RegulationOrderObjectEnum::cases() as $case) {
+            $choices[\sprintf('regulation.object.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.general_info.object',
         ];
     }
 

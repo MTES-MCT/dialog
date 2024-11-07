@@ -18,8 +18,9 @@ class RegulationOrder
         private string $uuid,
         private string $identifier,
         private string $category,
+        private string $object,
         private string $description,
-        private ?string $otherCategoryText = null,
+        private ?string $otherObjectText = null,
         private ?VisaModel $visaModel = null,
         private ?array $additionalVisas = [],
         private ?array $additionalReasons = [],
@@ -42,9 +43,14 @@ class RegulationOrder
         return $this->category;
     }
 
-    public function getOtherCategoryText(): ?string
+    public function getObject(): string
     {
-        return $this->otherCategoryText;
+        return $this->category;
+    }
+
+    public function getOtherObjectText(): ?string
+    {
+        return $this->otherObjectText;
     }
 
     public function getDescription(): string
@@ -92,16 +98,18 @@ class RegulationOrder
     public function update(
         string $identifier,
         string $category,
+        string $object,
         string $description,
-        ?string $otherCategoryText = null,
+        ?string $otherObjectText = null,
         array $additionalVisas = [],
         array $additionalReasons = [],
         ?VisaModel $visaModel = null,
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;
+        $this->object = $object;
         $this->description = $description;
-        $this->otherCategoryText = $otherCategoryText;
+        $this->otherObjectText = $otherObjectText;
         $this->additionalVisas = $additionalVisas;
         $this->additionalReasons = $additionalReasons;
         $this->visaModel = $visaModel;

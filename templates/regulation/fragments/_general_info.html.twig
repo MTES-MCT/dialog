@@ -11,7 +11,7 @@
                 <li>{{ generalInfo.organizationName }}</li>
                 <li>
                     {% if generalInfo.category == 'other' %}
-                        {{ 'regulation.category.other'|trans }} : {{ generalInfo.otherCategoryText }}
+                        {{ 'regulation.category.other'|trans }} : {{ generalInfo.otherObjectText }}
                     {% else %}
                         {{ ('regulation.category.' ~ generalInfo.category)|trans }}
                     {% endif %}

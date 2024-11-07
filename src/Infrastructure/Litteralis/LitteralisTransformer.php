@@ -116,7 +116,7 @@ final readonly class LitteralisTransformer
         };
 
         if ($generalInfoCommand->category === RegulationOrderCategoryEnum::OTHER->value) {
-            $generalInfoCommand->otherCategoryText = $categoriesModeleValue;
+            $generalInfoCommand->otherObjectText = $categoriesModeleValue;
         }
     }
 

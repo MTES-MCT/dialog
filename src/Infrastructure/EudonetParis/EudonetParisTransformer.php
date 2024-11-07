@@ -93,7 +93,7 @@ final class EudonetParisTransformer
         $type = $row['fields'][EudonetParisExtractor::ARRETE_TYPE];
 
         $command->category = RegulationOrderCategoryEnum::OTHER->value;
-        $command->otherCategoryText = $type;
+        $command->otherObjectText = $type;
 
         // Adhere to character limit
         $command->description = mb_substr($row['fields'][EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE], 0, 255);

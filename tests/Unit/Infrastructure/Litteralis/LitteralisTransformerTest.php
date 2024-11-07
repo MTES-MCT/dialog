@@ -154,7 +154,7 @@ final class LitteralisTransformerTest extends TestCase
 
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
         $this->assertSame(RegulationOrderCategoryEnum::OTHER->value, $command->generalInfoCommand->category);
-        $this->assertSame('special', $command->generalInfoCommand->otherCategoryText);
+        $this->assertSame('special', $command->generalInfoCommand->otherObjectText);
     }
 
     public function testTransformDescription(): void

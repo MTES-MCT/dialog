@@ -52,7 +52,7 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'F2023/no-locations',
             description: 'Description 5 that is very long and will be truncated',
             category: RegulationOrderCategoryEnum::OTHER->value,
-            otherCategoryText: 'Dérogation préfectorale',
+            otherObjectText: 'Dérogation préfectorale',
         );
 
         $regulationOrderNoMeasures = new RegulationOrder(

@@ -43,6 +43,7 @@
                     </ul>
                     <div id="general-form-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="general-form" tabindex="0">
                         {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+                        {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
                         {{ form_row(
                             form.organization,
                             {
@@ -52,9 +53,10 @@
                                 }
                             }
                         ) }}
+                        {{ form_row(form.category, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
                         <div class="fr-fieldset" data-controller="form-reveal">
                             <div class="fr-fieldset__element">
-                                {{ form_row(form.category, {
+                                {{ form_row(form.object, {
                                     group_class: 'fr-select-group',
                                     widget_class: 'fr-select',
                                     attr: {
@@ -64,11 +66,10 @@
                                     }
                                 }) }}
                             </div>
-                            <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
-                                {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
+                            <div id="otherObjectText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.object.vars.value != 'other' %}hidden{% endif %}>
+                                {{ form_row(form.otherObjectText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
                             </div>
                         </div>
-                        {{ form_row(form.description, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
                     </div>
                     <div id="reasons-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="reasons" tabindex="0">
                         <p>{{ 'regulation.general_info.visas_and_reasons.description'|trans }}</p>

@@ -32,10 +32,27 @@
                 </option>
             </constraint>
         </property>
-        <property name="otherCategoryText">
+        <property name="object">
+            <constraint name="NotBlank" />
             <constraint name="When">
                 <option name="expression">
-                    this.category == 'other'
+                    this.object != 'N/C'
+                </option>
+                <option name="constraints">
+                    <constraint name="Choice">
+                        <value>roadMaintenance</value>
+                        <value>permanentRegulation</value>
+                        <value>incident</value>
+                        <value>event</value>
+                        <value>other</value>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="otherObjectText">
+            <constraint name="When">
+                <option name="expression">
+                    this.object == 'other'
                 </option>
                 <option name="constraints">
                     <constraint name="NotBlank" />

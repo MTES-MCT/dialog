@@ -15,7 +15,8 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
     public ?string $identifier;
     public string $source = RegulationOrderRecordSourceEnum::DIALOG->value;
     public ?string $category;
-    public ?string $otherCategoryText = null;
+    public ?string $object;
+    public ?string $otherObjectText = null;
     public ?string $description;
     public ?Organization $organization;
     public array $additionalVisas = [];
@@ -37,7 +38,8 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command->identifier = $regulationOrder?->getIdentifier();
         $command->source = $regulationOrderRecord?->getSource() ?? RegulationOrderRecordSourceEnum::DIALOG->value;
         $command->category = $regulationOrder?->getCategory();
-        $command->otherCategoryText = $regulationOrder?->getOtherCategoryText();
+        $command->object = $regulationOrder?->getObject();
+        $command->otherObjectText = $regulationOrder?->getOtherObjectText();
         $command->description = $regulationOrder?->getDescription();
         $command->additionalVisas = $regulationOrder?->getAdditionalVisas() ?? [];
         $command->additionalReasons = $regulationOrder?->getAdditionalReasons() ?? [];
@@ -46,10 +48,10 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         return $command;
     }
 
-    public function cleanOtherCategoryText(): void
+    public function cleanOtherObjectText(): void
     {
         if ($this->category !== RegulationOrderCategoryEnum::OTHER->value) {
-            $this->otherCategoryText = null;
+            $this->otherObjectText = null;
         }
     }
 }

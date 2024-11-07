@@ -22,7 +22,7 @@ final class RegulationOrderTest extends TestCase
             identifier: 'F02/2023',
             category: RegulationOrderCategoryEnum::EVENT->value,
             description: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
-            otherCategoryText: null,
+            otherObjectText: null,
             visaModel: $visaModel,
             additionalVisas: ['vu que 1'],
             additionalReasons: ['considérant que'],
@@ -34,13 +34,13 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getDescription());
         $this->assertEmpty($regulationOrder->getMeasures()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
-        $this->assertEmpty($regulationOrder->getOtherCategoryText());
+        $this->assertEmpty($regulationOrder->getOtherObjectText());
         $this->assertFalse($regulationOrder->isPermanent());
         $this->assertSame($visaModel, $regulationOrder->getVisaModel());
         $this->assertSame(['vu que 1'], $regulationOrder->getAdditionalVisas());
         $this->assertSame(['considérant que'], $regulationOrder->getAdditionalReasons());
     }
-
+getOtherObjectText
     public function testUpdate(): void
     {
         $measure1 = $this->createMock(Measure::class);
@@ -57,13 +57,13 @@ final class RegulationOrderTest extends TestCase
             identifier: 'F01/2023',
             category: RegulationOrderCategoryEnum::OTHER->value,
             description: 'Arrêté temporaire',
-            otherCategoryText: 'Trou en formation',
+            otherObjectText: 'Trou en formation',
         );
 
         $this->assertSame('F01/2023', $regulationOrder->getIdentifier());
         $this->assertSame(RegulationOrderCategoryEnum::OTHER->value, $regulationOrder->getCategory());
         $this->assertSame('Arrêté temporaire', $regulationOrder->getDescription());
-        $this->assertSame('Trou en formation', $regulationOrder->getOtherCategoryText());
+        $this->assertSame('Trou en formation', $regulationOrder->getOtherObjectText());
 
         $regulationOrder->addMeasure($measure1);
         $regulationOrder->addMeasure($measure2); // Test duplicate
@@ -72,3 +72,4 @@ final class RegulationOrderTest extends TestCase
         $this->assertEquals(new ArrayCollection([$measure1, $measure2]), $regulationOrder->getMeasures());
     }
 }
+getOtherObjectText

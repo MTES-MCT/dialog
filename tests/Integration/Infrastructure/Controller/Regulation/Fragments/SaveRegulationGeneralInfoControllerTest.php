@@ -31,7 +31,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
         $values['general_info_form']['description'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $values['general_info_form']['otherCategoryText'] = 'Travaux';
+        $values['general_info_form']['otherObjectText'] = 'Travaux';
         $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
         $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
         $values['general_info_form']['additionalReasons'][0] = 'Motif 1';

@@ -65,18 +65,18 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
         $this->assertSame($command->organization, $organization);
     }
 
-    public function testCleanOtherCategoryText(): void
+    public function testCleanOtherObjectText(): void
     {
         $command = new SaveRegulationGeneralInfoCommand();
         $command->category = RegulationOrderCategoryEnum::EVENT->value;
-        $command->otherCategoryText = 'Will be cleared';
-        $command->cleanOtherCategoryText();
-        $this->assertNull($command->otherCategoryText);
+        $command->otherObjectText = 'Will be cleared';
+        $command->cleanOtherObjectText();
+        $this->assertNull($command->otherObjectText);
 
         $command = new SaveRegulationGeneralInfoCommand();
         $command->category = RegulationOrderCategoryEnum::OTHER->value;
-        $command->otherCategoryText = 'Will be kept';
-        $command->cleanOtherCategoryText();
-        $this->assertSame('Will be kept', $command->otherCategoryText);
+        $command->otherObjectText = 'Will be kept';
+        $command->cleanOtherObjectText();
+        $this->assertSame('Will be kept', $command->otherObjectText);
     }
 }
