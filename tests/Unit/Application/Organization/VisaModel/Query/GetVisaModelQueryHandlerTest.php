@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\VisaModel\Query;
+namespace App\Tests\Unit\Application\Organization\VisaModel\Query;
 
 use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\Organization\VisaModel\Query\GetVisaModelQueryHandler;

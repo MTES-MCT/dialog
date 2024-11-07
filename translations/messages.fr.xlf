@@ -2516,6 +2516,46 @@
                 <source>visa.list.duplicate</source>
                 <target>Duppliquer le modèle "%name%"</target>
             </trans-unit>
+            <trans-unit id="signing_authority.form.title">
+                <source>signing_authority.form.title</source>
+                <target>Autorité signataire</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.name">
+                <source>signing_authority.name</source>
+                <target>Intitulé du signataire</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.name.help">
+                <source>signing_authority.name.help</source>
+                <target>Entrez l'intitulé du signataire, par exemple "Madame le maire de XX"</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.address">
+                <source>signing_authority.address</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.address.help">
+                <source>signing_authority.address.help</source>
+                <target>Entrez l'adresse de l'établissement, par exemple de la mairie</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.placeOfSignature">
+                <source>signing_authority.placeOfSignature</source>
+                <target>Fait à</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.placeOfSignature.help">
+                <source>signing_authority.placeOfSignature.help</source>
+                <target>Entrez le nom de la ville ou a été rédigé l'arrếté</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.signatoryName">
+                <source>signing_authority.signatoryName</source>
+                <target>Nom du signataire</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.signatoryName.help">
+                <source>signing_authority.signatoryName.help</source>
+                <target>Entrez le nom du signataire de l'arrếté</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.form.image_description">
+                <source>signing_authority.form.image_description</source>
+                <target>Vue d'ensemble schématique de l’arrêté montrant l’emplacement des informations sur l’autorité signataire.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

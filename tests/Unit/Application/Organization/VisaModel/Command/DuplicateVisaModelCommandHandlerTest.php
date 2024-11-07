@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\VisaModel\Command;
+namespace App\Tests\Unit\Application\Organization\VisaModel\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Organization\VisaModel\Command\DuplicateVisaModelCommand;

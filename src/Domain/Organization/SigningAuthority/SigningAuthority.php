@@ -47,4 +47,16 @@ class SigningAuthority
     {
         return $this->organization;
     }
+
+    public function update(
+        string $name,
+        string $address,
+        string $placeOfSignature,
+        string $signatoryName,
+    ): void {
+        $this->name = $name;
+        $this->address = $address;
+        $this->placeOfSignature = $placeOfSignature;
+        $this->signatoryName = $signatoryName;
+    }
 }
