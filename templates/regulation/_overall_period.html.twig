@@ -1,7 +1,7 @@
 {% set startDate = generalInfo.startDate %}
 {% set endDate = generalInfo.endDate %}
 
-{% if startDate %}
+{%- if startDate %}
     {% set isFuture = app_is_client_future_day(startDate) %}
 
     {% if startDate and endDate %}
@@ -14,4 +14,4 @@
     {% endif %}
 {% else %}
     <em>{{ 'regulation.overall_period.tbd'|trans }}</em>
-{% endif %}
+{% endif -%}

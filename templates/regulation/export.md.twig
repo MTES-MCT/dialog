@@ -1,13 +1,11 @@
 {% set startDate = generalInfo.startDate %}
 {% set endDate = generalInfo.endDate %}
 
+{% if signingAuthority %}
 ::: {custom-style="Dialog_AligneDroite"}
-[
-Espace réservé au logo ou nom de
-l’administration émettrice
-]{custom-style="Dialog_ACompleter"}
+[{{ signingAuthority.address|raw|nl2br }}]{custom-style="Dialog_ACompleter"}
 :::
-
+{% endif %}
 <br/>
 
 ::: {custom-style="Dialog_Encart"}
@@ -28,16 +26,18 @@ Vous pouvez supprimer cet encart une fois votre arrêté complété.
 <br/>
 
 ::: {custom-style="Dialog_TitrePrincipal"}
-Arrếté {{ endDate ? 'temporaire' : 'permanent' }} [{{ generalInfo.identifier }}]{custom-style="Dialog_Variable"}
+Arrếté n°[{{ generalInfo.identifier }}]{custom-style="Dialog_Variable"}
 :::
 
 ::: {custom-style="Dialog_Description"}
 [{{ generalInfo.description }}]{custom-style="Dialog_Variable"}
 :::
 
+{% if signingAuthority %}
 ::: {custom-style="Dialog_Organisation"}
-Le maire de [{{ generalInfo.organizationName }}]{custom-style="Dialog_ACompleter"}
+{{ signingAuthority.name }}
 :::
+{% endif %}
 
 {% for visa in visasAndReasons.visas %}
 [{{ visa|raw|app_capfirst }}]{custom-style="Dialog_ACompleter"}
@@ -96,12 +96,12 @@ Arrête
 
 <br>
 
-Arrêté publié le : [XXX]{custom-style="Dialog_ACompleter"}
-
+{% if signingAuthority %}
 ::: {custom-style="Dialog_AligneDroite"}
-[Fait à {{ generalInfo.organizationName }}, le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
+Fait à [{{ signingAuthority.placeOfSignature}}, le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
 
-[Le maire / adjoint délégué / autre]{custom-style="Dialog_ACompleter"}
+[{{ signingAuthority.signatoryName }}]{custom-style="Dialog_ACompleter"}
 
 [Signature et tampon]{custom-style="Dialog_ACompleter"}
 :::
+{% endif %}
