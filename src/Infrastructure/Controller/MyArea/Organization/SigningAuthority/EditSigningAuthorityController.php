@@ -57,7 +57,7 @@ final class EditSigningAuthorityController extends AbstractOrganizationControlle
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_config_signing_authority_edit', ['uuid' => $uuid]),
+                url: $this->router->generate('app_config_signing_authority_detail', ['uuid' => $uuid]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

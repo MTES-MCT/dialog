@@ -33,7 +33,7 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
         $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_config_signing_authority_edit');
+        $this->assertRouteSame('app_config_signing_authority_detail');
     }
 
     public function testBadFormValues(): void
