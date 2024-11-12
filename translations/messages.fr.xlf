@@ -2524,6 +2524,10 @@
                 <source>signing_authority.name</source>
                 <target>Intitulé du signataire</target>
             </trans-unit>
+            <trans-unit id="signing_authority.help">
+                <source>signing_authority.help</source>
+                <target>L'autorité signataire est gérée par les administrateurs de votre organisation. Si elle ne convient pas, contactez l’administrateur de votre organisation.</target>
+            </trans-unit>
             <trans-unit id="signing_authority.name.help">
                 <source>signing_authority.name.help</source>
                 <target>Entrez l'intitulé du signataire, par exemple "Madame le maire de XX"</target>

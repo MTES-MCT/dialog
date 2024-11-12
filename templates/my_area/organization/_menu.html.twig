@@ -26,7 +26,7 @@
                                 </a>
                             </li>
                             <li class="fr-sidemenu__item">
-                                <a class="fr-sidemenu__link" href="{{ path('app_config_signing_authority_edit', {uuid: organization.uuid}) }}" aria-current="{{ 'app_config_signing_authority_edit' in routeName  ? 'true' : 'false' }}">
+                                <a class="fr-sidemenu__link" href="{{ path('app_config_signing_authority_detail', {uuid: organization.uuid}) }}" aria-current="{{ 'app_config_signing_authority' in routeName  ? 'true' : 'false' }}">
                                     {{ 'config.menu.authority'|trans }}
                                 </a>
                             </li>
