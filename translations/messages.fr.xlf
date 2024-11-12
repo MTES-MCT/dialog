@@ -460,9 +460,13 @@
                 <source>regulation.general_info.visa.add</source>
                 <target>Ajoutez les visas que vous souhaitez voir dans votre arrếté. Par exemple, "Vu le code de la route...".</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visa.info">
-                <source>regulation.general_info.visa.info</source>
-                <target>Les modèles de visas sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
+            <trans-unit id="regulation.visa_models.management_notice">
+                <source>regulation.visa_models.management_notice</source>
+                <target>Les %visa_models% sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
+            </trans-unit>
+            <trans-unit id="regulation.visa_models.management_notice.visa_models">
+                <source>regulation.visa_models.management_notice.visa_models</source>
+                <target>modèles de visas</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.reasons.add">
                 <source>regulation.general_info.reasons.add</source>
@@ -2511,6 +2515,46 @@
             <trans-unit id="visa.list.duplicate">
                 <source>visa.list.duplicate</source>
                 <target>Duppliquer le modèle "%name%"</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.form.title">
+                <source>signing_authority.form.title</source>
+                <target>Autorité signataire</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.name">
+                <source>signing_authority.name</source>
+                <target>Intitulé du signataire</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.name.help">
+                <source>signing_authority.name.help</source>
+                <target>Entrez l'intitulé du signataire, par exemple "Madame le maire de XX"</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.address">
+                <source>signing_authority.address</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.address.help">
+                <source>signing_authority.address.help</source>
+                <target>Entrez l'adresse de l'établissement, par exemple de la mairie</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.placeOfSignature">
+                <source>signing_authority.placeOfSignature</source>
+                <target>Fait à</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.placeOfSignature.help">
+                <source>signing_authority.placeOfSignature.help</source>
+                <target>Entrez le nom de la ville ou a été rédigé l'arrếté</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.signatoryName">
+                <source>signing_authority.signatoryName</source>
+                <target>Nom du signataire</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.signatoryName.help">
+                <source>signing_authority.signatoryName.help</source>
+                <target>Entrez le nom du signataire de l'arrếté</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.form.image_description">
+                <source>signing_authority.form.image_description</source>
+                <target>Vue d'ensemble schématique de l’arrêté montrant l’emplacement des informations sur l’autorité signataire.</target>
             </trans-unit>
         </body>
     </file>
