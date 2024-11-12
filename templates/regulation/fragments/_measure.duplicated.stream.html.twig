@@ -1,6 +1,7 @@
 <turbo-stream action="append" target="measure_list">
     <template>
-        <li id="block_measure_{{ uuid }}">
-            {% include 'regulation/fragments/_measure.html.twig' with { measure} only %}</li>
+        <li>
+            {% include 'regulation/fragments/_measure.html.twig' with { measure, generalInfo, canDelete, isReadOnly: false } only %}
+        </li>
     </template>
 </turbo-stream>

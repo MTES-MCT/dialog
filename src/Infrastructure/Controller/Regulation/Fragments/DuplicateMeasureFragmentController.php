@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\DuplicateMeasureFragmentCommand;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
+use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Exception\MeasureCannotBeDuplicatedException;
+use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class DuplicateMeasureFragmentController extends AbstractRegulationController
@@ -23,6 +31,8 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
+        private CanDeleteMeasures $canDeleteMeasures,
+        private CommandBusInterface $commandBus,
     ) {
         parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
@@ -31,8 +41,9 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         '/_fragment/regulations/{regulationOrderRecordUuid}/measure/{uuid}/duplicate',
         name: 'fragment_regulations_measure_duplicate',
         requirements: ['uuid' => Requirement::UUID],
-        methods: ['GET', 'POST'],
+        methods: ['POST'],
     )]
+    #[IsCsrfTokenValid('duplicate-measure')]
     public function __invoke(Request $request, string $regulationOrderRecordUuid, string $uuid): Response
     {
         /* On récupère le regulationOrderRecord pour vérifier que l'utilisateur a bien accès à l'organisation */
@@ -41,8 +52,16 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
 
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
 
+        $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));
+
         if (!$measure) {
             throw new NotFoundHttpException();
+        }
+
+        try {
+            $this->commandBus->handle(new DuplicateMeasureFragmentCommand($measure, $regulationOrderRecord));
+        } catch (MeasureCannotBeDuplicatedException) {
+            throw new BadRequestHttpException();
         }
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -51,8 +70,9 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
             $this->twig->render(
                 name: 'regulation/fragments/_measure.duplicated.stream.html.twig',
                 context: [
-                    'uuid' => $uuid,
-                    'measure' => $measure,
+                    'measure' => MeasureView::fromEntity($measure),
+                    'generalInfo' => $generalInfo,
+                    'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                 ],
             ),
         );

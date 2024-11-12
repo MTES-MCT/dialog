@@ -14,7 +14,6 @@ use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Regulation\Measure;
-use App\Domain\Regulation\RegulationOrder;
 
 final class DuplicateMeasureFragmentCommandHandler
 {
@@ -28,15 +27,7 @@ final class DuplicateMeasureFragmentCommandHandler
         $measure = $command->measure;
         $originalRegulationOrderRecord = $command->regulationOrderRecord;
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
-        $duplicatedMeasure = $this->duplicateMeasure($measure, $originalRegulationOrder);
 
-        return $duplicatedMeasure;
-    }
-
-    private function duplicateMeasure(
-        Measure $measure,
-        RegulationOrder $originalRegulationOrder,
-    ): void {
         $periodCommands = [];
         $locationCommands = [];
 
@@ -115,7 +106,6 @@ final class DuplicateMeasureFragmentCommandHandler
         $measureCommand->periods = $periodCommands;
         $measureCommand->locations = $locationCommands;
 
-        $this->commandBus->handle($measureCommand);
-        dd($this->commandBus->handle($measureCommand));
+        return $this->commandBus->handle($measureCommand);
     }
 }
