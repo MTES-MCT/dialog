@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Command\DuplicateMeasureFragmentCommand;
+use App\Application\Regulation\Command\DuplicateMeasureCommand;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
@@ -59,7 +59,7 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         }
 
         try {
-            $this->commandBus->handle(new DuplicateMeasureFragmentCommand($measure, $regulationOrderRecord));
+            $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
         } catch (MeasureCannotBeDuplicatedException) {
             throw new BadRequestHttpException();
         }

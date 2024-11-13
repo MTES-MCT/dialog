@@ -58,7 +58,7 @@ final class DuplicateRegulationCommandHandler
     ): void {
         if (!empty($originalRegulationOrder->getMeasures())) {
             foreach ($originalRegulationOrder->getMeasures() as $measure) {
-                $this->commandBus->handle(new DuplicateMeasureFragmentCommand($measure, $duplicatedRegulationOrderRecord));
+                $this->commandBus->handle(new DuplicateMeasureCommand($measure, $duplicatedRegulationOrderRecord));
             }
         }
     }

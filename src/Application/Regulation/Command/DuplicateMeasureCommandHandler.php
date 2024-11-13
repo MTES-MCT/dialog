@@ -15,17 +15,17 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Regulation\Measure;
 
-final class DuplicateMeasureFragmentCommandHandler
+final class DuplicateMeasureCommandHandler
 {
     public function __construct(
         private CommandBusInterface $commandBus,
     ) {
     }
 
-    public function __invoke(DuplicateMeasureFragmentCommand $command): Measure
+    public function __invoke(DuplicateMeasureCommand $command): Measure
     {
         $measure = $command->measure;
-        $originalRegulationOrderRecord = $command->regulationOrderRecord;
+        $originalRegulationOrderRecord = $command->originalRegulationOrderRecord;
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
 
         $periodCommands = [];

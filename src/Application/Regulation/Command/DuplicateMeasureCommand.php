@@ -8,11 +8,11 @@ use App\Application\CommandInterface;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 
-final class DuplicateMeasureFragmentCommand implements CommandInterface
+final class DuplicateMeasureCommand implements CommandInterface
 {
     public function __construct(
         public Measure $measure,
-        public RegulationOrderRecord $regulationOrderRecord,
+        public RegulationOrderRecord $originalRegulationOrderRecord,
     ) {
     }
 }
