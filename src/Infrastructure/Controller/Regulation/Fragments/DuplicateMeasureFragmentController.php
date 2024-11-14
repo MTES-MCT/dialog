@@ -58,11 +58,7 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
             throw new NotFoundHttpException();
         }
 
-        try {
-            $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
-        } catch (MeasureCannotBeDuplicatedException) {
-            throw new BadRequestHttpException();
-        }
+        $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

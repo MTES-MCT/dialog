@@ -17,7 +17,7 @@ final class DuplicateMeasureFragmentControllerTest extends AbstractWebTestCase
     {
         $client = $this->login();
 
-        $crawler = $client->request('POST', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/duplicate', [
+        $crawler = $client->request('POST', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/duplicate',[
             '_token' => $this->generateCsrfToken($client, 'duplicate-measure'),
         ]);
 
@@ -25,7 +25,7 @@ final class DuplicateMeasureFragmentControllerTest extends AbstractWebTestCase
         $streams = $crawler->filter('turbo-stream');
 
         $this->assertSame($streams->eq(0)->attr('action'), 'append');
-        $this->assertSame($streams->eq(1)->attr('target'), 'block_measure_' . MeasureFixture::UUID_TYPICAL);
+        $this->assertSame($streams->eq(0)->attr('target'), 'measure_list');
     }
 
     public function testWithoutAuthenticatedUser(): void
