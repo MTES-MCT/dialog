@@ -628,7 +628,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.city">
                 <source>regulation.location.city</source>
-                <target>Ville ou commune</target>
+                <target>Ville ou code postal</target>
             </trans-unit>
             <trans-unit id="regulation.location.city.results_label">
                 <source>regulation.location.city.results_label</source>
@@ -798,7 +798,7 @@
             </trans-unit>
             <trans-unit id="regulation.locations.description">
                 <source>regulation.locations.description</source>
-                <target>Où est prévue la perturbation ?</target>
+                <target>Où est prévue la restriction ?</target>
             </trans-unit>
             <trans-unit id="regulation.measures">
                 <source>regulation.measures</source>
