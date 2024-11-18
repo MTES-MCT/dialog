@@ -6,8 +6,8 @@
         <div class="fr-collapse" id="sidemenu">
             <p class="fr-sidemenu__title" id="sidemenu-title">{{ organization.name }}</p>
             <ul class="fr-sidemenu__list">
-                <li class="fr-sidemenu__item {% if 'app_config_organization' in routeName %}fr-sidemenu__item--active{% endif %}">
-                    <a class="fr-sidemenu__link" href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}" {% if 'app_config_organization' in routeName %}aria-current="page"{% endif%}>
+                <li class="fr-sidemenu__item {% if 'app_config_organization_detail' in routeName or 'app_config_organization_edit' == routeName %}fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}" {% if 'app_config_organization_detail' in routeName or 'app_config_organization_edit' == routeName %}aria-current="page"{% endif%}>
                         {{ 'config.menu.organization'|trans }}
                     </a>
                 </li>
