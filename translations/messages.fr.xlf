@@ -498,7 +498,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier.help">
                 <source>regulation.general_info.identifier.help</source>
-                <target>Numéro ou nom de l'arrêté (identifiant unique)</target>
+                <target>Numéro de l'arrêté (identifiant unique)</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.organization">
                 <source>regulation.general_info.organization</source>
@@ -518,16 +518,12 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.description">
                 <source>regulation.general_info.description</source>
-                <target>Description</target>
+                <target>Intitulé</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.description.help">
                 <source>regulation.general_info.description.help</source>
                 <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur
                     la voie")</target>
-            </trans-unit>
-            <trans-unit id="regulation.overall_period.tbd">
-                <source>regulation.overall_period.tbd</source>
-                <target>Dates à définir</target>
             </trans-unit>
             <trans-unit id="regulation.location.type">
                 <source>regulation.location.type</source>
