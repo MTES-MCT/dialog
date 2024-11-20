@@ -12,6 +12,7 @@ final class Storage implements StorageInterface
 {
     public function __construct(
         private readonly FilesystemOperator $storage,
+        private readonly string $mediaLocation,
     ) {
     }
 
@@ -33,5 +34,10 @@ final class Storage implements StorageInterface
         }
 
         $this->storage->delete($path);
+    }
+
+    public function get(string $path): string
+    {
+        return \sprintf('%s/%s', $this->mediaLocation, $path);
     }
 }
