@@ -31,7 +31,6 @@ install: build start install_deps dbinstall assets blog_install ## Bootstrap pro
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
 	$(BIN_NPM) ci
-	$(_DOCKER_EXEC_PHP_NO_TTY) chmod -R 777 public/storage
 
 update_deps:
 	make composer CMD="update"
