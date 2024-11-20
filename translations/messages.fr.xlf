@@ -1992,8 +1992,8 @@
                 <source>regulation.vehicle_set.type.carSharing</source>
                 <target>Covoiturage</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.type.servicesVehicles">
-                <source>regulation.vehicle_set.type.servicesVehicles</source>
+            <trans-unit id="regulation.vehicle_set.type.cityLogistics">
+                <source>regulation.vehicle_set.type.cityLogistics</source>
                 <target>Véhicules de services</target>
             </trans-unit>
             <trans-unit id="regulation.vehicles.all">
