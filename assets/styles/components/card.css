@@ -15,6 +15,10 @@
     }
 }
 
+.app-card--height-auto {
+    height: auto !important;
+}
+
 .app-card--with-full-background {
     background: var(--alt-blue-france);
 }

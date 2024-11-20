@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Organization\Logo\Command\SaveOrganizationLogoCommand">
+        <property name="file">
+            <constraint name="NotBlank"/>
+            <constraint name="File">
+                <option name="maxSize">300k</option>
+                <option name="extensions">
+                    <value>jpg</value>
+                    <value>jpeg</value>
+                    <value>webp</value>
+                    <value>png</value>
+                    <value>svg</value>
+                </option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>

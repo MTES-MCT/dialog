@@ -8,6 +8,7 @@ class Organization
 {
     private string $name;
     private ?string $siret;
+    private ?string $logo;
 
     public function __construct(
         private string $uuid,
@@ -41,6 +42,18 @@ class Organization
         $this->siret = $siret;
 
         return $this;
+    }
+
+    public function setLogo(string $logo): self
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
     }
 
     public function __toString(): string

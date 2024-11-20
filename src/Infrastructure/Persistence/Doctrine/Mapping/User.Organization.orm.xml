@@ -6,6 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" column="name" nullable="false"/>
     <field name="siret" type="string" length="14" nullable="true"/>
+    <field name="logo" type="string" length="200" nullable="true"/>
     <unique-constraints>
         <unique-constraint columns="siret" name="organization_siret" />
     </unique-constraints>

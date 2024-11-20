@@ -13,11 +13,13 @@ final class OrganizationTest extends TestCase
     {
         $organization = (new Organization('6598fd41-85cb-42a6-9693-1bc45f4dd392'))
             ->setName('Mairie de Savenay')
-            ->setSiret('21440195200129');
+            ->setSiret('21440195200129')
+            ->setLogo('/path/to/logo.jpg');
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $organization->getUuid());
         $this->assertSame('Mairie de Savenay', $organization->getName());
         $this->assertSame('21440195200129', $organization->getSiret());
         $this->assertSame('Mairie de Savenay', (string) $organization);
+        $this->assertSame('/path/to/logo.jpg', $organization->getLogo());
     }
 }
