@@ -17,7 +17,6 @@ interface RoadGeocoderInterface
     public function computeRoad(string $roadNumber, string $administrator): string;
 
     public function computeReferencePoint(
-        string $lineGeometry,
         string $administrator,
         string $roadNumber,
         string $pointNumber,

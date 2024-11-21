@@ -18,7 +18,10 @@
                 <div class="fr-grid-row fr-x-gap-2w">
                     <div class="fr-x-grow-32w">
                         <h2 class="fr-mb-0">{{ metaTitle }}</h2>
-                        <p>{{ 'organization.siret'|trans }} : {{ organization.siret }}</p>
+                        <p>{{ 'organization.siret'|trans }} : {{ organization.siret|default('N/D') }}</p>
+                        {% if logo %}
+                            <img class="fr-x-max-w-32w" src="{{ logo }}" alt="{{ 'organization.logo'|trans }}" />
+                        {% endif %}
                     </div>
                     <div class="fr-mb-3w">
                         {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}

@@ -23,8 +23,16 @@ final class StorageTest extends TestCase
             ->method('delete')
             ->with('logo.jpeg');
 
-        $storage = new Storage($filesystemOperator);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
         $storage->delete('logo.jpeg');
+    }
+
+    public function testGet(): void
+    {
+        $filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
+
+        $this->assertSame('/path/to/medias/logo.jpeg', $storage->get('logo.jpeg'));
     }
 
     public function testCantDelete(): void
@@ -39,7 +47,7 @@ final class StorageTest extends TestCase
             ->expects(self::never())
             ->method('delete');
 
-        $storage = new Storage($filesystemOperator);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
         $storage->delete('logo.jpeg');
     }
 }

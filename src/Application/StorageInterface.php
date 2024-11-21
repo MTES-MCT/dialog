@@ -11,4 +11,6 @@ interface StorageInterface
     public function write(string $folder, string $fileName, UploadedFile $file): string;
 
     public function delete(string $path): void;
+
+    public function get(string $path): string;
 }

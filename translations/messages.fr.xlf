@@ -2106,7 +2106,7 @@
             </trans-unit>
             <trans-unit id="organization.logo.description">
                 <source>organization.logo.description</source>
-                <target>Importez le logo de votre organisation que vous souhaitez afficher sur les arrêtés de circulation généré par Dialog.</target>
+                <target>Importez le logo de votre organisation que vous souhaitez afficher sur les arrêtés de circulation générés par Dialog.</target>
             </trans-unit>
             <trans-unit id="organization.logo.format">
                 <source>organization.logo.format</source>
