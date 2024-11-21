@@ -205,9 +205,9 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 {%- endblock choice_widget_expanded -%}
 
 {% block file_widget -%}
-    <input data-form-upload-target="input" class="file" type="file" {{ block('widget_attributes') }} style="display: none;"/>
+    <input data-form-upload-target="input" type="file" {{ block('widget_attributes') }} style="display: none;"/>
     <div class="fr-mt-2w fr-mb-2w app-frame app-frame--16-9">
-        <img src="{{ file ?: asset('images/placeholder-16x9.png')}}" />
+        <img src="{{ file ?: asset('images/placeholder-16x9.png')}}" alt="{{ file_alt }}"/>
     </div>
     <button data-action="click->form-upload#click" type="button" class="fr-btn {{ button_icon }} fr-btn--icon-left">{{ button_label }}</button>
 {% endblock %}

@@ -21,7 +21,7 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <p class="fr-text--sm">{{ 'organization.logo.description'|trans }}</p>
                         {{ form_start(form, { attr: { 'data-controller': 'form-upload', 'data-form-upload-target': 'form' }}) }}
-                        {{ form_row(form.file, { button_label: 'organization.logo.button'|trans, button_icon: 'fr-icon-upload-fill', file: logo }) }}
+                        {{ form_row(form.file, { button_label: (logo ? 'organization.logo.update' : 'organization.logo.add')|trans, button_icon: 'fr-icon-upload-fill', file: logo, file_alt: 'organization.logo'|trans }) }}
                         {{ form_end(form) }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">

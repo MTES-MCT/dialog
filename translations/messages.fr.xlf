@@ -2112,9 +2112,13 @@
                 <source>organization.image.help</source>
                 <target>Formats acceptés : jpeg, png, svg, webp. Taille maximale : 300 Ko</target>
             </trans-unit>
-            <trans-unit id="organization.logo.button">
-                <source>organization.logo.button</source>
+            <trans-unit id="organization.logo.add">
+                <source>organization.logo.add</source>
                 <target>Ajouter un logo</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.update">
+                <source>organization.logo.update</source>
+                <target>Modifier le logo</target>
             </trans-unit>
             <trans-unit id="organization.siret">
                 <source>organization.siret</source>
