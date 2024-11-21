@@ -10,18 +10,10 @@
             "name": "point_de_repere"
         },
         {
-            "name": "troncon_de_route",
-            "select_sql": [
-                "SELECT identifiant_voie_1_gauche, identifiant_de_section, sens_de_circulation, nature, geometrie",
-                "FROM troncon_de_route"
-            ]
+            "name": "section_de_points_de_repere"
         },
         {
-            "name": "section_de_points_de_repere",
-            "select_sql": [
-                "SELECT identifiant_de_section, geometrie",
-                "FROM section_de_points_de_repere"
-            ]
+            "name": "troncon_de_route"
         }
     ]
 }
