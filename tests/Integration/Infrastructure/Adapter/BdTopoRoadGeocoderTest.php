@@ -152,7 +152,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '34',
                 'U',
                 500,
-                Coordinates::fromLonLat(3.906088321, 44.596375194),
+                Coordinates::fromLonLat(3.905983817, 44.59655326),
             ],
             'pr-and-line-inverted-order' => [
                 'D978',
@@ -160,7 +160,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '1',
                 'U',
                 100,
-                Coordinates::fromLonLat(2.182054281, 45.221764408),
+                Coordinates::fromLonLat(2.182019496, 45.221793981),
             ],
         ];
     }
@@ -170,9 +170,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
      */
     public function testComputeReferencePoint(string $roadNumber, string $administrator, string $pointNumber, string $side, int $abscissa, Coordinates $coords): void
     {
-        $lineGeometry = $this->roadGeocoder->computeRoad($roadNumber, $administrator);
-
-        $this->assertEquals($coords, $this->roadGeocoder->computeReferencePoint($lineGeometry, $administrator, $roadNumber, $pointNumber, $side, $abscissa));
+        $this->assertEquals($coords, $this->roadGeocoder->computeReferencePoint($administrator, $roadNumber, $pointNumber, $side, $abscissa));
     }
 
     public function testComputeReferencePointErrorNoResult(): void
@@ -180,10 +178,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->expectException(GeocodingFailureException::class);
         $this->expectExceptionMessageMatches('/no result found/');
 
-        $lineGeometry = $this->roadGeocoder->computeRoad(roadNumber: 'D906', administrator: 'Ardèche');
-
         $this->roadGeocoder->computeReferencePoint(
-            $lineGeometry,
             administrator: 'Ardèche',
             roadNumber: 'D906',
             pointNumber: '1',
@@ -196,10 +191,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
     {
         $this->expectException(AbscissaOutOfRangeException::class);
 
-        $lineGeometry = $this->roadGeocoder->computeRoad(roadNumber: 'D906', administrator: 'Ardèche');
-
         $this->roadGeocoder->computeReferencePoint(
-            $lineGeometry,
             administrator: 'Ardèche',
             roadNumber: 'D906',
             pointNumber: '34',

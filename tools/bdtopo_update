@@ -187,7 +187,7 @@ def main(
                     "-t_srs",
                     "EPSG:4326",
                     # Append to existing data, or overwrite for faster re-ingestion
-                    "-overwrite" if overwrite else "-append",
+                    "-overwrite" if overwrite and table.name not in tables_seen else "-append",
                     # Use provided SQL statement, if any, to only import certain columns
                     # (In this case, progress bar won't be available due a limitation of the ogr2ogr Postgres driver)
                     *(["-sql", table.select_sql] if table.select_sql else []),

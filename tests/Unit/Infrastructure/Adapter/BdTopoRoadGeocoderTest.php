@@ -66,7 +66,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->computeReferencePoint('geom', 'Ardennes', 'D32', '1', 'U', 0);
+        $this->roadGeocoder->computeReferencePoint('Ardennes', 'D32', '1', 'U', 0);
     }
 
     public function testFindRoadNamesUnexpectedError(): void
