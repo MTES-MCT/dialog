@@ -55,7 +55,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Veuillez choisir une ville ou commune parmi la liste.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
+        $this->assertSame('Veuillez choisir une ville ou un code postal parmi la liste.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
     }
 
     public function testInvalidDepartmentalRoad(): void
