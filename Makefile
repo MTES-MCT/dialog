@@ -1,13 +1,13 @@
 .PHONY: assets
 
 # Allow non-Docker overrides for CI.
-_DOCKER_EXEC_PHP = docker compose exec php
-_SYMFONY = ${_DOCKER_EXEC_PHP} symfony
-BIN_PHP = ${_DOCKER_EXEC_PHP} php
+BIN_SHELL = docker compose exec php
+_SYMFONY = ${BIN_SHELL} symfony
+BIN_PHP = ${BIN_SHELL} php
 BIN_CONSOLE = ${_SYMFONY} console
 BIN_COMPOSER = ${_SYMFONY} composer
-BIN_NPM = ${_DOCKER_EXEC_PHP} npm
-BIN_NPX = ${_DOCKER_EXEC_PHP} npx
+BIN_NPM = ${BIN_SHELL} npm
+BIN_NPX = ${BIN_SHELL} npx
 
 # No TTY commands.
 _DOCKER_EXEC_PHP_NO_TTY = docker compose exec -T php
@@ -31,6 +31,7 @@ install: build start install_deps dbinstall assets blog_install ## Bootstrap pro
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
 	$(BIN_NPM) ci
+	$(BIN_SHELL) chmod -R 777 public/storage
 
 update_deps:
 	make composer CMD="update"

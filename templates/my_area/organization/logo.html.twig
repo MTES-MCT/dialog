@@ -20,23 +20,11 @@
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--end">
                         <div class="fr-col-12 fr-col-md-6">
                             <p class="fr-text--sm">{{ 'organization.logo.description'|trans }}</p>
-                            <div class="fr-card app-card--height-auto">
-                                <div class="fr-card__body">
-                                    <div class="fr-card__content">
-                                        <p class="fr-card__desc">
-                                            {{ 'organization.logo.format'|trans }}<br/>
-                                            {{ 'organization.logo.size'|trans }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="fr-card__header">
-                                    <div class="fr-card__img">
-                                        <img class="fr-responsive-img" src="{{ asset('images/placeholder-16x9.png')}}" alt="{{ 'organization.logo'|trans }}" />
-                                    </div>
-                                </div>
+                            <div class="fr-p-3w app-frame app-frame--16-9">
+                                <img src="{{ logo ? logo : asset('images/placeholder-16x9.png')}}" alt="{{ 'organization.logo'|trans }}" />
                             </div>
                             {{ form_start(form) }}
-                                {{ form_row(form.file, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                                {{ form_row(form.file, { group_class: 'fr-input-group', widget_class: 'fr-input', label: 'Logo', help: 'Formats acceptés : jpeg, png, svg, webp. Taille maximale : 300 ko.' }) }}
                                 {{ form_widget(form.save) }}
                             {{ form_end(form) }}
                         </div>

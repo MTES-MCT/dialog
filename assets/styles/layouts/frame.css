@@ -1,0 +1,16 @@
+.app-frame {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-frame--16-9 {
+    aspect-ratio: 16 / 9;
+}
+
+.app-frame > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

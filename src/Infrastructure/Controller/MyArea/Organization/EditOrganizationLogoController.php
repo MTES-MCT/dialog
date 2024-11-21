@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\MyArea\Organization;
 use App\Application\CommandBusInterface;
 use App\Application\Organization\Logo\Command\SaveOrganizationLogoCommand;
 use App\Application\QueryBusInterface;
+use App\Application\StorageInterface;
 use App\Infrastructure\Form\Organization\LogoFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,6 +27,7 @@ final class EditOrganizationLogoController extends AbstractOrganizationControlle
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
+        private StorageInterface $storage,
         QueryBusInterface $queryBus,
         Security $security,
     ) {
@@ -59,12 +61,15 @@ final class EditOrganizationLogoController extends AbstractOrganizationControlle
             );
         }
 
+        $logo = $organization->getLogo() ? $this->storage->get($organization->getLogo()) : null;
+
         return new Response(
             content: $this->twig->render(
                 name: 'my_area/organization/logo.html.twig',
                 context: [
                     'organization' => $organization,
                     'form' => $form->createView(),
+                    'logo' => $logo,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid())
