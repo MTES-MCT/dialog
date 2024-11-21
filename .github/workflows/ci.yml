@@ -65,7 +65,7 @@ jobs:
           echo "APP_STORAGE_SOURCE=memory.storage" >> .env
 
       - name: CI
-        run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx"
+        run: make ci CI=1 BIN_SHELL="" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
       - uses: codecov/codecov-action@v3
         with:
