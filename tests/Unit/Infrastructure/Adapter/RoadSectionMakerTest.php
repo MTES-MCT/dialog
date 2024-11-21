@@ -41,8 +41,8 @@ final class RoadSectionMakerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeReferencePoint')
             ->withConsecutive(
-                [$fullDepartmentalRoadGeometry, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa],
-                [$fullDepartmentalRoadGeometry, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa],
+                [$administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa],
+                [$administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa],
             )
             ->willReturnOnConsecutiveCalls($fromCoords, $toCoords);
 
@@ -92,7 +92,7 @@ final class RoadSectionMakerTest extends TestCase
         $geocoder
             ->expects(self::once())
             ->method('computeReferencePoint')
-            ->with($fullDepartmentalRoadGeometry, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa)
+            ->with($administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa)
             ->willThrowException(new AbscissaOutOfRangeException());
 
         $roadSectionMaker->computeSection(
