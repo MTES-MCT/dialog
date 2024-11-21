@@ -62,6 +62,7 @@ jobs:
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
           echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_DATABASE_URL }}" >> .env
           echo "REDIS_URL=redis://localhost:6379" >> .env
+          echo "APP_STORAGE_SOURCE=memory.storage" >> .env
 
       - name: CI
         run: make ci CI=1 BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer" BIN_NPM="npm" BIN_NPX="npx"

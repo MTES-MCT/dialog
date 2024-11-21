@@ -498,7 +498,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier.help">
                 <source>regulation.general_info.identifier.help</source>
-                <target>Numéro ou nom de l'arrêté (identifiant unique)</target>
+                <target>Numéro de l'arrêté (identifiant unique)</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.organization">
                 <source>regulation.general_info.organization</source>
@@ -518,7 +518,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.description">
                 <source>regulation.general_info.description</source>
-                <target>Description</target>
+                <target>Intitulé</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.description.help">
                 <source>regulation.general_info.description.help</source>
@@ -632,7 +632,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.city">
                 <source>regulation.location.city</source>
-                <target>Ville ou commune</target>
+                <target>Ville ou code postal</target>
             </trans-unit>
             <trans-unit id="regulation.location.city.results_label">
                 <source>regulation.location.city.results_label</source>
@@ -802,7 +802,7 @@
             </trans-unit>
             <trans-unit id="regulation.locations.description">
                 <source>regulation.locations.description</source>
-                <target>Où est prévue la perturbation ?</target>
+                <target>Où est prévue la restriction ?</target>
             </trans-unit>
             <trans-unit id="regulation.measures">
                 <source>regulation.measures</source>
@@ -2100,6 +2100,26 @@
                 <source>organization.name</source>
                 <target>Organisation</target>
             </trans-unit>
+            <trans-unit id="organization.logo">
+                <source>organization.logo</source>
+                <target>Logo</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.description">
+                <source>organization.logo.description</source>
+                <target>Importez le logo de votre organisation que vous souhaitez afficher sur les arrêtés de circulation généré par Dialog.</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.format">
+                <source>organization.logo.format</source>
+                <target>Formats acceptés : jpeg, png, svg, webp</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.size">
+                <source>organization.logo.size</source>
+                <target>Taille maximale : 300 Ko</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.button">
+                <source>organization.logo.button</source>
+                <target>Ajouter un logo</target>
+            </trans-unit>
             <trans-unit id="organization.siret">
                 <source>organization.siret</source>
                 <target>SIRET</target>
@@ -2452,6 +2472,10 @@
                 <source>config.menu.authority</source>
                 <target>Autorité signataire</target>
             </trans-unit>
+            <trans-unit id="config.menu.logo">
+                <source>config.menu.logo</source>
+                <target>Logo</target>
+            </trans-unit>
             <trans-unit id="visa.list.title">
                 <source>visa.list.title</source>
                 <target>Modèles de visas</target>
@@ -2563,6 +2587,10 @@
             <trans-unit id="signing_authority.form.image_description">
                 <source>signing_authority.form.image_description</source>
                 <target>Vue d'ensemble schématique de l’arrêté montrant l’emplacement des informations sur l’autorité signataire.</target>
+            </trans-unit>
+            <trans-unit id="organization.form.image_description">
+                <source>organization.form.image_description</source>
+                <target>Vue d’ensemble schématique de l’arrêté montrant l’emplacement du logo.</target>
             </trans-unit>
         </body>
     </file>
