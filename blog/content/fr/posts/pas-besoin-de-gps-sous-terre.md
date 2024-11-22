@@ -19,7 +19,7 @@ Vous êtes-vous déjà demandé comment vos applications de navigation préfér�
 
 <div class="contenu-article">
 
-{% image "./img/smartphone-gps.png", "GPS smartphone © Maël Balland, Unsplash", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/smartphone-gps.jpg", "GPS smartphone © Maël Balland, Unsplash", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 
 Vous séchez ? Ne vous inquiétez pas, l’équipe de [DiaLog, solution de numérisation de la réglementation routière](https://www.dialog.beta.gouv.fr/), est là pour vous expliquer les dessous des apps de navigation. Commençons par celui sans qui rien ne serait possible : le smartphone.
 
