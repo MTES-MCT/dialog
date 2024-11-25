@@ -22,6 +22,6 @@ final class SaveOrganizationLogoCommandHandler
             $this->storage->delete($logo);
         }
 
-        $organization->setLogo($this->storage->write($folder, 'logo', $command->file));
+        $organization->setLogo($this->storage->write($folder, $command->file));
     }
 }

@@ -16,9 +16,9 @@ final class Storage implements StorageInterface
     ) {
     }
 
-    public function write(string $folder, string $fileName, UploadedFile $file): string
+    public function write(string $folder, UploadedFile $file): string
     {
-        $path = \sprintf('%s/%s.%s', $folder, $fileName, $file->getClientOriginalExtension());
+        $path = \sprintf('%s/%s.%s', $folder, $file->getFilename(), $file->getClientOriginalExtension());
         $this->storage->write($path, $file->getContent(), [
             'visibility' => 'public',
             'directory_visibility' => 'public',
