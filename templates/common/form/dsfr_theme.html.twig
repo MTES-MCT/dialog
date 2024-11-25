@@ -7,7 +7,6 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 {% block form_start %}
   {% set attr = attr|default({}) %}
   {% set attr = attr|merge({'data-controller': (attr['data-controller']|default('')) ~ ' viewport'}) %}
-
   {{ parent() }}
 {% endblock form_start %}
 
@@ -204,3 +203,29 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
         {% endfor -%}
     </div>
 {%- endblock choice_widget_expanded -%}
+
+{%- block file_row -%}
+    {% set row_attr = row_attr|default({}) %}
+
+    {% if file_button_enabled|default(false) %}
+        {% set row_attr = row_attr|merge({'data-controller': row_attr['data-controller']|default('') ~ ' form-upload'}) %}
+    {% endif %}
+
+    {{ block('form_row') }}
+{%- endblock -%}
+
+{%- block file_widget -%}
+    {% if file_button_enabled|default(false) %}
+        {% set attr = attr|default({}) %}
+        {% set widget_class = attr.class|default('') ~ ' fr-hidden' %}
+        {% set attr = attr|merge({'data-form-upload-target': 'input', 'class': widget_class}) %}
+
+        {{ block('form_widget') }}
+
+        <button type="button" data-action="click->form-upload#open" class="fr-mt-2w fr-btn {{ file_button_icon }} fr-btn--icon-left">
+            {{ file_button_label }}
+        </button>
+    {% else %}
+      {{ block('form_widget') }}
+    {% endif %}
+{%- endblock -%}
