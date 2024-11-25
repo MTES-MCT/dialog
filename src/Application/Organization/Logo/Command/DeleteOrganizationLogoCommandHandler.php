@@ -16,8 +16,9 @@ final class DeleteOrganizationLogoCommandHandler
     public function __invoke(DeleteOrganizationLogoCommand $command): void
     {
         $organization = $command->organization;
+        $logo = $organization->getLogo();
 
-        if (!$logo = $organization->getLogo()) {
+        if (!$logo) {
             return;
         }
 

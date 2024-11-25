@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface StorageInterface
 {
-    public function write(string $folder, string $fileName, UploadedFile $file): string;
+    public function write(string $folder, UploadedFile $file): string;
 
     public function delete(string $path): void;
 
