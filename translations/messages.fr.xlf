@@ -1992,6 +1992,10 @@
                 <source>regulation.vehicle_set.type.carSharing</source>
                 <target>Covoiturage</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.roadMaintenanceOrConstruction">
+                <source>regulation.vehicle_set.type.roadMaintenanceOrConstruction</source>
+                <target>Véhicules de services</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicles.all">
                 <source>regulation.vehicles.all</source>
                 <target>pour tous les véhicules</target>
@@ -2095,6 +2099,26 @@
             <trans-unit id="organization.name">
                 <source>organization.name</source>
                 <target>Organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.logo">
+                <source>organization.logo</source>
+                <target>Logo</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.description">
+                <source>organization.logo.description</source>
+                <target>Importez le logo de votre organisation que vous souhaitez afficher sur les arrêtés de circulation générés par Dialog.</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.format">
+                <source>organization.logo.format</source>
+                <target>Formats acceptés : jpeg, png, svg, webp</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.size">
+                <source>organization.logo.size</source>
+                <target>Taille maximale : 300 Ko</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.button">
+                <source>organization.logo.button</source>
+                <target>Ajouter un logo</target>
             </trans-unit>
             <trans-unit id="organization.siret">
                 <source>organization.siret</source>
@@ -2448,6 +2472,10 @@
                 <source>config.menu.authority</source>
                 <target>Autorité signataire</target>
             </trans-unit>
+            <trans-unit id="config.menu.logo">
+                <source>config.menu.logo</source>
+                <target>Logo</target>
+            </trans-unit>
             <trans-unit id="visa.list.title">
                 <source>visa.list.title</source>
                 <target>Modèles de visas</target>
@@ -2559,6 +2587,10 @@
             <trans-unit id="signing_authority.form.image_description">
                 <source>signing_authority.form.image_description</source>
                 <target>Vue d'ensemble schématique de l’arrêté montrant l’emplacement des informations sur l’autorité signataire.</target>
+            </trans-unit>
+            <trans-unit id="organization.form.image_description">
+                <source>organization.form.image_description</source>
+                <target>Vue d’ensemble schématique de l’arrêté montrant l’emplacement du logo.</target>
             </trans-unit>
         </body>
     </file>

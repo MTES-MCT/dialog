@@ -1,0 +1,42 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = 'organization.logo'|trans %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+                    { title: metaTitle },
+                ]} %}
+                <h2>{{ metaTitle }}</h2>
+                    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--end">
+                        <div class="fr-col-12 fr-col-md-6">
+                            <p class="fr-text--sm">{{ 'organization.logo.description'|trans }}</p>
+                            <div class="fr-p-3w app-frame app-frame--16-9">
+                                <img src="{{ logo ? logo : asset('images/placeholder-16x9.png')}}" alt="{{ 'organization.logo'|trans }}" />
+                            </div>
+                            {{ form_start(form) }}
+                                {{ form_row(form.file, { group_class: 'fr-input-group', widget_class: 'fr-input', label: 'Logo', help: 'Formats acceptés : jpeg, png, svg, webp. Taille maximale : 300 ko.' }) }}
+                                {{ form_widget(form.save) }}
+                            {{ form_end(form) }}
+                        </div>
+                        <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">
+                            <figure>
+                                {% set imageTitle = 'organization.form.image_description'|trans %}
+                                <figcaption class="fr-mt-2w fr-mb-1w fr-text--xs">{{ imageTitle }}</figcaption>
+                                <img src="{{ asset('images/placeholder-logo.svg') }}"  alt="{{ imageTitle }}" width="350"/>
+                            </figure>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

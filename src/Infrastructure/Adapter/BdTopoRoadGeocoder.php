@@ -69,6 +69,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     WHERE numero LIKE :numero_pattern
                     AND gestionnaire = :gestionnaire
                     AND type_de_route = :type_de_route
+                    ORDER BY numero
                     LIMIT 10
                 ',
                 [
@@ -123,7 +124,6 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     }
 
     public function computeReferencePoint(
-        string $lineGeometry,
         string $administrator,
         string $roadNumber,
         string $pointNumber,
@@ -131,80 +131,54 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         int $abscissa,
     ): Coordinates {
         try {
+            // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
             $row = $this->bdtopoConnection->fetchAssociative(
-                // Principe : partir du PR indiqué, puis marcher **dans le sens
-                // des PR croissants** d'une distance en mètres définie par `$abscissa`.
-                'WITH route_prs AS (
-                    SELECT *
-                    FROM point_de_repere
-                    WHERE route = :route
-                    AND gestionnaire = :gestionnaire
-                ),
-                matching_pr as (
-                    SELECT pr.abscisse as abscisse
-                    FROM route_prs AS pr
-                    WHERE pr.cote = :cote
-                    AND pr.numero = :numero
-                    LIMIT 1
-                ),
-                -- Attention : tous les calculs doivent être faits en mètres (unité des abscisses)
-                -- Le système de coordonnées habituel EPSG:4326 est en angles / degrés
-                -- On passe dans le système EPSG:2154 qui est en mètres
-                first_pr_in_meters AS (
-                    SELECT ST_Transform(pr.geometrie, 2154) AS geom
-                    FROM route_prs AS pr
-                    WHERE pr.ordre >= 0
-                    ORDER BY pr.ordre ASC
-                    LIMIT 1
-                ),
-                line_geom_in_meters AS (
-                    SELECT ST_Transform(ST_LineMerge(ST_GeomFromGeoJSON(:geom)), 2154) AS geom
-                ),
-                line_order AS (
-                    -- L\'ordre de numérisation (points de la géométrie) est le même que celui de numérotation (PR)
-                    -- SI ET SEULEMENT SI le premier point de repère est dans la première moitié du linéaire ("côté début").
-                    -- On se base sur la distance à vol d\'oiseau entre le premier PR et le premier point du linéaire pour éviter de devoir
-                    -- calculer les abscisses curvilignes (car justement leur définition dépend du sens qu\'on essaie de déterminer ici).
-                    -- Mais si la route est courbée, la distance à vol d\'oiseau est une moins bonne approximation de la distance curviligne.
-                    -- Donc on s\'intéresse au premier quart de la route plutôt qu\'à la première moitié.
-                    SELECT ST_Distance(ST_StartPoint(l.geom), fp.geom) < ST_Length(l.geom) / 4 AS is_aligned
-                    FROM line_geom_in_meters AS l, first_pr_in_meters AS fp
-                ),
-                line_measure AS (
-                    -- On associe une échelle ("measure" en postgis) au linéaire de route
-                    -- allant de 0 à la longueur totale de la route,
-                    -- dans le sens déterminé ci-dessus.
-                    SELECT (
-                        CASE WHEN o.is_aligned THEN ST_AddMeasure(
-                            l.geom,
-                            0,
-                            ST_Length(l.geom)
-                        )
-                        ELSE ST_AddMeasure(
-                            l.geom,
-                            ST_Length(l.geom),
-                            0
-                        )
-                        END
-                    ) AS geom
-                    FROM line_geom_in_meters AS l, line_order AS o
-                ),
-                -- ST_LocateAlong permet alors de trouver les coordonnées du point le long de cette échelle à partir du couple PR+abs indiqué.
-                point_in_meters AS (
-                    SELECT ST_LocateAlong(lm.geom, p.abscisse + :abscissa) AS geom
-                    FROM matching_pr AS p, line_measure AS lm
-                )
-                -- On repasse en EPSG:4326
-                SELECT ST_AsGeoJSON(ST_Transform(p.geom, 4326)) AS geom
-                FROM point_in_meters AS p
+                'SELECT ST_AsGeoJSON(
+                    ST_GeometryN(
+                        ST_LocateAlong(
+                            ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
+                            ST_InterpolatePoint(
+                                ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
+                                p.geometrie
+                            ) + :abscissa * (
+                                -- L ordre de numérisation (= ordre des points dans la géométrie de la section)
+                                -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
+                                -- On détecte si les deux ordres correspondent avec cette règle :
+                                -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
+                                -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens 
+                                CASE WHEN ST_Distance(
+                                    ST_StartPoint(s.geometrie),
+                                    (
+                                        SELECT pp.geometrie
+                                        FROM point_de_repere AS pp
+                                        WHERE pp.identifiant_de_section = s.identifiant_de_section
+                                        AND pp.ordre >= 0
+                                        ORDER BY pp.ordre ASC
+                                        LIMIT 1
+                                    )
+                                ) < ST_Length(s.geometrie) / 4
+                                THEN 1
+                                ELSE -1
+                                END
+                            )
+                        ),
+                        1
+                    )
+                ) AS geom
+                FROM point_de_repere AS p
+                LEFT JOIN section_de_points_de_repere AS s
+                    ON p.identifiant_de_section = s.identifiant_de_section
+                WHERE p.gestionnaire = :administrator
+                    AND p.route = :roadNumber
+                    AND p.numero = :pointNumber
+                    AND p.cote = :side
                 ',
                 [
-                    'geom' => $lineGeometry,
-                    'route' => $roadNumber,
-                    'gestionnaire' => $administrator,
-                    'numero' => $pointNumber,
+                    'administrator' => $administrator,
+                    'roadNumber' => $roadNumber,
+                    'pointNumber' => $pointNumber,
+                    'side' => $side,
                     'abscissa' => $abscissa,
-                    'cote' => $side,
                 ],
             );
         } catch (\Exception $exc) {
@@ -215,12 +189,12 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingFailureException(\sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
         }
 
-        $lonLat = json_decode($row['geom'], associative: true);
-        $coordinates = $lonLat['coordinates'];
-
-        if (empty($coordinates)) {
+        if (empty($row['geom'])) {
             throw new AbscissaOutOfRangeException();
         }
+
+        $lonLat = json_decode($row['geom'], associative: true);
+        $coordinates = $lonLat['coordinates'];
 
         // Coordinates can be a POINT [1, 2] or a MULTIPOINT [[1, 2], [3, 4]]
         if (\is_array($coordinates[0])) {
