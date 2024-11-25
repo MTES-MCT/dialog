@@ -2124,6 +2124,10 @@
                 <source>organization.logo.update</source>
                 <target>Modifier le logo</target>
             </trans-unit>
+            <trans-unit id="organization.logo.delete">
+                <source>organization.logo.delete</source>
+                <target>Supprimer le logo</target>
+            </trans-unit>
             <trans-unit id="organization.siret">
                 <source>organization.siret</source>
                 <target>SIRET</target>
