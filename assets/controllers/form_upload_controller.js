@@ -1,17 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ['input', 'form'];
+    static targets = ['input'];
 
-    connect() {
-        this.inputTarget.addEventListener('change', this.#submit);
-    }
-
-    click() {
+    open() {
         this.inputTarget.click();
-    }
-
-    #submit = () => {
-        this.formTarget.submit();
     }
 }

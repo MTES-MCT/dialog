@@ -20,15 +20,30 @@
                 <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--end">
                     <div class="fr-col-12 fr-col-md-6">
                         <p class="fr-text--sm">{{ 'organization.logo.description'|trans }}</p>
-                        {{ form_start(form, { attr: { 'data-controller': 'form-upload', 'data-form-upload-target': 'form' }}) }}
-                        {{ form_row(form.file, { button_label: (logo ? 'organization.logo.update' : 'organization.logo.add')|trans, button_icon: 'fr-icon-upload-fill', file: logo, file_alt: 'organization.logo'|trans }) }}
+                        {{ form_start(form, { attr: { 'data-controller': 'form-submit' }}) }}
+                            <div class="fr-p-3w app-frame app-frame--16-9">
+                                <img src="{{ logo ?: asset('images/placeholder-16x9.png')}}" alt="{{ metaTitle }}"/>
+                            </div>
+                            {{ form_row(form.file, {
+                                attr: {
+                                    'data-action': 'change->form-submit#submit',
+                                },
+                                file_button_enabled: true,
+                                file_button_label: (logo ? 'organization.logo.update' : 'organization.logo.add')|trans,
+                                file_button_icon: 'fr-icon-upload-fill',
+                            }) }}
                         {{ form_end(form) }}
                     </div>
                     <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">
                         <figure>
                             {% set imageTitle = 'organization.form.image_description'|trans %}
-                            <figcaption class="fr-mt-2w fr-mb-1w fr-text--xs">{{ imageTitle }}</figcaption>
-                            <img src="{{ asset('images/placeholder-logo.svg') }}"  alt="{{ imageTitle }}" width="350"/>
+                            <figcaption class="fr-mb-1w fr-text--xs">{{ imageTitle }}</figcaption>
+                            <img
+                                class="fr-background-alt--grey fr-p-3w"
+                                src="{{ asset('images/placeholder-logo.svg') }}"
+                                alt="{{ imageTitle }}"
+                                width="350"
+                            />
                         </figure>
                     </div>
                 </div>
