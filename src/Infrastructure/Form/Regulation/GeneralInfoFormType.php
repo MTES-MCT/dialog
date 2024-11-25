@@ -71,11 +71,11 @@ final class GeneralInfoFormType extends AbstractType
                 ],
             )
             ->add(
-                'description',
+                'entitled',
                 TextareaType::class,
                 options: [
-                    'label' => 'regulation.general_info.description',
-                    'help' => 'regulation.general_info.description.help',
+                    'label' => 'regulation.general_info.entitled',
+                    'help' => 'regulation.general_info.entitled.help',
                 ],
             )
             ->add(

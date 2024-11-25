@@ -34,7 +34,7 @@ final class GetGeneralInfoQueryHandler
             regulationOrderUuid: $row['regulationOrderUuid'],
             category: $row['category'],
             otherCategoryText: $row['otherCategoryText'],
-            description: $row['description'],
+            entitled: $row['entitled'],
             startDate: $row['overallStartDate'] ? new \DateTimeImmutable($row['overallStartDate']) : null,
             endDate: $row['overallEndDate'] ? new \DateTimeImmutable($row['overallEndDate']) : null,
         );

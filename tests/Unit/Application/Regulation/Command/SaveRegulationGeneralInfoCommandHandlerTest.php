@@ -63,7 +63,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         identifier: 'FO2/2023',
                         category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-                        description: 'Interdiction de circuler',
+                        entitled: 'Interdiction de circuler',
                     ),
                 ),
             )
@@ -101,7 +101,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command = new SaveRegulationGeneralInfoCommand();
         $command->identifier = 'FO2/2023';
         $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $command->description = 'Interdiction de circuler';
+        $command->entitled = 'Interdiction de circuler';
         $command->organization = $this->organization;
 
         $result = $handler($command);
@@ -173,7 +173,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->identifier = 'FO2/2030';
         $command->organization = $organization;
         $command->category = RegulationOrderCategoryEnum::OTHER->value;
-        $command->description = 'Interdiction de circuler';
+        $command->entitled = 'Interdiction de circuler';
         $command->otherCategoryText = 'Trou en formation';
         $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 

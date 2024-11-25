@@ -18,7 +18,7 @@ class RegulationOrder
         private string $uuid,
         private string $identifier,
         private string $category,
-        private string $description,
+        private string $entitled,
         private ?string $otherCategoryText = null,
         private ?VisaModel $visaModel = null,
         private ?array $additionalVisas = [],
@@ -47,9 +47,9 @@ class RegulationOrder
         return $this->otherCategoryText;
     }
 
-    public function getDescription(): string
+    public function getEntitled(): string
     {
-        return $this->description;
+        return $this->entitled;
     }
 
     public function getMeasures(): iterable
@@ -92,7 +92,7 @@ class RegulationOrder
     public function update(
         string $identifier,
         string $category,
-        string $description,
+        string $entitled,
         ?string $otherCategoryText = null,
         array $additionalVisas = [],
         array $additionalReasons = [],
@@ -100,7 +100,7 @@ class RegulationOrder
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;
-        $this->description = $description;
+        $this->entitled = $entitled;
         $this->otherCategoryText = $otherCategoryText;
         $this->additionalVisas = $additionalVisas;
         $this->additionalReasons = $additionalReasons;

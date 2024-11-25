@@ -43,7 +43,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['general_info_form']['identifier'] = 'F022023';
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
-        $values['general_info_form']['description'] = 'Interdiction de circuler dans Paris';
+        $values['general_info_form']['entitled'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::OTHER->value;
         $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
         $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
@@ -86,7 +86,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_identifier_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_description_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_entitled_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#general_info_form_category_error')->text());
     }
 
@@ -100,7 +100,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $identifier = RegulationOrderFixture::TYPICAL_IDENTIFIER;
         $form['general_info_form[identifier]'] = $identifier;
         $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
-        $form['general_info_form[description]'] = 'Travaux';
+        $form['general_info_form[entitled]'] = 'Travaux';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
 
         $crawler = $client->submit($form);
@@ -128,13 +128,13 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $form['general_info_form[identifier]'] = str_repeat('a', 61);
-        $form['general_info_form[description]'] = str_repeat('a', 256);
+        $form['general_info_form[entitled]'] = str_repeat('a', 256);
         $form['general_info_form[otherCategoryText]'] = str_repeat('a', 101);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.', $crawler->filter('#general_info_form_identifier_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_description_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_entitled_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#general_info_form_otherCategoryText_error')->text());
     }
 

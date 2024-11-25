@@ -12,7 +12,7 @@ final readonly class RegulationOrderDatexListItemView
         public string $regulationId,
         public string $organization,
         public string $source,
-        public string $description,
+        public string $entitled,
         public ?\DateTimeInterface $startDate,
         public ?\DateTimeInterface $endDate,
         public array $trafficRegulations,

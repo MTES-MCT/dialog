@@ -29,7 +29,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['general_info_form']['identifier'] = $identifier;
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
-        $values['general_info_form']['description'] = 'Interdiction de circuler dans Paris';
+        $values['general_info_form']['entitled'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $values['general_info_form']['otherCategoryText'] = 'Travaux';
         $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
@@ -80,13 +80,13 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['general_info_form[description]'] = str_repeat('a', 256);
+        $form['general_info_form[entitled]'] = str_repeat('a', 256);
         $form['general_info_form[identifier]'] = str_repeat('a', 61);
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.', $crawler->filter('#general_info_form_identifier_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_description_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_entitled_error')->text());
     }
 
     public function testEmptyReasonsAndVisas(): void

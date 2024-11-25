@@ -27,10 +27,10 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         // General info
-        $this->assertSame('Description 1', $generalInfo->filter('h3')->text());
+        $this->assertSame('entitled 1', $generalInfo->filter('h3')->text());
         $this->assertSame(OrganizationFixture::MAIN_ORG_NAME, $generalInfo->filter('li')->eq(0)->text());
         $this->assertSame('Évènement', $generalInfo->filter('li')->eq(1)->text());
-        $this->assertSame('Description 1', $generalInfo->filter('li')->eq(2)->text());
+        $this->assertSame('entitled 1', $generalInfo->filter('li')->eq(2)->text());
         $this->assertSame('Du 31/10/2023 au 31/10/2023', $generalInfo->filter('li')->eq(3)->text());
         $editGeneralInfoForm = $generalInfo->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL, $editGeneralInfoForm->getUri());

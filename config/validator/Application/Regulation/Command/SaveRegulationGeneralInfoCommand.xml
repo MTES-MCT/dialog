@@ -45,7 +45,7 @@
                 <option name="max">100</option>
             </constraint>
         </property>
-        <property name="description">
+        <property name="entitled">
             <constraint name="NotBlank" />
             <constraint name="Length">
                 <option name="max">255</option>
