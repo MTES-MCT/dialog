@@ -1,5 +1,8 @@
 {% extends 'layouts/layout.html.twig' %}
+
 {% set metaTitle = 'organization.logo'|trans %}
+{% set deleteCsrfToken = csrf_token('delete-logo') %}
+
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -33,6 +36,14 @@
                                 file_button_icon: 'fr-icon-upload-fill',
                             }) }}
                         {{ form_end(form) }}
+                        {% if logo %}
+                            <form method="delete" action="{{ path('app_config_organization_delete_logo', { uuid: organization.uuid }) }}">
+                                <button class="fr-mt-2w fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-delete-bin-line">
+                                    {{ 'organization.logo.delete'|trans }}
+                                </button>
+                                <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                            </form>
+                        {% endif %}
                     </div>
                     <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">
                         <figure>
