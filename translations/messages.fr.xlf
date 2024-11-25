@@ -2104,21 +2104,25 @@
                 <source>organization.logo</source>
                 <target>Logo</target>
             </trans-unit>
+            <trans-unit id="organization.image">
+                <source>organization.image</source>
+                <target>Image</target>
+            </trans-unit>
             <trans-unit id="organization.logo.description">
                 <source>organization.logo.description</source>
                 <target>Importez le logo de votre organisation que vous souhaitez afficher sur les arrêtés de circulation générés par Dialog.</target>
             </trans-unit>
-            <trans-unit id="organization.logo.format">
-                <source>organization.logo.format</source>
-                <target>Formats acceptés : jpeg, png, svg, webp</target>
+            <trans-unit id="organization.image.help">
+                <source>organization.image.help</source>
+                <target>Formats acceptés : jpeg, png, svg, webp. Taille maximale : 300 Ko</target>
             </trans-unit>
-            <trans-unit id="organization.logo.size">
-                <source>organization.logo.size</source>
-                <target>Taille maximale : 300 Ko</target>
-            </trans-unit>
-            <trans-unit id="organization.logo.button">
-                <source>organization.logo.button</source>
+            <trans-unit id="organization.logo.add">
+                <source>organization.logo.add</source>
                 <target>Ajouter un logo</target>
+            </trans-unit>
+            <trans-unit id="organization.logo.update">
+                <source>organization.logo.update</source>
+                <target>Modifier le logo</target>
             </trans-unit>
             <trans-unit id="organization.siret">
                 <source>organization.siret</source>

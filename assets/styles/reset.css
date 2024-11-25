@@ -17,3 +17,7 @@ textarea {
   /* Prevent resizing horizontally */
   resize: vertical;
 }
+
+figure {
+  margin: 0;
+}
