@@ -400,7 +400,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $vehicleSet3
             ->expects(self::once())
             ->method('getExemptedTypes')
-            ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value]);
+            ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value, VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value]);
         $vehicleSet3
             ->expects(self::once())
             ->method('getOtherExemptedTypeText')
@@ -634,6 +634,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                 ),
                                 new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
                                 new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, isExempted: true, otherTypeText: 'Véhicules de service'),
+                                new DatexVehicleConditionView(VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value, isExempted: true),
                             ],
                         ),
                     ],
