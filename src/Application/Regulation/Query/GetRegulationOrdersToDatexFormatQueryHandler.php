@@ -153,7 +153,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 regulationId: $regulationOrder->getIdentifier() . '#' . $regulationOrderRecord->getOrganizationUuid(),
                 organization: $regulationOrderRecord->getOrganizationName(),
                 source: $regulationOrderRecord->getSource(),
-                description: $regulationOrder->getDescription(),
+                title: $regulationOrder->getTitle(),
                 startDate: $overallDates[$uuid]['overallStartDate'],
                 endDate: $overallDates[$uuid]['overallEndDate'],
                 trafficRegulations: $trafficRegulations,

@@ -86,7 +86,7 @@ final class JOPTransformerTest extends TestCase
         $translator
             ->expects(self::once())
             ->method('trans')
-            ->with('jop.regulation_order.description')
+            ->with('jop.regulation_order.title')
             ->willReturn('Description arrêté JOP');
 
         $permissions = [CanUseRawGeoJSON::PERMISSION_NAME];
@@ -94,7 +94,7 @@ final class JOPTransformerTest extends TestCase
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'JOP2024-ZONES';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::EVENT->value;
-        $generalInfoCommand->description = 'Description arrêté JOP';
+        $generalInfoCommand->title = 'Description arrêté JOP';
         $generalInfoCommand->organization = $organization;
 
         $locationCommand1 = new SaveLocationCommand();

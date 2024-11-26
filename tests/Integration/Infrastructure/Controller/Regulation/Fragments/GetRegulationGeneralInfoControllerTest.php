@@ -19,10 +19,10 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $this->assertSame('Description 3', $crawler->filter('h3')->text());
+        $this->assertSame('Title 3', $crawler->filter('h3')->text());
         $this->assertSame(OrganizationFixture::MAIN_ORG_NAME, $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Réglementation permanente', $crawler->filter('li')->eq(1)->text());
-        $this->assertSame('Description 3', $crawler->filter('li')->eq(2)->text());
+        $this->assertSame('Title 3', $crawler->filter('li')->eq(2)->text());
         $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(3)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_PERMANENT, $editForm->getUri());
@@ -35,7 +35,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_LONG_DESCRIPTION . '/general_info');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Description 5 that is very long and...', $crawler->filter('h3')->text());
+        $this->assertSame('Title 5 that is very long and will be...', $crawler->filter('h3')->text());
     }
 
     public function testGetOtherCategoryTextDisplay(): void

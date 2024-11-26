@@ -28,7 +28,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
             regulationOrderUuid: 'fce8177b-3737-4b4e-933d-fe29d0092c89',
             category: 'other',
             otherCategoryText: 'Other category 1',
-            description: 'Description 1',
+            title: 'title 1',
             startDate: new \DateTimeImmutable($startDate),
             endDate: new \DateTimeImmutable($endDate),
         );
@@ -46,7 +46,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
                 'regulationOrderUuid' => 'fce8177b-3737-4b4e-933d-fe29d0092c89',
                 'category' => $generalInfo->category,
                 'otherCategoryText' => $generalInfo->otherCategoryText,
-                'description' => $generalInfo->description,
+                'title' => $generalInfo->title,
                 'overallStartDate' => $startDate,
                 'overallEndDate' => $endDate,
             ]);

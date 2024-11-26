@@ -632,7 +632,7 @@
         <trafficRegulationOrder id="2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c" version="1">
             <description>
                 <com:values>
-                    <com:value>Description 2</com:value>
+                    <com:value>Title 2</com:value>
                 </com:values>
             </description>
             <issuingAuthority>

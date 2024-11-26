@@ -23,7 +23,7 @@ final class GeneralInfoViewTest extends TestCase
             regulationOrderUuid: 'ed97924b-bdc5-421a-b6e8-ac3ee6b16a7e',
             category: 'other',
             otherCategoryText: 'Other category 1',
-            description: 'Description 1',
+            title: 'title 1',
             startDate: $startDate,
             endDate: $endDate,
         );
@@ -39,7 +39,7 @@ final class GeneralInfoViewTest extends TestCase
             regulationOrderUuid: '8a32e881-a683-4caa-976f-6882296bc29b',
             category: 'other',
             otherCategoryText: 'Other category 1',
-            description: 'Description 1',
+            title: 'title 1',
             startDate: $startDate,
             endDate: $endDate,
         );

@@ -62,7 +62,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = '15.248-circ';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
-        $generalInfoCommand->description = 'Circulation passage Pierre Curie';
+        $generalInfoCommand->title = 'Circulation passage Pierre Curie';
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
@@ -181,7 +181,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
-        $generalInfoCommand->description = 'nom_1';
+        $generalInfoCommand->title = 'nom_1';
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
@@ -593,7 +593,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'arr_1';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
-        $generalInfoCommand->description = 'nom_1';
+        $generalInfoCommand->title = 'nom_1';
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;

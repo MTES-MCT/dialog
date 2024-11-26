@@ -92,8 +92,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(\sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
-            ->addSelect(\sprintf('(%s) as rawGeoJSON', self::GET_RAW_GEOJSON_QUERY))
-        ;
+            ->addSelect(\sprintf('(%s) as rawGeoJSON', self::GET_RAW_GEOJSON_QUERY));
 
         $parameters = [];
 
@@ -185,8 +184,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'organization' => $organization,
             ])
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
 
         return $row ? $row['uuid'] : null;
     }
@@ -208,7 +206,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     ro.uuid as regulationOrderUuid,
                     ro.category,
                     ro.otherCategoryText,
-                    ro.description,
+                    ro.title,
                     (%s) as overallStartDate,
                     (%s) as overallEndDate
                 ',
@@ -233,8 +231,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
 
         return $row ? $row['uuid'] : null;
     }
@@ -275,8 +272,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.uuid IN (:uuids)')
             ->setParameter('uuids', $uuids, ArrayParameterType::STRING)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
 
         // Return array of $uuid => {overallStartDate, overallEndDate}
         $result = [];
