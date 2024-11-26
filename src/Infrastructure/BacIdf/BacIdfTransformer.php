@@ -51,7 +51,7 @@ final class BacIdfTransformer
         $generalInfo = new SaveRegulationGeneralInfoCommand();
         $generalInfo->identifier = $row['ARR_REF'];
         $generalInfo->category = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
-        $generalInfo->description = $row['ARR_NOM'];
+        $generalInfo->title = $row['ARR_NOM'];
 
         $date = $row['ARR_DUREE']['PERIODE_DEBUT']['$date'];
 

@@ -96,7 +96,7 @@ final class EudonetParisTransformer
         $command->otherCategoryText = $type;
 
         // Adhere to character limit
-        $command->description = mb_substr($row['fields'][EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE], 0, 255);
+        $command->title = mb_substr($row['fields'][EudonetParisExtractor::ARRETE_COMPLEMENT_DE_TITRE], 0, 255);
 
         $command->organization = $organization;
 
