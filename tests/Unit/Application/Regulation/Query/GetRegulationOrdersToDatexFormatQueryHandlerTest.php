@@ -98,8 +98,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->willReturn('56456ff6-7e1c-4d24-aa09-9c650d7f6115');
         $regulationOrder1
             ->expects(self::once())
-            ->method('getEntitled')
-            ->willReturn('Description 1');
+            ->method('getTitle')
+            ->willReturn('Title 1');
 
         $measure1 = $this->createMock(Measure::class);
         $measure1
@@ -356,7 +356,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->willReturn('df1895bf-17af-4d68-adbd-02a7110d3b29');
         $regulationOrder2
             ->expects(self::once())
-            ->method('getEntitled')
+            ->method('getTitle')
             ->willReturn('Description 2');
 
         $measure3 = $this->createMock(Measure::class);
@@ -479,7 +479,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->willReturn('fde674d4-9e82-42f5-841d-13f7d20b43e0');
         $regulationOrder3
             ->expects(self::once())
-            ->method('getEntitled')
+            ->method('getTitle')
             ->willReturn('Description 3');
 
         $measure4 = $this->createMock(Measure::class);
@@ -585,7 +585,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     regulationId: 'F01/2024#56456ff6-7e1c-4d24-aa09-9c650d7f6115',
                     organization: 'Autorité 1',
                     source: RegulationOrderRecordSourceEnum::DIALOG->value,
-                    entitled: 'Description 1',
+                    title: 'Title 1',
                     startDate: $startDate1,
                     endDate: $endDate1,
                     trafficRegulations: [
@@ -613,7 +613,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     regulationId: 'F02/2024#df1895bf-17af-4d68-adbd-02a7110d3b29',
                     organization: 'Autorité 2',
                     source: RegulationOrderRecordSourceEnum::DIALOG->value,
-                    entitled: 'Description 2',
+                    title: 'Description 2',
                     startDate: $startDate2,
                     endDate: null,
                     trafficRegulations: [
@@ -645,7 +645,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     regulationId: 'F03/2024#fde674d4-9e82-42f5-841d-13f7d20b43e0',
                     organization: 'Autorité 3',
                     source: RegulationOrderRecordSourceEnum::DIALOG->value,
-                    entitled: 'Description 3',
+                    title: 'Description 3',
                     startDate: $startDate3,
                     endDate: $endDate3,
                     trafficRegulations: [

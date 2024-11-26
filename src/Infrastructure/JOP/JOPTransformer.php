@@ -39,7 +39,7 @@ final readonly class JOPTransformer
         $generalInfoCommand->identifier = self::JOP_REGULATION_ORDER_IDENTIFIER;
         $generalInfoCommand->organization = $organization;
         $generalInfoCommand->category = RegulationOrderCategoryEnum::EVENT->value;
-        $generalInfoCommand->entitled = $this->translator->trans('jop.regulation_order.entitled');
+        $generalInfoCommand->title = $this->translator->trans('jop.regulation_order.title');
 
         $measureCommands = [];
         $tz = new \DateTimeZone('Europe/Paris');

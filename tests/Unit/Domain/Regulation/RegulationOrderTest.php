@@ -21,7 +21,7 @@ final class RegulationOrderTest extends TestCase
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             identifier: 'F02/2023',
             category: RegulationOrderCategoryEnum::EVENT->value,
-            entitled: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
+            title: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
             otherCategoryText: null,
             visaModel: $visaModel,
             additionalVisas: ['vu que 1'],
@@ -31,7 +31,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrder->getUuid());
         $this->assertSame('F02/2023', $regulationOrder->getIdentifier());
         $this->assertSame(RegulationOrderCategoryEnum::EVENT->value, $regulationOrder->getCategory());
-        $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getEntitled());
+        $this->assertSame('Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye', $regulationOrder->getTitle());
         $this->assertEmpty($regulationOrder->getMeasures()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getOtherCategoryText());
@@ -50,19 +50,19 @@ final class RegulationOrderTest extends TestCase
             uuid: '6598fd41-85cb-42a6-9693-1bc45f4dd392',
             identifier: 'F02/2023',
             category: RegulationOrderCategoryEnum::EVENT->value,
-            entitled: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
+            title: 'Arrêté temporaire portant réglementation de la circulation sur : Routes Départementales N° 3-93, Voie communautaire de la Colleraye',
         );
 
         $regulationOrder->update(
             identifier: 'F01/2023',
             category: RegulationOrderCategoryEnum::OTHER->value,
-            entitled: 'Arrêté temporaire',
+            title: 'Arrêté temporaire',
             otherCategoryText: 'Trou en formation',
         );
 
         $this->assertSame('F01/2023', $regulationOrder->getIdentifier());
         $this->assertSame(RegulationOrderCategoryEnum::OTHER->value, $regulationOrder->getCategory());
-        $this->assertSame('Arrêté temporaire', $regulationOrder->getEntitled());
+        $this->assertSame('Arrêté temporaire', $regulationOrder->getTitle());
         $this->assertSame('Trou en formation', $regulationOrder->getOtherCategoryText());
 
         $regulationOrder->addMeasure($measure1);

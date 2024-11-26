@@ -18,7 +18,7 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
         public readonly string $regulationOrderUuid,
         public readonly string $category,
         public readonly ?string $otherCategoryText,
-        public readonly string $entitled,
+        public readonly string $title,
         public readonly ?\DateTimeInterface $startDate,
         public readonly ?\DateTimeInterface $endDate,
     ) {

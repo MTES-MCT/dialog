@@ -64,8 +64,8 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $this->originalRegulationOrder
             ->expects(self::once())
-            ->method('getEntitled')
-            ->willReturn('entitled');
+            ->method('getTitle')
+            ->willReturn('title');
 
         $this->originalRegulationOrder
             ->expects(self::once())
@@ -104,7 +104,7 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'F01/2023-1';
-        $generalInfoCommand->entitled = 'entitled';
+        $generalInfoCommand->title = 'title';
         $generalInfoCommand->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
         $generalInfoCommand->organization = $originalOrganization;
         $generalInfoCommand->additionalVisas = [];

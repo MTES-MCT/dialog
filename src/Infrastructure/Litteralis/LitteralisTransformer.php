@@ -63,7 +63,7 @@ final readonly class LitteralisTransformer
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = $identifier;
         $this->setCategory($generalInfoCommand, $properties);
-        $generalInfoCommand->entitled = $this->buildDescription($properties);
+        $generalInfoCommand->title = $this->buildDescription($properties);
         $generalInfoCommand->organization = $organization;
 
         // (2) Parsing des mesures et leur contenu

@@ -69,7 +69,7 @@ final class LitteralisTransformerTest extends TestCase
         $generalInfo = new SaveRegulationGeneralInfoCommand();
         $generalInfo->identifier = $identifier;
         $generalInfo->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
-        $generalInfo->entitled = "de chargement d'engin de chantier (URL : https://dl.sogelink.fr/?0dbjHha7)";
+        $generalInfo->title = "de chargement d'engin de chantier (URL : https://dl.sogelink.fr/?0dbjHha7)";
         $generalInfo->organization = $this->organization;
 
         $measureCommands = [];
@@ -162,19 +162,19 @@ final class LitteralisTransformerTest extends TestCase
         // Option 1: "Description des travaux"
         $features = [json_decode(self::feature, associative: true)];
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame('regulation description (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->entitled);
+        $this->assertSame('regulation description (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->title);
 
         // Option 2: "Description évènement"
         $feature = str_replace('Description des travaux : regulation description', 'Description évènement : event description', self::feature);
         $features = [json_decode($feature, associative: true)];
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame('event description (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->entitled);
+        $this->assertSame('event description (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->title);
 
         // Option 3: none is present, is 'nommodele' as a default
         $feature = str_replace('; Description des travaux : regulation description', '', self::feature);
         $features = [json_decode($feature, associative: true)];
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame('[MEL] - Arrêté permanent (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->entitled);
+        $this->assertSame('[MEL] - Arrêté permanent (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->title);
     }
 
     public function testTransformComplexMeasures(): void

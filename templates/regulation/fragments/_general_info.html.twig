@@ -3,7 +3,7 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-article-line fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ generalInfo.description|u.truncate(36, '...', false) }}
+                {{ generalInfo.title|u.truncate(36, '...', false) }}
             </h3>
         </div>
         <div class="app-card__content" style="--card-content-margin-desktop: var(--6w)">
@@ -16,7 +16,7 @@
                         {{ ('regulation.category.' ~ generalInfo.category)|trans }}
                     {% endif %}
                 </li>
-                <li>{{ generalInfo.description }}</li>
+                <li>{{ generalInfo.title }}</li>
                 <li>
                     {% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}
                 </li>

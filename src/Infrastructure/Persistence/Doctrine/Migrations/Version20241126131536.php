@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241125134252 extends AbstractMigration
+final class Version20241126131536 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,11 +20,11 @@ final class Version20241125134252 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE regulation_order RENAME COLUMN description TO entitled');
+        $this->addSql('ALTER TABLE regulation_order RENAME COLUMN description TO title');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE regulation_order RENAME COLUMN entitled TO description');
+        $this->addSql('ALTER TABLE regulation_order RENAME COLUMN title TO description');
     }
 }
