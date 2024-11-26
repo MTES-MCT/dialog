@@ -42,7 +42,7 @@ final class SaveOrganizationLogoCommandHandlerTest extends TestCase
         $this->storage
             ->expects(self::once())
             ->method('write')
-            ->with('organizations/496bd752-c217-4625-ba0c-7454dc218516', 'logo', $file)
+            ->with('organizations/496bd752-c217-4625-ba0c-7454dc218516', $file)
             ->willReturn('organizations/496bd752-c217-4625-ba0c-7454dc218516/logo.png');
 
         $organization
