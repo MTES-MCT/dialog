@@ -32,7 +32,81 @@ final class StorageTest extends TestCase
         $filesystemOperator = $this->createMock(FilesystemOperator::class);
         $storage = new Storage($filesystemOperator, '/path/to/medias');
 
-        $this->assertSame('/path/to/medias/logo.jpeg', $storage->get('logo.jpeg'));
+        $this->assertSame('/path/to/medias/logo.jpeg', $storage->getUrl('logo.jpeg'));
+    }
+
+    public function testRead(): void
+    {
+        $filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
+
+        $filesystemOperator
+            ->expects(self::once())
+            ->method('has')
+            ->with('logo.jpeg')
+            ->willReturn(true);
+
+        $filesystemOperator
+            ->expects(self::once())
+            ->method('read')
+            ->willReturn('logoResource');
+
+        $this->assertSame('bG9nb1Jlc291cmNl', $storage->read('logo.jpeg'));
+    }
+
+    public function testReadFileNotFound(): void
+    {
+        $filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
+
+        $filesystemOperator
+            ->expects(self::once())
+            ->method('has')
+            ->with('logo.jpeg')
+            ->willReturn(false);
+
+        $filesystemOperator
+            ->expects(self::never())
+            ->method('read');
+
+        $this->assertNull($storage->read('logo.jpeg'));
+    }
+
+    public function testGetMimeType(): void
+    {
+        $filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
+
+        $filesystemOperator
+            ->expects(self::once())
+            ->method('has')
+            ->with('logo.jpeg')
+            ->willReturn(true);
+
+        $filesystemOperator
+            ->expects(self::once())
+            ->method('mimeType')
+            ->willReturn('image/jpeg');
+
+        $this->assertSame('image/jpeg', $storage->getMimeType('logo.jpeg'));
+    }
+
+    public function testGetMimeTypeFileNotFound(): void
+    {
+        $filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $storage = new Storage($filesystemOperator, '/path/to/medias');
+
+        $filesystemOperator
+            ->expects(self::once())
+            ->method('has')
+            ->with('logo.jpeg')
+            ->willReturn(false);
+
+        $filesystemOperator
+            ->expects(self::never())
+            ->method('mimeType');
+
+        $this->assertNull($storage->getMimeType('logo.jpeg'));
     }
 
     public function testCantDelete(): void
