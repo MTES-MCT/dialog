@@ -35,7 +35,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_LONG_DESCRIPTION . '/general_info');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Title 5 that is very long and...', $crawler->filter('h3')->text());
+        $this->assertSame('Title 5 that is very long and will be...', $crawler->filter('h3')->text());
     }
 
     public function testGetOtherCategoryTextDisplay(): void
