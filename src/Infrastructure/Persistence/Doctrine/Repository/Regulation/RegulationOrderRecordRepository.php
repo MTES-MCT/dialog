@@ -205,6 +205,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     roc.status,
                     ro.uuid as regulationOrderUuid,
                     ro.category,
+                    ro.subject,
                     ro.otherCategoryText,
                     ro.title,
                     (%s) as overallStartDate,

@@ -38,6 +38,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                     uuid: $this->idFactory->make(),
                     identifier: $command->identifier,
                     category: $command->category,
+                    subject: $command->subject,
                     title: $command->title,
                     otherCategoryText: $command->otherCategoryText,
                     additionalVisas: $command->additionalVisas,
@@ -64,6 +65,7 @@ final class SaveRegulationGeneralInfoCommandHandler
         $command->regulationOrderRecord->getRegulationOrder()->update(
             identifier: $command->identifier,
             category: $command->category,
+            subject: $command->subject,
             title: $command->title,
             otherCategoryText: $command->otherCategoryText,
             additionalVisas: $command->additionalVisas,

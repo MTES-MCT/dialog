@@ -10,10 +10,10 @@
             <ul class="fr-ml-1w fr-my-0 fr-list">
                 <li>{{ generalInfo.organizationName }}</li>
                 <li>
-                    {% if generalInfo.category == 'other' %}
-                        {{ 'regulation.category.other'|trans }} : {{ generalInfo.otherCategoryText }}
+                    {% if generalInfo.subject == 'other' %}
+                        {{ 'regulation.subject.other'|trans }} : {{ generalInfo.otherCategoryText }}
                     {% else %}
-                        {{ ('regulation.category.' ~ generalInfo.category)|trans }}
+                        {{ ('regulation.subject.' ~ generalInfo.subject)|trans }}
                     {% endif %}
                 </li>
                 <li>{{ generalInfo.title }}</li>

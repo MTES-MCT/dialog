@@ -13,6 +13,7 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
@@ -109,13 +110,14 @@ final readonly class LitteralisTransformer
     {
         $categoriesModeleValue = $properties['categoriesmodele'];
         $generalInfoCommand->category = match ($categoriesModeleValue) {
-            'Travaux' => RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            'Travaux' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'Réglementation permanente' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            'Evenements' => RegulationOrderCategoryEnum::EVENT->value,
-            default => RegulationOrderCategoryEnum::OTHER->value,
+            'Réglementation temporaire' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'Evenements' => RegulationSubjectEnum::EVENT->value,
+            default => RegulationSubjectEnum::OTHER->value,
         };
 
-        if ($generalInfoCommand->category === RegulationOrderCategoryEnum::OTHER->value) {
+        if ($generalInfoCommand->subject === RegulationSubjectEnum::OTHER->value) {
             $generalInfoCommand->otherCategoryText = $categoriesModeleValue;
         }
     }

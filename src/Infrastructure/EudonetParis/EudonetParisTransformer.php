@@ -13,7 +13,7 @@ use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
-use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\User\Organization;
 use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
@@ -92,7 +92,7 @@ final class EudonetParisTransformer
 
         $type = $row['fields'][EudonetParisExtractor::ARRETE_TYPE];
 
-        $command->category = RegulationOrderCategoryEnum::OTHER->value;
+        $command->subject = RegulationSubjectEnum::OTHER->value;
         $command->otherCategoryText = $type;
 
         // Adhere to character limit

@@ -35,7 +35,7 @@
         <property name="otherCategoryText">
             <constraint name="When">
                 <option name="expression">
-                    this.category == 'other'
+                    this.subject == 'other'
                 </option>
                 <option name="constraints">
                     <constraint name="NotBlank" />

@@ -57,6 +57,12 @@
                                 {{ form_row(form.category, {
                                     group_class: 'fr-select-group',
                                     widget_class: 'fr-select',
+                                }) }}
+                            </div>
+                            <div class="fr-fieldset__element">
+                                {{ form_row(form.subject, {
+                                    group_class: 'fr-select-group',
+                                    widget_class: 'fr-select',
                                     attr: {
                                         'data-controller': 'condition',
                                         'data-condition-equals-value': 'other',
