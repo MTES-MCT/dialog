@@ -21,7 +21,8 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
     public function load(ObjectManager $manager): void
     {
         $mainOrg = (new Organization(self::MAIN_ORG_ID))
-            ->setName(self::MAIN_ORG_NAME);
+            ->setName(self::MAIN_ORG_NAME)
+            ->setLogo('/path/to/logo.jpeg');
 
         $otherOrg = (new Organization(self::OTHER_ORG_ID))
             ->setName('Mairie de Savenay')

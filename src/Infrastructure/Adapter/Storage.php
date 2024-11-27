@@ -47,7 +47,7 @@ final readonly class Storage implements StorageInterface
             return null;
         }
 
-        return base64_encode($this->storage->read($path));
+        return $this->storage->read($path);
     }
 
     public function getMimeType(string $path): ?string

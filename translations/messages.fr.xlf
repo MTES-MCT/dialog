@@ -516,12 +516,12 @@
                 <source>regulation.general_info.category</source>
                 <target>Nature de l'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.description">
-                <source>regulation.general_info.description</source>
+            <trans-unit id="regulation.general_info.title">
+                <source>regulation.general_info.title</source>
                 <target>Intitulé</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.description.help">
-                <source>regulation.general_info.description.help</source>
+            <trans-unit id="regulation.general_info.title.help">
+                <source>regulation.general_info.title.help</source>
                 <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur
                     la voie")</target>
             </trans-unit>
@@ -2268,8 +2268,8 @@
                 <source>public.regulation.map.view</source>
                 <target>Visualiser les restrictions sur la carte</target>
             </trans-unit>
-            <trans-unit id="jop.regulation_order.description">
-                <source>jop.regulation_order.description</source>
+            <trans-unit id="jop.regulation_order.title">
+                <source>jop.regulation_order.title</source>
                 <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
             </trans-unit>
             <trans-unit id="organization.list.title">

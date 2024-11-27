@@ -51,7 +51,7 @@ final class StorageTest extends TestCase
             ->method('read')
             ->willReturn('logoResource');
 
-        $this->assertSame('bG9nb1Jlc291cmNl', $storage->read('logo.jpeg'));
+        $this->assertSame('logoResource', $storage->read('logo.jpeg'));
     }
 
     public function testReadFileNotFound(): void

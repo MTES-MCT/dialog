@@ -53,7 +53,8 @@ final class ExportRegulationController extends AbstractRegulationController
         $logoMimeType = null;
 
         if ($path = $generalInfo->organizationLogo) {
-            $logo = $this->storage->read($path);
+            $storage = $this->storage->read($path);
+            $logo = $storage ? base64_encode($storage) : null;
             $logoMimeType = $this->storage->getMimeType($path);
         }
 
