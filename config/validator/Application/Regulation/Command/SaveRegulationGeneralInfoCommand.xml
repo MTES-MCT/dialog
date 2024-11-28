@@ -23,13 +23,18 @@
                 </option>
                 <option name="constraints">
                     <constraint name="Choice">
-                        <value>roadMaintenance</value>
+                        <value>temporaryRegulation</value>
                         <value>permanentRegulation</value>
-                        <value>incident</value>
-                        <value>event</value>
-                        <value>other</value>
                     </constraint>
                 </option>
+            </constraint>
+        </property>
+        <property name="subject">
+            <constraint name="Choice">
+                <value>roadMaintenance</value>
+                <value>incident</value>
+                <value>event</value>
+                <value>other</value>
             </constraint>
         </property>
         <property name="otherCategoryText">

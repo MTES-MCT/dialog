@@ -15,6 +15,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
@@ -271,8 +272,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn('2024T1');
         $regulationOrder1
             ->expects(self::once())
-            ->method('getCategory')
-            ->willReturn(RegulationOrderCategoryEnum::INCIDENT->value);
+            ->method('getSubject')
+            ->willReturn(RegulationSubjectEnum::INCIDENT->value);
 
         $measure1 = $this->createMock(Measure::class);
 
@@ -362,7 +363,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $regulationOrder2
             ->expects(self::once())
             ->method('getCategory')
-            ->willReturn(RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value);
+            ->willReturn(RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value);
 
         $measure2 = $this->createMock(Measure::class);
 
