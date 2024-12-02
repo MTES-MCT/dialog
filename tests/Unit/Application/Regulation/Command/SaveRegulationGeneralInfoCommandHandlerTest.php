@@ -147,8 +147,8 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->with(
                 'FO2/2030',
                 RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
-                RegulationSubjectEnum::OTHER->value,
                 'Interdiction de circuler',
+                RegulationSubjectEnum::OTHER->value,
                 'Trou en formation',
                 [],
                 [],
@@ -183,7 +183,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 
         $result = $handler($command);
-
         $this->assertSame($regulationOrderRecord, $result);
     }
 }

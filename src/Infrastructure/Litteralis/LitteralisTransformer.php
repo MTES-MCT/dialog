@@ -64,6 +64,7 @@ final readonly class LitteralisTransformer
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = $identifier;
         $this->setCategory($generalInfoCommand, $properties);
+        $this->setSubject($generalInfoCommand, $properties);
         $generalInfoCommand->title = $this->buildDescription($properties);
         $generalInfoCommand->organization = $organization;
 
@@ -108,11 +109,21 @@ final readonly class LitteralisTransformer
 
     private function setCategory(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
     {
-        $categoriesModeleValue = $properties['categoriesmodele'];
+        $categoriesModeleValue = $properties['documenttype'];
         $generalInfoCommand->category = match ($categoriesModeleValue) {
             'Travaux' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
-            'Réglementation permanente' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            'Réglementation temporaire' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'ARRETE PERMANENT' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
+            'ARRETE TEMPORAIRE' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'Evenements' => RegulationSubjectEnum::EVENT->value,
+            default => RegulationSubjectEnum::OTHER->value,
+        };
+    }
+
+    private function setSubject(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
+    {
+        $categoriesModeleValue = $properties['categoriesmodele'];
+        $generalInfoCommand->subject = match ($categoriesModeleValue) {
+            'Travaux' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'Evenements' => RegulationSubjectEnum::EVENT->value,
             default => RegulationSubjectEnum::OTHER->value,
         };
