@@ -34,7 +34,7 @@ nelmio_security:
             style-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io']
             connect-src: ['self', 'https://data.geopf.fr']
             font-src: ['self']
-            img-src: ['self', 'data:', 'blob:']
+            img-src: ['self', 'data:', 'blob:', 'https://dialog.oos.cloudgouv-eu-west-1.outscale.com']
             # maplibre-gl
             # https://maplibre.org/maplibre-gl-js/docs/#csp-directives
             worker-src: ['blob:']
