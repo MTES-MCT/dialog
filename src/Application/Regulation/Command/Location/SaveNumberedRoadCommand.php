@@ -26,7 +26,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public ?Location $location = null;
 
     public function __construct(
-        public readonly ?NumberedRoad $numberedRoad = null,
+        public ?NumberedRoad $numberedRoad = null,
     ) {
         $this->administrator = $numberedRoad?->getAdministrator();
         $this->roadNumber = $numberedRoad?->getRoadNumber();

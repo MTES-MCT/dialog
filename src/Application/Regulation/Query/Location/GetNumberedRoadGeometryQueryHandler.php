@@ -33,10 +33,11 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
     {
         $command = $query->command;
 
-        $fullDepartmentalRoadGeometry = $this->roadGeocoder->computeRoad($command->roadNumber, $command->administrator);
+        $fullRoadGeometry = $this->roadGeocoder->computeRoad($command->roadType, $command->administrator, $command->roadNumber);
 
         return $this->roadSectionMaker->computeSection(
-            $fullDepartmentalRoadGeometry,
+            $fullRoadGeometry,
+            $command->roadType,
             $command->administrator,
             $command->roadNumber,
             $command->fromPointNumber,
@@ -51,15 +52,16 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
     private function shouldRecomputeGeometry(GetNumberedRoadGeometryQuery $query): bool
     {
         $command = $query->command;
+        $numberedRoad = $command->numberedRoad;
 
-        return !$command->numberedRoad
-            || $command->roadNumber !== $command->numberedRoad->getRoadNumber()
-            || $command->administrator !== $command->numberedRoad->getAdministrator()
-            || $command->fromPointNumber !== $command->numberedRoad->getFromPointNumber()
-            || $command->toPointNumber !== $command->numberedRoad->getToPointNumber()
-            || $command->fromAbscissa !== $command->numberedRoad->getFromAbscissa()
-            || $command->toAbscissa !== $command->numberedRoad->getToAbscissa()
-            || $command->fromSide !== $command->numberedRoad->getFromSide()
-            || $command->toSide !== $command->numberedRoad->getToSide();
+        return !$numberedRoad
+            || $command->roadNumber !== $numberedRoad->getRoadNumber()
+            || $command->administrator !== $numberedRoad->getAdministrator()
+            || $command->fromPointNumber !== $numberedRoad->getFromPointNumber()
+            || $command->toPointNumber !== $numberedRoad->getToPointNumber()
+            || $command->fromAbscissa !== $numberedRoad->getFromAbscissa()
+            || $command->toAbscissa !== $numberedRoad->getToAbscissa()
+            || $command->fromSide !== $numberedRoad->getFromSide()
+            || $command->toSide !== $numberedRoad->getToSide();
     }
 }

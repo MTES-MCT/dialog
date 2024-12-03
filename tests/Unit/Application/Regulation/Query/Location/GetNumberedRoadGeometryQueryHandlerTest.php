@@ -11,6 +11,7 @@ use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
 {
+    private string $roadType;
     private ?string $administrator;
     private ?string $roadNumber;
     private string $geometry;
@@ -36,6 +38,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->roadSectionMaker = $this->createMock(RoadSectionMakerInterface::class);
 
+        $this->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $this->administrator = 'Département de Loire-Atlantique';
         $this->roadNumber = 'D12';
         $this->fromPointNumber = '1';
@@ -61,7 +64,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoad')
-            ->with($this->roadNumber, $this->administrator)
+            ->with($this->roadType, $this->administrator, $this->roadNumber)
             ->willReturn($fullDepartmentalRoadGeometry);
 
         $this->roadSectionMaker
@@ -69,6 +72,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
             ->method('computeSection')
             ->with(
                 $fullDepartmentalRoadGeometry,
+                $this->roadType,
                 $this->administrator,
                 $this->roadNumber,
                 $this->fromPointNumber,
@@ -86,6 +90,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         );
 
         $command = new SaveNumberedRoadCommand();
+        $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
@@ -118,6 +123,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         );
 
         $command = new SaveNumberedRoadCommand();
+        $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
@@ -149,7 +155,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoad')
-            ->with($this->roadNumber, $this->administrator)
+            ->with($this->roadType, $this->administrator, $this->roadNumber)
             ->willReturn($fullDepartmentalRoadGeometry);
 
         $this->roadSectionMaker
@@ -157,6 +163,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
             ->method('computeSection')
             ->with(
                 $fullDepartmentalRoadGeometry,
+                $this->roadType,
                 $this->administrator,
                 $this->roadNumber,
                 $this->fromPointNumber,
@@ -174,6 +181,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         );
 
         $command = new SaveNumberedRoadCommand($numberedRoad);
+        $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
@@ -244,6 +252,7 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         );
 
         $command = new SaveNumberedRoadCommand($numberedRoad);
+        $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
