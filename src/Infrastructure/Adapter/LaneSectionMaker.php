@@ -11,6 +11,7 @@ use App\Application\IntersectionGeocoderInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\DirectionEnum;
 
 final class LaneSectionMaker implements LaneSectionMakerInterface
 {
@@ -39,6 +40,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
         string $fullLaneGeometry,
         string $roadName,
         string $cityCode,
+        string $direction,
         ?Coordinates $fromCoords,
         ?string $fromHouseNumber,
         ?string $fromRoadName,
@@ -53,6 +55,11 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
 
             if (!$toCoords) {
                 $toCoords = $this->resolvePoint($roadName, $cityCode, $toHouseNumber, $toRoadName);
+            }
+
+            // NOTE : Rien à faire pour le cas A vers B, on mettra le fait qu'une seule direction comme métadonnée dans les exports DATEX / CIFS / etc.
+            if ($direction === DirectionEnum::B_TO_A->value) {
+                [$fromCoords, $toCoords] = [$toCoords, $fromCoords];
             }
 
             return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);

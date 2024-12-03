@@ -11,6 +11,7 @@ use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
@@ -140,6 +141,12 @@ final class GetCifsIncidentsQueryHandler
 
                     $geometry = $location->getGeometry();
 
+                    $direction = 'BOTH_DIRECTIONS';
+
+                    if ($location->getNamedStreet()) {
+                        $direction = DirectionEnum::toCifsDirection($location->getNamedStreet()->getDirection());
+                    }
+
                     if ($location->getRawGeoJSON()) {
                         // Simplify the geometry to a (MULTI)LINESTRING with deduplicated segments.
                         $geometry = $this->polylineMaker->attemptMergeLines($geometry);
@@ -160,7 +167,7 @@ final class GetCifsIncidentsQueryHandler
                                 type: 'ROAD_CLOSED',
                                 subType: $subType,
                                 street: $street,
-                                direction: 'BOTH_DIRECTIONS',
+                                direction: $direction,
                                 polyline: $polyline,
                                 startTime: $incidentPeriod['start'],
                                 endTime: $incidentPeriod['end'],

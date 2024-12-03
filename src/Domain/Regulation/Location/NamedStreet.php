@@ -99,6 +99,7 @@ class NamedStreet
     }
 
     public function update(
+        string $direction,
         ?string $cityCode = null,
         ?string $cityLabel = null,
         ?string $roadName = null,
@@ -107,6 +108,7 @@ class NamedStreet
         ?string $toHouseNumber = null,
         ?string $toRoadName = null,
     ): void {
+        $this->direction = $direction;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
         $this->roadName = $roadName;
