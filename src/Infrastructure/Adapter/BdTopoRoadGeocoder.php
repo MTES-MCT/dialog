@@ -10,6 +10,7 @@ use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\IntersectionGeocoderInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 
@@ -54,10 +55,15 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
-    public function findRoads(string $search, string $administrator): array
+    public function findRoads(string $search, string $roadType, string $administrator): array
     {
         // Can search for a departmental road with the prefix "RD"
         if (str_starts_with(strtoupper($search), 'RD')) {
+            $search = substr($search, 1);
+        }
+
+        // Can search for a national road with the prefix "RN"
+        if (str_starts_with(strtoupper($search), 'RN')) {
             $search = substr($search, 1);
         }
 
@@ -75,26 +81,29 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 [
                     'numero_pattern' => \sprintf('%s%%', strtoupper($search)),
                     'gestionnaire' => $administrator,
-                    'type_de_route' => 'Départementale',
+                    'type_de_route' => $roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value ? 'Départementale' : 'Nationale',
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(\sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Numbered road query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        $departmentalRoads = [];
+        $results = [];
 
         foreach ($rows as $row) {
-            $departmentalRoads[] = [
+            $results[] = [
                 'roadNumber' => $row['numero'],
             ];
         }
 
-        return $departmentalRoads;
+        return $results;
     }
 
-    public function computeRoad(string $roadNumber, string $administrator): string
+    public function computeRoad(string $roadType, string $administrator, string $roadNumber): string
     {
+        $numero = strtoupper($roadNumber);
+        $typeDeRoute = $roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value ? 'Départementale' : 'Nationale';
+
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
@@ -106,24 +115,30 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     LIMIT 1
                 ',
                 [
-                    'numero' => strtoupper($roadNumber),
+                    'numero' => $numero,
                     'gestionnaire' => $administrator,
-                    'type_de_route' => 'Départementale',
+                    'type_de_route' => $typeDeRoute,
                 ],
             );
         } catch (\Exception $exc) {
-            throw new RoadGeocodingFailureException(\sprintf('Departmental roads query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new RoadGeocodingFailureException($roadType, \sprintf('Numbered road query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
         if ($rows) {
             return $rows[0]['geometry'];
         }
 
-        $message = \sprintf('no result found in route_numerotee_ou_nommee for roadNumber="%s", administrator="%s"', $roadNumber, $administrator);
-        throw new RoadGeocodingFailureException($message);
+        $message = \sprintf(
+            'no result found in route_numerotee_ou_nommee for numero="%s", gestionnaire="%s", type_de_route="%s"',
+            $numero,
+            $administrator,
+            $typeDeRoute,
+        );
+        throw new RoadGeocodingFailureException($roadType, $message);
     }
 
     public function computeReferencePoint(
+        string $roadType,
         string $administrator,
         string $roadNumber,
         string $pointNumber,
@@ -190,7 +205,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         if (empty($row['geom'])) {
-            throw new AbscissaOutOfRangeException();
+            throw new AbscissaOutOfRangeException($roadType);
         }
 
         $lonLat = json_decode($row['geom'], associative: true);

@@ -12,11 +12,12 @@ interface RoadGeocoderInterface
 
     public function computeRoadLine(string $roadName, string $inseeCode): string;
 
-    public function findRoads(string $search, string $administrator): array;
+    public function findRoads(string $search, string $roadType, string $administrator): array;
 
-    public function computeRoad(string $roadNumber, string $administrator): string;
+    public function computeRoad(string $roadType, string $administrator, string $roadNumber): string;
 
     public function computeReferencePoint(
+        string $roadType,
         string $administrator,
         string $roadNumber,
         string $pointNumber,

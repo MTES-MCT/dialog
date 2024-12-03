@@ -62,17 +62,18 @@ final class DuplicateMeasureCommandHandler
             $cmd->roadType = $location->getRoadType();
 
             if ($numberedRoad = $location->getNumberedRoad()) {
-                $cmd->numberedRoad = new SaveNumberedRoadCommand();
-                $cmd->numberedRoad->geometry = $location->getGeometry();
-                $cmd->numberedRoad->roadType = $location->getRoadType();
-                $cmd->numberedRoad->administrator = $numberedRoad->getAdministrator();
-                $cmd->numberedRoad->roadNumber = $numberedRoad->getRoadNumber();
-                $cmd->numberedRoad->fromPointNumber = $numberedRoad->getFromPointNumber();
-                $cmd->numberedRoad->fromSide = $numberedRoad->getFromSide();
-                $cmd->numberedRoad->fromAbscissa = $numberedRoad->getFromAbscissa();
-                $cmd->numberedRoad->toPointNumber = $numberedRoad->getToPointNumber();
-                $cmd->numberedRoad->toAbscissa = $numberedRoad->getToAbscissa();
-                $cmd->numberedRoad->toSide = $numberedRoad->getToSide();
+                $numberedRoadCmd = new SaveNumberedRoadCommand();
+                $numberedRoadCmd->geometry = $location->getGeometry();
+                $numberedRoadCmd->roadType = $location->getRoadType();
+                $numberedRoadCmd->administrator = $numberedRoad->getAdministrator();
+                $numberedRoadCmd->roadNumber = $numberedRoad->getRoadNumber();
+                $numberedRoadCmd->fromPointNumber = $numberedRoad->getFromPointNumber();
+                $numberedRoadCmd->fromSide = $numberedRoad->getFromSide();
+                $numberedRoadCmd->fromAbscissa = $numberedRoad->getFromAbscissa();
+                $numberedRoadCmd->toPointNumber = $numberedRoad->getToPointNumber();
+                $numberedRoadCmd->toAbscissa = $numberedRoad->getToAbscissa();
+                $numberedRoadCmd->toSide = $numberedRoad->getToSide();
+                $cmd->assignNumberedRoad($numberedRoadCmd);
             } elseif ($namedStreet = $location->getNamedStreet()) {
                 $cmd->namedStreet = new SaveNamedStreetCommand();
                 $cmd->namedStreet->geometry = $location->getGeometry();

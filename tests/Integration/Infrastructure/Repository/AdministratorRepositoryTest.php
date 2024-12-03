@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Repository;
 
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Repository\AdministratorRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AdministratorRepositoryTest extends KernelTestCase
 {
-    public function testRender(): void
+    public function testFindAll(): void
     {
         static::bootKernel();
         $container = static::getContainer();
@@ -19,11 +20,15 @@ class AdministratorRepositoryTest extends KernelTestCase
 
         $administrators = $repository->findAll();
 
-        // Basic case
-        $this->assertContains('Nord', $administrators);
-        // Cases across file lines
-        $this->assertContains('Calvados', $administrators);
-        $this->assertContains('Deux-Sèvres', $administrators);
-        $this->assertContains('Haute-Saône', $administrators, implode(', ', $administrators));
+        $this->assertEquals([RoadTypeEnum::DEPARTMENTAL_ROAD->value, RoadTypeEnum::NATIONAL_ROAD->value], array_keys($administrators));
+
+        $this->assertCount(103, $administrators[RoadTypeEnum::DEPARTMENTAL_ROAD->value]);
+        $this->assertCount(24, $administrators[RoadTypeEnum::NATIONAL_ROAD->value]);
+
+        // Take some examples
+        $this->assertContains('Nord', $administrators[RoadTypeEnum::DEPARTMENTAL_ROAD->value]);
+        $this->assertContains('Calvados', $administrators[RoadTypeEnum::DEPARTMENTAL_ROAD->value]);
+        $this->assertContains('DIR Ouest', $administrators[RoadTypeEnum::NATIONAL_ROAD->value]);
+        $this->assertContains('ATB', $administrators[RoadTypeEnum::NATIONAL_ROAD->value]);
     }
 }

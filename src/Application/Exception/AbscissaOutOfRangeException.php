@@ -6,4 +6,12 @@ namespace App\Application\Exception;
 
 class AbscissaOutOfRangeException extends GeocodingFailureException
 {
+    public function __construct(
+        public readonly string $roadType,
+        string $message = '',
+        ?int $locationIndex = null,
+        ?\Exception $previous = null,
+    ) {
+        parent::__construct($message, $locationIndex, $previous);
+    }
 }

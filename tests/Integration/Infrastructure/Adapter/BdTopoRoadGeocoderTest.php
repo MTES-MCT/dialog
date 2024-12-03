@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Infrastructure\Adapter;
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -68,16 +69,80 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
     private function provideTestFindRoads(): array
     {
         return [
-            'empty-administratorDoesNotExist' => ['D90', 'Administrator Does Not Exist', []],
-            'empty-searchNoResults' => ['does not exist', 'Ardèche', []],
-            'empty-searchNotD' => ['90', 'Ardèche', []],
-            'success' => [
-                'D90',
-                'Ardèche',
-                [
+            'departmentalRoad-administratorDoesNotExist' => [
+                'search' => 'D90',
+                'roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'administrator' => 'DIR Nord', // Pas un gestionnaire de départementale
+                'result' => [],
+            ],
+            'departmentalRoad-searchNoResults' => [
+                'search' => 'blabla search',
+                'roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'administrator' => 'Ardèche',
+                'result' => [],
+            ],
+            'departmentalRoad-searchNotD' => [
+                'search' => '90',
+                'roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'administrator' => 'Ardèche',
+                'result' => [],
+            ],
+            'departmentalRoad-success' => [
+                'search' => 'D90',
+                'roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'administrator' => 'Ardèche',
+                'result' => [
                     ['roadNumber' => 'D901'],
                     ['roadNumber' => 'D902'],
                     ['roadNumber' => 'D906'],
+                ],
+            ],
+            'departmentalRoad-success-RD' => [
+                'search' => 'RD90',
+                'roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'administrator' => 'Ardèche',
+                'result' => [
+                    ['roadNumber' => 'D901'],
+                    ['roadNumber' => 'D902'],
+                    ['roadNumber' => 'D906'],
+                ],
+            ],
+            'nationalRoad-administratorDoesNotExist' => [
+                'search' => 'N10',
+                'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+                'administrator' => 'Ardèche', // Pas un gestionnaire de nationale
+                'result' => [],
+            ],
+            'nationalRoad-searchNoResults' => [
+                'search' => 'blabla search',
+                'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+                'administrator' => 'DIR Île-de-France',
+                'result' => [],
+            ],
+            'nationalRoad-searchNotN' => [
+                'search' => '10',
+                'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+                'administrator' => 'DIR Île-de-France',
+                'result' => [],
+            ],
+            'nationalRoad-success' => [
+                'search' => 'N10',
+                'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+                'administrator' => 'DIR Île-de-France',
+                'result' => [
+                    ['roadNumber' => 'N10'],
+                    ['roadNumber' => 'N1013'],
+                    ['roadNumber' => 'N1014'],
+                    ['roadNumber' => 'N104'],
+                    ['roadNumber' => 'N105'],
+                ],
+            ],
+            'nationalRoad-success-RN' => [
+                'search' => 'RN11',
+                'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+                'administrator' => 'DIR Île-de-France',
+                'result' => [
+                    ['roadNumber' => 'N118'],
                 ],
             ],
         ];
@@ -86,9 +151,9 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
     /**
      * @dataProvider provideTestFindRoads
      */
-    public function testFindRoads(string $search, string $administrator, array $roadNumbers): void
+    public function testFindRoads(string $search, string $roadType, string $administrator, array $result): void
     {
-        $this->assertEquals($roadNumbers, $this->roadGeocoder->findRoads($search, $administrator));
+        $this->assertEquals($result, $this->roadGeocoder->findRoads($search, $roadType, $administrator));
     }
 
     private function provideTestComputeRoad(): array
@@ -96,13 +161,15 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         // Departmental road lines are very long, use hashes
         return [
             'success' => [
-                'D906',
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value,
                 'Ardèche',
+                'D906',
                 '188aafa16d56b14ac98387d369be5798',
             ],
             'multiple-results' => [
-                'D60',
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value,
                 'Aisne',
+                'D60',
                 'a443edf6c51aa195a0e7b9c703fce783',
             ],
         ];
@@ -111,28 +178,36 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
     /**
      * @dataProvider provideTestComputeRoad
      */
-    public function testComputeRoad(string $roadNumber, string $administrator, string $geometryMd5): void
+    public function testComputeRoad(string $roadType, string $administrator, string $roadNumber, string $geometryMd5): void
     {
-        $this->assertSame($geometryMd5, md5($this->roadGeocoder->computeRoad($roadNumber, $administrator)));
+        $this->assertSame($geometryMd5, md5($this->roadGeocoder->computeRoad($roadType, $administrator, $roadNumber)));
     }
 
     private function provideTestComputeRoadNoResult(): array
     {
         return [
-            'noResult-roadDoesNotExist' => ['D9000', 'Ardèche'],
-            'noResult-administratorDoesNotExist' => ['D902', 'La Dèche'],
+            'noResult-roadDoesNotExist' => [
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'D9000',
+                'Ardèche',
+            ],
+            'noResult-administratorDoesNotExist' => [
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'D902',
+                'La Dèche',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideTestComputeRoadNoResult
      */
-    public function testComputeRoadNoResult(string $roadNumber, string $administrator): void
+    public function testComputeRoadNoResult(string $roadType, string $administrator, string $roadNumber): void
     {
         $this->expectException(GeocodingFailureException::class);
         $this->expectExceptionMessageMatches('/no result found/');
 
-        $this->roadGeocoder->computeRoad($roadNumber, $administrator);
+        $this->roadGeocoder->computeRoad($roadType, $administrator, $roadNumber);
     }
 
     private function provideTestComputeReferencePoint(): array
@@ -170,7 +245,14 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
      */
     public function testComputeReferencePoint(string $roadNumber, string $administrator, string $pointNumber, string $side, int $abscissa, Coordinates $coords): void
     {
-        $this->assertEquals($coords, $this->roadGeocoder->computeReferencePoint($administrator, $roadNumber, $pointNumber, $side, $abscissa));
+        $this->assertEquals($coords, $this->roadGeocoder->computeReferencePoint(
+            RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+            $administrator,
+            $roadNumber,
+            $pointNumber,
+            $side,
+            $abscissa,
+        ));
     }
 
     public function testComputeReferencePointErrorNoResult(): void
@@ -179,6 +261,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->expectExceptionMessageMatches('/no result found/');
 
         $this->roadGeocoder->computeReferencePoint(
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             administrator: 'Ardèche',
             roadNumber: 'D906',
             pointNumber: '1',
@@ -192,6 +275,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->expectException(AbscissaOutOfRangeException::class);
 
         $this->roadGeocoder->computeReferencePoint(
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             administrator: 'Ardèche',
             roadNumber: 'D906',
             pointNumber: '34',
@@ -319,7 +403,8 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         // By default all types of sections are included.
         $geometry = $this->roadGeocoder->findSectionsInArea($area);
         $this->assertSame(
-            '{"type":"MultiLineString","coordinates":[[[2.702812091,49.375080986],[2.703003456,49.37507786],[2.703226487,49.375073913],[2.703234746,49.375073934],[2.703444002,49.37507175],[2.703720699,49.37507153],[2.703928546,49.375074735],[2.704122628,49.375077907],[2.70422448,49.375080853],[2.704291927,49.375081917],[2.704411689,49.375082209],[2.704450238,49.375081405],[2.704547996,49.375078048],[2.704663706,49.375064848]],[[2.703926664,49.37516282],[2.703928546,49.375074735],[2.703931583,49.375025305]],[[2.704141355,49.370375059],[2.704154607,49.371424076],[2.704175827,49.373723441],[2.704157915,49.374446088],[2.704127042,49.37502848]],[[2.704127042,49.37502848],[2.704124118,49.375058136],[2.704122628,49.375077907],[2.704119365,49.375166887]],[[2.704047618,49.379991827],[2.704002207,49.37998812],[2.703927917,49.37997895],[2.703874323,49.37996174],[2.703838642,49.379941878],[2.703823638,49.379917572],[2.703819668,49.379889697],[2.703829635,49.379832194],[2.703868123,49.379603078],[2.703908085,49.379356887],[2.704045651,49.378176115],[2.704074021,49.377790571],[2.704148908,49.377215479],[2.704347775,49.376145415],[2.70449489,49.375697239],[2.704644914,49.375221205],[2.704661989,49.375124169],[2.704663706,49.375064848]],[[2.703813123,49.376475788],[2.703820301,49.376424571],[2.703926664,49.37516282]],[[2.704119365,49.375166887],[2.70408568,49.375759159],[2.703941665,49.37710531],[2.70390435,49.377370385]],[[2.704663706,49.375064848],[2.705508168,49.374958144],[2.706102966,49.374938917],[2.706678394,49.374936719],[2.707757531,49.37495641]],[[2.703931583,49.375025305],[2.703972588,49.373877549],[2.703977585,49.373726551],[2.703973356,49.373024523],[2.703911925,49.368140794]]]}', $geometry,
+            '{"type":"MultiLineString","coordinates":[[[2.702812091,49.375080986],[2.703003456,49.37507786],[2.703226487,49.375073913],[2.703234746,49.375073934],[2.703444002,49.37507175],[2.703720699,49.37507153],[2.703928546,49.375074735],[2.704122628,49.375077907],[2.70422448,49.375080853],[2.704291927,49.375081917],[2.704411689,49.375082209],[2.704450238,49.375081405],[2.704547996,49.375078048],[2.704663706,49.375064848]],[[2.703926664,49.37516282],[2.703928546,49.375074735],[2.703931583,49.375025305]],[[2.704141355,49.370375059],[2.704154607,49.371424076],[2.704175827,49.373723441],[2.704157915,49.374446088],[2.704127042,49.37502848]],[[2.704127042,49.37502848],[2.704124118,49.375058136],[2.704122628,49.375077907],[2.704119365,49.375166887]],[[2.704047618,49.379991827],[2.704002207,49.37998812],[2.703927917,49.37997895],[2.703874323,49.37996174],[2.703838642,49.379941878],[2.703823638,49.379917572],[2.703819668,49.379889697],[2.703829635,49.379832194],[2.703868123,49.379603078],[2.703908085,49.379356887],[2.704045651,49.378176115],[2.704074021,49.377790571],[2.704148908,49.377215479],[2.704347775,49.376145415],[2.70449489,49.375697239],[2.704644914,49.375221205],[2.704661989,49.375124169],[2.704663706,49.375064848]],[[2.703813123,49.376475788],[2.703820301,49.376424571],[2.703926664,49.37516282]],[[2.704119365,49.375166887],[2.70408568,49.375759159],[2.703941665,49.37710531],[2.70390435,49.377370385]],[[2.704663706,49.375064848],[2.705508168,49.374958144],[2.706102966,49.374938917],[2.706678394,49.374936719],[2.707757531,49.37495641]],[[2.703931583,49.375025305],[2.703972588,49.373877549],[2.703977585,49.373726551],[2.703973356,49.373024523],[2.703911925,49.368140794]]]}',
+            $geometry,
         );
 
         // When excluding highways, the result contains only Rue de Vaudherlant and the "bretelle".

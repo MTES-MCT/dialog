@@ -148,6 +148,115 @@
     </li>
 {% endmacro %}
 
+{% macro numbered_road_form(form, roadType, locationIndex) %}
+    {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
+
+    <div
+        data-controller="reset"
+        data-form-reveal-target="section"
+        data-value="{{ roadType }}"
+        {% if not isThisTypeOfNumberedRoad%}hidden{% endif %}
+    >
+        {{ form_row(form[roadType].roadType, {
+            attr: {
+                'data-form-reveal-target': 'formControl',
+                'data-value': roadType,
+            }
+        }) }}
+
+        {{ form_row(form[roadType].administrator, {
+            group_class: 'fr-input-group',
+            widget_class: 'fr-input',
+            attr: {
+                'data-action': 'change->reset#reset',
+                'data-reset-key-param': 'administrator',
+                'data-form-reveal-target': 'formControl',
+                'data-value': roadType,
+                'disabled': not isThisTypeOfNumberedRoad,
+            }
+        }) }}
+
+        <div
+            class="fr-x-autocomplete-wrapper"
+            data-controller="autocomplete"
+            data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
+            data-autocomplete-query-param-value="search"
+            data-autocomplete-extra-query-params-value="{{ {
+                administrator: '#' ~ form[roadType].administrator.vars.id,
+                roadType: roadType,
+            }|json_encode }}"
+            data-autocomplete-min-length-value="2"
+            data-autocomplete-delay-value="500"
+            data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+            data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
+            data-action="autocomplete.change->reset#reset"
+            data-reset-key-param="roadNumber"
+        >
+            {{ form_row(form[roadType].roadNumber, {
+                group_class: 'fr-input-group',
+                widget_class: 'fr-input',
+                attr: {
+                    'data-autocomplete-target': 'input',
+                    'data-reset-target': 'element',
+                    'data-reset-keys': ['administrator']|json_encode,
+                    'data-form-reveal-target': 'formControl',
+                    'data-value': roadType,
+                    'disabled': not isThisTypeOfNumberedRoad,
+                },
+            }) }}
+                <ul
+                    id="{{ form[roadType].roadNumber.vars.id }}-results"
+                    role="listbox"
+                    aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
+                    class="fr-x-autocomplete"
+                    data-autocomplete-target="results"
+                >
+                    <li role="status" data-autocomplete-target="status"></li>
+                </ul>
+        </div>
+
+        <fieldset
+            aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point"
+            data-reset-target="element"
+            data-reset-keys="{{ ['administrator', 'roadNumber']|json_encode }}"
+            data-form-reveal-target="formControl"
+            data-value="{{ roadType }}"
+            {% if not isThisTypeOfNumberedRoad %}disabled{% endif %}
+        >
+            <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point">
+                {{ 'regulation.location.referencePoint'|trans }}
+            </legend>
+            <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
+            <fieldset
+                class="fr-mt-2w"
+                aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-start-legend"
+            >
+                <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-start-legend">
+                    {{ 'regulation.location.referencePoint.from'|trans }}
+                </legend>
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    {{ form_row(form[roadType].fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form[roadType].fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                    {{ form_row(form[roadType].fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                </div>
+            </fieldset>
+            <fieldset
+                class="fr-mt-2w fr-mb-2w"
+                aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-end-legend"
+            >
+                <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-end-legend">
+                    {{ 'regulation.location.referencePoint.to'|trans }}
+                </legend>
+                <div class="fr-grid-row fr-grid-row--gutters">
+                    {{ form_row(form[roadType].toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form[roadType].toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                    {{ form_row(form[roadType].toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                </div>
+            </fieldset>
+        </fieldset>
+    </div>
+{% endmacro %}
+
 {% macro locations_list_item(form, index) %}
     <li
         class="app-card app-card--no-header"
@@ -172,112 +281,12 @@
                     group_class: 'fr-select-group',
                     widget_class: 'fr-select',
                     row_attr: {
-                        'data-action':
-                        'change->form-reveal#openByValue'
+                        'data-action': 'change->form-reveal#openByValue'
                     },
                 }) }}
 
-                {% set isDepartmentalRoad = form.roadType.vars.value == 'departmentalRoad' %}
-                <div
-                    data-controller="reset"
-                    data-form-reveal-target="section"
-                    data-value="departmentalRoad"
-                    {% if not isDepartmentalRoad%}hidden{% endif %}
-                >
-                    {{ form_row(form.numberedRoad.roadType, {
-                        attr: {
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'departmentalRoad',
-                            'disabled': not isDepartmentalRoad,
-                        }
-                    }) }}
-                    {{ form_row(form.numberedRoad.administrator, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-action': 'change->reset#reset',
-                            'data-reset-key-param': 'administrator',
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'departmentalRoad',
-                            'disabled': not isDepartmentalRoad,
-                        }
-                    }) }}
-                    <div
-                        class="fr-x-autocomplete-wrapper"
-                        data-controller="autocomplete"
-                        data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
-                        data-autocomplete-query-param-value="search"
-                        data-autocomplete-extra-query-params-value="{{ {administrator: '#' ~ form.numberedRoad.administrator.vars.id}|json_encode }}"
-                        data-autocomplete-min-length-value="2"
-                        data-autocomplete-delay-value="500"
-                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
-                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
-                        data-action="autocomplete.change->reset#reset"
-                        data-reset-key-param="roadNumber"
-                    >
-                        {{ form_row(form.numberedRoad.roadNumber, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input',
-                            attr: {
-                                'data-autocomplete-target': 'input',
-                                'data-reset-target': 'element',
-                                'data-reset-keys': ['administrator']|json_encode,
-                                'data-form-reveal-target': 'formControl',
-                                'data-value': 'departmentalRoad',
-                                'disabled': not isDepartmentalRoad,
-                            },
-                        }) }}
-                            <ul
-                                id="{{ form.numberedRoad.roadNumber.vars.id }}-results"
-                                role="listbox"
-                                aria-label="{{ 'regulation.location.roadNumber.results_label'|trans }}"
-                                class="fr-x-autocomplete"
-                                data-autocomplete-target="results"
-                            >
-                                <li role="status" data-autocomplete-target="status"></li>
-                            </ul>
-                    </div>
-
-                    <fieldset
-                        aria-labelledby="regulation-location-{{ index }}-reference-point"
-                        data-reset-target="element"
-                        data-reset-keys="{{ ['administrator', 'roadNumber']|json_encode }}"
-                        data-form-reveal-target="formControl"
-                        data-value="departmentalRoad"
-                        {% if not isDepartmentalRoad %}disabled{% endif %}
-                    >
-                        <legend id="regulation-location-{{ index }}-reference-point">
-                           {{ 'regulation.location.referencePoint'|trans }}
-                        </legend>
-                        <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
-                        <fieldset
-                            class="fr-mt-2w"
-                            aria-labelledby="regulation-location-{{ index }}-reference-point-start-legend"
-                        >
-                            <legend id="regulation-location-{{ index }}-reference-point-start-legend">
-                                {{ 'regulation.location.referencePoint.from'|trans }}
-                            </legend>
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                {{ form_row(form.numberedRoad.fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                                {{ form_row(form.numberedRoad.fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                                {{ form_row(form.numberedRoad.fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                            </div>
-                        </fieldset>
-                        <fieldset
-                            class="fr-mt-2w fr-mb-2w"
-                            aria-labelledby="regulation-location-{{ index }}-reference-point-end-legend"
-                        >
-                            <legend id="regulation-location-{{ index }}-reference-point-end-legend">
-                                {{ 'regulation.location.referencePoint.to'|trans }}
-                            </legend>
-                            <div class="fr-grid-row fr-grid-row--gutters">
-                                {{ form_row(form.numberedRoad.toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                                {{ form_row(form.numberedRoad.toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                                {{ form_row(form.numberedRoad.toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                            </div>
-                        </fieldset>
-                    </fieldset>
-                </div>
+                {{ _self.numbered_road_form(form, 'departmentalRoad', index) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', index) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div

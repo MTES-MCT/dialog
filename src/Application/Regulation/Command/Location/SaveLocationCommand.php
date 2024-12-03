@@ -13,7 +13,8 @@ final class SaveLocationCommand implements CommandInterface
 {
     public ?string $roadType = null;
     public ?Measure $measure = null;
-    public ?SaveNumberedRoadCommand $numberedRoad = null;
+    public ?SaveNumberedRoadCommand $departmentalRoad = null;
+    public ?SaveNumberedRoadCommand $nationalRoad = null;
     public ?SaveNamedStreetCommand $namedStreet = null;
     public ?SaveRawGeoJSONCommand $rawGeoJSON = null;
     public array $permissions = []; // For validation
@@ -28,7 +29,9 @@ final class SaveLocationCommand implements CommandInterface
         }
 
         if ($location?->getNumberedRoad()) {
-            $this->numberedRoad = new SaveNumberedRoadCommand($location->getNumberedRoad());
+            $numberedRoad = new SaveNumberedRoadCommand($location->getNumberedRoad());
+            $numberedRoad->location = $location;
+            $this->assignNumberedRoad($numberedRoad);
         }
 
         if ($location?->getRawGeoJSON()) {
@@ -36,27 +39,64 @@ final class SaveLocationCommand implements CommandInterface
         }
     }
 
+    public function assignNumberedRoad(SaveNumberedRoadCommand $numberedRoad): void
+    {
+        if ($this->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value) {
+            $numberedRoad->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+            $this->departmentalRoad = $numberedRoad;
+        } else {
+            $numberedRoad->roadType = RoadTypeEnum::NATIONAL_ROAD->value;
+            $this->nationalRoad = $numberedRoad;
+        }
+    }
+
     public function clean(): void
     {
         if ($this->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value) {
+            // /!\ (**) Il y a déjà une NumberedRoad en DB qui correspond à une départementale.
+            // On recopie la référence vers la commande qui va la transformer en nationale.
+            if ($numberedRoad = $this->nationalRoad?->numberedRoad) {
+                $this->departmentalRoad->numberedRoad = $numberedRoad;
+            }
+
             $this->namedStreet = null;
+            $this->nationalRoad = null;
+            $this->rawGeoJSON = null;
+        }
+
+        if ($this->roadType === RoadTypeEnum::NATIONAL_ROAD->value) {
+            // /!\ Idem que (**) ci-dessus.
+            if ($numberedRoad = $this->departmentalRoad?->numberedRoad) {
+                $this->nationalRoad->numberedRoad = $numberedRoad;
+            }
+
+            $this->namedStreet = null;
+            $this->departmentalRoad = null;
             $this->rawGeoJSON = null;
         }
 
         if ($this->roadType === RoadTypeEnum::LANE->value) {
-            $this->numberedRoad = null;
+            $this->departmentalRoad = null;
+            $this->nationalRoad = null;
             $this->rawGeoJSON = null;
         }
 
         if ($this->roadType == RoadTypeEnum::RAW_GEOJSON->value) {
             $this->namedStreet = null;
-            $this->numberedRoad = null;
+            $this->departmentalRoad = null;
+            $this->nationalRoad = null;
         }
     }
 
     public function getRoadCommand(): RoadCommandInterface
     {
-        return $this->namedStreet ?? $this->numberedRoad ?? $this->rawGeoJSON ?? throw new \LogicException('No road command');
+        return match ($this->roadType) {
+            RoadTypeEnum::LANE->value => $this->namedStreet,
+            RoadTypeEnum::DEPARTMENTAL_ROAD->value => $this->departmentalRoad,
+            RoadTypeEnum::NATIONAL_ROAD->value => $this->nationalRoad,
+            RoadTypeEnum::RAW_GEOJSON->value => $this->rawGeoJSON,
+            default => throw new \LogicException('No road command'),
+        };
     }
 
     public function getRoadDeleteCommand(): ?CommandInterface
@@ -65,7 +105,7 @@ final class SaveLocationCommand implements CommandInterface
             return new DeleteNamedStreetCommand($namedStreet);
         }
 
-        if (!$this->numberedRoad && $numberedRoad = $this->location->getNumberedRoad()) {
+        if (!$this->departmentalRoad && !$this->nationalRoad && $numberedRoad = $this->location->getNumberedRoad()) {
             return new DeleteNumberedRoadCommand($numberedRoad);
         }
 

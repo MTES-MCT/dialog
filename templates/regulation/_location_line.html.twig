@@ -1,6 +1,6 @@
 {%- if location.roadType == 'lane' -%}
     {{ location.namedStreet.roadName }} {% include 'location/named_street/points.html.twig' with { location: location.namedStreet } only %} à {{ location.namedStreet.cityLabel }}
-{%- elseif location.roadType == 'departmentalRoad' -%}
+{%- elseif location.roadType in ['departmentalRoad', 'nationalRoad'] -%}
     {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }}) {% include 'regulation/_reference_points.html.twig' with { location: location.numberedRoad } only %}
 {%- elseif location.roadType == 'rawGeoJSON' -%}
     {{ location.rawGeoJSON.label }} ({{ 'regulation.location.road.type.rawGeoJSON'|trans|lower }})

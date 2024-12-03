@@ -255,13 +255,14 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
 
         $locationCommand2 = new SaveLocationCommand();
         $locationCommand2->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
-        $locationCommand2->numberedRoad = new SaveNumberedRoadCommand();
-        $locationCommand2->numberedRoad->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
-        $locationCommand2->numberedRoad->administrator = 'Ardèche';
-        $locationCommand2->numberedRoad->roadNumber = 'D110';
-        $locationCommand2->numberedRoad->fromPointNumber = '1';
-        $locationCommand2->numberedRoad->toPointNumber = '3';
-        $locationCommand2->numberedRoad->geometry = 'roadGeometry';
+        $numberedRoad = new SaveNumberedRoadCommand();
+        $numberedRoad->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $numberedRoad->administrator = 'Ardèche';
+        $numberedRoad->roadNumber = 'D110';
+        $numberedRoad->fromPointNumber = '1';
+        $numberedRoad->toPointNumber = '3';
+        $numberedRoad->geometry = 'roadGeometry';
+        $locationCommand2->assignNumberedRoad($numberedRoad);
 
         $locationCommand3 = new SaveLocationCommand();
         $locationCommand3->roadType = RoadTypeEnum::RAW_GEOJSON->value;

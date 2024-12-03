@@ -7,7 +7,8 @@ namespace App\Application;
 interface RoadSectionMakerInterface
 {
     public function computeSection(
-        string $fullDepartmentalRoadGeometry,
+        string $fullRoadGeometry,
+        string $roadType,
         string $administrator,
         string $roadNumber,
         string $fromPointNumber,

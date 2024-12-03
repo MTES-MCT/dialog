@@ -24,14 +24,14 @@ final class NumberedRoadFormType extends AbstractType
             ->add(
                 'administrator',
                 ChoiceType::class,
-                options: $this->getAdministratorOptions($options['administrators']),
+                options: $this->getAdministratorOptions($options['administrators'], $options['roadType']),
             )
             ->add(
                 'roadNumber',
                 TextType::class,
                 options: [
-                    'label' => 'regulation.location.roadNumber',
-                    'help' => 'regulation.location.roadNumber.help',
+                    'label' => 'regulation.location.roadNumber.' . $options['roadType'],
+                    'help' => 'regulation.location.roadNumber.help.' . $options['roadType'],
                 ],
             )
             ->add(
@@ -78,7 +78,7 @@ final class NumberedRoadFormType extends AbstractType
                     'help' => 'regulation.location.referencePoint.abscissa.help',
                 ],
             )
-            ->add('roadType', HiddenType::class)
+            ->add('roadType', HiddenType::class, ['data' => $options['roadType']])
         ;
 
         // Constraint "Valid" cannot be nested inside constraint When. The event listener is used to ensure that the roadType is added to the submitted data before the form is processed.
@@ -106,7 +106,7 @@ final class NumberedRoadFormType extends AbstractType
         ];
     }
 
-    private function getAdministratorOptions(array $administrators): array
+    private function getAdministratorOptions(array $administrators, string $roadType): array
     {
         $choices = [];
 
@@ -116,7 +116,7 @@ final class NumberedRoadFormType extends AbstractType
 
         return [
             'label' => 'regulation.location.administrator',
-            'help' => 'regulation.location.administrator.help',
+            'help' => \sprintf('regulation.location.administrator.help.%s', $roadType),
             'choices' => array_merge(
                 ['regulation.location.administrator.placeholder' => ''],
                 $choices,
@@ -127,9 +127,11 @@ final class NumberedRoadFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'roadType' => null,
             'administrators' => [],
             'data_class' => SaveNumberedRoadCommand::class,
         ]);
+        $resolver->setAllowedTypes('roadType', 'string');
         $resolver->setAllowedTypes('administrators', 'array');
     }
 }

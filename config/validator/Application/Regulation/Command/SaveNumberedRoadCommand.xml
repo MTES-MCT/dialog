@@ -7,57 +7,25 @@
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank" />
-                </option>
-            </constraint>
         </property>
         <property name="roadNumber">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank" />
-                    <constraint name="Length">
-                        <option name="max">50</option>
-                    </constraint>
-                </option>
-            </constraint>
-        </property>
-        <property name="fromPointNumber">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank"/>
-                </option>
-            </constraint>
-        </property>
-        <property name="toPointNumber">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="NotBlank"/>
-                </option>
+            <constraint name="Length">
+                <option name="max">50</option>
             </constraint>
         </property>
         <property name="fromAbscissa">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="Type">
-                        <option name="type">integer</option>
-                    </constraint>
+            <constraint name="Type">
+                <option name="type">
+                    <value>null</value>
+                    <value>integer</value>
                 </option>
             </constraint>
         </property>
         <property name="toAbscissa">
-            <constraint name="When">
-                <option name="expression"> this.roadType === 'departmentalRoad' </option>
-                <option name="constraints">
-                    <constraint name="Type">
-                        <option name="type">integer</option>
-                    </constraint>
+            <constraint name="Type">
+                <option name="type">
+                    <value>null</value>
+                    <value>integer</value>
                 </option>
             </constraint>
         </property>

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetDepartmentalRoadCompletionFragmentController
+final class GetNumberedRoadCompletionFragmentController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -27,18 +27,19 @@ final class GetDepartmentalRoadCompletionFragmentController
     {
         $search = $request->query->get('search');
         $administrator = $request->query->get('administrator');
+        $roadType = $request->query->get('roadType');
 
-        if (!$administrator) {
+        if (!$administrator || !$roadType) {
             throw new BadRequestHttpException();
         }
 
-        $departmentalRoadNumbers = $this->roadGeocoder->findRoads($search, $administrator);
+        $results = $this->roadGeocoder->findRoads($search, $roadType, $administrator);
 
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_road_numbers_completions.html.twig',
                 context: [
-                    'departmentalRoadNumbers' => $departmentalRoadNumbers,
+                    'results' => $results,
                 ],
             ),
         );
