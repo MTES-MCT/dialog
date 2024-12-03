@@ -27,6 +27,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     private ?bool $isEntireStreetFormValue = null;
     public ?string $geometry = null;
     public ?Location $location = null;
+    public ?string $direction = null;
 
     public function __construct(
         public readonly ?NamedStreet $namedStreet = null,
@@ -42,6 +43,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
         $this->toRoadName = $namedStreet?->getToRoadName();
         $this->isEntireStreetFormValue = $namedStreet ? $this->computeIsEntireStreetFormValue() : null;
         $this->roadType = $namedStreet?->getLocation()?->getRoadType();
+        $this->direction = $namedStreet?->getDirection();
     }
 
     public function clean(): void

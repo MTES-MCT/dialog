@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\PointTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -86,6 +87,7 @@ final class NamedStreetFormType extends AbstractType
                     'label' => 'regulation.location.named_street.intersection',
                 ],
             )
+            ->add('direction', ChoiceType::class, $this->getDirectionOptions())
             ->add('roadType', HiddenType::class)
         ;
 
@@ -118,6 +120,21 @@ final class NamedStreetFormType extends AbstractType
                 ],
             ],
             'label' => 'regulation.location.named_street.point_type',
+        ];
+    }
+
+    private function getDirectionOptions(): array
+    {
+        $choices = [];
+
+        foreach (DirectionEnum::cases() as $case) {
+            $choices[\sprintf('regulation.location.named_street.direction.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.location.named_street.direction',
+            'help' => 'regulation.location.named_street.direction.help',
         ];
     }
 
