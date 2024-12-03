@@ -31,7 +31,7 @@ final class OrganizationDetailController extends AbstractOrganizationController
     public function __invoke(string $uuid): Response
     {
         $organization = $this->getOrganization($uuid);
-        $logo = $organization->getLogo() ? $this->storage->get($organization->getLogo()) : null;
+        $logo = $organization->getLogo() ? $this->storage->getUrl($organization->getLogo()) : null;
 
         return new Response(
             content: $this->twig->render(
