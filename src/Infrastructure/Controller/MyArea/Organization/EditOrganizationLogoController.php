@@ -61,7 +61,7 @@ final class EditOrganizationLogoController extends AbstractOrganizationControlle
             );
         }
 
-        $logo = $organization->getLogo() ? $this->storage->get($organization->getLogo()) : null;
+        $logo = $organization->getLogo() ? $this->storage->getUrl($organization->getLogo()) : null;
 
         return new Response(
             content: $this->twig->render(
