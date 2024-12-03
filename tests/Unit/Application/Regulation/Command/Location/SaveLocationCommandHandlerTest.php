@@ -25,15 +25,14 @@ use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class SaveLocationCommandHandlerTest extends TestCase
 {
-    private MockObject $commandBus;
-    private MockObject $queryBus;
-    private MockObject $locationRepository;
-    private MockObject $idFactory;
+    private $commandBus;
+    private $queryBus;
+    private $locationRepository;
+    private $idFactory;
 
     public function setUp(): void
     {
@@ -43,7 +42,18 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
     }
 
-    public function testCreateNumberedRoad(): void
+    private function provideTestCreateNumberedRoad(): array
+    {
+        return [
+            ['roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value],
+            ['roadType' => RoadTypeEnum::NATIONAL_ROAD->value],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestCreateNumberedRoad
+     */
+    public function testCreateNumberedRoad(string $roadType): void
     {
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
@@ -71,7 +81,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->with(new Location(
                 uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                 measure: $measure,
-                roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                roadType: $roadType,
                 geometry: 'geometry',
             ))
             ->willReturn($createdLocation);
@@ -84,8 +94,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
         $command = new SaveLocationCommand();
         $command->measure = $measure;
-        $command->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
-        $command->numberedRoad = $numberedRoadCommand;
+        $command->roadType = $roadType;
+        $command->assignNumberedRoad($numberedRoadCommand);
 
         $result = $handler($command);
 
@@ -229,9 +239,9 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
 
         $command = new SaveLocationCommand($location);
-        $command->numberedRoad = $numberedRoadCommand;
         $command->namedStreet = null;
         $command->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $command->assignNumberedRoad($numberedRoadCommand);
 
         $result = $handler($command);
 
@@ -276,7 +286,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $command = new SaveLocationCommand($location);
         $command->roadType = RoadTypeEnum::LANE->value;
-        $command->numberedRoad = null;
         $command->namedStreet = $namedStreetCommand;
 
         $result = $handler($command);
@@ -322,7 +331,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
         $command = new SaveLocationCommand($location);
         $command->roadType = RoadTypeEnum::LANE->value;
-        $command->numberedRoad = null;
         $command->namedStreet = $namedStreetCommand;
 
         $result = $handler($command);
