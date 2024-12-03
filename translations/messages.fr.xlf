@@ -605,6 +605,10 @@
                 <source>regulation.location.road.type.departmentalRoad</source>
                 <target>Route départementale</target>
             </trans-unit>
+            <trans-unit id="regulation.location.road.type.nationalRoad">
+                <source>regulation.location.road.type.nationalRoad</source>
+                <target>Route nationale</target>
+            </trans-unit>
             <trans-unit id="regulation.location.road.type.lane">
                 <source>regulation.location.road.type.lane</source>
                 <target>Voie</target>
@@ -615,28 +619,39 @@
             </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
-                <target>Département ou gestionnaire</target>
+                <target>Gestionnaire</target>
             </trans-unit>
-            <trans-unit id="regulation.location.administrator.help">
-                <source>regulation.location.administrator.help</source>
-                <target>Indiquez le gestionnaire de la route, par exemple Ille-et-Vilaine (35) ou
-                    Ville de Paris.</target>
+            <trans-unit id="regulation.location.administrator.help.departmentalRoad">
+                <source>regulation.location.administrator.help.departmentalRoad</source>
+                <target>Indiquez le gestionnaire de la départmentale, par exemple Ille-et-Vilaine (35) ou Ville de Paris. </target>
+            </trans-unit>
+            <trans-unit id="regulation.location.administrator.help.nationalRoad">
+                <source>regulation.location.administrator.help.nationalRoad</source>
+                <target>Indiquez le gestionnaire de la nationale, par exemple DIR Ouest.</target>
             </trans-unit>
             <trans-unit id="regulation.location.administrator.placeholder">
                 <source>regulation.location.administrator.placeholder</source>
-                <target>Sélectionner un département...</target>
+                <target>Sélectionner un gestionnaire...</target>
             </trans-unit>
-            <trans-unit id="regulation.location.roadNumber">
-                <source>regulation.location.roadNumber</source>
+            <trans-unit id="regulation.location.roadNumber.departmentalRoad">
+                <source>regulation.location.roadNumber.departmentalRoad</source>
                 <target>Numéro de la départementale</target>
             </trans-unit>
-            <trans-unit id="regulation.location.roadNumber.help">
-                <source>regulation.location.roadNumber.help</source>
-                <target>Indiquez le numéro de la départementale, par exemple D905</target>
+            <trans-unit id="regulation.location.roadNumber.help.departmentalRoad">
+                <source>regulation.location.roadNumber.help.departmentalRoad</source>
+                <target>Indiquez le numéro de la départementale, par exemple D905.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.roadNumber.nationalRoad">
+                <source>regulation.location.roadNumber.nationalRoad</source>
+                <target>Numéro de la nationale</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.roadNumber.help.nationalRoad">
+                <source>regulation.location.roadNumber.help.nationalRoad</source>
+                <target>Indiquez le numéro de la nationale, par exemple N176.</target>
             </trans-unit>
             <trans-unit id="regulation.location.roadNumber.results_label">
                 <source>regulation.location.roadNumber.results_label</source>
-                <target>Numéros des départementales suggérés</target>
+                <target>Numéros des routes suggérées</target>
             </trans-unit>
             <trans-unit id="regulation.location.isEntireStreet">
                 <source>regulation.location.isEntireStreet</source>

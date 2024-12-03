@@ -6,23 +6,10 @@
 [{{ signingAuthority.address|raw|nl2br }}]{custom-style="Dialog_ACompleter"}
 :::
 {% endif %}
-<br/>
 
-::: {custom-style="Dialog_Encart"}
-[Information importante :]{custom-style="Dialog_GrasSouligne"}
-
-Ce document est un [modèle à compléter et à modifier]{custom-style="Dialog_Gras"}
-par vos soins. Il constitue simplement une aide à la rédaction de l'arrêté, mais
-ne garantit pas l'exactitude des informations. Il vous appartient de vérifier que
-toutes les informations sont correctes.
-
-• Les informations en [bleu]{custom-style="Dialog_VariableGras"} sont issues du formulaire, assurez-vous qu'elles soient toujours en cohérence avec les informations renseignées dans DiaLog.
-
-• Les informations en [italique]{custom-style="Dialog_ACompleter"} sont à compléter.
-
-Vous pouvez supprimer cet encart une fois votre arrêté complété.
-:::
-
+{% if logo %}
+![](data:{{ logoMimeType }};base64,{{ logo }}){ height=100px }
+{% endif %}
 <br/>
 
 ::: {custom-style="Dialog_TitrePrincipal"}

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +43,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAllAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->findRoads('D32', 'Ardennes');
+        $this->roadGeocoder->findRoads(RoadTypeEnum::DEPARTMENTAL_ROAD->value, 'D32', 'Ardennes');
     }
 
     public function testComputeRoadUnexpectedError(): void
@@ -54,7 +55,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAllAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->computeRoad('D32', 'Ardennes');
+        $this->roadGeocoder->computeRoad(RoadTypeEnum::DEPARTMENTAL_ROAD->value, 'Ardennes', 'D32');
     }
 
     public function testComputeReferencePointUnexpectedError(): void
@@ -66,7 +67,7 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->method('fetchAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
 
-        $this->roadGeocoder->computeReferencePoint('Ardennes', 'D32', '1', 'U', 0);
+        $this->roadGeocoder->computeReferencePoint(RoadTypeEnum::DEPARTMENTAL_ROAD->value, 'Ardennes', 'D32', '1', 'U', 0);
     }
 
     public function testFindRoadNamesUnexpectedError(): void
