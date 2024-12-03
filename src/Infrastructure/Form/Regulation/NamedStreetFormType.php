@@ -95,6 +95,7 @@ final class NamedStreetFormType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
             $data['roadType'] = $event->getForm()->getParent()->get('roadType')->getData();
+            $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value; // Prevent null if entire street is checked
             $event->setData($data);
         });
     }

@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
@@ -44,6 +45,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetTypicalMeasureLocation1 = new NamedStreet(
             uuid: '047d007c-f468-4f80-9f8c-11cd19cfe0c1',
             location: $typicalMeasureLocation1,
+            direction: DirectionEnum::A_TO_B->value,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Grand Brossais',
@@ -61,6 +63,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetTypicalMeasureLocation2 = new NamedStreet(
             uuid: 'b291d4ef-9a78-43c4-9f4f-babc256ac320',
             location: $typicalMeasureLocation2,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Rue Victor Hugo',
@@ -78,6 +81,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetTypicalMeasureLocation3 = new NamedStreet(
             uuid: 'f8f38bf6-6dec-4a0a-aa23-0d934cc49e55',
             location: $typicalMeasureLocation3,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Avenue de Fonneuve',
@@ -115,6 +119,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetTypicalMeasureToRemoveLocation1 = new NamedStreet(
             uuid: 'b640220b-a80b-45b7-915c-b1fc878ada9a',
             location: $typicalMeasureToRemoveLocation1,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '44195',
             cityLabel: 'Savenay (44260)',
             roadName: 'Route du Grand Brossais',
@@ -135,6 +140,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetPublishedLocation1 = new NamedStreet(
             uuid: 'e998d4bc-2e4a-4686-9105-e06869ddb24b',
             location: $publishedLocation1,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Avenue de Fonneuve',
@@ -152,6 +158,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetPublishedLocation2 = new NamedStreet(
             uuid: '1578630f-06d7-457a-bfde-8447be156107',
             location: $publishedLocation2,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: "Rue de l'Hôtel de Ville",
@@ -169,6 +176,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetPublishedLocation3 = new NamedStreet(
             uuid: 'c477f85d-0827-454e-932d-d0e1ce8ebe0c',
             location: $publishedLocation3,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Rue Gamot',
@@ -204,6 +212,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetPermanentRegulationOrderLocation = new NamedStreet(
             uuid: '5a2f6655-5903-4b57-97be-fe6906f8aa42',
             location: $permanentRegulationOrderLocation,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '75118',
             cityLabel: 'Paris 18e Arrondissement (75018)',
             roadName: 'Rue du Simplon',
@@ -221,6 +230,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetFullCityLocation = new NamedStreet(
             uuid: 'be75b5f0-e1e3-4162-b1af-3dff1946ca36',
             location: $fullCityLocation,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '75118',
             cityLabel: 'Paris 18e Arrondissement (75018)',
             roadName: null,
@@ -245,6 +255,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $namedStreetCifsLocation = new NamedStreet(
             uuid: '72b70089-04ea-4ba0-8d9e-61ca86fc2413',
             location: $cifsLocation,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '82121',
             cityLabel: 'Montauban (82000)',
             roadName: 'Rue de la République',
