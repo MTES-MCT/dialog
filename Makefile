@@ -236,7 +236,6 @@ ci: ## Run CI steps
 	make assets
 	make dbinstall
 	make dbfixtures
-	make blog_install
 	make check
 	make test_all
 
