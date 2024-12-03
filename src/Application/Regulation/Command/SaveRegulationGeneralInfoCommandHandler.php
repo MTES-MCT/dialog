@@ -46,7 +46,6 @@ final class SaveRegulationGeneralInfoCommandHandler
                     visaModel: $visaModel,
                 ),
             );
-
             $regulationOrderRecord = $this->regulationOrderRecordRepository->add(
                 new RegulationOrderRecord(
                     uuid: $this->idFactory->make(),

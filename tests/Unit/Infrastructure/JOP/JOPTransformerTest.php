@@ -14,6 +14,7 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -93,6 +94,7 @@ final class JOPTransformerTest extends TestCase
 
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = 'JOP2024-ZONES';
+        $generalInfoCommand->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $generalInfoCommand->subject = RegulationSubjectEnum::EVENT->value;
         $generalInfoCommand->title = 'Description arrêté JOP';
         $generalInfoCommand->organization = $organization;

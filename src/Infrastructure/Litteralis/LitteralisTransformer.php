@@ -109,11 +109,9 @@ final readonly class LitteralisTransformer
 
     private function setCategory(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
     {
-        $categoriesModeleValue = $properties['documenttype'];
-        $generalInfoCommand->category = match ($categoriesModeleValue) {
-            'ARRETE PERMANENT' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            'ARRETE TEMPORAIRE' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
-        };
+        $generalInfoCommand->category = $properties['documenttype'] === 'ARRETE PERMANENT'
+        ? RegulationOrderCategoryEnum::PERMANENT_REGULATION->value
+        : RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
     }
 
     private function setSubject(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
