@@ -22,7 +22,8 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
     }
 
     public function computeSection(
-        string $fullDepartmentalRoadGeometry,
+        string $fullRoadGeometry,
+        string $roadType,
         string $administrator,
         string $roadNumber,
         string $fromPointNumber,
@@ -34,30 +35,30 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
     ): string {
         try {
             $fromCoords = $this->roadGeocoder
-                ->computeReferencePoint($administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa);
+                ->computeReferencePoint($roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa);
         } catch (AbscissaOutOfRangeException $e) {
-            throw new StartAbscissaOutOfRangeException(previous: $e);
+            throw new StartAbscissaOutOfRangeException($roadType, previous: $e);
         } catch (GeocodingFailureException $e) {
-            throw new RoadGeocodingFailureException(previous: $e);
+            throw new RoadGeocodingFailureException($roadType, previous: $e);
         }
 
         try {
             $toCoords = $this->roadGeocoder
-                ->computeReferencePoint($administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa);
+                ->computeReferencePoint($roadType, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa);
         } catch (AbscissaOutOfRangeException $e) {
-            throw new EndAbscissaOutOfRangeException(previous: $e);
+            throw new EndAbscissaOutOfRangeException($roadType, previous: $e);
         } catch (GeocodingFailureException $e) {
-            throw new RoadGeocodingFailureException(previous: $e);
+            throw new RoadGeocodingFailureException($roadType, previous: $e);
         }
 
         try {
             return $this->lineSectionMaker->computeSection(
-                $fullDepartmentalRoadGeometry,
+                $fullRoadGeometry,
                 $fromCoords,
                 $toCoords,
             );
         } catch (GeocodingFailureException $e) {
-            throw new RoadGeocodingFailureException(previous: $e);
+            throw new RoadGeocodingFailureException($roadType, previous: $e);
         }
     }
 }

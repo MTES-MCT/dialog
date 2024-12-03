@@ -108,7 +108,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 $commandFailed = true;
                 \Sentry\captureException($exc);
                 $field = $exc instanceof StartAbscissaOutOfRangeException ? 'fromAbscissa' : 'toAbscissa';
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('numberedRoad')->get($field)->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get($exc->roadType)->get($field)->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators'),
                     ),
@@ -116,9 +116,9 @@ final class UpdateMeasureController extends AbstractRegulationController
             } catch (RoadGeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('numberedRoad')->get('roadNumber')->addError(
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get($exc->roadType)->get('roadNumber')->addError(
                     new FormError(
-                        $this->translator->trans('regulation.location.error.departmental_road_geocoding_failed', [], 'validators'),
+                        $this->translator->trans('regulation.location.error.numbered_road_geocoding_failed', [], 'validators'),
                     ),
                 );
             } catch (GeocodingFailureException $exc) {

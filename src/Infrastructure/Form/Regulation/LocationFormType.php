@@ -24,8 +24,14 @@ final class LocationFormType extends AbstractType
                 ChoiceType::class,
                 options: $this->getRoadTypeOptions(),
             )
-            ->add('numberedRoad', NumberedRoadFormType::class, [
-                'administrators' => $options['administrators'],
+            ->add(RoadTypeEnum::DEPARTMENTAL_ROAD->value, NumberedRoadFormType::class, [
+                'roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+                'administrators' => $options['administrators'][RoadTypeEnum::DEPARTMENTAL_ROAD->value],
+                'label' => false,
+            ])
+            ->add(RoadTypeEnum::NATIONAL_ROAD->value, NumberedRoadFormType::class, [
+                'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+                'administrators' => $options['administrators'][RoadTypeEnum::NATIONAL_ROAD->value],
                 'label' => false,
             ])
             ->add('namedStreet', NamedStreetFormType::class, [
@@ -90,7 +96,10 @@ final class LocationFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'administrators' => [],
+            'administrators' => [
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value => [],
+                RoadTypeEnum::NATIONAL_ROAD->value => [],
+            ],
             'permissions' => [],
             'data_class' => SaveLocationCommand::class,
         ]);

@@ -1,13 +1,415 @@
-Ain | Aisne | Allier | Alpes-de-Haute-Provence | Alpes-
-Maritimes | Ardèche | Ardennes | Ariège | Aube | Aude | Aveyron | Bas-Rhin | Bouches-du-Rhône | Calvados |
-Cantal | Charente | Charente-Maritime | Cher | Collectivité de Corse | Collectivité européenne d'Alsace |
-Collectivité territoriale de Martinique | Corrèze | Corse-du-Sud | Côte-d'Or | Côtes-d'Armor | Creuse | Deux-Sèvres
-| DIR Méditerranée | Dordogne | Doubs | Drôme | Essonne | Eure | Eure-et-Loir | Finistère | Gard | Gers | Gironde
-| Guadeloupe | Guyane | Haute-Corse | Haute-Garonne | Haute-Loire | Haute-Marne | Hautes-Alpes | Haute-
-Saône | Haute-Savoie | Hautes-Pyrénées | Haute-Vienne | Haut-Rhin | Hauts-de-Seine | Hérault | Ille-et-Vilaine |
-Indre | Indre-et-Loire | Isère | Jura | Landes | Loire | Loire-Atlantique | Loiret | Loir-et-Cher | Lot | Lot-et-Garonne |
-Lozère | Maine-et-Loire | Manche | Marne | Mayenne | Mayotte | Métropole de Lyon | Métropole Nice Côte d'Azur |
-Meurthe-et-Moselle | Meuse | Morbihan | Moselle | Nièvre | Nord | Oise | Orne | Paris | Pas-de-Calais | Puy-de-
-Dôme | Pyrénées-Atlantiques | Pyrénées-Orientales | Réunion | Rhône | Saône-et-Loire | Sarthe | Savoie | Seine-
-et-Marne | Seine-Maritime | Seine-Saint-Denis | Somme | Tarn | Tarn-et-Garonne | Territoire de Belfort | Val-de-
-Marne | Val-d'Oise | Var | Vaucluse | Vendée | Vienne | Ville de Paris | Vosges | Yonne | Yvelines
+# Copié-collé de la documentation BDTOPO octobre 2023, page 65
+# https://geoservices.ign.fr/documentation/donnees/vecteur/bdtopo
+# Ce fichier est parsé par le code PHP
+# Les lignes commençant par "#" sont nos propres commentaires
+
+Gestionnaire = « ADELAC »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Ain »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Aisne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « ALBEA »
+Valeur du champ « Type de route » associée : Autoroute
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+64Gestionnaire = « ALIAE »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « ALICORNE »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « A'LIENOR »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « ALIS »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Allemagne »
+Gestionnaire = « Allier »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Alpes-de-Haute-Provence »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Alpes-Maritimes »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « APRR »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « APRR »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « ARCOS »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « ARCOUR »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Ardèche »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Ardennes »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « AREA »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Ariège »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Ariège »
+Valeur du champ « Type de route » associée : Voie verte
+Gestionnaire = « ASF »
+Valeur du champ « Type de route » associée : Autoroute
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+65Gestionnaire = « ASF »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « ATB »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « ATLANDES »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « ATMB »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « ATMB »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Aube »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Aude »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Aveyron »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Bas-Rhin »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Belgique »
+Gestionnaire = « Bordeaux Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Bouches-du-Rhône »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Brésil »
+Gestionnaire = « Brest Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Calvados »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Cantal »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « CCI du Havre »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « CEVM »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Charente »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+66Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Charente-Maritime »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Cher »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Clermont Auvergne Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « COFIROUTE »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Collectivité de Corse »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « Collectivité de Corse »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Collectivité de Corse »
+Gestionnaire = « Collectivité européenne d'Alsace »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Collectivité européenne d'Alsace »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « Collectivité européenne d'Alsace »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Collectivité européenne d'Alsace »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Collectivité territoriale de Martinique »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Collectivité territoriale de Martinique »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « Collectivité territoriale de Martinique »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Corrèze »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Corse-du-Sud »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Côte-d'Or »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Côtes-d'Armor »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+67Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Creuse »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « DEAL Guyane »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DEAL Mayotte »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « Deux-Sèvres »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Dijon Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « DIR Atlantique »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Atlantique »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Centre Est »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Centre Est »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Centre Ouest »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Centre Ouest »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Est »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Est »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Île-de-France »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Île-de-France »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Massif Central »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Massif Central »
+Valeur du champ « Type de route » associée : Nationale
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+68Gestionnaire = « DIR Méditerranée »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Méditerranée »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « DIR Méditerranée »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Nord »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Nord »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Nord Ouest »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Nord Ouest »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Ouest »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « DIR Ouest »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Sud Ouest »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « DIR Sud Ouest »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Dordogne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Doubs »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Drôme »
+Valeur du champ « Type de route » associée : Voie verte
+Gestionnaire = « Drôme »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « DTAM Saint-Pierre-et-Miquelon »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « ESCOTA »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Espagne »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+69Gestionnaire = « Essonne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Eure »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Eure-et-Loir »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Eurométropole de Strasbourg »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Finistère »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Gard »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Gers »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Gironde »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « GPMM »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « Grenoble Alpes Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Guadeloupe »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Guyane »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Corse »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Garonne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Loire »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Marne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Hautes-Alpes »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Saône »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+70Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Savoie »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Hautes-Pyrénées »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haute-Vienne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Haut-Rhin »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Hauts-de-Seine »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Hérault »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Ille-et-Vilaine »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Indre »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Indre-et-Loire »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Isère »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Italie »
+Gestionnaire = « Jura »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Landes »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Loire »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Loire-Atlantique »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Loiret »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Loir-et-Cher »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Lot »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+71Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Lot-et-Garonne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Lozère »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Maine-et-Loire »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Manche »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Marne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Mayenne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Mayotte »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Métropole de Lyon »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Métropole de Lyon »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Métropole de Lyon »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Métropole du Grand Nancy »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Métropole Européenne de Lille »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Métropole Nice Côte d'Azur »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Métropole Nice Côte d'Azur »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Métropole Rouen Normandie »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Métropole Toulon-Provence-Méditerranée »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Metz Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+72Gestionnaire = « Meurthe-et-Moselle »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Meuse »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Montpellier Méditerranée Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Morbihan »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Moselle »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Nantes Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Nièvre »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Nord »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Oise »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Orléans Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Orne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Paris »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Pas-de-Calais »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Principauté d'Andorre »
+Gestionnaire = « Principauté de Monaco »
+Gestionnaire = « Puy-de-Dôme »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Pyrénées-Atlantiques »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Pyrénées-Orientales »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Région Réunion »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+73Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « Rennes Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Réunion »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Rhône »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Rhône »
+Valeur du champ « Type de route » associée : Voie verte
+Gestionnaire = « Royaume-Uni »
+Gestionnaire = « Saint-Etienne Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « SANEF »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Saône-et-Loire »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « SAPN »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Sarthe »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Savoie »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Seine-et-Marne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Seine-Maritime »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Seine-Saint-Denis »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « SFTRF »
+Valeur du champ « Type de route » associée : Nationale
+Gestionnaire = « SFTRF »
+Valeur du champ « Type de route » associée : Autoroute
+Gestionnaire = « Somme »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Suisse »
+_________________________________________________________________________________
+BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
+74Gestionnaire = « Tarn »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Tarn-et-Garonne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Territoire de Belfort »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Toulouse Métropole »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Tours Métropole Val de Loire »
+Valeur du champ « Type de route » associée : Route intercommunale
+Gestionnaire = « Val-de-Marne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Val-d'Oise »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Var »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Vaucluse »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Vendée »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Vienne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Ville de Paris »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Vosges »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Yonne »
+Valeur du champ « Type de route » associée : Départementale
+Gestionnaire = « Yvelines »
+Valeur du champ « Type de route » associée : Départementale
