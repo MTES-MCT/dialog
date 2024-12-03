@@ -8,6 +8,7 @@ use App\Application\GeocoderInterface;
 use App\Application\IntersectionGeocoderInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Infrastructure\Adapter\LaneSectionMaker;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,7 @@ final class LaneSectionMakerTest extends TestCase
     private $fromCoords;
     private $toCoords;
     private $geocoder;
+    private string $direction;
     private $intersectionGeocoder;
     private $lineSectionMaker;
     private $laneSectionMaker;
@@ -30,6 +32,7 @@ final class LaneSectionMakerTest extends TestCase
         $this->cityCode = '01010';
         $this->fromCoords = Coordinates::fromLonLat(1, 41);
         $this->toCoords = Coordinates::fromLonLat(9, 49);
+        $this->direction = DirectionEnum::BOTH->value;
 
         $this->geocoder = $this->createMock(GeocoderInterface::class);
         $this->intersectionGeocoder = $this->createMock(IntersectionGeocoderInterface::class);
@@ -66,6 +69,7 @@ final class LaneSectionMakerTest extends TestCase
             $this->fullLaneGeometry,
             $this->roadName,
             $this->cityCode,
+            $this->direction,
             fromCoords: null,
             fromHouseNumber: '1',
             fromRoadName: null,
@@ -95,6 +99,7 @@ final class LaneSectionMakerTest extends TestCase
             $this->fullLaneGeometry,
             $this->roadName,
             $this->cityCode,
+            $this->direction,
             fromCoords: $this->fromCoords,
             fromHouseNumber: null,
             fromRoadName: null,
