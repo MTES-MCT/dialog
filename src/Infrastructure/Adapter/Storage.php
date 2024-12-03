@@ -8,11 +8,11 @@ use App\Application\StorageInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-final class Storage implements StorageInterface
+final readonly class Storage implements StorageInterface
 {
     public function __construct(
-        private readonly FilesystemOperator $storage,
-        private readonly string $mediaLocation,
+        private FilesystemOperator $storage,
+        private string $mediaLocation,
     ) {
     }
 
@@ -36,8 +36,26 @@ final class Storage implements StorageInterface
         $this->storage->delete($path);
     }
 
-    public function get(string $path): string
+    public function getUrl(string $path): string
     {
         return \sprintf('%s/%s', $this->mediaLocation, $path);
+    }
+
+    public function read(string $path): ?string
+    {
+        if (!$this->storage->has($path)) {
+            return null;
+        }
+
+        return $this->storage->read($path);
+    }
+
+    public function getMimeType(string $path): ?string
+    {
+        if (!$this->storage->has($path)) {
+            return null;
+        }
+
+        return $this->storage->mimeType($path);
     }
 }

@@ -29,6 +29,7 @@ final class GetGeneralInfoQueryHandler
             uuid: $row['uuid'],
             identifier: $row['identifier'],
             organizationName: $row['organizationName'],
+            organizationLogo: $row['organizationLogo'],
             organizationUuid: $row['organizationUuid'],
             status: $row['status'],
             regulationOrderUuid: $row['regulationOrderUuid'],

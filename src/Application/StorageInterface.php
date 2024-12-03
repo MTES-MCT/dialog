@@ -12,5 +12,9 @@ interface StorageInterface
 
     public function delete(string $path): void;
 
-    public function get(string $path): string;
+    public function getUrl(string $path): string;
+
+    public function read(string $path): ?string;
+
+    public function getMimeType(string $path): ?string;
 }

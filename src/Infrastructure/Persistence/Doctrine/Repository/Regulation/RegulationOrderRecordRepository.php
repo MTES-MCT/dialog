@@ -202,6 +202,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     ro.identifier,
                     org.name as organizationName,
                     org.uuid as organizationUuid,
+                    org.logo as organizationLogo,
                     roc.status,
                     ro.uuid as regulationOrderUuid,
                     ro.category,
