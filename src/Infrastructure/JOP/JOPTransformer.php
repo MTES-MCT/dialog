@@ -14,6 +14,7 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -38,6 +39,7 @@ final readonly class JOPTransformer
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = self::JOP_REGULATION_ORDER_IDENTIFIER;
         $generalInfoCommand->organization = $organization;
+        $generalInfoCommand->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $generalInfoCommand->subject = RegulationSubjectEnum::EVENT->value;
         $generalInfoCommand->title = $this->translator->trans('jop.regulation_order.title');
 

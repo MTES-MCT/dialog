@@ -30,11 +30,18 @@
             </constraint>
         </property>
         <property name="subject">
-            <constraint name="Choice">
-                <value>roadMaintenance</value>
-                <value>incident</value>
-                <value>event</value>
-                <value>other</value>
+            <constraint name="When">
+                <option name="expression">
+                    this.subject != null
+                </option>
+                <option name="constraints">
+                    <constraint name="Choice">
+                        <value>roadMaintenance</value>
+                        <value>incident</value>
+                        <value>event</value>
+                        <value>other</value>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="otherCategoryText">

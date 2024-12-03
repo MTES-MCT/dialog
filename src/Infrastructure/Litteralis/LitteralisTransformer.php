@@ -111,11 +111,8 @@ final readonly class LitteralisTransformer
     {
         $categoriesModeleValue = $properties['documenttype'];
         $generalInfoCommand->category = match ($categoriesModeleValue) {
-            'Travaux' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'ARRETE PERMANENT' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
             'ARRETE TEMPORAIRE' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
-            'Evenements' => RegulationSubjectEnum::EVENT->value,
-            default => RegulationSubjectEnum::OTHER->value,
         };
     }
 
