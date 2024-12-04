@@ -35,20 +35,29 @@ final class PeriodFormType extends AbstractType
                     'label' => 'regulation.period.endTime',
                     'widget' => 'choice',
                     'view_timezone' => $this->clientTimezone,
+                ])
+                ->add('startDate', DateType::class, [
+                    'label' => 'regulation.period.startDate',
+                    'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
+                ])
+                ->add('startTime', TimeType::class, [
+                    'label' => 'regulation.period.startTime',
+                    'widget' => 'choice',
+                    'view_timezone' => $this->clientTimezone,
+                ]);
+        }
+
+        if ($options['isPermanent']) {
+            $builder
+                ->add('startDate', DateType::class, [
+                    'label' => 'regulation.period.startDate',
+                    'widget' => 'single_text',
+                    'view_timezone' => $this->clientTimezone,
                 ]);
         }
 
         $builder
-            ->add('startDate', DateType::class, [
-                'label' => 'regulation.period.startDate',
-                'widget' => 'single_text',
-                'view_timezone' => $this->clientTimezone,
-            ])
-            ->add('startTime', TimeType::class, [
-                'label' => 'regulation.period.startTime',
-                'widget' => 'choice',
-                'view_timezone' => $this->clientTimezone,
-            ])
             ->add('recurrenceType', ChoiceType::class,
                 options: $this->getRecurrenceTypeOptions(),
             )
