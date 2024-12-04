@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\RegulationOrder;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -22,15 +23,17 @@ final class RegulationOrderFixture extends Fixture
         $typicalRegulationOrder = new RegulationOrder(
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
             identifier: self::TYPICAL_IDENTIFIER,
-            category: RegulationOrderCategoryEnum::EVENT->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             title: 'Title 1',
+            subject: RegulationSubjectEnum::EVENT->value,
         );
 
         $publishedRegulationOrder = new RegulationOrder(
             uuid: '2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c',
             identifier: 'FO2/2023',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             title: 'Title 2',
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
         $regulationOrderPermanent = new RegulationOrder(
@@ -38,20 +41,23 @@ final class RegulationOrderFixture extends Fixture
             identifier: 'FO3/2023',
             category: RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
             title: 'Title 3',
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
         $fullCityRegulationOrder = new RegulationOrder(
             uuid: '0658c568-dfbe-7c64-8000-303f7e2ae9b3',
             identifier: 'F2023/full-city',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             title: 'Title 2',
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
         $regulationOrderNoLocations = new RegulationOrder(
             uuid: 'e589f277-ccd4-4364-967a-7e9db80e6d34',
             identifier: 'F2023/no-locations',
             title: 'Title 5 that is very long and will be truncated',
-            category: RegulationOrderCategoryEnum::OTHER->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            subject: RegulationSubjectEnum::OTHER->value,
             otherCategoryText: 'Dérogation préfectorale',
         );
 
@@ -59,35 +65,40 @@ final class RegulationOrderFixture extends Fixture
             uuid: '0650037e-8f8e-7f66-8000-c8ebe51493b9',
             identifier: 'FO14/2023',
             title: 'No measures',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
         $regulationOrderCifs = new RegulationOrder(
             uuid: '06549047-db9d-74bb-8000-754a6f2ff4c3',
             identifier: self::IDENTIFIER_CIFS,
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             title: 'Arrêté exporté vers CIFS',
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
         $outDatedRegulationOrderCifs = new RegulationOrder(
             uuid: 'edc8dd18-5f56-4684-b2ba-d18658d53518',
             identifier: 'F/OUTDATED/CIFS/2021',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             title: 'Arrêté exporté vers CIFS',
         );
 
         $rawGeoJSONRegulationOrder = new RegulationOrder(
             uuid: '06672e5f-f248-785b-8000-5f4ee64ca094',
             identifier: 'F2024/RAWGEOJSON',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             title: 'Arrêté avec données brutes GeoJSON',
         );
 
         $litteralisRegulationOrder = new RegulationOrder(
             uuid: '066e9849-f802-7a4c-8000-845f47c4b0de',
             identifier: '117374#24-A-0473',
-            category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             title: 'Arrêté de voirie (URL : https://dl.sogelink.fr/?iX5UN3GL)',
+            subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
         $manager->persist($typicalRegulationOrder);

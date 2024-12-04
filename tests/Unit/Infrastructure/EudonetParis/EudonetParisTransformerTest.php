@@ -15,6 +15,7 @@ use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\User\Organization;
 use App\Infrastructure\EudonetParis\Enum\EudonetParisErrorEnum;
 use App\Infrastructure\EudonetParis\EudonetParisExtractor;
@@ -79,7 +80,8 @@ final class EudonetParisTransformerTest extends TestCase
 
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = '20230514-1';
-        $generalInfoCommand->category = RegulationOrderCategoryEnum::OTHER->value;
+        $generalInfoCommand->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $generalInfoCommand->subject = RegulationSubjectEnum::OTHER->value;
         $generalInfoCommand->otherCategoryText = 'Temporaire';
         $generalInfoCommand->title = str_repeat('a', 255);
         $generalInfoCommand->organization = $organization;
