@@ -6,6 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="identifier" type="string" column="identifier" length="60" nullable="false"/>
     <field name="category" type="string" column="category" length="50" nullable="false"/>
+    <field name="subject" type="string" column="subject" length="50" nullable="true"/>
     <field name="otherCategoryText" type="string" column="other_category_text" length="100" nullable="true"/>
     <field name="title" type="text" column="title" nullable="false"/>
     <field name="additionalVisas" type="array" nullable="true"/>

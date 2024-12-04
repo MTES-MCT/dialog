@@ -12,7 +12,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\DirectionEnum;
-use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -54,10 +54,10 @@ final class GetCifsIncidentsQueryHandler
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
             $identifier = $regulationOrder->getIdentifier();
 
-            $subType = match ($regulationOrder->getCategory()) {
-                RegulationOrderCategoryEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
-                RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value => 'ROAD_BLOCKED_CONSTRUCTION',
-                RegulationOrderCategoryEnum::INCIDENT->value => 'ROAD_BLOCKED_HAZARD',
+            $subType = match ($regulationOrder->getSubject()) {
+                RegulationSubjectEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
+                RegulationSubjectEnum::ROAD_MAINTENANCE->value => 'ROAD_BLOCKED_CONSTRUCTION',
+                RegulationSubjectEnum::INCIDENT->value => 'ROAD_BLOCKED_HAZARD',
                 default => null,
             };
 

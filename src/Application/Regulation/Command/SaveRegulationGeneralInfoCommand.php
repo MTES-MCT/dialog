@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandInterface;
-use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
 
@@ -15,6 +15,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
     public ?string $identifier;
     public string $source = RegulationOrderRecordSourceEnum::DIALOG->value;
     public ?string $category;
+    public ?string $subject = null;
     public ?string $otherCategoryText = null;
     public ?string $title;
     public ?Organization $organization;
@@ -37,6 +38,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command->identifier = $regulationOrder?->getIdentifier();
         $command->source = $regulationOrderRecord?->getSource() ?? RegulationOrderRecordSourceEnum::DIALOG->value;
         $command->category = $regulationOrder?->getCategory();
+        $command->subject = $regulationOrder?->getSubject();
         $command->otherCategoryText = $regulationOrder?->getOtherCategoryText();
         $command->title = $regulationOrder?->getTitle();
         $command->additionalVisas = $regulationOrder?->getAdditionalVisas() ?? [];
@@ -48,7 +50,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
 
     public function cleanOtherCategoryText(): void
     {
-        if ($this->category !== RegulationOrderCategoryEnum::OTHER->value) {
+        if ($this->subject !== RegulationSubjectEnum::OTHER->value) {
             $this->otherCategoryText = null;
         }
     }

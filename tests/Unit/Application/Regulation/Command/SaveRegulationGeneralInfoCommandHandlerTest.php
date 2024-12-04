@@ -13,6 +13,7 @@ use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -62,8 +63,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                     new RegulationOrder(
                         uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
                         identifier: 'FO2/2023',
-                        category: RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
+                        category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
                         title: 'Interdiction de circuler',
+                        subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
                     ),
                 ),
             )
@@ -100,8 +102,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
 
         $command = new SaveRegulationGeneralInfoCommand();
         $command->identifier = 'FO2/2023';
-        $command->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
+        $command->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $command->title = 'Interdiction de circuler';
+        $command->subject = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
         $command->organization = $this->organization;
 
         $result = $handler($command);
@@ -143,8 +146,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 'FO2/2030',
-                RegulationOrderCategoryEnum::OTHER->value,
+                RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
                 'Interdiction de circuler',
+                RegulationSubjectEnum::OTHER->value,
                 'Trou en formation',
                 [],
                 [],
@@ -172,13 +176,13 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
         $command->identifier = 'FO2/2030';
         $command->organization = $organization;
-        $command->category = RegulationOrderCategoryEnum::OTHER->value;
-        $command->title = 'Interdiction de circuler';
+        $command->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $command->subject = RegulationSubjectEnum::OTHER->value;
         $command->otherCategoryText = 'Trou en formation';
+        $command->title = 'Interdiction de circuler';
         $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
 
         $result = $handler($command);
-
         $this->assertSame($regulationOrderRecord, $result);
     }
 }
