@@ -108,4 +108,55 @@ final class LaneSectionMakerTest extends TestCase
             toRoadName: null,
         ));
     }
+
+    private function provideTestComputeSectionDirection(): array
+    {
+        $this->setUp();
+
+        $fromCoords = $this->fromCoords;
+        $toCoords = $this->toCoords;
+
+        return [
+            'both' => [
+                'direction' => DirectionEnum::BOTH->value,
+                'fromCoords' => $fromCoords,
+                'toCoords' => $toCoords,
+            ],
+            'ab' => [
+                'direction' => DirectionEnum::A_TO_B->value,
+                'fromCoords' => $fromCoords,
+                'toCoords' => $toCoords,
+            ],
+            'ba' => [
+                'direction' => DirectionEnum::B_TO_A->value,
+                'fromCoords' => $toCoords,
+                'toCoords' => $fromCoords,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestComputeSectionDirection
+     */
+    public function testComputeSectionDirection(string $direction, Coordinates $fromCoords, Coordinates $toCoords): void
+    {
+        $this->lineSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->with($this->fullLaneGeometry, $fromCoords, $toCoords)
+            ->willReturn('section');
+
+        $this->assertSame('section', $this->laneSectionMaker->computeSection(
+            $this->fullLaneGeometry,
+            $this->roadName,
+            $this->cityCode,
+            $direction,
+            fromCoords: $this->fromCoords,
+            fromHouseNumber: null,
+            fromRoadName: null,
+            toCoords: $this->toCoords,
+            toHouseNumber: null,
+            toRoadName: null,
+        ));
+    }
 }
