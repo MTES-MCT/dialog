@@ -12,6 +12,4 @@
     {% else %}
         {{ 'common.date.since'|trans({'%date%': app_datetime(startDate) })|capitalize }}
     {% endif %}
-{% else %}
-    <em>{{ 'regulation.overall_period.tbd'|trans }}</em>
 {% endif -%}

@@ -537,10 +537,6 @@
                 <target>Décrivez brièvement les raisons de la perturbation. (Exemple : "travaux sur
                     la voie")</target>
             </trans-unit>
-            <trans-unit id="regulation.overall_period.tbd">
-                <source>regulation.overall_period.tbd</source>
-                <target>Dates à définir</target>
-            </trans-unit>
             <trans-unit id="regulation.location.type">
                 <source>regulation.location.type</source>
                 <target>Type de route ou voie</target>
