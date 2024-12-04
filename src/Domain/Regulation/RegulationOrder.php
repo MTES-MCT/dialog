@@ -19,6 +19,7 @@ class RegulationOrder
         private string $identifier,
         private string $category,
         private string $title,
+        private ?string $subject = null,
         private ?string $otherCategoryText = null,
         private ?VisaModel $visaModel = null,
         private ?array $additionalVisas = [],
@@ -50,6 +51,11 @@ class RegulationOrder
     public function getTitle(): string
     {
         return $this->title;
+    }
+
+    public function getSubject(): string
+    {
+        return $this->subject;
     }
 
     public function getMeasures(): iterable
@@ -93,6 +99,7 @@ class RegulationOrder
         string $identifier,
         string $category,
         string $title,
+        ?string $subject = null,
         ?string $otherCategoryText = null,
         array $additionalVisas = [],
         array $additionalReasons = [],
@@ -101,6 +108,7 @@ class RegulationOrder
         $this->identifier = $identifier;
         $this->category = $category;
         $this->title = $title;
+        $this->subject = $subject;
         $this->otherCategoryText = $otherCategoryText;
         $this->additionalVisas = $additionalVisas;
         $this->additionalReasons = $additionalReasons;

@@ -14,7 +14,7 @@ use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
-use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
@@ -271,8 +271,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn('2024T1');
         $regulationOrder1
             ->expects(self::once())
-            ->method('getCategory')
-            ->willReturn(RegulationOrderCategoryEnum::INCIDENT->value);
+            ->method('getSubject')
+            ->willReturn(RegulationSubjectEnum::INCIDENT->value);
 
         $measure1 = $this->createMock(Measure::class);
 
@@ -359,10 +359,11 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getIdentifier')
             ->willReturn('2024T2');
+
         $regulationOrder2
             ->expects(self::once())
-            ->method('getCategory')
-            ->willReturn(RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value);
+            ->method('getSubject')
+            ->willReturn(RegulationSubjectEnum::ROAD_MAINTENANCE->value);
 
         $measure2 = $this->createMock(Measure::class);
 
@@ -623,7 +624,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 
         $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $incidents = $handler(new GetCifsIncidentsQuery());
-
         $this->assertEquals(
             [$incident1, $incident2, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
             $incidents,

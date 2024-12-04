@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Organization;
@@ -66,13 +67,15 @@ final class SaveRegulationGeneralInfoCommandTest extends TestCase
     public function testCleanOtherCategoryText(): void
     {
         $command = new SaveRegulationGeneralInfoCommand();
-        $command->category = RegulationOrderCategoryEnum::EVENT->value;
+        $command->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $command->subject = RegulationSubjectEnum::EVENT->value;
         $command->otherCategoryText = 'Will be cleared';
         $command->cleanOtherCategoryText();
         $this->assertNull($command->otherCategoryText);
 
         $command = new SaveRegulationGeneralInfoCommand();
-        $command->category = RegulationOrderCategoryEnum::OTHER->value;
+        $command->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $command->subject = RegulationSubjectEnum::OTHER->value;
         $command->otherCategoryText = 'Will be kept';
         $command->cleanOtherCategoryText();
         $this->assertSame('Will be kept', $command->otherCategoryText);

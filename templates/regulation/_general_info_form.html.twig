@@ -52,9 +52,13 @@
                                 }
                             }
                         ) }}
+                        {{ form_row(form.category, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                        }) }}
                         <div class="fr-fieldset" data-controller="form-reveal">
                             <div class="fr-fieldset__element">
-                                {{ form_row(form.category, {
+                                {{ form_row(form.subject, {
                                     group_class: 'fr-select-group',
                                     widget_class: 'fr-select',
                                     attr: {
@@ -64,7 +68,7 @@
                                     }
                                 }) }}
                             </div>
-                            <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.category.vars.value != 'other' %}hidden{% endif %}>
+                            <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.subject.vars.value != 'other' %}hidden{% endif %}>
                                 {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
                             </div>
                         </div>

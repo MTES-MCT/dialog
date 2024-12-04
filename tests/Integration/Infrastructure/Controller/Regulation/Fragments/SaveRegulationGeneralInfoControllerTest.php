@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
@@ -30,7 +31,8 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $values['general_info_form']['identifier'] = $identifier;
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
-        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $values['general_info_form']['subject'] = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
         $values['general_info_form']['otherCategoryText'] = 'Travaux';
         $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
         $values['general_info_form']['additionalVisas'][1] = 'Vu 2';

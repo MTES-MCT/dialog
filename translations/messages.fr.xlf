@@ -400,29 +400,37 @@
                 <source>regulation.permanent</source>
                 <target>Arrêté permanent</target>
             </trans-unit>
-            <trans-unit id="regulation.category.roadMaintenance">
-                <source>regulation.category.roadMaintenance</source>
-                <target>Travaux</target>
-            </trans-unit>
-            <trans-unit id="regulation.category.other">
-                <source>regulation.category.other</source>
-                <target>Autre</target>
-            </trans-unit>
-            <trans-unit id="regulation.category.event">
-                <source>regulation.category.event</source>
-                <target>Évènement</target>
-            </trans-unit>
             <trans-unit id="regulation.category.permanentRegulation">
                 <source>regulation.category.permanentRegulation</source>
                 <target>Réglementation permanente</target>
             </trans-unit>
-            <trans-unit id="regulation.category.incident">
-                <source>regulation.category.incident</source>
-                <target>Incident ou péril</target>
+            <trans-unit id="regulation.category.temporaryRegulation">
+                <source>regulation.category.temporaryRegulation</source>
+                <target>Réglementation temporaire</target>
             </trans-unit>
             <trans-unit id="regulation.category.placeholder">
                 <source>regulation.category.placeholder</source>
                 <target>Sélectionner la nature de l'arrếté</target>
+            </trans-unit>
+            <trans-unit id="regulation.subject.roadMaintenance">
+                <source>regulation.subject.roadMaintenance</source>
+                <target>Travaux</target>
+            </trans-unit>
+            <trans-unit id="regulation.subject.incident">
+                <source>regulation.subject.incident</source>
+                <target>Incident ou péril</target>
+            </trans-unit>
+            <trans-unit id="regulation.subject.other">
+                <source>regulation.subject.other</source>
+                <target>Autre</target>
+            </trans-unit>
+            <trans-unit id="regulation.subject.event">
+                <source>regulation.subject.event</source>
+                <target>Évènement</target>
+            </trans-unit>
+            <trans-unit id="regulation.subject.placeholder">
+                <source>regulation.subject.placeholder</source>
+                <target>Sélectionner l'objet de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info">
                 <source>regulation.general_info</source>
@@ -494,7 +502,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.other_category_text">
                 <source>regulation.general_info.other_category_text</source>
-                <target>Préciser la nature de l'arrêté</target>
+                <target>Préciser l'objet de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier.help">
                 <source>regulation.general_info.identifier.help</source>
@@ -515,6 +523,10 @@
             <trans-unit id="regulation.general_info.category">
                 <source>regulation.general_info.category</source>
                 <target>Nature de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.subject">
+                <source>regulation.general_info.subject</source>
+                <target>Objet de l'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.title">
                 <source>regulation.general_info.title</source>

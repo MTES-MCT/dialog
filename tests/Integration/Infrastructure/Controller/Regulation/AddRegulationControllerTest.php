@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
@@ -44,7 +45,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $values['general_info_form']['identifier'] = 'F022023';
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
-        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::OTHER->value;
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;
         $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
         $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
         $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
@@ -68,7 +70,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
-        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::OTHER->value;
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $form['general_info_form[subject]'] = RegulationSubjectEnum::OTHER->value;
         $form['general_info_form[otherCategoryText]'] = '';
 
         $crawler = $client->submit($form);
@@ -101,7 +104,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form['general_info_form[identifier]'] = $identifier;
         $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
         $form['general_info_form[title]'] = 'Travaux';
-        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
+        $form['general_info_form[category]'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $form['general_info_form[subject]'] = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);

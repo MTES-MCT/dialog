@@ -13,6 +13,7 @@ use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
@@ -63,6 +64,7 @@ final readonly class LitteralisTransformer
         $generalInfoCommand = new SaveRegulationGeneralInfoCommand();
         $generalInfoCommand->identifier = $identifier;
         $this->setCategory($generalInfoCommand, $properties);
+        $this->setSubject($generalInfoCommand, $properties);
         $generalInfoCommand->title = $this->buildDescription($properties);
         $generalInfoCommand->organization = $organization;
 
@@ -107,15 +109,21 @@ final readonly class LitteralisTransformer
 
     private function setCategory(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
     {
+        $generalInfoCommand->category = $properties['documenttype'] === 'ARRETE PERMANENT'
+        ? RegulationOrderCategoryEnum::PERMANENT_REGULATION->value
+        : RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+    }
+
+    private function setSubject(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
+    {
         $categoriesModeleValue = $properties['categoriesmodele'];
-        $generalInfoCommand->category = match ($categoriesModeleValue) {
-            'Travaux' => RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value,
-            'Réglementation permanente' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            'Evenements' => RegulationOrderCategoryEnum::EVENT->value,
-            default => RegulationOrderCategoryEnum::OTHER->value,
+        $generalInfoCommand->subject = match ($categoriesModeleValue) {
+            'Travaux' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'Evenements' => RegulationSubjectEnum::EVENT->value,
+            default => RegulationSubjectEnum::OTHER->value,
         };
 
-        if ($generalInfoCommand->category === RegulationOrderCategoryEnum::OTHER->value) {
+        if ($generalInfoCommand->subject === RegulationSubjectEnum::OTHER->value) {
             $generalInfoCommand->otherCategoryText = $categoriesModeleValue;
         }
     }

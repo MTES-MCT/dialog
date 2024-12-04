@@ -9,13 +9,17 @@
         <div class="app-card__content" style="--card-content-margin-desktop: var(--6w)">
             <ul class="fr-ml-1w fr-my-0 fr-list">
                 <li>{{ generalInfo.organizationName }}</li>
-                <li>
-                    {% if generalInfo.category == 'other' %}
-                        {{ 'regulation.category.other'|trans }} : {{ generalInfo.otherCategoryText }}
-                    {% else %}
-                        {{ ('regulation.category.' ~ generalInfo.category)|trans }}
-                    {% endif %}
-                </li>
+
+                {% if generalInfo.subject %}
+                    <li>
+                        {% if generalInfo.subject == 'other' %}
+                            {{ 'regulation.subject.other'|trans }} : {{ generalInfo.otherCategoryText }}
+                        {% else %}
+                            {{ ('regulation.subject.' ~ generalInfo.subject)|trans }}
+                        {% endif %}
+                    </li>
+                {% endif %}
+
                 <li>{{ generalInfo.title }}</li>
                 <li>
                     {% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}

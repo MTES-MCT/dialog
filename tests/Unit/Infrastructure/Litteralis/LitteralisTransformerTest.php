@@ -16,6 +16,7 @@ use App\Application\RoadGeocoderInterface;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
@@ -68,7 +69,8 @@ final class LitteralisTransformerTest extends TestCase
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
         $generalInfo->identifier = $identifier;
-        $generalInfo->category = RegulationOrderCategoryEnum::ROAD_MAINTENANCE->value;
+        $generalInfo->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $generalInfo->subject = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
         $generalInfo->title = "de chargement d'engin de chantier (URL : https://dl.sogelink.fr/?0dbjHha7)";
         $generalInfo->organization = $this->organization;
 
@@ -136,7 +138,6 @@ final class LitteralisTransformerTest extends TestCase
         $expectedCommand = new ImportLitteralisRegulationCommand($generalInfo, $measureCommands);
 
         $command = $this->transformer->transform($this->reporter, $identifier, $this->realWorldFeatures, $this->organization);
-
         $this->assertFalse($this->reporter->hasNewErrors());
         $this->assertEquals([], $this->reporter->getRecords());
         $this->assertEquals($expectedCommand, $command);
@@ -153,7 +154,7 @@ final class LitteralisTransformerTest extends TestCase
         $features = [json_decode($feature, associative: true)];
 
         $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
-        $this->assertSame(RegulationOrderCategoryEnum::OTHER->value, $command->generalInfoCommand->category);
+        $this->assertSame(RegulationSubjectEnum::OTHER->value, $command->generalInfoCommand->subject);
         $this->assertSame('special', $command->generalInfoCommand->otherCategoryText);
     }
 

@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\User\View\UserOrganizationView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\User\Organization;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -53,6 +54,11 @@ final class GeneralInfoFormType extends AbstractType
                 'category',
                 ChoiceType::class,
                 options: $this->getCategoryOptions(),
+            )
+            ->add(
+                'subject',
+                ChoiceType::class,
+                options: $this->getSubjectOptions(),
             )
             ->add(
                 'visaModelUuid',
@@ -158,6 +164,23 @@ final class GeneralInfoFormType extends AbstractType
         return [
             'choices' => $choices,
             'label' => 'regulation.general_info.category',
+        ];
+    }
+
+    private function getSubjectOptions(): array
+    {
+        $choices = [
+            'regulation.subject.placeholder' => '',
+        ];
+
+        foreach (RegulationSubjectEnum::cases() as $case) {
+            $choices[\sprintf('regulation.subject.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.general_info.subject',
+            'required' => false,
         ];
     }
 

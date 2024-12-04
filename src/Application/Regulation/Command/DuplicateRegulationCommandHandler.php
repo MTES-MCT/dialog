@@ -41,6 +41,7 @@ final class DuplicateRegulationCommandHandler
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
         $generalInfo->category = $originalRegulationOrder->getCategory();
+        $generalInfo->subject = $originalRegulationOrder->getSubject();
         $generalInfo->otherCategoryText = $originalRegulationOrder->getOtherCategoryText();
         $generalInfo->organization = $organization;
         $generalInfo->identifier = $identifier;
