@@ -57,7 +57,7 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
                 $toCoords = $this->resolvePoint($roadName, $cityCode, $toHouseNumber, $toRoadName);
             }
 
-            // NOTE : Rien à faire pour le cas A vers B, on mettra le fait qu'une seule direction comme métadonnée dans les exports DATEX / CIFS / etc.
+            // NOTE : Rien à faire pour le cas A vers B, on mettra le fait qu'une seule direction est concernée comme métadonnée dans les exports DATEX / CIFS / etc.
             if ($direction === DirectionEnum::B_TO_A->value) {
                 [$fromCoords, $toCoords] = [$toCoords, $fromCoords];
             }
