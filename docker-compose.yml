@@ -68,3 +68,12 @@ services:
       # Allow accessing host ports from this container via host.docker.internal on Linux
       # https://stackoverflow.com/a/43541732
       - host.docker.internal:host-gateway
+
+  pg_featureserv:
+    # https://github.com/crunchydata/pg_featureserv
+    image: pramsey/pg_featureserv:20240706
+    ports:
+      - 8889:8889
+    environment:
+      DATABASE_URL: "postgresql://dialog:dialog@database:5432/dialog_featureserver" # TODO: config
+      PGFS_SERVER_HTTPPORT: 8889
