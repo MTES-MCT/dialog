@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation\Location;
 
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ final class NumberedRoadTest extends TestCase
         $numberedRoad = new NumberedRoad(
             uuid: '8785a4c2-8f0d-423e-bd5b-641f228df23b',
             location: $location,
+            direction: DirectionEnum::BOTH->value,
             administrator: 'Ardèche',
             roadNumber: 'D110',
             fromPointNumber: '14',
@@ -29,6 +31,7 @@ final class NumberedRoadTest extends TestCase
 
         $this->assertSame('8785a4c2-8f0d-423e-bd5b-641f228df23b', $numberedRoad->getUuid());
         $this->assertSame($location, $numberedRoad->getLocation());
+        $this->assertSame(DirectionEnum::BOTH->value, $numberedRoad->getDirection());
         $this->assertSame('Ardèche', $numberedRoad->getAdministrator());
         $this->assertSame('D110', $numberedRoad->getRoadNumber());
         $this->assertSame('14', $numberedRoad->getFromPointNumber());
@@ -39,6 +42,7 @@ final class NumberedRoadTest extends TestCase
         $this->assertSame('U', $numberedRoad->getToSide());
 
         $numberedRoad->update(
+            DirectionEnum::B_TO_A->value,
             'Ain',
             'D16',
             '10',
@@ -49,6 +53,7 @@ final class NumberedRoadTest extends TestCase
             0,
         );
 
+        $this->assertSame(DirectionEnum::B_TO_A->value, $numberedRoad->getDirection());
         $this->assertSame('Ain', $numberedRoad->getAdministrator());
         $this->assertSame('D16', $numberedRoad->getRoadNumber());
         $this->assertSame('10', $numberedRoad->getFromPointNumber());
