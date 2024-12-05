@@ -41,6 +41,32 @@ Une configuration est nécéssaire à la première connection pour relier pgAdmi
 
 Et c'est tout ! Vous aurez maintenant accès à l'interface graphique pour gérer la base de données.
 
+## Base de données de branche
+
+Pour développer sur une branche contenant de nouvelles migrations, il peut être utile d'utiliser une DB dédiée afin de ne pas affecter votre DB de développement principale.
+
+Pour cela utilisez `make createdb` :
+
+```bash
+make createdb NAME=_ma_feature # Noter le "_" devant
+```
+
+Une base de données `dialog_ma_feature` sera créée à partir de la base `dialog`.
+
+Pour l'utiliser, il faut mettre à jour `DATABASE_URL` dans les fichiers `.env.local` et `.env.test.local`. Vous pouvez le faire en une commande avec `make usedb` :
+
+```bash
+make usedb NAME=ma_feature
+```
+
+Pour retourner à la DB principale, utilisez `make usdb` (sans paramètre `NAME`).
+
+Quand vous n'avez plus besoin de la DB, utilisez `make dropdb` :
+
+```bash
+make dropdb NAME=ma_feature
+```
+
 ## Utiliser une DB Scalingo en local
 
 Vous pouvez utiliser en local une base de données hébergée sur Scalingo (staging, PR...) à l'aide d'un utilitaire.
