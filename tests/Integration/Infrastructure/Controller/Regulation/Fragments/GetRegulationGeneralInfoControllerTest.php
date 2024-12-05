@@ -22,7 +22,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSame('Title 3', $crawler->filter('h3')->text());
         $this->assertSame(OrganizationFixture::MAIN_ORG_NAME, $crawler->filter('li')->eq(0)->text());
         $this->assertSame('Title 3', $crawler->filter('li')->eq(2)->text());
-        $this->assertSame('Depuis le 11/03/2023', $crawler->filter('li')->eq(3)->text());
+        $this->assertSame('Modifier', $crawler->filter('li')->eq(3)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_PERMANENT, $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());

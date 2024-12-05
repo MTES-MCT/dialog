@@ -31,7 +31,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(OrganizationFixture::MAIN_ORG_NAME, $generalInfo->filter('li')->eq(0)->text());
         $this->assertSame('Évènement', $generalInfo->filter('li')->eq(1)->text());
         $this->assertSame('Title 1', $generalInfo->filter('li')->eq(2)->text());
-        $this->assertSame('Du 31/10/2023 au 31/10/2023', $generalInfo->filter('li')->eq(3)->text());
+        $this->assertSame('Modifier', $generalInfo->filter('li')->eq(3)->text());
         $editGeneralInfoForm = $generalInfo->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL, $editGeneralInfoForm->getUri());
         $this->assertSame('GET', $editGeneralInfoForm->getMethod());

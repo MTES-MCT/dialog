@@ -21,12 +21,6 @@
                 {% endif %}
 
                 <li>{{ generalInfo.title }}</li>
-
-                {% if generalInfo.startDate %}
-                    <li>
-                        {% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}
-                    </li>
-                {% endif %}
             </ul>
         </div>
 
