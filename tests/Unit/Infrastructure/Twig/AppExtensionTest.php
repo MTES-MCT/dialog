@@ -236,9 +236,9 @@ class AppExtensionTest extends TestCase
 
     public function testCapFirst(): void
     {
-        $this->assertSame('', $this->extension->capFirst(''));
-        $this->assertSame('Test', $this->extension->capFirst('test'));
-        $this->assertSame('Test me', $this->extension->capFirst('test me'));
-        $this->assertSame('Test me First', $this->extension->capFirst('test me First'));
+        $this->assertSame('', (string) $this->extension->capFirst(''));
+        $this->assertSame('Test', (string) $this->extension->capFirst('test'));
+        $this->assertSame('Test me', (string) $this->extension->capFirst('test me'));
+        $this->assertSame('Test me First', (string) $this->extension->capFirst('test me First'));
     }
 }
