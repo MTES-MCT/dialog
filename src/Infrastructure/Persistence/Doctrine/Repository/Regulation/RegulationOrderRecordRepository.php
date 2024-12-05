@@ -106,9 +106,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         // Organization filter
         if ($dto->organizationUuid) {
-            $query
-                ->andWhere('roc.organization = :organizationUuid');
+            $query->andWhere('roc.organization = :organizationUuid');
             $parameters['organizationUuid'] = $dto->organizationUuid;
+        } elseif ($dto->user) {
+            $query->andWhere('roc.organization IN (:organizationUuids)');
+            $parameters['organizationUuids'] = $dto->user->getUserOrganizationUuids();
         }
 
         // Regulation order type filter
