@@ -9,6 +9,7 @@ use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommandHandler;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Repository\NumberedRoadRepositoryInterface;
@@ -26,6 +27,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
     private string $toPointNumber;
     private string $toSide;
     private int $toAbscissa;
+    private string $direction;
 
     private MockObject $idFactory;
     private MockObject $numberedRoadRepository;
@@ -43,6 +45,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         $this->toPointNumber = '5';
         $this->toSide = 'U';
         $this->toAbscissa = 100;
+        $this->direction = DirectionEnum::BOTH->value;
 
         $this->geometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.935836, 47.347024),
@@ -73,6 +76,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
                     new NumberedRoad(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         location: $location,
+                        direction: $this->direction,
                         administrator: $this->administrator,
                         roadNumber: $this->roadNumber,
                         fromPointNumber: $this->fromPointNumber,
@@ -93,6 +97,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
 
         $command = new SaveNumberedRoadCommand();
         $command->location = $location;
+        $command->direction = $this->direction;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
@@ -114,6 +119,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(
+                $this->direction,
                 $this->administrator,
                 $this->roadNumber,
                 $this->fromPointNumber,
@@ -138,6 +144,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         );
 
         $command = new SaveNumberedRoadCommand($numberedRoad);
+        $command->direction = $this->direction;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
