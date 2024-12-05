@@ -9,6 +9,7 @@ class NumberedRoad
     public function __construct(
         private string $uuid,
         private Location $location,
+        private string $direction,
         private ?string $administrator = null,
         private ?string $roadNumber = null,
         private ?string $fromPointNumber = null,
@@ -70,7 +71,13 @@ class NumberedRoad
         return $this->toSide;
     }
 
+    public function getDirection(): string
+    {
+        return $this->direction;
+    }
+
     public function update(
+        string $direction,
         ?string $administrator = null,
         ?string $roadNumber = null,
         ?string $fromPointNumber = null,
@@ -88,5 +95,6 @@ class NumberedRoad
         $this->fromAbscissa = $fromAbscissa;
         $this->toAbscissa = $toAbscissa;
         $this->toSide = $toSide;
+        $this->direction = $direction;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Command\Location;
 
 use App\Application\QueryInterface;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Measure;
@@ -21,6 +22,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public ?string $toPointNumber = null;
     public ?int $toAbscissa = null;
     public ?string $toSide = null;
+    public string $direction = DirectionEnum::BOTH->value;
     public ?string $geometry = null;
     public ?Measure $measure;
     public ?Location $location = null;
@@ -36,6 +38,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         $this->toPointNumber = $numberedRoad?->getToPointNumber();
         $this->toAbscissa = $numberedRoad?->getToAbscissa();
         $this->toSide = $numberedRoad?->getToSide();
+        $this->direction = $numberedRoad?->getDirection() ?? DirectionEnum::BOTH->value;
         $this->roadType = $numberedRoad?->getLocation()?->getRoadType();
     }
 
