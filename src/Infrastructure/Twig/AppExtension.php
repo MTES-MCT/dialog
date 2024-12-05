@@ -130,12 +130,12 @@ class AppExtension extends \Twig\Extension\AbstractExtension
         return $this->featureFlagService->isFeatureEnabled($featureName, $request);
     }
 
-    public function capFirst(string $text): string
+    public function capFirst(string $text): \Twig\Markup
     {
         if (!$text) {
-            return '';
+            return new \Twig\Markup('', 'utf-8');
         }
 
-        return strtoupper(substr($text, 0, 1)) . substr($text, 1);
+        return new \Twig\Markup(strtoupper(substr($text, 0, 1)) . substr($text, 1), 'utf-8');
     }
 }
