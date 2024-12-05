@@ -401,10 +401,11 @@ final class BacIdfTransformer
             $geometries[] = $feature['geometry'];
         }
 
-        $geometry = [
-            'type' => 'GeometryCollection',
-            'geometries' => $geometries,
-        ];
+        // Attention : une GeometryCollection à un seul élément ne serait pas conforme à la spec GeoJSON
+        // https://github.com/MTES-MCT/dialog/issues/1099
+        $geometry = \count($geometries) === 1
+            ? $geometries[0]
+            : ['type' => 'GeometryCollection', 'geometries' => $geometries];
 
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;

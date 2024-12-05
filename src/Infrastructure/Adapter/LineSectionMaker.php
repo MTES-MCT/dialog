@@ -92,7 +92,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
                 FROM linestring AS l
             )
             SELECT ST_AsGeoJSON(
-                ST_Split(
+                f_ST_NormalizeGeometryCollection(ST_Split(
                     -- ST_Snap avoids intersection issues due to numerical rounding errors
                     -- https://postgis.net/docs/ST_Split.html
                     ST_Snap(
@@ -102,7 +102,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
                         0.00001
                     ),
                     endpoints.geom
-                )
+                ))
             ) AS geom
             FROM merged_section AS s
             JOIN endpoints on true

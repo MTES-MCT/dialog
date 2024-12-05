@@ -134,15 +134,10 @@ final class LineSectionMakerTest extends KernelTestCase
                 'fromCoords' => Coordinates::fromLonLat(6, 1), // Maps to (6, 2) and (7, 1) on c
                 'toCoords' => Coordinates::fromLonLat(9, 2), // Maps to (7, 2) on c
                 'section' => json_encode([
-                    'type' => 'GeometryCollection',
-                    'geometries' => [
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [6, 2],
-                                [7, 2],
-                            ],
-                        ],
+                    'type' => 'LineString',
+                    'coordinates' => [
+                        [6, 2],
+                        [7, 2],
                     ],
                 ]),
             ],
@@ -150,15 +145,10 @@ final class LineSectionMakerTest extends KernelTestCase
                 'fromCoords' => Coordinates::fromLonLat(1, 2), // 3rd point of a (1st segment)
                 'toCoords' => Coordinates::fromLonLat(1, 1), // 1st point of a (1st segment)
                 'section' => json_encode([
-                    'type' => 'GeometryCollection',
-                    'geometries' => [
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [1, 1],
-                                [1, 2],
-                            ],
-                        ],
+                    'type' => 'LineString',
+                    'coordinates' => [
+                        [1, 1],
+                        [1, 2],
                     ],
                 ]),
             ],
@@ -166,15 +156,10 @@ final class LineSectionMakerTest extends KernelTestCase
                 'fromCoords' => Coordinates::fromLonLat(5, 1), // Maps to (5, 2) (intersection point) on a, b, c
                 'toCoords' => Coordinates::fromLonLat(9, 2), // Maps to (8, 2) on b
                 'section' => json_encode([
-                    'type' => 'GeometryCollection',
-                    'geometries' => [
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [5, 2],
-                                [7, 2],
-                            ],
-                        ],
+                    'type' => 'LineString',
+                    'coordinates' => [
+                        [5, 2],
+                        [7, 2],
                     ],
                 ]),
             ],
@@ -182,15 +167,10 @@ final class LineSectionMakerTest extends KernelTestCase
                 'fromCoords' => Coordinates::fromLonLat(7, 1),
                 'toCoords' => Coordinates::fromLonLat(9.6, 2), // P
                 'section' => json_encode([
-                    'type' => 'GeometryCollection',
-                    'geometries' => [
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [7, 2],
-                                [7, 1],
-                            ],
-                        ],
+                    'type' => 'LineString',
+                    'coordinates' => [
+                        [7, 2],
+                        [7, 1],
                     ],
                 ]),
                 'getTolerance' => fn ($bdtopoConnection) => 1.01 // Just above
