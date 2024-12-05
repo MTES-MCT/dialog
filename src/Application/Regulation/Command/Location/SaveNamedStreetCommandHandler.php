@@ -25,6 +25,7 @@ final class SaveNamedStreetCommandHandler
                 new NamedStreet(
                     uuid: $this->idFactory->make(),
                     location: $command->location,
+                    direction: $command->direction,
                     cityLabel: $command->cityLabel,
                     cityCode: $command->cityCode,
                     roadName: $command->roadName,
@@ -40,6 +41,7 @@ final class SaveNamedStreetCommandHandler
         }
 
         $command->namedStreet->update(
+            direction: $command->direction,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
             roadName: $command->roadName,

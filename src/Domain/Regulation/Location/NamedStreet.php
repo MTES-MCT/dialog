@@ -11,6 +11,7 @@ class NamedStreet
     public function __construct(
         private string $uuid,
         private Location $location,
+        private string $direction,
         private ?string $cityCode = null,
         private ?string $cityLabel = null,
         private ?string $roadName = null,
@@ -44,6 +45,11 @@ class NamedStreet
     public function getRoadName(): ?string
     {
         return $this->roadName;
+    }
+
+    public function getDirection(): string
+    {
+        return $this->direction;
     }
 
     public function getFromPointType(): ?string
@@ -93,6 +99,7 @@ class NamedStreet
     }
 
     public function update(
+        string $direction,
         ?string $cityCode = null,
         ?string $cityLabel = null,
         ?string $roadName = null,
@@ -101,6 +108,7 @@ class NamedStreet
         ?string $toHouseNumber = null,
         ?string $toRoadName = null,
     ): void {
+        $this->direction = $direction;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
         $this->roadName = $roadName;

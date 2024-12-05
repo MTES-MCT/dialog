@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
@@ -155,6 +156,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '37bis';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -225,6 +227,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'houseNumber';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
@@ -258,6 +261,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'houseNumber';
         $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = '15';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
@@ -293,6 +297,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = '15';
         $values['measure_form']['locations'][0]['namedStreet']['toPointType'] = 'intersection';
         $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = '';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
@@ -327,6 +332,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '999'; // Mock will return no result
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
@@ -358,6 +364,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '80';
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '44'; // Not on same section than 80
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';

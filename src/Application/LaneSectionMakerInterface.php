@@ -12,6 +12,7 @@ interface LaneSectionMakerInterface
         string $fullLaneGeometry,
         string $roadName,
         string $cityCode,
+        string $direction,
         ?Coordinates $fromCoords,
         ?string $fromHouseNumber,
         ?string $fromRoadName,

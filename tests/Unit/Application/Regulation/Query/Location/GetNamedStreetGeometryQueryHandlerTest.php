@@ -11,6 +11,7 @@ use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQueryHandler
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
@@ -22,6 +23,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     private string $cityCode;
     private string $cityLabel;
     private string $roadName;
+    private string $direction;
     private string $fromHouseNumber;
     private string $toHouseNumber;
     private string $geometry;
@@ -38,6 +40,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->roadName = 'Route du Grand Brossais';
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
+        $this->direction = DirectionEnum::BOTH->value;
         $this->geometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.935836, 47.347024),
             Coordinates::fromLonLat(-1.930973, 47.347917),
@@ -55,7 +58,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->laneSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
+            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $this->direction, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
             ->willReturn($this->geometry);
 
         $handler = new GetNamedStreetGeometryQueryHandler(
@@ -65,6 +68,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
         $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
         $saveNamedStreetCommand->roadName = $this->roadName;
@@ -125,7 +129,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->laneSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
+            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $this->direction, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
             ->willReturn($this->geometry);
 
         $handler = new GetNamedStreetGeometryQueryHandler(
@@ -136,6 +140,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand = new SaveNamedStreetCommand($namedStreet);
         $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
@@ -214,7 +219,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->laneSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $fromCoords, null, null, $toCoords, null, null)
+            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $this->direction, $fromCoords, null, null, $toCoords, null, null)
             ->willReturn($this->geometry);
 
         $handler = new GetNamedStreetGeometryQueryHandler(
@@ -224,6 +229,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
         $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
         $saveNamedStreetCommand->roadName = $this->roadName;

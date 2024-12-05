@@ -677,6 +677,26 @@
                 <source>regulation.location.roadName.results_label</source>
                 <target>Noms de voies suggérés</target>
             </trans-unit>
+            <trans-unit id="regulation.location.named_street.direction">
+                <source>regulation.location.named_street.direction</source>
+                <target>Sens concerné</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.direction.help">
+                <source>regulation.location.named_street.direction.help</source>
+                <target>Définissez le sens impacté par la restriction.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.direction.BOTH">
+                <source>regulation.location.named_street.direction.BOTH</source>
+                <target>Double sens</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.direction.A_TO_B">
+                <source>regulation.location.named_street.direction.A_TO_B</source>
+                <target>Sens A vers B</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.direction.B_TO_A">
+                <source>regulation.location.named_street.direction.B_TO_A</source>
+                <target>Sens B vers A</target>
+            </trans-unit>
             <trans-unit id="regulation.location.named_street.section">
                 <source>regulation.location.named_street.section</source>
                 <target>Section concernée</target>

@@ -22,6 +22,7 @@ use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
@@ -149,6 +150,10 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCityLabel')
             ->willReturn('Savenay');
+        $namedStreet1
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::BOTH->value);
         $location1
             ->expects(self::exactly(2))
             ->method('getRoadType')
@@ -246,6 +251,7 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
         $locationCommand1->roadType = RoadTypeEnum::LANE->value;
         $locationCommand1->namedStreet = new SaveNamedStreetCommand();
         $locationCommand1->namedStreet->cityCode = '44195';
+        $locationCommand1->namedStreet->direction = DirectionEnum::BOTH->value;
         $locationCommand1->namedStreet->cityLabel = 'Savenay';
         $locationCommand1->namedStreet->roadType = RoadTypeEnum::LANE->value;
         $locationCommand1->namedStreet->roadName = 'Route du Lac';

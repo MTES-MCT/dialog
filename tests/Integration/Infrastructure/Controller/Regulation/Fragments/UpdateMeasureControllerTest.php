@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
@@ -291,6 +292,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['locations'][2]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Rue Lamartine';
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Rue Saint-Victor';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);
