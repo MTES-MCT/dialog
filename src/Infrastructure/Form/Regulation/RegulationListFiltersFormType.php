@@ -36,7 +36,7 @@ final class RegulationListFiltersFormType extends AbstractType
                 ChoiceType::class,
                 options: [
                     'label' => 'regulation.list.filters.organizationUuid',
-                    'placeholder' => 'regulation.list.filters.organizationUuid.placeholder',
+                    'placeholder' => $options['user'] ? 'regulation.list.filters.organizationUuid.my_organizations' : 'regulation.list.filters.organizationUuid.all',
                     'choices' => $options['organizations'],
                     'choice_value' => 'uuid',
                     'choice_label' => 'name',

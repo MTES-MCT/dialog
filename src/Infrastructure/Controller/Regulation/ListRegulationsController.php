@@ -54,6 +54,7 @@ final class ListRegulationsController
 
         /** @var SymfonyUser|null */
         $user = $this->security->getUser();
+        $dto->user = $user;
         $organizations = $this->queryBus->handle(new GetOrganizationsQuery());
 
         if (!$user) {
@@ -79,7 +80,6 @@ final class ListRegulationsController
         );
 
         $form->handleRequest($request);
-
         $regulations = $this->queryBus->handle(new GetRegulationsQuery($dto));
 
         return new Response($this->twig->render(
