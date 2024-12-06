@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Regulation\DTO;
 
 use App\Domain\Pagination;
+use App\Infrastructure\Security\SymfonyUser;
 
 final class RegulationListFiltersDTO
 {
@@ -14,4 +15,5 @@ final class RegulationListFiltersDTO
     public ?string $organizationUuid = null;
     public ?string $regulationOrderType = null;
     public ?string $status = null;
+    public ?SymfonyUser $user = null;
 }

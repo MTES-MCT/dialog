@@ -22,7 +22,6 @@ final class GetRegulationsQueryHandler
     public function __invoke(GetRegulationsQuery $query): Pagination
     {
         $regulationOrderViews = [];
-
         $rows = $this->repository->findAllRegulations($query->dto);
 
         foreach ($rows['items'] as $row) {

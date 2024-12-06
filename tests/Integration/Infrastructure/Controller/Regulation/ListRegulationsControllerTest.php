@@ -29,7 +29,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
         $this->assertSame('...', $navLi->eq(5)->text());
-        $this->assertSame('10', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('9', $navLi->eq(6)->filter('a')->text());
         $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
         $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
 
@@ -168,7 +168,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('Organisation', trim($field->getLabel()->nodeValue));
         $choices = $crawler->filter('form[role="search"] select[name="organizationUuid"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
         $this->assertEquals([
-            ['', 'Toutes les organisations'],
+            ['', 'Mes organisations'],
             [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
             [OrganizationFixture::OTHER_ORG_ID_2, 'Mairie de Saint Ouen'],
             [OrganizationFixture::OTHER_ORG_ID, 'Mairie de Savenay'],
@@ -184,6 +184,28 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         foreach ($organizations as $org) {
             $this->assertSame('Mairie de Savenay', $org);
         }
+    }
+
+    public function testOrganizationFilterWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/regulations');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Inspect filter field
+        $searchButton = $crawler->selectButton('Rechercher');
+        $form = $searchButton->form();
+        $field = $form->get('organizationUuid');
+        $this->assertSame('Organisation', trim($field->getLabel()->nodeValue));
+        $choices = $crawler->filter('form[role="search"] select[name="organizationUuid"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertEquals([
+            ['', 'Toutes les organisations'],
+            [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
+            [OrganizationFixture::OTHER_ORG_ID_2, 'Mairie de Saint Ouen'],
+            [OrganizationFixture::OTHER_ORG_ID, 'Mairie de Savenay'],
+        ], $choices);
+        $this->assertSame('', $field->getValue());
     }
 
     public function testRegulationOrderTypeFilterPermanent(): void
@@ -230,7 +252,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(9, $rows->count());
+        $this->assertSame(8, $rows->count());
     }
 
     public function testStatusFilterPublished(): void
@@ -258,7 +280,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertCount(4, $statuses);
+        $this->assertCount(3, $statuses);
         foreach ($statuses as $status) {
             $this->assertSame('Publié', $status);
         }
