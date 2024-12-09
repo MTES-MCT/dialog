@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Regulation\Location;
 
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ final class NamedStreetTest extends TestCase
         $namedstreet = new NamedStreet(
             uuid: 'b4812143-c4d8-44e6-8c3a-34688becae6e',
             location: $location,
+            direction: DirectionEnum::BOTH->value,
             cityCode: '44195',
             cityLabel: 'Savenay',
             roadName: 'Route du Grand Brossais',
@@ -35,14 +37,17 @@ final class NamedStreetTest extends TestCase
         $this->assertSame(null, $namedstreet->getFromRoadName());
         $this->assertSame('37bis', $namedstreet->getToHouseNumber());
         $this->assertSame(null, $namedstreet->getToRoadName());
+        $this->assertSame(DirectionEnum::BOTH->value, $namedstreet->getDirection());
 
         $newCityCode = '44025';
         $newCityLabel = 'Campbon';
         $newRoadName = 'La Forge Hervé';
         $newFromHouseNumber = '1';
         $newToHouseNumber = '4';
+        $newDirection = DirectionEnum::A_TO_B->value;
 
         $namedstreet->update(
+            $newDirection,
             $newCityCode,
             $newCityLabel,
             $newRoadName,
@@ -52,6 +57,7 @@ final class NamedStreetTest extends TestCase
             null,
         );
 
+        $this->assertSame($newDirection, $namedstreet->getDirection());
         $this->assertSame($newCityCode, $namedstreet->getCityCode());
         $this->assertSame($newCityLabel, $namedstreet->getCityLabel());
         $this->assertSame($newRoadName, $namedstreet->getRoadName());
