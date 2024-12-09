@@ -75,17 +75,12 @@ final class BacIdfTransformerTest extends TestCase
         $locationCommand->namedStreet->toHouseNumber = null;
         $locationCommand->namedStreet->geometry = json_encode(
             [
-                'type' => 'GeometryCollection',
-                'geometries' => [
-                    [
-                        'type' => 'LineString',
-                        'coordinates' => [
-                            [2.3844267, 48.9207082],
-                            [2.3844462, 48.9207571],
-                            [2.3847146, 48.9214287],
-                            [2.3847305, 48.9214627],
-                        ],
-                    ],
+                'type' => 'LineString',
+                'coordinates' => [
+                    [2.3844267, 48.9207082],
+                    [2.3844462, 48.9207571],
+                    [2.3847146, 48.9214287],
+                    [2.3847305, 48.9214627],
                 ],
             ],
         );
@@ -194,15 +189,10 @@ final class BacIdfTransformerTest extends TestCase
         $locationCommand->namedStreet->toHouseNumber = null;
         $locationCommand->namedStreet->geometry = json_encode(
             [
-                'type' => 'GeometryCollection',
-                'geometries' => [
-                    [
-                        'type' => 'LineString',
-                        'coordinates' => [
-                            [2.3820543, 48.9220036],
-                            [2.3821628, 48.9221769],
-                        ],
-                    ],
+                'type' => 'LineString',
+                'coordinates' => [
+                    [2.3820543, 48.9220036],
+                    [2.3821628, 48.9221769],
                 ],
             ],
         );
@@ -606,15 +596,10 @@ final class BacIdfTransformerTest extends TestCase
         $locationCommand->namedStreet->toHouseNumber = null;
         $locationCommand->namedStreet->geometry = json_encode(
             [
-                'type' => 'GeometryCollection',
-                'geometries' => [
-                    [
-                        'type' => 'LineString',
-                        'coordinates' => [
-                            [2.3820543, 48.9220036],
-                            [2.3821628, 48.9221769],
-                        ],
-                    ],
+                'type' => 'LineString',
+                'coordinates' => [
+                    [2.3820543, 48.9220036],
+                    [2.3821628, 48.9221769],
                 ],
             ],
         );

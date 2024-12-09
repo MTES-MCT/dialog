@@ -33,7 +33,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                         AND code_insee = :code_insee
                         LIMIT 1
                     )
-                    SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(geometrie))) AS geometry
+                    SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
                     FROM troncon_de_route
                     INNER JOIN voie_nommee ON true
                     WHERE voie_nommee.id_pseudo_fpb = identifiant_voie_1_gauche
@@ -363,7 +363,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $row = $this->bdtopoConnection->fetchAssociative(
                 \sprintf(
-                    'SELECT ST_AsGeoJSON(ST_Force2D(ST_Collect(%s))) AS geom
+                    'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(%s)))) AS geom
                     FROM troncon_de_route AS t
                     WHERE ST_Intersects(t.geometrie, :areaGeometry)
                     %s

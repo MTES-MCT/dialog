@@ -76,6 +76,25 @@ dbmigration: ## Generate new db migration
 dbmigrate: ## Run db migration
 	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing ${ARGS}
 
+createdb: ## Create branch db from dialog db
+	docker compose exec database createdb -U dialog -T dialog dialog_${NAME}
+
+usedb: ## Update .env.local files with branch DATABASE_URL
+	@if [ -z ${NAME} ]; then\
+		sed -i -r 's/^DATABASE_URL=.+/DATABASE_URL="postgresql:\/\/dialog:dialog@database:5432\/dialog"/' .env.local;\
+		sed -i -r 's/^DATABASE_URL=.+/DATABASE_URL="postgresql:\/\/dialog:dialog@database:5432\/dialog"/' .env.test.local;\
+	else\
+		sed -i -r 's/^DATABASE_URL=.+/DATABASE_URL="postgresql:\/\/dialog:dialog@database:5432\/dialog_${NAME}"/' .env.local;\
+		sed -i -r 's/^DATABASE_URL=.+/DATABASE_URL="postgresql:\/\/dialog:dialog@database:5432\/dialog_${NAME}"/' .env.test.local;\
+	fi
+
+dropdb: ## Remove branch db
+	docker compose exec database dropdb --if-exists -U dialog dialog_${NAME}
+	docker compose exec database dropdb --if-exists -U dialog dialog_${NAME}_test
+
+listdb: ## Show local databases
+	docker compose exec database psql -U dialog -c "\l"
+
 bdtopo_migration: ## Generate new db migration for bdtopo
 	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/bdtopo/doctrine_migrations.yaml
 

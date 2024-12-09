@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Command\Location;
 use App\Application\QueryInterface;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 
@@ -27,6 +28,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     private ?bool $isEntireStreetFormValue = null;
     public ?string $geometry = null;
     public ?Location $location = null;
+    public string $direction = DirectionEnum::BOTH->value;
 
     public function __construct(
         public readonly ?NamedStreet $namedStreet = null,
@@ -42,6 +44,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
         $this->toRoadName = $namedStreet?->getToRoadName();
         $this->isEntireStreetFormValue = $namedStreet ? $this->computeIsEntireStreetFormValue() : null;
         $this->roadType = $namedStreet?->getLocation()?->getRoadType();
+        $this->direction = $namedStreet?->getDirection() ?? DirectionEnum::BOTH->value;
     }
 
     public function clean(): void

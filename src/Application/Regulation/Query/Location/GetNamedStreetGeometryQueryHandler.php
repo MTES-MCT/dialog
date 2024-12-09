@@ -47,6 +47,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             $fullLaneGeometry,
             $command->roadName,
             $command->cityCode,
+            $command->direction,
             $command->fromCoords,
             $command->fromHouseNumber,
             $command->fromRoadName,
@@ -61,6 +62,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
         $command = $query->command;
 
         return !$command->namedStreet
+            || $command->direction !== $command->namedStreet->getDirection()
             || $command->cityCode !== $command->namedStreet->getCityCode()
             || $command->roadName !== $command->namedStreet->getRoadName()
             || ($command->fromHouseNumber !== $command->namedStreet->getFromHouseNumber())
