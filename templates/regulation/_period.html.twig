@@ -4,7 +4,8 @@
     {%- elseif period.startDateTime and not period.endDateTime  -%}
         {{ 'common.date.starting'|trans({'%date%': app_datetime(period.startDateTime, true) }) }}
     {%- else -%}
-        {{ app_datetime(period.startDateTime, true) }}
+        { {{ app_datetime(period.startDateTime, true) }} }
+       
     {%- endif -%}
     {%- if period.dailyRange -%}
         ,&nbsp;
