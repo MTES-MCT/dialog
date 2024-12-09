@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-final class ValidGeoJsonConstraintValidator extends ConstraintValidator
+final class ValidGeoJsonGeometryConstraintValidator extends ConstraintValidator
 {
     public function __construct(
         private Connection $connection,
@@ -18,8 +18,8 @@ final class ValidGeoJsonConstraintValidator extends ConstraintValidator
 
     public function validate(mixed $value, Constraint $constraint): void
     {
-        if (!$constraint instanceof ValidGeoJsonConstraint) {
-            throw new UnexpectedValueException($constraint, ValidGeoJsonConstraint::class);
+        if (!$constraint instanceof ValidGeoJsonGeometryConstraint) {
+            throw new UnexpectedValueException($constraint, ValidGeoJsonGeometryConstraint::class);
         }
 
         try {
@@ -28,7 +28,7 @@ final class ValidGeoJsonConstraintValidator extends ConstraintValidator
                 ['value' => $value],
             );
         } catch (\Exception $e) {
-            $this->context->buildViolation('geojson.error.invalid')
+            $this->context->buildViolation('geojson.error.invalid_geometry')
                 ->addViolation();
         }
     }
