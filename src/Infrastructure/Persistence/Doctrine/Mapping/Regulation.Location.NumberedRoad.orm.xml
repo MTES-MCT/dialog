@@ -22,6 +22,7 @@
             <option name="default">0</option>
       </options>
     </field>
+    <field name="direction" type="string" column="direction" nullable="false" length="10" />
     <one-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="numberedRoad">
         <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </one-to-one>
