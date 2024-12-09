@@ -25,7 +25,12 @@ final class SavePeriodCommandHandler
     public function __invoke(SavePeriodCommand $command): Period
     {
         $command->clean();
-        $command->startDate = $this->dateUtils->mergeDateAndTime($command->startDate, $command->startTime);
+
+        // In the case of a temporary order only
+        if ($command->startTime) {
+            $command->startDate = $this->dateUtils->mergeDateAndTime($command->startDate, $command->startTime);
+        }
+
         $command->endDate = $command->endDate && $command->endTime
             ? $this->dateUtils->mergeDateAndTime($command->endDate, $command->endTime)
             : null;
