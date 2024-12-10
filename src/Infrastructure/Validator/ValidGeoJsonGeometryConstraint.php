@@ -6,7 +6,7 @@ namespace App\Infrastructure\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-final class ValidGeoJsonConstraint extends Constraint
+final class ValidGeoJsonGeometryConstraint extends Constraint
 {
     public function validatedBy(): string
     {

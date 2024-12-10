@@ -482,7 +482,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette valeur doit être un GeoJSON valide. (Vous pouvez vous aider d'un validateur tel que https://geojson.io.)", $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
+        $this->assertStringStartsWith('Cette valeur doit être une géométrie GeoJSON valide', $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
