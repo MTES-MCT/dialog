@@ -10,19 +10,19 @@ use App\Domain\User\OrganizationRegulationAccessInterface;
 readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
 {
     public function __construct(
-        public readonly string $uuid,
-        public readonly string $identifier,
-        public readonly string $organizationName,
-        public readonly ?string $organizationLogo,
-        public readonly ?string $organizationUuid,
-        public readonly string $status,
-        public readonly string $regulationOrderUuid,
-        public readonly string $category,
-        public readonly string $subject,
-        public readonly ?string $otherCategoryText,
-        public readonly string $title,
-        public readonly ?\DateTimeInterface $startDate,
-        public readonly ?\DateTimeInterface $endDate,
+        public string $uuid,
+        public string $identifier,
+        public string $organizationName,
+        public ?string $organizationLogo,
+        public ?string $organizationUuid,
+        public string $status,
+        public string $regulationOrderUuid,
+        public string $category,
+        public ?string $subject,
+        public ?string $otherCategoryText,
+        public string $title,
+        public ?\DateTimeInterface $startDate,
+        public ?\DateTimeInterface $endDate,
     ) {
     }
 
