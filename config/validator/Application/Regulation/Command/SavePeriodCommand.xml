@@ -10,9 +10,14 @@
             </constraint>
         </property>
         <property name="startTime">
-            <constraint name="NotBlank"/>
-            <constraint name="Type">
-                <option name="type">\DateTimeInterface</option>
+            <constraint name="When">
+                <option name="expression"> !this.isPermanent </option>
+                <option name="constraints">
+                    <constraint name="NotBlank"/>
+                    <constraint name="Type">
+                        <option name="type">\DateTimeInterface</option>
+                    </constraint>
+                </option>
             </constraint>
         </property>
         <property name="endDate">
