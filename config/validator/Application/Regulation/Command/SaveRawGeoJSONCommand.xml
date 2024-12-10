@@ -15,7 +15,7 @@
             </constraint>
         </property>
         <property name="geometry">
-            <constraint name="App\Infrastructure\Validator\ValidGeoJsonConstraint" />
+            <constraint name="App\Infrastructure\Validator\ValidGeoJsonGeometryConstraint" />
             <constraint name="When">
                 <option name="expression">this.roadType === 'rawGeoJSON'</option>
                 <option name="constraints">
