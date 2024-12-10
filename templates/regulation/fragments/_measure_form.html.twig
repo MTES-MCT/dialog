@@ -25,9 +25,9 @@
         <div class="app-card__content">
             <div class="fr-x-container--fluid">
                 {% if form.isPermanent.vars.value %}
-                	<div class="fr-grid-row fr-grid-row--gutters">
-                	    {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 fr-mb-3w'}, attr: {class: 'fr-input'}}) }}
-                	</div>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5 fr-mb-3w'}, attr: {class: 'fr-input'}}) }}
+                    </div>
                 {% else %}
                     <div class="fr-grid-row fr-grid-row--gutters">
                         {{ form_row(form.startDate, {group_class: 'fr-input-group', row_attr: {class: 'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-input'}}) }}
