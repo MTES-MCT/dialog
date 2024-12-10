@@ -129,7 +129,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $this->assertSame($createdPeriod, $result);
     }
 
-    public function testCreateWithoutEndDate(): void
+    public function testCreateWithoutStartTimeAndEndDate(): void
     {
         $startDateTime = new \DateTimeImmutable('2023-05-22');
 
@@ -198,6 +198,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
             ->willReturnOnConsecutiveCalls($createdTimeSlot, $createdDailyRange);
 
         $command = new SavePeriodCommand();
+        $command->isPermanent = true;
         $command->measure = $measure;
         $command->startDate = $startDateTime;
         $command->endDate = null;

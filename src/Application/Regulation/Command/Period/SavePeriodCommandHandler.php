@@ -26,8 +26,11 @@ final class SavePeriodCommandHandler
     {
         $command->clean();
 
-        // In the case of a temporary order only
-        if ($command->startTime) {
+        // Les arrêtés permanents n'ont qu'un champ date de début,
+        // mais pour les temporaires il faut joindre la date et l'heure
+        // dans un même datetime.
+
+        if (!$command->isPermanent) {
             $command->startDate = $this->dateUtils->mergeDateAndTime($command->startDate, $command->startTime);
         }
 

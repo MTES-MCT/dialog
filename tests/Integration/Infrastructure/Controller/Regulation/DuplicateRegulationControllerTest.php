@@ -28,7 +28,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         // Measure
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
-        $this->assertSame('à partir du 09/06/2023 à 10h00', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text()); // Date comes from DateUtilsMock
+        $this->assertSame('à partir du 09/06/2023 à 00h00', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text()); // Date comes from DateUtilsMock
         $this->assertSame('Rue du Simplon à Paris 18e Arrondissement (75018)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
