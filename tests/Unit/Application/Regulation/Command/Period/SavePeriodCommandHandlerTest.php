@@ -132,15 +132,10 @@ final class SavePeriodCommandHandlerTest extends TestCase
     public function testCreateWithoutEndDate(): void
     {
         $startDateTime = new \DateTimeImmutable('2023-05-22');
-        $startTime = new \DateTimeImmutable('2023-05-22 10:00:00');
-
-        $mergedStartDateTime = new \DateTimeImmutable('2023-05-22 10:00:00');
 
         $this->dateUtils
-            ->expects(self::once())
-            ->method('mergeDateAndTime')
-            ->withConsecutive([$startDateTime, $startTime])
-            ->willReturnOnConsecutiveCalls($mergedStartDateTime);
+            ->expects(self::never())
+            ->method('mergeDateAndTime');
 
         $this->idFactory
             ->expects(self::once())
@@ -164,7 +159,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
                     new Period(
                         uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
                         measure: $measure,
-                        startDateTime: $mergedStartDateTime,
+                        startDateTime: $startDateTime,
                         endDateTime: null,
                         recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
                     ),
@@ -206,7 +201,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->measure = $measure;
         $command->startDate = $startDateTime;
         $command->endDate = null;
-        $command->startTime = $startTime;
+        $command->startTime = null;
         $command->endTime = null;
         $command->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $command->dailyRange = $dailyRangeCommand;
