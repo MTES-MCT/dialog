@@ -7,6 +7,7 @@ namespace App\Infrastructure\Form\Regulation;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\CritairEnum;
+use App\Domain\Regulation\Enum\HeavyweightMaxWeightEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -42,13 +43,8 @@ final class VehicleSetFormType extends AbstractType
             )
             ->add(
                 'heavyweightMaxWeight',
-                NumberType::class,
-                options: [
-                    'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
-                    'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
-                    'required' => false,
-                    'empty_data' => '3,5',
-                ],
+                ChoiceType::class,
+                options: $this->getHeavyweightMaxWeightOptions(),
             )
             ->add(
                 'maxWidth',
@@ -146,6 +142,24 @@ final class VehicleSetFormType extends AbstractType
             'help' => 'regulation.vehicle_set.restricted_types.help',
             'expanded' => true,
             'multiple' => true,
+        ];
+    }
+
+    private function getHeavyweightMaxWeightOptions(): array
+    {
+        $choices = [
+            'regulation.vehicle_set.heavyweightMaxWeight.placeholder' => '',
+        ];
+
+        foreach (HeavyweightMaxWeightEnum::cases() as $case) {
+            $choices[\sprintf('regulation.vehicle_set.heavyweightMaxWeight.%s', $case->value)] = $case->value;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
+            'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
+            'required' => false,
         ];
     }
 
