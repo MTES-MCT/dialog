@@ -255,6 +255,7 @@
                     {{ form_row(form[roadType].toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                 </div>
             </fieldset>
+            {{ form_row(form[roadType].direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
         </fieldset>
     </div>
 {% endmacro %}
