@@ -1916,7 +1916,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight.placeholder">
                 <source>regulation.vehicle_set.heavyweightMaxWeight.placeholder</source>
-                <target>Indiquer le poids</target>
+                <target>Sélectionner le poids</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight">
                 <source>regulation.vehicle_set.heavyweightMaxWeight</source>
