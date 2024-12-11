@@ -99,6 +99,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $numberedRoadTypicalMeasureLocation4 = new NumberedRoad(
             uuid: 'fae12210-025f-4450-8912-e73861ff7792',
             location: $typicalMeasureLocation4,
+            direction: DirectionEnum::BOTH->value,
             administrator: 'Loire-Atlantique',
             roadNumber: 'D17',
             fromPointNumber: '28',
@@ -194,6 +195,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $numberedRoadPublishedLocation4DepartmentalRoad = new NumberedRoad(
             uuid: '1346b8e4-e768-4370-90c3-2c3f8985b9d8',
             location: $publishedLocation4DepartmentalRoad,
+            direction: DirectionEnum::BOTH->value,
             administrator: 'Ardennes',
             roadNumber: 'D322',
             fromPointNumber: '1',
@@ -273,6 +275,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $numberedRoadCifsLocationDepartmentalRoad = new NumberedRoad(
             uuid: 'eb1f2403-8aaf-4a02-8d50-0b0dbc66f85c',
             location: $cifsLocationDepartmentalRoad,
+            direction: DirectionEnum::BOTH->value,
             administrator: 'Ardennes',
             roadNumber: 'D324',
             fromPointNumber: '1',

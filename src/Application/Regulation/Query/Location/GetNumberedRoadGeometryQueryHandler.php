@@ -46,6 +46,7 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
             $command->toPointNumber,
             $command->toSide,
             $command->toAbscissa ?? 0,
+            $command->direction,
         );
     }
 

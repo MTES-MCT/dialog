@@ -23,6 +23,7 @@ final class SaveNumberedRoadCommandHandler
                 new NumberedRoad(
                     uuid: $this->idFactory->make(),
                     location: $command->location,
+                    direction: $command->direction,
                     roadNumber: $command->roadNumber,
                     administrator: $command->administrator,
                     fromPointNumber: $command->fromPointNumber,
@@ -48,6 +49,7 @@ final class SaveNumberedRoadCommandHandler
             toPointNumber: $command->toPointNumber,
             toAbscissa: $command->toAbscissa,
             toSide: $command->toSide,
+            direction: $command->direction,
         );
 
         return $command->numberedRoad;

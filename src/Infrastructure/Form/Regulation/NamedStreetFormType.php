@@ -129,13 +129,13 @@ final class NamedStreetFormType extends AbstractType
         $choices = [];
 
         foreach (DirectionEnum::cases() as $case) {
-            $choices[\sprintf('regulation.location.named_street.direction.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.location.direction.%s', $case->value)] = $case->value;
         }
 
         return [
             'choices' => $choices,
-            'label' => 'regulation.location.named_street.direction',
-            'help' => 'regulation.location.named_street.direction.help',
+            'label' => 'regulation.location.direction',
+            'help' => 'regulation.location.direction.help',
         ];
     }
 
