@@ -38,7 +38,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         /** @var UserRepositoryInterface */
         $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
-        $this->assertNull($userRepository->findOneByEmail($email)->getLastActiveAt());
+        $this->assertEquals(new \DateTimeImmutable('2024-06-07'), $userRepository->findOneByEmail($email)->getLastActiveAt());
 
         // Get the raw values.
         $values = $form->getPhpValues();
@@ -56,6 +56,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(303);
+        // Filled with DateUtilsMock::getNow()
         $this->assertEquals(new \DateTimeImmutable('2023-06-09'), $userRepository->findOneByEmail($email)->getLastActiveAt());
         $client->followRedirect();
 
