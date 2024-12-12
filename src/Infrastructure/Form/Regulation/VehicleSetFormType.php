@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Component\Form\AbstractType;
@@ -44,9 +43,6 @@ final class VehicleSetFormType extends AbstractType
                 'heavyweightMaxWeight',
                 ChoiceType::class,
                 options : [
-                    'attr' => [
-                        'placeholder' => 'regulation.vehicle_set.heavyweightMaxWeight.placeholder',
-                    ],
                     'choices' => [
                         'regulation.vehicle_set.heavyweightMaxWeight.3.5t' => 3.5,
                         'regulation.vehicle_set.heavyweightMaxWeight.7.5t' => 7.5,
@@ -56,6 +52,7 @@ final class VehicleSetFormType extends AbstractType
                         'regulation.vehicle_set.heavyweightMaxWeight.44t' => 44,
                     ],
                     'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
+                    'placeholder' => 'regulation.vehicle_set.heavyweightMaxWeight.placeholder',
                     'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
                     'required' => false,
                 ],
@@ -131,15 +128,6 @@ final class VehicleSetFormType extends AbstractType
                     },
                 ),
             );
-
-        $builder
-            ->get('heavyweightMaxWeight')
-            ->addModelTransformer(
-                new CallbackTransformer(
-                    transform: fn ($maxWeight) => $maxWeight ?? VehicleSet::DEFAULT_MAX_WEIGHT,
-                    reverseTransform: fn ($value) => $value,
-                ),
-            );
     }
 
     private function getRestrictedTypesOptions(): array
@@ -158,24 +146,6 @@ final class VehicleSetFormType extends AbstractType
             'multiple' => true,
         ];
     }
-
-    // private function getHeavyweightMaxWeightOptions(): array
-    // {
-    //     $choices = [
-    //         'regulation.vehicle_set.heavyweightMaxWeight.placeholder' => '',
-    //     ];
-
-    //     foreach (HeavyweightMaxWeightEnum::cases() as $case) {
-    //         $choices[\sprintf('regulation.vehicle_set.heavyweightMaxWeight.%s', $case->value)] = $case->value;
-    //     }
-
-    //     return [
-    //         'choices' => $choices,
-    //         'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
-    //         'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
-    //         'required' => false,
-    //     ];
-    // }
 
     private function getCritairTypesOptions(): array
     {

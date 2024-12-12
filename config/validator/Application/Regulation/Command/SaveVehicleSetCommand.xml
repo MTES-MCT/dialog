@@ -85,14 +85,6 @@
                     <constraint name="NotBlank">
                         <option name="message">common.error.not_blank</option>
                     </constraint>
-                    <constraint name="Choice">
-                        <value>3.5</value>
-                        <value>7.5</value>
-                        <value>19</value>
-                        <value>26</value>
-                        <value>32</value>
-                        <value>44</value>
-                    </constraint>
                 </option>
             </constraint>
             <constraint name="PositiveOrZero"></constraint>
