@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
+use App\Domain\User\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -33,22 +34,22 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
             ->setSiret('67876540989876');
 
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
-        $organizationUser1->setUser($this->getReference('mainOrgUser'));
+        $organizationUser1->setUser($this->getReference('mainOrgUser', User::class));
         $organizationUser1->setOrganization($mainOrg);
         $organizationUser1->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $organizationUser2 = new OrganizationUser('cf72ca91-3446-410f-b563-74085516180d');
-        $organizationUser2->setUser($this->getReference('mainOrgAdmin'));
+        $organizationUser2->setUser($this->getReference('mainOrgAdmin', User::class));
         $organizationUser2->setOrganization($mainOrg);
         $organizationUser2->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
 
         $organizationUser3 = new OrganizationUser('890615e1-bcb0-4623-a2fa-362435109030');
-        $organizationUser3->setUser($this->getReference('otherOrgUser'));
+        $organizationUser3->setUser($this->getReference('otherOrgUser', User::class));
         $organizationUser3->setOrganization($otherOrg);
         $organizationUser3->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $organizationUser4 = new OrganizationUser('5d054f87-f55b-49fa-8761-e52e37a44ac0');
-        $organizationUser4->setUser($this->getReference('otherOrgUser'));
+        $organizationUser4->setUser($this->getReference('otherOrgUser', User::class));
         $organizationUser4->setOrganization($otherOrg2);
         $organizationUser4->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
 
