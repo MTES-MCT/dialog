@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
 use App\Domain\Organization\VisaModel\VisaModel;
+use App\Domain\User\Organization;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -21,7 +22,7 @@ final class VisaModelFixture extends Fixture implements DependentFixtureInterfac
         $visa1 = (new VisaModel('65c12316-e210-445d-9169-0298b13b3b30'))
             ->setName('Interdiction de circulation')
             ->setDescription('Interdiction pour tous les véhicules')
-            ->setOrganization($this->getReference('mainOrg'))
+            ->setOrganization($this->getReference('mainOrg', Organization::class))
             ->setVisas(['vu que 3']);
 
         $manager->persist($genericVisa);
