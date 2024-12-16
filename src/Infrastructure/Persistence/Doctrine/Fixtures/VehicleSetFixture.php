@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use App\Domain\Regulation\Measure;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -17,7 +18,7 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
     {
         $typicalVehicleSet = new VehicleSet(
             '6a65132f-7319-4d5a-aa2d-479685d49df3',
-            measure: $this->getReference('typicalMeasure'),
+            measure: $this->getReference('typicalMeasure', Measure::class),
             restrictedTypes: [],
             exemptedTypes: [],
             otherExemptedTypeText: null,
@@ -25,7 +26,7 @@ final class VehicleSetFixture extends Fixture implements DependentFixtureInterfa
 
         $complexVehicleSet = new VehicleSet(
             '981f0260-948e-45e9-8788-efa23859a884',
-            measure: $this->getReference('publishedMeasure'),
+            measure: $this->getReference('publishedMeasure', Measure::class),
             restrictedTypes: [VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::DIMENSIONS->value, VehicleTypeEnum::CRITAIR->value, VehicleTypeEnum::HAZARDOUS_MATERIALS->value],
             exemptedTypes: [VehicleTypeEnum::PEDESTRIANS->value, VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value],
             otherExemptedTypeText: 'Convois exceptionnels',
