@@ -36,6 +36,8 @@ doctrine:
                         alias: 'App\Domain'
             bdtopo:
                 connection: bdtopo
+            metabase:
+                connection: metabase
 
 when@test:
     doctrine:

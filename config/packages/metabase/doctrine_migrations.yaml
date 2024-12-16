@@ -1,0 +1,3 @@
+migrations_paths:
+    App\Infrastructure\Persistence\Doctrine\MetabaseMigrations: 'src/Infrastructure/Persistence/Doctrine/MetabaseMigrations'
+em: metabase

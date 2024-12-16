@@ -28,8 +28,8 @@ jobs:
 
       - name: Init CI environment variables
         run: |
-          echo "DATABASE_URL=${{ secrets.METABASE_EXPORT_SRC_DATABASE_URL }}" >> .env
-          echo "METABASE_DATABASE_URL=${{ secrets.METABASE_EXPORT_DEST_DATABASE_URL }}" >> .env
+          echo "DATABASE_URL=${{ secrets.METABASE_EXPORT_DATABASE_URL }}" >> .env
+          echo "METABASE_DATABASE_URL=${{ secrets.METABASE_EXPORT_METABASE_DATABASE_URL }}" >> .env
 
       - name: Run export
         run: make ci_metabase_export
