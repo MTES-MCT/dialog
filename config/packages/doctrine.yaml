@@ -9,8 +9,10 @@ doctrine:
                 use_savepoints: true
             bdtopo:
                 url: '%env(BDTOPO_DATABASE_URL)%'
+                use_savepoints: true
             metabase:
                 url: '%env(METABASE_DATABASE_URL)%'
+                use_savepoints: true
     orm:
         auto_generate_proxy_classes: true
         default_entity_manager: default
