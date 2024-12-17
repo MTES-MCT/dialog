@@ -30,4 +30,10 @@ interface RoadGeocoderInterface
     public function findSectionsInArea(string $areaGeometry, array $excludeTypes = [], ?bool $clipToArea = false): string;
 
     public function convertPolygonRoadToLines(string $geometry): string;
+
+    public function getAvailableSidesAtPointNumber(
+        string $administrator,
+        string $roadNumber,
+        string $pointNumber,
+    ): array;
 }

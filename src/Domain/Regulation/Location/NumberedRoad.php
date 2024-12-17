@@ -97,4 +97,17 @@ class NumberedRoad
         $this->toSide = $toSide;
         $this->direction = $direction;
     }
+
+    /**
+     * Compare two PR+abs.
+     * Return -1 if A < B, 0 if A === B, or 1 if A > B
+     */
+    public static function comparePointNumber(
+        string $pointNumberA,
+        int $abscissaA,
+        string $pointNumberB,
+        int $abscissaB,
+    ): int {
+        return 0;
+    }
 }

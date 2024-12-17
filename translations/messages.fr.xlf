@@ -553,14 +553,6 @@
                 <source>regulation.location.referencePoint.to</source>
                 <target>Point de fin</target>
             </trans-unit>
-            <trans-unit id="regulation.location.road.side">
-                <source>regulation.location.road.side</source>
-                <target>Côté</target>
-            </trans-unit>
-            <trans-unit id="regulation.location.road.side.help">
-                <source>regulation.location.road.side.help</source>
-                <target>Côté de la route où se situe le PR</target>
-            </trans-unit>
             <trans-unit id="regulation.location.referencePoint">
                 <source>regulation.location.referencePoint</source>
                 <target>Section concernée</target>
@@ -568,18 +560,6 @@
             <trans-unit id="regulation.location.referencePoint.help">
                 <source>regulation.location.referencePoint.help</source>
                 <target>Indiquez la section de route concernée par la mesure. La restriction s'applique à toutes les voies de la chaussée</target>
-            </trans-unit>
-            <trans-unit id="regulation.location.road.side.D">
-                <source>regulation.location.road.side.D</source>
-                <target>Chaussée droite (D)</target>
-            </trans-unit>
-            <trans-unit id="regulation.location.road.side.G">
-                <source>regulation.location.road.side.G</source>
-                <target>Chaussée gauche (G)</target>
-            </trans-unit>
-            <trans-unit id="regulation.location.road.side.U">
-                <source>regulation.location.road.side.U</source>
-                <target>Chaussée unique (U)</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.pointNumber">
                 <source>regulation.location.referencePoint.pointNumber</source>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\IdFactoryInterface;
+use App\Application\PointNumberSideDetectorInterface;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommandHandler;
 use App\Domain\Geography\Coordinates;
@@ -31,11 +32,13 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
 
     private MockObject $idFactory;
     private MockObject $numberedRoadRepository;
+    private $pointNumberSideDetector;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->numberedRoadRepository = $this->createMock(NumberedRoadRepositoryInterface::class);
+        $this->pointNumberSideDetector = $this->createMock(PointNumberSideDetectorInterface::class);
 
         $this->administrator = 'Département de Loire-Atlantique';
         $this->roadNumber = 'D12';
@@ -90,9 +93,24 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
             )
             ->willReturn($createdNumberedRoad);
 
+        $this->pointNumberSideDetector
+            ->expects(self::once())
+            ->method('detect')
+            ->with(
+                $this->direction,
+                $this->administrator,
+                $this->roadNumber,
+                $this->fromPointNumber,
+                $this->fromAbscissa,
+                $this->toPointNumber,
+                $this->toAbscissa,
+            )
+            ->willReturn([$this->fromSide, $this->toSide]);
+
         $handler = new SaveNumberedRoadCommandHandler(
             $this->idFactory,
             $this->numberedRoadRepository,
+            $this->pointNumberSideDetector,
         );
 
         $command = new SaveNumberedRoadCommand();
@@ -101,10 +119,8 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
         $command->fromPointNumber = $this->fromPointNumber;
-        $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
         $command->toPointNumber = $this->toPointNumber;
-        $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;
 
         $result = $handler($command);
@@ -138,9 +154,24 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
+        $this->pointNumberSideDetector
+            ->expects(self::once())
+            ->method('detect')
+            ->with(
+                $this->direction,
+                $this->administrator,
+                $this->roadNumber,
+                $this->fromPointNumber,
+                $this->fromAbscissa,
+                $this->toPointNumber,
+                $this->toAbscissa,
+            )
+            ->willReturn([$this->fromSide, $this->toSide]);
+
         $handler = new SaveNumberedRoadCommandHandler(
             $this->idFactory,
             $this->numberedRoadRepository,
+            $this->pointNumberSideDetector,
         );
 
         $command = new SaveNumberedRoadCommand($numberedRoad);

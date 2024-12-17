@@ -414,4 +414,34 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         return $row['geom'];
     }
+
+    public function getAvailableSidesAtPointNumber(
+        string $administrator,
+        string $roadNumber,
+        string $pointNumber,
+    ): array {
+        $rows = $this->bdtopoConnection->fetchAllAssociative(
+            \sprintf(
+                'SELECT p.cote AS side
+                FROM point_de_repere AS p
+                WHERE p.gestionnaire = :administrator
+                AND p.route = :roadNumber
+                AND p.numero = :pointNumber
+                ',
+            ),
+            [
+                'administrator' => $administrator,
+                'roadNumber' => $roadNumber,
+                'pointNumber' => $pointNumber,
+            ],
+        );
+
+        $sides = [];
+
+        foreach ($rows as $row) {
+            $sides[] = $row['side'];
+        }
+
+        return $sides;
+    }
 }

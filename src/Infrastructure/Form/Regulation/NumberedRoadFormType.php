@@ -6,7 +6,6 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Domain\Regulation\Enum\DirectionEnum;
-use App\Domain\Regulation\Enum\RoadSideEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -44,22 +43,12 @@ final class NumberedRoadFormType extends AbstractType
                 ],
             )
             ->add(
-                'fromSide',
-                ChoiceType::class,
-                options: $this->getRoadSideOptions(),
-            )
-            ->add(
                 'toPointNumber',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
                     'help' => 'regulation.location.referencePoint.pointNumber.help',
                 ],
-            )
-            ->add(
-                'toSide',
-                ChoiceType::class,
-                options: $this->getRoadSideOptions(),
             )
             ->add(
                 'fromAbscissa',
@@ -90,23 +79,6 @@ final class NumberedRoadFormType extends AbstractType
             $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value;
             $event->setData($data);
         });
-    }
-
-    private function getRoadSideOptions(): array
-    {
-        $choices = [];
-
-        foreach (RoadSideEnum::cases() as $case) {
-            $choices[\sprintf('regulation.location.road.side.%s', $case->value)] = $case->value;
-        }
-
-        return [
-            'choices' => array_merge(
-                $choices,
-            ),
-            'label' => 'regulation.location.road.side',
-            'help' => 'regulation.location.road.side.help',
-        ];
     }
 
     private function getAdministratorOptions(array $administrators, string $roadType): array
