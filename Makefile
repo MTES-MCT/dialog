@@ -67,6 +67,7 @@ dbinstall: ## Setup databases
 	make data_install
 	make console CMD="doctrine:database:create --env=test --if-not-exists"
 	make dbmigrate ARGS="--env=test"
+	make metabase_migrate ARGS="--env=test"
 	make data_install ARGS="--env=test"
 	make dbfixtures
 
@@ -106,6 +107,12 @@ bdtopo_migrate_redo: ## Revert db migrations for bdtopo and run them again
 	make bdtopo_migrate ARGS="App\\\Infrastructure\\\Persistence\\\Doctrine\\\BdTopoMigrations\\\Version20240320122522"
 	# Re-run migrations from there
 	make bdtopo_migrate
+
+metabase_migration: ## Generate new migration for metabase
+	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/metabase/doctrine_migrations.yaml
+
+metabase_migrate: ## Run db migrations for metabase
+	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing --configuration ./config/packages/metabase/doctrine_migrations.yaml ${ARGS}
 
 dbshell: ## Connect to the database
 	docker compose exec database psql postgresql://dialog:dialog@database:5432/dialog
@@ -280,10 +287,14 @@ ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	make bdtopo_migrate
 
+ci_metabase_migrate: ## Run CI steps for Metabase Migrate workflow
+	make composer CMD="install -n --prefer-dist"
+	make metabase_migrate
+
 ci_metabase_export: ## Export data to Metabase
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
-	./tools/scalingodbtunnel ${METABASE_DEST_APP} --host-url --port 10001 & ./tools/wait-for-it.sh 127.0.0.1:10001
-	./tools/metabase-export.sh ${METABASE_SRC_DATABASE_URL} ${METABASE_DEST_DATABASE_URL}
+	./tools/scalingodbtunnel dialog-metabase --host-url --port 10001 & ./tools/wait-for-it.sh 127.0.0.1:10001
+	make console CMD="app:metabase:export"
 
 ##
 ## ----------------

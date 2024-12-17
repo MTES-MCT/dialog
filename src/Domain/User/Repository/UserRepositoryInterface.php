@@ -15,4 +15,6 @@ interface UserRepositoryInterface
     public function add(User $user): User;
 
     public function remove(User $user): void;
+
+    public function findAllForStatistics(): array;
 }
