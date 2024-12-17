@@ -88,9 +88,11 @@ class User
         return $this->lastActiveAt;
     }
 
-    public function setLastActiveAt(\DateTimeInterface $date): void
+    public function setLastActiveAt(\DateTimeInterface $date): self
     {
         $this->lastActiveAt = $date;
+
+        return $this;
     }
 
     public function __toString(): string
