@@ -182,6 +182,10 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
             ->willReturn($numberedRoad1);
         $numberedRoad1
             ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::BOTH->value);
+        $numberedRoad1
+            ->expects(self::once())
             ->method('getAdministrator')
             ->willReturn('Ardèche');
         $numberedRoad1
@@ -263,6 +267,7 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
         $locationCommand2->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $numberedRoad = new SaveNumberedRoadCommand();
         $numberedRoad->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $numberedRoad->direction = DirectionEnum::BOTH->value;
         $numberedRoad->administrator = 'Ardèche';
         $numberedRoad->roadNumber = 'D110';
         $numberedRoad->fromPointNumber = '1';

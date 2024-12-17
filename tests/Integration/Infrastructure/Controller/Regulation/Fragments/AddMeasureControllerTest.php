@@ -140,8 +140,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['isPermanent'] = '1';
         $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
         $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
         $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
         $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
@@ -196,8 +194,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
@@ -229,8 +225,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -334,8 +328,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '999'; // Mock will return no result
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -366,8 +358,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '44'; // Not on same section than 80
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -432,8 +422,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0] = $locationForm;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -470,8 +458,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 650;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -504,8 +490,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100000000;
         $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 650;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -538,8 +522,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 100000000;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -869,7 +851,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startTime_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
     }
 

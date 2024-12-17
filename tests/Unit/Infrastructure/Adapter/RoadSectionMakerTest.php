@@ -12,12 +12,22 @@ use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\RoadSectionMaker;
 use PHPUnit\Framework\TestCase;
 
 final class RoadSectionMakerTest extends TestCase
 {
+    private $fromCoords;
+    private $toCoords;
+
+    protected function setUp(): void
+    {
+        $this->fromCoords = Coordinates::fromLonLat(1, 41);
+        $this->toCoords = Coordinates::fromLonLat(9, 10);
+    }
+
     public function testComputeSection(): void
     {
         $fullDepartmentalRoadGeometry = 'geometry';
@@ -30,9 +40,7 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-
-        $fromCoords = Coordinates::fromLonLat(1, 41);
-        $toCoords = Coordinates::fromLonLat(9, 10);
+        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -48,12 +56,12 @@ final class RoadSectionMakerTest extends TestCase
                 [$roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa],
                 [$roadType, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa],
             )
-            ->willReturnOnConsecutiveCalls($fromCoords, $toCoords);
+            ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
 
         $lineSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with($fullDepartmentalRoadGeometry, $fromCoords, $toCoords)
+            ->with($fullDepartmentalRoadGeometry, $this->fromCoords, $this->toCoords)
             ->willReturn('section');
 
         $this->assertSame(
@@ -69,6 +77,7 @@ final class RoadSectionMakerTest extends TestCase
                 $toPointNumber,
                 $toSide,
                 $toAbscissa,
+                $direction,
             ),
         );
     }
@@ -87,6 +96,7 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
+        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -116,14 +126,13 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
+            $direction,
         );
     }
 
     public function testComputeSectionEndAbscissaOutOfRange(): void
     {
         $this->expectException(EndAbscissaOutOfRangeException::class);
-
-        $fromCoords = Coordinates::fromLonLat(1, 41);
 
         $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $fullDepartmentalRoadGeometry = 'geometry';
@@ -135,6 +144,7 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 15000000;
         $toSide = 'U';
+        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -147,9 +157,9 @@ final class RoadSectionMakerTest extends TestCase
         $geocoder
             ->expects($matcher)
             ->method('computeReferencePoint')
-            ->willReturnCallback(function () use ($matcher, $fromCoords, $roadType) {
+            ->willReturnCallback(function () use ($matcher, $roadType) {
                 if ($matcher->getInvocationCount() === 1) {
-                    return $fromCoords;
+                    return $this->fromCoords;
                 }
 
                 throw new AbscissaOutOfRangeException($roadType);
@@ -170,6 +180,7 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
+            $direction,
         );
     }
 
@@ -187,8 +198,7 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-
-        $fromCoords = Coordinates::fromLonLat(1, 41);
+        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -201,9 +211,9 @@ final class RoadSectionMakerTest extends TestCase
         $geocoder
             ->expects($matcher)
             ->method('computeReferencePoint')
-            ->willReturnCallback(function () use ($matcher, $fromCoords) {
+            ->willReturnCallback(function () use ($matcher) {
                 if ($matcher->getInvocationCount() === 1) {
-                    return $fromCoords;
+                    return $this->fromCoords;
                 }
                 throw new GeocodingFailureException('oops');
             });
@@ -223,6 +233,7 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
+            $direction,
         );
     }
 
@@ -240,9 +251,7 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-
-        $fromCoords = Coordinates::fromLonLat(1, 41);
-        $toCoords = Coordinates::fromLonLat(9, 10);
+        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -254,7 +263,7 @@ final class RoadSectionMakerTest extends TestCase
         $geocoder
             ->expects(self::exactly(2))
             ->method('computeReferencePoint')
-            ->willReturnOnConsecutiveCalls($fromCoords, $toCoords);
+            ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
 
         $lineSectionMaker
             ->expects(self::once())
@@ -272,6 +281,86 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
+            $direction,
         );
+    }
+
+    private function provideTestComputeSectionDirection(): array
+    {
+        $this->setUp();
+
+        $fromCoords = $this->fromCoords;
+        $toCoords = $this->toCoords;
+
+        return [
+            'both' => [
+                'direction' => DirectionEnum::BOTH->value,
+                'fromCoords' => $fromCoords,
+                'toCoords' => $toCoords,
+            ],
+            'ab' => [
+                'direction' => DirectionEnum::A_TO_B->value,
+                'fromCoords' => $fromCoords,
+                'toCoords' => $toCoords,
+            ],
+            'ba' => [
+                'direction' => DirectionEnum::B_TO_A->value,
+                'fromCoords' => $toCoords,
+                'toCoords' => $fromCoords,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestComputeSectionDirection
+     */
+    public function testComputeSectionDirection(string $direction, Coordinates $fromCoords, Coordinates $toCoords): void
+    {
+        $fullDepartmentalRoadGeometry = 'geometry';
+        $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $administrator = 'Ardèche';
+        $roadNumber = 'D110';
+        $fromPointNumber = '1';
+        $fromSide = 'U';
+        $fromAbscissa = 0;
+        $toPointNumber = '5';
+        $toAbscissa = 150;
+        $toSide = 'U';
+
+        $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
+        $geocoder = $this->createMock(RoadGeocoderInterface::class);
+        $roadSectionMaker = new RoadSectionMaker(
+            $lineSectionMaker,
+            $geocoder,
+        );
+
+        $geocoder
+            ->expects(self::exactly(2))
+            ->method('computeReferencePoint')
+            ->withConsecutive(
+                [$roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa],
+                [$roadType, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa],
+            )
+            ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
+
+        $lineSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->with('geometry', $fromCoords, $toCoords)
+            ->willReturn('section');
+
+        $this->assertSame('section', $roadSectionMaker->computeSection(
+            $fullDepartmentalRoadGeometry,
+            $roadType,
+            $administrator,
+            $roadNumber,
+            $fromPointNumber,
+            $fromSide,
+            $fromAbscissa,
+            $toPointNumber,
+            $toSide,
+            $toAbscissa,
+            $direction,
+        ));
     }
 }

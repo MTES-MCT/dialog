@@ -48,4 +48,12 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findAllForStatistics(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.uuid, u.lastActiveAt')
+            ->getQuery()
+            ->getResult();
+    }
 }
