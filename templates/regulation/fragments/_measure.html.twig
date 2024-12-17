@@ -33,9 +33,16 @@
                 </ul>
                 <ul class="fr-raw-list d-stack" style="--stack-gap: var(--1w)">
                     {% for location in measure.locations %}
-                        <li data-location-uuid="{{ location.uuid }}">
+                        <li data-location-uuid="{{ location.uuid }}" class="fr-grid-row">
                             <span class="app-card__img fr-icon-map-pin-2-line fr-x-icon--dark-border fr-pr-1w" aria-hidden="true"></span>
-                            {% include 'regulation/_location_line.html.twig' with { location } only %}
+                            <span class="fr-grid-row">
+                                <span class="fr-pr-1w">
+                                    {% include 'regulation/_location_line.html.twig' with { location } only %}
+                                </span>
+                                <a href="{{ wazeUrls[location.uuid] }}" target="_blank">
+                                    <small>Voir dans Waze</small>
+                                </a>
+                            </span>
                         </li>
                     {% endfor %}
                 </ul>

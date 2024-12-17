@@ -9,6 +9,7 @@ final readonly class LocationView
     public function __construct(
         public string $uuid,
         public string $roadType,
+        public string $geometry,
         public ?NamedStreetView $namedStreet = null,
         public ?NumberedRoadView $numberedRoad = null,
         public ?RawGeoJSONView $rawGeoJSON = null,

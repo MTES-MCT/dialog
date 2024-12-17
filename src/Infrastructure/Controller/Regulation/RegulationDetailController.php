@@ -13,6 +13,7 @@ use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use App\Domain\Regulation\Specification\CanViewRegulationDetail;
+use App\Infrastructure\Adapter\WazeUrlMaker;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,7 @@ final class RegulationDetailController extends AbstractRegulationController
         private CanViewRegulationDetail $canViewRegulationDetail,
         private CanDeleteMeasures $canDeleteMeasures,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
+        private WazeUrlMaker $wazeUrlMaker,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
     ) {
@@ -58,6 +60,7 @@ final class RegulationDetailController extends AbstractRegulationController
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getUserOrganizationUuids()));
+        $wazeUrls = $this->wazeUrlMaker->makeAll($measures);
 
         $context = [
             'uuid' => $uuid,
@@ -69,6 +72,7 @@ final class RegulationDetailController extends AbstractRegulationController
             'isPermanent' => $regulationOrderRecord->getRegulationOrder()->isPermanent(),
             'measures' => $measures,
             'regulationOrderRecord' => $regulationOrderRecord,
+            'wazeUrls' => $wazeUrls,
         ];
 
         return new Response(

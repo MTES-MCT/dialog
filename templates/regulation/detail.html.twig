@@ -36,7 +36,7 @@
                         <ul id="measure_list" class="fr-raw-list">
                             {% for measure in measures %}
                                 <li class="fr-mx-n4v fr-mx-md-0">
-                                    {% include "regulation/fragments/_measure.html.twig" with { isReadOnly, measure, generalInfo, canDelete } only %}
+                                    {% include "regulation/fragments/_measure.html.twig" with { isReadOnly, measure, generalInfo, canDelete, wazeUrls: wazeUrls[measure.uuid] } only %}
                                 </li>
                             {% endfor %}
                         </ul>

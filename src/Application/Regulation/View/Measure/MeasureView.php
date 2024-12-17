@@ -53,6 +53,7 @@ readonly class MeasureView
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
+                    geometry: $location->getGeometry(),
                     namedStreet: new NamedStreetView(
                         cityLabel: $namedStreet->getCityLabel(),
                         roadName: $namedStreet->getRoadName(),
@@ -66,6 +67,7 @@ readonly class MeasureView
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
+                    geometry: $location->getGeometry(),
                     numberedRoad: new NumberedRoadView(
                         administrator: $numberedRoad->getAdministrator(),
                         roadNumber: $numberedRoad->getRoadNumber(),
@@ -81,6 +83,7 @@ readonly class MeasureView
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
+                    geometry: $location->getGeometry(),
                     rawGeoJSON: new RawGeoJSONView(
                         label: $rawGeoJSON->getLabel(),
                     ),
