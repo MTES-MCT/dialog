@@ -4,20 +4,49 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\Location\SaveLocationCommand">
         <property name="roadType">
-            <constraint name="NotBlank" />
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>Default</value>
+                </option>
+            </constraint>
         </property>
+
         <property name="namedStreet">
-            <constraint name="Valid" />
+            <constraint name="Valid">
+                <option name="groups">
+                    <value>lane</value>
+                </option>
+            </constraint>
         </property>
+
         <property name="departmentalRoad">
-            <constraint name="Valid" />
+            <constraint name="Valid">
+                <option name="groups">
+                    <value>departmentalRoad</value>
+                </option>
+            </constraint>
         </property>
+
         <property name="nationalRoad">
-            <constraint name="Valid" />
+            <constraint name="Valid">
+                <option name="groups">
+                    <value>nationalRoad</value>
+                </option>
+            </constraint>
         </property>
+
         <property name="rawGeoJSON">
-            <constraint name="Valid" />
+            <constraint name="Valid">
+                <option name="groups">
+                    <value>rawGeoJSON</value>
+                </option>
+            </constraint>
         </property>
-        <constraint name="App\Infrastructure\Validator\SaveLocationCommandConstraint" />
+
+        <constraint name="App\Infrastructure\Validator\SaveLocationCommandConstraint">
+            <option name="groups">
+                <value>Default</value>
+            </option>
+        </constraint>
     </class>
 </constraint-mapping>

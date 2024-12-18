@@ -18,6 +18,8 @@ framework:
     #fragments: true
     php_errors:
         log: true
+    validation:
+        cache: validator.mapping.cache.adapter
 
     http_client:
         scoped_clients:
