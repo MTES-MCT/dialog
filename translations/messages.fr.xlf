@@ -547,11 +547,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.from">
                 <source>regulation.location.referencePoint.from</source>
-                <target>Point de début</target>
+                <target>Point A</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.to">
                 <source>regulation.location.referencePoint.to</source>
-                <target>Point de fin</target>
+                <target>Point B</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.side">
                 <source>regulation.location.road.side</source>
@@ -587,7 +587,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.pointNumber.help">
                 <source>regulation.location.referencePoint.pointNumber.help</source>
-                <target>Indiquez le numéro du point</target>
+                <target>Numéro du point de repère</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.abscissa">
                 <source>regulation.location.referencePoint.abscissa</source>
