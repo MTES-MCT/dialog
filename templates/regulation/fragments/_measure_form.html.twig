@@ -402,15 +402,18 @@
                                     'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
                                 }
                             }) }}
-
+                            <hr class="fr-mt-3w" />
                             <fieldset
                                 aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
                                 data-form-reveal-target="section formControl"
                                 {% if form.namedStreet.isEntireStreet.vars.checked %}hidden disabled{% endif %}
                             >
-                                <legend id="{{ form.namedStreet.vars.id }}-points-legend" class="app-sr-only">
+                                <legend id="{{ form.namedStreet.vars.id }}-points-legend">
                                     {{ 'regulation.location.named_street.points'|trans }}
                                 </legend>
+                                <div class="fr-hint-text help-text">
+                                    {{ 'regulation.location.named_street.points.description'|trans }}
+                                </div>
                                 {% include 'location/named_street/points_form.html.twig' with { form } only %}
                             </fieldset>
                         </div>

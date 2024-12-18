@@ -611,7 +611,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.lane">
                 <source>regulation.location.road.type.lane</source>
-                <target>Voie</target>
+                <target>Voie (rue, avenue, boulevard)</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
@@ -703,11 +703,15 @@
             </trans-unit>
             <trans-unit id="regulation.location.named_street.points">
                 <source>regulation.location.named_street.points</source>
-                <target>Points de la section concernée</target>
+                <target>Section concernée</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.points.description">
+                <source>regulation.location.named_street.points.description</source>
+                <target>Indiquez les points de début et fin sur la voie concernée. Un point peut être un numéro de rue ou une intersection.</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type">
                 <source>regulation.location.named_street.point_type</source>
-                <target>Type de point</target>
+                <target>Type</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type.placeholder">
                 <source>regulation.location.named_street.point_type.placeholder</source>
@@ -715,7 +719,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type.houseNumber">
                 <source>regulation.location.named_street.point_type.houseNumber</source>
-                <target>Numéro d'adresse</target>
+                <target>Numéro de rue</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type.intersection">
                 <source>regulation.location.named_street.point_type.intersection</source>
