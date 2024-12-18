@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Statistics;
 
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Statistics\Repository\StatisticsRepositoryInterface;
+use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use Doctrine\DBAL\Connection;
 
@@ -12,8 +14,36 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
+        private OrganizationRepositoryInterface $organizationRepository,
+        private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private Connection $metabaseConnection,
     ) {
+    }
+
+    public function addCountStatistics(\DateTimeInterface $now): void
+    {
+        // On peut tracer le graphique d'évolution de chaque count en groupant par 'name' et
+        // en utilisant 'uploadedAt' (la date d'exécution) comme abscisse.
+        $counts = [
+            'users' => $this->userRepository->countUsers(),
+            'organizations' => $this->organizationRepository->countOrganizations(),
+            'regulationOrderRecords' => $this->regulationOrderRecordRepository->countTotalRegulationOrderRecords(),
+            'regulationOrderRecords.published' => $this->regulationOrderRecordRepository->countPublishedRegulationOrderRecords(),
+            'regulationOrderRecords.permanent' => $this->regulationOrderRecordRepository->countPermanentRegulationOrderRecords(),
+            'regulationOrderRecords.temporary' => $this->regulationOrderRecordRepository->countTemporaryRegulationOrderRecords(),
+        ];
+
+        $stmt = $this->metabaseConnection->prepare(
+            'INSERT INTO analytics_count(id, uploaded_at, name, value)
+            VALUES (uuid_generate_v4(), :uploadedAt, :name, :value)',
+        );
+
+        foreach ($counts as $name => $value) {
+            $stmt->bindValue('uploadedAt', $now->format(\DateTimeInterface::ATOM));
+            $stmt->bindValue('name', $name);
+            $stmt->bindValue('value', $value);
+            $stmt->execute();
+        }
     }
 
     public function addUserActiveStatistics(\DateTimeInterface $now): void
