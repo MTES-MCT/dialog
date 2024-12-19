@@ -6,6 +6,7 @@ namespace App\Domain\User;
 
 class Organization
 {
+    private \DateTimeInterface $createdAt;
     private string $name;
     private ?string $siret;
     private ?string $logo;
@@ -18,6 +19,18 @@ class Organization
     public function getUuid(): string
     {
         return $this->uuid;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 
     public function getName(): string
