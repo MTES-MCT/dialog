@@ -115,4 +115,9 @@ final class SaveLocationCommand implements CommandInterface
 
         return null;
     }
+
+    public function getRoadType(): string
+    {
+        return $this->roadType;
+    }
 }
