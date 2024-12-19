@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\User\Command;
 
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\User\Command\SaveOrganizationCommand;
 use App\Application\User\Command\SaveOrganizationCommandHandler;
@@ -15,22 +16,31 @@ use PHPUnit\Framework\TestCase;
 final class SaveOrganizationCommandHandlerTest extends TestCase
 {
     private $idFactory;
+    private $dateUtils;
     private $organizationRepository;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
     }
 
     public function testCreate(): void
     {
+        $date = new \DateTimeImmutable('2024-05-07');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($date);
+
         $this->idFactory
             ->expects(self::once())
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
 
         $createdOrganization = (new Organization(uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0'))
+            ->setCreatedAt($date)
             ->setSiret('21930027400012')
             ->setName('Commune de La Courneuve');
 
@@ -45,6 +55,7 @@ final class SaveOrganizationCommandHandlerTest extends TestCase
 
         $handler = new SaveOrganizationCommandHandler(
             $this->idFactory,
+            $this->dateUtils,
             $this->organizationRepository,
         );
 
@@ -87,6 +98,7 @@ final class SaveOrganizationCommandHandlerTest extends TestCase
 
         $handler = new SaveOrganizationCommandHandler(
             $this->idFactory,
+            $this->dateUtils,
             $this->organizationRepository,
         );
 
@@ -131,6 +143,7 @@ final class SaveOrganizationCommandHandlerTest extends TestCase
 
         $handler = new SaveOrganizationCommandHandler(
             $this->idFactory,
+            $this->dateUtils,
             $this->organizationRepository,
         );
 
@@ -177,6 +190,7 @@ final class SaveOrganizationCommandHandlerTest extends TestCase
 
         $handler = new SaveOrganizationCommandHandler(
             $this->idFactory,
+            $this->dateUtils,
             $this->organizationRepository,
         );
 

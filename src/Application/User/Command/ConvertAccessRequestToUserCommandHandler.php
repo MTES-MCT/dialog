@@ -50,10 +50,12 @@ final class ConvertAccessRequestToUserCommandHandler
 
         $organization = $this->organizationRepository->findOneBySiret($accessRequest->getSiret());
         $organizationRole = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value; // Default organization role
+        $now = $this->dateUtils->getNow();
 
         if (!$organization) {
             $organizationRole = OrganizationRolesEnum::ROLE_ORGA_ADMIN->value; // The first user in an organization becomes an admin
             $organization = (new Organization($this->idFactory->make()))
+                ->setCreatedAt($now)
                 ->setSiret($accessRequest->getSiret())
                 ->setName($accessRequest->getOrganization());
             $this->organizationRepository->add($organization);
@@ -64,7 +66,7 @@ final class ConvertAccessRequestToUserCommandHandler
             ->setPassword($accessRequest->getPassword())
             ->setEmail($accessRequest->getEmail())
             ->setRoles([UserRolesEnum::ROLE_USER->value])
-            ->setRegistrationDate($this->dateUtils->getNow());
+            ->setRegistrationDate($now);
 
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
