@@ -44,12 +44,12 @@ final class VehicleSetFormType extends AbstractType
                 ChoiceType::class,
                 options : [
                     'choices' => [
-                        'regulation.vehicle_set.heavyweightMaxWeight.3.5t' => 3.5,
-                        'regulation.vehicle_set.heavyweightMaxWeight.7.5t' => 7.5,
-                        'regulation.vehicle_set.heavyweightMaxWeight.19t' => 19,
-                        'regulation.vehicle_set.heavyweightMaxWeight.26t' => 26,
-                        'regulation.vehicle_set.heavyweightMaxWeight.32t' => 32,
-                        'regulation.vehicle_set.heavyweightMaxWeight.44t' => 44,
+                        3.5 => 3.5,
+                        7.5 => 7.5,
+                        19 => 19,
+                        26 => 26,
+                        32 => 32,
+                        44 => 44,
                     ],
                     'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
                     'placeholder' => 'regulation.vehicle_set.heavyweightMaxWeight.placeholder',
