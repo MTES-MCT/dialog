@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\User\Command;
 
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\User\Exception\SiretAlreadyExistException;
 use App\Domain\User\Organization;
@@ -13,6 +14,7 @@ final class SaveOrganizationCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
+        private DateUtilsInterface $dateUtils,
         private OrganizationRepositoryInterface $organizationRepository,
     ) {
     }
@@ -21,6 +23,7 @@ final class SaveOrganizationCommandHandler
     {
         if (!$command->organization) {
             $organization = (new Organization($this->idFactory->make()))
+                ->setCreatedAt($this->dateUtils->getNow())
                 ->setSiret($command->siret)
                 ->setName($command->name);
 

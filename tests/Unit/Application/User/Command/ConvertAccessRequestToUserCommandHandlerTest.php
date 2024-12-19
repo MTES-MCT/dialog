@@ -192,6 +192,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->setRegistrationDate($date);
 
         $organization = (new Organization('d145a0e3-e397-412c-ba6a-90b150f7aec2'))
+            ->setCreatedAt($date)
             ->setName('Fairness')
             ->setSiret('82050375300015');
 

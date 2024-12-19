@@ -23,14 +23,17 @@ final class OrganizationFixture extends Fixture implements DependentFixtureInter
     {
         $mainOrg = (new Organization(self::MAIN_ORG_ID))
             ->setName(self::MAIN_ORG_NAME)
+            ->setCreatedAt(new \DateTimeImmutable('2022-11-01'))
             ->setLogo('/path/to/logo.jpeg');
 
         $otherOrg = (new Organization(self::OTHER_ORG_ID))
             ->setName('Mairie de Savenay')
+            ->setCreatedAt(new \DateTimeImmutable('2023-02-13'))
             ->setSiret('12345678909876');
 
         $otherOrg2 = (new Organization(self::OTHER_ORG_ID_2))
             ->setName('Mairie de Saint Ouen')
+            ->setCreatedAt(new \DateTimeImmutable('2023-06-24'))
             ->setSiret('67876540989876');
 
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
