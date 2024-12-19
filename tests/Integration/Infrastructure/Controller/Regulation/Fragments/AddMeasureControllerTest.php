@@ -643,8 +643,26 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $this->assertSame($values['measure_form']['vehicleSet']['heavyweightMaxWeight'], '3,5');
         $this->assertStringContainsString('Veuillez spécifier un ou plusieurs véhicules concernés.', $crawler->filter('#measure_form_vehicleSet_restrictedTypes_error')->text());
+    }
+
+    public function testInvalidVehicleSetBlankHeavyweightMaxWeight(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle'];
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
     }
 
     public function testInvalidVehicleSetBlankOtherRestrictedTypeText(): void
@@ -785,15 +803,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
-        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = 'not a number';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['dimensions'];
         $values['measure_form']['vehicleSet']['maxWidth'] = 'true';
         $values['measure_form']['vehicleSet']['maxLength'] = [12];
         $values['measure_form']['vehicleSet']['maxHeight'] = '2.4m';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
         $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxWidth_error')->text());
         $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxLength_error')->text());
         $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());
@@ -811,15 +827,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'no';
-        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions'];
-        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = -1;
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['dimensions'];
         $values['measure_form']['vehicleSet']['maxWidth'] = -0.1;
         $values['measure_form']['vehicleSet']['maxLength'] = -2.3;
         $values['measure_form']['vehicleSet']['maxHeight'] = -12;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_heavyweightMaxWeight_error')->text());
         $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxWidth_error')->text());
         $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxLength_error')->text());
         $this->assertStringContainsString('Cette valeur doit être supérieure ou égale à zéro.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());

@@ -8,8 +8,6 @@ use App\Domain\Regulation\Measure;
 
 class VehicleSet
 {
-    public const DEFAULT_MAX_WEIGHT = 3.5;
-
     public function __construct(
         private string $uuid,
         private Measure $measure,

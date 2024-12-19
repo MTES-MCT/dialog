@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Component\Form\AbstractType;
@@ -42,12 +41,20 @@ final class VehicleSetFormType extends AbstractType
             )
             ->add(
                 'heavyweightMaxWeight',
-                NumberType::class,
-                options: [
+                ChoiceType::class,
+                options : [
+                    'choices' => [
+                        3.5 => 3.5,
+                        7.5 => 7.5,
+                        19 => 19,
+                        26 => 26,
+                        32 => 32,
+                        44 => 44,
+                    ],
                     'label' => 'regulation.vehicle_set.heavyweightMaxWeight',
+                    'placeholder' => 'regulation.vehicle_set.heavyweightMaxWeight.placeholder',
                     'help' => 'regulation.vehicle_set.heavyweightMaxWeight.help',
                     'required' => false,
-                    'empty_data' => '3,5',
                 ],
             )
             ->add(
@@ -119,15 +126,6 @@ final class VehicleSetFormType extends AbstractType
                     reverseTransform: function (?string $property): ?bool {
                         return $property === null ? null : ($property === 'yes' ? true : false);
                     },
-                ),
-            );
-
-        $builder
-            ->get('heavyweightMaxWeight')
-            ->addModelTransformer(
-                new CallbackTransformer(
-                    transform: fn ($maxWeight) => $maxWeight ?? VehicleSet::DEFAULT_MAX_WEIGHT,
-                    reverseTransform: fn ($value) => $value,
                 ),
             );
     }
