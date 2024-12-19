@@ -1914,13 +1914,17 @@
                 <source>regulation.vehicle_set.restricted_types.help</source>
                 <target>Spécifiez les véhicules pour lesquels la restriction s'applique :</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight.placeholder">
+                <source>regulation.vehicle_set.heavyweightMaxWeight.placeholder</source>
+                <target>Sélectionner le poids</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight">
                 <source>regulation.vehicle_set.heavyweightMaxWeight</source>
                 <target>Poids maximum</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.heavyweightMaxWeight.help">
                 <source>regulation.vehicle_set.heavyweightMaxWeight.help</source>
-                <target>Spécifier le poids maximum autorisé</target>
+                <target>La restriction s'applique aux véhicules dont le PTAC est supérieur à ...</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.maxWidth">
                 <source>regulation.vehicle_set.maxWidth</source>
@@ -1972,7 +1976,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.heavyGoodsVehicle">
                 <source>regulation.vehicle_set.type.heavyGoodsVehicle</source>
-                <target>Poids lourds</target>
+                <target>Poids</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.dimensions">
                 <source>regulation.vehicle_set.type.dimensions</source>

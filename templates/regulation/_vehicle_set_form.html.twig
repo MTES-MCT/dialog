@@ -104,7 +104,7 @@
 
                     <fieldset
                         data-controller="section form-control"
-                        class="fr-fieldset fr-x-max-w-32w {{ restrictedDetailsClass['heavyGoodsVehicle'] }}"
+                        class="fr-fieldset fr-x-max-w-38w {{ restrictedDetailsClass['heavyGoodsVehicle'] }}"
                         aria-labelledby="heavyGoodsVehicle-details-legend-{{ index }}"
                         {% if 'heavyGoodsVehicle' not in form.restrictedTypes.vars.value %}hidden disabled{% endif %}
                     >
@@ -113,8 +113,8 @@
                         </legend>
                         <div class="fr-fieldset__element">
                             {{ form_row(form.heavyweightMaxWeight, {
-                                group_class: 'fr-input-group',
-                                widget_class: 'fr-input',
+                                group_class: 'fr-select-group',
+                                widget_class: 'fr-select',
                                 widget_suffix: 'common.unit.tons'|trans,
                             }) }}
                         </div>
