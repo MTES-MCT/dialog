@@ -727,11 +727,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.named_street.from_point">
                 <source>regulation.location.named_street.from_point</source>
-                <target>Point de début > Point A</target>
+                <target>Point A</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.to_point">
                 <source>regulation.location.named_street.to_point</source>
-                <target>Point de fin > Point B</target>
+                <target>Point B</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.house_number">
                 <source>regulation.location.named_street.house_number</source>

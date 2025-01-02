@@ -237,9 +237,9 @@
                     {{ 'regulation.location.referencePoint.from'|trans }}
                 </legend>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form[roadType].fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-3'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form[roadType].fromSide, { row_attr: {class:'fr-col-12 fr-col-md-6'}, attr: {class: 'fr-select'}}) }}
-                    {{ form_row(form[roadType].fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-3'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form[roadType].fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form[roadType].fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                    {{ form_row(form[roadType].fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                 </div>
             </fieldset>
             <fieldset
@@ -250,9 +250,9 @@
                     {{ 'regulation.location.referencePoint.to'|trans }}
                 </legend>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form[roadType].toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-3'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form[roadType].toSide, { row_attr: {class:'fr-col-12 fr-col-md-6'}, attr: {class: 'fr-select'}}) }}
-                    {{ form_row(form[roadType].toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-3'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form[roadType].toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                    {{ form_row(form[roadType].toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
+                    {{ form_row(form[roadType].toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
                 </div>
             </fieldset>
             {{ form_row(form[roadType].direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
