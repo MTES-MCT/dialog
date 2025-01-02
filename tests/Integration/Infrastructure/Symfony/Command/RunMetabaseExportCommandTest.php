@@ -14,6 +14,8 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
     {
         self::bootKernel();
 
+        $executionDate = '2023-06-09 00:00:00'; // Defined in DateUtilsMock
+
         $container = static::getContainer();
         $command = $container->get(RunMetabaseExportCommand::class);
         $commandTester = new CommandTester($command);
@@ -22,6 +24,30 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
 
         /** @var \Doctrine\DBAL\Connection */
         $metabaseConnection = $container->get('doctrine.dbal.metabase_connection');
+
+        // Check count statistics
+        $rows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_count');
+        $this->assertCount(6, $rows);
+        $this->assertEquals(['id', 'uploaded_at', 'name', 'value'], array_keys($rows[0]));
+
+        $counts = [];
+
+        foreach ($rows as $row) {
+            $this->assertSame($executionDate, $row['uploaded_at']);
+            $counts[$row['name']] = $row['value'];
+        }
+
+        $this->assertEquals([
+            'users' => 3,
+            'organizations' => 2,
+            // Only counts regulations outside of DiaLog org
+            'regulationOrderRecords' => 1,
+            'regulationOrderRecords.published' => 1,
+            'regulationOrderRecords.permanent' => 0,
+            'regulationOrderRecords.temporary' => 1,
+        ], $counts);
+
+        // Check user active statistics
         $rows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_user_active');
         $this->assertCount(3, $rows);
         $this->assertEquals(['id', 'uploaded_at', 'last_active_at'], array_keys($rows[0]));

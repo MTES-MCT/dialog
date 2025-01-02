@@ -8,6 +8,7 @@ use App\Application\IdFactoryInterface;
 use App\Domain\User\Organization;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 final class OrganizationCrudController extends AbstractCrudController
@@ -29,6 +30,9 @@ final class OrganizationCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name')->setLabel('Nom de l\'organisation'),
+            DateField::new('createdAt')
+                ->setLabel('Date de création')
+                ->setDisabled($pageName === Crud::PAGE_EDIT),
             TextField::new('siret')->setLabel('Siret'),
         ];
     }

@@ -29,6 +29,7 @@ class RunMetabaseExportCommand extends Command
     {
         $now = $this->dateUtils->getNow();
 
+        $this->statisticsRepository->addCountStatistics($now);
         $this->statisticsRepository->addUserActiveStatistics($now);
 
         return Command::SUCCESS;
