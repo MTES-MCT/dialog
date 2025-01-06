@@ -32,4 +32,4 @@ jobs:
           echo "METABASE_DATABASE_URL=${{ secrets.METABASE_EXPORT_METABASE_DATABASE_URL }}" >> .env
 
       - name: Run export
-        run: make ci_metabase_export
+        run: make ci_metabase_export BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
