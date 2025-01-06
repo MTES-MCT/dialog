@@ -727,6 +727,28 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_vehicleSet_critairTypes_error')->text());
     }
 
+    public function testHeavyweightMaxWeightChoices(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $choices = $crawler
+            ->filter('select[name="measure_form[vehicleSet][heavyweightMaxWeight]"] > option')
+            ->each(fn ($node) => [$node->attr('value'), $node->text()]);
+
+        $this->assertEquals([
+            ['', 'Sélectionner le poids'],
+            ['3.5', 3.5],
+            ['7.5', 7.5],
+            ['19', 19],
+            ['26', 26],
+            ['32', 32],
+            ['44', 44],
+        ], $choices);
+    }
+
     public function testInvalidCritairTypes(): void
     {
         $client = $this->login();
