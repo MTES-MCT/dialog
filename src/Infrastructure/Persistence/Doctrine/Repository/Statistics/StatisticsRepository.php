@@ -65,7 +65,7 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
         foreach ($userRows as $row) {
             $stmt->bindValue('id', $row['uuid']);
             $stmt->bindValue('uploadedAt', $now->format(\DateTimeInterface::ATOM));
-            $stmt->bindValue('lastActiveAt', $row['lastActiveAt']?->format(\DateTimeInterface::ATOM));
+            $stmt->bindValue('lastActiveAt', $row['last_active_at']);
             $stmt->execute();
         }
     }
