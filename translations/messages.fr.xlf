@@ -547,11 +547,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.from">
                 <source>regulation.location.referencePoint.from</source>
-                <target>Point de début</target>
+                <target>Point A</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.to">
                 <source>regulation.location.referencePoint.to</source>
-                <target>Point de fin</target>
+                <target>Point B</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.side">
                 <source>regulation.location.road.side</source>
@@ -587,7 +587,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.pointNumber.help">
                 <source>regulation.location.referencePoint.pointNumber.help</source>
-                <target>Indiquez le numéro du point</target>
+                <target>Numéro du point de repère</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.abscissa">
                 <source>regulation.location.referencePoint.abscissa</source>
@@ -611,7 +611,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.lane">
                 <source>regulation.location.road.type.lane</source>
-                <target>Voie</target>
+                <target>Voie (rue, avenue, boulevard)</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
@@ -703,11 +703,15 @@
             </trans-unit>
             <trans-unit id="regulation.location.named_street.points">
                 <source>regulation.location.named_street.points</source>
-                <target>Points de la section concernée</target>
+                <target>Section concernée</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.named_street.points.description">
+                <source>regulation.location.named_street.points.description</source>
+                <target>Indiquez les points de début et fin sur la voie concernée. Un point peut être un numéro de rue ou une intersection.</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type">
                 <source>regulation.location.named_street.point_type</source>
-                <target>Type de point</target>
+                <target>Type</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type.placeholder">
                 <source>regulation.location.named_street.point_type.placeholder</source>
@@ -715,7 +719,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type.houseNumber">
                 <source>regulation.location.named_street.point_type.houseNumber</source>
-                <target>Numéro d'adresse</target>
+                <target>Numéro de rue</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.point_type.intersection">
                 <source>regulation.location.named_street.point_type.intersection</source>
