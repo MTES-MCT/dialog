@@ -60,5 +60,9 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
 
         $this->assertSame('2023-06-09 00:00:00', $rows[2]['uploaded_at']);
         $this->assertSame(null, $rows[2]['last_active_at']);
+
+        // Execute again to test for uuid conflicts
+        $commandTester->execute([]);
+        $commandTester->assertCommandIsSuccessful();
     }
 }
