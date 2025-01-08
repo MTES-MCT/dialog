@@ -34,6 +34,9 @@ final class OrganizationCrudController extends AbstractCrudController
                 ->setLabel('Date de création')
                 ->setDisabled($pageName === Crud::PAGE_EDIT),
             TextField::new('siret')->setLabel('Siret'),
+            TextField::new('uuid')
+                ->setLabel('Id de l\'organisation')
+                ->setDisabled($pageName === Crud::PAGE_EDIT),
         ];
     }
 
