@@ -296,6 +296,7 @@ ci_metabase_migrate: ## Run CI steps for Metabase Migrate workflow
 ci_metabase_export: ## Export data to Metabase
 	make composer CMD="install -n --prefer-dist"
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel dialog --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
 	./tools/scalingodbtunnel dialog-metabase --host-url --port 10001 & ./tools/wait-for-it.sh 127.0.0.1:10001
 	make console CMD="app:metabase:export"
 

@@ -37,6 +37,6 @@ La configuration de la GitHub Action passe par diverses variables d'environnemen
 | Variable d'environnement | Configuration | Description |
 |---|---|---|
 | `METABASE_MIGRATIONS_METABASE_DATABASE_URL` | [Secret](https://docs.github.com/fr/actions/security-guides/using-secrets-in-github-actions) au sens GitHub Actions | L'URL d'accès à la base de données Metabase par la CI, afin d'exécuter les migrations (`./tools/scalingodbtunnel dialog-metabase --host-url --port 10001`) |
-| `METABASE_EXPORT_DATABASE_URL` | [Secret](https://docs.github.com/fr/actions/security-guides/using-secrets-in-github-actions) au sens GitHub Actions | L'URL d'accès à la base de données applicative par la CI (`./tools/scalingodbtunnel dialog --host-url --port 10001`) |
+| `METABASE_EXPORT_DATABASE_URL` | [Secret](https://docs.github.com/fr/actions/security-guides/using-secrets-in-github-actions) au sens GitHub Actions | L'URL d'accès à la base de données applicative par la CI (`./tools/scalingodbtunnel dialog --host-url --port 10000`) |
 | `METABASE_EXPORT_METABASE_DATABASE_URL` | Secret | L'URL d'accès à la base de données Metabase par la CI (`./tools/scalingodbtunnel dialog-metabase --host-url --port 10001`) |
 | `GH_SCALINGO_SSH_PRIVATE_KEY` | Secret | Clé SSH privée permettant l'accès à Scalingo par la CI |
