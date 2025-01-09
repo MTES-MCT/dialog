@@ -24,7 +24,7 @@ L'intégration peut être exécutée à l'aide de commandes Symfony spécifiques
 
 **Pour l'import en prod** :
 
-1. Récupérer le UUID de l'organisation en prod. Pour cela demander à un super-admin : l'UUID est visible dans l'URL de la page de l'organisation dans l'admin.
+1. Récupérer le UUID de l'organisation en prod. Pour cela demander à un super-admin : l'UUID est visible dans l'édition d'une organisation sur la page Organisations du dashboard.
 2. Créer un fichier `.env.prod.local` vide, et y définir :
     * `BDTOPO_DATABASE_URL`
     * `APP_<INTG>_ORG_ID=<ID>` où `<ID>` est l'UUID de l'organisation que vous venez de récupérer.
