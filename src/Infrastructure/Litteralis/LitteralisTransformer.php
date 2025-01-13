@@ -234,8 +234,10 @@ final readonly class LitteralisTransformer
             if (!\array_key_exists($name, self::MEASURE_MAP)) {
                 $reporter->addNotice(LitteralisRecordEnum::NOTICE_UNSUPPORTED_MEASURE->value, [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
-                    'name' => $name,
-                    'idemprise' => $properties['idemprise'],
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'name' => $name,
+                        'idemprise' => $properties['idemprise'],
+                    ],
                 ]);
                 continue;
             }
@@ -294,10 +296,12 @@ final readonly class LitteralisTransformer
                     $reporter->addError(LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER->value, [
                         CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                         CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                        'idemprise' => $properties['idemprise'],
-                        'measureName' => $name,
-                        'expected' => $index + 1,
-                        'actual' => $number,
+                        CommonRecordEnum::ATTR_DETAILS->value => [
+                            'idemprise' => $properties['idemprise'],
+                            'measureName' => $name,
+                            'expected' => $index + 1,
+                            'actual' => $number,
+                        ],
                     ]);
 
                     continue;
@@ -393,8 +397,10 @@ final readonly class LitteralisTransformer
             $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_MISSING->value, [
                 CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                 CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                'idemprise' => $properties['idemprise'],
-                'mesures' => $properties['mesures'],
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'idemprise' => $properties['idemprise'],
+                    'mesures' => $properties['mesures'],
+                ],
             ]);
 
             return null;
@@ -404,8 +410,10 @@ final readonly class LitteralisTransformer
             $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_INVALID->value, [
                 CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                 CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                'idemprise' => $properties['idemprise'],
-                'limite de vitesse' => $value,
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'idemprise' => $properties['idemprise'],
+                    'limite de vitesse' => $value,
+                ],
             ]);
 
             return null;

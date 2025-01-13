@@ -95,9 +95,11 @@ final class LitteralisExtractorTest extends TestCase
             ->expects(self::once())
             ->method('addWarning')
             ->with(LitteralisRecordEnum::WARNING_MISSING_GEOMETRY->value, [
-                'idemprise' => 'emprise4',
                 CommonRecordEnum::ATTR_REGULATION_ID->value => 'arrete3',
                 CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'idemprise' => 'emprise4',
+                ],
             ]);
 
         $extractor = new LitteralisExtractor($this->client);

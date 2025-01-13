@@ -55,9 +55,11 @@ final class LitteralisPeriodParser
                 [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                     CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                    'idemprise' => $properties['idemprise'],
-                    $startDateProperty => $properties[$startDateProperty],
-                    'format' => $dateFormat,
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => $properties['idemprise'],
+                        $startDateProperty => $properties[$startDateProperty],
+                        'format' => $dateFormat,
+                    ],
                 ],
             );
         }
@@ -82,9 +84,11 @@ final class LitteralisPeriodParser
                 [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                     CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-                    'idemprise' => $properties['idemprise'],
-                    $endDateProperty => $properties[$endDateProperty],
-                    'format' => $dateFormat,
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => $properties['idemprise'],
+                        $endDateProperty => $properties[$endDateProperty],
+                        'format' => $dateFormat,
+                    ],
                 ],
             );
         }
@@ -168,8 +172,10 @@ final class LitteralisPeriodParser
         $reporter->addError(LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value, [
             CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
             CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
-            'idemprise' => $properties['idemprise'],
-            'jours et horaires' => $value,
+            CommonRecordEnum::ATTR_DETAILS->value => [
+                'idemprise' => $properties['idemprise'],
+                'jours et horaires' => $value,
+            ],
         ]);
 
         return [];

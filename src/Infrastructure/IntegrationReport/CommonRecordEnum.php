@@ -8,6 +8,7 @@ enum CommonRecordEnum: string
 {
     case ATTR_REGULATION_ID = 'regulationId';
     case ATTR_URL = 'url';
+    case ATTR_DETAILS = 'details';
 
     case FACT_INTEGRATION_NAME = 'common.integration_name';
     case FACT_ORGANIZATION = 'common.organization';
