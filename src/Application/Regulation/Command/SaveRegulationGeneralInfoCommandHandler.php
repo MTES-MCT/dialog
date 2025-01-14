@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command;
 
+use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
+use App\Infrastructure\Security\AuthenticatedUser;
 
 final class SaveRegulationGeneralInfoCommandHandler
 {
@@ -21,11 +24,14 @@ final class SaveRegulationGeneralInfoCommandHandler
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private \DateTimeInterface $now,
         private QueryBusInterface $queryBus,
+        private CommandBusInterface $commandBus,
+        private AuthenticatedUser $authenticatedUser,
     ) {
     }
 
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
+        $user = $this->authenticatedUser->getUser();
         $command->cleanOtherCategoryText();
         $visaModel = $command->visaModelUuid
             ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
@@ -57,11 +63,18 @@ final class SaveRegulationGeneralInfoCommandHandler
                 ),
             );
 
+            $action = ActionTypeEnum::CREATE->value;
+
+            $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action));
+
             return $regulationOrderRecord;
         }
 
         $command->regulationOrderRecord->updateOrganization($command->organization);
-        $command->regulationOrderRecord->getRegulationOrder()->update(
+
+        $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
+
+        $regulationOrder->update(
             identifier: $command->identifier,
             category: $command->category,
             subject: $command->subject,
@@ -71,6 +84,10 @@ final class SaveRegulationGeneralInfoCommandHandler
             additionalReasons: $command->additionalReasons,
             visaModel: $visaModel,
         );
+
+        $action = ActionTypeEnum::UPDATE->value;
+
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action));
 
         return $command->regulationOrderRecord;
     }
