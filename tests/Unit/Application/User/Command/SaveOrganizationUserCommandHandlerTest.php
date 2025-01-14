@@ -16,7 +16,9 @@ use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
+use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
+use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\Specification\IsEmailAlreadyExists;
 use App\Domain\User\Specification\IsUserAlreadyRegisteredInOrganization;
@@ -28,6 +30,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
 {
     private MockObject $idFactory;
     private MockObject $organizationUserRepository;
+    private MockObject $passwordUserRepository;
     private MockObject $userRepository;
     private MockObject $stringUtils;
     private MockObject $dateUtils;
@@ -41,6 +44,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
+        $this->passwordUserRepository = $this->createMock(PasswordUserRepositoryInterface::class);
         $this->stringUtils = $this->createMock(StringUtilsInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
@@ -86,17 +90,17 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->willReturn(null);
 
         $this->idFactory
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('make')
             ->willReturn(
                 '584f12e7-01b1-4981-9bab-cf8dcce535b9',
+                '93b30d2c-1a38-4f7e-ae1c-9721ebf7bef4',
                 '0de5692b-cab1-494c-804d-765dc14df674',
             );
 
         $user = (new User('584f12e7-01b1-4981-9bab-cf8dcce535b9'))
             ->setEmail('mathieu.marchois@beta.gouv.fr')
             ->setFullName('Mathieu MARCHOIS')
-            ->setPassword('encryptedPassword')
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($registrationDate);
 
@@ -105,6 +109,11 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->method('add')
             ->with($this->equalTo($user))
             ->willReturn($user);
+
+        $this->passwordUserRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with($this->equalTo(new PasswordUser('93b30d2c-1a38-4f7e-ae1c-9721ebf7bef4', 'encryptedPassword', $user)));
 
         $this->organizationUserRepository
             ->expects(self::once())
@@ -120,6 +129,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->stringUtils,
             $this->dateUtils,
             $this->passwordHasher,
@@ -172,6 +182,10 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
+        $this->passwordUserRepository
+            ->expects(self::never())
+            ->method('add');
+
         $this->organizationUserRepository
             ->expects(self::once())
             ->method('add')
@@ -186,6 +200,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->stringUtils,
             $this->dateUtils,
             $this->passwordHasher,
@@ -212,6 +227,10 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
         $this->passwordHasher
             ->expects(self::never())
             ->method('hash');
+
+        $this->passwordUserRepository
+            ->expects(self::never())
+            ->method('add');
 
         $this->isEmailAlreadyExists
             ->expects(self::never())
@@ -243,6 +262,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->stringUtils,
             $this->dateUtils,
             $this->passwordHasher,
@@ -311,10 +331,15 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
+        $this->passwordUserRepository
+            ->expects(self::never())
+            ->method('add');
+
         $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->stringUtils,
             $this->dateUtils,
             $this->passwordHasher,
@@ -382,10 +407,15 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
+        $this->passwordUserRepository
+            ->expects(self::never())
+            ->method('add');
+
         $handler = new SaveOrganizationUserCommandHandler(
             $this->idFactory,
             $this->organizationUserRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->stringUtils,
             $this->dateUtils,
             $this->passwordHasher,

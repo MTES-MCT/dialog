@@ -17,7 +17,6 @@ final class UserTest extends TestCase
         $user = (new User('9cebe00d-04d8-48da-89b1-059f6b7bfe44'))
             ->setFullName('Mathieu Marchois')
             ->setEmail('mathieu@fairness.coop')
-            ->setPassword('password')
             ->setRoles([UserRolesEnum::ROLE_SUPER_ADMIN->value]);
 
         $user->setRegistrationDate($date);
@@ -25,9 +24,10 @@ final class UserTest extends TestCase
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $user->getUuid());
         $this->assertSame('Mathieu Marchois', $user->getFullName());
         $this->assertSame('mathieu@fairness.coop', $user->getEmail());
-        $this->assertSame('password', $user->getPassword());
         $this->assertSame([UserRolesEnum::ROLE_SUPER_ADMIN->value], $user->getRoles());
         $this->assertSame($date, $user->getRegistrationDate());
+        $this->assertNull($user->getProConnectUser()); // Manage by Doctrine
+        $this->assertNull($user->getPasswordUser()); // Manage by Doctrine
         $this->assertSame('Mathieu Marchois (mathieu@fairness.coop)', (string) $user);
     }
 }

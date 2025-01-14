@@ -8,10 +8,11 @@ class User
 {
     private string $fullName;
     private string $email;
-    private string $password;
     private array $roles = [];
     private \DateTimeInterface $registrationDate;
     private ?\DateTimeInterface $lastActiveAt;
+    private ?PasswordUser $passwordUser = null;
+    private ?ProConnectUser $proConnectUser = null;
 
     public function __construct(
         private string $uuid,
@@ -43,18 +44,6 @@ class User
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
 
         return $this;
     }
@@ -93,6 +82,16 @@ class User
         $this->lastActiveAt = $date;
 
         return $this;
+    }
+
+    public function getProConnectUser(): ?ProConnectUser
+    {
+        return $this->proConnectUser;
+    }
+
+    public function getPasswordUser(): ?PasswordUser
+    {
+        return $this->passwordUser;
     }
 
     public function __toString(): string

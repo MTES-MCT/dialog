@@ -16,9 +16,11 @@ use App\Domain\User\Exception\SiretMissingException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
+use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\AccessRequestRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
+use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,6 +31,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
     private MockObject $idFactory;
     private MockObject $accessRequestRepository;
     private MockObject $userRepository;
+    private MockObject $passwordUserRepository;
     private MockObject $organizationUserRepository;
     private MockObject $organizationRepository;
     private MockObject $accessRequest;
@@ -40,6 +43,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
         $this->accessRequestRepository = $this->createMock(AccessRequestRepositoryInterface::class);
         $this->organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
+        $this->passwordUserRepository = $this->createMock(PasswordUserRepositoryInterface::class);
         $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
         $this->accessRequest = $this->createMock(AccessRequest::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
@@ -89,10 +93,11 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->willReturn($this->accessRequest);
 
         $this->idFactory
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('make')
             ->willReturn(
                 '0de5692b-cab1-494c-804d-765dc14df674',
+                '3e4ea113-9f64-4933-a699-0561b8c15622',
                 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
             );
 
@@ -104,10 +109,14 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
 
         $user = (new User('0de5692b-cab1-494c-804d-765dc14df674'))
             ->setFullName('Mathieu MARCHOIS')
-            ->setPassword('passwordHashed')
             ->setEmail('mathieu@fairness.coop')
             ->setRegistrationDate($date)
             ->setRoles([UserRolesEnum::ROLE_USER->value]);
+
+        $this->passwordUserRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with($this->equalTo(new PasswordUser('3e4ea113-9f64-4933-a699-0561b8c15622', 'passwordHashed', $user)));
 
         $organizationUser = (new OrganizationUser('f40f95eb-a7dd-4232-9f03-2db10f04f37f'))
             ->setOrganization($organization)
@@ -133,6 +142,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->accessRequestRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->organizationUserRepository,
             $this->organizationRepository,
             $this->dateUtils,
@@ -186,7 +196,6 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
 
         $user = (new User('0de5692b-cab1-494c-804d-765dc14df674'))
             ->setFullName('Mathieu MARCHOIS')
-            ->setPassword('passwordHashed')
             ->setEmail('mathieu@fairness.coop')
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($date);
@@ -211,6 +220,11 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->method('add')
             ->with($this->isInstanceOf(Organization::class));
 
+        $this->passwordUserRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with($this->equalTo(new PasswordUser('3e4ea113-9f64-4933-a699-0561b8c15622', 'passwordHashed', $user)));
+
         $this->accessRequestRepository
             ->expects(self::once())
             ->method('findOneByUuid')
@@ -218,11 +232,12 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->willReturn($this->accessRequest);
 
         $this->idFactory
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(4))
             ->method('make')
             ->willReturn(
                 'd145a0e3-e397-412c-ba6a-90b150f7aec2',
                 '0de5692b-cab1-494c-804d-765dc14df674',
+                '3e4ea113-9f64-4933-a699-0561b8c15622',
                 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
             );
 
@@ -240,6 +255,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->accessRequestRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->organizationUserRepository,
             $this->organizationRepository,
             $this->dateUtils,
@@ -261,6 +277,10 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->method('findOneBySiret');
 
         $this->organizationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $this->passwordUserRepository
             ->expects(self::never())
             ->method('add');
 
@@ -290,6 +310,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->accessRequestRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->organizationUserRepository,
             $this->organizationRepository,
             $this->dateUtils,
@@ -326,6 +347,10 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('add');
 
+        $this->passwordUserRepository
+            ->expects(self::never())
+            ->method('add');
+
         $this->accessRequestRepository
             ->expects(self::once())
             ->method('findOneByUuid')
@@ -347,6 +372,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->accessRequestRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->organizationUserRepository,
             $this->organizationRepository,
             $this->dateUtils,
@@ -362,6 +388,10 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
         $this->userRepository
             ->expects(self::never())
             ->method('findOneByEmail');
+
+        $this->passwordUserRepository
+            ->expects(self::never())
+            ->method('add');
 
         $this->organizationRepository
             ->expects(self::never())
@@ -396,6 +426,7 @@ final class ConvertAccessRequestToUserCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->accessRequestRepository,
             $this->userRepository,
+            $this->passwordUserRepository,
             $this->organizationUserRepository,
             $this->organizationRepository,
             $this->dateUtils,

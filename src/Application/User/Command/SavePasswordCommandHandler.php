@@ -17,6 +17,6 @@ final class SavePasswordCommandHandler
     {
         $user = $command->user;
         $password = $this->passwordHasher->hash($command->password);
-        $user->setPassword($password);
+        $user->getPasswordUser()->setPassword($password);
     }
 }

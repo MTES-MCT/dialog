@@ -12,7 +12,9 @@ use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\OrganizationUser;
+use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
+use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\Specification\IsEmailAlreadyExists;
 use App\Domain\User\Specification\IsUserAlreadyRegisteredInOrganization;
@@ -24,6 +26,7 @@ final class SaveOrganizationUserCommandHandler
         private IdFactoryInterface $idFactory,
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private UserRepositoryInterface $userRepository,
+        private PasswordUserRepositoryInterface $passwordUserRepository,
         private StringUtilsInterface $stringUtils,
         private DateUtilsInterface $dateUtils,
         private PasswordHasherInterface $passwordHasher,
@@ -66,11 +69,17 @@ final class SaveOrganizationUserCommandHandler
             $user = (new User($this->idFactory->make()))
                 ->setEmail($email)
                 ->setFullName($command->fullName)
-                ->setPassword($this->passwordHasher->hash($command->password))
                 ->setRoles([UserRolesEnum::ROLE_USER->value])
                 ->setRegistrationDate($this->dateUtils->getNow());
 
+            $passwordUser = new PasswordUser(
+                uuid: $this->idFactory->make(),
+                password: $this->passwordHasher->hash($command->password),
+                user: $user,
+            );
+
             $this->userRepository->add($user);
+            $this->passwordUserRepository->add($passwordUser);
         }
 
         $this->organizationUserRepository->add(
