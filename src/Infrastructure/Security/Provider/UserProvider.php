@@ -24,7 +24,7 @@ final class UserProvider implements UserProviderInterface
     {
         $user = $this->userRepository->findOneByEmail($identifier);
 
-        if (!$user instanceof User) {
+        if (!$user instanceof User || !$user->getPasswordUser()) {
             throw new UserNotFoundException(\sprintf('Unable to find the user %s', $identifier));
         }
 
@@ -34,7 +34,7 @@ final class UserProvider implements UserProviderInterface
             $user->getUuid(),
             $user->getEmail(),
             $user->getFullName(),
-            $user->getPassword(),
+            $user->getPasswordUser()->getPassword(),
             $userOrganizations,
             $user->getRoles(),
         );

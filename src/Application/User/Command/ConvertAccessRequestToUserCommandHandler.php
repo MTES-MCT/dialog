@@ -14,9 +14,11 @@ use App\Domain\User\Exception\SiretMissingException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
+use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\AccessRequestRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
+use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
 
@@ -26,6 +28,7 @@ final class ConvertAccessRequestToUserCommandHandler
         private IdFactoryInterface $idFactory,
         private AccessRequestRepositoryInterface $accessRequestRepository,
         private UserRepositoryInterface $userRepository,
+        private PasswordUserRepositoryInterface $passwordUserRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private OrganizationRepositoryInterface $organizationRepository,
         private DateUtilsInterface $dateUtils,
@@ -63,10 +66,15 @@ final class ConvertAccessRequestToUserCommandHandler
 
         $user = (new User($this->idFactory->make()))
             ->setFullName($accessRequest->getFullName())
-            ->setPassword($accessRequest->getPassword())
             ->setEmail($accessRequest->getEmail())
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($now);
+
+        $passwordUser = new PasswordUser(
+            uuid: $this->idFactory->make(),
+            password: $accessRequest->getPassword(),
+            user: $user,
+        );
 
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
@@ -74,6 +82,7 @@ final class ConvertAccessRequestToUserCommandHandler
             ->setRoles($organizationRole);
 
         $this->userRepository->add($user);
+        $this->passwordUserRepository->add($passwordUser);
         $this->organizationUserRepository->add($organizationUser);
         $this->accessRequestRepository->remove($accessRequest);
     }
