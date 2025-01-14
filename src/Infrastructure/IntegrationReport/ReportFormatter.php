@@ -173,7 +173,7 @@ final class ReportFormatter
                 foreach ($info['regulations'] as $id) {
                     $line = \sprintf('    %s', $id);
 
-                    if (\array_key_exists($id, $info['urls'])) {
+                    if (!empty($info['urls']) && \array_key_exists($id, $info['urls'])) {
                         $url = $info['urls'][$id];
                         $line = \sprintf('%s (%s)', $line, $url);
                     }

@@ -27,6 +27,8 @@ services:
             $melCredentials: '%env(APP_MEL_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
             $fougeresOrgId: '%env(APP_FOUGERES_ORG_ID)%'
             $fougeresCredentials: '%env(APP_FOUGERES_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
+            $lonsLeSaunierOrgId: '%env(APP_LONS_LE_SAUNIER_ORG_ID)%'
+            $lonsLeSaunierCredentials: '%env(APP_LONS_LE_SAUNIER_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
             $metabaseSiteUrl: '%env(APP_METABASE_SITE_URL)%'
             $metabaseSecretKey: '%env(APP_METABASE_SECRET_KEY)%'
             $mediaLocation: '%env(APP_MEDIA_LOCATION)%'
