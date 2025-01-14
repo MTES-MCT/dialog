@@ -283,6 +283,12 @@ ci_litteralis_fougeres_import: ## Run CI steps for Litteralis Fougeres Import wo
 	./tools/scalingodbtunnel ${APP_FOUGERES_IMPORT_APP} --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
 	make console CMD="app:fougeres:import"
 
+ci_litteralis_lons_le_saunier_import: ## Run CI steps for Litteralis Lons-le-Saunier Import workflow
+	make composer CMD="install -n --prefer-dist"
+	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel dialog --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
+	make console CMD="app:lons_le_saunier:import"
+
 ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	make bdtopo_migrate
@@ -294,7 +300,9 @@ ci_metabase_migrate: ## Run CI steps for Metabase Migrate workflow
 	make metabase_migrate
 
 ci_metabase_export: ## Export data to Metabase
+	make composer CMD="install -n --prefer-dist"
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel dialog --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
 	./tools/scalingodbtunnel dialog-metabase --host-url --port 10001 & ./tools/wait-for-it.sh 127.0.0.1:10001
 	make console CMD="app:metabase:export"
 

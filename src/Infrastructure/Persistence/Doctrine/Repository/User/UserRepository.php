@@ -51,9 +51,11 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
 
     public function findAllForStatistics(): array
     {
-        return $this->createQueryBuilder('u')
-            ->select('u.uuid, u.lastActiveAt')
-            ->getQuery()
-            ->getResult();
+        return $this->getEntityManager()
+            ->getConnection()
+            ->fetchAllAssociative(
+                'SELECT uuid_generate_v4() AS uuid, u.last_active_at AS last_active_at
+                FROM "user" AS u',
+            );
     }
 }
