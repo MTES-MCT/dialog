@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command;
 
-use App\Application\CommandBusInterface;
 use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
 use App\Infrastructure\Adapter\IdFactory;
@@ -14,7 +13,6 @@ final class CreateRegulationOrderHistoryCommandHandler
     public function __construct(
         private IdFactory $idFactory,
         private RegulationOrderHistoryRepositoryInterface $regulationOrderHistoryRepository,
-        private CommandBusInterface $commandBus,
         private \DateTimeInterface $now,
     ) {
     }
