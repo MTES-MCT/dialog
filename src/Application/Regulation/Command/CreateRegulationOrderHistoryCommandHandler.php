@@ -22,8 +22,8 @@ final class CreateRegulationOrderHistoryCommandHandler
         $regulationOrderHistory = $this->regulationOrderHistoryRepository->add(
             new RegulationOrderHistory(
                 uuid: $this->idFactory->make(),
-                regulationOrder: $command->regulationOrder,
-                user: $command->user,
+                regulationOrderUuid: $command->regulationOrder->getUuid(),
+                userUuid: $command->user->getUuid(),
                 action: $command->action,
                 date: $this->now,
             ),

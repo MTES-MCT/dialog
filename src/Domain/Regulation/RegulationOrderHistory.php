@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-use App\Domain\User\User;
-
 class RegulationOrderHistory
 {
     public function __construct(
         private string $uuid,
-        private RegulationOrder $regulationOrder,
-        private User $user,
+        private string $regulationOrderUuid,
+        private string $userUuid,
         private string $action,
         private \DateTimeInterface $date,
     ) {
@@ -22,14 +20,14 @@ class RegulationOrderHistory
         return $this->uuid;
     }
 
-    public function getRegulationOrder(): RegulationOrder
+    public function getRegulationOrderUuid(): string
     {
-        return $this->regulationOrder;
+        return $this->regulationOrderUuid;
     }
 
-    public function getUser(): User
+    public function getUserUuid(): string
     {
-        return $this->user;
+        return $this->userUuid;
     }
 
     public function getAction(): string

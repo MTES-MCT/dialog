@@ -4,21 +4,13 @@
     name="App\Domain\Regulation\RegulationOrderHistory"
     table="regulation_order_history">
     <id name="uuid" type="guid" column="uuid"/>
+    <field name="regulationOrderUuid" type="string" column="regulation_order_uuid" length="50" nullable="false"/>
+    <field name="userUuid" type="string" column="user_uuid" length="50" nullable="false"/>
     <field name="action" type="string" column="action" length="20" nullable="false"/>
     <field name="date" type="datetimetz" column="date" nullable="false">
         <options>
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>
     </field>
-    <many-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" mapped-by="regulationOrderHistory">
-      <join-columns>
-          <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
-      </join-columns>
-  </many-to-one>
-  <many-to-one field="user" target-entity="App\Domain\User\User" mapped-by="regulationOrderHistory">
-      <join-columns>
-          <join-column name="user_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
-      </join-columns>
-  </many-to-one>
   </entity>
 </doctrine-mapping>
