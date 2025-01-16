@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Statistics;
 
+use App\Application\Cifs\CifsExportClientInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Statistics\Repository\StatisticsRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
@@ -17,6 +18,7 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
         private OrganizationRepositoryInterface $organizationRepository,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private Connection $metabaseConnection,
+        private CifsExportClientInterface $cifsExportClient,
     ) {
     }
 
@@ -31,6 +33,7 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
             'regulationOrderRecords.published' => $this->regulationOrderRecordRepository->countPublishedRegulationOrderRecords(),
             'regulationOrderRecords.permanent' => $this->regulationOrderRecordRepository->countPermanentRegulationOrderRecords(),
             'regulationOrderRecords.temporary' => $this->regulationOrderRecordRepository->countTemporaryRegulationOrderRecords(),
+            'cifs.incidents' => $this->cifsExportClient->getIncidentsCount(),
         ];
 
         $stmt = $this->metabaseConnection->prepare(
@@ -42,7 +45,7 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
             $stmt->bindValue('uploadedAt', $now->format(\DateTimeInterface::ATOM));
             $stmt->bindValue('name', $name);
             $stmt->bindValue('value', $value);
-            $stmt->execute();
+            $stmt->executeStatement();
         }
     }
 
@@ -66,7 +69,7 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
             $stmt->bindValue('id', $row['uuid']);
             $stmt->bindValue('uploadedAt', $now->format(\DateTimeInterface::ATOM));
             $stmt->bindValue('lastActiveAt', $row['last_active_at']);
-            $stmt->execute();
+            $stmt->executeStatement();
         }
     }
 }
