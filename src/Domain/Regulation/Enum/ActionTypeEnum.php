@@ -8,5 +8,6 @@ enum ActionTypeEnum: string
 {
     case CREATE = 'create';
     case UPDATE = 'update';
+    case PUBLISH = 'publish';
     case DELETE = 'delete';
 }
