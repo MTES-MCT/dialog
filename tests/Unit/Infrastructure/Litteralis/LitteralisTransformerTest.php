@@ -287,9 +287,11 @@ final class LitteralisTransformerTest extends TestCase
                     RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
                     CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'arretedebut' => 'BAD FORMAT',
-                    'idemprise' => 493136,
-                    'format' => \DateTimeInterface::ISO8601,
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'arretedebut' => 'BAD FORMAT',
+                        'idemprise' => 493136,
+                        'format' => \DateTimeInterface::ISO8601,
+                    ],
                 ],
             ],
             [
@@ -298,9 +300,11 @@ final class LitteralisTransformerTest extends TestCase
                     RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_DATE_PARSING_FAILED->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
                     CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'arretefin' => 'BAD FORMAT',
-                    'idemprise' => 493136,
-                    'format' => \DateTimeInterface::ISO8601,
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'arretefin' => 'BAD FORMAT',
+                        'idemprise' => 493136,
+                        'format' => \DateTimeInterface::ISO8601,
+                    ],
                 ],
             ],
             [
@@ -309,8 +313,10 @@ final class LitteralisTransformerTest extends TestCase
                     RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_MISSING->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
                     CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'idemprise' => 493136,
-                    'mesures' => 'Limitation de vitesse',
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 493136,
+                        'mesures' => 'Limitation de vitesse',
+                    ],
                 ],
             ],
             [
@@ -319,8 +325,10 @@ final class LitteralisTransformerTest extends TestCase
                     RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_INVALID->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
                     CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'idemprise' => 493136,
-                    'limite de vitesse' => 'foo km/h',
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 493136,
+                        'limite de vitesse' => 'foo km/h',
+                    ],
                 ],
             ],
             [
@@ -329,10 +337,12 @@ final class LitteralisTransformerTest extends TestCase
                     RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
                     CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'idemprise' => 493136,
-                    'measureName' => 'Circulation interdite 4',
-                    'expected' => 1,
-                    'actual' => 4,
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 493136,
+                        'measureName' => 'Circulation interdite 4',
+                        'expected' => 1,
+                        'actual' => 4,
+                    ],
                 ],
             ],
             [
@@ -341,8 +351,10 @@ final class LitteralisTransformerTest extends TestCase
                     RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
                     CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                    'idemprise' => 493136,
-                    'jours et horaires' => 'foo',
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 493136,
+                        'jours et horaires' => 'foo',
+                    ],
                 ],
             ],
         ], $this->reporter->getRecords());
@@ -363,8 +375,10 @@ final class LitteralisTransformerTest extends TestCase
                 [
                     RecordTypeEnum::NOTICE->value => LitteralisRecordEnum::NOTICE_UNSUPPORTED_MEASURE->value,
                     CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
-                    'name' => 'unknown measure',
-                    'idemprise' => 493136,
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'name' => 'unknown measure',
+                        'idemprise' => 493136,
+                    ],
                 ],
             ],
             [

@@ -51,6 +51,29 @@ final class ReportFormatter
         return implode(' ; ', $items);
     }
 
+    private function addDetails(string $line, array $details): string
+    {
+        $partsList = [];
+
+        foreach ($details as $key => $value) {
+            $parts = [];
+
+            if (\is_string($key)) {
+                // Details is a single ['key' => 'val'] array
+                $parts[] = \sprintf('%s = %s', $key, var_export($value, true));
+            } else {
+                // Details is a list of ['key' => 'val'] arrays
+                foreach ($value as $theKey => $theValue) {
+                    $parts[] = \sprintf('%s = %s', $theKey, var_export($theValue, true));
+                }
+            }
+
+            $partsList[] = implode(', ', $parts);
+        }
+
+        return \sprintf('%s (%s)', $line, implode(' ; ', $partsList));
+    }
+
     public function format(array $records): string
     {
         $lines = [];
@@ -77,7 +100,13 @@ final class ReportFormatter
                 $value = $this->arrayEncode($value);
             }
 
-            $lines[] = \sprintf('%s : %s', $verboseName, $value);
+            $line = \sprintf('%s : %s', $verboseName, $value);
+
+            if (!empty($context[CommonRecordEnum::ATTR_DETAILS->value])) {
+                $line = $this->addDetails($line, $context[CommonRecordEnum::ATTR_DETAILS->value]);
+            }
+
+            $lines[] = $line;
         }
 
         $lines[] = '';
@@ -102,6 +131,10 @@ final class ReportFormatter
                         ],
                     ),
                 );
+            }
+
+            if (!empty($context[CommonRecordEnum::ATTR_DETAILS->value])) {
+                $line = $this->addDetails($line, $context[CommonRecordEnum::ATTR_DETAILS->value]);
             }
 
             $lines[] = $line;
@@ -138,10 +171,15 @@ final class ReportFormatter
 
             if (!\in_array($regulationId, $info['regulations'])) {
                 $info['regulations'][] = $regulationId;
+                $info['details'][$regulationId] = [];
 
                 if (\array_key_exists(CommonRecordEnum::ATTR_URL->value, $context)) {
                     $info['urls'][$regulationId] = $context[CommonRecordEnum::ATTR_URL->value];
                 }
+            }
+
+            if (\array_key_exists(CommonRecordEnum::ATTR_DETAILS->value, $context)) {
+                $info['details'][$regulationId][] = $context[CommonRecordEnum::ATTR_DETAILS->value];
             }
 
             $caseLists[$type][$name] = $info;
@@ -176,6 +214,10 @@ final class ReportFormatter
                     if (!empty($info['urls']) && \array_key_exists($id, $info['urls'])) {
                         $url = $info['urls'][$id];
                         $line = \sprintf('%s (%s)', $line, $url);
+                    }
+
+                    if (\array_key_exists($id, $info['details']) && !empty($info['details'][$id])) {
+                        $line = $this->addDetails($line, $info['details'][$id]);
                     }
 
                     $lines[] = $line;

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Litteralis;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
+use App\Infrastructure\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\IntegrationReport\Reporter;
 use App\Infrastructure\Litteralis\LitteralisPeriodParser;
 use App\Infrastructure\Litteralis\LitteralisRecordEnum;
@@ -104,7 +105,17 @@ final class LitteralisPeriodParserTest extends TestCase
         $reporter
             ->expects(self::once())
             ->method('addError')
-            ->with(LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value);
+            ->with(
+                LitteralisRecordEnum::ERROR_PERIOD_UNPARSABLE->value,
+                [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => 'id2',
+                    CommonRecordEnum::ATTR_URL->value => 'url',
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 'id1',
+                        'jours et horaires' => $value,
+                    ],
+                ],
+            );
 
         $this->assertEquals([], $this->parser->parseTimeSlots($value, $properties, $reporter));
     }

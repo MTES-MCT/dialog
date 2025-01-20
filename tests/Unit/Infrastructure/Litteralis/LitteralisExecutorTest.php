@@ -170,9 +170,11 @@ final class LitteralisExecutorTest extends TestCase
             ->expects(self::once())
             ->method('addError')
             ->with(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
-                'message' => 'oops',
                 CommonRecordEnum::ATTR_REGULATION_ID->value => '1234',
                 CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'message' => 'oops',
+                ],
                 'violations' => null,
                 'command' => $command3,
             ]);

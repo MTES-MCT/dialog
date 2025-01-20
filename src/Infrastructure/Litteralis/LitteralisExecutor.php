@@ -69,7 +69,9 @@ final class LitteralisExecutor
                 $reporter->addError(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationFeatures[0]['properties']['arretesrcid'],
                     CommonRecordEnum::ATTR_URL->value => $regulationFeatures[0]['properties']['shorturl'],
-                    'message' => $exc->getMessage(),
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'message' => $exc->getMessage(),
+                    ],
                     'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
                     'command' => $command,
                 ]);

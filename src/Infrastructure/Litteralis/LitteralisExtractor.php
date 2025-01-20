@@ -47,7 +47,9 @@ final class LitteralisExtractor
                 $reporter->addWarning(LitteralisRecordEnum::WARNING_MISSING_GEOMETRY->value, [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $identifier,
                     CommonRecordEnum::ATTR_URL->value => $feature['properties']['shorturl'],
-                    'idemprise' => $feature['properties']['idemprise'],
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => $feature['properties']['idemprise'],
+                    ],
                 ]);
                 continue;
             }
