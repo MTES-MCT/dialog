@@ -151,6 +151,10 @@ when@test:
         App\Tests\Mock\IgnGeocoderMockClient:
             decorates: 'ign.geocoder.client'
             decoration_inner_name: 'App\Tests\Mock\IgnGeocoderMockClient::ign.geocoder.client'
+        App\Tests\Mock\DiaLogMockHttpClient:
+            decorates: 'dialog.http.client'
+            decoration_inner_name: 'App\Tests\Mock\DiaLogMockHttpClient::dialog.http.client'
+            arguments: ['@http_kernel']
         App\Infrastructure\Adapter\DateUtils:
             class: App\Tests\Mock\DateUtilsMock
         Psr\Log\NullLogger: ~

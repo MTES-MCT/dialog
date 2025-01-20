@@ -27,7 +27,7 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
 
         // Check count statistics
         $rows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_count');
-        $this->assertCount(6, $rows);
+        $this->assertCount(7, $rows);
         $this->assertEquals(['id', 'uploaded_at', 'name', 'value'], array_keys($rows[0]));
 
         $counts = [];
@@ -45,6 +45,7 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
             'regulationOrderRecords.published' => 1,
             'regulationOrderRecords.permanent' => 0,
             'regulationOrderRecords.temporary' => 1,
+            'cifs.incidents' => 7,
         ], $counts);
 
         // Check user active statistics
