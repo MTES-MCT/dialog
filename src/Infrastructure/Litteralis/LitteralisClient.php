@@ -13,7 +13,7 @@ final class LitteralisClient
     private string $credentials;
 
     public function __construct(
-        private readonly HttpClientInterface $litteralisWfsHttpClient,
+        private readonly HttpClientInterface $httpClient,
     ) {
     }
 
@@ -37,7 +37,7 @@ final class LitteralisClient
         }
 
         $options['auth_basic'] = $this->credentials;
-        $response = $this->litteralisWfsHttpClient->request($method, $path, $options);
+        $response = $this->httpClient->request($method, $path, $options);
 
         if ($reporter) {
             $reporter->onResponse($response);

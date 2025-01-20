@@ -7,17 +7,35 @@ namespace App\Infrastructure\IntegrationReport;
 use App\Domain\User\Organization;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class Reporter
 {
+    private LoggerInterface $logger;
     private bool $haveNewErrorsBeenReceived;
     private \DateTimeInterface $startTime;
     private array $records;
 
     public function __construct(
-        private LoggerInterface $logger,
+        ?LoggerInterface $logger = null,
     ) {
+        if (empty($logger)) {
+            $logger = new NullLogger();
+        }
+
+        $this->logger = $logger;
+        $this->haveNewErrorsBeenReceived = false;
+        $this->records = [];
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
+    }
+
+    public function reset(): void
+    {
         $this->haveNewErrorsBeenReceived = false;
         $this->records = [];
     }

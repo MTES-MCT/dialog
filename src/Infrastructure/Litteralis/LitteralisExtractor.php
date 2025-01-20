@@ -4,23 +4,44 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Litteralis;
 
+use App\Application\Litteralis\DTO\LitteralisCredentials;
 use App\Infrastructure\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\IntegrationReport\Reporter;
 
 final class LitteralisExtractor
 {
+    private array $clients;
+
     public function __construct(
-        private readonly LitteralisClient $client,
+        private LitteralisClientFactory $clientFactory,
     ) {
     }
 
-    public function configure(string $credentials)
+    public function configure(array $enabledOrgs, LitteralisCredentials $credentials)
     {
-        $this->client->setCredentials($credentials);
+        $clients = [];
+
+        foreach ($enabledOrgs as $name) {
+            $orgCredentials = $credentials->getCredentials($name);
+            $clients[$name] = $this->clientFactory->create($orgCredentials);
+        }
+
+        $this->clients = $clients;
     }
 
-    public function extractFeaturesByRegulation(\DateTimeInterface $laterThan, Reporter $reporter): array
+    private function getClient(string $name): LitteralisClient
     {
+        if (empty($this->clients[$name])) {
+            throw new \RuntimeException(\sprintf('Organization with name "%s" is not enabled', $name));
+        }
+
+        return $this->clients[$name];
+    }
+
+    public function extractFeaturesByRegulation(string $name, \DateTimeInterface $laterThan, Reporter $reporter): array
+    {
+        $client = $this->getClient($name);
+
         $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%') AND " . \sprintf(
             "(arretefin IS NULL OR arretefin >= '%s')",
             $laterThan->format(\DateTimeInterface::ISO8601),
@@ -28,16 +49,16 @@ final class LitteralisExtractor
 
         // On calcule des totaux qui seront affichés dans le rapport final
 
-        $numTotalFeatures = $this->client->count(null, $reporter);
+        $numTotalFeatures = $client->count(null, $reporter);
         $reporter->addCount(LitteralisRecordEnum::COUNT_TOTAL_FEATURES->value, $numTotalFeatures);
 
-        $numMatchingFeatures = $this->client->count($cqlFilter, $reporter);
+        $numMatchingFeatures = $client->count($cqlFilter, $reporter);
         $reporter->addCount(LitteralisRecordEnum::COUNT_MATCHING_FEATURES->value, $numMatchingFeatures);
 
         // On récupère les emprises et on les regroupe par arrêté
         $featuresByRegulation = [];
         $numExtractedFeatures = 0;
-        $features = $this->client->fetchAllPaginated($cqlFilter, $reporter);
+        $features = $client->fetchAllPaginated($cqlFilter, $reporter);
 
         foreach ($features as $feature) {
             $identifier = $feature['properties']['arretesrcid'];
