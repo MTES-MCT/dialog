@@ -51,17 +51,6 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string {
-        $includeNone = !$includePermanentRegulations && !$includeTemporaryRegulations && empty($measureTypes);
-        $permanentOnly = $includePermanentRegulations && !$includeTemporaryRegulations;
-        $temporaryOnly = !$includePermanentRegulations && $includeTemporaryRegulations;
-
-        if ($includeNone) {
-            return json_encode([
-                'type' => 'FeatureCollection',
-                'features' => [],
-            ]); // we return no regulations
-        }
-
         $parameters = [
             'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             'measureTypes' => $measureTypes,
@@ -71,14 +60,16 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             'measureTypes' => ArrayParameterType::STRING,
         ];
 
-        $regulationTypeWhereClause = '';
-
-        if ($permanentOnly) {
+        if ($includePermanentRegulations && $includeTemporaryRegulations) {
+            $regulationTypeWhereClause = '';
+        } elseif ($includePermanentRegulations) {
             $regulationTypeWhereClause = 'AND ro.category = :permanentCategory';
             $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
-        } elseif ($temporaryOnly) {
+        } elseif ($includeTemporaryRegulations) {
             $regulationTypeWhereClause = 'AND ro.category <> :permanentCategory';
             $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        } else {
+            $regulationTypeWhereClause = 'AND FALSE';
         }
 
         $measureDatesCondition = '';

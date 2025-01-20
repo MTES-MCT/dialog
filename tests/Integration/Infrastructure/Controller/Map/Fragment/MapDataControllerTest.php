@@ -14,7 +14,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
     public function testMeasureTypesFilter(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry');
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -28,6 +28,35 @@ final class MapDataControllerTest extends AbstractWebTestCase
         foreach ($dataArray['features'] as $feature) {
             $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $feature['properties']['measure_type']);
         }
+    }
+
+    public function testRegulationTypeFilterNone(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $jsonData = $client->getResponse()->getContent();
+        $dataArray = json_decode($jsonData, true);
+        $this->assertCount(0, $dataArray['features']);
+    }
+
+    public function testRegulationTypeFilterPermanentOnly(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+
+        $jsonData = $client->getResponse()->getContent();
+        $dataArray = json_decode($jsonData, true);
+
+        $this->assertCount(0, $dataArray['features']); // None published in test data
     }
 
     public function testRegulationTypeFilterTemporaryOnly(): void
