@@ -24,6 +24,13 @@ final class ReporterTest extends TestCase
         $this->reporter = new Reporter($this->logger);
     }
 
+    public function testNoLogger(): void
+    {
+        // For coverage
+        $reporter = new Reporter();
+        $this->assertEmpty($reporter->getRecords());
+    }
+
     public function testReport(): void
     {
         $organization = $this->createMock(Organization::class);

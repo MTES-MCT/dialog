@@ -23,12 +23,8 @@ services:
             $jopOrgId: '%env(APP_JOP_ORG_ID)%'
             $featureMap: '%features%'
             $cifsFilterSet: '%env(cifs_filterset:default::APP_CIFS_FILTERS)%'
-            $melOrgId: '%env(APP_MEL_ORG_ID)%'
-            $melCredentials: '%env(APP_MEL_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
-            $fougeresOrgId: '%env(APP_FOUGERES_ORG_ID)%'
-            $fougeresCredentials: '%env(APP_FOUGERES_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
-            $lonsLeSaunierOrgId: '%env(APP_LONS_LE_SAUNIER_ORG_ID)%'
-            $lonsLeSaunierCredentials: '%env(APP_LONS_LE_SAUNIER_LITTERALIS_CREDENTIALS)%' # format: 'user:pass'
+            $litteralisEnabledOrgs: "%env(json:default::APP_LITTERALIS_ENABLED_ORGS)%"
+            $litteralisCredentials: "%env(litteralis_credentials:APP_LITTERALIS_ORG_)%"
             $metabaseSiteUrl: '%env(APP_METABASE_SITE_URL)%'
             $metabaseSecretKey: '%env(APP_METABASE_SECRET_KEY)%'
             $mediaLocation: '%env(APP_MEDIA_LOCATION)%'
@@ -126,12 +122,7 @@ services:
     # Litteralis
     # --------------
 
-    App\Infrastructure\Symfony\Command\MELImportCommand:
-        arguments: ['@logger']
-        tags:
-            - { name: monolog.logger, channel: litteralis_import }
-
-    App\Infrastructure\Symfony\Command\FougeresImportCommand:
+    App\Infrastructure\Symfony\Command\LitteralisImportCommand:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: litteralis_import }

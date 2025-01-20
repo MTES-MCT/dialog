@@ -1,9 +1,16 @@
-name: Litteralis Lons-le-Saunier Import
+name: Litteralis Import
 
 on:
   workflow_dispatch:
+    inputs:
+      enabled_orgs:
+        description: "Organisations à intégrer (format : array JSON)"
+        required: false
+        default: null
+        type: string
+
   schedule:
-    - cron: '15 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h08 GMT
+    - cron: '15 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h15 GMT
 
 jobs:
   import:
@@ -45,13 +52,23 @@ jobs:
 
       - name: Init environment variables
         run: |
-          echo "DATABASE_URL=${{ secrets.APP_LONS_LE_SAUNIER_IMPORT_DATABASE_URL }}" >> .env.local
+          echo "DATABASE_URL=${{ secrets.APP_LITTERALIS_IMPORT_DATABASE_URL }}" >> .env.local
           echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_DATABASE_URL }}" >> .env.local
-          echo "APP_LONS_LE_SAUNIER_LITTERALIS_CREDENTIALS=${{ secrets.APP_LONS_LE_SAUNIER_LITTERALIS_CREDENTIALS }}" >> .env.local
-          echo "APP_LONS_LE_SAUNIER_ORG_ID=${{ vars.APP_LONS_LE_SAUNIER_ORG_ID }}" >> .env.local
+          echo "APP_LITTERALIS_ENABLED_ORGS=${{ vars.APP_LITTERALIS_ENABLED_ORGS }}" >> .env.local
+
+      - name: Override enabled orgs if defined by input
+        if: ${{ inputs.enabled_orgs }}
+        run: |
+          echo "APP_LITTERALIS_ENABLED_ORGS=${{ inputs.enabled_orgs }}" >> .env.local
+
+      - name: Init organization environment variables
+        run: |
+          ./tools/ci_litteralis_init_org_env_vars.py GHA_SECRETS "APP_LITTERALIS_ORG_*"
+        env:
+          GHA_SECRETS: ${{ toJson(secrets) }}
 
       - name: Run import
-        run: make ci_litteralis_lons_le_saunier_import BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
+        run: make ci_litteralis_import BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
       - name: Get log file path
         id: logfile
