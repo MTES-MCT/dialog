@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command;
 
+use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
 use App\Domain\Organization\VisaModel\VisaModel;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -19,6 +22,8 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
+use App\Domain\User\User;
+use App\Infrastructure\Security\AuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
@@ -29,6 +34,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     private $queryBus;
     private $organization;
     private $visaModel;
+    private $commandBus;
+    private $authenticatedUser;
+    private $user;
 
     public function setUp(): void
     {
@@ -38,6 +46,14 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
         $this->visaModel = $this->createMock(VisaModel::class);
+        $this->commandBus = $this->createMock(CommandBusInterface::class);
+        $this->authenticatedUser = $this->createMock(AuthenticatedUser::class);
+        $this->user = $this->createMock(User::class);
+
+        $this->authenticatedUser
+            ->expects(self::once())
+            ->method('getUser')
+            ->willReturn($this->user);
     }
 
     public function testCreate(): void
@@ -98,6 +114,8 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             $this->regulationOrderRecordRepository,
             $now,
             $this->queryBus,
+            $this->commandBus,
+            $this->authenticatedUser,
         );
 
         $command = new SaveRegulationGeneralInfoCommand();
@@ -165,12 +183,21 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->method('updateOrganization')
             ->with($organization);
 
+        $action = ActionTypeEnum::UPDATE->value;
+        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, $this->user, $action);
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with($this->equalTo($regulationOrderHistoryCommand));
         $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,
             $this->regulationOrderRecordRepository,
             $now,
             $this->queryBus,
+            $this->commandBus,
+            $this->authenticatedUser,
         );
 
         $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);
