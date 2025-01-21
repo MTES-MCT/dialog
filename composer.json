@@ -29,6 +29,7 @@
         "symfony/framework-bundle": "7.2.*",
         "symfony/http-client": "7.2.*",
         "symfony/lock": "7.2.*",
+        "symfony/mailer": "7.2.*",
         "symfony/messenger": "7.2.*",
         "symfony/mime": "7.2.*",
         "symfony/monolog-bundle": "^3.8",

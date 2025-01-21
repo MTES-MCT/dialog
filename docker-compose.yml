@@ -27,6 +27,17 @@ services:
       - database
       - redis
 
+  php_worker:
+    build:
+      context: ./docker/php
+    command: 'bin/console messenger:consume async --time-limit=300 --memory-limit=256M --limit=50'
+    restart: always
+    volumes:
+      - ./:/var/www/dialog
+    depends_on:
+      - database
+      - redis
+
   nginx:
     image: nginx:stable-alpine
     ports:
@@ -68,3 +79,9 @@ services:
       # Allow accessing host ports from this container via host.docker.internal on Linux
       # https://stackoverflow.com/a/43541732
       - host.docker.internal:host-gateway
+
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - 1025:1025
+      - 1080:1080
