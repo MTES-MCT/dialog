@@ -31,6 +31,8 @@ framework:
                 base_uri: '%env(APP_IGN_GEOCODER_BASE_URL)%'
             dialog.http.client:
                 base_uri: '%env(APP_DIALOG_BASE_URL)%'
+            organization_fetcher.client:
+                base_uri: '%env(API_ORGANIZATION_FETCHER_URL)%'
 
 when@test:
     framework:

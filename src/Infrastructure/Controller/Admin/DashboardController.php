@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Admin;
 
 use App\Domain\Organization\VisaModel\VisaModel;
-use App\Domain\User\AccessRequest;
 use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
@@ -37,7 +36,6 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Gestion des utilisateurs');
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-users', User::class);
         yield MenuItem::linkToCrud('Membres d\'organisations', 'fa fa-user-gear', OrganizationUser::class);
-        yield MenuItem::linkToCrud('Création de comptes', 'fa fa-code-pull-request', AccessRequest::class);
 
         yield MenuItem::section('Gestion des organisations');
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);

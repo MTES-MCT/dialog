@@ -4,77 +4,80 @@ declare(strict_types=1);
 
 namespace App\Application\User\Command;
 
+use App\Application\ApiOrganizationFetcherInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
-use App\Domain\User\AccessRequest;
+use App\Application\PasswordHasherInterface;
+use App\Application\StringUtilsInterface;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Enum\UserRolesEnum;
-use App\Domain\User\Exception\AccessRequestNotFoundException;
-use App\Domain\User\Exception\SiretMissingException;
+use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\PasswordUser;
-use App\Domain\User\Repository\AccessRequestRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
 
-final class ConvertAccessRequestToUserCommandHandler
+final class RegisterCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
-        private AccessRequestRepositoryInterface $accessRequestRepository,
         private UserRepositoryInterface $userRepository,
         private PasswordUserRepositoryInterface $passwordUserRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private OrganizationRepositoryInterface $organizationRepository,
         private DateUtilsInterface $dateUtils,
+        private StringUtilsInterface $stringUtils,
+        private PasswordHasherInterface $passwordHasher,
+        private ApiOrganizationFetcherInterface $organizationFetcher,
     ) {
     }
 
-    public function __invoke(ConvertAccessRequestToUserCommand $command): void
+    public function __invoke(RegisterCommand $command): User
     {
-        $accessRequest = $this->accessRequestRepository->findOneByUuid($command->uuid);
-        if (!$accessRequest instanceof AccessRequest) {
-            throw new AccessRequestNotFoundException();
-        }
+        $email = $this->stringUtils->normalizeEmail($command->email);
 
-        if (!$accessRequest->getSiret()) {
-            throw new SiretMissingException();
-        }
-
-        $user = $this->userRepository->findOneByEmail($accessRequest->getEmail());
+        $user = $this->userRepository->findOneByEmail($email);
         if ($user instanceof User) {
             throw new UserAlreadyRegisteredException();
         }
 
-        $organization = $this->organizationRepository->findOneBySiret($accessRequest->getSiret());
+        $organization = $this->organizationRepository->findOneBySiret($command->organizationSiret);
         $organizationRole = OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value; // Default organization role
         $now = $this->dateUtils->getNow();
 
         if (!$organization) {
+            try {
+                ['name' => $name] = $this->organizationFetcher->findBySiret($command->organizationSiret);
+            } catch (OrganizationNotFoundException $e) {
+                throw $e;
+            }
+
             $organizationRole = OrganizationRolesEnum::ROLE_ORGA_ADMIN->value; // The first user in an organization becomes an admin
             $organization = (new Organization($this->idFactory->make()))
                 ->setCreatedAt($now)
-                ->setSiret($accessRequest->getSiret())
-                ->setName($accessRequest->getOrganization());
+                ->setSiret($command->organizationSiret)
+                ->setName($name);
             $this->organizationRepository->add($organization);
         }
 
         $user = (new User($this->idFactory->make()))
-            ->setFullName($accessRequest->getFullName())
-            ->setEmail($accessRequest->getEmail())
+            ->setFullName($command->fullName)
+            ->setEmail($email)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($now);
 
         $passwordUser = new PasswordUser(
             uuid: $this->idFactory->make(),
-            password: $accessRequest->getPassword(),
+            password: $this->passwordHasher->hash($command->password),
             user: $user,
         );
+
+        $user->setPasswordUser($passwordUser);
 
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
@@ -84,6 +87,7 @@ final class ConvertAccessRequestToUserCommandHandler
         $this->userRepository->add($user);
         $this->passwordUserRepository->add($passwordUser);
         $this->organizationUserRepository->add($organizationUser);
-        $this->accessRequestRepository->remove($accessRequest);
+
+        return $user;
     }
 }
