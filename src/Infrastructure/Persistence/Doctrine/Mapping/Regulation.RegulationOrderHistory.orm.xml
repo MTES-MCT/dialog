@@ -3,6 +3,10 @@
   <entity
     name="App\Domain\Regulation\RegulationOrderHistory"
     table="regulation_order_history">
+    <indexes>
+        <index columns="regulation_order_uuid"/>
+        <index columns="user_uuid"/>
+    </indexes>
     <id name="uuid" type="guid" column="uuid"/>
     <field name="regulationOrderUuid" type="string" column="regulation_order_uuid" length="50" nullable="false"/>
     <field name="userUuid" type="string" column="user_uuid" length="50" nullable="false"/>
