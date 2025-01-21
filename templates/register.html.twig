@@ -1,0 +1,53 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{'register.meta.title'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-mt-8v fr-mt-md-14v fr-mb-2v fr-mb-md-8v">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-8">
+                <h2>{{ 'register.meta.title'|trans }}</h2>
+                <p class="fr-text--lead">{{ 'register.meta.subtitle'|trans }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            {{ form_start(form) }}
+                            {{ form_row(form.fullName, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            {{ form_row(form.email, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            {{ form_row(form.organizationSiret, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            <div class="fr-mb-3w">
+                                <a class="fr-link  fr-icon-info-fill fr-link--icon-left" href="https://annuaire-entreprises.data.gouv.fr" target="_blank">
+                                    {{ 'register.find_siret'|trans }}
+                                </a>
+                            </div>
+                            {{ form_row(form.password, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            <div class="fr-fieldset__element">
+                                <div class="fr-checkbox-group">
+                                    {{ form_widget(form.cgu) }}
+                                    <label class="fr-label required" for="{{ form.cgu.vars.id }}">
+                                        {{ 'register.cgu.start'|trans }}&nbsp;<a href="{{ path('app_cgu') }}" target="_blank">{{ 'register.cgu.end'|trans }}</a>
+                                    </label>
+                                </div>
+                            </div>
+                            {{ form_row(form.save, {group_class: 'fr-btns-group'}) }}
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-mt-8v fr-mb-8v">
+                    <a href="{{ path('app_landing') }}" class="fr-link fr-fi-arrow-left-line fr-link--icon-left">
+                        {{ 'common.back_to_home'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

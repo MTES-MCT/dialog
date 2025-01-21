@@ -2,7 +2,7 @@
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
-    <class name="App\Application\User\Command\SaveAccessRequestCommand">
+    <class name="App\Application\User\Command\RegisterCommand">
         <property name="fullName">
             <constraint name="NotBlank"/>
             <constraint name="Length">
@@ -22,13 +22,8 @@
                 <option name="min">12</option>
             </constraint>
         </property>
-        <property name="organizationName">
-            <constraint name="NotBlank"/>
-            <constraint name="Length">
-                <option name="max">255</option>
-            </constraint>
-        </property>
         <property name="organizationSiret">
+            <constraint name="NotBlank"/>
             <constraint name="Type">
                 <option name="type">digit</option>
                 <option name="message">Les caractères doivent être des chiffres.</option>
@@ -38,10 +33,5 @@
                 <option name="min">14</option>
             </constraint>
         </property>
-        <property name="consentToBeContacted">
-            <constraint name="Type">
-                <option name="type">boolean</option>
-            </constraint>
-       </property>
     </class>
 </constraint-mapping>

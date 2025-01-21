@@ -89,6 +89,13 @@ class User
         return $this->proConnectUser;
     }
 
+    public function setPasswordUser(PasswordUser $passwordUser): self
+    {
+        $this->passwordUser = $passwordUser;
+
+        return $this;
+    }
+
     public function getPasswordUser(): ?PasswordUser
     {
         return $this->passwordUser;

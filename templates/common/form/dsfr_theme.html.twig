@@ -66,8 +66,8 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
             {{ form_widget(form, { attr: {class: 'fr-password__input fr-input'} }) }}
         </div>
         <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
-            <input aria-label="{{ 'accessRequest.displayPassword'|trans }}" id="{{ form.vars.id }}-show" type="checkbox" aria-describedby="{{ form.vars.id }}-show-messages">
-            <label class="fr-password__checkbox fr-label" for="{{ form.vars.id }}-show">{{ 'accessRequest.displayPassword'|trans }}</label>
+            <input aria-label="{{ 'register.displayPassword'|trans }}" id="{{ form.vars.id }}-show" type="checkbox" aria-describedby="{{ form.vars.id }}-show-messages">
+            <label class="fr-password__checkbox fr-label" for="{{ form.vars.id }}-show">{{ 'register.displayPassword'|trans }}</label>
             <div class="fr-messages-group" id="{{ form.vars.id }}-show-messages" aria-live="assertive"></div>
         </div>
         {{ form_errors(form) }}

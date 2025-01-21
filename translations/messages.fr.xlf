@@ -10,8 +10,8 @@
                 <source>common.results</source>
                 <target>Résultats</target>
             </trans-unit>
-            <trans-unit id="common.accessRequest">
-                <source>common.accessRequest</source>
+            <trans-unit id="common.register">
+                <source>common.register</source>
                 <target>Créer un compte</target>
             </trans-unit>
             <trans-unit id="common.blog">
@@ -123,6 +123,10 @@
             <trans-unit id="common.send">
                 <source>common.send</source>
                 <target>Envoyer</target>
+            </trans-unit>
+            <trans-unit id="common.submit">
+                <source>common.submit</source>
+                <target>Valider</target>
             </trans-unit>
             <trans-unit id="common.cancel">
                 <source>common.cancel</source>
@@ -1632,9 +1636,9 @@
                 <source>login.no_account.title</source>
                 <target>Vous n'avez pas de compte ?</target>
             </trans-unit>
-            <trans-unit id="login.no_account.access_request">
-                <source>login.no_account.access_request</source>
-                <target>Demander la création d'un compte</target>
+            <trans-unit id="login.no_account.register">
+                <source>login.no_account.register</source>
+                <target>Créer un compte</target>
             </trans-unit>
             <trans-unit id="login.legend">
                 <source>login.legend</source>
@@ -2127,28 +2131,28 @@
                 <source>common.form.time.minute</source>
                 <target>Minutes</target>
             </trans-unit>
-            <trans-unit id="accessRequest.displayPassword">
-                <source>accessRequest.displayPassword</source>
+            <trans-unit id="register.displayPassword">
+                <source>register.displayPassword</source>
                 <target>Afficher</target>
             </trans-unit>
-            <trans-unit id="accessRequest.fullName">
-                <source>accessRequest.fullName</source>
+            <trans-unit id="register.fullName">
+                <source>register.fullName</source>
                 <target>Nom et prénom</target>
             </trans-unit>
-            <trans-unit id="accessRequest.email">
-                <source>accessRequest.email</source>
+            <trans-unit id="register.email">
+                <source>register.email</source>
                 <target>Adresse e-mail</target>
             </trans-unit>
-            <trans-unit id="accessRequest.email.help">
-                <source>accessRequest.email.help</source>
+            <trans-unit id="register.email.help">
+                <source>register.email.help</source>
                 <target>Format attendu : nom@domaine.fr</target>
             </trans-unit>
-            <trans-unit id="accessRequest.organizationName">
-                <source>accessRequest.organizationName</source>
+            <trans-unit id="register.organizationName">
+                <source>register.organizationName</source>
                 <target>Nom de l'organisation</target>
             </trans-unit>
-            <trans-unit id="accessRequest.comment">
-                <source>accessRequest.comment</source>
+            <trans-unit id="register.comment">
+                <source>register.comment</source>
                 <target>Message</target>
             </trans-unit>
             <trans-unit id="organization.name">
@@ -2187,49 +2191,53 @@
                 <source>organization.siret</source>
                 <target>SIRET</target>
             </trans-unit>
-            <trans-unit id="accessRequest.organizationSiret">
-                <source>accessRequest.organizationSiret</source>
+            <trans-unit id="register.organizationSiret">
+                <source>register.organizationSiret</source>
                 <target>Numéro SIRET de l'organisation</target>
             </trans-unit>
-            <trans-unit id="accessRequest.organizationSiret.help">
-                <source>accessRequest.organizationSiret.help</source>
+            <trans-unit id="register.organizationSiret.help">
+                <source>register.organizationSiret.help</source>
                 <target>Format attendu : 14 chiffres</target>
             </trans-unit>
-            <trans-unit id="accessRequest.password">
-                <source>accessRequest.password</source>
+            <trans-unit id="register.password">
+                <source>register.password</source>
                 <target>Mot de passe</target>
             </trans-unit>
-            <trans-unit id="accessRequest.password.help">
-                <source>accessRequest.password.help</source>
+            <trans-unit id="register.password.confirm">
+                <source>register.password.confirm</source>
+                <target>Confirmer votre mot de passe</target>
+            </trans-unit>
+            <trans-unit id="register.password.help">
+                <source>register.password.help</source>
                 <target>Format attendu : 12 caractères minimum</target>
             </trans-unit>
-            <trans-unit id="accessRequest.consentToBeContacted">
-                <source>accessRequest.consentToBeContacted</source>
-                <target>J’accepte que l’équipe DiaLog me recontacte afin d’améliorer la plateforme</target>
+            <trans-unit id="register.cgu.end">
+                <source>register.cgu.end</source>
+                <target>conditions générales d'utilisation</target>
             </trans-unit>
-            <trans-unit id="accessRequest.send.success">
-                <source>accessRequest.send.success</source>
-                <target>Votre demande de création de compte a bien été prise en compte. Nous
-                    reviendrons vers vous dans les plus brefs délais.</target>
+            <trans-unit id="register.cgu.start">
+                <source>register.cgu.start</source>
+                <target>J’accepte les</target>
             </trans-unit>
-            <trans-unit id="accessRequest.send.success.help">
-                <source>accessRequest.send.success.help</source>
-                <target>La validation du compte n’est pas faite automatiquement, cela peut prendre
-                    quelques heures.</target>
+            <trans-unit id="register.error.already_exists">
+                <source>register.error.already_exists</source>
+                <target>Un compte utilisant cette adresse e-mail existe déjà.</target>
             </trans-unit>
-            <trans-unit id="accessRequest.send.error">
-                <source>accessRequest.send.error</source>
-                <target>Une demande de création de compte a déjà été créée avec cette adresse
-                    e-mail.</target>
+            <trans-unit id="register.error.organizationSiret_not_found">
+                <source>register.error.organizationSiret_not_found</source>
+                <target>Le SIRET fourni n'existe pas. Veuillez vérifier si votre SIRET est correct.</target>
             </trans-unit>
-            <trans-unit id="accessRequest.meta.title">
-                <source>accessRequest.meta.title</source>
-                <target>Demande de création de compte</target>
+            <trans-unit id="register.find_siret">
+                <source>register.find_siret</source>
+                <target>Retrouver votre SIRET sur L’Annuaire des Entreprises</target>
             </trans-unit>
-            <trans-unit id="accessRequest.meta.subtitle">
-                <source>accessRequest.meta.subtitle</source>
-                <target>Vous pouvez demander la création d’un compte pour votre commune ou
-                    collectivité.</target>
+            <trans-unit id="register.meta.title">
+                <source>register.meta.title</source>
+                <target>Créer mon compte</target>
+            </trans-unit>
+            <trans-unit id="register.meta.subtitle">
+                <source>register.meta.subtitle</source>
+                <target>Vous pouvez créer votre compte pour votre commune ou collectivité.</target>
             </trans-unit>
             <trans-unit id="api.cifs.incident.description">
                 <source>api.cifs.incident.description</source>
