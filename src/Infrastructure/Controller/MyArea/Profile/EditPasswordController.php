@@ -40,7 +40,7 @@ final class EditPasswordController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
             $symfonyUser = $this->authenticatedUser->getSymfonyUser();
-            $symfonyUser->setPassword($user->getPassword());
+            $symfonyUser->setPassword($user->getPasswordUser()->getPassword());
 
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();

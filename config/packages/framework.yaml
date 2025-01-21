@@ -29,6 +29,8 @@ framework:
                 base_uri: '%env(APP_LITTERALIS_WFS_BASE_URL)%'
             ign.geocoder.client:
                 base_uri: '%env(APP_IGN_GEOCODER_BASE_URL)%'
+            dialog.http.client:
+                base_uri: '%env(APP_DIALOG_BASE_URL)%'
 
 when@test:
     framework:

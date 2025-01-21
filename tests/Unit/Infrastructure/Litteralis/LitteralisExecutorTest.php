@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Litteralis\Command\CleanUpLitteralisRegulationsBeforeImportCommand;
 use App\Application\Litteralis\Command\ImportLitteralisRegulationCommand;
+use App\Application\Litteralis\DTO\LitteralisCredentials;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
 
 final class LitteralisExecutorTest extends TestCase
 {
+    private $enabledOrgs;
+    private $credentials;
     private $commandBus;
     private $queryBus;
     private $extractor;
@@ -34,6 +37,9 @@ final class LitteralisExecutorTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->enabledOrgs = ['test'];
+        $this->credentials = (new LitteralisCredentials())
+            ->add('test', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', 'testpassword');
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->extractor = $this->createMock(LitteralisExtractor::class);
@@ -46,7 +52,7 @@ final class LitteralisExecutorTest extends TestCase
     public function testExecuteOrganizationNotFound(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/Organization not found/');
+        $this->expectExceptionMessage('Organization test not found with orgId="066b4d97-016e-77f9-8000-1e8dfaaba586"');
 
         $laterThan = new \DateTimeImmutable('2024-08-01');
 
@@ -64,6 +70,8 @@ final class LitteralisExecutorTest extends TestCase
             ->method('transform');
 
         $executor = new LitteralisExecutor(
+            $this->enabledOrgs,
+            $this->credentials,
             $this->commandBus,
             $this->queryBus,
             $this->extractor,
@@ -132,7 +140,7 @@ final class LitteralisExecutorTest extends TestCase
         $this->extractor
             ->expects(self::once())
             ->method('extractFeaturesByRegulation')
-            ->with($laterThan, $this->reporter)
+            ->with('test', $laterThan, $this->reporter)
             ->willReturn(
                 [
                     'identifier1' => $features1,
@@ -170,9 +178,11 @@ final class LitteralisExecutorTest extends TestCase
             ->expects(self::once())
             ->method('addError')
             ->with(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
-                'message' => 'oops',
                 CommonRecordEnum::ATTR_REGULATION_ID->value => '1234',
                 CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'message' => 'oops',
+                ],
                 'violations' => null,
                 'command' => $command3,
             ]);
@@ -203,6 +213,8 @@ final class LitteralisExecutorTest extends TestCase
             ->with('report');
 
         $executor = new LitteralisExecutor(
+            $this->enabledOrgs,
+            $this->credentials,
             $this->commandBus,
             $this->queryBus,
             $this->extractor,

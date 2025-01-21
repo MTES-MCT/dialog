@@ -7,6 +7,7 @@ namespace App\Infrastructure\Litteralis;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Litteralis\Command\CleanUpLitteralisRegulationsBeforeImportCommand;
+use App\Application\Litteralis\DTO\LitteralisCredentials;
 use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
@@ -19,6 +20,8 @@ use Symfony\Component\Messenger\Exception\ValidationFailedException;
 final class LitteralisExecutor
 {
     public function __construct(
+        array $litteralisEnabledOrgs,
+        LitteralisCredentials $litteralisCredentials,
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private LitteralisExtractor $extractor,
@@ -26,11 +29,7 @@ final class LitteralisExecutor
         private ReportFormatter $reportFormatter,
         private DateUtilsInterface $dateUtils,
     ) {
-    }
-
-    public function configure(string $credentials): void
-    {
-        $this->extractor->configure($credentials);
+        $this->extractor->configure($litteralisEnabledOrgs, $litteralisCredentials);
     }
 
     public function execute(string $name, string $orgId, \DateTimeInterface $laterThan, Reporter $reporter): string
@@ -39,7 +38,7 @@ final class LitteralisExecutor
             /** @var Organization */
             $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($orgId));
         } catch (OrganizationNotFoundException $exc) {
-            throw new \RuntimeException(\sprintf('Organization not found: %s', $orgId));
+            throw new \RuntimeException(\sprintf('Organization %s not found with orgId="%s"', $name, $orgId));
         }
 
         $startTime = $this->dateUtils->getNow();
@@ -47,7 +46,7 @@ final class LitteralisExecutor
 
         $this->commandBus->handle(new CleanUpLitteralisRegulationsBeforeImportCommand($organization->getUuid(), $laterThan));
 
-        $featuresByRegulation = $this->extractor->extractFeaturesByRegulation($laterThan, $reporter);
+        $featuresByRegulation = $this->extractor->extractFeaturesByRegulation($name, $laterThan, $reporter);
         $numImportedRegulations = 0;
         $numImportedFeatures = 0;
 
@@ -69,7 +68,9 @@ final class LitteralisExecutor
                 $reporter->addError(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationFeatures[0]['properties']['arretesrcid'],
                     CommonRecordEnum::ATTR_URL->value => $regulationFeatures[0]['properties']['shorturl'],
-                    'message' => $exc->getMessage(),
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'message' => $exc->getMessage(),
+                    ],
                     'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
                     'command' => $command,
                 ]);
