@@ -148,5 +148,9 @@ when@test:
             arguments: ['@http_kernel']
         App\Infrastructure\Adapter\DateUtils:
             class: App\Tests\Mock\DateUtilsMock
+        App\Tests\Mock\ApiOrganizationFetcherMock:
+            decorates: 'organization_fetcher.client'
+            decoration_inner_name: 'App\Tests\Mock\EudonetParis\ApiOrganizationFetcherMock::organization_fetcher.client'
+
         Psr\Log\NullLogger: ~
         logger: '@Psr\Log\NullLogger'
