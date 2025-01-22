@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Command;
 
-use App\Infrastructure\JOP\JOPExecutor;
+use App\Infrastructure\Integration\JOP\JOPExecutor;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

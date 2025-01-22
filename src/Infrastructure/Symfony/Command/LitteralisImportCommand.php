@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
-use App\Application\Litteralis\DTO\LitteralisCredentials;
-use App\Infrastructure\IntegrationReport\Reporter;
-use App\Infrastructure\Litteralis\LitteralisExecutor;
+use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
+use App\Infrastructure\Integration\IntegrationReport\Reporter;
+use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

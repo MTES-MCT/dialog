@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
-use App\Infrastructure\EudonetParis\EudonetParisExecutor;
-use App\Infrastructure\EudonetParis\Exception\EudonetParisException;
+use App\Infrastructure\Integration\EudonetParis\EudonetParisExecutor;
+use App\Infrastructure\Integration\EudonetParis\Exception\EudonetParisException;
 use App\Infrastructure\Symfony\Command\EudonetParisImportCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;

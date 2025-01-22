@@ -86,12 +86,12 @@ services:
     # Eudonet Paris
     # --------------
 
-    App\Infrastructure\EudonetParis\EudonetParisExecutor:
+    App\Infrastructure\Integration\EudonetParis\EudonetParisExecutor:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: eudonet_paris_import }
 
-    App\Infrastructure\EudonetParis\EudonetParisClient:
+    App\Infrastructure\Integration\EudonetParis\EudonetParisClient:
         arguments:
             $credentials: '%env(APP_EUDONET_PARIS_CREDENTIALS)%'
 
@@ -99,7 +99,7 @@ services:
     # Bac IDF
     # --------------
 
-    App\Infrastructure\BacIdf\BacIdfExecutor:
+    App\Infrastructure\Integration\BacIdf\BacIdfExecutor:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: bac_idf_import }
@@ -108,12 +108,12 @@ services:
     # JOP
     # --------------
 
-    App\Infrastructure\JOP\JOPExecutor:
+    App\Infrastructure\Integration\JOP\JOPExecutor:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: jop_import }
 
-    App\Infrastructure\JOP\JOPTransformer:
+    App\Infrastructure\Integration\JOP\JOPTransformer:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: jop_import }

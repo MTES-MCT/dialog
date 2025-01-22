@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
-use App\Application\Litteralis\DTO\LitteralisCredentials;
-use App\Infrastructure\IntegrationReport\Reporter;
-use App\Infrastructure\Litteralis\LitteralisExecutor;
+use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
+use App\Infrastructure\Integration\IntegrationReport\Reporter;
+use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
