@@ -49,7 +49,7 @@ class LitteralisImportCommand extends Command
                 $report = $this->executor->execute($name, $orgId, $now, $this->reporter);
 
                 $output->write($report);
-            } catch (\RuntimeException $exc) {
+            } catch (\Exception $exc) {
                 $output->writeln($exc->getMessage());
 
                 $returnCode = Command::FAILURE;
