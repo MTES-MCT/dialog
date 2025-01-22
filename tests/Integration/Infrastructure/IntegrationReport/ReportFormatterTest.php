@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\IntegrationReport;
 
-use App\Infrastructure\IntegrationReport\CommonRecordEnum;
-use App\Infrastructure\IntegrationReport\RecordTypeEnum;
-use App\Infrastructure\IntegrationReport\ReportFormatter;
+use App\Infrastructure\Integration\IntegrationReport\CommonRecordEnum;
+use App\Infrastructure\Integration\IntegrationReport\RecordTypeEnum;
+use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
