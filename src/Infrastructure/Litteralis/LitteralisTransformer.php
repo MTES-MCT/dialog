@@ -110,8 +110,8 @@ final readonly class LitteralisTransformer
     private function setCategory(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
     {
         $generalInfoCommand->category = $properties['documenttype'] === 'ARRETE PERMANENT'
-        ? RegulationOrderCategoryEnum::PERMANENT_REGULATION->value
-        : RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+            ? RegulationOrderCategoryEnum::PERMANENT_REGULATION->value
+            : RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
     }
 
     private function setSubject(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
@@ -277,7 +277,22 @@ final readonly class LitteralisTransformer
 
         foreach ($measureParameters as $param) {
             // Exemple : "Circulation interdite 2 | dérogation : urgences" -> ['Circulation interdite 2', 'dérogation : urgences']
-            [$name, $item] = $this->parseSeparatedString($param, '|');
+            $parts = explode('|', $param, 2);
+
+            if (\count($parts) !== 2) {
+                $reporter->addError(LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_MALFORMED->value, [
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
+                    CommonRecordEnum::ATTR_URL->value => $properties['shorturl'],
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => $properties['idemprise'],
+                        'param' => $param,
+                    ],
+                ]);
+
+                continue;
+            }
+
+            [$name, $item] = array_map(fn ($s) => trim($s), $parts);
 
             if (preg_match('/^(?P<name>[\s|\w]+) (?P<number>\d+)$/i', $name, $matches)) {
                 // Si un numéro est indiqué, il doit correspondre au index commençant à 1 de la mesure dans le champ 'mesures'.

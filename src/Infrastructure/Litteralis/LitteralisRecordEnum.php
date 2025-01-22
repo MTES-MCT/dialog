@@ -11,6 +11,7 @@ enum LitteralisRecordEnum: string
     case COUNT_EXTRACTED_FEATURES = 'litteralis.extracted_features';
     case COUNT_IMPORTED_FEATURES = 'litteralis.imported_features';
 
+    case ERROR_MEASURE_PARAMETER_MALFORMED = 'litteralis.measure_parameter_malformed';
     case ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER = 'litteralis.measure_parameter_inconsistent_number';
     case ERROR_MAX_SPEED_VALUE_INVALID = 'litteralis.max_speed_value_invalid';
     case ERROR_MAX_SPEED_VALUE_MISSING = 'litteralis.max_speed_value_missing';

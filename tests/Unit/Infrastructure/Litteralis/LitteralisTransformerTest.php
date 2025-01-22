@@ -250,6 +250,18 @@ final class LitteralisTransformerTest extends TestCase
             self::feature,
         );
 
+        // Trigger ERROR_MEASURE_PARAMETER_MALFORMED
+        $malformedParamFeature = str_replace(
+            '"mesures": "Limitation de vitesse"',
+            '"mesures": "Circulation interdite"',
+            self::feature,
+        );
+        $malformedParamFeature = str_replace(
+            '"parametresmesures": "Limitation de vitesse | limite de vitesse : 70 km/h"',
+            '"parametresmesures": "Circulation interdite 1"',
+            $malformedParamFeature,
+        );
+
         // Trigger ERROR_MEASURE_PARAMETER_INCONSISTENT_NUMBER
         $inconsistentIndexFeature = str_replace(
             '"mesures": "Limitation de vitesse"',
@@ -273,6 +285,7 @@ final class LitteralisTransformerTest extends TestCase
             json_decode($invalidDatesFeature, associative: true),
             json_decode($missingSpeedLimitValueFeature, associative: true),
             json_decode($invalidSpeedLimitValueFeature, associative: true),
+            json_decode($malformedParamFeature, associative: true),
             json_decode($inconsistentIndexFeature, associative: true),
             json_decode($periodUnparsableFeature, associative: true),
         ];
@@ -328,6 +341,18 @@ final class LitteralisTransformerTest extends TestCase
                     CommonRecordEnum::ATTR_DETAILS->value => [
                         'idemprise' => 493136,
                         'limite de vitesse' => 'foo km/h',
+                    ],
+                ],
+            ],
+            [
+                RecordTypeEnum::ERROR->value,
+                [
+                    RecordTypeEnum::ERROR->value => LitteralisRecordEnum::ERROR_MEASURE_PARAMETER_MALFORMED->value,
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
+                    CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 493136,
+                        'param' => 'Circulation interdite 1',
                     ],
                 ],
             ],
