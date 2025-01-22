@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Symfony\DependencyInjection;
 
-use App\Application\Litteralis\DTO\LitteralisCredentials;
+use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
 use App\Infrastructure\Symfony\DependencyInjection\LitteralisCredentialsEnvVarProcessor;
 use PHPUnit\Framework\TestCase;
 

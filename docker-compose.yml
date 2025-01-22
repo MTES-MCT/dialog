@@ -27,13 +27,14 @@ services:
       - database
       - redis
 
-  php_worker:
+  supervisor:
     build:
       context: ./docker/php
-    command: 'bin/console messenger:consume async --time-limit=300 --memory-limit=256M --limit=50'
-    restart: always
+    command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
     volumes:
       - ./:/var/www/dialog
+      - ./docker/php/supervisor:/etc/supervisor
+      - ./var/log/supervisor:/var/log/supervisor
     depends_on:
       - database
       - redis
@@ -85,3 +86,12 @@ services:
     ports:
       - 1025:1025
       - 1080:1080
+
+  redis-commander:
+    image: rediscommander/redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis

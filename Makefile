@@ -296,6 +296,18 @@ ci_metabase_export: ## Export data to Metabase
 
 ##
 ## ----------------
+## Supervision
+## ----------------
+##
+
+supervisor_status:
+	docker compose exec supervisor supervisorctl status
+
+supervisor_restart:
+	docker compose exec supervisor supervisorctl restart messenger-worker:*
+
+##
+## ----------------
 ## Prod
 ## ----------------
 ##

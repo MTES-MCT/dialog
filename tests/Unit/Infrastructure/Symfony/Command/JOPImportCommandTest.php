@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
-use App\Infrastructure\JOP\JOPExecutor;
+use App\Infrastructure\Integration\JOP\JOPExecutor;
 use App\Infrastructure\Symfony\Command\JOPImportCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;

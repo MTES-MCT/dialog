@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "DATABASE_URL=${{ secrets.METABASE_EXPORT_DATABASE_URL }}" >> .env
           echo "METABASE_DATABASE_URL=${{ secrets.METABASE_EXPORT_METABASE_DATABASE_URL }}" >> .env
-          echo "APP_DIALOG_BASE_URL=${{ variables.METABASE_EXPORT_APP_DIALOG_BASE_URL }}" >> .env
+          echo "APP_DIALOG_BASE_URL=${{ vars.METABASE_EXPORT_APP_DIALOG_BASE_URL }}" >> .env
 
       - name: Run export
         run: make ci_metabase_export BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"

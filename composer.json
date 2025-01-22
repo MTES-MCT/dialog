@@ -34,6 +34,7 @@
         "symfony/mime": "7.2.*",
         "symfony/monolog-bundle": "^3.8",
         "symfony/rate-limiter": "7.2.*",
+        "symfony/redis-messenger": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
         "symfony/translation": "7.2.*",

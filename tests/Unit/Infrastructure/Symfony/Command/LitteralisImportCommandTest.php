@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
-use App\Application\Litteralis\DTO\LitteralisCredentials;
-use App\Infrastructure\IntegrationReport\Reporter;
-use App\Infrastructure\Litteralis\LitteralisExecutor;
+use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
+use App\Infrastructure\Integration\IntegrationReport\Reporter;
+use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -78,7 +78,7 @@ class LitteralisImportCommandTest extends TestCase
             ->willReturnCallback(
                 fn () => match ($matcher->getInvocationCount()) {
                     1 => 'report1' . PHP_EOL,
-                    2 => throw new \RuntimeException('Failed'),
+                    2 => throw new \Exception('Failed'),
                     3 => 'report3' . PHP_EOL,
                 },
             );
