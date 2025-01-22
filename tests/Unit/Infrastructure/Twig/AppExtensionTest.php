@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Infrastructure\Twig;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Infrastructure\Adapter\StringUtils;
-use App\Infrastructure\FeatureFlagService;
 use App\Infrastructure\Twig\AppExtension;
 use App\Tests\TimezoneHelper;
 use PHPUnit\Framework\TestCase;
@@ -20,21 +19,18 @@ class AppExtensionTest extends TestCase
     use TimezoneHelper;
 
     private AppExtension $extension;
-    private $featureFlagService;
 
     protected function setUp(): void
     {
-        $this->featureFlagService = $this->createMock(FeatureFlagService::class);
         $this->extension = new AppExtension(
             'Etc/GMT-1', // Independent of Daylight Saving Time (DST).
             new StringUtils(),
-            $this->featureFlagService,
         );
     }
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(8, $this->extension->getFunctions());
+        $this->assertCount(7, $this->extension->getFunctions());
     }
 
     public function testGetFilters(): void
@@ -213,25 +209,6 @@ class AppExtensionTest extends TestCase
         $constraint->payload = $payload;
 
         $this->assertSame($expected, $this->extension->isFieldsetError($error, 'example'));
-    }
-
-    private function provideIsFeatureEnabled(): array
-    {
-        return [['enabled' => true], ['enabled' => false]];
-    }
-
-    /**
-     * @dataProvider provideIsFeatureEnabled
-     */
-    public function testIsFeatureEnabled(bool $enabled): void
-    {
-        $this->featureFlagService
-            ->expects(self::once())
-            ->method('isFeatureEnabled')
-            ->with('MY_FEATURE')
-            ->willReturn($enabled);
-
-        $this->assertSame($enabled, $this->extension->isFeatureEnabled('MY_FEATURE'));
     }
 
     public function testCapFirst(): void
