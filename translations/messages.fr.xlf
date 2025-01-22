@@ -2491,6 +2491,10 @@
                 <source>integration.report.error.litteralis.period_unparsable</source>
                 <target>Emprises avec "jours et horaires" au format non-supporté</target>
             </trans-unit>
+            <trans-unit id="integration.report.error.litteralis.measure_parameter_malformed">
+                <source>integration.report.error.litteralis.measure_parameter_malformed</source>
+                <target>Emprises avec paramètres de mesures au format inattendu</target>
+            </trans-unit>
             <trans-unit id="integration.report.error.litteralis.measure_parameter_inconsistent_number">
                 <source>integration.report.error.litteralis.measure_parameter_inconsistent_number</source>
                 <target>Emprises avec numéros de mesures incohérents</target>
