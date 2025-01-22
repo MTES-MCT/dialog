@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\DependencyInjection;
 
-use App\Application\Litteralis\DTO\LitteralisCredentials;
+use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
 use Symfony\Component\DependencyInjection\EnvVarProcessorInterface;
 
 class LitteralisCredentialsEnvVarProcessor implements EnvVarProcessorInterface
