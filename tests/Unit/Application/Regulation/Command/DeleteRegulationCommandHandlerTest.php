@@ -14,7 +14,6 @@ use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
 use App\Domain\User\User;
-use App\Infrastructure\Security\AuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 final class DeleteRegulationCommandHandlerTest extends TestCase
@@ -25,7 +24,6 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
     private $regulationOrderRecord;
     private $regulationOrder;
     private $commandBus;
-    private $authenticatedUser;
 
     protected function setUp(): void
     {
@@ -35,7 +33,6 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->authenticatedUser = $this->createMock(AuthenticatedUser::class);
     }
 
     public function testDelete(): void
@@ -59,15 +56,9 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($this->regulationOrder);
 
-        $this->authenticatedUser
-            ->expects(self::once())
-            ->method('getUser')
-            ->willReturn($user);
-
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRepository,
             $this->canOrganizationAccessToRegulation, $this->commandBus,
-            $this->authenticatedUser,
         );
 
         $command = new DeleteRegulationCommand($this->organizationUuids, $this->regulationOrderRecord);
@@ -98,7 +89,6 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
             $this->regulationOrderRepository,
             $this->canOrganizationAccessToRegulation,
             $this->commandBus,
-            $this->authenticatedUser,
         );
 
         $command = new DeleteRegulationCommand($this->organizationUuids, $this->regulationOrderRecord);

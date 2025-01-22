@@ -14,7 +14,6 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
-use App\Infrastructure\Security\AuthenticatedUser;
 
 final class SaveRegulationGeneralInfoCommandHandler
 {
@@ -25,13 +24,11 @@ final class SaveRegulationGeneralInfoCommandHandler
         private \DateTimeInterface $now,
         private QueryBusInterface $queryBus,
         private CommandBusInterface $commandBus,
-        private AuthenticatedUser $authenticatedUser,
     ) {
     }
 
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
-        $user = $this->authenticatedUser->getUser();
         $command->cleanOtherCategoryText();
         $visaModel = $command->visaModelUuid
             ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
@@ -63,9 +60,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                 ),
             );
 
-            $action = ActionTypeEnum::CREATE->value;
-
-            $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action));
+            $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::CREATE->value));
 
             return $regulationOrderRecord;
         }
@@ -85,9 +80,7 @@ final class SaveRegulationGeneralInfoCommandHandler
             visaModel: $visaModel,
         );
 
-        $action = ActionTypeEnum::UPDATE->value;
-
-        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action));
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value));
 
         return $command->regulationOrderRecord;
     }

@@ -15,20 +15,17 @@ use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use App\Domain\User\User;
-use App\Infrastructure\Security\AuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 final class PublishRegulationCommandHandlerTest extends TestCase
 {
     private $canRegulationOrderRecordBePublished;
     private $commandBus;
-    private $authenticatedUser;
 
     protected function setUp(): void
     {
         $this->canRegulationOrderRecordBePublished = $this->createMock(CanRegulationOrderRecordBePublished::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->authenticatedUser = $this->createMock(AuthenticatedUser::class);
     }
 
     public function testPublish(): void
@@ -48,18 +45,13 @@ final class PublishRegulationCommandHandlerTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
 
-        $this->authenticatedUser
-            ->expects(self::once())
-            ->method('getUser')
-            ->willReturn($user);
-
         $this->canRegulationOrderRecordBePublished
             ->expects(self::once())
             ->method('isSatisfiedBy')
             ->willReturn(true);
 
         $action = ActionTypeEnum::PUBLISH->value;
-        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action);
+        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, $action);
 
         $this->commandBus
                 ->expects(self::once())
@@ -67,7 +59,7 @@ final class PublishRegulationCommandHandlerTest extends TestCase
                 ->with($this->equalTo($regulationOrderHistoryCommand));
 
         $handler = new PublishRegulationCommandHandler(
-            $this->canRegulationOrderRecordBePublished, $this->commandBus, $this->authenticatedUser,
+            $this->canRegulationOrderRecordBePublished, $this->commandBus,
         );
 
         $command = new PublishRegulationCommand($regulationOrderRecord);
@@ -90,7 +82,7 @@ final class PublishRegulationCommandHandlerTest extends TestCase
             ->willReturn(false);
 
         $handler = new PublishRegulationCommandHandler(
-            $this->canRegulationOrderRecordBePublished, $this->commandBus, $this->authenticatedUser,
+            $this->canRegulationOrderRecordBePublished, $this->commandBus,
         );
 
         $command = new PublishRegulationCommand($regulationOrderRecord);

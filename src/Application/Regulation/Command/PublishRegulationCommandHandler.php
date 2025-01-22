@@ -9,14 +9,12 @@ use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
-use App\Infrastructure\Security\AuthenticatedUser;
 
 final class PublishRegulationCommandHandler
 {
     public function __construct(
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
         private CommandBusInterface $commandBus,
-        private AuthenticatedUser $authenticatedUser,
     ) {
     }
 
@@ -27,10 +25,8 @@ final class PublishRegulationCommandHandler
         }
 
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
-        $user = $this->authenticatedUser->getUser();
-        $action = ActionTypeEnum::PUBLISH->value;
 
-        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action));
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::PUBLISH->value));
 
         $command->regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::PUBLISHED->value);
     }

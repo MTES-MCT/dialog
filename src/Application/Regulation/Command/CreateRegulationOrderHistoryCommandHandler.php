@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
+use App\Infrastructure\Security\AuthenticatedUser;
 
 final class CreateRegulationOrderHistoryCommandHandler
 {
@@ -15,6 +16,7 @@ final class CreateRegulationOrderHistoryCommandHandler
         private IdFactoryInterface $idFactory,
         private RegulationOrderHistoryRepositoryInterface $regulationOrderHistoryRepository,
         private DateUtilsInterface $dateUtils,
+        private AuthenticatedUser $authenticatedUser,
     ) {
     }
 
@@ -24,7 +26,7 @@ final class CreateRegulationOrderHistoryCommandHandler
             new RegulationOrderHistory(
                 uuid: $this->idFactory->make(),
                 regulationOrderUuid: $command->regulationOrder->getUuid(),
-                userUuid: $command->user->getUuid(),
+                userUuid: $this->authenticatedUser->getUser()->getUuid(),
                 action: $command->action,
                 date: $this->dateUtils->getNow(),
             ),

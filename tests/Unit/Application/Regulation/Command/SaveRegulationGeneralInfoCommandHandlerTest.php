@@ -23,7 +23,6 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
 use App\Domain\User\User;
-use App\Infrastructure\Security\AuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
@@ -35,7 +34,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     private $organization;
     private $visaModel;
     private $commandBus;
-    private $authenticatedUser;
     private $user;
 
     public function setUp(): void
@@ -47,13 +45,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->organization = $this->createMock(Organization::class);
         $this->visaModel = $this->createMock(VisaModel::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->authenticatedUser = $this->createMock(AuthenticatedUser::class);
         $this->user = $this->createMock(User::class);
-
-        $this->authenticatedUser
-            ->expects(self::once())
-            ->method('getUser')
-            ->willReturn($this->user);
     }
 
     public function testCreate(): void
@@ -115,7 +107,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             $now,
             $this->queryBus,
             $this->commandBus,
-            $this->authenticatedUser,
         );
 
         $command = new SaveRegulationGeneralInfoCommand();
@@ -183,8 +174,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->method('updateOrganization')
             ->with($organization);
 
-        $action = ActionTypeEnum::UPDATE->value;
-        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, $this->user, $action);
+        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value);
 
         $this->commandBus
             ->expects(self::once())
@@ -197,7 +187,6 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             $now,
             $this->queryBus,
             $this->commandBus,
-            $this->authenticatedUser,
         );
 
         $command = new SaveRegulationGeneralInfoCommand($regulationOrderRecord);

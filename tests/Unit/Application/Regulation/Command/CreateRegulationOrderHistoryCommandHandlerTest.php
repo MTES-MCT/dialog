@@ -13,6 +13,7 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
 use App\Domain\User\User;
+use App\Infrastructure\Security\AuthenticatedUser;
 use AsyncAws\Core\Test\TestCase;
 
 final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
@@ -20,12 +21,14 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
     private $idFactory;
     private $regulationOrderHistoryRepository;
     private $dateUtils;
+    private $authenticatedUser;
 
     public function SetUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->regulationOrderHistoryRepository = $this->createMock(RegulationOrderHistoryRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
+        $this->authenticatedUser = $this->createMock(AuthenticatedUser::class);
     }
 
     public function testCreate(): void
@@ -50,6 +53,11 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('9ddd73e5-2162-4279-be73-183816e7f85b');
+
+        $this->authenticatedUser
+            ->expects(self::once())
+            ->method('getUser')
+            ->willReturn($user);
 
         $user
             ->expects(self::once())
@@ -78,11 +86,10 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->regulationOrderHistoryRepository,
             $this->dateUtils,
+            $this->authenticatedUser,
         );
 
-        $command = new CreateRegulationOrderHistoryCommand($regulationOrder,
-            $user,
-            $action);
+        $command = new CreateRegulationOrderHistoryCommand($regulationOrder, $action);
 
         $result = $handler($command);
 

@@ -9,7 +9,6 @@ use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
-use App\Infrastructure\Security\AuthenticatedUser;
 
 final class DeleteRegulationCommandHandler
 {
@@ -17,7 +16,6 @@ final class DeleteRegulationCommandHandler
         private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         private CommandBusInterface $commandBus,
-        private AuthenticatedUser $authenticatedUser,
     ) {
     }
 
@@ -25,15 +23,12 @@ final class DeleteRegulationCommandHandler
     {
         $regulationOrderRecord = $command->regulationOrderRecord;
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
-        $user = $this->authenticatedUser->getUser();
 
         if (false === $this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $command->userOrganizationUuids)) {
             throw new RegulationOrderRecordCannotBeDeletedException();
         }
 
-        $action = ActionTypeEnum::DELETE->value;
-
-        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, $user, $action));
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::DELETE->value));
 
         $this->regulationOrderRepository->delete($regulationOrder);
     }
