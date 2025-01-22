@@ -78,7 +78,7 @@ class LitteralisImportCommandTest extends TestCase
             ->willReturnCallback(
                 fn () => match ($matcher->getInvocationCount()) {
                     1 => 'report1' . PHP_EOL,
-                    2 => throw new \RuntimeException('Failed'),
+                    2 => throw new \Exception('Failed'),
                     3 => 'report3' . PHP_EOL,
                 },
             );
