@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
-use App\Infrastructure\BacIdf\BacIdfExecutor;
-use App\Infrastructure\BacIdf\Exception\BacIdfException;
+use App\Infrastructure\Integration\BacIdf\BacIdfExecutor;
+use App\Infrastructure\Integration\BacIdf\Exception\BacIdfException;
 use App\Infrastructure\Symfony\Command\BacIdfImportCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
