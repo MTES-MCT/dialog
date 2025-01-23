@@ -14,6 +14,12 @@ jobs:
         ports:
           - 5432:5432
 
+      mailer:
+        image: schickling/mailcatcher
+        ports:
+          - 1025:1025
+          - 1080:1080
+
       redis:
         image: redis:5-alpine
         options: >-
@@ -64,6 +70,7 @@ jobs:
           echo "METABASE_DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
           echo "REDIS_URL=redis://localhost:6379" >> .env
           echo "APP_STORAGE_SOURCE=memory.storage" >> .env
+          echo "MAILER_DSN=smtp://localhost:1025" >> .env
 
       - name: CI
         run: make ci CI=1 BIN_SHELL="" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"

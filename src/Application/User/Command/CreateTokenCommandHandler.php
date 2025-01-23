@@ -24,17 +24,17 @@ final readonly class CreateTokenCommandHandler
     ) {
     }
 
-    public function __invoke(CreateTokenCommand $command): string
+    public function __invoke(CreateTokenCommand $command): Token
     {
         $user = $this->userRepository->findOneByEmail($command->email);
-        if (!$user instanceof User) {
+        if (!$user instanceof User || !$user->getPasswordUser()) {
             throw new UserNotFoundException();
         }
 
         $expirationDate = $this->dateUtils->getNow()->modify('+1 day');
         $token = $this->tokenGenerator->generate();
 
-        $this->tokenRepository->add(
+        return $this->tokenRepository->add(
             new Token(
                 uuid: $this->idFactory->make(),
                 token: $token,
@@ -43,7 +43,5 @@ final readonly class CreateTokenCommandHandler
                 expirationDate: $expirationDate,
             ),
         );
-
-        return $token;
     }
 }
