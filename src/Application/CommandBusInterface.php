@@ -7,4 +7,6 @@ namespace App\Application;
 interface CommandBusInterface
 {
     public function handle(CommandInterface $command): mixed;
+
+    public function dispatchAsync(AsyncCommandInterface $message): void;
 }
