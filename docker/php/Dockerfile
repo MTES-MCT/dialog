@@ -53,6 +53,12 @@ RUN apt-get install -y wget && \
     wget https://github.com/jgm/pandoc/releases/download/3.5/pandoc-3.5-1-amd64.deb && \
     dpkg -i pandoc-3.5-1-amd64.deb
 
+# Install Supervisor
+
+RUN apt-get update && apt-get install -y supervisor
+RUN mkdir -p /var/log/supervisor
+COPY supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+
 # Allow husky to install pre-commit hooks
 RUN git config --global --add safe.directory /var/www/dialog
 

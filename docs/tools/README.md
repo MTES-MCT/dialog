@@ -13,3 +13,4 @@ Table des matières :
 - [Analytics](./analytics.md)
 - [Eudonet Paris](./eudonet_paris.md)
 - [S3](./s3.md)
+- [Mailer](./mailer.md)
