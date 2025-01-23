@@ -20,9 +20,16 @@ final class CreateRegulationOrderHistoryCommandHandler
     ) {
     }
 
-    public function __invoke(CreateRegulationOrderHistoryCommand $command): RegulationOrderHistory
+    public function __invoke(CreateRegulationOrderHistoryCommand $command): void
     {
-        $regulationOrderHistory = $this->regulationOrderHistoryRepository->add(
+        // La seule possibilité d'exécuter cette commande sans être authentifié, c'est
+        // d'avoir lancé une commande Symfony en ligne de commande.
+        // Dans ce cas on n'a pas d'utilisateur connecté donc on ne stocke pas d'historique.
+
+        if (!$this->authenticatedUser->getUser()) {
+            return;
+        }
+        $this->regulationOrderHistoryRepository->add(
             new RegulationOrderHistory(
                 uuid: $this->idFactory->make(),
                 regulationOrderUuid: $command->regulationOrder->getUuid(),
@@ -31,7 +38,5 @@ final class CreateRegulationOrderHistoryCommandHandler
                 date: $this->dateUtils->getNow(),
             ),
         );
-
-        return $regulationOrderHistory;
     }
 }
