@@ -10,6 +10,7 @@ use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
+use App\Domain\Regulation\Location\StorageArea;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
 
@@ -24,6 +25,7 @@ final class LocationTest extends TestCase
         $rawGeoJSON = $this->createMock(RawGeoJSON::class);
         $rawGeoJSON2 = $this->createMock(RawGeoJSON::class);
         $measure = $this->createMock(Measure::class);
+        $storageArea = $this->createMock(StorageArea::class);
         $geometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.935836, 47.347024),
             Coordinates::fromLonLat(-1.930973, 47.347917),
@@ -62,6 +64,9 @@ final class LocationTest extends TestCase
         $this->assertSame($measure, $numberedRoadLocation->getMeasure());
         $this->assertSame($geometry, $numberedRoadLocation->getGeometry());
         $this->assertSame('departmentalRoad', $numberedRoadLocation->getRoadType());
+        $this->assertEmpty($numberedRoadLocation->getStorageArea()); // Automatically set by Doctrine
+        $numberedRoadLocation->setStorageArea($storageArea);
+        $this->assertSame($storageArea, $numberedRoadLocation->getStorageArea());
 
         $this->assertSame('c4bc0255-3546-4e04-bf30-f9c8699778ad', $rawGeoJSONLocation->getUuid());
         $this->assertSame($measure, $rawGeoJSONLocation->getMeasure());
