@@ -13,19 +13,16 @@ framework:
                     - validation
 
         transports:
-            # https://symfony.com/doc/current/messenger.html#transport-configuration
-            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
-
+            async:
+                dsn: "%env(REDIS_URL)%/messages"
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
         routing:
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            'App\Application\AsyncCommandInterface': async
 
-# when@test:
-#    framework:
-#        messenger:
-#            transports:
-#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
-#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
-#                async: 'in-memory://'
+when@test:
+   framework:
+       messenger:
+           transports:
+               async: 'sync://'

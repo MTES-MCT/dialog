@@ -27,6 +27,18 @@ services:
       - database
       - redis
 
+  supervisor:
+    build:
+      context: ./docker/php
+    command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+    volumes:
+      - ./:/var/www/dialog
+      - ./docker/php/supervisor:/etc/supervisor
+      - ./var/log/supervisor:/var/log/supervisor
+    depends_on:
+      - database
+      - redis
+
   nginx:
     image: nginx:stable-alpine
     ports:
@@ -68,3 +80,18 @@ services:
       # Allow accessing host ports from this container via host.docker.internal on Linux
       # https://stackoverflow.com/a/43541732
       - host.docker.internal:host-gateway
+
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - 1025:1025
+      - 1080:1080
+
+  redis-commander:
+    image: rediscommander/redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis

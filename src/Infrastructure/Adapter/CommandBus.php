@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\AsyncCommandInterface;
 use App\Application\CommandBusInterface;
 use App\Application\CommandInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
@@ -34,5 +35,14 @@ final class CommandBus implements CommandBusInterface
 
             throw $previous;
         }
+    }
+
+    /**
+     * Use whenever you want to execute a command async,
+     * but **please ensure the Messenger routing is correct**.
+     */
+    public function dispatchAsync(AsyncCommandInterface $message): void
+    {
+        $this->messageBus->dispatch($message);
     }
 }
