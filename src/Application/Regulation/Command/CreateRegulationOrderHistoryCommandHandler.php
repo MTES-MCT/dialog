@@ -25,10 +25,10 @@ final class CreateRegulationOrderHistoryCommandHandler
         // La seule possibilité d'exécuter cette commande sans être authentifié, c'est
         // d'avoir lancé une commande Symfony en ligne de commande.
         // Dans ce cas on n'a pas d'utilisateur connecté donc on ne stocke pas d'historique.
-
         if (!$this->authenticatedUser->getUser()) {
             return;
         }
+
         $this->regulationOrderHistoryRepository->add(
             new RegulationOrderHistory(
                 uuid: $this->idFactory->make(),
