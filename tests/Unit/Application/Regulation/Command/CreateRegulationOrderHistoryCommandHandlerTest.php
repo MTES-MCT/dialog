@@ -55,7 +55,7 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
             ->willReturn('9ddd73e5-2162-4279-be73-183816e7f85b');
 
         $this->authenticatedUser
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getUser')
             ->willReturn($user);
 
@@ -63,8 +63,6 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('3cc78eae-50ba-4805-9b75-7f64ca638caf');
-
-        $createdRegulationOrderHistory = $this->createMock(RegulationOrderHistory::class);
 
         $this->regulationOrderHistoryRepository
             ->expects(self::once())
@@ -79,8 +77,7 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
                         date: $now,
                     ),
                 ),
-            )
-            ->willReturn($createdRegulationOrderHistory);
+            );
 
         $handler = new CreateRegulationOrderHistoryCommandHandler(
             $this->idFactory,
@@ -91,8 +88,6 @@ final class CreateRegulationOrderHistoryCommandHandlerTest extends TestCase
 
         $command = new CreateRegulationOrderHistoryCommand($regulationOrder, $action);
 
-        $result = $handler($command);
-
-        $this->assertSame($createdRegulationOrderHistory, $result);
+        $handler($command);
     }
 }
