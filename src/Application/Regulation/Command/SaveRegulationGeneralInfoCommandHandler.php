@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Command;
 
+use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -21,6 +23,7 @@ final class SaveRegulationGeneralInfoCommandHandler
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private \DateTimeInterface $now,
         private QueryBusInterface $queryBus,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -57,11 +60,16 @@ final class SaveRegulationGeneralInfoCommandHandler
                 ),
             );
 
+            $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::CREATE->value));
+
             return $regulationOrderRecord;
         }
 
         $command->regulationOrderRecord->updateOrganization($command->organization);
-        $command->regulationOrderRecord->getRegulationOrder()->update(
+
+        $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
+
+        $regulationOrder->update(
             identifier: $command->identifier,
             category: $command->category,
             subject: $command->subject,
@@ -71,6 +79,8 @@ final class SaveRegulationGeneralInfoCommandHandler
             additionalReasons: $command->additionalReasons,
             visaModel: $visaModel,
         );
+
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value));
 
         return $command->regulationOrderRecord;
     }
