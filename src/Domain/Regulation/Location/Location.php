@@ -59,9 +59,9 @@ class Location
         return $this->rawGeoJSON;
     }
 
-    public function getStorageArea(): ?StorageArea
+    public function getStorageAreas(): array
     {
-        return $this->storageAreas->first() ?: null;
+        return $this->storageAreas->toArray();
     }
 
     public function getCifsStreetLabel(): string
@@ -98,16 +98,21 @@ class Location
         $this->rawGeoJSON = $rawGeoJSON;
     }
 
-    public function setStorageArea(StorageArea $storageArea): void
+    public function addStorageArea(StorageArea $storageArea): void
     {
         if ($this->storageAreas->contains($storageArea)) {
             return;
         }
 
-        if (!$this->storageAreas->isEmpty()) {
-            $this->storageAreas->remove(0);
+        $this->storageAreas->add($storageArea);
+    }
+
+    public function removeStorageArea(StorageArea $storageArea): void
+    {
+        if (!$this->storageAreas->contains($storageArea)) {
+            return;
         }
 
-        $this->storageAreas[] = $storageArea;
+        $this->storageAreas->removeElement($storageArea);
     }
 }
