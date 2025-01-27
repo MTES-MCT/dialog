@@ -78,7 +78,7 @@ jobs:
         run:
           echo "path=$(find log/litteralis -type f -name '*.log' | head -n 1)" >> $GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: litteralis_logfile
