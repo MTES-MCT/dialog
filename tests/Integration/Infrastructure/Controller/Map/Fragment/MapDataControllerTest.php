@@ -85,6 +85,15 @@ final class MapDataControllerTest extends AbstractWebTestCase
                 'queryString' => '&map_filter_form[startDate]=2018-12-10&map_filter_form[endDate]=2018-12-10',
                 'locationUuids' => [],
             ],
+            'interval-both-exact' => [
+                'queryString' => '&map_filter_form[startDate]=2023-03-28&map_filter_form[endDate]=2023-03-28',
+                'locationUuids' => [
+                    LocationFixture::UUID_PUBLISHED,
+                    LocationFixture::UUID_PUBLISHED2,
+                    LocationFixture::UUID_PUBLISHED3,
+                    LocationFixture::UUID_PUBLISHED4,
+                ],
+            ],
             // Test on cifsPeriod2 (2023-06-02 -> 2023-06-06)
             'interval-start-exact' => [
                 'queryString' => '&map_filter_form[startDate]=2023-06-01&map_filter_form[endDate]=2023-06-02',

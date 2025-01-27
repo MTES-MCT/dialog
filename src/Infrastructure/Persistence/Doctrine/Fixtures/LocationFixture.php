@@ -24,6 +24,9 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
     public const UUID_TYPICAL = '51449b82-5032-43c8-a427-46b9ddb44762';
 
     public const UUID_PUBLISHED = '2d79e1ff-c991-4767-b8c0-36b644038d0f';
+    public const UUID_PUBLISHED2 = '064ca782-771c-783f-8000-e67473eabea6';
+    public const UUID_PUBLISHED3 = '0655b3f6-124a-7f8d-8000-7c747883d40d';
+    public const UUID_PUBLISHED4 = '065f9436-0ff3-74e3-8000-d9ac9b5a16ad';
     public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
 
     public const UUID_PERMANENT_ONLY_ONE = 'f15ed802-fa9b-4d75-ab04-d62ea46597e9';
@@ -151,7 +154,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         );
 
         $publishedLocation2 = new Location(
-            '064ca782-771c-783f-8000-e67473eabea6',
+            self::UUID_PUBLISHED2,
             $this->getReference('publishedMeasure', Measure::class),
             roadType: RoadTypeEnum::LANE->value,
             geometry: '{"type":"LineString","coordinates":[[1.352105256,44.016810494],[1.35213207,44.01678578],[1.35216909,44.01675663],[1.35221741,44.01672495],[1.35226814,44.01669601],[1.35232384,44.01666804],[1.35272189,44.0164913],[1.35280254,44.01646281],[1.35301215,44.016390795]]}',
@@ -169,7 +172,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         );
 
         $publishedLocation3 = new Location(
-            '0655b3f6-124a-7f8d-8000-7c747883d40d',
+            self::UUID_PUBLISHED3,
             $this->getReference('publishedMeasure', Measure::class),
             roadType: RoadTypeEnum::LANE->value,
             geometry: '{"type":"MultiLineString","coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}',
@@ -187,7 +190,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         );
 
         $publishedLocation4DepartmentalRoad = new Location(
-            '065f9436-0ff3-74e3-8000-d9ac9b5a16ad',
+            self::UUID_PUBLISHED4,
             $this->getReference('publishedMeasure', Measure::class),
             roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             geometry: '{"type":"MultiLineString","coordinates":[[[4.663492283,49.820771105],[4.663561067,49.820708163],[4.663623202,49.820654298],[4.663725129,49.820585513],[4.66385317,49.820508284],[4.663996569,49.820433542],[4.664156393,49.820351386],[4.664302802,49.820283791],[4.664436862,49.820220858],[4.664595794,49.82015399],[4.664760103,49.820081657],[4.664970675,49.819979937],[4.66510358,49.819924207],[4.66516665,49.819899084],[4.665248891,49.819865612],[4.665391601,49.819812444],[4.665544028,49.819759143],[4.665691049,49.819710408],[4.665836593,49.819658998],[4.66598766,49.819606614],[4.666138405,49.819544349],[4.66630138,49.819473829]]]}',

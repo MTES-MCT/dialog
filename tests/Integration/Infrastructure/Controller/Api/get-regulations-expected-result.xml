@@ -647,7 +647,7 @@
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
                     <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
-                    <com:overallEndTime>2023-03-20T22:59:00+00:00</com:overallEndTime>
+                    <com:overallEndTime>2023-03-28T21:00:00+00:00</com:overallEndTime>
                 </com:validityTimeSpecification>
             </validityByOrder>
 
@@ -668,6 +668,15 @@
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
                                     <com:overallEndTime>2023-03-20T22:59:00+00:00</com:overallEndTime>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2023-03-28T07:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-03-28T21:00:00+00:00</com:overallEndTime>
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>

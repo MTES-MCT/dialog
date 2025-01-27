@@ -34,6 +34,14 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2023-03-20 23:59:00', $tz),
             recurrenceType: 'everyDay',
         );
+        $publishedPeriod2 = new Period(
+            uuid: '212d8eda-58ce-4dce-80ee-92504690e16c',
+            measure: $this->getReference('publishedMeasure', Measure::class),
+            // Single day with hours
+            startDateTime: new \DateTimeImmutable('2023-03-28 08:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-03-28 22:00:00', $tz),
+            recurrenceType: 'everyDay',
+        );
         $permanentPeriod = new Period(
             uuid: '06717be6-ddb3-7635-8000-431d53fcd535',
             measure: $this->getReference('permanentMeasure', Measure::class),
@@ -142,6 +150,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
 
         $manager->persist($typicalPeriod);
         $manager->persist($publishedPeriod);
+        $manager->persist($publishedPeriod2);
         $manager->persist($permanentPeriod);
         $manager->persist($fullCityPeriod);
         $manager->persist($cifsPeriod1);
