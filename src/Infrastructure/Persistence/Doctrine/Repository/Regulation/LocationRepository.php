@@ -35,9 +35,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function findOneByUuid(string $uuid): ?Location
     {
         return $this->createQueryBuilder('l')
-            ->addSelect('m')
-            ->where('l.uuid = :uuid')
+            ->addSelect('m', 'v', 'p', 'd', 't')
             ->innerJoin('l.measure', 'm')
+            ->innerjoin('m.periods', 'p')
+            ->leftJoin('m.vehicleSet', 'v')
+            ->leftJoin('p.dailyRange', 'd')
+            ->leftJoin('p.timeSlots', 't')
+            ->where('l.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->getQuery()
             ->getOneOrNullResult()
@@ -79,16 +83,21 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 // Renvoie un résultat vide pour éviter une erreur dans le cas où la date de fin est avant la date de début
                 $measureDatesCondition = 'AND FALSE';
             } else {
-                // Principe : on garde une localisation si l'intervalle défini par les dates des périodes
+                // Principe : on garde une localisation si l'intervalle défini par ses périodes
                 // intersecte au moins partiellement l'intervalle défini par les filtres.
-                // En PostgreSQL, daterange permet de représenter un intervalle de date.
+                // En PostgreSQL, tsrange permet de représenter un intervalle de date et heure.
                 // https://www.postgresql.org/docs/13/rangetypes.html
                 // NB : si l'arrêté n'a pas encore de période, EXISTS renverra FALSE, donc on ne retiendra pas ses localisations, comme attendu.
                 $measureDatesCondition = 'AND EXISTS (
                     SELECT 1
                     FROM period AS p
-                    WHERE p.measure_uuid = m.uuid 
-                    AND daterange((:startDate)::date, (:endDate)::date, \'[]\') && daterange(p.start_datetime::date, p.end_datetime::date)
+                    WHERE p.measure_uuid = m.uuid
+                    -- ATTENTION : startDate et endDate sont données comme "inclus" toutes les deux,
+                    -- et elles ont une heure qui vaut 00h00.
+                    -- Donc dans le cas où startDate et endDate désignent toutes les deux le 12/01/2025 par exemple,
+                    -- cela correspondrait à un intervalle de temps vide, et on ne sélectionnerait rien.
+                    -- Pour inclure le 12/01/2025 en entier, il faut prendre (startDate inclus, endDate + 1 jour exclus)
+                    AND tsrange((:startDate)::timestamp, ((:endDate)::timestamp + make_interval(days => 1))::timestamp, \'[)\') && tsrange(p.start_datetime::timestamp, p.end_datetime::timestamp)
                 )';
 
                 $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);

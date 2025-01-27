@@ -62,7 +62,7 @@ jobs:
         run:
           echo "path=$(find log/eudonet_paris -type f -name '*.log' | head -n 1)" >> $GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: eudonet_paris_logfile
