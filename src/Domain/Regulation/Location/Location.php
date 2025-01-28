@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Regulation\Location;
 
 use App\Domain\Regulation\Measure;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class Location
 {
+    private Collection $storageAreas;
+
     public function __construct(
         private string $uuid,
         private Measure $measure,
@@ -17,6 +21,7 @@ class Location
         private ?NumberedRoad $numberedRoad = null,
         private ?RawGeoJSON $rawGeoJSON = null,
     ) {
+        $this->storageAreas = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -54,6 +59,11 @@ class Location
         return $this->rawGeoJSON;
     }
 
+    public function getStorageAreas(): array
+    {
+        return $this->storageAreas->toArray();
+    }
+
     public function getCifsStreetLabel(): string
     {
         if ($this->namedStreet) {
@@ -86,5 +96,23 @@ class Location
     public function setRawGeoJSON(RawGeoJSON $rawGeoJSON): void
     {
         $this->rawGeoJSON = $rawGeoJSON;
+    }
+
+    public function addStorageArea(StorageArea $storageArea): void
+    {
+        if ($this->storageAreas->contains($storageArea)) {
+            return;
+        }
+
+        $this->storageAreas->add($storageArea);
+    }
+
+    public function removeStorageArea(StorageArea $storageArea): void
+    {
+        if (!$this->storageAreas->contains($storageArea)) {
+            return;
+        }
+
+        $this->storageAreas->removeElement($storageArea);
     }
 }
