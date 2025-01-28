@@ -22,4 +22,8 @@ final class RegulationOrderHistoryRepository extends ServiceEntityRepository imp
 
         return $regulationOrderHistory;
     }
+
+    public function findLastRegulationOrderHistoriesByRegulationOrderUuid(string $regulationOrderUuid): array
+    {
+    }
 }
