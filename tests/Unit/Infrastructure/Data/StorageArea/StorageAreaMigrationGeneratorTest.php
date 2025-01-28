@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Data\StorageArea;
 
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
 use App\Domain\Regulation\Enum\DirectionEnum;
@@ -32,6 +33,30 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
     public function testGenerateEmpty(): void
     {
         $this->assertSame('', $this->generator->makeMigrationSql([]));
+    }
+
+    public function testGenerateGeocodingExceptionIgnored(): void
+    {
+        $rows = $this->csvParser->parseAssociative(file_get_contents(__DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv'));
+        $rows = [$rows[0]];
+
+        $this->bdtopoConnection
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willReturn(['gestionnaire' => 'DIR Centre-Est']);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoad')
+            ->withConsecutive(['Nationale', 'DIR Centre-Est', 'N79'])
+            ->willReturn('roadGeometry1');
+
+        $this->roadSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->willThrowException(new GeocodingFailureException());
+
+        $this->assertSame('', $this->generator->makeMigrationSql($rows));
     }
 
     public function testGenerate(): void

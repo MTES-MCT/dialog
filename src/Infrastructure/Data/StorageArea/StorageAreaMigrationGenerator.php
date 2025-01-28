@@ -61,10 +61,6 @@ class StorageAreaMigrationGenerator
 
     public function makeMigrationSql(array $rows): string
     {
-        if (empty($rows)) {
-            return '';
-        }
-
         $valuesList = [];
 
         foreach ($rows as $row) {
@@ -105,7 +101,8 @@ class StorageAreaMigrationGenerator
                     DirectionEnum::BOTH->value,
                 );
             } catch (GeocodingFailureException $exc) {
-                // TODO
+                // On rencontre cette erreur pour environ la moitié des aires de stockage
+                // Ignoré pour l'instant, ça a l'air lié à https://github.com/MTES-MCT/dialog/issues/713
                 continue;
             }
 
@@ -125,6 +122,10 @@ class StorageAreaMigrationGenerator
             ];
 
             $valuesList[] = \sprintf('(%s)', implode(', ', $values));
+        }
+
+        if (empty($valuesList)) {
+            return '';
         }
 
         $columns = [
