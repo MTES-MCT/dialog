@@ -68,7 +68,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
         $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
-        $this->assertSame($formDelete->getMethod(), 'DELETE');
+        $this->assertSame($formDelete->getMethod(), 'POST');
+        $this->assertSame($formDelete->get('_method')->getValue(), 'DELETE');
 
         $publishBtn = $crawler->selectButton('Publier');
         $this->assertSame(0, $crawler->selectButton('Valider')->count()); // Location form
@@ -134,7 +135,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
         $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
-        $this->assertSame($formDelete->getMethod(), 'DELETE');
+        $this->assertSame($formDelete->getMethod(), 'POST');
+        $this->assertSame($formDelete->get('_method')->getValue(), 'DELETE');
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

@@ -78,12 +78,14 @@
                             {% endif %}
                             {% if belongsToOrganizationUsers %}
                                 <form
-                                    method="delete"
+                                    method="POST"
                                     action="{{ path('app_regulation_delete', { uuid: regulation.uuid }) }}"
                                     data-controller="form-submit"
                                     data-action="modal-trigger:submit->form-submit#submit"
                                     class="fr-hidden fr-unhidden-md"
                                 >
+                                    <input type="hidden" name="_method" value="DELETE">
+
                                     <d-modal-trigger modal="regulation-delete-modal" submitValue="regulation-delete-{{ regulation.uuid }}">
                                         <button
                                             class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"

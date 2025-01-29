@@ -27,11 +27,13 @@
                     <li>{{ 'profile.delete.third.item'|trans }}</li>
                 </ul>
                 <form
-                method="delete"
-                action="{{ path('app_profile_delete') }}"
-                data-controller="form-submit"
-                data-action="modal-trigger:submit->form-submit#submit"
+                    method="POST"
+                    action="{{ path('app_profile_delete') }}"
+                    data-controller="form-submit"
+                    data-action="modal-trigger:submit->form-submit#submit"
                 >
+                    <input type="hidden" name="_method" value="DELETE">
+
                     <d-modal-trigger modal="user-profile-delete-modal" submitValue="user-profile-delete-{{ app.user.getFullName() }}">
                         <button
                             class="fr-btn fr-x-btn-sm--icon-left fr-icon-delete-bin-line fr-mt-3w"

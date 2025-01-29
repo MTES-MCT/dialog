@@ -82,11 +82,13 @@
                                     <li>
                                         {% set deleteCsrfToken = csrf_token('delete-regulation') %}
                                         <form
-                                            method="delete"
+                                            method="POST"
                                             action="{{ path('app_regulation_delete', { uuid: generalInfo.uuid }) }}"
                                             data-controller="form-submit"
                                             data-action="modal-trigger:submit->form-submit#submit"
                                         >
+                                            <input type="hidden" name="_method" value="DELETE">
+
                                             <d-modal-trigger modal="regulation-delete-modal" submitValue="delete">
                                                 <button
                                                     class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"

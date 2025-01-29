@@ -1,9 +1,11 @@
 <form
-    method="delete"
+    method="POST"
     action="{{ path('fragment_regulations_measure_delete', { regulationOrderRecordUuid, uuid }) }}"
     data-controller="form-submit"
     data-action="modal-trigger:submit->form-submit#submit"
 >
+    <input type="hidden" name="_method" value="DELETE">
+
     <d-modal-trigger modal="measure-delete-modal" submitValue="{{ uuid }}">
         <button
             class="fr-btn fr-btn--tertiary fr-icon-delete-line"
