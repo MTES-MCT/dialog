@@ -243,7 +243,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     public function findRegulationOrdersForDatexFormat(): array
     {
         return $this->createQueryBuilder('roc')
-            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg')
+            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg', 'sa')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
@@ -251,6 +251,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('loc.namedStreet', 'ns')
             ->leftJoin('loc.numberedRoad', 'nr')
             ->leftJoin('loc.rawGeoJSON', 'rg')
+            ->leftJoin('loc.storageArea', 'sa')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
@@ -305,7 +306,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         array $allowedLocationIds = [],
     ): array {
         return $this->createQueryBuilder('roc')
-            ->addSelect('ro', 'loc', 'm', 'p', 'd', 't')
+            ->addSelect('ro', 'loc', 'm', 'p', 'd', 't', 'sa')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
@@ -313,6 +314,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.dailyRange', 'd')
             ->leftJoin('p.timeSlots', 't')
+            ->leftJoin('loc.storageArea', 'sa')
             ->where(
                 'roc.status = :status',
                 \sprintf('(%s) >= :today', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE)),

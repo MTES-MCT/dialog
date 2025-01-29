@@ -6,5 +6,5 @@ namespace App\Domain\Regulation\Repository;
 
 interface StorageAreaRepositoryInterface
 {
-    public function findAllByAdministratorAndRoadNumber(string $administrator, string $roadNumber): array;
+    public function findAll(): array;
 }

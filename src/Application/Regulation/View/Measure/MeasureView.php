@@ -8,6 +8,7 @@ use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 
 readonly class MeasureView
@@ -48,6 +49,7 @@ readonly class MeasureView
             );
         }
 
+        /* @var Location */
         foreach ($measure->getLocations() as $location) {
             if ($namedStreet = $location->getNamedStreet()) {
                 $locations[] = new LocationView(
@@ -63,6 +65,8 @@ readonly class MeasureView
                     ),
                 );
             } elseif ($numberedRoad = $location->getNumberedRoad()) {
+                $storageArea = $location->getStorageArea();
+
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
@@ -76,6 +80,7 @@ readonly class MeasureView
                         toAbscissa: $numberedRoad->getToAbscissa() ?? 0,
                         toSide: $numberedRoad->getToSide(),
                     ),
+                    storageArea: $storageArea ? new StorageAreaView($storageArea->getDescription()) : null,
                 );
             } elseif ($rawGeoJSON = $location->getRawGeoJSON()) {
                 $locations[] = new LocationView(

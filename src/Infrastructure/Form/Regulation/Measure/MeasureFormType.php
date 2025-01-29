@@ -57,6 +57,7 @@ final class MeasureFormType extends AbstractType
                 'entry_options' => [
                     'label' => false,
                     'administrators' => $options['administrators'],
+                    'storage_areas' => $options['storage_areas'],
                     'permissions' => $options['permissions'],
                 ],
                 'prototype_name' => '__location_name__',
@@ -97,11 +98,13 @@ final class MeasureFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SaveMeasureCommand::class,
             'administrators' => [],
+            'storage_areas' => [],
             'isPermanent' => false,
             'permissions' => [],
             'validation_groups' => ['Default', 'html_form'],
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
+        $resolver->setAllowedTypes('storage_areas', 'array');
         $resolver->setAllowedTypes('isPermanent', 'boolean');
         $resolver->setAllowedTypes('permissions', 'array');
     }

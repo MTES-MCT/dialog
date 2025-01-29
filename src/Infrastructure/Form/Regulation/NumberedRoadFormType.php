@@ -7,6 +7,8 @@ namespace App\Infrastructure\Form\Regulation;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadSideEnum;
+use App\Domain\Regulation\Location\StorageArea;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -80,6 +82,14 @@ final class NumberedRoadFormType extends AbstractType
                 ],
             )
             ->add('direction', ChoiceType::class, $this->getDirectionOptions())
+            ->add('storageArea', EntityType::class, [
+                'class' => StorageArea::class,
+                'choices' => $options['storage_areas'],
+                'choice_label' => 'description',
+                'choice_value' => 'uuid',
+                'label' => 'regulation.location.storage_area',
+                'help' => 'regulation.location.storage_area.help',
+            ])
             ->add('roadType', HiddenType::class, ['data' => $options['roadType']])
         ;
 
@@ -147,9 +157,11 @@ final class NumberedRoadFormType extends AbstractType
         $resolver->setDefaults([
             'roadType' => null,
             'administrators' => [],
+            'storage_areas' => [],
             'data_class' => SaveNumberedRoadCommand::class,
         ]);
         $resolver->setAllowedTypes('roadType', 'string');
         $resolver->setAllowedTypes('administrators', 'array');
+        $resolver->setAllowedTypes('storage_areas', 'array');
     }
 }

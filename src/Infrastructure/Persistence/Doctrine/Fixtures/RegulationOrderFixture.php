@@ -101,6 +101,14 @@ final class RegulationOrderFixture extends Fixture
             subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
         );
 
+        $winterMaintenanceRegulationOrder = new RegulationOrder(
+            uuid: '804fedae-db25-4ac8-ac95-2d6cf4df7422',
+            identifier: 'F2025/HIVER1',
+            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            title: 'Arrêté de viabilité hivernale sur la N176',
+            subject: RegulationSubjectEnum::WINTER_MAINTENANCE->value,
+        );
+
         $manager->persist($typicalRegulationOrder);
         $manager->persist($publishedRegulationOrder);
         $manager->persist($regulationOrderPermanent);
@@ -111,6 +119,7 @@ final class RegulationOrderFixture extends Fixture
         $manager->persist($outDatedRegulationOrderCifs);
         $manager->persist($rawGeoJSONRegulationOrder);
         $manager->persist($litteralisRegulationOrder);
+        $manager->persist($winterMaintenanceRegulationOrder);
         $manager->flush();
 
         $this->addReference('typicalRegulationOrder', $typicalRegulationOrder);
@@ -123,5 +132,6 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('outDatedRegulationOrderCifs', $outDatedRegulationOrderCifs);
         $this->addReference('rawGeoJSONRegulationOrder', $rawGeoJSONRegulationOrder);
         $this->addReference('litteralisRegulationOrder', $litteralisRegulationOrder);
+        $this->addReference('winterMaintenanceRegulationOrder', $winterMaintenanceRegulationOrder);
     }
 }

@@ -10,6 +10,8 @@ use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\Measure\LocationView;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Application\Regulation\View\Measure\NamedStreetView;
+use App\Application\Regulation\View\Measure\NumberedRoadView;
+use App\Application\Regulation\View\Measure\StorageAreaView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
@@ -18,8 +20,12 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Regulation\Enum\RoadSideEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
+use App\Domain\Regulation\Location\NumberedRoad;
+use App\Domain\Regulation\Location\StorageArea;
 use App\Domain\Regulation\Measure;
 use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\MeasureRepository;
 use PHPUnit\Framework\TestCase;
@@ -148,17 +154,17 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->method('getRecurrenceType')
             ->willReturn('certainDays');
 
-        $location = $this->createMock(Location::class);
+        $location1 = $this->createMock(Location::class);
         $namedStreet = $this->createMock(NamedStreet::class);
-        $location
+        $location1
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('12fca512-dee7-4b3d-9c86-59b03a88d8d2');
-        $location
+        $location1
             ->expects(self::once())
             ->method('getRoadType')
             ->willReturn('lane');
-        $location
+        $location1
             ->expects(self::once())
             ->method('getNamedStreet')
             ->willReturn($namedStreet);
@@ -190,6 +196,63 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->method('getToRoadName')
             ->willReturn(null);
 
+        $location2 = $this->createMock(Location::class);
+        $numberedRoad = $this->createMock(NumberedRoad::class);
+        $location2
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('9b80de91-a68e-45a1-b516-77d667c55d53');
+        $location2
+            ->expects(self::once())
+            ->method('getRoadType')
+            ->willReturn(RoadTypeEnum::NATIONAL_ROAD->value);
+        $location2
+            ->expects(self::once())
+            ->method('getNumberedRoad')
+            ->willReturn($numberedRoad);
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getAdministrator')
+            ->willReturn('DIR Sud-Ouest');
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getRoadNumber')
+            ->willReturn('N176');
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getFromPointNumber')
+            ->willReturn('24');
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getFromSide')
+            ->willReturn(RoadSideEnum::D->value);
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getFromAbscissa')
+            ->willReturn(0);
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getToPointNumber')
+            ->willReturn('28');
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getToSide')
+            ->willReturn(RoadSideEnum::D->value);
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getToAbscissa')
+            ->willReturn(0);
+
+        $storageArea = $this->createMock(StorageArea::class);
+        $storageArea
+            ->expects(self::once())
+            ->method('getDescription')
+            ->willReturn('Aire de stockage 1');
+        $location2
+            ->expects(self::once())
+            ->method('getStorageArea')
+            ->willReturn($storageArea);
+
         $measure = $this->createMock(Measure::class);
         $measure
             ->expects(self::once())
@@ -210,7 +273,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
         $measure
             ->expects(self::once())
             ->method('getLocations')
-            ->willReturn([$location]);
+            ->willReturn([$location1, $location2]);
 
         $measureRepository = $this->createMock(MeasureRepository::class);
         $measureRepository
@@ -261,6 +324,21 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                                 toHouseNumber: '253',
                                 toRoadName: null,
                             ),
+                        ),
+                        new LocationView(
+                            uuid: '9b80de91-a68e-45a1-b516-77d667c55d53',
+                            roadType: RoadTypeEnum::NATIONAL_ROAD->value,
+                            numberedRoad: new NumberedRoadView(
+                                administrator: 'DIR Sud-Ouest',
+                                roadNumber: 'N176',
+                                fromPointNumber: '24',
+                                fromSide: 'D',
+                                fromAbscissa: 0,
+                                toPointNumber: '28',
+                                toSide: 'D',
+                                toAbscissa: 0,
+                            ),
+                            storageArea: new StorageAreaView('Aire de stockage 1'),
                         ),
                     ],
                 ),
