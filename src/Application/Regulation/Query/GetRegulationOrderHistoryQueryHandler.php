@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
-use App\Application\Regulation\View\RegulationOrderHistoryView;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
 
 final class GetRegulationOrderHistoryQueryHandler
@@ -14,16 +13,9 @@ final class GetRegulationOrderHistoryQueryHandler
     ) {
     }
 
-    public function __invoke(GetRegulationOrderHistoryQuery $query): RegulationOrderHistoryView
+    public function __invoke(GetRegulationOrderHistoryQuery $query): array
     {
-        $row = $this->regulationOrderHistoryRepository->findLastRegulationOrderHistoriesByRegulationOrderUuid($query->regulationOrderUuid);
-
-        $date = new \DateTimeImmutable($row['date']);
-
-        $regulationOrderHistory = new RegulationOrderHistoryView(
-            date: $date,
-            action: $row['action'],
-        );
+        $regulationOrderHistory = $this->regulationOrderHistoryRepository->findLastRegulationOrderHistoriesByRegulationOrderUuid($query->regulationOrderUuid);
 
         return $regulationOrderHistory;
     }

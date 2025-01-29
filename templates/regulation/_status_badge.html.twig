@@ -11,11 +11,11 @@
     </p>
 
     {% if action == 'create' %}
-        <p>Créé le </p>
+        <p>Créé le {{ date }}</p>
     {% elseif action == 'publish' %}
-        <p>Publié le </p>
+        <p>Publié le {{ date }}</p>
     {% else %}
-        <p>Modifié le </p>
+        <p>Modifié le {{ date }}</p>
     {% endif %}
 
 {% endif %}
