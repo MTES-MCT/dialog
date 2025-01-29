@@ -57,6 +57,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertNavStructure([
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/regulations');
@@ -64,6 +65,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertNavStructure([
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => 'page']],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/carte');
@@ -71,6 +73,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertNavStructure([
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => 'page']],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
     }
 
@@ -87,6 +90,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/collectivites');
@@ -99,6 +103,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/services-numeriques');
@@ -111,6 +116,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/usagers');
@@ -123,6 +129,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
+            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
     }
 }
