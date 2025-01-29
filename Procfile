@@ -1,3 +1,3 @@
 web: bin/run
-worker: php bin/console messenger:consume async --memory-limit=256M
+worker: php bin/console messenger:consume async --memory-limit=256M --limit=50
 postdeploy: make scalingo-postdeploy
