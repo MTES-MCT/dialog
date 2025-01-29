@@ -18,6 +18,7 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         /** @var UserOrganizationView[] */
         private array $userOrganizations,
         private array $roles,
+        private bool $isVerified,
     ) {
     }
 
@@ -71,6 +72,11 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $uuids;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
     }
 
     public function eraseCredentials(): void

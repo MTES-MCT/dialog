@@ -1608,6 +1608,10 @@
                 <source>measure.delete_modal.title</source>
                 <target>Supprimer cette mesure ?</target>
             </trans-unit>
+            <trans-unit id="login.error.not_verified_account">
+                <source>login.error.not_verified_account</source>
+                <target>Vous devez valider votre compte grâce à l'e-mail de confirmation reçu.</target>
+            </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
@@ -2146,6 +2150,14 @@
             <trans-unit id="register.displayPassword">
                 <source>register.displayPassword</source>
                 <target>Afficher</target>
+            </trans-unit>
+            <trans-unit id="register.succeeded">
+                <source>register.succeeded</source>
+                <target>Votre compte a été créé avec succès. Veuillez consulter votre boîte de réception pour confirmer votre adresse email et finaliser l'activation de votre compte.</target>
+            </trans-unit>
+            <trans-unit id="register.succeeded.verified">
+                <source>register.succeeded.verified</source>
+                <target>Votre compte est maintenant activé. Vous pouvez dès à présent vous connecter avec vos identifiants.</target>
             </trans-unit>
             <trans-unit id="register.fullName">
                 <source>register.fullName</source>

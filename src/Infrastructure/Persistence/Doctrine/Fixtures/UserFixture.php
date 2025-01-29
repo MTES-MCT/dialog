@@ -24,7 +24,8 @@ final class UserFixture extends Fixture
             ->setEmail(self::MAIN_ORG_USER_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-03-01'))
-            ->setLastActiveAt(new \DateTimeImmutable('2024-06-07'));
+            ->setLastActiveAt(new \DateTimeImmutable('2024-06-07'))
+            ->setVerified();
 
         $mainOrgPasswordUser = new PasswordUser(
             'e06f9972-6add-403d-82d9-bd7370b7668f',
@@ -37,7 +38,8 @@ final class UserFixture extends Fixture
             ->setEmail(self::MAIN_ORG_ADMIN_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_SUPER_ADMIN->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-04-02'))
-            ->setLastActiveAt(new \DateTimeImmutable('2024-06-08'));
+            ->setLastActiveAt(new \DateTimeImmutable('2024-06-08'))
+            ->setVerified();
 
         $mainOtherPasswordAdmin = new PasswordUser(
             '437dd344-0b78-4aa6-ba79-112cb6827516',

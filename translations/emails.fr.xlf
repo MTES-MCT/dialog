@@ -6,21 +6,37 @@
                 <source>forgot_password.subject</source>
                 <target>Réinitialisation du mot de passe de votre compte DiaLog</target>
             </trans-unit>
-            <trans-unit id="forgot_password.hello">
-                <source>forgot_password.hello</source>
+            <trans-unit id="common.hello">
+                <source>common.hello</source>
                 <target>Bonjour %fullName%,</target>
             </trans-unit>
             <trans-unit id="forgot_password.title">
                 <source>forgot_password.title</source>
                 <target>Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, cliquez sur le lien ci-dessous :</target>
             </trans-unit>
-            <trans-unit id="forgot_password.expiration">
-                <source>forgot_password.expiration</source>
+            <trans-unit id="common.expiration">
+                <source>common.expiration</source>
                 <target>Ce lien est à usage unique. Il expirera au bout de 24 heures.</target>
             </trans-unit>
             <trans-unit id="forgot_password.reset">
                 <source>forgot_password.reset</source>
                 <target>Modifier mon mot de passe</target>
+            </trans-unit>
+            <trans-unit id="confirm_user_account.subject">
+                <source>confirm_user_account.subject</source>
+                <target>Confirmez votre compte DiaLog</target>
+            </trans-unit>
+            <trans-unit id="confirm_user_account.thanks">
+                <source>confirm_user_account.thanks</source>
+                <target>Merci d’avoir rejoint DiaLog !</target>
+            </trans-unit>
+            <trans-unit id="confirm_user_account.confirm_email">
+                <source>confirm_user_account.confirm_email</source>
+                <target>Pour finaliser la création de votre compte, merci de cliquer sur le lien ci-dessous :</target>
+            </trans-unit>
+            <trans-unit id="confirm_user_account.confirm_email_button">
+                <source>confirm_user_account.confirm_email_button</source>
+                <target>Je confirme mon adresse e-mail</target>
             </trans-unit>
         </body>
     </file>

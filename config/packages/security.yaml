@@ -11,6 +11,7 @@ security:
         main:
             lazy: true
             provider: user
+            user_checker: App\Infrastructure\Security\UserChecker
             form_login:
                 login_path: app_login
                 check_path: app_login

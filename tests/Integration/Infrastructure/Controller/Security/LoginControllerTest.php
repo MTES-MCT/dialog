@@ -64,4 +64,20 @@ final class LoginControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Identifiants invalides.', $crawler->filter('p.fr-message--error')->text());
     }
+
+    public function testLoginWithUnverifiedAcccount(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/login');
+
+        $saveButton = $crawler->selectButton('Se connecter');
+        $form = $saveButton->form();
+        $form['email'] = UserFixture::OTHER_ORG_USER_EMAIL;
+        $form['password'] = UserFixture::PASSWORD;
+
+        $client->submit($form);
+        $crawler = $client->followRedirect();
+
+        $this->assertSame('Vous devez valider votre compte grâce à l\'e-mail de confirmation reçu.', $crawler->filter('p.fr-message--error')->text());
+    }
 }

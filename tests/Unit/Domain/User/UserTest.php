@@ -32,5 +32,9 @@ final class UserTest extends TestCase
         $this->assertNull($user->getProConnectUser()); // Manage by Doctrine
         $this->assertEquals($passwordUser, $user->getPasswordUser());
         $this->assertSame('Mathieu Marchois (mathieu@fairness.coop)', (string) $user);
+        $this->assertFalse($user->isVerified());
+
+        $user->setVerified();
+        $this->assertTrue($user->isVerified());
     }
 }
