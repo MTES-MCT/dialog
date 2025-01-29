@@ -114,7 +114,7 @@
         {% for label, messages in app.flashes %}
             {% if loop.first %}<div class="fr-container fr-pt-4w">{% endif %}
             {% for message in messages %}
-                <div class="fr-alert fr-alert--{{ label }}">
+                <div class="fr-alert fr-alert--{{ label }}" data-test-flash-type="{{ label }}">
                     {{ message|raw }}
                 </div>
             {% endfor %}

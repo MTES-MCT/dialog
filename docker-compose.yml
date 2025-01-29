@@ -34,7 +34,6 @@ services:
     volumes:
       - ./:/var/www/dialog
       - ./docker/php/supervisor:/etc/supervisor
-      - ./var/log/supervisor:/var/log/supervisor
     depends_on:
       - database
       - redis
@@ -95,3 +94,4 @@ services:
       - REDIS_HOSTS=local:redis:6379
     depends_on:
       - redis
+      - database

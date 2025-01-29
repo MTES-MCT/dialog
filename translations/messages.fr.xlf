@@ -1650,15 +1650,23 @@
             </trans-unit>
             <trans-unit id="forgot_password.title">
                 <source>forgot_password.title</source>
-                <target>Mot de passe oublié</target>
+                <target>Mot de passe oublié ?</target>
             </trans-unit>
-            <trans-unit id="forgot_password.instructions">
-                <source>forgot_password.instructions</source>
-                <target>Pour toute demande de réinitialisation de mot de passe, veuillez contacter notre équipe à l'adresse dialog@beta.gouv.fr en précisant l'adresse e-mail du compte que vous souhaitez réinitialiser.</target>
+            <trans-unit id="forgot_password.submit">
+                <source>forgot_password.submit</source>
+                <target>Envoyer un lien de réinitialisation</target>
             </trans-unit>
-            <trans-unit id="forgot_password.go_back">
-                <source>forgot_password.go_back</source>
-                <target>Revenir au formulaire de connexion</target>
+            <trans-unit id="forgot_password.description">
+                <source>forgot_password.description</source>
+                <target>Entrez votre mail ci-dessous. Nous vous enverrons un lien de réinitialisation de votre mot de passe.</target>
+            </trans-unit>
+            <trans-unit id="forgot_password.succeeded">
+                <source>forgot_password.succeeded</source>
+                <target>Si cette adresse e-mail est enregistrée chez DiaLog, vous recevrez un lien pour réinitialiser votre mot de passe.</target>
+            </trans-unit>
+            <trans-unit id="forgot_password.back_to_login">
+                <source>forgot_password.back_to_login</source>
+                <target>Retour à la connexion</target>
             </trans-unit>
             <trans-unit id="home.breadcrumb">
                 <source>home.breadcrumb</source>
@@ -2670,6 +2678,38 @@
             <trans-unit id="organization.form.image_description">
                 <source>organization.form.image_description</source>
                 <target>Vue d’ensemble schématique de l’arrêté montrant l’emplacement du logo.</target>
+            </trans-unit>
+            <trans-unit id="reset_password.succeeded">
+                <source>reset_password.succeeded</source>
+                <target>Votre mot de passe a bien été changé. Vous pouvez dès à présent vous connecter en utilisant votre nouveau mot de passe.</target>
+            </trans-unit>
+            <trans-unit id="reset_password.password.help">
+                <source>reset_password.password.help</source>
+                <target>Format attendu : 12 caractères minimum</target>
+            </trans-unit>
+            <trans-unit id="reset_password.password.old">
+                <source>reset_password.password.old</source>
+                <target>Mot de passe actuel</target>
+            </trans-unit>
+            <trans-unit id="reset_password.password">
+                <source>reset_password.password</source>
+                <target>Nouveau mot de passe</target>
+            </trans-unit>
+            <trans-unit id="reset_password.repeated_password">
+                <source>reset_password.repeated_password</source>
+                <target>Retaper votre nouveau mot de passe</target>
+            </trans-unit>
+            <trans-unit id="reset_password.submit">
+                <source>reset_password.submit</source>
+                <target>Changer mon mot de passe</target>
+            </trans-unit>
+            <trans-unit id="reset_password.title">
+                <source>reset_password.title</source>
+                <target>Changer mon mot de passe</target>
+            </trans-unit>
+            <trans-unit id="reset_password.token.error">
+                <source>reset_password.token.error</source>
+                <target>Le changement de mot de passe a échoué, veuillez faire une nouvelle demande.</target>
             </trans-unit>
         </body>
     </file>

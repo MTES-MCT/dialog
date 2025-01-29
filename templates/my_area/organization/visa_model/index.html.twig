@@ -75,11 +75,13 @@
                                                 </form>
                                                 {% if visa.organizationUuid %}
                                                     <form
-                                                        method="delete"
+                                                        method="POST"
                                                         action="{{ path('app_config_visa_models_delete', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}"
                                                         data-controller="form-submit"
                                                         data-action="modal-trigger:submit->form-submit#submit"
                                                     >
+                                                        <input type="hidden" name="_method" value="DELETE">
+
                                                         <d-modal-trigger modal="visa-delete-modal" submitValue="visa-delete-{{ visa.uuid }}">
                                                             <button
                                                                 class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
