@@ -57,12 +57,14 @@
                                                     {{ 'common.update'|trans }}
                                                 </a>
                                                 <form
-                                                    method="delete"
+                                                    method="POST"
                                                     action="{{ path('app_organization_users_delete', { uuid: user.uuid, organizationUuid: organization.uuid }) }}"
                                                     data-controller="form-submit"
                                                     data-action="modal-trigger:submit->form-submit#submit"
                                                     class="fr-hidden fr-unhidden-md"
                                                 >
+                                                    <input type="hidden" name="_method" value="DELETE">
+
                                                     <d-modal-trigger modal="user-delete-modal" submitValue="user-delete-{{ user.uuid }}">
                                                         <button
                                                             class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
