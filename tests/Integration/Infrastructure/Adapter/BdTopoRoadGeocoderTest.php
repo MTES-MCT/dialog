@@ -417,13 +417,14 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
 
     public function testConvertPolygonToRoadLines(): void
     {
-        $polygonGeometry = '{"type":"Polygon","coordinates":[[[3.0739553997,50.6424619948],[3.0739665207,50.6424529935],[3.074522087,50.6418609607],[3.0777787224,50.63850051],[3.0776585827,50.6384534293],[3.0744016773,50.6418141505],[3.0744011534,50.6418146998],[3.0738499776,50.6424020525],[3.0733516646,50.6427136294],[3.0734506159,50.6427776181],[3.0739553997,50.6424619948]]]}';
+        $polygonCoordinates = [[[3.0739553997, 50.6424619948], [3.0739665207, 50.6424529935], [3.074522087, 50.6418609607], [3.0777787224, 50.63850051], [3.0776585827, 50.6384534293], [3.0744016773, 50.6418141505], [3.0744011534, 50.6418146998], [3.0738499776, 50.6424020525], [3.0733516646, 50.6427136294], [3.0734506159, 50.6427776181], [3.0739553997, 50.6424619948]]];
+        $polygonGeometry = json_encode(['type' => 'Polygon', 'coordinates' => $polygonCoordinates]);
+        $multiPolygonGeometry = json_encode(['type' => 'MultiPolygon', 'coordinates' => [$polygonCoordinates]]);
 
-        $geometry = $this->roadGeocoder->convertPolygonRoadToLines($polygonGeometry);
+        $expectedLine = '{"type":"MultiLineString","coordinates":[[[3.073884143,50.64244362],[3.073451098,50.642714387]],[[3.073884143,50.64244362],[3.0739208,50.64241349]],[[3.0739208,50.64241349],[3.073925633,50.642408998]],[[3.077673753,50.638523301],[3.07447901,50.641819881]],[[3.07447901,50.641819881],[3.074444873,50.641855679]],[[3.074444873,50.641855679],[3.074444682,50.64185588]],[[3.074444682,50.64185588],[3.073925633,50.642408998]]]}';
 
-        $this->assertSame(
-            '{"type":"MultiLineString","coordinates":[[[3.073884143,50.64244362],[3.073451098,50.642714387]],[[3.073884143,50.64244362],[3.0739208,50.64241349]],[[3.0739208,50.64241349],[3.073925633,50.642408998]],[[3.077673753,50.638523301],[3.07447901,50.641819881]],[[3.07447901,50.641819881],[3.074444873,50.641855679]],[[3.074444873,50.641855679],[3.074444682,50.64185588]],[[3.074444682,50.64185588],[3.073925633,50.642408998]]]}',
-            $geometry,
-        );
+        $this->assertSame($expectedLine, $this->roadGeocoder->convertPolygonRoadToLines($polygonGeometry));
+        $this->assertSame($expectedLine, $this->roadGeocoder->convertPolygonRoadToLines($multiPolygonGeometry));
+        $this->assertSame($expectedLine, $this->roadGeocoder->convertPolygonRoadToLines($expectedLine)); // Test not polygon
     }
 }

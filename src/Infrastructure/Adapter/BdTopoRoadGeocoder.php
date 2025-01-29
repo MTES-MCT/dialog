@@ -398,7 +398,14 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 // ST_ApproximateMedialAxis permet de calculer la "ligne centrale" d'un polygone
                 // https://postgis.net/docs/ST_ApproximateMedialAxis.html
                 // Ici on l'utilise pour approximer le linéaire de voie à partir d'un polygone qui définit l'enveloppe de cette voie.
-                'SELECT ST_AsGeoJSON(ST_ApproximateMedialAxis(ST_MakeValid(:geom))) AS geom',
+                // Si la géométrie n'est pas un polygône, on la renvoie telle quelle.
+                'SELECT ST_AsGeoJSON(
+                    CASE
+                    WHEN ST_GeometryType((:geom)::geometry) IN (\'ST_Polygon\', \'ST_MultiPolygon\')
+                    THEN ST_ApproximateMedialAxis(ST_MakeValid(:geom))
+                    ELSE (:geom)::geometry
+                    END
+                ) AS geom',
                 [
                     'geom' => $geometry,
                 ],
