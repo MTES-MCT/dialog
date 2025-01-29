@@ -20,6 +20,7 @@
         "nelmio/security-bundle": "^3.0",
         "sentry/sentry-symfony": "^4.5",
         "symfony/asset": "7.2.*",
+        "symfony/brevo-mailer": "7.2.*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/expression-language": "7.2.*",
