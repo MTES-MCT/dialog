@@ -55,7 +55,7 @@
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
                             <h3 class="fr-h4 fr-mb-0">{{ 'regulation.status'|trans }}</h3>
-                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
+                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true, action: regulationOrderHistoryView.action } %}
 
                             {% if not isReadOnly %}
                                 <turbo-frame id="block_export">

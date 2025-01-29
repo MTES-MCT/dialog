@@ -25,5 +25,14 @@ final class RegulationOrderHistoryRepository extends ServiceEntityRepository imp
 
     public function findLastRegulationOrderHistoriesByRegulationOrderUuid(string $regulationOrderUuid): array
     {
+        return $this->createQueryBuilder('roh')
+            ->select(' roh.action, MAX(roh.date)')
+            ->where('roh.regulationOrderUuid = :uuid')
+            ->setParameter('uuid', $regulationOrderUuid)
+            ->groupBy('roh.action')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 }

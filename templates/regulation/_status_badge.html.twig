@@ -9,7 +9,13 @@
     <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v">
         {{ hint|trans }}
     </p>
-    <p>Crée le </p>
-    <p>Modifié le </p>
-    <p>Publié le </p>
+
+    {% if action == 'create' %}
+        <p>Créé le </p>
+    {% elseif action == 'publish' %}
+        <p>Publié le </p>
+    {% else %}
+        <p>Modifié le </p>
+    {% endif %}
+
 {% endif %}

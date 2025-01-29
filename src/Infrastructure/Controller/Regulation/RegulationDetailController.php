@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
+use App\Application\Regulation\Query\GetRegulationOrderHistoryQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\ArrayRegulationMeasures;
@@ -55,10 +56,13 @@ final class RegulationDetailController extends AbstractRegulationController
         }
 
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid, requireUserSameOrg: false);
+        $regulationOrderUuid = $regulationOrderRecord->getRegulationOrder()->getUuid();
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getUserOrganizationUuids()));
-        // ici on appellera la regulationQuery $this->queryBus->handle(new GetRegulationOrderHistoryQuery($uuid));
+        
+        $regulationOrderHistoryView = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderUuid));
+
         $context = [
             'uuid' => $uuid,
             'isDraft' => $generalInfo->isDraft(),
@@ -69,6 +73,7 @@ final class RegulationDetailController extends AbstractRegulationController
             'isPermanent' => $regulationOrderRecord->getRegulationOrder()->isPermanent(),
             'measures' => $measures,
             'regulationOrderRecord' => $regulationOrderRecord,
+            'regulationOrderHistoryView' => $regulationOrderHistoryView,
         ];
 
         return new Response(
