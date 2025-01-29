@@ -3,6 +3,7 @@ twig:
     form_themes: ['common/form/dsfr_theme.html.twig']
     globals:
         dialogOrgId: '%env(DIALOG_ORG_ID)%'
+        baseUrl: '%env(BASE_URL)%'
 when@test:
     twig:
         strict_variables: true

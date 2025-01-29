@@ -300,10 +300,10 @@ ci_metabase_export: ## Export data to Metabase
 ## ----------------
 ##
 
-supervisor_status:
+workers_status:
 	docker compose exec supervisor supervisorctl status
 
-supervisor_restart:
+workers_restart:
 	docker compose exec supervisor supervisorctl restart messenger-worker:*
 
 ##

@@ -10,6 +10,7 @@ use App\Application\User\Command\CreateTokenCommand;
 use App\Application\User\Command\CreateTokenCommandHandler;
 use App\Domain\User\Enum\TokenTypeEnum;
 use App\Domain\User\Exception\UserNotFoundException;
+use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\TokenRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\Token;
@@ -48,7 +49,14 @@ final class CreateTokenCommandHandlerTest extends TestCase
             ->method('getNow')
             ->willReturn($expirationDate);
 
+        $passwordUser = $this->createMock(PasswordUser::class);
+
         $user = $this->createMock(User::class);
+        $user
+            ->expects(self::once())
+            ->method('getPasswordUser')
+            ->willReturn($passwordUser);
+
         $this->userRepository
             ->expects(self::once())
             ->method('findOneByEmail')
@@ -60,18 +68,19 @@ final class CreateTokenCommandHandlerTest extends TestCase
             ->method('make')
             ->willReturn('ed81607d-476c-4e52-a234-90fddf3ba550');
 
+        $expectedResult = new Token(
+            uuid: 'ed81607d-476c-4e52-a234-90fddf3ba550',
+            token: 'myToken',
+            type: TokenTypeEnum::FORGOT_PASSWORD->value,
+            user: $user,
+            expirationDate: new \DateTime('2023-09-01 08:00:00'),
+        );
+
         $this->tokenRepository
             ->expects(self::once())
             ->method('add')
-            ->with(
-                new Token(
-                    uuid: 'ed81607d-476c-4e52-a234-90fddf3ba550',
-                    token: 'myToken',
-                    type: TokenTypeEnum::FORGOT_PASSWORD->value,
-                    user: $user,
-                    expirationDate: new \DateTime('2023-09-01 08:00:00'),
-                ),
-            );
+            ->with($expectedResult)
+            ->willReturn($expectedResult);
 
         $handler = new CreateTokenCommandHandler(
             $this->idFactory,
@@ -80,8 +89,8 @@ final class CreateTokenCommandHandlerTest extends TestCase
             $this->dateUtils,
             $this->tokenGenerator,
         );
-        $this->assertSame(
-            'myToken',
+        $this->assertEquals(
+            $expectedResult,
             ($handler)(new CreateTokenCommand('mathieu@fairness.coop', TokenTypeEnum::FORGOT_PASSWORD->value)),
         );
     }
@@ -103,6 +112,49 @@ final class CreateTokenCommandHandlerTest extends TestCase
             ->method('findOneByEmail')
             ->with('mathieu@fairness.coop')
             ->willReturn(null);
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->tokenRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $handler = new CreateTokenCommandHandler(
+            $this->idFactory,
+            $this->userRepository,
+            $this->tokenRepository,
+            $this->dateUtils,
+            $this->tokenGenerator,
+        );
+
+        ($handler)(new CreateTokenCommand('mathieu@fairness.coop', TokenTypeEnum::FORGOT_PASSWORD->value));
+    }
+
+    public function testUserProConnect(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $user = $this->createMock(User::class);
+        $user
+            ->expects(self::once())
+            ->method('getPasswordUser')
+            ->willReturn(null);
+
+        $this->tokenGenerator
+            ->expects(self::never())
+            ->method('generate');
+
+        $this->dateUtils
+            ->expects(self::never())
+            ->method('getNow');
+
+        $this->userRepository
+            ->expects(self::once())
+            ->method('findOneByEmail')
+            ->with('mathieu@fairness.coop')
+            ->willReturn($user);
 
         $this->idFactory
             ->expects(self::never())

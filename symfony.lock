@@ -167,6 +167,15 @@
             "config/packages/sentry.yaml"
         ]
     },
+    "symfony/brevo-mailer": {
+        "version": "7.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.4",
+            "ref": "7c1038ceb733175f610a913a885a7c8b552b703a"
+        }
+    },
     "symfony/console": {
         "version": "6.1",
         "recipe": {
