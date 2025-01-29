@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Security;
 
 use App\Application\CommandBusInterface;
+use App\Application\User\Command\Mail\SendConfirmationMailCommand;
 use App\Application\User\Command\RegisterCommand;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Infrastructure\Form\User\RegisterFormType;
-use App\Infrastructure\Security\Provider\UserProvider;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +27,6 @@ final class RegisterController
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
-        private Security $security,
-        private UserProvider $userProvider,
         private \Twig\Environment $twig,
     ) {
     }
@@ -43,10 +41,14 @@ final class RegisterController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $user = $this->commandBus->handle($command);
-                $this->security->login($this->userProvider->loadUserByIdentifier($user->getEmail()));
+                $this->commandBus->dispatchAsync(new SendConfirmationMailCommand($user->getEmail()));
+
+                /** @var FlashBagAwareSessionInterface */
+                $session = $request->getSession();
+                $session->getFlashBag()->add('success', $this->translator->trans('register.succeeded'));
 
                 return new RedirectResponse(
-                    url: $this->router->generate('app_regulations_list'),
+                    url: $this->router->generate('app_login'),
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (OrganizationNotFoundException) {
