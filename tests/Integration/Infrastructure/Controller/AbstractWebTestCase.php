@@ -84,4 +84,22 @@ abstract class AbstractWebTestCase extends WebTestCase
 
         $this->assertEquals($expectedSkipLinks, $actualSkipLinks);
     }
+
+    protected function getFlashes(Crawler $crawler): array
+    {
+        $flashes = [];
+
+        foreach (['success', 'error'] as $type) {
+            $flashesOfType = array_map(
+                fn ($text) => trim($text),
+                $crawler->filter(\sprintf('[data-test-flash-type="%s"]', $type))->extract(['_text']),
+            );
+
+            if (\count($flashesOfType) > 0) {
+                $flashes[$type] = $flashesOfType;
+            }
+        }
+
+        return $flashes;
+    }
 }

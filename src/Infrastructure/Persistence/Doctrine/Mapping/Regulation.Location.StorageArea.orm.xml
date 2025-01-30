@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Regulation\Location\StorageArea"
+    table="storage_area">
+    <id name="uuid" type="guid" column="uuid" />
+    <field name="sourceId" type="string" column="source_id" length="64" nullable="false" />
+    <field name="description" type="string" column="description" length="255" nullable="false" />
+    <field name="administrator" type="string" column="administrator" length="64" nullable="false" />
+    <field name="roadNumber" type="string" column="road_number" length="16" nullable="false" />
+    <field name="fromPointNumber" type="string" column="from_point_number" length="5"  nullable="false"/>
+    <field name="fromSide" type="string" column="from_side" length="1" nullable="false" />
+    <field name="fromAbscissa" type="integer" column="from_abscissa" nullable="false">
+      <options>
+            <option name="default">0</option>
+      </options>
+    </field>
+    <field name="toPointNumber" type="string" column="to_point_number" length="5" nullable="false"/>
+    <field name="toSide" type="string" column="to_side" length="1" nullable="false" />
+    <field name="toAbscissa" type="integer" column="to_abscissa" nullable="false">
+      <options>
+            <option name="default">0</option>
+      </options>
+    </field>
+    <field name="geometry" type="geojson_geometry" column="geometry" nullable="false">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
+    <many-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="storageAreas">
+        <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
+    </many-to-one>
+    <unique-constraints>
+      <unique-constraint columns="source_id" name="storage_area_source_id" />
+    </unique-constraints>
+  </entity>
+</doctrine-mapping>

@@ -37,7 +37,8 @@
                             }) }}
                         {{ form_end(form) }}
                         {% if logo %}
-                            <form method="delete" action="{{ path('app_config_organization_delete_logo', { uuid: organization.uuid }) }}">
+                            <form method="POST" action="{{ path('app_config_organization_delete_logo', { uuid: organization.uuid }) }}">
+                                <input type="hidden" name="_method" value="DELETE">
                                 <button class="fr-mt-2w fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-delete-bin-line">
                                     {{ 'organization.logo.delete'|trans }}
                                 </button>

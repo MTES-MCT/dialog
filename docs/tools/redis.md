@@ -20,10 +20,10 @@ URL : http://dialog.localhost:8081
 
 ```bash
 # Voir le status des workers
-make supervisor_status
+make workers_status
 ````
 
 ```bash
 # Redémarrer les workers
-make supervisor_restart
+make workers_restart
 ```

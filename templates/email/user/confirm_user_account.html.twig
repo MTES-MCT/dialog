@@ -1,0 +1,12 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
+    <p>{{ 'confirm_user_account.thanks'|trans }}</p>
+    <p>{{ 'confirm_user_account.confirm_email'|trans }}</p>
+    <a href="{{ baseUrl ~ path('app_register_confirm_account', { token }) }}">
+        {{ 'confirm_user_account.confirm_email_button'|trans }}
+    </a>
+    <p>{{ 'common.expiration'|trans }}</p>
+{% endblock %}

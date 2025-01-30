@@ -1,3 +1,3 @@
 web: bin/run
-worker: php bin/console messenger:consume async --time-limit=300 --limit=50  --sleep=5 --failure-limit=5 --recover-timeout=30
+worker: bash -c "set -e; while true ; do php bin/console messenger:consume async --memory-limit=256M --limit=50 ; done"
 postdeploy: make scalingo-postdeploy

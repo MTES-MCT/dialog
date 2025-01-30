@@ -22,6 +22,7 @@ class SymfonyUserTest extends TestCase
             'password',
             [$organizationUser],
             [UserRolesEnum::ROLE_USER->value],
+            true,
         );
 
         $this->assertSame('2d3724f1-2910-48b4-ba56-81796f6e100b', $user->getUuid());
@@ -34,5 +35,6 @@ class SymfonyUserTest extends TestCase
         $this->assertSame([$organizationUser], $user->getUserOrganizations());
         $this->assertSame(['133fb411-7754-4749-9590-ce05a2abe108'], $user->getUserOrganizationUuids());
         $this->assertEmpty($user->eraseCredentials());
+        $this->assertTrue($user->isVerified());
     }
 }
