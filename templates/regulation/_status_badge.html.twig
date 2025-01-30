@@ -9,13 +9,14 @@
     <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v">
         {{ hint|trans }}
     </p>
-
-    {% if action == 'create' %}
-        <p>Créé le {{ date }}</p>
-    {% elseif action == 'publish' %}
-        <p>Publié le {{ date }}</p>
-    {% else %}
-        <p>Modifié le {{ date }}</p>
-    {% endif %}
+    {% for item in regulationOrderHistory %}
+        {% if item.action == 'create' %}
+            <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v">{{'regulation.regulation_order_history.action.create'|trans}} {{ item.date|date("d-m-Y") }}</p>
+        {% elseif item.action == 'publish' %}
+            <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v">{{'regulation.regulation_order_history.action.publish'|trans}} {{ item.date|date("d-m-Y") }}</p>
+        {% else %}
+            <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v">{{'regulation.regulation_order_history.action.update'|trans}} {{ item.date|date("d-m-Y") }}</p>
+        {% endif %}
+    {% endfor %}
 
 {% endif %}
