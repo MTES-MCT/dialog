@@ -1,4 +1,5 @@
 .PHONY: assets
+.SILENT: data/aires_de_stockage.php
 
 # Allow non-Docker overrides for CI.
 BIN_SHELL = docker compose exec php
@@ -143,6 +144,11 @@ data_bac_idf_import: # Import BAC-IDF decrees as regulation orders
 
 data/bac_idf/decrees.json: ## Create BAC-IDF decrees file
 	./tools/bacidfinstall
+
+data/aires_de_stockage.php:
+	make --silent console CMD="app:storage_area:generate data/aires_de_stockage.csv" > data/aires_de_stockage.php
+	make console CMD="doctrine:migrations:generate -n"
+	@echo "Ajoutez le contenu du fichier PHP data/aires_de_stockage.php ci-dessus dans le up() de la nouvelle migration"
 
 ##
 ## ----------------
