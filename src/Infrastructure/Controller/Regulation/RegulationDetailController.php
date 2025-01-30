@@ -61,7 +61,7 @@ final class RegulationDetailController extends AbstractRegulationController
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getUserOrganizationUuids()));
 
-        $regulationOrderHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderUuid));
+        $latestHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderUuid));
 
         $context = [
             'uuid' => $uuid,
@@ -73,7 +73,7 @@ final class RegulationDetailController extends AbstractRegulationController
             'isPermanent' => $regulationOrderRecord->getRegulationOrder()->isPermanent(),
             'measures' => $measures,
             'regulationOrderRecord' => $regulationOrderRecord,
-            'regulationOrderHistory' => $regulationOrderHistory,
+            'latestHistory' => $latestHistory,
         ];
 
         return new Response(

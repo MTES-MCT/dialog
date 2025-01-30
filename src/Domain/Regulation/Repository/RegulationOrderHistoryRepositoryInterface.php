@@ -10,5 +10,5 @@ interface RegulationOrderHistoryRepositoryInterface
 {
     public function add(RegulationOrderHistory $regulationOrderHistory): RegulationOrderHistory;
 
-    public function findLastRegulationOrderHistoriesByRegulationOrderUuid(string $regulationOrderUuid): array;
+    public function findLastRegulationOrderHistoryByUuid(string $regulationOrderUuid): ?array;
 }

@@ -55,8 +55,8 @@
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
                             <h3 class="fr-h4 fr-mb-0">{{ 'regulation.status'|trans }}</h3>
-                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true, regulationOrderHistory: regulationOrderHistory} %}
-                            {% include 'regulation/_regulation_order_history.html.twig' with { regulationOrderHistory: regulationOrderHistory} %}
+                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
+                            {% include 'regulation/_regulation_order_history.html.twig' with { latestHistory: latestHistory } %}
 
                             {% if not isReadOnly %}
                                 <turbo-frame id="block_export">

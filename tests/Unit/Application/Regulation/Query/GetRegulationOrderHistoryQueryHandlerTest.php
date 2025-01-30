@@ -18,7 +18,7 @@ final class GetRegulationOrderHistoryQueryHandlerTest extends TestCase
 
         $repository
             ->expects(self::once())
-            ->method('findLastRegulationOrderHistoriesByRegulationOrderUuid')
+            ->method('findLastRegulationOrderHistoryByUuid')
             ->with('c41d4831-1c4c-4e3b-aaa6-202d98a63b3a')
             ->willReturn($regulationOrderHistory);
 

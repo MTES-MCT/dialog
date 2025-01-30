@@ -13,10 +13,8 @@ final class GetRegulationOrderHistoryQueryHandler
     ) {
     }
 
-    public function __invoke(GetRegulationOrderHistoryQuery $query): array
+    public function __invoke(GetRegulationOrderHistoryQuery $query): ?array
     {
-        $regulationOrderHistory = $this->regulationOrderHistoryRepository->findLastRegulationOrderHistoriesByRegulationOrderUuid($query->regulationOrderUuid);
-
-        return $regulationOrderHistory;
+        return $this->regulationOrderHistoryRepository->findLastRegulationOrderHistoryByUuid($query->regulationOrderUuid);
     }
 }
