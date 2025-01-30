@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Command;
 
-use App\Infrastructure\Adapter\CsvParser;
 use App\Infrastructure\Data\StorageArea\StorageAreaMigrationGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 #[AsCommand(
     name: 'app:storage_area:generate',
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class StorageAreaGenerateCommand extends Command
 {
     public function __construct(
-        private readonly CsvParser $csvParser,
+        private readonly DecoderInterface $decoder,
         private readonly StorageAreaMigrationGenerator $storageAreaMigrationGenerator,
     ) {
         parent::__construct();
@@ -37,7 +37,7 @@ class StorageAreaGenerateCommand extends Command
 
         $csv = file_get_contents($path);
 
-        $rows = $this->csvParser->parseAssociative($csv);
+        $rows = $this->decoder->decode($csv, 'csv');
         $sql = $this->storageAreaMigrationGenerator->makeMigrationSql($rows);
 
         $output->writeln(\sprintf('$this->addSql(\'%s\');', str_replace("'", "\\'", $sql)));

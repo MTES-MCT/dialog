@@ -8,18 +8,18 @@ use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
 use App\Domain\Regulation\Enum\DirectionEnum;
-use App\Infrastructure\Adapter\CsvParser;
 use App\Infrastructure\Data\StorageArea\StorageAreaMigrationGenerator;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
 
 final class StorageAreaMigrationGeneratorTest extends TestCase
 {
     private $bdtopoConnection;
     private $roadGeocoder;
     private $roadSectionMaker;
+    private $testRows;
     private $generator;
-    private $csvParser;
 
     protected function setUp(): void
     {
@@ -27,7 +27,8 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->roadSectionMaker = $this->createMock(RoadSectionMakerInterface::class);
         $this->generator = new StorageAreaMigrationGenerator($this->bdtopoConnection, $this->roadGeocoder, $this->roadSectionMaker);
-        $this->csvParser = new CsvParser();
+        $decoder = new CsvEncoder();
+        $this->testRows = $decoder->decode(file_get_contents(__DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv'), 'csv');
     }
 
     public function testGenerateEmpty(): void
@@ -37,8 +38,7 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
 
     public function testGenerateGeocodingExceptionIgnored(): void
     {
-        $rows = $this->csvParser->parseAssociative(file_get_contents(__DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv'));
-        $rows = [$rows[0]];
+        $rows = [$this->testRows[0]];
 
         $this->bdtopoConnection
             ->expects(self::once())
@@ -61,8 +61,6 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
 
     public function testGenerate(): void
     {
-        $rows = $this->csvParser->parseAssociative(file_get_contents(__DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv'));
-
         $this->bdtopoConnection
             ->expects(self::exactly(3))
             ->method('fetchAssociative')
@@ -132,7 +130,7 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls('geom1', 'geom2', 'geom3');
 
-        $sql = $this->generator->makeMigrationSql($rows);
+        $sql = $this->generator->makeMigrationSql($this->testRows);
 
         $expectedSql = trim(
             'INSERT INTO storage_area (uuid, source_id, description, administrator, road_number, from_point_number, from_side, from_abscissa, to_point_number, to_side, to_abscissa, geometry) VALUES
