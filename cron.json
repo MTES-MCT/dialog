@@ -1,0 +1,7 @@
+{
+    "jobs": [
+      {
+        "command": "0 0 * * * php bin/console app:user_tokens:purge"
+      }
+    ]
+  }

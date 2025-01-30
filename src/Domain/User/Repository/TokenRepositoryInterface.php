@@ -12,5 +12,7 @@ interface TokenRepositoryInterface
 
     public function remove(Token $token): void;
 
+    public function deleteExpiredTokens(): void;
+
     public function findOneByTokenAndType(string $token, string $type): ?Token;
 }

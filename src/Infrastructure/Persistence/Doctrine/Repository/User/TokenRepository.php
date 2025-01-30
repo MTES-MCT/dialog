@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
+use App\Application\DateUtilsInterface;
 use App\Domain\User\Repository\TokenRepositoryInterface;
 use App\Domain\User\Token;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -11,8 +12,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class TokenRepository extends ServiceEntityRepository implements TokenRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private DateUtilsInterface $dateUtils,
+    ) {
         parent::__construct($registry, Token::class);
     }
 
@@ -41,5 +44,17 @@ final class TokenRepository extends ServiceEntityRepository implements TokenRepo
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function deleteExpiredTokens(): void
+    {
+        $this->createQueryBuilder('t')
+            ->delete()
+            ->where('t.expirationDate < :now')
+            ->setParameters([
+                'now' => $this->dateUtils->getNow(),
+            ])
+            ->getQuery()
+            ->execute();
     }
 }
