@@ -36,6 +36,7 @@ final class UserProvider implements UserProviderInterface
             $user->getPasswordUser()->getPassword(),
             $userOrganizations,
             $user->getRoles(),
+            $user->isVerified(),
         );
     }
 

@@ -29,9 +29,13 @@ final class RegisterControllerTest extends AbstractWebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHtmlBodyContains($email, 'Pour finaliser la création de votre compte, merci de cliquer sur le lien ci-dessous :');
+
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_regulations_list');
+        $this->assertRouteSame('app_login');
     }
 
     public function testRegisterSiretNotExists(): void
