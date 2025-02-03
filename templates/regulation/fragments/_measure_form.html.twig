@@ -181,7 +181,7 @@
 
         <div
             class="fr-x-autocomplete-wrapper"
-            data-controller="autocomplete"
+            data-controller="autocomplete fetch"
             data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
             data-autocomplete-query-param-value="search"
             data-autocomplete-extra-query-params-value="{{ {
@@ -192,7 +192,12 @@
             data-autocomplete-delay-value="500"
             data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
             data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
-            data-action="autocomplete.change->reset#reset"
+            data-fetch-url-value="{{ url('fragment_storage_area_options') }}"
+            data-fetch-extra-query-params-value="{{ {
+                roadNumber: '#' ~ form[roadType].roadNumber.vars.id,
+                targetId: form[roadType].storageArea.vars.id,
+            }|json_encode }}"
+            data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch"
             data-reset-key-param="roadNumber"
         >
             {{ form_row(form[roadType].roadNumber, {
@@ -277,7 +282,6 @@
                     </button>
 
                     <div
-                        data-controller="reset"
                         data-form-reveal-target="section"
                         {% if form[roadType].storageArea.vars.value == null %}hidden{% endif %}
                     >
@@ -297,6 +301,7 @@
                                 <button
                                     type="button"
                                     class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                                    data-reset-behavior="click"
                                     data-action="form-reveal#close"
                                     aria-label="{{ 'common.delete'|trans }}"
                                 >

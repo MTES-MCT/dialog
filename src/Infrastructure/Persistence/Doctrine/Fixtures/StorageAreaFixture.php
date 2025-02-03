@@ -20,7 +20,7 @@ final class StorageAreaFixture extends Fixture
             description: 'Zone de stockage 18-22 N176 Voie de droite',
             administrator: 'DIR Ouest',
             roadNumber: 'N176',
-            fromPointNumber: '17',
+            fromPointNumber: '18',
             fromAbscissa: 0,
             fromSide: 'D',
             toPointNumber: '22',

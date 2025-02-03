@@ -326,7 +326,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             location: $winterMaintenanceLocation,
             direction: DirectionEnum::BOTH->value,
             administrator: 'DIR Ouest',
-            roadNumber: 'N165',
+            roadNumber: 'N176',
             fromPointNumber: '24',
             fromSide: 'D',
             fromAbscissa: 0,

@@ -397,12 +397,17 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $values = $form->getPhpValues();
         $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values['measure_form']['locations'][0]['roadType']);
+        $choices = $crawler->filter('select[name="measure_form[locations][0][nationalRoad][storageArea]"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertEquals([
+            ['', 'Sélectionner une aire de stockage'],
+            [StorageAreaFixture::UUID_DIRO_N176, 'Zone de stockage 18-22 N176 Voie de droite'],
+        ], $choices);
         $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);
 
-        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = null;
+        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);

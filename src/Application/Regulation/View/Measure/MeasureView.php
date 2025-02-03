@@ -8,7 +8,6 @@ use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
-use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 
 readonly class MeasureView
@@ -49,7 +48,6 @@ readonly class MeasureView
             );
         }
 
-        /* @var Location */
         foreach ($measure->getLocations() as $location) {
             if ($namedStreet = $location->getNamedStreet()) {
                 $locations[] = new LocationView(

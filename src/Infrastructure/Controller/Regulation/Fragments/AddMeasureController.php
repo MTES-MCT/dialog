@@ -14,7 +14,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
-use App\Application\Regulation\Query\Location\GetStorageAreasQuery;
+use App\Application\Regulation\Query\Location\GetStorageAreasByRoadNumbersQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
@@ -58,7 +58,7 @@ final class AddMeasureController extends AbstractRegulationController
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $command = SaveMeasureCommand::create($regulationOrder);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
-        $storageAreas = $this->queryBus->handle(new GetStorageAreasQuery());
+        $storageAreas = $this->queryBus->handle(new GetStorageAreasByRoadNumbersQuery()); // Show all because no road selected yet
         $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
         if ($canUseRawGeoJSON) {

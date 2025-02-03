@@ -6,15 +6,15 @@ namespace App\Application\Regulation\Query\Location;
 
 use App\Domain\Regulation\Repository\StorageAreaRepositoryInterface;
 
-final class GetStorageAreasQueryHandler
+final class GetStorageAreasByRoadNumbersQueryHandler
 {
     public function __construct(
         private StorageAreaRepositoryInterface $storageAreaRepository,
     ) {
     }
 
-    public function __invoke(GetStorageAreasQuery $query): array
+    public function __invoke(GetStorageAreasByRoadNumbersQuery $query): array
     {
-        return $this->storageAreaRepository->findAll();
+        return $this->storageAreaRepository->findAllByRoadNumbers($query->roadNumbers);
     }
 }

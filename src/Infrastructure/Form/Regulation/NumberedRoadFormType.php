@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class NumberedRoadFormType extends AbstractType
@@ -82,23 +83,52 @@ final class NumberedRoadFormType extends AbstractType
                 ],
             )
             ->add('direction', ChoiceType::class, $this->getDirectionOptions())
-            ->add('storageArea', EntityType::class, [
+            ->add('roadType', HiddenType::class, ['data' => $options['roadType']])
+        ;
+
+        // Credit: https://symfony.com/doc/current/form/dynamic_form_modification.html#dynamic-generation-for-submitted-forms
+        $storageAreaModifier = function (FormInterface $form, mixed $data = null) use ($options) {
+            $choices = [];
+
+            if ($data === null) {
+                // If no road selected, allow selecting from all storage areas
+                foreach ($options['storage_areas'] as $roadNumber => $storageAreas) {
+                    $choices[] = $storageAreas;
+                }
+            } elseif (\array_key_exists($data->roadNumber, $options['storage_areas'])) {
+                // Or get only the storage areas of selected road
+                foreach ($options['storage_areas'][$data->roadNumber] as $storageArea) {
+                    $choices[] = $storageArea;
+                }
+            }
+
+            $form->add('storageArea', EntityType::class, [
                 'class' => StorageArea::class,
-                'choices' => $options['storage_areas'],
+                'choices' => $choices,
                 'choice_label' => 'description',
                 'choice_value' => 'uuid',
                 'label' => 'regulation.location.storage_area',
                 'help' => 'regulation.location.storage_area.help',
-            ])
-            ->add('roadType', HiddenType::class, ['data' => $options['roadType']])
-        ;
+                'placeholder' => 'regulation.location.storage_area.placeholder',
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'required',
+                ],
+            ]);
+        };
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($storageAreaModifier): void {
+            $storageAreaModifier($event->getForm(), $event->getData());
+        });
 
         // Constraint "Valid" cannot be nested inside constraint When. The event listener is used to ensure that the roadType is added to the submitted data before the form is processed.
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($storageAreaModifier): void {
             $data = $event->getData();
             $data['roadType'] = $event->getForm()->getParent()->get('roadType')->getData();
             $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value;
             $event->setData($data);
+
+            $storageAreaModifier($event->getForm(), $event->getForm()->getData());
         });
     }
 

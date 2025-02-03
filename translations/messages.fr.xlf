@@ -725,6 +725,14 @@
                 <source>regulation.location.storage_area.line</source>
                 <target>Aire de stockage : %description%</target>
             </trans-unit>
+            <trans-unit id="regulation.location.storage_area.placeholder">
+                <source>regulation.location.storage_area.placeholder</source>
+                <target>Sélectionner une aire de stockage</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.placeholder.empty">
+                <source>regulation.location.storage_area.placeholder.empty</source>
+                <target>Aucune aire de stockage connue sur cette route</target>
+            </trans-unit>
             <trans-unit id="regulation.location.named_street.section">
                 <source>regulation.location.named_street.section</source>
                 <target>Section concernée</target>

@@ -13,7 +13,6 @@ use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
-use App\Application\Regulation\Query\Location\GetStorageAreasQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -64,7 +63,7 @@ final class UpdateMeasureController extends AbstractRegulationController
 
         $command = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder(), $measure);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
-        $storageAreas = $this->queryBus->handle(new GetStorageAreasQuery());
+        $storageAreas = $this->queryBus->handle($command->getStorageAreasQuery());
         $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
         if ($canUseRawGeoJSON) {

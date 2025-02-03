@@ -48,7 +48,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         // Les 2 premiers n'en ont pas pour des raisons de test
         $this->assertSame('', $rows->eq(0)->filter('td')->eq(3)->text());
         $this->assertSame('', $rows->eq(1)->filter('td')->eq(3)->text());
-        $this->assertSame('du 15/01/2025 au 30/01/2025 en cours', $rows->eq(2)->filter('td')->eq(3)->text());
+        $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(2)->filter('td')->eq(3)->text());
         $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(3)->filter('td')->eq(3)->text());
         $this->assertSame('du 03/07/2023 au 10/11/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
     }
