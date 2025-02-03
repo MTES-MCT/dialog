@@ -187,6 +187,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     AND p.route = :roadNumber
                     AND p.numero = :pointNumber
                     AND p.cote = :side
+                    -- Types dans la BDTOPO : C, CS, DS, FS, PR, PR0, PRF.
+                    -- On ne garde que les types PR, PR0 et PRF, car les autres types ne correspondent pas à des PR "physiques".
+                    AND p.type_de_pr LIKE \'PR%\'
                 ',
                 [
                     'administrator' => $administrator,
