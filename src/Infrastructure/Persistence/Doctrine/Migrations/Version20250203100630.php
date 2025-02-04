@@ -28,7 +28,7 @@ final class Version20250203100630 extends AbstractMigration
             INNER JOIN regulation_order AS ro ON ro.uuid = ror.regulation_order_uuid
             INNER JOIN organization AS o ON o.uuid = ror.organization_uuid
             INNER JOIN organizations_users AS ou ON ou.organization_uuid = o.uuid
-            INNER JOIN user AS u ON ou.user_uuid = u.uuid
+              INNER JOIN "user" AS u ON ou.user_uuid = u.uuid
             WHERE NOT EXISTS (SELECT 1 FROM regulation_order_history AS roh WHERE CAST(roh.regulation_order_uuid AS uuid) = ro.uuid)
             AND ou.roles LIKE \'%ROLE_ORGA_ADMIN%\';
         ', );
