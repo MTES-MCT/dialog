@@ -44,13 +44,14 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
     public function findByRegulationOrderRecordUuid(string $uuid): array
     {
         return $this->createQueryBuilder('m')
-            ->addSelect('p', 't', 'd', 'v', 'l', 'ns', 'nr', 'rg')
+            ->addSelect('p', 't', 'd', 'v', 'l', 'ns', 'nr', 'rg', 'sa')
             ->innerJoin('m.regulationOrder', 'ro')
             ->innerJoin('ro.regulationOrderRecord', 'roc')
             ->leftJoin('m.locations', 'l')
             ->leftJoin('l.namedStreet', 'ns')
             ->leftJoin('l.numberedRoad', 'nr')
             ->leftJoin('l.rawGeoJSON', 'rg')
+            ->leftJoin('l.storageArea', 'sa')
             ->leftJoin('m.periods', 'p')
             ->leftJoin('p.timeSlots', 't')
             ->leftJoin('p.dailyRange', 'd')

@@ -14,6 +14,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
+use App\Application\Regulation\Query\Location\GetStorageAreasByRoadNumbersQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
@@ -57,6 +58,7 @@ final class AddMeasureController extends AbstractRegulationController
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $command = SaveMeasureCommand::create($regulationOrder);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
+        $storageAreas = $this->queryBus->handle(new GetStorageAreasByRoadNumbersQuery()); // Show all because no road selected yet
         $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
         if ($canUseRawGeoJSON) {
@@ -66,6 +68,7 @@ final class AddMeasureController extends AbstractRegulationController
         $form = $this->formFactory->create(MeasureFormType::class, $command, [
             'action' => $this->router->generate('fragment_regulations_measure_add', ['uuid' => $uuid]),
             'administrators' => $administrators,
+            'storage_areas' => $storageAreas,
             'isPermanent' => $regulationOrder->isPermanent(),
             'permissions' => $command->permissions,
         ]);

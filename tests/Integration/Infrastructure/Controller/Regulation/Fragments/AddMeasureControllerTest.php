@@ -8,6 +8,7 @@ use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -431,6 +432,50 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
         $this->assertSame($expectedText, $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+    }
+
+    public function testAddNumberedRoadWinterMaintenance(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0] = [
+            'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
+            RoadTypeEnum::NATIONAL_ROAD->value => [
+                'administrator' => 'DIR Ouest',
+                'roadNumber' => 'N176',
+                'fromPointNumber' => '24',
+                'fromSide' => 'D',
+                'fromAbscissa' => '0',
+                'toPointNumber' => '28',
+                'toSide' => 'D',
+                'toAbscissa' => '0',
+                'storageArea' => StorageAreaFixture::UUID_DIRO_N176,
+            ],
+        ];
+        $values['measure_form']['periods'][0]['startDate'] = '2025-01-15';
+        $values['measure_form']['periods'][0]['endDate'] = '2025-01-30';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
+        $this->assertSame(
+            'N176 (DIR Ouest) du PR 24+0 (côté D) au PR 28+0 (côté D) Aire de stockage : Zone de stockage 18-22 N176 Voie de droite',
+            $measures->eq(0)->filter('.app-card__content li')->eq(3)->text(),
+        );
     }
 
     public function testAddDepartmentalRoadWithUnknownPointNumbers(): void

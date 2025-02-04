@@ -5,13 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\Regulation\Location;
 
 use App\Domain\Regulation\Measure;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 class Location
 {
-    private Collection $storageAreas;
-
     public function __construct(
         private string $uuid,
         private Measure $measure,
@@ -20,8 +16,8 @@ class Location
         private ?NamedStreet $namedStreet = null,
         private ?NumberedRoad $numberedRoad = null,
         private ?RawGeoJSON $rawGeoJSON = null,
+        private ?StorageArea $storageArea = null,
     ) {
-        $this->storageAreas = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -59,9 +55,9 @@ class Location
         return $this->rawGeoJSON;
     }
 
-    public function getStorageAreas(): array
+    public function getStorageArea(): ?StorageArea
     {
-        return $this->storageAreas->toArray();
+        return $this->storageArea;
     }
 
     public function getCifsStreetLabel(): string
@@ -98,21 +94,8 @@ class Location
         $this->rawGeoJSON = $rawGeoJSON;
     }
 
-    public function addStorageArea(StorageArea $storageArea): void
+    public function setStorageArea(?StorageArea $storageArea): void
     {
-        if ($this->storageAreas->contains($storageArea)) {
-            return;
-        }
-
-        $this->storageAreas->add($storageArea);
-    }
-
-    public function removeStorageArea(StorageArea $storageArea): void
-    {
-        if (!$this->storageAreas->contains($storageArea)) {
-            return;
-        }
-
-        $this->storageAreas->removeElement($storageArea);
+        $this->storageArea = $storageArea;
     }
 }

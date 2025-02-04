@@ -8,7 +8,6 @@ class StorageArea
 {
     public function __construct(
         private string $uuid,
-        private Location $location,
         private string $sourceId,
         private string $description,
         private string $administrator,
@@ -26,11 +25,6 @@ class StorageArea
     public function getUuid(): string
     {
         return $this->uuid;
-    }
-
-    public function getLocation(): Location
-    {
-        return $this->location;
     }
 
     public function getSourceId(): string

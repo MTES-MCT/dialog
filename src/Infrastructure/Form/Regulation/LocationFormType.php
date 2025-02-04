@@ -32,6 +32,7 @@ final class LocationFormType extends AbstractType
             ->add(RoadTypeEnum::NATIONAL_ROAD->value, NumberedRoadFormType::class, [
                 'roadType' => RoadTypeEnum::NATIONAL_ROAD->value,
                 'administrators' => $options['administrators'][RoadTypeEnum::NATIONAL_ROAD->value],
+                'storage_areas' => $options['storage_areas'],
                 'label' => false,
             ])
             ->add('namedStreet', NamedStreetFormType::class, [
@@ -100,10 +101,12 @@ final class LocationFormType extends AbstractType
                 RoadTypeEnum::DEPARTMENTAL_ROAD->value => [],
                 RoadTypeEnum::NATIONAL_ROAD->value => [],
             ],
+            'storage_areas' => [],
             'permissions' => [],
             'data_class' => SaveLocationCommand::class,
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
+        $resolver->setAllowedTypes('storage_areas', 'array');
         $resolver->setAllowedTypes('permissions', 'array');
     }
 }

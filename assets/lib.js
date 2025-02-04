@@ -67,16 +67,24 @@ export function resetFormControl(element) {
         element.value = '';
         return;
     }
-    
+
     if (element instanceof HTMLSelectElement) {
         element.selectedIndex = 0;
         return;
     }
-    
+
     if (element instanceof HTMLFieldSetElement) {
         for (const subElement of element.elements) {
             resetFormControl(subElement);
         }
+        return;
+    }
+
+    if (element instanceof HTMLButtonElement) {
+        if (element.dataset.resetBehavior === 'click') {
+            element.click();
+        }
+
         return;
     }
 

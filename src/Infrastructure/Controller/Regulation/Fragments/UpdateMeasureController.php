@@ -63,6 +63,7 @@ final class UpdateMeasureController extends AbstractRegulationController
 
         $command = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder(), $measure);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
+        $storageAreas = $this->queryBus->handle($command->getStorageAreasQuery());
         $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
 
         if ($canUseRawGeoJSON) {
@@ -78,6 +79,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                     'uuid' => $uuid,
                 ]),
                 'administrators' => $administrators,
+                'storage_areas' => $storageAreas,
                 'isPermanent' => $regulationOrder->isPermanent(),
                 'permissions' => $command->permissions,
             ],

@@ -12,6 +12,7 @@ use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
+use App\Domain\Regulation\Location\StorageArea;
 use App\Domain\Regulation\Repository\NumberedRoadRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -114,6 +115,14 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
 
     public function testUpdate(): void
     {
+        $location = $this->createMock(Location::class);
+        $storageArea = $this->createMock(StorageArea::class);
+
+        $location
+            ->expects(self::once())
+            ->method('setStorageArea')
+            ->with($storageArea);
+
         $numberedRoad = $this->createMock(NumberedRoad::class);
         $numberedRoad
             ->expects(self::once())
@@ -144,6 +153,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         );
 
         $command = new SaveNumberedRoadCommand($numberedRoad);
+        $command->location = $location;
         $command->direction = $this->direction;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
@@ -153,6 +163,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         $command->toPointNumber = $this->toPointNumber;
         $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;
+        $command->storageArea = $storageArea;
         $this->assertSame($numberedRoad, $handler($command));
     }
 }

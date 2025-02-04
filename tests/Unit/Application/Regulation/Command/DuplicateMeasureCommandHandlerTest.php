@@ -208,6 +208,10 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getGeometry')
             ->willReturn('roadGeometry');
+        $location2
+            ->expects(self::once())
+            ->method('getStorageArea')
+            ->willReturn(null);
 
         $rawGeoJSON1 = $this->createMock(RawGeoJSON::class);
         $location3
@@ -273,6 +277,7 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
         $numberedRoad->fromPointNumber = '1';
         $numberedRoad->toPointNumber = '3';
         $numberedRoad->geometry = 'roadGeometry';
+        $numberedRoad->storageArea = null;
         $locationCommand2->assignNumberedRoad($numberedRoad);
 
         $locationCommand3 = new SaveLocationCommand();

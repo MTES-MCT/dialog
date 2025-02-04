@@ -30,9 +30,6 @@
         <option name="srid">4326</option>
       </options>
     </field>
-    <many-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="storageAreas">
-        <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
-    </many-to-one>
     <unique-constraints>
       <unique-constraint columns="source_id" name="storage_area_source_id" />
     </unique-constraints>

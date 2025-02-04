@@ -39,6 +39,7 @@
                         <value>roadMaintenance</value>
                         <value>incident</value>
                         <value>event</value>
+                        <value>winterMaintenance</value>
                         <value>other</value>
                     </constraint>
                 </option>

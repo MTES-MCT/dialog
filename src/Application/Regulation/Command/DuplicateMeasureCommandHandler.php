@@ -74,6 +74,7 @@ final class DuplicateMeasureCommandHandler
                 $numberedRoadCmd->toAbscissa = $numberedRoad->getToAbscissa();
                 $numberedRoadCmd->toSide = $numberedRoad->getToSide();
                 $numberedRoadCmd->direction = $numberedRoad->getDirection();
+                $numberedRoadCmd->storageArea = $location->getStorageArea();
                 $cmd->assignNumberedRoad($numberedRoadCmd);
             } elseif ($namedStreet = $location->getNamedStreet()) {
                 $cmd->namedStreet = new SaveNamedStreetCommand();

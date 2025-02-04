@@ -39,6 +39,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
     public const UUID_CIFS = '0654905d-6771-75d8-8000-d523184d0b55';
     public const UUID_RAWGEOJSON = '06672e5e-8322-739f-8000-9ebfcd86e29a';
     public const UUID_LITTERALIS = '066e9849-1457-7a1e-8000-3142ece4a7de';
+    public const UUID_WINTER_MAINTENANCE = '6f665f38-7765-47b1-849a-06279eba3ac6';
 
     public function load(ObjectManager $manager): void
     {
@@ -132,6 +133,15 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('mainOrg', Organization::class),
         );
 
+        $winterMaintenanceRegulationOrderRecord = new RegulationOrderRecord(
+            self::UUID_WINTER_MAINTENANCE,
+            RegulationOrderRecordSourceEnum::DIALOG->value,
+            RegulationOrderRecordStatusEnum::DRAFT->value,
+            $this->getReference('winterMaintenanceRegulationOrder', RegulationOrder::class),
+            new \DateTime('2025-01-08'),
+            $this->getReference('mainOrg', Organization::class),
+        );
+
         $manager->persist($typicalRegulationOrderRecord);
         $manager->persist($publishedRegulationOrderRecord);
         $manager->persist($regulationOrderRecordPermanent);
@@ -142,6 +152,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $manager->persist($outDatedRegulationOrderRecordCifs);
         $manager->persist($rawGeoJSONRegulationOrderRecord);
         $manager->persist($litteralisRegulationOrderRecord);
+        $manager->persist($winterMaintenanceRegulationOrderRecord);
         $manager->flush();
     }
 

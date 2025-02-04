@@ -148,6 +148,14 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
         );
 
+        $winterMaintenancePeriod = new Period(
+            uuid: '10258e5a-0f5b-4e74-ac9e-cbda7f64165d',
+            measure: $this->getReference('winterMaintenanceMeasure', Measure::class),
+            startDateTime: new \DateTimeImmutable('2025-01-15 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2025-01-30 23:59:00', $tz),
+            recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
+        );
+
         $manager->persist($typicalPeriod);
         $manager->persist($publishedPeriod);
         $manager->persist($publishedPeriod2);
@@ -167,6 +175,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($outDatedCifsDailyRange);
         $manager->persist($rawGeoJSONPeriod);
         $manager->persist($litteralisPeriod);
+        $manager->persist($winterMaintenancePeriod);
 
         $manager->flush();
     }

@@ -12,6 +12,7 @@ final readonly class LocationView
         public ?NamedStreetView $namedStreet = null,
         public ?NumberedRoadView $numberedRoad = null,
         public ?RawGeoJSONView $rawGeoJSON = null,
+        public ?StorageAreaView $storageArea = null,
     ) {
     }
 }

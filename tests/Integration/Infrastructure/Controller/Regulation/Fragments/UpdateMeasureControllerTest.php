@@ -8,6 +8,7 @@ use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -384,6 +385,49 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $initialValues, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);
+    }
+
+    public function testNationalRoadWinterMaintenanceSetAndClearStorageArea(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/' . MeasureFixture::UUID_WINTER_MAINTENANCE . '/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values['measure_form']['locations'][0]['roadType']);
+        $choices = $crawler->filter('select[name="measure_form[locations][0][nationalRoad][storageArea]"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertEquals([
+            ['', 'Sélectionner une aire de stockage'],
+            [StorageAreaFixture::UUID_DIRO_N176, 'Zone de stockage 18-22 N176 Voie de droite'],
+        ], $choices);
+        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(303);
+
+        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = '';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(303);
+    }
+
+    public function testNationalRoadWinterMaintenanceInvalidStorageArea(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/' . MeasureFixture::UUID_WINTER_MAINTENANCE . '/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values['measure_form']['locations'][0]['roadType']);
+        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = '8d32e8c4-ee98-4183-aea1-b03d341d971d';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringStartsWith('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_nationalRoad_storageArea_error')->text());
     }
 
     public function testEditAsUserRawGeoJSONHidden(): void

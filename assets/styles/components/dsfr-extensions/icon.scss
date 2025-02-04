@@ -33,6 +33,7 @@
     'restriction',
     'check',
     'road-maintenance-or-construction',
+    'parking-box-line',
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
