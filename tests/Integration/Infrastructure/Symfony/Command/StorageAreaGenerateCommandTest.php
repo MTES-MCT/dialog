@@ -24,7 +24,7 @@ final class StorageAreaGenerateCommandTest extends KernelTestCase
         $sql = $commandTester->getDisplay();
 
         $this->assertStringStartsWith('$this->addSql(\'INSERT INTO storage_area', $sql);
-        // 4 lignes dans le CSV de test, 1 est une Autoroute (ignorée), 1 erreur de géocodage => 2 au final
-        $this->assertSame(2, substr_count($sql, 'uuid_generate_v4()'));
+        // 4 lignes dans le CSV de test, 1 est une Autoroute (ignorée)
+        $this->assertSame(3, substr_count($sql, 'uuid_generate_v4()'));
     }
 }
