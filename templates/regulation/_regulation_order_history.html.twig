@@ -1,1 +1,4 @@
-<p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v">{{ ('regulation.regulation_order_history.action.' ~ latestHistory.action)|trans }} {{ latestHistory.date }}</p>
+{% if latestHistory %}
+	<p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v" data-testid="history">{{ ('regulation.regulation_order_history.action.' ~ latestHistory.action)|trans }}
+		{{ latestHistory.date }}</p>
+{% endif %}

@@ -18,13 +18,15 @@ final class GetRegulationOrderHistoryQueryHandler
     {
         $row = $this->regulationOrderHistoryRepository->findLastRegulationOrderHistoryByUuid($query->regulationOrderUuid);
 
+        if (!$row) {
+            return null;
+        }
+
         $date = $row['date'];
 
-        $regulationOrderHistoryView = new RegulationOrderHistoryView(
+        return new RegulationOrderHistoryView(
             date: $date->format('d-m-Y'),
             action: $row['action'],
         );
-
-        return $regulationOrderHistoryView;
     }
 }
