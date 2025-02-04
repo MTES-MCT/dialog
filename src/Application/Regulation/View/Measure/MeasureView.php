@@ -63,6 +63,8 @@ readonly class MeasureView
                     ),
                 );
             } elseif ($numberedRoad = $location->getNumberedRoad()) {
+                $storageArea = $location->getStorageArea();
+
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
@@ -76,6 +78,7 @@ readonly class MeasureView
                         toAbscissa: $numberedRoad->getToAbscissa() ?? 0,
                         toSide: $numberedRoad->getToSide(),
                     ),
+                    storageArea: $storageArea ? new StorageAreaView($storageArea->getDescription()) : null,
                 );
             } elseif ($rawGeoJSON = $location->getRawGeoJSON()) {
                 $locations[] = new LocationView(

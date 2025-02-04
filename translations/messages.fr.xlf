@@ -428,6 +428,10 @@
                 <source>regulation.subject.incident</source>
                 <target>Incident ou péril</target>
             </trans-unit>
+            <trans-unit id="regulation.subject.winterMaintenance">
+                <source>regulation.subject.winterMaintenance</source>
+                <target>Viabilité hivernale</target>
+            </trans-unit>
             <trans-unit id="regulation.subject.other">
                 <source>regulation.subject.other</source>
                 <target>Autre</target>
@@ -700,6 +704,34 @@
             <trans-unit id="regulation.location.direction.B_TO_A">
                 <source>regulation.location.direction.B_TO_A</source>
                 <target>Sens B vers A</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area">
+                <source>regulation.location.storage_area</source>
+                <target>Aire de stockage</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.help">
+                <source>regulation.location.storage_area.help</source>
+                <target>Sélectionnez une aire de stockage pour les poids lourds le temps de la restriction.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.define">
+                <source>regulation.location.storage_area.define</source>
+                <target>Indiquer une aire de stockage</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.define.help">
+                <source>regulation.location.storage_area.define.help</source>
+                <target>Sélectionner une aire de stockage pour les poids lourds le temps de la restriction.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.line">
+                <source>regulation.location.storage_area.line</source>
+                <target>Aire de stockage : %description%</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.placeholder">
+                <source>regulation.location.storage_area.placeholder</source>
+                <target>Sélectionner une aire de stockage</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.storage_area.placeholder.empty">
+                <source>regulation.location.storage_area.placeholder.empty</source>
+                <target>Aucune aire de stockage connue sur cette route</target>
             </trans-unit>
             <trans-unit id="regulation.location.named_street.section">
                 <source>regulation.location.named_street.section</source>

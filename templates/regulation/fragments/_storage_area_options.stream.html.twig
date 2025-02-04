@@ -1,0 +1,13 @@
+<turbo-stream action="update" target="{{ targetId }}">
+    <template>
+        <option value="">{{ 'regulation.location.storage_area.placeholder'|trans }}</option>
+
+        {% if options|length > 0 %}
+            {% for uuid, description in options %}
+                <option value="{{ uuid }}">{{ description }}</option>
+            {% endfor %}
+        {% else %}
+            <option value="" disabled>{{ 'regulation.location.storage_area.placeholder.empty'|trans }}</option>
+        {% endif %}
+    </template>
+</turbo-stream>
