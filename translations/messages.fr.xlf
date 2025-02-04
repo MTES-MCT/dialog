@@ -354,15 +354,15 @@
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.create">
                 <source>regulation.regulation_order_history.action.create</source>
-                <target>Créé le </target>
+                <target>Créé le %date%</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.publish">
                 <source>regulation.regulation_order_history.action.publish</source>
-                <target>Publié le </target>
+                <target>Publié le %date%</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.update">
                 <source>regulation.regulation_order_history.action.update</source>
-                <target>Modifié le </target>
+                <target>Modifié le %date%</target>
             </trans-unit>
             <trans-unit id="regulation.status">
                 <source>regulation.status</source>

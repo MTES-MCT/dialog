@@ -7,7 +7,7 @@ namespace App\Application\Regulation\View;
 final readonly class RegulationOrderHistoryView
 {
     public function __construct(
-        public readonly string $date,
+        public readonly \DateTimeInterface $date,
         public readonly string $action,
     ) {
     }

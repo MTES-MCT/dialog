@@ -29,7 +29,7 @@ final class GetRegulationOrderHistoryQueryHandlerTest extends TestCase
             ->willReturn($row);
 
         $regulationOrderHistoryView = new RegulationOrderHistoryView(
-            date: '31-01-2025',
+            date: $mockDate,
             action: ActionTypeEnum::CREATE->value,
         );
 

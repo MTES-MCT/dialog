@@ -22,10 +22,8 @@ final class GetRegulationOrderHistoryQueryHandler
             return null;
         }
 
-        $date = $row['date'];
-
         return new RegulationOrderHistoryView(
-            date: $date->format('d-m-Y'),
+            date: $row['date'],
             action: $row['action'],
         );
     }
