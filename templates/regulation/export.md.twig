@@ -53,7 +53,7 @@ Arrête
     {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
     {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
     {%- for location in measure.locations %}
-        {% include 'regulation/_location_line.html.twig' with { location } only %}{% if not loop.last%}, {% endif %}
+        {% include 'regulation/_location_line.html.twig' with { location } only %} {% if location.storageArea %} ({{ 'regulation.location.storage_area.line'|trans({'%description%': location.storageArea.description }) }}){% endif %} {% if not loop.last%}, {% endif %}
     {%- endfor %}
     {# New line #}
 

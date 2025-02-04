@@ -8,6 +8,7 @@ use App\Application\CommandInterface;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Application\Regulation\Query\Location\GetStorageAreasByRoadNumbersQuery;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 
@@ -64,5 +65,18 @@ final class SaveMeasureCommand implements CommandInterface
     {
         $locationCommand->permissions = &$this->permissions;
         $this->locations[] = $locationCommand;
+    }
+
+    public function getStorageAreasQuery(): GetStorageAreasByRoadNumbersQuery
+    {
+        $roadNumbers = [];
+
+        foreach ($this->locations as $location) {
+            if ($location->nationalRoad) {
+                $roadNumbers[] = $location->nationalRoad->roadNumber;
+            }
+        }
+
+        return new GetStorageAreasByRoadNumbersQuery($roadNumbers);
     }
 }

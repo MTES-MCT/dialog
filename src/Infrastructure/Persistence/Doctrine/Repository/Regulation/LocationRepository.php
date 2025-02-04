@@ -35,12 +35,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function findOneByUuid(string $uuid): ?Location
     {
         return $this->createQueryBuilder('l')
-            ->addSelect('m', 'v', 'p', 'd', 't')
+            ->addSelect('m', 'v', 'p', 'd', 't', 'sa')
             ->innerJoin('l.measure', 'm')
             ->innerjoin('m.periods', 'p')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('p.dailyRange', 'd')
             ->leftJoin('p.timeSlots', 't')
+            ->leftJoin('l.storageArea', 'sa')
             ->where('l.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->getQuery()

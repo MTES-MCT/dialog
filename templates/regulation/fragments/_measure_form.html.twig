@@ -4,6 +4,7 @@
     : path('fragment_regulation_measure_add_link', {regulationOrderRecordUuid: regulationOrderRecord.uuid})
 %}
 {% set isPermanent = regulationOrderRecord.regulationOrder.isPermanent %}
+{% set regulationSubject = regulationOrderRecord.regulationOrder.subject %}
 
 {% macro periods_list_item(form, index, isPermanent) %}
     <li
@@ -150,7 +151,7 @@
     </li>
 {% endmacro %}
 
-{% macro numbered_road_form(form, roadType, locationIndex) %}
+{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject) %}
     {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
 
     <div
@@ -180,7 +181,7 @@
 
         <div
             class="fr-x-autocomplete-wrapper"
-            data-controller="autocomplete"
+            data-controller="autocomplete fetch"
             data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
             data-autocomplete-query-param-value="search"
             data-autocomplete-extra-query-params-value="{{ {
@@ -191,7 +192,12 @@
             data-autocomplete-delay-value="500"
             data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
             data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
-            data-action="autocomplete.change->reset#reset"
+            data-fetch-url-value="{{ url('fragment_storage_area_options') }}"
+            data-fetch-extra-query-params-value="{{ {
+                roadNumber: '#' ~ form[roadType].roadNumber.vars.id,
+                targetId: form[roadType].storageArea.vars.id,
+            }|json_encode }}"
+            data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch"
             data-reset-key-param="roadNumber"
         >
             {{ form_row(form[roadType].roadNumber, {
@@ -256,11 +262,64 @@
                 </div>
             </fieldset>
             {{ form_row(form[roadType].direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+
+            {% if regulationSubject == 'winterMaintenance' %}
+                <hr class="fr-mt-3w">
+
+                <div
+                    data-controller="form-reveal"
+                    data-form-reveal-is-permanent-button-value="false"
+                >
+                    <button
+                        type="button"
+                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-x-parking-box-line fr-x-btn--with-hint"
+                        data-form-reveal-target="button"
+                        data-action="click->form-reveal#open"
+                        {% if form[roadType].storageArea.vars.value %}hidden{% endif %}
+                    >
+                        {{ 'regulation.location.storage_area.define'|trans }}
+                        <span class="fr-hint-text">{{ 'regulation.location.storage_area.define.help'|trans }}</span>
+                    </button>
+
+                    <div
+                        data-form-reveal-target="section"
+                        {% if form[roadType].storageArea.vars.value == null %}hidden{% endif %}
+                    >
+                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                            {{ form_row(form[roadType].storageArea, {
+                                group_class: 'fr-select-group',
+                                widget_class: 'fr-select',
+                                row_attr: {
+                                    class: 'fr-mb-0 fr-col',
+                                },
+                                attr: {
+                                    'data-form-reveal-target': 'formControl',
+                                }
+                            }) }}
+
+                            <div class="fr-col fr-x-no-grow">
+                                <button
+                                    type="button"
+                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                                    data-reset-behavior="click"
+                                    data-action="form-reveal#close"
+                                    aria-label="{{ 'common.delete'|trans }}"
+                                >
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            {% else %}
+                {% do form[roadType].storageArea.setRendered %}
+            {% endif %}
         </fieldset>
     </div>
 {% endmacro %}
 
-{% macro locations_list_item(form, index) %}
+{% macro locations_list_item(form, index, position, regulationSubject) %}
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
@@ -288,8 +347,8 @@
                     },
                 }) }}
 
-                {{ _self.numbered_road_form(form, 'departmentalRoad', index) }}
-                {{ _self.numbered_road_form(form, 'nationalRoad', index) }}
+                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
@@ -603,7 +662,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__')|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-2w d-stack"
@@ -612,7 +671,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, loop.index) }}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}

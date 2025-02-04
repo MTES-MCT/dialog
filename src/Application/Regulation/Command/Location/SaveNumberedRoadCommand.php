@@ -7,8 +7,10 @@ namespace App\Application\Regulation\Command\Location;
 use App\Application\QueryInterface;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
 use App\Domain\Regulation\Enum\DirectionEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NumberedRoad;
+use App\Domain\Regulation\Location\StorageArea;
 use App\Domain\Regulation\Measure;
 
 final class SaveNumberedRoadCommand implements RoadCommandInterface
@@ -23,6 +25,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public ?int $toAbscissa = null;
     public ?string $toSide = null;
     public string $direction = DirectionEnum::BOTH->value;
+    public ?StorageArea $storageArea = null;
     public ?string $geometry = null;
     public ?Measure $measure;
     public ?Location $location = null;
@@ -39,6 +42,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         $this->toAbscissa = $numberedRoad?->getToAbscissa();
         $this->toSide = $numberedRoad?->getToSide();
         $this->direction = $numberedRoad?->getDirection() ?? DirectionEnum::BOTH->value;
+        $this->storageArea = $numberedRoad?->getLocation()?->getStorageArea();
         $this->roadType = $numberedRoad?->getLocation()?->getRoadType();
     }
 
@@ -56,5 +60,8 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
 
     public function clean(): void
     {
+        if ($this->roadType !== RoadTypeEnum::NATIONAL_ROAD->value) {
+            $this->storageArea = null;
+        }
     }
 }

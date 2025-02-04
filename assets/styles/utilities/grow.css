@@ -7,3 +7,7 @@
     flex-basis: 0;
     flex-grow: 1;
 }
+
+.fr-x-no-grow {
+    flex: 0;
+}
