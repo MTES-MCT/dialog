@@ -66,15 +66,11 @@ final class LocationTest extends TestCase
         $this->assertSame($geometry, $numberedRoadLocation->getGeometry());
         $this->assertSame('departmentalRoad', $numberedRoadLocation->getRoadType());
 
-        $this->assertEmpty($numberedRoadLocation->getStorageAreas()); // Automatically set by Doctrine
-        $numberedRoadLocation->addStorageArea($storageArea);
-        $this->assertEquals([$storageArea], $numberedRoadLocation->getStorageAreas());
-        $numberedRoadLocation->addStorageArea($storageArea); // Test added twice
-        $this->assertEquals([$storageArea], $numberedRoadLocation->getStorageAreas());
-        $numberedRoadLocation->removeStorageArea($storageArea2); // Not in array
-        $this->assertEquals([$storageArea], $numberedRoadLocation->getStorageAreas());
-        $numberedRoadLocation->removeStorageArea($storageArea);
-        $this->assertEmpty($numberedRoadLocation->getStorageAreas());
+        $this->assertNull($numberedRoadLocation->getStorageArea()); // Automatically set by Doctrine
+        $numberedRoadLocation->setStorageArea($storageArea);
+        $this->assertSame($storageArea, $numberedRoadLocation->getStorageArea());
+        $numberedRoadLocation->setStorageArea(null);
+        $this->assertNull($numberedRoadLocation->getStorageArea());
 
         $this->assertSame('c4bc0255-3546-4e04-bf30-f9c8699778ad', $rawGeoJSONLocation->getUuid());
         $this->assertSame($measure, $rawGeoJSONLocation->getMeasure());

@@ -35,10 +35,13 @@ final class SaveNumberedRoadCommandHandler
                 ),
             );
 
+            $command->location->setStorageArea($command->storageArea);
             $command->location->setNumberedRoad($numberedRoad);
 
             return $numberedRoad;
         }
+
+        $command->location->setStorageArea($command->storageArea);
 
         $command->numberedRoad->update(
             administrator: $command->administrator,
