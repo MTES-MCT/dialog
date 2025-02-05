@@ -1,0 +1,60 @@
+<d-auto-form>
+    {{ form_start(form) }}
+        <fieldset class="fr-fieldset" id="measureTypes" aria-labelledby="measureTypes-legend">
+            {{ form_label(form.measureTypes, null, {
+                element: 'legend',
+                label_attr: {
+                    id: 'measureTypes-legend',
+                    class: 'fr-fieldset__legend',
+                },
+            }) }}
+            {{ form_widget(form.measureTypes) }}
+        </fieldset>
+
+        <fieldset class="fr-fieldset" aria-labelledby="regulationTypes-legend">
+            <legend id="regulationTypes-legend" class="fr-fieldset__legend">
+                {{ 'restriction.list.filter.regulationTypes.title'|trans }}
+            </legend>
+
+            {{ form_row(form.isPermanent, {
+                group_class: 'fr-checkbox-group',
+                row_attr: {
+                    class: 'fr-fieldset__element',
+                },
+            }) }}
+
+            {{ form_row(form.isTemporary, {
+                group_class: 'fr-checkbox-group',
+                row_attr: {
+                    class: 'fr-fieldset__element',
+                },
+            }) }}
+        </fieldset>
+
+        <fieldset class="fr-fieldset" aria-labelledby="period-legend">
+            <legend id="period-legend" class="fr-fieldset__legend">
+                {{ 'restriction.list.filter.period.title'|trans }}
+            </legend>
+
+            {{ form_row(form.startDate, {
+                group_class: 'fr-input-group',
+                widget_class: 'fr-input',
+                row_attr: {
+                    class: 'fr-fieldset__element',
+                },
+            }) }}
+
+            {{ form_row(form.endDate, {
+                group_class: 'fr-input-group',
+                widget_class: 'fr-input',
+                row_attr: {
+                    class: 'fr-fieldset__element',
+                },
+            }) }}
+        </fieldset>
+
+        <noscript>
+            {{ form_row(form.save) }}
+        </noscript>
+    {{ form_end(form) }}
+</d-auto-form>

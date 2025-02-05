@@ -84,12 +84,17 @@
                     {% else %}
                         <li class="fr-nav__item">
                             <a class="fr-nav__link" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.restrictions'|trans }}
+                                {{ 'landing.menu.button.regulation_orders'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
                             <a class="fr-nav__link" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.map'|trans }}
+                            </a>
+                        </li>
+                        <li class="fr-nav__item">
+                            <a class="fr-nav__link" href="{{ path('app_restrictions_list') }}" {% if 'app_restrictions_list' == app.current_route %}aria-current="page"{% endif %}>
+                                {{ 'landing.menu.button.restrictions'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
