@@ -116,6 +116,10 @@
                 <source>common.save</source>
                 <target>Sauvegarder</target>
             </trans-unit>
+            <trans-unit id="common.invite">
+                <source>common.invite</source>
+                <target>Inviter</target>
+            </trans-unit>
             <trans-unit id="common.update">
                 <source>common.update</source>
                 <target>Modifier</target>
@@ -2451,13 +2455,17 @@
                 <source>user.list.email</source>
                 <target>Adresse e-mail</target>
             </trans-unit>
+            <trans-unit id="user.list.waiting">
+                <source>user.list.waiting</source>
+                <target>En attente d'activation</target>
+            </trans-unit>
             <trans-unit id="user.form.password">
                 <source>user.form.password</source>
                 <target>Mot de passe</target>
             </trans-unit>
-            <trans-unit id="user.form.add">
-                <source>user.form.add</source>
-                <target>Nouvel utilisateur</target>
+            <trans-unit id="user.form.invite">
+                <source>user.form.invite</source>
+                <target>Inviter un utilisateur</target>
             </trans-unit>
             <trans-unit id="user.form.password.repeat">
                 <source>user.form.password.repeat</source>
@@ -2479,9 +2487,9 @@
                 <source>user.list.roles</source>
                 <target>Rôles</target>
             </trans-unit>
-            <trans-unit id="user.add.title">
-                <source>user.add.title</source>
-                <target>Ajouter un utilisateur</target>
+            <trans-unit id="user.invite.title">
+                <source>user.invite.title</source>
+                <target>Inviter un utilisateur</target>
             </trans-unit>
             <trans-unit id="user.myarea">
                 <source>user.myarea</source>
@@ -2766,6 +2774,18 @@
             <trans-unit id="reset_password.token.error">
                 <source>reset_password.token.error</source>
                 <target>Le changement de mot de passe a échoué, veuillez faire une nouvelle demande.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.success">
+                <source>invitation.accept.success</source>
+                <target>Vous faites désormais partie de l'organisation.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.error">
+                <source>invitation.accept.error</source>
+                <target>Vous disposez déjà d'un compte dans cette organisation.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.error_not_owned">
+                <source>invitation.accept.error_not_owned</source>
+                <target>Cette adresse email ne correspond pas à l'invitation reçue.</target>
             </trans-unit>
         </body>
     </file>

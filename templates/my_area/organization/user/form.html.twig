@@ -1,5 +1,5 @@
 {% extends 'layouts/layout.html.twig' %}
-{% set metaTitle = user is defined ? user.fullName : 'user.form.add'|trans %}
+{% set metaTitle = user is defined ? user.fullName : 'user.form.invite'|trans %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -22,9 +22,6 @@
                 {{ form_start(form) }}
                     {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                     {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-                    {% if form.password is defined %}
-                        {{ form_row(form.password, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-                    {% endif %}
                     <fieldset class="fr-fieldset {% if form.role.vars.errors|length > 0 %}fr-fieldset--error{% endif %}" id="user-role" aria-labelledby="user-role-legend">
                         {{ form_errors(form.role) }}
                         {{ form_label(form.role, null, {

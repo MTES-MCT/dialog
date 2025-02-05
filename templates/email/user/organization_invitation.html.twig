@@ -1,0 +1,10 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
+    <p>{{ 'organization_invitation.description'|trans({'%invitedBy%': invitedBy, '%organizationName%': organizationName}) }}</p>
+    <a href="{{ baseUrl ~ path('app_invitation_accept', { uuid: invitationUuid }) }}">
+        {{ 'organization_invitation.join'|trans }}
+    </a>
+{% endblock %}

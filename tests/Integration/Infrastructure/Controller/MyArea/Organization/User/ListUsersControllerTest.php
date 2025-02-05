@@ -23,17 +23,23 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $users = $crawler->filter('[data-testid="user-list"]');
         $tr0 = $users->filter('tr')->eq(0)->filter('td');
         $tr1 = $users->filter('tr')->eq(1)->filter('td');
-        $this->assertCount(2, $users->filter('tr'));
+        $tr2 = $users->filter('tr')->eq(2)->filter('td');
+        $this->assertCount(3, $users->filter('tr'));
 
-        $this->assertSame('Mathieu FERNANDEZ', $tr0->eq(0)->text());
-        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr0->eq(1)->text());
-        $this->assertSame('Administrateur', $tr0->eq(2)->text());
+        // Invitation qui va permettre de valider le fait qu'un compte existe déjà
+        $this->assertSame('Mathieu MARCHOIS En attente d\'activation', $tr0->eq(0)->text());
+        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr0->eq(1)->text());
+        $this->assertSame('Contributeur', $tr0->eq(2)->text());
 
-        $this->assertSame('Mathieu MARCHOIS', $tr1->eq(0)->text());
-        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr1->eq(1)->text());
-        $this->assertSame('Contributeur', $tr1->eq(2)->text());
-        $this->assertSame('Modifier', $tr1->eq(3)->filter('a')->text());
-        $this->assertSame('http://localhost/mon-espace/organizations/e0d93630-acf7-4722-81e8-ff7d5fa64b66/users/0b507871-8b5e-4575-b297-a630310fc06e/edit', $tr1->eq(3)->filter('a')->link()->getUri());
+        $this->assertSame('Mathieu FERNANDEZ', $tr1->eq(0)->text());
+        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr1->eq(1)->text());
+        $this->assertSame('Administrateur', $tr1->eq(2)->text());
+
+        $this->assertSame('Mathieu MARCHOIS', $tr2->eq(0)->text());
+        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr2->eq(1)->text());
+        $this->assertSame('Contributeur', $tr2->eq(2)->text());
+        $this->assertSame('Modifier', $tr2->eq(3)->filter('a')->text());
+        $this->assertSame('http://localhost/mon-espace/organizations/e0d93630-acf7-4722-81e8-ff7d5fa64b66/users/0b507871-8b5e-4575-b297-a630310fc06e/edit', $tr2->eq(3)->filter('a')->link()->getUri());
     }
 
     public function testIndexAsContributor(): void
@@ -44,13 +50,17 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $users = $crawler->filter('[data-testid="user-list"]');
         $tr0 = $users->filter('tr')->eq(0)->filter('td');
         $tr1 = $users->filter('tr')->eq(1)->filter('td');
-        $this->assertCount(2, $users->filter('tr'));
+        $tr2 = $users->filter('tr')->eq(2)->filter('td');
+        $this->assertCount(3, $users->filter('tr'));
 
-        $this->assertSame('Mathieu FERNANDEZ', $tr0->eq(0)->text());
+        $this->assertSame('Mathieu MARCHOIS En attente d\'activation', $tr0->eq(0)->text());
         $this->assertEmpty($tr0->eq(3)->text());
 
-        $this->assertSame('Mathieu MARCHOIS', $tr1->eq(0)->text());
+        $this->assertSame('Mathieu FERNANDEZ', $tr1->eq(0)->text());
         $this->assertEmpty($tr1->eq(3)->text());
+
+        $this->assertSame('Mathieu MARCHOIS', $tr2->eq(0)->text());
+        $this->assertEmpty($tr2->eq(3)->text());
     }
 
     public function testOrganizationNotOwned(): void
