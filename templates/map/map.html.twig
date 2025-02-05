@@ -64,8 +64,8 @@
                 aria-hidden="true"
                 mapHeight="100%"
                 mapMinHeight="600px"
-                mapPos="[2.725, 47.16]"
-                mapZoom="5"
+                mapPos="{{ [mapCenter.longitude, mapCenter.latitude]|json_encode }}"
+                mapZoom="{{ mapZoom }}"
                 dataUrl="{{ path('app_carto_data') }}"
                 locationPopupUrl="{{ path('fragment_map_location') }}"
             >

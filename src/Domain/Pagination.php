@@ -8,6 +8,7 @@ final class Pagination
 {
     public const DEFAULT_PAGE = 1;
     public const DEFAULT_PAGE_SIZE = 20;
+    public const DEFAULT_PAGE_SIZE_RESTRICTIONS = 10;
 
     public readonly array $windowPages;
     public readonly int $lastPage;
@@ -19,7 +20,7 @@ final class Pagination
     public function __construct(
         public readonly array $items,
         public readonly int $totalItems,
-        int $currentPage,
+        public readonly int $currentPage,
         int $pageSize,
     ) {
         $this->lastPage = $totalItems > 0 ? (int) ceil($totalItems / $pageSize) : 1;

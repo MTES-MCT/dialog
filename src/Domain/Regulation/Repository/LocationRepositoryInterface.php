@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Repository;
 
+use App\Domain\Regulation\DTO\RestrictionListFilterDTO;
 use App\Domain\Regulation\Location\Location;
 
 interface LocationRepositoryInterface
@@ -21,4 +22,6 @@ interface LocationRepositoryInterface
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string;
+
+    public function findAllForRestrictionList(RestrictionListFilterDTO $dto): array;
 }

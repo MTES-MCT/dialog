@@ -1,0 +1,64 @@
+{% if results is null %}
+    <h1 class="fr-h2">
+        {{ 'restriction.list.title'|trans }}
+    </h1>
+
+    <p class="fr-text--bold">
+        {{ 'restriction.list.results.ready.label'|trans }}
+    </p>
+
+    <p>
+        {{ 'restriction.list.results.ready.hint'|trans }}
+    </p>
+{% elseif results.totalItems == 0 %}
+    <h1 class="fr-h2">
+        {{ 'restriction.list.results'|trans }}
+    </h1>
+
+    <p class="fr-text--bold">
+        {{ 'restriction.list.results.empty.label'|trans }}
+    </p>
+
+    <p>
+        {{ 'restriction.list.results.empty.hint'|trans }}
+    </p>
+{% else %}
+
+    <h1 class="fr-h2">
+        {{ 'restriction.list.results'|trans }}
+    </h1>
+
+    <p>
+        {{ 'restriction.list.results.count'|trans({'%count%': results.totalItems}) }}
+    </p>
+
+    <ul class="fr-raw-list">
+        {% for item in results.items %}
+            <li class="fr-mb-3w">
+                <ul class="fr-raw-list">
+                    <li class="fr-text--bold fr-mb-1w">
+                        {{ ('regulation.measure.type.' ~ item.measureType)|trans }}
+                    </li>
+
+                    <li class="fr-grid-row fr-x-gap-1w fr-text--sm fr-mb-1w">
+                        <span class="fr-icon-map-pin-2-line fr-x-icon--dark-border" aria-hidden="true"></span>
+                        <span class="fr-x-grow">
+                            <a class="fr-link" href="{{ path('app_carto', {lon: item.centroid.longitude, lat: item.centroid.latitude, zoom: 15}) }}">
+                                {{ item.label }}
+                            </a>
+                        </span>
+                    </li>
+                </ul>
+
+                <a class="fr-btn fr-btn--tertiary-no-outline" href="{{ path('app_regulation_detail', { uuid: item.regulationOrderRecordUuid }) }}">
+                    Voir les détails
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% include 'common/pagination.html.twig' with {
+        pagination: results,
+        queryParams: app.request.query.all(),
+    } only %}
+{% endif %}

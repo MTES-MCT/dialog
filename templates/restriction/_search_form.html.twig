@@ -1,0 +1,49 @@
+<div
+    class="fr-x-autocomplete-wrapper"
+    data-controller="autocomplete"
+    data-autocomplete-url-value="{{ path('fragment_carto_search') }}"
+    data-autocomplete-query-param-value="search"
+    data-autocomplete-min-length-value="3"
+    data-autocomplete-delay-value="500"
+    data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+    data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+    data-action="autocomplete.change->reset#reset"
+>
+    <div class="fr-search-bar">
+        <label for="search" class="app-sr-only">
+            {{ 'restriction.list.search_form.search'|trans }}
+        </label>
+
+        <input
+            id="search_value"
+            name="search_value"
+            type="hidden"
+            data-autocomplete-target="hidden"
+        >
+
+        <input
+            id="search"
+            name="search"
+            type="text"
+            class="fr-input"
+            spellcheck="false"
+            autocomplete="off"
+            data-autocomplete-target="input"
+            placeholder="{{ 'restriction.list.search_form.search.placeholder'|trans }}"
+        >
+
+        <button class="fr-btn" aria-label="{{ 'common.form.search'|trans }}">
+            {{ 'common.form.search'|trans }}
+        </button>
+    </div>
+
+    <ul
+        id="restriction-search-results"
+        role="listbox"
+        aria-label="{{ 'restriction.list.search_form.results_label'|trans }}"
+        class="fr-x-autocomplete"
+        data-autocomplete-target="results"
+    >
+        <li role="status" data-autocomplete-target="status"></li>
+    </ul>
+</div>

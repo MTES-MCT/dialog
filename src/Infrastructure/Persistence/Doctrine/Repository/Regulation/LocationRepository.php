@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\DTO\RestrictionListFilterDTO;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
@@ -154,5 +155,109 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             'type' => 'FeatureCollection',
             'features' => $features,
         ]);
+    }
+
+    public function findAllForRestrictionList(RestrictionListFilterDTO $dto): array
+    {
+        $measureTypes = $dto->measureTypes;
+
+        $parameters = [
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'measureTypes' => $measureTypes,
+        ];
+
+        $types = [
+            'measureTypes' => ArrayParameterType::STRING,
+        ];
+
+        $isPermanent = $dto->isPermanent;
+        $isTemporary = $dto->isTemporary;
+
+        if ($isPermanent && $isTemporary) {
+            $regulationTypeWhereClause = '';
+        } elseif ($isPermanent) {
+            $regulationTypeWhereClause = 'AND ro.category = :permanentCategory';
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        } elseif ($isTemporary) {
+            $regulationTypeWhereClause = 'AND ro.category <> :permanentCategory';
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        } else {
+            $regulationTypeWhereClause = 'AND FALSE';
+        }
+
+        $measureDatesCondition = '';
+
+        $startDate = $dto->startDate;
+        $endDate = $dto->endDate;
+
+        if ($startDate || $endDate) {
+            if ($startDate && $endDate && $startDate > $endDate) {
+                // Renvoie un résultat vide pour éviter une erreur dans le cas où la date de fin est avant la date de début
+                $measureDatesCondition = 'AND FALSE';
+            } else {
+                // Principe : on garde une localisation si l'intervalle défini par ses périodes
+                // intersecte au moins partiellement l'intervalle défini par les filtres.
+                // En PostgreSQL, tsrange permet de représenter un intervalle de date et heure.
+                // https://www.postgresql.org/docs/13/rangetypes.html
+                // NB : si l'arrêté n'a pas encore de période, EXISTS renverra FALSE, donc on ne retiendra pas ses localisations, comme attendu.
+                $measureDatesCondition = 'AND EXISTS (
+                    SELECT 1
+                    FROM period AS p
+                    WHERE p.measure_uuid = m.uuid
+                    -- ATTENTION : startDate et endDate sont données comme "inclus" toutes les deux,
+                    -- et elles ont une heure qui vaut 00h00.
+                    -- Donc dans le cas où startDate et endDate désignent toutes les deux le 12/01/2025 par exemple,
+                    -- cela correspondrait à un intervalle de temps vide, et on ne sélectionnerait rien.
+                    -- Pour inclure le 12/01/2025 en entier, il faut prendre (startDate inclus, endDate + 1 jour exclus)
+                    AND tsrange((:startDate)::timestamp, ((:endDate)::timestamp + make_interval(days => 1))::timestamp, \'[)\') && tsrange(p.start_datetime::timestamp, p.end_datetime::timestamp)
+                )';
+
+                $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
+                $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
+            }
+        }
+
+        $sqlTemplate = \sprintf(
+            'SELECT
+                __columns__
+                FROM location AS l
+                INNER JOIN measure AS m ON m.uuid = l.measure_uuid
+                INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
+                INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+                WHERE roc.status = :status
+                AND l.geometry IS NOT NULL
+                AND ST_NPoints(l.geometry) > 0
+                AND m.type IN (:measureTypes)
+                %s
+                %s
+                LIMIT :limit
+                OFFSET :offset
+                ',
+            $regulationTypeWhereClause,
+            $measureDatesCondition,
+        );
+
+        $countSql = str_replace('__columns__', 'COUNT(*) AS count', $sqlTemplate);
+        $countResult = $this->getEntityManager()->getConnection()->fetchAssociative($countSql, [...$parameters, 'limit' => null, 'offset' => 0], $types);
+        $totalItems = $countResult['count'];
+
+        $mainSql = str_replace('__columns__', '
+            ST_X(ST_Centroid(l.geometry)) AS centroid_x,
+            ST_Y(ST_Centroid(l.geometry)) AS centroid_y,
+            m.type AS measure_type,
+            l.uuid AS location_uuid,
+            ro.category AS regulation_category,
+            roc.uuid AS regulation_order_record_uuid
+        ', $sqlTemplate);
+
+        $parameters['limit'] = $dto->pageSize;
+        $parameters['offset'] = $dto->pageSize * ($dto->page - 1);
+
+        $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative($mainSql, $parameters, $types);
+
+        return [
+            'totalItems' => $totalItems,
+            'rows' => $rows,
+        ];
     }
 }

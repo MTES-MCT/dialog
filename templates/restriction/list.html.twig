@@ -1,0 +1,36 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{'restriction.list.meta.title'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-x-container--fluid fr-x-h-full">
+        <div class="fr-grid-row fr-x-h-full fr-pb-4w">
+            <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-py-2w">
+                <h1 class="app-sr-only">{{ 'restrictions.list.title'|trans }}</h1>
+                <div class="fr-my-2w">
+                    {% include 'restriction/_search_form.html.twig' with {} only %}
+                </div>
+
+                <div class="fr-accordion">
+                    <h2 class="fr-accordion__title">
+                        <button class="fr-accordion__btn" aria-expanded="true" aria-controls="filters-accordion">
+                            <span class="fr-icon-filter-line fr-icon--sm fr-mr-1w" aria-hidden="true"></span>
+                            {{ 'restriction.list.filters.title'|trans }}
+                        </button>
+                    </h2>
+                    <div class="fr-collapse fr-collapse--expanded" id="filters-accordion">
+                        {% include 'restriction/_filters_form.html.twig' with { form } only %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="fr-col-12 fr-col-sm-8 fr-col-md-9 fr-container fr-pt-4w fr-pb-2w">
+                {% include 'restriction/_search_results.html.twig' with {
+                    results: pagination,
+                } only %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

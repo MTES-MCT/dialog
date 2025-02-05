@@ -1080,9 +1080,13 @@
                 <source>landing.menu.button.help</source>
                 <target>Aide</target>
             </trans-unit>
+            <trans-unit id="landing.menu.button.regulation_orders">
+                <source>landing.menu.button.regulation_orders</source>
+                <target>Arrêtés de circulation</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.restrictions">
                 <source>landing.menu.button.restrictions</source>
-                <target>Arrêtés de circulation</target>
+                <target>Liste des restrictions</target>
             </trans-unit>
             <trans-unit id="landing.menu.button.authorities">
                 <source>landing.menu.button.authorities</source>
@@ -2150,6 +2154,86 @@
             <trans-unit id="regulation.vehicles.maxCharacteristics.height">
                 <source>regulation.vehicles.maxCharacteristics.height</source>
                 <target>%value% mètres de haut</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.meta.title">
+                <source>restriction.list.meta.title</source>
+                <target>Liste des restrictions</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filters.title">
+                <source>restriction.list.filters.title</source>
+                <target>Filtres</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.measureTypes.title">
+                <source>restriction.list.filter.measureTypes.title</source>
+                <target>Types de restriction</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.regulationTypes.title">
+                <source>restriction.list.filter.regulationTypes.title</source>
+                <target>Réglementation</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.isPermanent">
+                <source>restriction.list.filter.isPermanent</source>
+                <target>Permanent</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filtes.isTemporary">
+                <source>restriction.list.filter.isTemporary</source>
+                <target>Temporaire</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.period.title">
+                <source>restriction.list.filter.period.title</source>
+                <target>Période d'application</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.start_date">
+                <source>restriction.list.filter.start_date</source>
+                <target>À partir de</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.start_date.help">
+                <source>restriction.list.filter.start_date.help</source>
+                <target>Afficher les restrictions à partir de cette date</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.end_date">
+                <source>restriction.list.filter.end_date</source>
+                <target>Jusqu'à</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.filter.end_date.help">
+                <source>restriction.list.filter.end_date.help</source>
+                <target>Afficher les restrictions jusqu’à cette date</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.search_form.search">
+                <source>restriction.list.search_form.search</source>
+                <target>Rechercher un lieu</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.search_form.search.placeholder">
+                <source>restriction.list.search_form.search.placeholder</source>
+                <target>Rechercher un lieu</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.title">
+                <source>restriction.list.title</source>
+                <target>Rechercher des restrictions</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.results.ready.label">
+                <source>restriction.list.results.ready.label</source>
+                <target>Entrez un lieu dans le champ de recherche pour afficher les restrictions de circulation.</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.results.ready.hint">
+                <source>restriction.list.results.ready.hint</source>
+                <target>Vous pouvez utiliser les filtres pour afficher seulement certains types de restrictions.</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.results">
+                <source>restriction.list.results</source>
+                <target>Résultats</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.results.empty.label">
+                <source>restriction.list.results.empty.label</source>
+                <target>Il n'y a pas de résultats correspondant à cette recherche.</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.results.empty.hint">
+                <source>restriction.list.results.empty.hint</source>
+                <target>Ce lieu ne semble pas avoir de restriction de circulation. Vous pouvez essayer une autre recherche.</target>
+            </trans-unit>
+            <trans-unit id="restriction.list.results.count">
+                <source>restriction.list.results.count</source>
+                <target>{0} Aucun résultat trouvé | {1} 1 résultat trouvé | ]1,Inf[ %count% résultats trouvés</target>
             </trans-unit>
             <trans-unit id="statistics.title">
                 <source>statistics.title</source>
