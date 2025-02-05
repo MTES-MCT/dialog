@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-final class UserFormType extends AbstractType
+final class InvitationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -51,7 +51,7 @@ final class UserFormType extends AbstractType
             )
             ->add('save', SubmitType::class,
                 options: [
-                    'label' => 'common.save',
+                    'label' => 'common.invite',
                     'attr' => ['class' => 'fr-btn'],
                 ],
             )

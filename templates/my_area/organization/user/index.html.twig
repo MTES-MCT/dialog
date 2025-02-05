@@ -21,8 +21,8 @@
                 <div class="fr-grid-row">
                     <h2 id="user-list" class="fr-col fr-mb-0">{{ 'user.list.title'|trans }}</h2>
                     {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                        <a href="{{ path('app_users_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'user.add.title'|trans }}">
-                            {{ 'user.add.title'|trans }}
+                        <a href="{{ path('app_users_invite', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'user.invite.title'|trans }}">
+                            {{ 'user.invite.title'|trans }}
                         </a>
                     {% endif %}
                 </div>
@@ -39,6 +39,27 @@
                             </tr>
                         </thead>
                         <tbody data-testid="user-list">
+                            {% for invitation in invitations %}
+                                <tr>
+                                    <td>
+                                        {{ invitation.fullName }}<br/>
+                                        <p class="fr-tag fr-tag--sm">{{ 'user.list.waiting'|trans }}</p>
+                                    </td>
+                                    <td>
+                                        {{ invitation.email }}
+                                    </td>
+                                    <td>
+                                        {{ ('roles.' ~ invitation.role)|trans }}
+                                    </td>
+                                    <td>
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                            <div class="fr-btns-group fr-btns-group--inline-sm">
+
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
                             {% for user in users %}
                                 <tr>
                                     <td>
