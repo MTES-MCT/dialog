@@ -4,13 +4,44 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use App\Tests\SessionHelper;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class GetRegulationsControllerTest extends AbstractWebTestCase
 {
+    use SessionHelper;
+
+    private function prepareWinterMaintenanceRegulationOrder(KernelBrowser $client): void
+    {
+        // Add storage area
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/' . MeasureFixture::UUID_WINTER_MAINTENANCE . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(303);
+
+        // Publish
+        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/publish', [
+            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
+        ]);
+        $this->assertResponseStatusCodeSame(303);
+    }
+
     public function testGetRegulationsToDatexFormat(): void
     {
-        $client = static::createClient();
+        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+
+        // Prepare some regulation orders to avoid the need to have published versions of fixtures
+        $this->prepareWinterMaintenanceRegulationOrder($client);
+
         $client->request('GET', '/api/regulations.xml');
         $response = $client->getResponse();
 

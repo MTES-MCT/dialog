@@ -24,6 +24,8 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
+use App\Domain\Regulation\Location\NumberedRoad;
+use App\Domain\Regulation\Location\StorageArea;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -323,18 +325,18 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->method('getMeasures')
             ->willReturn([$measure1, $measure2]);
 
-        $regulationOrderRecord2 = $this->createMock(RegulationOrderRecord::class);
+        $regulationOrderRecord2WinterMaintenance = $this->createMock(RegulationOrderRecord::class);
         $regulationOrder2 = $this->createMock(RegulationOrder::class);
-        $regulationOrderRecord2
+        $regulationOrderRecord2WinterMaintenance
             ->expects(self::once())
             ->method('getSource')
             ->willReturn(RegulationOrderRecordSourceEnum::DIALOG->value);
-        $regulationOrderRecord2
+        $regulationOrderRecord2WinterMaintenance
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder2);
         $uuid2 = '066c603b-c507-75fd-8000-66acdc0f7ba1';
-        $regulationOrderRecord2
+        $regulationOrderRecord2WinterMaintenance
             ->expects(self::exactly(2))
             ->method('getUuid')
             ->willReturn($uuid2);
@@ -346,105 +348,158 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getIdentifier')
             ->willReturn('F02/2024');
-        $regulationOrderRecord2
+        $regulationOrderRecord2WinterMaintenance
             ->expects(self::once())
             ->method('getOrganizationName')
             ->willReturn('Autorité 2');
-        $regulationOrderRecord2
+        $regulationOrderRecord2WinterMaintenance
             ->expects(self::once())
             ->method('getOrganizationUuid')
             ->willReturn('df1895bf-17af-4d68-adbd-02a7110d3b29');
         $regulationOrder2
             ->expects(self::once())
             ->method('getTitle')
-            ->willReturn('Description 2');
+            ->willReturn('Arrêté viabilité hivernale');
 
-        $measure3 = $this->createMock(Measure::class);
-        $measure3
+        $winterMaintenanceMeasure = $this->createMock(Measure::class);
+        $winterMaintenanceMeasure
             ->expects(self::once())
             ->method('getType')
             ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
-        $measure3
+        $winterMaintenanceMeasure
             ->expects(self::once())
             ->method('getMaxSpeed')
             ->willReturn(null);
 
-        $vehicleSet3 = $this->createMock(VehicleSet::class);
-        $measure3
+        $winterMaintenanceVehicleSet = $this->createMock(VehicleSet::class);
+        $winterMaintenanceMeasure
             ->expects(self::once())
             ->method('getVehicleSet')
-            ->willReturn($vehicleSet3);
-        $vehicleSet3
+            ->willReturn($winterMaintenanceVehicleSet);
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getRestrictedTypes')
             ->willReturn([VehicleTypeEnum::HEAVY_GOODS_VEHICLE->value, VehicleTypeEnum::DIMENSIONS->value]);
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::never())
             ->method('getCritairTypes');
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getMaxHeight')
             ->willReturn(2.4);
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getMaxWidth')
             ->willReturn(2.0);
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getMaxLength')
             ->willReturn(12.0);
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getHeavyweightMaxWeight')
             ->willReturn(3.5);
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getExemptedTypes')
             ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value, VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value]);
-        $vehicleSet3
+        $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getOtherExemptedTypeText')
             ->willReturn('Véhicules de service');
 
-        $locationView3 = new DatexLocationView(
-            roadType: RoadTypeEnum::LANE->value,
-            roadName: 'Route du Grand Brossais',
-            roadNumber: null,
+        $winterMaintenanceStorageAreaLocationView = new DatexLocationView(
+            roadType: RoadTypeEnum::NATIONAL_ROAD->value,
+            roadName: null,
+            roadNumber: 'N176',
+            rawGeoJSONLabel: null,
+            geometry: '<storageAreaGeometry>',
+        );
+        $winterMaintenanceStorageArea = $this->createMock(StorageArea::class);
+        $winterMaintenanceStorageArea
+            ->expects(self::once())
+            ->method('getRoadNumber')
+            ->willReturn('N176');
+        $winterMaintenanceStorageArea
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn('<storageAreaGeometry>');
+
+        $winterMaintenanceLocationView = new DatexLocationView(
+            roadType: RoadTypeEnum::NATIONAL_ROAD->value,
+            roadName: null,
+            roadNumber: 'N176',
             rawGeoJSONLabel: null,
             geometry: GeoJSON::toLineString([
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             ]),
         );
-
-        $location3 = $this->createMock(Location::class);
-        $namedStreet3 = $this->createMock(NamedStreet::class);
-        $location3
+        $winterMaintenanceLocation = $this->createMock(Location::class);
+        $winterMaintenanceNationalRoad = $this->createMock(NumberedRoad::class);
+        $winterMaintenanceLocation
             ->expects(self::once())
             ->method('getNamedStreet')
-            ->willReturn($namedStreet3);
-        $location3
+            ->willReturn(null);
+        $winterMaintenanceLocation
+            ->expects(self::once())
+            ->method('getNumberedRoad')
+            ->willReturn($winterMaintenanceNationalRoad);
+        $winterMaintenanceLocation
             ->expects(self::once())
             ->method('getRoadType')
-            ->willReturn($locationView3->roadType);
-        $namedStreet3
+            ->willReturn(RoadTypeEnum::NATIONAL_ROAD->value);
+        $winterMaintenanceNationalRoad
             ->expects(self::once())
-            ->method('getRoadName')
-            ->willReturn($locationView3->roadName);
-        $location3
+            ->method('getRoadNumber')
+            ->willReturn('N176');
+        $winterMaintenanceLocation
             ->expects(self::once())
             ->method('getGeometry')
-            ->willReturn($locationView3->geometry);
+            ->willReturn($winterMaintenanceLocationView->geometry);
+        $winterMaintenanceLocation
+            ->expects(self::once())
+            ->method('getStorageArea')
+            ->willReturn($winterMaintenanceStorageArea);
 
-        $measure3
+        $winterMaintenanceMeasure
             ->expects(self::once())
             ->method('getLocations')
-            ->willReturn([$location3]);
+            ->willReturn([$winterMaintenanceLocation]);
+
+        $winterMaintenanceValidityView = new DatexValidityConditionView(
+            new \DateTimeImmutable('2024-01-03 08:00', $this->tz),
+            new \DateTimeImmutable('2024-01-10 16:00', $this->tz),
+            [],
+        );
+
+        $winterMaintenancePeriod = $this->createMock(Period::class);
+        $winterMaintenancePeriod
+            ->expects(self::once())
+            ->method('getStartDateTime')
+            ->willReturn($winterMaintenanceValidityView->overallStartTime);
+        $winterMaintenancePeriod
+            ->expects(self::once())
+            ->method('getEndDateTime')
+            ->willReturn($winterMaintenanceValidityView->overallEndTime);
+        $winterMaintenancePeriod
+            ->expects(self::once())
+            ->method('getDailyRange')
+            ->willReturn(null);
+        $winterMaintenancePeriod
+            ->expects(self::once())
+            ->method('getTimeSlots')
+            ->willReturn([]);
+
+        $winterMaintenanceMeasure
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([$winterMaintenancePeriod]);
 
         $regulationOrder2
             ->expects(self::once())
             ->method('getMeasures')
-            ->willReturn([$measure3]);
+            ->willReturn([$winterMaintenanceMeasure]);
 
         $regulationOrderRecord3 = $this->createMock(RegulationOrderRecord::class);
         $regulationOrder3 = $this->createMock(RegulationOrder::class);
@@ -562,7 +617,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForDatexFormat')
-            ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2, $regulationOrderRecord3]);
+            ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2WinterMaintenance, $regulationOrderRecord3]);
 
         $regulationOrderRecordRepository
             ->expects(self::once())
@@ -613,14 +668,34 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                     regulationId: 'F02/2024#df1895bf-17af-4d68-adbd-02a7110d3b29',
                     organization: 'Autorité 2',
                     source: RegulationOrderRecordSourceEnum::DIALOG->value,
-                    title: 'Description 2',
+                    title: 'Arrêté viabilité hivernale',
                     startDate: $startDate2,
                     endDate: null,
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
                             type: 'noEntry',
-                            locationConditions: [$locationView3],
-                            validityConditions: [],
+                            locationConditions: [$winterMaintenanceLocationView],
+                            validityConditions: [$winterMaintenanceValidityView],
+                            vehicleConditions: [
+                                new DatexVehicleConditionView(
+                                    'heavyGoodsVehicle',
+                                    maxWeight: 3.5,
+                                ),
+                                new DatexVehicleConditionView(
+                                    'dimensions',
+                                    maxWidth: 2,
+                                    maxLength: 12,
+                                    maxHeight: 2.4,
+                                ),
+                                new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
+                                new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, isExempted: true, otherTypeText: 'Véhicules de service'),
+                                new DatexVehicleConditionView(VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value, isExempted: true),
+                            ],
+                        ),
+                        new DatexTrafficRegulationView(
+                            type: 'storageArea',
+                            locationConditions: [$winterMaintenanceStorageAreaLocationView],
+                            validityConditions: [$winterMaintenanceValidityView],
                             vehicleConditions: [
                                 new DatexVehicleConditionView(
                                     'heavyGoodsVehicle',
