@@ -87,6 +87,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
+        $this->assertEmpty($crawler->filter('[data-testid="history"]')); // No history fixture
         $this->assertSame(0, $crawler->selectButton('Publier')->count());
     }
 
