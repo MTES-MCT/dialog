@@ -58,10 +58,11 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
         // Filled with DateUtilsMock::getNow()
         $this->assertEquals(new \DateTimeImmutable('2023-06-09'), $userRepository->findOneByEmail($email)->getLastActiveAt());
-        $client->followRedirect();
+        $crawler = $client->followRedirect();
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulation_detail');
+        $this->assertSame('Créé le 09/06/2023', $crawler->filter('[data-testid="history"]')->text());
     }
 
     public function testEmptyData(): void

@@ -21,7 +21,8 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(303);
-        $client->followRedirect();
+        $crawler = $client->followRedirect();
+        $this->assertSame($crawler->filter('[data-testid="history"]')->text(), 'Publié le 09/06/2023');
         $this->assertRouteSame('app_regulation_detail', ['uuid' => RegulationOrderRecordFixture::UUID_TYPICAL]);
     }
 
