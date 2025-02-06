@@ -7,7 +7,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="fullName" type="string" column="full_name" nullable="false"/>
     <field name="email" type="string" column="email" nullable="false"/>
-    <field name="role" type="string" length="20" nullable="false"/>
+    <field name="role" type="string" length="25" nullable="false"/>
     <field name="createdAt" type="datetimetz" nullable="false"/>
     <many-to-one field="owner" target-entity="App\Domain\User\User">
         <join-column name="owner_uuid" nullable="false" referenced-column-name="uuid" on-delete="CASCADE"/>

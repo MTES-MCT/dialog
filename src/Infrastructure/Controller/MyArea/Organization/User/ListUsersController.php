@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\MyArea\Organization\User;
 
 use App\Application\QueryBusInterface;
+use App\Application\User\Query\GetInvitationsQuery;
 use App\Application\User\Query\GetOrganizationUsersQuery;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,11 +33,13 @@ final class ListUsersController extends AbstractOrganizationController
     {
         $organization = $this->getOrganization($uuid);
         $users = $this->queryBus->handle(new GetOrganizationUsersQuery($uuid));
+        $invitations = $this->queryBus->handle(new GetInvitationsQuery($uuid));
 
         return new Response($this->twig->render(
             name: 'my_area/organization/user/index.html.twig',
             context: [
                 'users' => $users,
+                'invitations' => $invitations,
                 'organization' => $organization,
             ],
         ));
