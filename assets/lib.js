@@ -29,32 +29,6 @@ function _displayAnyDebugExceptionPage(event) {
 
 // End Turbo helpers
 
-// Matomo helpers
-
-export function beginMatomoTracking() {
-    console.debug('[Matomo] Started');
-
-    var _paq = window._paq = window._paq || [];
-
-    // Track initial page view
-    _paq.push(['setTrackerUrl', 'https://stats.beta.gouv.fr/matomo.php']);
-    _paq.push(['setSiteId', '38']);
-    _paq.push(['trackPageView']);
-    _paq.push(['enableLinkTracking']);
-
-    document.addEventListener('turbo:load', (event) => {
-        const url = new URL(event.detail.url);
-        // Track new page views
-        // See: https://developer.matomo.org/guides/spa-tracking
-        _paq.push(['setCustomUrl', url.pathname + url.search]);
-        _paq.push(['setDocumentTitle', document.title]);
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-    });
-}
-
-// End Matomo helpers
-
 /**
  * @param {HTMLElement} element 
  * @returns {void}

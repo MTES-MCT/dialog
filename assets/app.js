@@ -11,8 +11,5 @@ import './styles/app.scss';
 // start the Stimulus application
 import './bootstrap';
 
-// configure analytics
-import './analytics';
-
 // our custom HTML elements
 import './customElements';
