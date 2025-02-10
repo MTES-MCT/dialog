@@ -70,9 +70,13 @@
                 <source>regulation.period.error.end_time</source>
                 <target>L'heure de fin doit être supérieure à l'heure de début.</target>
             </trans-unit>
+            <trans-unit id="invitation.already.exists">
+                <source>invitation.already.exists</source>
+                <target>Une invitation a déjà été envoyé à cette adresse email.</target>
+            </trans-unit>
             <trans-unit id="user.already.registered">
                 <source>user.already.registered</source>
-                <target>Cette adresse email est déjà associée à l'organisation.</target>
+                <target>Cette adresse email est déjà associée à votre organisation.</target>
             </trans-unit>
             <trans-unit id="email.already.exists">
                 <source>email.already.exists</source>

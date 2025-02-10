@@ -38,6 +38,18 @@
                 <source>confirm_user_account.confirm_email_button</source>
                 <target>Je confirme mon adresse e-mail</target>
             </trans-unit>
+            <trans-unit id="organization_invitation.subject">
+                <source>organization_invitation.subject</source>
+                <target>Invitation à rejoindre une organisation DiaLog</target>
+            </trans-unit>
+            <trans-unit id="organization_invitation.description">
+                <source>organization_invitation.description</source>
+                <target>%invitedBy% vous invite à rejoindre l'organisation %organizationName%. En tant que membre de l'organisation, vous pourrez consulter et contribuer aux arrêtés de circulation de votre territoire.</target>
+            </trans-unit>
+            <trans-unit id="organization_invitation.join">
+                <source>organization_invitation.join</source>
+                <target>Je rejoins cette organisation</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
