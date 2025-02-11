@@ -96,16 +96,25 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 }
 
                 $locationConditions = [];
+                $storageAreaTrafficRegulations = [];
 
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
+                    $roadType = $location->getRoadType();
+
                     $locationConditions[] = new DatexLocationView(
-                        roadType: $location->getRoadType(),
+                        roadType: $roadType,
                         roadName: $location->getNamedStreet()?->getRoadName(),
                         roadNumber: $location->getNumberedRoad()?->getRoadNumber(),
                         rawGeoJSONLabel: $location->getRawGeoJSON()?->getLabel(),
                         geometry: $location->getGeometry(),
                     );
+
+                    $storageArea = $location->getStorageArea();
+
+                    if ($storageArea) {
+                        $storageAreaTrafficRegulations[] = [$roadType, $storageArea];
+                    }
                 }
 
                 $validityConditions = [];
@@ -145,6 +154,25 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     $validityConditions,
                     $maxSpeed,
                 );
+
+                // Chaque aire de stockage sur une Nationale génère une restriction supplémentaire dans la
+                // représentation DATEX de l'arrêté.
+                foreach ($storageAreaTrafficRegulations as [$roadType, $storageArea]) {
+                    $storageAreaLocationCondition = new DatexLocationView(
+                        roadType: $roadType,
+                        roadName: null,
+                        roadNumber: $storageArea->getRoadNumber(),
+                        rawGeoJSONLabel: null,
+                        geometry: $storageArea->getGeometry(),
+                    );
+
+                    $trafficRegulations[] = new DatexTrafficRegulationView(
+                        'storageArea',
+                        [$storageAreaLocationCondition],
+                        $vehicleConditions,
+                        $validityConditions,
+                    );
+                }
             }
 
             $regulationOrderViews[] = new RegulationOrderDatexListItemView(
