@@ -8,17 +8,18 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Query\GetRegulationOrderHistoryQuery;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\SymfonyUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class SaveGeneralInfoController extends AbstractRegulationController
 {
@@ -68,11 +69,15 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
 
-            return new RedirectResponse(
-                url: $this->router->generate('fragment_regulations_general_info', [
-                    'uuid' => $uuid,
-                ]),
-                status: Response::HTTP_SEE_OTHER,
+            $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+            $latestHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderRecord->getRegulationOrder()->getUuid()));
+
+            return new Response(
+                $this->twig->render(
+                    name: 'regulation/fragments/_general_info.updated.stream.html.twig',
+                    context: ['latestHistory' => $latestHistory, 'generalInfoUuid' => $uuid],
+                ),
             );
         }
 

@@ -13,6 +13,7 @@ use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
+use App\Application\Regulation\Query\GetRegulationOrderHistoryQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -22,13 +23,13 @@ use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class UpdateMeasureController extends AbstractRegulationController
 {
@@ -91,12 +92,18 @@ final class UpdateMeasureController extends AbstractRegulationController
             try {
                 $this->commandBus->handle($command);
 
-                return new RedirectResponse(
-                    url: $this->router->generate('fragment_regulations_measure', [
-                        'uuid' => $uuid,
-                        'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
-                    ]),
-                    status: Response::HTTP_SEE_OTHER,
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+                $latestHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrder->getUuid()));
+
+                return new Response(
+                    $this->twig->render(
+                        name: 'regulation/fragments/_general_info.updated.stream.html.twig',
+                        context: [
+                            'latestHistory' => $latestHistory,
+                            'measureUuid' => $uuid,
+                            'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
+                        ],
+                    ),
                 );
             } catch (LaneGeocodingFailureException $exc) {
                 $commandFailed = true;
