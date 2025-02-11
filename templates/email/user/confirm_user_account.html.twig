@@ -2,6 +2,7 @@
 {% trans_default_domain 'emails' %}
 
 {% block body %}
+    <h1>{{ 'confirm_user_account.subject'|trans }}</h1>
     <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
     <p>{{ 'confirm_user_account.thanks'|trans }}</p>
     <p>{{ 'confirm_user_account.confirm_email'|trans }}</p>
