@@ -2787,6 +2787,18 @@
                 <source>invitation.accept.error_not_owned</source>
                 <target>Cette adresse email ne correspond pas à l'invitation reçue.</target>
             </trans-unit>
+            <trans-unit id="invitation.delete.error">
+                <source>invitation.delete.error</source>
+                <target>Vous n'avez pas les droits pour supprimer cette invitation.</target>
+            </trans-unit>
+            <trans-unit id="invitation.delete.success">
+                <source>invitation.delete.success</source>
+                <target>Invitation supprimée.</target>
+            </trans-unit>
+            <trans-unit id="invitation.list.delete">
+                <source>invitation.list.delete</source>
+                <target>Supprimer cette invitation</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

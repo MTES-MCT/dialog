@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\User\Command;
+namespace App\Tests\Unit\Application\User\Command\Invitation;
 
 use App\Application\IdFactoryInterface;
-use App\Application\User\Command\JoinOrganizationCommand;
-use App\Application\User\Command\JoinOrganizationCommandHandler;
+use App\Application\User\Command\Invitation\JoinOrganizationCommand;
+use App\Application\User\Command\Invitation\JoinOrganizationCommandHandler;
 use App\Domain\User\Exception\InvitationNotFoundException;
 use App\Domain\User\Exception\InvitationNotOwnedException;
 use App\Domain\User\Exception\OrganizationUserAlreadyExistException;

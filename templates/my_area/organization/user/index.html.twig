@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% set deleteCsrfToken = csrf_token('delete-user') %}
+{% set deleteInvitationCsrfToken = csrf_token('delete-invitation') %}
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="user-list">
@@ -54,7 +55,26 @@
                                     <td>
                                         {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                                             <div class="fr-btns-group fr-btns-group--inline-sm">
+                                                <form
+                                                    method="POST"
+                                                    action="{{ path('app_invitation_delete', { uuid: invitation.uuid }) }}"
+                                                    data-controller="form-submit"
+                                                    data-action="modal-trigger:submit->form-submit#submit"
+                                                    class="fr-hidden fr-unhidden-md"
+                                                >
+                                                    <input type="hidden" name="_method" value="DELETE">
 
+                                                    <d-modal-trigger modal="invitation-delete-modal" submitValue="invitation-delete-{{ invitation.uuid }}">
+                                                        <button
+                                                            class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                                            aria-controls="invitation-delete-modal"
+                                                            aria-label="{{ 'invitation.list.delete'|trans }}"
+                                                            title="{{ 'invitation.list.delete'|trans }}"
+                                                        ></button>
+                                                    </d-modal-trigger>
+
+                                                    <input type="hidden" name="_token" value="{{ deleteInvitationCsrfToken }}" />
+                                                </form>
                                             </div>
                                         {% endif %}
                                     </td>
@@ -115,6 +135,14 @@
     {% include 'common/confirmation_modal.html.twig' with {
         id: 'user-delete-modal',
         title: 'user.delete_modal.title'|trans,
+        buttons: [
+            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
+    } only %}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'invitation-delete-modal',
+        title: 'invitation.list.delete'|trans,
         buttons: [
             { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
             { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },

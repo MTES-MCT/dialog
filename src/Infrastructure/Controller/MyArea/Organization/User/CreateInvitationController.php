@@ -6,7 +6,7 @@ namespace App\Infrastructure\Controller\MyArea\Organization\User;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
-use App\Application\User\Command\CreateInvitationCommand;
+use App\Application\User\Command\Invitation\CreateInvitationCommand;
 use App\Application\User\Command\Mail\SendInvitationMailCommand;
 use App\Domain\User\Exception\InvitationAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationUserAlreadyExistException;

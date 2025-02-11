@@ -35,7 +35,7 @@ final class InvitationFixture extends Fixture implements DependentFixtureInterfa
             email: 'mathieu.marchois@beta.gouv.fr',
             role: OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             createdAt: new \DateTimeImmutable('2025-02-12'),
-            owner: $this->getReference('mainOrgUser', User::class),
+            owner: $this->getReference('mainOrgAdmin', User::class),
             organization: $this->getReference('mainOrg', Organization::class),
         );
 
