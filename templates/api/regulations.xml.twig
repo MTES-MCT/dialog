@@ -60,6 +60,14 @@
                                     <unitOfMeasure>kilometresPerHour</unitOfMeasure>
                                 </maxValue>
                             </typeOfRegulation>
+                        {% elseif trafficRegulation.type == 'storageArea' %}
+                            <typeOfRegulation xsi:type="MandatoryRoadOrCarriagewayOrLaneUsage">
+                                <otherObligation>
+                                    <com:values>
+                                        <com:value>Aire de stockage</com:value>
+                                    </com:values>
+                                </otherObligation>
+                            </typeOfRegulation>
                         {% else %}
                             <typeOfRegulation xsi:type="AccessRestriction">
                                 <accessRestrictionType>noEntry</accessRestrictionType>
@@ -117,7 +125,7 @@
                                                     <loc:roadInformation>
                                                         <loc:roadName>{{ location.roadName }}</loc:roadName>
                                                     </loc:roadInformation>
-                                                {% elseif location.roadType == 'departmentalRoad' %}
+                                                {% elseif location.roadType == 'departmentalRoad' or location.roadType == 'nationalRoad' %}
                                                     <loc:roadInformation>
                                                         <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
                                                     </loc:roadInformation>
