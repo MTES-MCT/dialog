@@ -20,5 +20,8 @@ final class MapControllerTest extends AbstractWebTestCase
         // Search form is present
         $this->assertNotNull($crawler->selectButton('Rechercher'));
         $this->assertNotNull($crawler->filter('#search[name=search][autocomplete=off][spellcheck=false]')->first());
+
+        // Filters form is open by default
+        $this->assertStringContainsString('fr-collapse--expanded', $crawler->filter('#map-filters-accordion')->attr('class'));
     }
 }

@@ -22,9 +22,9 @@
 
                 <div class="fr-accordion">
                     <h2 class="fr-accordion__title">
-                        <button class="fr-accordion__btn" aria-expanded="true" aria-controls="accordion-1040"><span class="fr-icon-filter-line fr-icon--sm fr-mr-1w" aria-hidden="true"></span>{{ 'map.filters.title'|trans }}</button>
+                        <button class="fr-accordion__btn" aria-expanded="true" aria-controls="map-filters-accordion"><span class="fr-icon-filter-line fr-icon--sm fr-mr-1w" aria-hidden="true"></span>{{ 'map.filters.title'|trans }}</button>
                     </h2>
-                    <div class="fr-collapse" id="accordion-1040">
+                    <div class="fr-collapse fr-collapse--expanded" id="map-filters-accordion">
                         <h3 class="fr-h6 fr-my-2w">{{ 'map.filters.title.restriction'|trans }}</h3>
                         <d-map-form target="map" urlAttribute="dataUrl" class="fr-x-block fr-mb-2w">
                             {{ form_start(form, {
