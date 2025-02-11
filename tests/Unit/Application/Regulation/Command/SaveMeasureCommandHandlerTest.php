@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -16,6 +17,7 @@ use App\Application\Regulation\Command\SaveMeasureCommandHandler;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
@@ -314,15 +316,17 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $periodCommand1 = new SavePeriodCommand($period1);
         $locationCommand2 = new SaveLocationCommand($location2);
+        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value);
 
         $this->commandBus
-            ->expects(self::exactly(4))
+            ->expects(self::exactly(5))
             ->method('handle')
             ->withConsecutive(
                 [$this->equalTo($periodCommand1)],
                 [$this->equalTo(new DeletePeriodCommand($period2))],
                 [$this->equalTo($locationCommand2)],
                 [$this->equalTo(new DeleteLocationCommand($location1))],
+                [$this->equalTo($regulationOrderHistoryCommand)],
             )
             ->willReturnOnConsecutiveCalls(null, null, $location2, null);
 
