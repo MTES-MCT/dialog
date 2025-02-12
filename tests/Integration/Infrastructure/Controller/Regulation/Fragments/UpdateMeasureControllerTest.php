@@ -137,7 +137,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_CIFS]);
         $this->assertSame(
             // 09/06/2023 comes from DateUtilsMock
-            'du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le mardi (13h00-15h00 et 20h00-22h00) du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le mardi et le jeudi (09h00-11h00)',
+            'du 02/06/2023 à 00h00 au 06/06/2023 à 23h59, le mardi (13h00-15h00 et 20h00-22h00) du 03/06/2023 à 09h00 au 05/06/2023 à 11h00, le mardi et le jeudi (09h00-11h00)',
             ensureRegularSpaces($crawler->filter('li')->eq(1)->text()),
         );
     }
@@ -165,7 +165,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
-        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
+        $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
         // Remove added daily range
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
@@ -177,7 +177,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00 (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
+        $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00 (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testRemoveTimeSlots(): void
@@ -205,7 +205,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
-        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
+        $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
         // Remove added timeslot
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
@@ -217,7 +217,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
         $crawler = $client->followRedirect();
-        $this->assertSame('du 09/06/2023 à 10h00 au 09/06/2023 à 10h00, le lundi', $crawler->filter('li')->eq(1)->text());
+        $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi', $crawler->filter('li')->eq(1)->text());
     }
 
     public function testGeocodingFailureFullRoad(): void

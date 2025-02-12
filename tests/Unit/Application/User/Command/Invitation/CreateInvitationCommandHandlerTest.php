@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Application\User\Command;
+namespace App\Tests\Unit\Application\User\Command\Invitation;
 
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\StringUtilsInterface;
-use App\Application\User\Command\CreateInvitationCommand;
-use App\Application\User\Command\CreateInvitationCommandHandler;
+use App\Application\User\Command\Invitation\CreateInvitationCommand;
+use App\Application\User\Command\Invitation\CreateInvitationCommandHandler;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Exception\InvitationAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationUserAlreadyExistException;

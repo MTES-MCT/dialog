@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\User\Command;
+namespace App\Application\User\Command\Invitation;
 
 use App\Application\IdFactoryInterface;
 use App\Domain\User\Exception\InvitationNotFoundException;
