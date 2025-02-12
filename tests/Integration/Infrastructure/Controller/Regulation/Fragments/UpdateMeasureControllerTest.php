@@ -130,9 +130,22 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['periods'][0]); // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
+
+        /* $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect(); */
         $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+
+        $this->assertEquals([
+            ['replace', 'block_general_info'],
+            ['replace', 'block_measure_' . MeasureFixture::UUID_CIFS],
+            ['replace', 'block_regulation_order_history'],
+        ], $streams);
+
+        $updateLatestHistory = $crawler->filter('turbo-stream[target=block_regulation_order_history]')->filter('[data-testid="history"')->text();
+
+        $this->assertSame('Modifié le 06/09/2023 ', $updateLatestHistory);
 
         $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_CIFS]);
         $this->assertSame(
