@@ -4,6 +4,7 @@ security:
     providers:
         user:
             id: App\Infrastructure\Security\Provider\UserProvider
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -20,6 +21,10 @@ security:
                 password_parameter: password
             logout:
                 path: app_logout
+            # ProConnect
+            custom_authenticator:
+                - App\Infrastructure\Security\ProConnectAuthenticator
+
     access_control:
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
         - { path: '^/regulations/([0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$', methods: [GET], roles: PUBLIC_ACCESS }
