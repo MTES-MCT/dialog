@@ -21,4 +21,7 @@ interface LocationRepositoryInterface
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string;
+
+    /** @return Location[] */
+    public function findAllWithoutGeometry(): array;
 }

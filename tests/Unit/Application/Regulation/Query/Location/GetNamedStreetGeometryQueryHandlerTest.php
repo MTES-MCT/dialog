@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
@@ -239,5 +240,35 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
 
         $this->assertSame($this->geometry, $result);
+    }
+
+    public function testGetFullCity(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+        $this->expectExceptionMessage('not implemented: full city geocoding');
+
+        $this->roadGeocoder
+            ->expects(self::never())
+            ->method('computeRoadLine');
+
+        $this->laneSectionMaker
+            ->expects(self::never())
+            ->method('computeSection');
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadName = null;
+        $saveNamedStreetCommand->fromCoords = null;
+        $saveNamedStreetCommand->toCoords = null;
+
+        $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
     }
 }
