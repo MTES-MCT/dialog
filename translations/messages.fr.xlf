@@ -62,11 +62,6 @@
                 <source>common.menu</source>
                 <target>Menu</target>
             </trans-unit>
-            <trans-unit id="common.slogan">
-                <source>common.slogan</source>
-                <target>Digitaliser, diagnostiquer, diffuser l’information réglementaire de
-                    logistique.</target>
-            </trans-unit>
             <trans-unit id="common.see">
                 <source>common.see</source>
                 <target>Voir le détail</target>
@@ -255,6 +250,10 @@
             <trans-unit id="public.skiplinks.menu">
                 <source>public.skiplinks.menu</source>
                 <target>Menu</target>
+            </trans-unit>
+            <trans-unit id="footer.description">
+                <source>footer.description</source>
+                <target>DiaLog est un service porté par <![CDATA[<a href="https://beta.gouv.fr/incubateurs/mtes.html">]]>La Fabrique Numérique de l'Ecologie (MTE-MCT)<![CDATA[</a>]]> et sponsorisé par la <![CDATA[<strong>]]>Direction générale des infrastructures, des transports et des mobilités<![CDATA[</strong>]]>.</target>
             </trans-unit>
             <trans-unit id="accessibility.status">
                 <source>accessibility.status</source>
@@ -1084,21 +1083,9 @@
                 <source>landing.menu.button.help</source>
                 <target>Aide</target>
             </trans-unit>
-            <trans-unit id="landing.menu.button.restrictions">
-                <source>landing.menu.button.restrictions</source>
-                <target>Arrêtés de circulation</target>
-            </trans-unit>
-            <trans-unit id="landing.menu.button.authorities">
-                <source>landing.menu.button.authorities</source>
-                <target>Collectivités</target>
-            </trans-unit>
-            <trans-unit id="landing.menu.button.digital_services">
-                <source>landing.menu.button.digital_services</source>
-                <target>Services numériques</target>
-            </trans-unit>
-            <trans-unit id="landing.menu.button.road_users">
-                <source>landing.menu.button.road_users</source>
-                <target>Usagers de la route</target>
+            <trans-unit id="landing.menu.button.regulations">
+                <source>landing.menu.button.regulations</source>
+                <target>Liste des arrêtés</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.title">
                 <source>landing.jumbotron.title</source>
@@ -1106,28 +1093,19 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.description1">
                 <source>landing.jumbotron.description1</source>
-                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> l'application de la réglementation.</target>
+                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> la réglementation et lui donner plus d’impact.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description2">
                 <source>landing.jumbotron.description2</source>
-                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière grâce à une diffusion plus large de la
-                    réglementation.</target>
+                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière en rendant la réglementation mieux connue.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description3">
                 <source>landing.jumbotron.description3</source>
-                <target><![CDATA[<b>]]>Mettre en oeuvre<![CDATA[</b>]]> les Zones à Faibles Emissions.</target>
-            </trans-unit>
-            <trans-unit id="landing.jumbotron.illustration">
-                <source>landing.jumbotron.illustration</source>
-                <target>Illustration GPS</target>
+                <target><![CDATA[<b>]]>Améliorer<![CDATA[</b>]]> la gestion de la réglementation par les autorités de voirie.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.logged">
                 <source>landing.jumbotron.logged</source>
                 <target>Accéder aux arrếtés</target>
-            </trans-unit>
-            <trans-unit id="landing.for-who.title">
-                <source>landing.for-who.title</source>
-                <target>Pour qui ?</target>
             </trans-unit>
             <trans-unit id="landing.for-city.title">
                 <source>landing.for-city.title</source>
@@ -1138,22 +1116,17 @@
                 <target>Gagnez du temps sur la rédaction de vos arrêtés et communiquez plus
                     efficacement avec les usagers de la route.</target>
             </trans-unit>
-            <trans-unit id="landing.for-gps.title">
-                <source>landing.for-gps.title</source>
-                <target>Pour les services numériques</target>
+            <trans-unit id="landing.map.title">
+                <source>landing.map.title</source>
+                <target>Où sont les restrictions de circulation ?</target>
             </trans-unit>
-            <trans-unit id="landing.for-gps.description">
-                <source>landing.for-gps.description</source>
-                <target>Accédez à la réglementation de circulation et de stationnement des
-                    territoires partenaires, dans des formats adaptés à vos besoins.</target>
+            <trans-unit id="landing.map.description">
+                <source>landing.map.description</source>
+                <target>DiaLog permet aux collectivités de numériser leurs arrêtés de circulation. Ces données sont ensuite accessibles à certains services numériques tels que des GPS.</target>
             </trans-unit>
-            <trans-unit id="landing.road-users.title">
-                <source>landing.road-users.title</source>
-                <target>Pour les usagers de la route</target>
-            </trans-unit>
-            <trans-unit id="landing.road-users.description">
-                <source>landing.road-users.description</source>
-                <target>Soyez mieux informés des conditions de circulation.</target>
+            <trans-unit id="landing.map.link">
+                <source>landing.map.link</source>
+                <target>Voir la carte</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.title">
                 <source>landing.how-it-works.title</source>
@@ -1162,11 +1135,52 @@
             <trans-unit id="landing.how-it-works.description">
                 <source>landing.how-it-works.description</source>
                 <target>
-                    DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de
-                    circulation et de stationnement. Ces données sont ensuite transmises aux
-                    services numériques. Les données de circulation sont ainsi consultables et
-                    réutilisables facilement par tous.
+                    DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation. Ces données sont ensuite réutilisables par des services numériques, conformément aux obligations d’ouverture des données. Les données de réglementation sont ainsi consultables facilement par tous.
                 </target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.title">
+                <source>landing.distribute.title</source>
+                <target>Diffuser mes données avec DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.input.title">
+                <source>landing.distribute.input.title</source>
+                <target>Saisir un arrêté</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.input.description">
+                <source>landing.distribute.input.description</source>
+            <target>Editez vos <![CDATA[<b>]]>arrêtés de circulation <![CDATA[</b>]]> directement dans DiaLog grâce à un <![CDATA[<b>]]>formulaire <![CDATA[</b>]]> facilitant la saisie, puis mettez <![CDATA[<b>]]>les données <![CDATA[</b>]]> de vos arrêtés <![CDATA[<b>]]> à disposition des GPS <![CDATA[</b>]]> en un clic. <![CDATA[<br/>]]>Des modèles de visas sont fournis pour créer le document final. </target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.input.more">
+                <source>landing.distribute.input.more</source>
+            <target>Pour en savoir plus, consultez  l’article :  </target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.input.more.link">
+                <source>landing.distribute.input.more.link</source>
+            <target>Comment créer un arrêté dans DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.input.test">
+                <source>landing.distribute.input.test</source>
+            <target>Pour tester DiaLog, vous pouvez dès à présent créer un compte pour vous et votre collectivité.</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.input.register">
+                <source>landing.distribute.input.register</source>
+            <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.integration.title">
+                <source>landing.distribute.integration.title</source>
+                <target>Intégrer mes données</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.integration.description">
+                <source>landing.distribute.integration.description</source>
+            <target>Vous utilisez déjà un outil de saisie des arrêtés mais vous souhaitez <![CDATA[<b>]]> transmettre les données des arrêtés aux GPS <![CDATA[</b>]]>: DiaLog vous permet d'<![CDATA[<b>]]>intégrer ces données <![CDATA[</b>]]>et de les mettre à disposition de services tiers.</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.integration.contact">
+                <source>landing.distribute.integration.contact</source>
+            <target>Pour échanger sur l’intégration possible de vos arrêtés dans DiaLog, n’hésitez pas à nous contacter.</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.integration.contact.link">
+                <source>landing.distribute.integration.contact.link</source>
+            <target>Nous contacter</target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.title">
                 <source>landing.who-are-we.title</source>
@@ -1184,29 +1198,81 @@
                 <source>landing.who-are-we.description2</source>
                 <target>
                     Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6
-                    personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique
+                    personnes, réparties entre Lille, Paris, Rennes ou Rouen. Le service numérique
                     est en cours de construction et d’amélioration continue.
                 </target>
             </trans-unit>
-            <trans-unit id="landing.who-are-we.experiment">
-                <source>landing.who-are-we.experiment</source>
-                <target>Participer à l'expérimentation</target>
+            <trans-unit id="landing.who-are-we.team">
+                <source>landing.who-are-we.team</source>
+                <target>Découvrir l'équipe</target>
             </trans-unit>
-            <trans-unit id="landing.who-are-we.contact">
-                <source>landing.who-are-we.contact</source>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.title">
+                <source>landing.enter-or-integrate-details.jumbotron.title</source>
+                <target>Saisir des arrêtés ou intégrer vos données dans DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.description">
+                <source>landing.enter-or-integrate-details.jumbotron.description</source>
+                <target><![CDATA[<strong>]]>Les restrictions de circulation <![CDATA[</strong>]]> peuvent être rendues accessibles aux GPS de deux façons : </target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.list1">
+                <source>landing.enter-or-integrate-details.jumbotron.list1</source>
+                <target>en les saisissant dans DiaLog grace à un formulaire</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.list2">
+                <source>landing.enter-or-integrate-details.jumbotron.list2</source>
+                <target>en intégrant vos données issues d'un autre logiciel de gestion des restrictions</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.title">
+                <source>landing.enter-or-integrate-details.steps.title</source>
+                <target>Saisir un arrêté</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.register">
+                <source>landing.enter-or-integrate-details.steps.register</source>
+                <target>Créer un compte DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.register.description">
+                <source>landing.enter-or-integrate-details.steps.register.description</source>
+                <target>Après avoir créé un compte DiaLog, vous pouvez désormais créer des arrêtés pour votre organisation.</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.register.cta">
+                <source>landing.enter-or-integrate-details.steps.register.cta</source>
+                <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.add_regulation_orders">
+                <source>landing.enter-or-integrate-details.steps.add_regulation_orders</source>
+                <target>Renseigner mes arrêtés</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.add_regulation_orders.description">
+                <source>landing.enter-or-integrate-details.steps.add_regulation_orders.description</source>
+                <target>Vous pouvez créer des arrêtés de circulation portant sur une interdiction de circulation ou une limitation de vitesse. Les arrêtés peuvent être temporaires ou permanents.</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.broadcast">
+                <source>landing.enter-or-integrate-details.steps.broadcast</source>
+                <target>Diffuser mes données</target>
+            </trans-unit>
+            <trans-unit id="contact.title">
+                <source>contact.title</source>
+                <target>Contact</target>
+            </trans-unit>
+            <trans-unit id="contact.jumbotron.title">
+                <source>contact.jumbotron.title</source>
                 <target>Nous contacter</target>
             </trans-unit>
-            <trans-unit id="landing.authorities.metatitle">
-                <source>landing.authorities.metatitle</source>
-                <target>Collectivités</target>
+            <trans-unit id="contact.jumbotron.description">
+                <source>contact.jumbotron.description</source>
+                <target><![CDATA[<strong>]]>Vous avez des questions <![CDATA[</strong>]]>avant de vous lancer, ou <![CDATA[<strong>]]>vous souhaitez nous faire des retours sur DiaLog<![CDATA[</strong>]]>, écrivez-nous !</target>
             </trans-unit>
-            <trans-unit id="landing.authorities.jumbotron.title">
-                <source>landing.authorities.jumbotron.title</source>
-                <target>Numériser votre réglementation de circulation routière avec DiaLog</target>
+            <trans-unit id="contact.email.title">
+                <source>contact.email.title</source>
+                <target>Contactez-nous par email</target>
             </trans-unit>
-            <trans-unit id="landing.authorities.jumbotron.cta">
-                <source>landing.authorities.jumbotron.cta</source>
-                <target>Créer un compte pour ma commune</target>
+            <trans-unit id="contact.email.description1">
+                <source>contact.email.description1</source>
+                <target>Écrivez-nous par email à <![CDATA[<a href="mailto:dialog@beta.gouv.fr" data-testid="contact-email">]]>dialog@beta.gouv.fr<![CDATA[</a>]]>.</target>
+            </trans-unit>
+            <trans-unit id="contact.email.description2">
+                <source>contact.email.description2</source>
+                <target>L'équipe DiaLog vous répondra dans les meilleurs délais. </target>
             </trans-unit>
             <trans-unit id="landing.diagram.authorities">
                 <source>landing.diagram.authorities</source>
@@ -1218,431 +1284,11 @@
             </trans-unit>
             <trans-unit id="landing.diagram.digital_services">
                 <source>landing.diagram.digital_services</source>
-                <target>Services numériques</target>
+                <target>Services tiers et GPS</target>
             </trans-unit>
             <trans-unit id="landing.diagram.road_users">
                 <source>landing.diagram.road_users</source>
                 <target>Usagers de la route</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.why">
-                <source>landing.authorities.why</source>
-                <target>Pourquoi DiaLog ?</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.why_fast">
-                <source>landing.authorities.why_fast</source>
-                <target>Rapide</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.why_efficient">
-                <source>landing.authorities.why_efficient</source>
-                <target>Efficace</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.why_free">
-                <source>landing.authorities.why_free</source>
-                <target>Gratuit</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.value_prop">
-                <source>landing.authorities.value_prop</source>
-                <target>Facilitez la vie de votre service voirie</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.save_time">
-                <source>landing.authorities.save_time</source>
-                <target>Gagnez du temps</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.save_time.create_orders">
-                <source>landing.authorities.save_time.create_orders</source>
-                <target><![CDATA[<strong>]]>Rédigez<![CDATA[</strong>]]> vos arrêtés via l'outil DiaLog ou <![CDATA[<strong>]]>connectez<![CDATA[</strong>]]> votre outil de gestion
-                    (outil interne...) pour éviter la double saisie</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.save_time.send_to_gps">
-                <source>landing.authorities.save_time.send_to_gps</source>
-                <target><![CDATA[<strong>]]>Transmettez<![CDATA[</strong>]]> vos données automatiquement aux services numériques</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.simpler_interactions">
-                <source>landing.authorities.simpler_interactions</source>
-                <target>Simplifiez vos échanges</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.simpler_interactions.other_authorities">
-                <source>landing.authorities.simpler_interactions.other_authorities</source>
-                <target><![CDATA[<strong>]]>Coordonnez-vous<![CDATA[</strong>]]> facilement avec votre métropole ou les communes voisines</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.simpler_interactions.other_services">
-                <source>landing.authorities.simpler_interactions.other_services</source>
-                <target><![CDATA[<strong>]]>Partagez<![CDATA[</strong>]]> la réglementation aux autres services (géomatique...)</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.how_it_works">
-                <source>landing.authorities.how_it_works</source>
-                <target>Comment ça marche ?</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.how_it_works.description">
-                <source>landing.authorities.how_it_works.description</source>
-                <target>DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés
-                    de circulation et de stationnement. Ces données sont ensuite publiées aux
-                    services numériques. Les données de circulations sont ainsi consultables et
-                    réutilisables facilement par tous.</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.register">
-                <source>landing.authorities.steps.register</source>
-                <target>Créer un compte DiaLog</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.register.cta">
-                <source>landing.authorities.steps.register.cta</source>
-                <target>Créer un compte</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.add_regulation_orders">
-                <source>landing.authorities.steps.add_regulation_orders</source>
-                <target>Renseigner mes arrêtés</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.add_regulation_orders.description">
-                <source>landing.authorities.steps.add_regulation_orders.description</source>
-                <target>Numérisez facilement votre réglementation (arrêtés de circulation
-                    temporaires, permanents), dans un langage naturel.</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.broadcast">
-                <source>landing.authorities.steps.broadcast</source>
-                <target>Diffuser mes données</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.broadcast.description">
-                <source>landing.authorities.steps.broadcast.description</source>
-                <target>Publiez vos arrêtés pour les rendre accessibles à tous les services
-                    numériques connectés à DiaLog.</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots">
-                <source>landing.authorities.pilots</source>
-                <target>Rejoignez les communes pilotes</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.join">
-                <source>landing.authorities.pilots.join</source>
-                <target>Participez à l'expérimentation</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.join.description">
-                <source>landing.authorities.pilots.join.description</source>
-                <target>Rejoignez les communes qui utilisent DiaLog en avant première, pour nous
-                    aider à concevoir la plateforme la plus utile.</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.join.cta">
-                <source>landing.authorities.pilots.join.cta</source>
-                <target>Créer un compte</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.toulouse">
-                <source>landing.authorities.pilots.toulouse</source>
-                <target>Toulouse (Haute-Garonne)</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.toulouse.alt">
-                <source>landing.authorities.pilots.toulouse.alt</source>
-                <target>Place du Capitole à Toulouse</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.savenay">
-                <source>landing.authorities.pilots.savenay</source>
-                <target>Savenay (Loire-Atlantique)</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.savenay.alt">
-                <source>landing.authorities.pilots.savenay.alt</source>
-                <target>Clocher de l'église Saint-Martin de Savenay</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.saintrome">
-                <source>landing.authorities.pilots.saintrome</source>
-                <target>Saint-Rome (Haute-Garonne)</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.pilots.saintrome.alt">
-                <source>landing.authorities.pilots.saintrome.alt</source>
-                <target>Maison typique de Saint-Rome</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.metatitle">
-                <source>landing.digital_services.metatitle</source>
-                <target>Services numériques</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.jumbotron.title">
-                <source>landing.digital_services.jumbotron.title</source>
-                <target>La réglementation de circulation accessible, à jour et standardisée</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.jumbotron.description">
-                <source>landing.digital_services.jumbotron.description</source>
-                <target>DiaLog est la <![CDATA[<strong>]]>base de données nationale<![CDATA[</strong>]]> des réglementations de circulation
-                    et de stationnement.</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.jumbotron.cta">
-                <source>landing.digital_services.jumbotron.cta</source>
-                <target>Accéder aux données</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.quality.title">
-                <source>landing.digital_services.quality.title</source>
-                <target>Qualité</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.quality.description">
-                <source>landing.digital_services.quality.description</source>
-                <target>Données renseignées et validées directement par les collectivités</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.up_to_date.title">
-                <source>landing.digital_services.up_to_date.title</source>
-                <target>À jour</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.up_to_date.description">
-                <source>landing.digital_services.up_to_date.description</source>
-                <target>Restrictions permanentes et temporaires (travaux, événements...)</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.open_data.title">
-                <source>landing.digital_services.open_data.title</source>
-                <target>Open Data</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.open_data.description">
-                <source>landing.digital_services.open_data.description</source>
-                <target>Diffusion au format standardisé, sous licence libre</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.how_it_works.title">
-                <source>landing.digital_services.how_it_works.title</source>
-                <target>Comment ça marche ?</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.how_it_works.description">
-                <source>landing.digital_services.how_it_works.description</source>
-                <target>DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés
-                    de circulation et de stationnement. Ces données sont ensuite publiées aux
-                    services numériques. Les données de circulations sont ainsi consultables et
-                    réutilisables facilement par tous.</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.qualitative_data.title">
-                <source>landing.digital_services.qualitative_data.title</source>
-                <target>Des données qualitatives</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.qualitative_data.description1">
-                <source>landing.digital_services.qualitative_data.description1</source>
-                <target><![CDATA[<strong>]]>Récupérez la bonne information<![CDATA[</strong>]]> : les données sont renseignées directement
-                    par les gestionnaires d’infrastructure. Ces derniers s’assurent de la qualité et
-                    de la validation des informations.</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.qualitative_data.description2">
-                <source>landing.digital_services.qualitative_data.description2</source>
-                <target><![CDATA[<strong>]]>À jour<![CDATA[</strong>]]> : DiaLog permet le recueil des restrictions de circulation
-                    permanentes et temporaires. Bénéficiez d’une visibilité sur les travaux et
-                    évènements à venir sur les réseaux couverts !</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.qualitative_data.description3">
-                <source>landing.digital_services.qualitative_data.description3</source>
-                <target><![CDATA[<strong>]]>Au bon format :<![CDATA[</strong>]]> les données sont accessibles au format XML via le <![CDATA[<a href="https://transport.data.gouv.fr" target="_blank" rel="noopener">]]>point
-                    d’accès national aux données de transport<![CDATA[</a>]]>. DiaLog utilise le standard <![CDATA[<a href="https://www.datex2.eu" target="_blank" rel="noopener">]]>DATEX II<![CDATA[</a>]]>
-                    afin d’être facilement intégrable dans votre solution numérique. D’autres
-                    formats sont en cours d’élaboration.</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.qualitative_data.contact">
-                <source>landing.digital_services.qualitative_data.contact</source>
-                <target>Vous voulez intégrer les données DiaLog dans votre service numérique ?</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.qualitative_data.contact.cta">
-                <source>landing.digital_services.qualitative_data.contact.cta</source>
-                <target>Contactez-nous</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.title">
-                <source>landing.digital_services.why-digitise.title</source>
-                <target>Pourquoi numériser la réglementation ?</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.description">
-                <source>landing.digital_services.why-digitise.description</source>
-                <target>La <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat" target="_blank" rel="noopener"> ]]>Loi Climat et Résilience <![CDATA[</a>]]> oblige les calculateurs d’itinéraire
-                    spécialisés poids lourd à <![CDATA[<strong>]]>intégrer les informations concernant les poids lourds.<![CDATA[</strong>]]>
-                    Cette obligation permet de <![CDATA[<strong>]]>mieux informer les chauffeurs<![CDATA[</strong>]]> concernant les
-                    itinéraires adaptés à leur véhicule afin de :</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.argument1">
-                <source>landing.digital_services.why-digitise.argument1</source>
-                <target>Limiter les incidents</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.argument2">
-                <source>landing.digital_services.why-digitise.argument2</source>
-                <target>Assurer la sécurité des usagers de la route et des riverains</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.argument3">
-                <source>landing.digital_services.why-digitise.argument3</source>
-                <target>Pérenniser l’infrastructure routière.</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.questions">
-                <source>landing.digital_services.why-digitise.questions</source>
-                <target>Vous avez des questions complémentaires au sujet de DiaLog et de l’article
-                    122 de la loi Climat et Résilience ?</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.why-digitise.contact.cta">
-                <source>landing.digital_services.why-digitise.contact.cta</source>
-                <target>Contactez-nous</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.title">
-                <source>landing.digital_services.deployment.title</source>
-                <target>Un déploiement continu</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.description">
-                <source>landing.digital_services.deployment.description</source>
-                <target>DiaLog se donne 3 ans pour devenir la <![CDATA[<strong>]]>solution de référence d’accès à la
-                    réglementation routière<![CDATA[</strong>]]> :</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.test.title">
-                <source>landing.digital_services.deployment.test.title</source>
-                <target>Expérimentation</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.test.start">
-                <source>landing.digital_services.deployment.test.start</source>
-                <target>Début en 2022</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.test.step1">
-                <source>landing.digital_services.deployment.test.step1</source>
-                <target><![CDATA[<strong>]]>Construction<![CDATA[</strong>]]> du produit</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.test.step2">
-                <source>landing.digital_services.deployment.test.step2</source>
-                <target><![CDATA[<strong>]]>Test<![CDATA[</strong>]]> avec des territoires pilotes</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.test.step3">
-                <source>landing.digital_services.deployment.test.step3</source>
-                <target><![CDATA[<strong>]]>Validation<![CDATA[</strong>]]> du fonctionnement de la plateforme</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.france.title">
-                <source>landing.digital_services.deployment.france.title</source>
-                <target>Déploiement en France</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.france.start">
-                <source>landing.digital_services.deployment.france.start</source>
-                <target>Courant 2023</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.france.step1">
-                <source>landing.digital_services.deployment.france.step1</source>
-                <target>Déploiement opérationnel sur les <![CDATA[<strong>]]>territoires concernés par les JO<![CDATA[</strong>]]> de 2024</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.france.step2">
-                <source>landing.digital_services.deployment.france.step2</source>
-                <target>
-                    Déploiement dans les <![CDATA[<strong>]]>10 plus grandes villes du territoire<![CDATA[</strong>]]> métropolitain</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.europe.title">
-                <source>landing.digital_services.deployment.europe.title</source>
-                <target>Déploiement en Europe</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.europe.start">
-                <source>landing.digital_services.deployment.europe.start</source>
-                <target>Courant 2024</target>
-            </trans-unit>
-            <trans-unit id="landing.digital_services.deployment.europe.step1">
-                <source>landing.digital_services.deployment.europe.step1</source>
-                <target>Couverture au minimum du réseau transeuropéen global (RTE-T)</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.metatitle">
-                <source>landing.road_users.metatitle</source>
-                <target>Usagers</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.jumbotron.title">
-                <source>landing.road_users.jumbotron.title</source>
-                <target>Vous êtes sur la bonne voie !</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.jumbotron.description">
-                <source>landing.road_users.jumbotron.description</source>
-                <target>DiaLog permet de <![CDATA[<strong>]]>rendre la réglementation routière facile d'accès<![CDATA[</strong>]]> pour les
-                    autorités publiques.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works">
-                <source>landing.road_users.how_it_works</source>
-                <target>Comment ça marche ?</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.description">
-                <source>landing.road_users.how_it_works.description</source>
-                <target>DiaLog permet aux autorités qui conçoivent la réglementation de mieux la
-                    rendre accessible en la numérisant. Ainsi, ces informations peuvent être
-                    réutilisées par les applications de navigation par GPS.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.item1">
-                <source>landing.road_users.how_it_works.item1</source>
-                <target>Vous êtes <![CDATA[<strong>]]>mieux guidé<![CDATA[</strong>]]> par votre GPS favori.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.item2">
-                <source>landing.road_users.how_it_works.item2</source>
-                <target>Les règles de circulation du réseau routier sont <![CDATA[<strong>]]>mieux coordonnées<![CDATA[</strong>]]>.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.item3">
-                <source>landing.road_users.how_it_works.item3</source>
-                <target>Vous avez accès à de nouveaux services pour <![CDATA[<strong>]]>faciliter votre circulation<![CDATA[</strong>]]>.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.quote.part1">
-                <source>landing.road_users.how_it_works.quote.part1</source>
-                <target>La réglementation routière en France, ce n'est pas que les limitations de
-                    vitesse ou les sens interdits. Ce sont aussi les travaux, les événements festifs
-                    ou sportifs, les Zones à Faible Emissions (ZFE) ou les Zones à Trafic Limité
-                    (ZTL).</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.quote.part2">
-                <source>landing.road_users.how_it_works.quote.part2</source>
-                <target>Tous les conducteurs ont pu rencontrer un jour des blocages liés à ces
-                    règles sur leur chemin.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.how_it_works.quote.author">
-                <source>landing.road_users.how_it_works.quote.author</source>
-                <target>Mathieu Fernandez, intrapreneur de DiaLog</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.state_support.title">
-                <source>landing.road_users.state_support.title</source>
-                <target>Un dispositif soutenu par l'Etat</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.state_support.description">
-                <source>landing.road_users.state_support.description</source>
-                <target>DiaLog est un <![CDATA[<strong>]]>projet porté par le Ministère des Transports<![CDATA[</strong>]]>. Il a été initié
-                    en 2022 pour faciliter l'application de la <![CDATA[<a href="https://www.vie-publique.fr/loi/278460-loi-22-aout-2021-climat-et-resilience-convention-citoyenne-climat" target="_blank" rel="noopener">]]>loi Climat et Résilience<![CDATA[</a>]]>. Ainsi, ce
-                    service permet de <![CDATA[<strong>]]>construire une base de données nationale de la réglementation
-                    de circulation<![CDATA[</strong>]]> pour <![CDATA[<strong>]]>tous les véhicules<![CDATA[</strong>]]>. Les applications numériques (type GPS)
-                    vont ainsi pouvoir se mettre en conformité avec leur <![CDATA[<strong>]]>obligation d'intégrer la
-                    réglementation relative aux poids lourds<![CDATA[</strong>]]>.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.learn_more.title">
-                <source>landing.road_users.learn_more.title</source>
-                <target>Pour en savoir plus</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.title">
-                <source>landing.road_users.road_network.title</source>
-                <target>Comment sont gérées les routes en France ?</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.city.title">
-                <source>landing.road_users.road_network.city.title</source>
-                <target>Voies communales</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.city.description.part1">
-                <source>landing.road_users.road_network.city.description.part1</source>
-                <target>Elles appartiennent aux communes. C'est le conseil municipal de la commune
-                    concernée qui prend les décisions concernant la construction, l'entretien, les
-                    travaux.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.city.description.part2">
-                <source>landing.road_users.road_network.city.description.part2</source>
-                <target>Dans certains cas, cette responsabilité est confiée à une Métropole ou une
-                    communauté de communes, d'agglomération ou urbaine. On compte près de 700 000 km
-                    de ces routes sur l'ensemble du territoire, gérées par plus de 36 000 communes.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.departement.title">
-                <source>landing.road_users.road_network.departement.title</source>
-                <target>Voies départementales</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.departement.description.part1">
-                <source>landing.road_users.road_network.departement.description.part1</source>
-                <target>Elles sont entretenues et gérées par les Conseils Départementaux. Elles
-                    représentent un maillage de proximité entre les agglomérations, et sont
-                    reconnaissables par leurs bornes kilométriques jaunes.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.departement.description.part2">
-                <source>landing.road_users.road_network.departement.description.part2</source>
-                <target>On en dénombre environ 380 000 km en France, gérées par les 96 départements.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.national.title">
-                <source>landing.road_users.road_network.national.title</source>
-                <target>Voies nationales</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.national.description.part1">
-                <source>landing.road_users.road_network.national.description.part1</source>
-                <target>Ce sont les routes de plus gros gabarit. Elles sont gérées par l'État et ses
-                    services, ou par des sociétés concessionnaires. Elles permettent de traverser
-                    l'ensemble du territoire métropolitain et d'outre-mer.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.national.description.part2">
-                <source>landing.road_users.road_network.national.description.part2</source>
-                <target>Reconnaissables à leurs bornes kilométriques rouges, les routes du réseau
-                    national comptent environ 21 000 km de voies. Celles qui sont gérées par des
-                    sociétés concessionnaires sont soumises à péage, mais leur réglementation reste
-                    du ressort des services de l'Etat.</target>
-            </trans-unit>
-            <trans-unit id="landing.road_users.road_network.learn_more">
-                <source>landing.road_users.road_network.learn_more</source>
-                <target>Pour aller plus loin, consulter la page des <![CDATA[<a href="https://www.ecologie.gouv.fr/acteurs-route-en-france" target="_blank" rel="noopener">]]>acteurs routiers<![CDATA[</a>]]> sur le site du
-                    Ministère de l'Ecologie.</target>
             </trans-unit>
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
