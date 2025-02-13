@@ -148,6 +148,7 @@ when@test:
             arguments: ['@http_kernel']
         App\Infrastructure\Adapter\DateUtils:
             class: App\Tests\Mock\DateUtilsMock
+            arguments: ['%client_timezone%']
         App\Tests\Mock\ApiOrganizationFetcherMock:
             decorates: 'organization_fetcher.client'
             decoration_inner_name: 'App\Tests\Mock\EudonetParis\ApiOrganizationFetcherMock::organization_fetcher.client'
