@@ -1,0 +1,15 @@
+{% if measureUuid is defined and regulationOrderRecordUuid is defined %}
+	<turbo-stream action="replace" target="block_measure_{{ measureUuid }}">
+		<template>
+			{{ render(path('fragment_regulations_measure', { uuid: measureUuid , regulationOrderRecordUuid})) }}
+		</template>
+	</turbo-stream>
+{% endif %}
+
+{% if latestHistory is defined %}
+	<turbo-stream action="replace" target="block_regulation_order_history">
+		<template>
+			{% include 'regulation/_regulation_order_history.html.twig' with { latestHistory } only %}
+		</template>
+	</turbo-stream>
+{% endif %}

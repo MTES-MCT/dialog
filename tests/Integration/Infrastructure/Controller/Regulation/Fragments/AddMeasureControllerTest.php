@@ -159,9 +159,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(expectedCode: 200);
 
-        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $streams = $crawler->filter('turbo-stream')->extract(attributes: ['action', 'target']);
 
         $this->assertEquals([
             ['replace', 'measure_' . MeasureFixture::UUID_PERMANENT_ONLY_ONE . '_delete_button'],
