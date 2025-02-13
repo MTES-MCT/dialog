@@ -1106,16 +1106,15 @@
             </trans-unit>
             <trans-unit id="landing.jumbotron.description1">
                 <source>landing.jumbotron.description1</source>
-                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> l'application de la réglementation.</target>
+                <target><![CDATA[<b>]]>Faciliter<![CDATA[</b>]]> la réglementation et lui donner plus d’impact.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description2">
                 <source>landing.jumbotron.description2</source>
-                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière grâce à une diffusion plus large de la
-                    réglementation.</target>
+                <target><![CDATA[<b>]]>Sécuriser<![CDATA[</b>]]> la circulation routière en rendant la réglementation mieux connue.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.description3">
                 <source>landing.jumbotron.description3</source>
-                <target><![CDATA[<b>]]>Mettre en oeuvre<![CDATA[</b>]]> les Zones à Faibles Emissions.</target>
+                <target><![CDATA[<b>]]>Améliorer<![CDATA[</b>]]> la gestion de la réglementation par les autorités de voirie.</target>
             </trans-unit>
             <trans-unit id="landing.jumbotron.illustration">
                 <source>landing.jumbotron.illustration</source>
@@ -1162,10 +1161,7 @@
             <trans-unit id="landing.how-it-works.description">
                 <source>landing.how-it-works.description</source>
                 <target>
-                    DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de
-                    circulation et de stationnement. Ces données sont ensuite transmises aux
-                    services numériques. Les données de circulation sont ainsi consultables et
-                    réutilisables facilement par tous.
+                    DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation. Ces données sont ensuite réutilisables par des services numériques, conformément aux obligations d’ouverture des données. Les données de réglementation sont ainsi consultables facilement par tous.
                 </target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.title">
@@ -1184,17 +1180,13 @@
                 <source>landing.who-are-we.description2</source>
                 <target>
                     Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6
-                    personnes, réparties entre Lille, Paris, Rennes ou Lyon. Le service numérique
+                    personnes, réparties entre Lille, Paris, Rennes ou Rouen. Le service numérique
                     est en cours de construction et d’amélioration continue.
                 </target>
             </trans-unit>
-            <trans-unit id="landing.who-are-we.experiment">
-                <source>landing.who-are-we.experiment</source>
-                <target>Participer à l'expérimentation</target>
-            </trans-unit>
-            <trans-unit id="landing.who-are-we.contact">
-                <source>landing.who-are-we.contact</source>
-                <target>Nous contacter</target>
+            <trans-unit id="landing.who-are-we.team">
+                <source>landing.who-are-we.team</source>
+                <target>Découvrir l'équipe</target>
             </trans-unit>
             <trans-unit id="landing.authorities.metatitle">
                 <source>landing.authorities.metatitle</source>

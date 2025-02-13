@@ -25,13 +25,9 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('/collectivites', $crawler->selectLink('Pour les collectivités')->attr('href'));
         $this->assertSame('/services-numeriques', $crawler->selectLink('Pour les services numériques')->attr('href'));
         $this->assertSame('/usagers', $crawler->selectLink('Pour les usagers de la route')->attr('href'));
-        $joinLink = $crawler->selectLink("Participer à l'expérimentation");
-        $this->assertSame('Participer à l\'expérimentation', $joinLink->text());
-        $this->assertSame('/collectivites', $joinLink->attr('href'));
+        $joinLink = $crawler->selectLink("Découvrir l'équipe");
+        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
         $this->assertMetaTitle('DiaLog', $crawler);
-        $contactLink = $crawler->filter('[data-testid="contact-link"]');
-        $this->assertSame('Nous contacter', $contactLink->text());
-        $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
     }
 
     public function testLandingWithLoggedUser(): void
@@ -45,8 +41,8 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertCount(2, $userLinks);
         $this->assertSame('Votre avis', $userLinks->eq(0)->text());
 
-        $enterLink = $crawler->selectLink("Participer à l'expérimentation");
-        $this->assertSame('/collectivites', $enterLink->attr('href'));
+        $joinLink = $crawler->selectLink("Découvrir l'équipe");
+        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
     }
 
     public function testNavigationLink(): void

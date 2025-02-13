@@ -23,7 +23,7 @@
             </div>
         </div>
     </section>
-    <section class="how-it-works fr-x-background-alt--blue-france" aria-labelledby="how-it-works">
+    <section class="how-it-works" aria-labelledby="how-it-works">
         <div class="fr-container fr-py-4w">
             <h2 id="how-it-works">{{ 'landing.for-who.title'|trans }}</h2>
             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
@@ -87,7 +87,7 @@
             </div>
         </div>
     </section>
-    <section class="itinerary fr-container fr-py-6w" aria-labelledby="itinerary">
+    <section class="itinerary fr-container fr-py-6w fr-x-background-alt--blue-france" aria-labelledby="itinerary">
         <h2 id="itinerary" class="fr-x-text--blue-france">{{ 'landing.how-it-works.title'|trans }}</h2>
         <p class="fr-text--xl fr-m-0">{{ 'landing.how-it-works.description'|trans|raw }}</p>
         {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: 'dialog'} only %}
@@ -96,11 +96,8 @@
                 <h2 class="fr-x-text--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
                 <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
                 <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>
-                <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w fr-mb-2w">
-                    {{ 'landing.who-are-we.experiment'|trans }}
-                </a>
-                <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary" data-testid="contact-link">
-                    {{ 'landing.who-are-we.contact'|trans }}
+                <a href="https://beta.gouv.fr/startups/dialogue.html" class="fr-btn fr-btn--secondary" target="_blank">
+                    {{ 'landing.who-are-we.team'|trans }}
                 </a>
     </section>
 {% endblock %}

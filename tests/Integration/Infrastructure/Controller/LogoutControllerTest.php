@@ -21,7 +21,7 @@ final class LogoutControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
         $this->assertRouteSame('app_landing');
 
-        $enterLink = $crawler->selectLink("Participer à l'expérimentation");
-        $this->assertSame('/collectivites', $enterLink->attr('href'));
+        $joinLink = $crawler->selectLink("Découvrir l'équipe");
+        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
     }
 }
