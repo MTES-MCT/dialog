@@ -22,16 +22,11 @@ final class LandingControllerTest extends AbstractWebTestCase
             $crawler,
         );
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
-        $this->assertSame('/collectivites', $crawler->selectLink('Pour les collectivités')->attr('href'));
         $this->assertSame('/services-numeriques', $crawler->selectLink('Pour les services numériques')->attr('href'));
         $this->assertSame('/usagers', $crawler->selectLink('Pour les usagers de la route')->attr('href'));
-        $joinLink = $crawler->selectLink("Participer à l'expérimentation");
-        $this->assertSame('Participer à l\'expérimentation', $joinLink->text());
-        $this->assertSame('/collectivites', $joinLink->attr('href'));
+        $joinLink = $crawler->selectLink("Découvrir l'équipe");
+        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
         $this->assertMetaTitle('DiaLog', $crawler);
-        $contactLink = $crawler->filter('[data-testid="contact-link"]');
-        $this->assertSame('Nous contacter', $contactLink->text());
-        $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
     }
 
     public function testLandingWithLoggedUser(): void
@@ -45,8 +40,8 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertCount(2, $userLinks);
         $this->assertSame('Votre avis', $userLinks->eq(0)->text());
 
-        $enterLink = $crawler->selectLink("Participer à l'expérimentation");
-        $this->assertSame('/collectivites', $enterLink->attr('href'));
+        $joinLink = $crawler->selectLink("Découvrir l'équipe");
+        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
     }
 
     public function testNavigationLink(): void
@@ -84,20 +79,6 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertNavStructure([
             ['Accueil', ['href' => '/', 'aria-current' => 'page']],
-            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
-            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
-            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
-            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
-            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
-            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
-            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-        ], $crawler);
-
-        $crawler = $client->request('GET', '/collectivites');
-
-        $this->assertNavStructure([
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Collectivités', ['href' => '/collectivites', 'aria-current' => 'page']],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
@@ -110,7 +91,6 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertNavStructure([
             ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
@@ -123,7 +103,6 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertNavStructure([
             ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Collectivités', ['href' => '/collectivites', 'aria-current' => null]],
             ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
             ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
