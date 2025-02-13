@@ -97,7 +97,7 @@ final class UpdateMeasureController extends AbstractRegulationController
 
                 return new Response(
                     $this->twig->render(
-                        name: 'regulation/fragments/_general_info.updated.stream.html.twig',
+                        name: 'regulation/fragments/_measure.updated.stream.html.twig',
                         context: [
                             'latestHistory' => $latestHistory,
                             'measureUuid' => $uuid,

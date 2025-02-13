@@ -1,7 +1,7 @@
-{% if generalInfoUuid is defined %}
-	<turbo-stream action="replace" target="block_general_info">
+{% if measureUuid is defined and regulationOrderRecordUuid is defined %}
+	<turbo-stream action="replace" target="block_measure_{{ measureUuid }}">
 		<template>
-			{{ render(path('fragment_regulations_general_info', { uuid: generalInfoUuid })) }}
+			{{ render(path('fragment_regulations_measure', { uuid: measureUuid , regulationOrderRecordUuid})) }}
 		</template>
 	</turbo-stream>
 {% endif %}
