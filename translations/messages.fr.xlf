@@ -1088,10 +1088,6 @@
                 <source>landing.menu.button.restrictions</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
-            <trans-unit id="landing.menu.button.authorities">
-                <source>landing.menu.button.authorities</source>
-                <target>Collectivités</target>
-            </trans-unit>
             <trans-unit id="landing.menu.button.digital_services">
                 <source>landing.menu.button.digital_services</source>
                 <target>Services numériques</target>
