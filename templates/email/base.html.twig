@@ -1,19 +1,95 @@
-<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  </head>
-  <body>
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-      <tr>
-        <td>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiaLog</title>
+    <style type="text/css">
+        /* Reset styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Base styles */
+        body {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #f8f9fa;
+        }
+
+        .header img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        /* Content */
+        .content {
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* Button */
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 20px 0;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .content {
+                padding: 10px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="{{ baseUrl ~ '/' ~ 'images/logo_email.png' }}" alt="Logo DiaLog"/>
+        </div>
+        <div class="content">
             {% block body %}{% endblock %}
-            <p>
-                <img src="{{ baseUrl ~ asset('images/logo_email.png') }}" height="120"/>
-            </p>
-        </td>
-      </tr>
-    </table>
-  </body>
+        </div>
+
+        <div class="footer">
+            <p>© {{ "now"|date("Y") }} DiaLog.</p>
+        </div>
+    </div>
+</body>
 </html>
