@@ -49,12 +49,35 @@
         <p class="fr-text--xl fr-m-0">{{ 'landing.how-it-works.description'|trans|raw }}</p>
         {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: 'dialog'} only %}
     </section>
+    <section class="fr-container fr-py-6w" aria-labelledby="distribute-data">
+        <h2 class="">{{ 'landing.distribute-data.title'|trans }}</h2>
+        <div>
+            <h3 class="">{{ 'distribute-data-by-input.title'|trans }}</h3>
+            <p>{{ 'landing.distribute-data-by-input.description'|trans|raw }}</p>
+            <p>{{ 'landing.distribute-data-by-input.more-informations'|trans }}</p>
+            <p>{{ 'landing.distribute-data-by-input.test'|trans }}</p>
+            <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-user-add-line fr-btn--icon-left" aria-hidden="true" target="_blank">
+            {{ 'landing.distribute-data-by-input.create-account-button'|trans }}
+            </a>
+        </div>
+
+        <div>
+            <h3 class="">{{ 'landing.distribute-data-by-integration.title'|trans }}</h3>
+        <p></p>
+            <p>{{ 'landing.distribute-data-by-integration.description'|trans|raw }}</p>
+            <p>{{ 'landing.distribute-data-by-integration.more-informations'|trans }}</p>
+            <p>{{ 'landing.distribute-data-by-integration.contact'|trans }}</p>
+            <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-mail-open-line fr-btn--icon-left" aria-hidden="true" target="_blank">
+            {{ 'landing.distribute-data-by-integration.contact-button'|trans }}
+            </a>
+        </div>
+    </section>
     <section class="fr-container fr-py-6w fr-background-alt--grey">
-                <h2 class="fr-x-text--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
-                <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
-                <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>
-                <a href="https://beta.gouv.fr/startups/dialogue.html" class="fr-btn fr-btn--secondary" target="_blank">
-                    {{ 'landing.who-are-we.team'|trans }}
-                </a>
+        <h2 class="fr-x-text--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
+        <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
+        <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>
+        <a href="https://beta.gouv.fr/startups/dialogue.html" class="fr-btn fr-btn--secondary" target="_blank">
+            {{ 'landing.who-are-we.team'|trans }}
+        </a>
     </section>
 {% endblock %}
