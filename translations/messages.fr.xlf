@@ -1088,14 +1088,6 @@
                 <source>landing.menu.button.restrictions</source>
                 <target>Arrêtés de circulation</target>
             </trans-unit>
-            <trans-unit id="landing.menu.button.digital_services">
-                <source>landing.menu.button.digital_services</source>
-                <target>Services numériques</target>
-            </trans-unit>
-            <trans-unit id="landing.menu.button.road_users">
-                <source>landing.menu.button.road_users</source>
-                <target>Usagers de la route</target>
-            </trans-unit>
             <trans-unit id="landing.jumbotron.title">
                 <source>landing.jumbotron.title</source>
                 <target>Numériser la réglementation de circulation routière avec DiaLog</target>
@@ -1120,10 +1112,6 @@
                 <source>landing.jumbotron.logged</source>
                 <target>Accéder aux arrếtés</target>
             </trans-unit>
-            <trans-unit id="landing.for-who.title">
-                <source>landing.for-who.title</source>
-                <target>Pour qui ?</target>
-            </trans-unit>
             <trans-unit id="landing.for-city.title">
                 <source>landing.for-city.title</source>
                 <target>Pour les collectivités</target>
@@ -1141,13 +1129,9 @@
                 <source>landing.for-gps.description</source>
                 <target>DiaLog permet aux collectivités de numériser leurs arrêtés de circulation. Ces données sont ensuite accessibles à certains services numériques tels que des GPS.</target>
             </trans-unit>
-            <trans-unit id="landing.road-users.title">
-                <source>landing.road-users.title</source>
-                <target>Pour les usagers de la route</target>
-            </trans-unit>
-            <trans-unit id="landing.road-users.description">
-                <source>landing.road-users.description</source>
-                <target>Soyez mieux informés des conditions de circulation.</target>
+            <trans-unit id="landing.for-gps.map">
+                <source>landing.for-gps.map</source>
+                <target>Voir la carte</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.title">
                 <source>landing.how-it-works.title</source>

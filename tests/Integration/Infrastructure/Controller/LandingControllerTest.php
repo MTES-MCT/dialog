@@ -22,8 +22,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             $crawler,
         );
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
-        $this->assertSame('/services-numeriques', $crawler->selectLink('Pour les services numériques')->attr('href'));
-        $this->assertSame('/usagers', $crawler->selectLink('Pour les usagers de la route')->attr('href'));
+        $this->assertSame('/carte', $crawler->selectLink('Voir la carte')->attr('href'));
         $joinLink = $crawler->selectLink("Découvrir l'équipe");
         $this->assertSame('Découvrir l\'équipe', $joinLink->text());
         $this->assertMetaTitle('DiaLog', $crawler);
@@ -79,34 +78,8 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertNavStructure([
             ['Accueil', ['href' => '/', 'aria-current' => 'page']],
-            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
-            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
-            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
-            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
-            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-        ], $crawler);
-
-        $crawler = $client->request('GET', '/services-numeriques');
-
-        $this->assertNavStructure([
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => 'page']],
-            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => null]],
             ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
-            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
-            ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
-            ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-        ], $crawler);
-
-        $crawler = $client->request('GET', '/usagers');
-
-        $this->assertNavStructure([
-            ['Accueil', ['href' => '/', 'aria-current' => null]],
-            ['Services numériques', ['href' => '/services-numeriques', 'aria-current' => null]],
-            ['Usagers de la route', ['href' => '/usagers', 'aria-current' => 'page']],
-            ['Arrêtés de circulation', ['href' => '/regulations', 'aria-current' => null]],
-            ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
