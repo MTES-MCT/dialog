@@ -19,14 +19,32 @@
                 </ul>
             </div>
             <div class="fr-col-12 fr-col-md-4 fr-x-text--center">
-                <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" width="300" height="276"/>
+                <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" height="272"/>
             </div>
         </div>
     </section>
     <section class="how-it-works" aria-labelledby="how-it-works">
         <div class="fr-container fr-py-4w">
+            <div class="fr-grid-row fr-mb-3w">
+                <div class="fr-col fr-col-md-6">
+                    <div class="fr-card ">
+                        <div class="fr-card__body">
+                            <div class="fr-card__content">
+                                <h3 class="fr-card__title">
+                                    {{ 'landing.for-gps.title'|trans }}
+                                </h3>
+                                <p class="fr-card__desc">{{ 'landing.for-gps.description'|trans|raw }}</p>
+                            </div>
+                            <div class="fr-card__footer">
+                                    <a class="fr-btn fr-btn--icon-right fr-icon-road-map-line" aria-hidden="true" href="{{ path('app_carto') }}">Voir la carte</a>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
             <h2 id="how-it-works">{{ 'landing.for-who.title'|trans }}</h2>
-            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
+            <img src="/images/landing/illustration-map.webp" alt="" width="1474">
+            {# <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
                 <div class="fr-col-12 fr-col-md-4">
                 </div>
                 <div class="fr-col-12 fr-col-md-4">
@@ -67,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> #}
         </div>
     </section>
     <section class="itinerary fr-container fr-py-6w fr-x-background-alt--blue-france" aria-labelledby="itinerary">
@@ -75,7 +93,7 @@
         <p class="fr-text--xl fr-m-0">{{ 'landing.how-it-works.description'|trans|raw }}</p>
         {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: 'dialog'} only %}
     </section>
-    <section class="fr-container fr-py-6w">
+    <section class="fr-container fr-py-6w fr-background-alt--grey">
                 <h2 class="fr-x-text--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
                 <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
                 <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>

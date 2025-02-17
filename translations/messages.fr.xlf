@@ -1135,12 +1135,11 @@
             </trans-unit>
             <trans-unit id="landing.for-gps.title">
                 <source>landing.for-gps.title</source>
-                <target>Pour les services numériques</target>
+                <target>Où sont les restrictions de circulation ?</target>
             </trans-unit>
             <trans-unit id="landing.for-gps.description">
                 <source>landing.for-gps.description</source>
-                <target>Accédez à la réglementation de circulation et de stationnement des
-                    territoires partenaires, dans des formats adaptés à vos besoins.</target>
+                <target>DiaLog permet aux collectivités de numériser leurs arrêtés de circulation. Ces données sont ensuite accessibles à certains services numériques tels que des GPS.</target>
             </trans-unit>
             <trans-unit id="landing.road-users.title">
                 <source>landing.road-users.title</source>
@@ -1206,7 +1205,7 @@
             </trans-unit>
             <trans-unit id="landing.diagram.digital_services">
                 <source>landing.diagram.digital_services</source>
-                <target>Services numériques</target>
+                <target>Services tiers et GPS</target>
             </trans-unit>
             <trans-unit id="landing.diagram.road_users">
                 <source>landing.diagram.road_users</source>
