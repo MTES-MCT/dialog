@@ -1,0 +1,19 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-4w header" aria-labelledby="jumbotron">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-10">
+                <h1 id="jumbotron" class="fr-x-text--blue-france">{{ 'contact.jumbotron.title'|trans }}</h1>
+                <p>{{ 'contact.jumbotron.description'|trans }}</p>
+            </div>
+            <div class="fr-col-12 fr-col-md-2 fr-x-text--center">
+                <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" height="272"/>
+            </div>
+        </div>
+    </section>
+{% endblock %}
