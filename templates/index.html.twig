@@ -24,8 +24,8 @@
         </div>
     </section>
     <section class="how-it-works" aria-labelledby="how-it-works">
-        <div class="fr-container fr-py-4w fr-background-map">
-            <div class="fr-grid-row fr-mb-3w">
+        <div class="fr-container fr-pt-4w fr-background-map">
+            <div class="fr-grid-row ">
                 <div class="fr-col fr-col-md-6">
                     <div class="fr-card ">
                         <div class="fr-card__body">
@@ -51,25 +51,31 @@
     </section>
     <section class="fr-container fr-py-6w" aria-labelledby="distribute-data">
         <h2 class="">{{ 'landing.distribute-data.title'|trans }}</h2>
-        <div>
-            <h3 class="">{{ 'distribute-data-by-input.title'|trans }}</h3>
-            <p>{{ 'landing.distribute-data-by-input.description'|trans|raw }}</p>
-            <p>{{ 'landing.distribute-data-by-input.more-informations'|trans }}</p>
-            <p>{{ 'landing.distribute-data-by-input.test'|trans }}</p>
-            <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-user-add-line fr-btn--icon-left" aria-hidden="true" target="_blank">
-            {{ 'landing.distribute-data-by-input.create-account-button'|trans }}
-            </a>
-        </div>
-
-        <div>
-            <h3 class="">{{ 'landing.distribute-data-by-integration.title'|trans }}</h3>
-        <p></p>
-            <p>{{ 'landing.distribute-data-by-integration.description'|trans|raw }}</p>
-            <p>{{ 'landing.distribute-data-by-integration.more-informations'|trans }}</p>
-            <p>{{ 'landing.distribute-data-by-integration.contact'|trans }}</p>
-            <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-mail-open-line fr-btn--icon-left" aria-hidden="true" target="_blank">
-            {{ 'landing.distribute-data-by-integration.contact-button'|trans }}
-            </a>
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-py-4w">
+            <div class="fr-col-12 fr-col-lg-4">
+                <h3 class="">{{ 'distribute-data-by-input.title'|trans }}</h3>
+                <p>{{ 'landing.distribute-data-by-input.description'|trans|raw }}</p>
+                <p>{{ 'landing.distribute-data-by-input.more-informations'|trans }}</p>
+                <p>{{ 'landing.distribute-data-by-input.test'|trans }}</p>
+                <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-user-add-line fr-btn--icon-left" aria-hidden="true">
+                {{ 'landing.distribute-data-by-input.create-account-button'|trans }}
+                </a>
+            </div>
+            <div class="fr-hidden-sm fr-hidden fr-unhidden-lg fr-col-lg-8 fr-x-text--center">
+                <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" height="411" alt="Illustration arrêté de circulation temporaire" class="fr-background-open-blue-france-active">
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                <h3 class="">{{ 'landing.distribute-data-by-integration.title'|trans }}</h3>
+                <p>{{ 'landing.distribute-data-by-integration.description'|trans|raw }}</p>
+                <p>{{ 'landing.distribute-data-by-integration.more-informations'|trans }}</p>
+                <p>{{ 'landing.distribute-data-by-integration.contact'|trans }}</p>
+                <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary fr-icon-mail-open-line fr-btn--icon-left" aria-hidden="true">
+                {{ 'landing.distribute-data-by-integration.contact-button'|trans }}
+                </a>
+            </div>
+            <div class="fr-hidden-sm fr-hidden fr-unhidden-lg fr-col-lg-8 fr-x-text--center">
+                <img class="fr-background-open-blue-france-active" src="{{ asset('images/landing/illustration-liste-arretés-publiés.webp') }}" height="400" alt="Illustration arrêté de circulation temporaire">
+            </div>
         </div>
     </section>
     <section class="fr-container fr-py-6w fr-background-alt--grey">

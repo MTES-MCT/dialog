@@ -17,3 +17,8 @@
     background-image: url('../../../../public/images/landing/illustration-map.webp');
     background-size: cover;
 }
+
+.fr-background-open-blue-france-active {
+    border-radius: 40px;
+    background: var(--light-decisions-background-background-open-blue-france-active, #ADADF9);
+}
