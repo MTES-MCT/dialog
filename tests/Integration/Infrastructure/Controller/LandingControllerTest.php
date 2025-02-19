@@ -23,8 +23,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         );
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $this->assertSame('/carte', $crawler->selectLink('Voir la carte')->attr('href'));
-        $joinLink = $crawler->selectLink("Découvrir l'équipe");
-        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
         $this->assertMetaTitle('DiaLog', $crawler);
     }
 
@@ -40,7 +38,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('Votre avis', $userLinks->eq(0)->text());
 
         $joinLink = $crawler->selectLink("Découvrir l'équipe");
-        $this->assertSame('Découvrir l\'équipe', $joinLink->text());
+        $this->assertSame('https://beta.gouv.fr/startups/dialogue.html', $joinLink->attr('href'));
     }
 
     public function testNavigationLink(): void
@@ -83,5 +81,11 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
+
+        $registerLink = $crawler->filter('[data-testid="register-link"]');
+        $this->assertSame('/register', $registerLink->attr('href'));
+
+        $contactLink = $crawler->filter('[data-testid="contact-link"]');
+        $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
     }
 }
