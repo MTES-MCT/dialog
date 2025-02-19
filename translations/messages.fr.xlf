@@ -1157,11 +1157,15 @@
             </trans-unit>
             <trans-unit id="landing.distribute-data-by-input.description">
                 <source>landing.distribute-data-by-input.description</source>
-            <target>Editez vos <![CDATA[<b>]]>arrêtés de circulation <![CDATA[</b>]]> directement dans DiaLog grâce à un <![CDATA[<b>]]>formulaire <![CDATA[</b>]]> facilitant la saisie, puis mettez <![CDATA[<b>]]>les données <![CDATA[</b>]]> de vos arrêtés <![CDATA[<b>]]> à disposition des GPS <![CDATA[</b>]]> en un clic. Des modèles de visas sont fournis pour créer le document final. </target>
+            <target>Editez vos <![CDATA[<b>]]>arrêtés de circulation <![CDATA[</b>]]> directement dans DiaLog grâce à un <![CDATA[<b>]]>formulaire <![CDATA[</b>]]> facilitant la saisie, puis mettez <![CDATA[<b>]]>les données <![CDATA[</b>]]> de vos arrêtés <![CDATA[<b>]]> à disposition des GPS <![CDATA[</b>]]> en un clic. <![CDATA[<br/>]]>Des modèles de visas sont fournis pour créer le document final. </target>
             </trans-unit>
             <trans-unit id="landing.distribute-data-by-input.more-informations">
                 <source>landing.distribute-data-by-input.more-informations</source>
-            <target>Pour en savoir plus, consultez  l’article : </target>
+            <target>Pour en savoir plus, consultez  l’article :  </target>
+            </trans-unit>
+            <trans-unit id="landing.distribute-data-by-input.more-informations.link">
+                <source>landing.distribute-data-by-input.more-informations.link</source>
+            <target>Comment créer un arrêté dans DiaLog</target>
             </trans-unit>
             <trans-unit id="landing.distribute-data-by-input.test">
                 <source>landing.distribute-data-by-input.test</source>
@@ -1178,6 +1182,10 @@
             <trans-unit id="landing.distribute-data-by-integration.more-informations">
                 <source>landing.distribute-data-by-integration.more-informations</source>
             <target>Pour en savoir plus, consultez  l’article : </target>
+            </trans-unit>
+            <trans-unit id="landing.distribute-data-by-integration.more-informations.link">
+                <source>landing.distribute-data-by-integration.more-informations.link</source>
+            <target>Comment intégrer mes arrêtés dans DiaLog</target>
             </trans-unit>
             <trans-unit id="landing.distribute-data-by-integration.contact">
                 <source>landing.distribute-data-by-integration.contact</source>

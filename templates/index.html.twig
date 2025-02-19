@@ -53,9 +53,11 @@
         <h2 class="">{{ 'landing.distribute-data.title'|trans }}</h2>
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-py-4w">
             <div class="fr-col-12 fr-col-lg-4">
-                <h3 class="">{{ 'distribute-data-by-input.title'|trans }}</h3>
+                <h3 class="">✏️ {{ 'distribute-data-by-input.title'|trans }}</h3>
                 <p>{{ 'landing.distribute-data-by-input.description'|trans|raw }}</p>
-                <p>{{ 'landing.distribute-data-by-input.more-informations'|trans }}</p>
+                <p>{{ 'landing.distribute-data-by-input.more-informations'|trans }}
+                    <a href="#" class="fr-link">{{ 'landing.distribute-data-by-input.more-informations.link'|trans }}</a>
+                </p>
                 <p>{{ 'landing.distribute-data-by-input.test'|trans }}</p>
                 <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-user-add-line fr-btn--icon-left" aria-hidden="true">
                 {{ 'landing.distribute-data-by-input.create-account-button'|trans }}
@@ -64,10 +66,17 @@
             <div class="fr-hidden-sm fr-hidden fr-unhidden-lg fr-col-lg-8 fr-x-text--center">
                 <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" height="411" alt="Illustration arrêté de circulation temporaire" class="fr-background-open-blue-france-active">
             </div>
+        </div>
+        <svg width="160" height="2" viewBox="0 0 160 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M160 1.19141H0V0.191406H160V1.19141Z" fill="#DDDDDD"/>
+        </svg>
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-py-4w">
             <div class="fr-col-12 fr-col-lg-4">
-                <h3 class="">{{ 'landing.distribute-data-by-integration.title'|trans }}</h3>
+                <h3 class="">⚙️ {{ 'landing.distribute-data-by-integration.title'|trans }}</h3>
                 <p>{{ 'landing.distribute-data-by-integration.description'|trans|raw }}</p>
-                <p>{{ 'landing.distribute-data-by-integration.more-informations'|trans }}</p>
+                <p>{{ 'landing.distribute-data-by-integration.more-informations'|trans }}
+                    <a href="#" class="fr-link">{{ 'landing.distribute-data-by-integration.more-informations.link'|trans }}</a>
+                </p>
                 <p>{{ 'landing.distribute-data-by-integration.contact'|trans }}</p>
                 <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary fr-icon-mail-open-line fr-btn--icon-left" aria-hidden="true">
                 {{ 'landing.distribute-data-by-integration.contact-button'|trans }}
