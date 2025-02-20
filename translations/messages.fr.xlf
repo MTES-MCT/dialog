@@ -1223,6 +1223,34 @@
                 <source>landing.who-are-we.team</source>
                 <target>Découvrir l'équipe</target>
             </trans-unit>
+            <trans-unit id="contact.jumbotron.title">
+                <source>contact.jumbotron.title</source>
+                <target>Nous contacter</target>
+            </trans-unit>
+            <trans-unit id="contact.jumbotron.description">
+                <source>contact.jumbotron.description</source>
+                <target><![CDATA[<strong>]]>Vous avez des questions <![CDATA[</strong>]]>avant de vous lancer, ou <![CDATA[<strong>]]>vous souhaitez nous faire des retours sur DiaLog<![CDATA[</strong>]]>, écrivez-nous !</target>
+            </trans-unit>
+            <trans-unit id="contact.jumbotron.illustration">
+                <source>contact.jumbotron.illustration</source>
+                <target>Illustration email</target>
+            </trans-unit>
+            <trans-unit id="contact.title">
+                <source>contact.title</source>
+                <target>Contactez-nous par email</target>
+            </trans-unit>
+            <trans-unit id="contact.description1">
+                <source>contact.description1</source>
+                <target>Écrivez-nous par email à </target>
+            </trans-unit>
+            <trans-unit id="contact.email">
+                <source>contact.email</source>
+                <target>dialog@beta.gouv.fr</target>
+            </trans-unit>
+            <trans-unit id="contact.description">
+                <source>contact.description</source>
+                <target>L’équipe DiaLog vous répondra dans les meilleurs délais. </target>
+            </trans-unit>
             <trans-unit id="landing.authorities.metatitle">
                 <source>landing.authorities.metatitle</source>
                 <target>Collectivités</target>

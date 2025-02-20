@@ -86,6 +86,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('/register', $registerLink->attr('href'));
 
         $contactLink = $crawler->filter('[data-testid="contact-link"]');
-        $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
+        $this->assertSame('/contact', $contactLink->attr('href'));
     }
 }

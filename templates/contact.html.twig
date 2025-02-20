@@ -1,19 +1,32 @@
 {% extends 'layouts/layout.html.twig' %}
-
+{% set metaTitle = 'contact.jumbotron.title'|trans %}
 {% block title %}
-    {{ parent() }}
+    {{ metaTitle }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
-    <section class="fr-container fr-py-4w header" aria-labelledby="jumbotron">
+    <section class="fr-container fr-px-15w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'landing.menu.button.home'|trans, path: 'app_landing'},
+            { title: metaTitle },
+        ]} %}
+    </section>
+    <section class="fr-container fr-py-6w fr-px-15w fr-x-background-alt--blue-france" aria-labelledby="jumbotron">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
             <div class="fr-col-12 fr-col-md-10">
-                <h1 id="jumbotron" class="fr-x-text--blue-france">{{ 'contact.jumbotron.title'|trans }}</h1>
-                <p>{{ 'contact.jumbotron.description'|trans }}</p>
+                <h1 id="jumbotron" class="fr-x-text--blue-france">{{ metaTitle }}</h1>
+                <p>{{ 'contact.jumbotron.description'|trans|raw}}</p>
             </div>
             <div class="fr-col-12 fr-col-md-2 fr-x-text--center">
-                <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" height="272"/>
+                <img src="{{ asset('images/landing/contact-email.webp') }}" alt="{{ 'contact.jumbotron.illustration'|trans }}" height="260"/>
             </div>
         </div>
+    </section>
+    <section class="fr-container fr-py-6w fr-px-15w">
+        <h2>{{ 'contact.title'|trans }}</h2>
+        <p>{{ 'contact.description1'|trans }} 
+            <a href="mailto:dialog@beta.gouv.fr" data-testid="contact-email"> {{ 'contact.email'|trans }} </a>
+        </p>
+        <p>{{ 'contact.description'|trans }}</p>
     </section>
 {% endblock %}
