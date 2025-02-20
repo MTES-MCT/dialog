@@ -1223,6 +1223,54 @@
                 <source>landing.who-are-we.team</source>
                 <target>Découvrir l'équipe</target>
             </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.title">
+                <source>landing.enter-or-integrate-details.jumbotron.title</source>
+                <target>Saisir des arrêtés ou intégrer vos données dans DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.description">
+                <source>landing.enter-or-integrate-details.jumbotron.description</source>
+                <target><![CDATA[<strong>]]>Les restrictions de circulation <![CDATA[</strong>]]> peuvent être rendues accessibles aux GPS de deux façons : </target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.list1">
+                <source>landing.enter-or-integrate-details.jumbotron.list1</source>
+                <target>en les saisissant dans DiaLog grace à un formulaire</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.jumbotron.list2">
+                <source>landing.enter-or-integrate-details.jumbotron.list2</source>
+                <target>en intégrant vos données issues d’un autre logiciel de gestion des restrictions</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.title">
+                <source>landing.enter-or-integrate-details.steps.title</source>
+                <target>Saisir un arrêté</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.register">
+                <source>landing.enter-or-integrate-details.steps.register</source>
+                <target>Créer un compte DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.register.description">
+                <source>landing.enter-or-integrate-details.steps.register.description</source>
+                <target>Après avoir créé un compte DiaLog, vous pouvez désormais créer des arrêtés pour votre organisation.</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.register.cta">
+                <source>landing.enter-or-integrate-details.steps.register.cta</source>
+                <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.add_regulation_orders">
+                <source>landing.enter-or-integrate-details.steps.add_regulation_orders</source>
+                <target>Renseigner mes arrêtés</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.add_regulation_orders.description">
+                <source>landing.enter-or-integrate-details.steps.add_regulation_orders.description</source>
+                <target>Vous pouvez créer des arrêtés de circulation portant sur une interdiction de circulation ou une limitation de vitesse. Les arrêtés peuvent être temporaires ou permanents.</target>
+            </trans-unit>
+            <trans-unit id="landing.enter-or-integrate-details.steps.broadcast">
+                <source>landing.enter-or-integrate-details.steps.broadcast</source>
+                <target>Diffuser mes données</target>
+            </trans-unit>
+            <trans-unit id="landing.authorities.steps.broadcast.description">
+                <source>landing.authorities.steps.broadcast.description</source>
+                <target>Une fois l'arrêté créé et publié dans DiaLog, les informations seront disponibles aux GPS et aux services tiers souhaitant récupérer ces données. <![CDATA[<br\>]]>Vous verrez également vos informations dans la carte fournie sur le site de DiaLog et consultable par tous.</target>
+            </trans-unit>
             <trans-unit id="contact.jumbotron.title">
                 <source>contact.jumbotron.title</source>
                 <target>Nous contacter</target>
@@ -1334,32 +1382,6 @@
                     de circulation et de stationnement. Ces données sont ensuite publiées aux
                     services numériques. Les données de circulations sont ainsi consultables et
                     réutilisables facilement par tous.</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.register">
-                <source>landing.authorities.steps.register</source>
-                <target>Créer un compte DiaLog</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.register.cta">
-                <source>landing.authorities.steps.register.cta</source>
-                <target>Créer un compte</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.add_regulation_orders">
-                <source>landing.authorities.steps.add_regulation_orders</source>
-                <target>Renseigner mes arrêtés</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.add_regulation_orders.description">
-                <source>landing.authorities.steps.add_regulation_orders.description</source>
-                <target>Numérisez facilement votre réglementation (arrêtés de circulation
-                    temporaires, permanents), dans un langage naturel.</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.broadcast">
-                <source>landing.authorities.steps.broadcast</source>
-                <target>Diffuser mes données</target>
-            </trans-unit>
-            <trans-unit id="landing.authorities.steps.broadcast.description">
-                <source>landing.authorities.steps.broadcast.description</source>
-                <target>Publiez vos arrêtés pour les rendre accessibles à tous les services
-                    numériques connectés à DiaLog.</target>
             </trans-unit>
             <trans-unit id="landing.authorities.pilots">
                 <source>landing.authorities.pilots</source>

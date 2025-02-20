@@ -1,0 +1,68 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = 'landing.enter-or-integrate-details.jumbotron.title'|trans %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-px-15w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'landing.menu.button.home'|trans, path: 'app_landing'},
+            { title: metaTitle },
+        ]} %}
+    </section>
+    <section class="fr-container fr-py-6w fr-px-15w fr-x-background-alt--blue-france" aria-labelledby="jumbotron">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-8">
+                <h1 id="jumbotron" class="fr-x-text--blue-france">{{ metaTitle }}</h1>
+                <p>{{ 'landing.enter-or-integrate-details.jumbotron.description'|trans|raw}}</p>
+                <ul>
+                    <li>{{ 'landing.enter-or-integrate-details.jumbotron.list1'|trans }}</li>
+                    <li>{{ 'landing.enter-or-integrate-details.jumbotron.list2'|trans }}</li>
+                </ul>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 fr-x-text--center">
+                <img src="{{ asset('/images/landing/authorities/illustration-steps.webp') }}" alt="{{ 'contact.jumbotron.illustration'|trans }}" height="260"/>
+            </div>
+        </div>
+    </section>
+    <section class="fr-container fr-x-container--fluid fr-mt-6w fr-mb-4w fr-px-15w">
+        <h2>{{ 'landing.enter-or-integrate-details.steps.title'|trans }}</h2>
+        <div class="fr-grid-row fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-8 fr-px-3w fr-py-4w fr-x-background-alt--blue-france">
+                <ol class="app-authorities__steplist">
+                    <li>
+                        <h3 class="fr-text--xl fr-my-0">
+                            {{ 'landing.enter-or-integrate-details.steps.register'|trans }}
+                        </h3>
+                        <p>{{ 'landing.enter-or-integrate-details.steps.register.description'|trans }}</p>
+                        <p class="fr-text--sm fr-my-0">
+                            <a href="{{ path('app_register') }}" class="fr-link fr-icon-arrow-right-line fr-link--icon-right">
+                                {{ 'landing.enter-or-integrate-details.steps.register.cta'|trans }}
+                            </a>
+                        </p>
+                    </li>
+                    <li>
+                        <h3 class="fr-text--xl fr-my-0">
+                            {{ 'landing.enter-or-integrate-details.steps.add_regulation_orders'|trans }}
+                        </h3>
+                        <p class="fr-text--sm fr-my-0">
+                            {{ 'landing.enter-or-integrate-details.steps.add_regulation_orders.description'|trans }}
+                        </p>
+                    </li>
+                    <li>
+                        <h3 class="fr-text--xl fr-my-0">
+                            {{ 'landing.enter-or-integrate-details.steps.broadcast'|trans }}
+                        </h3>
+                        <p class="fr-text--sm fr-my-0">
+                            {{ 'landing.authorities.steps.broadcast.description'|trans }}
+                        </p>
+                    </li>
+                </ol>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 fr-x-text--center">
+                <img src="{{ asset('images/landing/authorities/illustration-steps.webp') }}" aria-hidden="true">
+            </div>
+        </div>
+    </section>
+{% endblock %}
