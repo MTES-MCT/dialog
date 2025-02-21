@@ -18,6 +18,6 @@ final class ContactControllerTest extends AbstractWebTestCase
         $this->assertSame('Contactez-nous par email', $crawler->filter('h2')->text());
         $contactLink = $crawler->filter('[data-testid="contact-email"]');
         $this->assertSame('mailto:dialog@beta.gouv.fr', $contactLink->attr('href'));
-        $this->assertMetaTitle('DiaLog', $crawler);
+        $this->assertMetaTitle('Nous contacter - DiaLog', $crawler);
     }
 }
