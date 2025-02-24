@@ -30,6 +30,7 @@ services:
             $mediaLocation: '%env(APP_MEDIA_LOCATION)%'
             $proConnectClientId: '%env(PRO_CONNECT_CLIENT_ID)%'
             $proConnectClientSecret: '%env(PRO_CONNECT_CLIENT_SECRET)%'
+            $proConnectDomain: '%env(PRO_CONNECT_DOMAIN)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

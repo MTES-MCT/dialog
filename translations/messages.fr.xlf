@@ -1664,6 +1664,14 @@
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
             </trans-unit>
+            <trans-unit id="login.proconnect.title">
+                <source>login.proconnect.title</source>
+                <target>Se connecter avec ProConnect</target>
+            </trans-unit>
+            <trans-unit id="login.proconnect.auth">
+                <source>login.proconnect.auth</source>
+                <target>S'identifier avec</target>
+            </trans-unit>
             <trans-unit id="login.email">
                 <source>login.email</source>
                 <target>Adresse e-mail</target>
@@ -2226,6 +2234,14 @@
             <trans-unit id="register.comment">
                 <source>register.comment</source>
                 <target>Message</target>
+            </trans-unit>
+            <trans-unit id="register.auth.proconnect">
+                <source>register.auth.proconnect</source>
+                <target>Se créer un compte avec ProConnect</target>
+            </trans-unit>
+            <trans-unit id="register.auth.email">
+                <source>register.auth.email</source>
+                <target>Se créer un compte avec son adresse e-mail</target>
             </trans-unit>
             <trans-unit id="organization.name">
                 <source>organization.name</source>
