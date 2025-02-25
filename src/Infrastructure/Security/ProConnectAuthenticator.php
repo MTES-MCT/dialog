@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security;
 
-use App\Application\CommandBusInterface;
-use App\Application\User\Command\ProConnect\CreateProConnectUserCommand;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use App\Infrastructure\Security\Provider\UserProvider;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
@@ -20,12 +18,17 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/**
+ * Se référer à la documentation technique
+ * https://github.com/numerique-gouv/proconnect-documentation/blob/main/doc_fs/implementation_technique.md
+ */
 class ProConnectAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
         private HttpClientInterface $httpClient,
         private UrlGeneratorInterface $urlGenerator,
-        private CommandBusInterface $commandBus,
+        private UserProvider $userProvider,
+        private TokenStorageInterface $tokenStorage,
         private string $proConnectClientId,
         private string $proConnectClientSecret,
         private string $proConnectDomain,
@@ -44,7 +47,7 @@ class ProConnectAuthenticator extends AbstractAuthenticator
 
             // Vérification du state
             $receivedState = $request->query->get('state');
-            $originalState = $session->get('proconnect_state');
+            $originalState = $session->get('oauth2_state');
 
             if (empty($receivedState) || $receivedState !== $originalState) {
                 throw new AuthenticationException('Invalid state parameter');
@@ -56,101 +59,83 @@ class ProConnectAuthenticator extends AbstractAuthenticator
                 throw new AuthenticationException('No authorization code provided');
             }
 
-            // Récupération du token
-            $response = $this->httpClient->request('POST', $this->proConnectDomain . '/api/v2/token', [
-                'body' => [
-                    'grant_type' => 'authorization_code',
-                    'code' => $code,
-                    'client_id' => $this->proConnectClientId,
-                    'client_secret' => $this->proConnectClientSecret,
-                    'redirect_uri' => $this->urlGenerator->generate('pro_connect_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
-                ],
-            ]);
-
-            $tokenData = $response->toArray();
-
+            // Échange du code contre un token
+            $tokenData = $this->exchangeCodeForToken($code);
+            // Vérification de la réponse du token
             if (!isset($tokenData['access_token']) || !isset($tokenData['id_token'])) {
                 throw new AuthenticationException('Invalid token response');
             }
 
-            // Vérification de l'expiration du token
-            if ($this->isTokenExpired($tokenData)) {
-                throw new AuthenticationException('Token expired');
-            }
-
-            $accessToken = $tokenData['access_token'];
-            $idToken = $tokenData['id_token'];
-
             // Stockage de l'id_token pour la déconnexion
-            $session->set('proconnect_id_token', $idToken);
-
-            // Vérification du nonce dans l'id_token
-            $decodedToken = $this->decodeAndVerifyToken($idToken);
-            $savedNonce = $session->get('proconnect_nonce');
-
-            if (!isset($decodedToken['nonce']) || $decodedToken['nonce'] !== $savedNonce) {
-                throw new AuthenticationException('Invalid nonce in ID token');
-            }
+            $session->set('id_token', $tokenData['id_token']);
 
             // Récupération des infos utilisateur
-            $userInfo = $this->httpClient->request('GET', $this->proConnectDomain . '/api/v2/userinfo', [
-                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
-            ])->toArray();
+            $userInfo = $this->getUserInfo($tokenData['access_token']);
 
+            // Vérification des données utilisateur
             if (!isset($userInfo['email'])) {
                 throw new AuthenticationException('Email not found in user info');
             }
 
+            // Création du Passport
             return new SelfValidatingPassport(
                 new UserBadge($userInfo['email'], function (string $email) use ($userInfo) {
-                    return $this->commandBus->handle(
-                        new CreateProConnectUserCommand(
-                            $email,
-                            $userInfo,
-                        ),
-                    );
+                    return $this->userProvider->loadUserByIdentifier($email, $userInfo);
                 }),
             );
         } catch (\Exception $e) {
-            throw new AuthenticationException('Authentication failed: ' . $e->getMessage());
+            throw new AuthenticationException('Authentication failed: ' . $e->getMessage(), 0, $e);
         }
     }
 
-    private function isTokenExpired(array $tokenData): bool
+    private function exchangeCodeForToken(string $code): array
     {
-        return !isset($tokenData['expires_in']) || $tokenData['expires_in'] <= 0;
+        $response = $this->httpClient->request('POST', $this->proConnectDomain . '/token', [
+            'body' => [
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'client_id' => $this->proConnectClientId,
+                'client_secret' => $this->proConnectClientSecret,
+                'redirect_uri' => $this->urlGenerator->generate('pro_connect_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            ],
+        ]);
+
+        return $response->toArray();
     }
 
-    private function decodeAndVerifyToken(string $token): array
+    private function getUserInfo(string $accessToken): array
     {
-        try {
-            $decoded = JWT::decode($token, new Key($this->proConnectClientSecret, 'HS256'));
+        $response = $this->httpClient->request('GET', $this->proConnectDomain . '/userinfo', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accessToken,
+                'Accept' => 'application/json',
+            ],
+        ]);
+        $jwt = $response->getContent();
 
-            return (array) $decoded;
-        } catch (\Exception $e) {
-            throw new AuthenticationException('JWT verification failed: ' . $e->getMessage());
-        }
+        // Decodage du JWT
+        $parts = explode('.', $jwt);
+        $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+
+        return $payload;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $session = $request->getSession();
-        $session->remove('proconnect_state');
-        $session->remove('proconnect_nonce');
+        $request->getSession()->remove('oauth2_state');
+        $request->getSession()->remove('oauth2_nonce');
 
-        return new RedirectResponse($this->urlGenerator->generate('app_landing'));
+        return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $session = $request->getSession();
-        $session->remove('proconnect_state');
-        $session->remove('proconnect_nonce');
+        $request->getSession()->remove('oauth2_state');
+        $request->getSession()->remove('oauth2_nonce');
+        $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
 
         return new RedirectResponse(
-            $this->urlGenerator->generate('app_login', [
-                'error' => $exception->getMessageKey(),
-            ]),
+            $this->urlGenerator->generate('app_login'),
         );
     }
 }

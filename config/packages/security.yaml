@@ -9,21 +9,21 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
             provider: user
             user_checker: App\Infrastructure\Security\UserChecker
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
-                username_parameter: email
-                password_parameter: password
-            logout:
-                path: app_logout
-            # ProConnect
             custom_authenticator:
                 - App\Infrastructure\Security\ProConnectAuthenticator
+            #form_login:
+            #    login_path: app_login
+            #    check_path: app_login
+            #    enable_csrf: true
+            #    username_parameter: email
+            #    password_parameter: password
+            logout:
+                path: app_logout
 
     access_control:
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }

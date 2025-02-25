@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const DEFAULT_PRO_CONNECT_PASSWORD = 'proconnect-no-password';
+
     public function __construct(
         private string $uuid,
         private string $email,

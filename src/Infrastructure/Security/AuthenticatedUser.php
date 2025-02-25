@@ -7,6 +7,7 @@ namespace App\Infrastructure\Security;
 use App\Domain\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 final class AuthenticatedUser
 {
@@ -25,7 +26,7 @@ final class AuthenticatedUser
             : null;
     }
 
-    public function getSymfonyUser(): ?SymfonyUser
+    public function getSymfonyUser(): ?UserInterface
     {
         /** @var SymfonyUser|null */
         $user = $this->security->getUser();

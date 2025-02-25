@@ -14,6 +14,10 @@
                 <source>common.register</source>
                 <target>Créer un compte</target>
             </trans-unit>
+            <trans-unit id="common.or">
+                <source>common.or</source>
+                <target>ou</target>
+            </trans-unit>
             <trans-unit id="common.blog">
                 <source>common.blog</source>
                 <target>Blog</target>
@@ -86,10 +90,6 @@
             <trans-unit id="common.do_not_delete">
                 <source>common.do_not_delete</source>
                 <target>Ne pas supprimer</target>
-            </trans-unit>
-            <trans-unit id="common.or">
-                <source>common.or</source>
-                <target>ou</target>
             </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
@@ -2237,11 +2237,11 @@
             </trans-unit>
             <trans-unit id="register.auth.proconnect">
                 <source>register.auth.proconnect</source>
-                <target>Se créer un compte avec ProConnect</target>
+                <target>Créer un compte avec ProConnect</target>
             </trans-unit>
             <trans-unit id="register.auth.email">
                 <source>register.auth.email</source>
-                <target>Se créer un compte avec son adresse e-mail</target>
+                <target>Créer un compte avec son adresse e-mail</target>
             </trans-unit>
             <trans-unit id="organization.name">
                 <source>organization.name</source>
