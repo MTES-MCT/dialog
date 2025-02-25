@@ -26,7 +26,6 @@ final class LocationTest extends TestCase
         $rawGeoJSON2 = $this->createMock(RawGeoJSON::class);
         $measure = $this->createMock(Measure::class);
         $storageArea = $this->createMock(StorageArea::class);
-        $storageArea2 = $this->createMock(StorageArea::class);
         $geometry = GeoJSON::toLineString([
             Coordinates::fromLonLat(-1.935836, 47.347024),
             Coordinates::fromLonLat(-1.930973, 47.347917),

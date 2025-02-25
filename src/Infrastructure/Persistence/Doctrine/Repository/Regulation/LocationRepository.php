@@ -155,4 +155,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             'features' => $features,
         ]);
     }
+
+    public function findAllWithoutGeometry(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.geometry IS NULL')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query\Location;
 
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\QueryInterface;
 use App\Application\RoadGeocoderInterface;
@@ -33,6 +34,10 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
     {
         $command = $query->command;
         $command->clean();
+
+        if (!$command->roadName) {
+            throw new GeocodingFailureException('not implemented: full city geocoding');
+        }
 
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
