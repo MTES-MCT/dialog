@@ -15,13 +15,13 @@ security:
             provider: user
             user_checker: App\Infrastructure\Security\UserChecker
             custom_authenticator:
-                - App\Infrastructure\Security\ProConnectAuthenticator
-            #form_login:
-            #    login_path: app_login
-            #    check_path: app_login
-            #    enable_csrf: true
-            #    username_parameter: email
-            #    password_parameter: password
+                - App\Infrastructure\Security\Authenticator\ProConnectAuthenticator
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                username_parameter: email
+                password_parameter: password
             logout:
                 path: app_logout
 

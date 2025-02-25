@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\User\Command\SavePasswordCommand;
 use App\Infrastructure\Form\User\EditPasswordFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
+use App\Infrastructure\Security\User\PasswordUser;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,8 +40,9 @@ final class EditPasswordController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
-            $symfonyUser = $this->authenticatedUser->getSymfonyUser();
-            $symfonyUser->setPassword($user->getPasswordUser()->getPassword());
+            /** @var PasswordUser */
+            $abstractSymfonyUser = $this->authenticatedUser->getSessionUser();
+            $abstractSymfonyUser->setPassword($user->getPasswordUser()->getPassword());
 
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();

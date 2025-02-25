@@ -2,26 +2,29 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\User;
 
 use App\Application\User\View\UserOrganizationView;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Domain\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
+abstract class AbstractAuthenticatedUser implements UserInterface
 {
-    public const DEFAULT_PRO_CONNECT_PASSWORD = 'proconnect-no-password';
+    protected string $uuid;
+    protected string $email;
+    protected string $fullName;
+    protected array $userOrganizations;
+    protected array $roles;
 
     public function __construct(
-        private string $uuid,
-        private string $email,
-        private string $fullName,
-        private string $password,
-        /** @var UserOrganizationView[] */
-        private array $userOrganizations,
-        private array $roles,
-        private bool $isVerified,
+        User $user,
+        array $userOrganizations,
     ) {
+        $this->uuid = $user->getUuid();
+        $this->email = $user->getEmail();
+        $this->fullName = $user->getFullName();
+        $this->roles = $user->getRoles();
+        $this->userOrganizations = $userOrganizations;
     }
 
     public function getUuid(): string
@@ -54,11 +57,6 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
     /** @return UserOrganizationView[] */
     public function getUserOrganizations(): array
     {
@@ -76,11 +74,6 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $uuids;
     }
 
-    public function isVerified(): bool
-    {
-        return $this->isVerified;
-    }
-
     public function eraseCredentials(): void
     {
     }
@@ -95,8 +88,7 @@ class SymfonyUser implements UserInterface, PasswordAuthenticatedUserInterface
         $this->fullName = $fullName;
     }
 
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
+    abstract public function isVerified(): bool;
+
+    abstract public function getAuthOrigin(): string;
 }

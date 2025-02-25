@@ -10,7 +10,9 @@ final readonly class CreateProConnectUserCommand implements CommandInterface
 {
     public function __construct(
         public string $email,
-        public array $userInfo,
+        public string $givenName,
+        public string $usualName,
+        public string $siret,
     ) {
     }
 }

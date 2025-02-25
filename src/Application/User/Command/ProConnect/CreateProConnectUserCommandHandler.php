@@ -17,6 +17,7 @@ use App\Domain\User\ProConnectUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\ProConnectUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
+use App\Domain\User\Specification\IsUserAlreadyRegisteredInOrganization;
 use App\Domain\User\User;
 
 final class CreateProConnectUserCommandHandler
@@ -26,50 +27,56 @@ final class CreateProConnectUserCommandHandler
         private UserRepositoryInterface $userRepository,
         private ProConnectUserRepositoryInterface $proConnectUserRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepository,
+        private IsUserAlreadyRegisteredInOrganization $isUserAlreadyRegisteredInOrganization,
         private DateUtilsInterface $dateUtils,
         private CommandBusInterface $commandBus,
     ) {
     }
 
-    public function __invoke(CreateProConnectUserCommand $command): User
+    public function __invoke(CreateProConnectUserCommand $command): void
     {
-        ['given_name' => $givenName, 'usual_name' => $usualName, 'siret' => $siret] = $command->userInfo;
-
         $user = $this->userRepository->findOneByEmail($command->email);
-        if ($user instanceof User) {
-            return $user;
+
+        // Si le compte utilisateur a déjà un accès ProConnect, on stoppe le process
+        if ($user?->getProConnectUser()) {
+            return;
         }
 
         try {
+            // Si le compte utilisateur n'existe pas (ni ProConnectUser, ni PasswordUser)
+            if (!$user) {
+                $user = (new User($this->idFactory->make()))
+                    ->setFullName(\sprintf('%s %s', $command->givenName, $command->usualName))
+                    ->setEmail($command->email)
+                    ->setRoles([UserRolesEnum::ROLE_USER->value])
+                    ->setRegistrationDate($this->dateUtils->getNow())
+                    ->setVerified();
+
+                $this->userRepository->add($user);
+            }
+
+            // Si l'utilisateur n'est pas dans l'organisation récupéré via ProConnect, on le rajoute.
+
             /** @var GetOrCreateOrganizationView $organizationView */
-            $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($siret));
+            $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($command->siret));
             $organization = $organizationView->organization;
-            $organizationRole = $organizationView->isCreated
-                ? OrganizationRolesEnum::ROLE_ORGA_ADMIN->value
-                : OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
 
-            $now = $this->dateUtils->getNow();
-            $user = (new User($this->idFactory->make()))
-                ->setFullName(\sprintf('%s %s', $givenName, $usualName))
-                ->setEmail($command->email)
-                ->setRoles([UserRolesEnum::ROLE_USER->value])
-                ->setRegistrationDate($now)
-                ->setVerified();
+            if (!$this->isUserAlreadyRegisteredInOrganization->isSatisfiedBy($user->getEmail(), $organization)) {
+                $organizationRole = $organizationView->isCreated
+                    ? OrganizationRolesEnum::ROLE_ORGA_ADMIN->value
+                    : OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
 
+                $organizationUser = (new OrganizationUser($this->idFactory->make()))
+                    ->setUser($user)
+                    ->setOrganization($organization)
+                    ->setRoles($organizationRole);
+                $this->organizationUserRepository->add($organizationUser);
+            }
+
+            // Dernière étape, création du compte ProConnect
             $proConnectUser = new ProConnectUser($this->idFactory->make(), $user);
-
             $user->setProConnectUser($proConnectUser);
-
-            $organizationUser = (new OrganizationUser($this->idFactory->make()))
-                ->setUser($user)
-                ->setOrganization($organization)
-                ->setRoles($organizationRole);
-
-            $this->userRepository->add($user);
             $this->proConnectUserRepository->add($proConnectUser);
-            $this->organizationUserRepository->add($organizationUser);
-
-            return $user;
         } catch (OrganizationNotFoundException $e) {
             throw $e;
         }

@@ -11,8 +11,8 @@ use App\Domain\Pagination;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Infrastructure\Form\Regulation\RegulationListFiltersFormType;
-use App\Infrastructure\Security\SymfonyUser;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Infrastructure\Security\AuthenticatedUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,9 +27,9 @@ final class ListRegulationsController
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
         private TranslatorInterface $translator,
-        private Security $security,
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
+        private AuthenticatedUser $authenticatedUser,
     ) {
     }
 
@@ -52,8 +52,8 @@ final class ListRegulationsController
             );
         }
 
-        /** @var SymfonyUser|null */
-        $user = $this->security->getUser();
+        /** @var AbstractAuthenticatedUser|null */
+        $user = $this->authenticatedUser->getSessionUser();
         $dto->user = $user;
         $organizations = $this->queryBus->handle(new GetOrganizationsQuery());
 

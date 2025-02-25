@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\MyArea;
 
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +24,7 @@ final class IndexController
     )]
     public function __invoke(): Response
     {
-        /** @var SymfonyUser|null */
+        /** @var AbstractAuthenticatedUser|null */
         $user = $this->security->getUser();
 
         return new Response($this->twig->render(

@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Security;
 
-use App\Infrastructure\Security\SymfonyUser;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
+/**
+ * Se référer à la documentation technique https://github.com/numerique-gouv/proconnect-documentation?tab=readme-ov-file#-proconnect---documentation
+ */
 final class ProConnectLoginController
 {
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
-        private Security $security,
         private string $proConnectClientId,
         private string $proConnectDomain,
     ) {
@@ -59,11 +58,9 @@ final class ProConnectLoginController
         ];
 
         $request->getSession()->invalidate();
-        $this->security->logout();
 
         return new RedirectResponse(
             \sprintf('%s/session/end?%s', $this->proConnectDomain, http_build_query($params)),
         );
     }
-
 }

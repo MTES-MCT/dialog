@@ -4,52 +4,41 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Provider;
 
-use App\Application\CommandBusInterface;
-use App\Application\User\Command\ProConnect\CreateProConnectUserCommand;
 use App\Domain\User\ProConnectUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
+use App\Infrastructure\Security\User\PasswordUser;
+use App\Infrastructure\Security\User\ProConnectUser as SymfonyProConnectUser;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\User\AttributesBasedUserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-final class UserProvider implements UserProviderInterface, AttributesBasedUserProviderInterface
+final class UserProvider implements UserProviderInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepositoryInterface,
-        private CommandBusInterface $commandBus,
     ) {
     }
 
-    public function loadUserByIdentifier(string $identifier, array $attributes = []): UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $user = $this->userRepository->findOneByEmail($identifier);
-        if (!empty($attributes)) {
-            if (!$user) {
-                $user = $this->commandBus->handle(new CreateProConnectUserCommand($identifier, $attributes));
-            }
-        }
 
-        if (!$user instanceof User || (!$user->getPasswordUser() && empty($attributes))) {
+        if (!$user instanceof User) {
             throw new UserNotFoundException(\sprintf('Unable to find the user %s', $identifier));
         }
 
         $userOrganizations = $this->organizationUserRepositoryInterface->findByUserUuid($user->getUuid());
         $isProConnectUser = $user->getProConnectUser() instanceof ProConnectUser;
 
-        return new SymfonyUser(
-            $user->getUuid(),
-            $user->getEmail(),
-            $user->getFullName(),
-            $isProConnectUser ? SymfonyUser::DEFAULT_PRO_CONNECT_PASSWORD : $user->getPasswordUser()->getPassword(),
-            $userOrganizations,
-            $user->getRoles(),
-            $user->isVerified(),
-        );
+        if ($isProConnectUser) {
+            return new SymfonyProConnectUser($user, $userOrganizations);
+        }
+
+        return new PasswordUser($user, $userOrganizations);
     }
 
     public function refreshUser(UserInterface $user): UserInterface
@@ -59,6 +48,6 @@ final class UserProvider implements UserProviderInterface, AttributesBasedUserPr
 
     public function supportsClass(string $class): bool
     {
-        return SymfonyUser::class === $class;
+        return is_subclass_of($class, AbstractAuthenticatedUser::class);
     }
 }

@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Security;
+namespace App\Infrastructure\Security\Authenticator;
 
-use App\Infrastructure\Security\Provider\UserProvider;
+use App\Application\CommandBusInterface;
+use App\Application\User\Command\ProConnect\CreateProConnectUserCommand;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
@@ -27,8 +28,7 @@ class ProConnectAuthenticator extends AbstractAuthenticator
     public function __construct(
         private HttpClientInterface $httpClient,
         private UrlGeneratorInterface $urlGenerator,
-        private UserProvider $userProvider,
-        private TokenStorageInterface $tokenStorage,
+        private CommandBusInterface $commandBus,
         private string $proConnectClientId,
         private string $proConnectClientSecret,
         private string $proConnectDomain,
@@ -77,12 +77,17 @@ class ProConnectAuthenticator extends AbstractAuthenticator
                 throw new AuthenticationException('Email not found in user info');
             }
 
-            // Création du Passport
-            return new SelfValidatingPassport(
-                new UserBadge($userInfo['email'], function (string $email) use ($userInfo) {
-                    return $this->userProvider->loadUserByIdentifier($email, $userInfo);
-                }),
+            // Creation du user proConnect s'il n'existe pas
+            $this->commandBus->handle(
+                new CreateProConnectUserCommand(
+                    $userInfo['email'],
+                    $userInfo['given_name'],
+                    $userInfo['usual_name'],
+                    $userInfo['siret'],
+                ),
             );
+
+            return new SelfValidatingPassport(new UserBadge($userInfo['email']));
         } catch (\Exception $e) {
             throw new AuthenticationException('Authentication failed: ' . $e->getMessage(), 0, $e);
         }
@@ -122,17 +127,21 @@ class ProConnectAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $request->getSession()->remove('oauth2_state');
-        $request->getSession()->remove('oauth2_nonce');
+        /** @var FlashBagAwareSessionInterface */
+        $session = $request->getSession();
+        $session->remove('oauth2_state');
+        $session->remove('oauth2_nonce');
 
         return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $request->getSession()->remove('oauth2_state');
-        $request->getSession()->remove('oauth2_nonce');
-        $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
+        /** @var FlashBagAwareSessionInterface */
+        $session = $request->getSession();
+        $session->remove('oauth2_state');
+        $session->remove('oauth2_nonce');
+        $session->getFlashBag()->add('error', $exception->getMessage());
 
         return new RedirectResponse(
             $this->urlGenerator->generate('app_login'),

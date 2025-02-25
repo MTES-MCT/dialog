@@ -9,7 +9,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Specification\CanUserPublishRegulation;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 final class CanUserPublishRegulationTest extends TestCase
@@ -28,8 +28,8 @@ final class CanUserPublishRegulationTest extends TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $symfonyUser = $this->createMock(SymfonyUser::class);
-        $symfonyUser
+        $abstractSymfonyUser = $this->createMock(AbstractAuthenticatedUser::class);
+        $abstractSymfonyUser
             ->expects(self::once())
             ->method('getUserOrganizations')
             ->willReturn([
@@ -37,7 +37,7 @@ final class CanUserPublishRegulationTest extends TestCase
             ]);
 
         $pattern = new CanUserPublishRegulation();
-        $this->assertTrue($pattern->isSatisfiedBy($regulationOrderRecord, $symfonyUser));
+        $this->assertTrue($pattern->isSatisfiedBy($regulationOrderRecord, $abstractSymfonyUser));
     }
 
     public function testCannotPublish(): void
@@ -54,8 +54,8 @@ final class CanUserPublishRegulationTest extends TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $symfonyUser = $this->createMock(SymfonyUser::class);
-        $symfonyUser
+        $abstractSymfonyUser = $this->createMock(AbstractAuthenticatedUser::class);
+        $abstractSymfonyUser
             ->expects(self::once())
             ->method('getUserOrganizations')
             ->willReturn([
@@ -63,6 +63,6 @@ final class CanUserPublishRegulationTest extends TestCase
             ]);
 
         $pattern = new CanUserPublishRegulation();
-        $this->assertFalse($pattern->isSatisfiedBy($regulationOrderRecord, $symfonyUser));
+        $this->assertFalse($pattern->isSatisfiedBy($regulationOrderRecord, $abstractSymfonyUser));
     }
 }

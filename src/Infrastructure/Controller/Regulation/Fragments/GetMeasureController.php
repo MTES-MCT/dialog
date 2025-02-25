@@ -12,7 +12,7 @@ use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -43,7 +43,7 @@ final class GetMeasureController extends AbstractRegulationController
     )]
     public function __invoke(string $regulationOrderRecordUuid, string $uuid): Response
     {
-        /** @var SymfonyUser|null */
+        /** @var AbstractAuthenticatedUser|null */
         $currentUser = $this->security->getUser();
 
         /** @var GeneralInfoView */
