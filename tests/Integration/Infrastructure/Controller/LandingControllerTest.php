@@ -13,6 +13,9 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
+
+        $this->assertMetaTitle('DiaLog', $crawler);
+
         $this->assertSkipLinks(
             [
                 ['Contenu', '#content'],
@@ -21,9 +24,25 @@ final class LandingControllerTest extends AbstractWebTestCase
             ],
             $crawler,
         );
-        $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
-        $this->assertSame('/carte', $crawler->selectLink('Voir la carte')->attr('href'));
-        $this->assertMetaTitle('DiaLog', $crawler);
+
+        $this->assertPageStructure(
+            [
+                ['h1', 'Numériser la réglementation de circulation routière avec DiaLog'],
+                ['h2', 'Où sont les restrictions de circulation ?'],
+                ['a', 'Voir la carte', ['href' => '/carte']],
+                ['h2', 'Comment ça marche ?'],
+                ['h2', 'Diffuser mes données avec DiaLog'],
+                ['h3', '✏️ Saisir un arrêté'],
+                ['a', 'Comment saisir un arrêté dans DiaLog', ['href' => '/details#input']],
+                ['a', 'Créer un compte', ['href' => '/register']],
+                ['h3', '⚙️ Intégrer mes données'],
+                ['a', 'Comment intégrer mes arrêtés dans DiaLog', ['href' => '/details#integration']],
+                ['a', 'Nous contacter', ['href' => '/contact']],
+                ['h2', 'Qui sommes-nous ?'],
+                ['a', 'Découvrir l\'équipe', ['href' => 'https://beta.gouv.fr/startups/dialogue.html']],
+            ],
+            $crawler,
+        );
     }
 
     public function testLandingWithLoggedUser(): void

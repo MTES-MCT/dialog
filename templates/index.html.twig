@@ -77,10 +77,7 @@
                     {{ 'landing.distribute.input.description'|trans|raw }}
                 </p>
                 <p>
-                    {{ 'landing.distribute.input.more'|trans }}
-                    <a href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/creer-des-arretes/saisir-un-arrete" class="fr-link">
-                        {{ 'landing.distribute.input.more.link'|trans }}
-                    </a>
+                    {{ 'landing.distribute.input.more'|trans({'%href%': path('app_landing_details') ~ '#input'})|raw }}
                 </p>
                 <p>
                     {{ 'landing.distribute.input.test'|trans }}
@@ -106,6 +103,9 @@
                 </h3>
                 <p>
                     {{ 'landing.distribute.integration.description'|trans|raw }}
+                </p>
+                <p>
+                    {{ 'landing.distribute.integration.more'|trans({'%href%': path('app_landing_details') ~ '#integration' })|raw }}
                 </p>
                 <p>
                     {{ 'landing.distribute.integration.contact'|trans }}
