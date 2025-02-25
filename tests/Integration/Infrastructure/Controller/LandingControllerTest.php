@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
+/**
+ * @group only
+ */
 final class LandingControllerTest extends AbstractWebTestCase
 {
     public function testLanding(): void
@@ -52,6 +55,12 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
 
+        $registerLink = $crawler->filter('main')->selectLink('Créer un compte');
+        $this->assertSame('/register', $registerLink->attr('href'));
+
+        $contactLink = $crawler->filter('main')->selectLink('Nous contacter');
+        $this->assertSame('/contact', $contactLink->attr('href'));
+
         $crawler = $client->request('GET', '/regulations');
 
         $this->assertNavStructure([
@@ -81,11 +90,5 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
         ], $crawler);
-
-        $registerLink = $crawler->filter('[data-testid="register-link"]');
-        $this->assertSame('/register', $registerLink->attr('href'));
-
-        $contactLink = $crawler->filter('[data-testid="contact-link"]');
-        $this->assertSame('/contact', $contactLink->attr('href'));
     }
 }

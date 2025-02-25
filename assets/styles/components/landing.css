@@ -1,0 +1,35 @@
+.app-landing-map {
+    position: relative;
+    width: 100%;
+    height: auto;
+    /* Add overlay on top to adjust opacity */
+    --bg-overlay: rgba(255, 255, 255, 0.4);
+    background-image: linear-gradient(var(--bg-overlay), var(--bg-overlay)), url('../../../public/images/landing/illustration-map.webp');
+    background-size: cover;
+    padding: calc(8 * var(--1w)) 0;
+}
+
+.app-landing-map-card {
+    background-color: #FFFFFF;
+    max-width: 624px;
+    padding: calc(4 * var(--1w));
+}
+
+[class*="app-landing-distribute-"] {
+    display: flex;
+    gap: calc(4 * var(--1w));
+}
+
+[class*="app-landing-distribute-"] img {
+    display: block;
+    background-color: var(--background-open-blue-france-active);
+    /* Valeurs différentes de la maquette pour s'adapter à l'ombre incluse dans les images */
+    border-radius: 32px;
+    padding: 12px 12px 6px 12px;
+}
+
+.app-landing-hr {
+    max-width: 160px;
+    margin-top: calc(4 * var(--1w));
+    margin-bottom: calc(2 * var(--1w));
+}

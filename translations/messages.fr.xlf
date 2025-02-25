@@ -1121,16 +1121,16 @@
                 <target>Gagnez du temps sur la rédaction de vos arrêtés et communiquez plus
                     efficacement avec les usagers de la route.</target>
             </trans-unit>
-            <trans-unit id="landing.for-gps.title">
-                <source>landing.for-gps.title</source>
+            <trans-unit id="landing.map.title">
+                <source>landing.map.title</source>
                 <target>Où sont les restrictions de circulation ?</target>
             </trans-unit>
-            <trans-unit id="landing.for-gps.description">
-                <source>landing.for-gps.description</source>
+            <trans-unit id="landing.map.description">
+                <source>landing.map.description</source>
                 <target>DiaLog permet aux collectivités de numériser leurs arrêtés de circulation. Ces données sont ensuite accessibles à certains services numériques tels que des GPS.</target>
             </trans-unit>
-            <trans-unit id="landing.for-gps.map">
-                <source>landing.for-gps.map</source>
+            <trans-unit id="landing.map.link">
+                <source>landing.map.link</source>
                 <target>Voir la carte</target>
             </trans-unit>
             <trans-unit id="landing.how-it-works.title">
@@ -1143,61 +1143,49 @@
                     DiaLog permet aux collectivités gérant la voirie de numériser leurs arrêtés de circulation. Ces données sont ensuite réutilisables par des services numériques, conformément aux obligations d’ouverture des données. Les données de réglementation sont ainsi consultables facilement par tous.
                 </target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data.title">
-                <source>landing.distribute-data.title</source>
+            <trans-unit id="landing.distribute.title">
+                <source>landing.distribute.title</source>
                 <target>Diffuser mes données avec DiaLog</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-input.title">
-                <source>landing.distribute-data-by-input.title</source>
+            <trans-unit id="landing.distribute.input.title">
+                <source>landing.distribute.input.title</source>
                 <target>Saisir un arrêté</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-integration.title">
-                <source>landing.distribute-data-by-integration.title</source>
-                <target>Intégrer mes données</target>
-            </trans-unit>
-            <trans-unit id="landing.distribute-data-by-input.description">
-                <source>landing.distribute-data-by-input.description</source>
+            <trans-unit id="landing.distribute.input.description">
+                <source>landing.distribute.input.description</source>
             <target>Editez vos <![CDATA[<b>]]>arrêtés de circulation <![CDATA[</b>]]> directement dans DiaLog grâce à un <![CDATA[<b>]]>formulaire <![CDATA[</b>]]> facilitant la saisie, puis mettez <![CDATA[<b>]]>les données <![CDATA[</b>]]> de vos arrêtés <![CDATA[<b>]]> à disposition des GPS <![CDATA[</b>]]> en un clic. <![CDATA[<br/>]]>Des modèles de visas sont fournis pour créer le document final. </target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-input.more-informations">
-                <source>landing.distribute-data-by-input.more-informations</source>
+            <trans-unit id="landing.distribute.input.more">
+                <source>landing.distribute.input.more</source>
             <target>Pour en savoir plus, consultez  l’article :  </target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-input.more-informations.link">
-                <source>landing.distribute-data-by-input.more-informations.link</source>
+            <trans-unit id="landing.distribute.input.more.link">
+                <source>landing.distribute.input.more.link</source>
             <target>Comment créer un arrêté dans DiaLog</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-input.test">
-                <source>landing.distribute-data-by-input.test</source>
+            <trans-unit id="landing.distribute.input.test">
+                <source>landing.distribute.input.test</source>
             <target>Pour tester DiaLog, vous pouvez dès à présent créer un compte pour vous et votre collectivité.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-input.create-account-button">
-                <source>landing.distribute-data-by-input.create-account-button</source>
+            <trans-unit id="landing.distribute.input.register">
+                <source>landing.distribute.input.register</source>
             <target>Créer un compte</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-integration.description">
-                <source>landing.distribute-data-by-integration.description</source>
+            <trans-unit id="landing.distribute.integration.title">
+                <source>landing.distribute.integration.title</source>
+                <target>Intégrer mes données</target>
+            </trans-unit>
+            <trans-unit id="landing.distribute.integration.description">
+                <source>landing.distribute.integration.description</source>
             <target>Vous utilisez déjà un outil de saisie des arrêtés mais vous souhaitez <![CDATA[<b>]]> transmettre les données des arrêtés aux GPS <![CDATA[</b>]]>: DiaLog vous permet d’ <![CDATA[<b>]]>intégrer ces données <![CDATA[</b>]]>et de les mettre à disposition de services tiers.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-integration.more-informations">
-                <source>landing.distribute-data-by-integration.more-informations</source>
-            <target>Pour en savoir plus, consultez  l’article : </target>
-            </trans-unit>
-            <trans-unit id="landing.distribute-data-by-integration.more-informations.link">
-                <source>landing.distribute-data-by-integration.more-informations.link</source>
-            <target>Comment intégrer mes arrêtés dans DiaLog</target>
-            </trans-unit>
-            <trans-unit id="landing.distribute-data-by-integration.contact">
+            <trans-unit id="landing.distribute.integration.contact">
                 <source>landing.distribute-data-by-integration.contact</source>
             <target>Pour échanger sur l’intégration possible de vos arrêtés dans DiaLog, n’hésitez pas à nous contacter.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute-data-by-integration.contact-button">
-                <source>landing.distribute-data-by-integration.contact-button</source>
+            <trans-unit id="landing.distribute.integration.contact.link">
+                <source>landing.distribute.integration.contact.link</source>
             <target>Nous contacter</target>
-            </trans-unit>
-            <trans-unit id="distribute-data-by-input.title">
-                <source>distribute-data-by-input.title</source>
-                <target>Saisir un arrêté</target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.title">
                 <source>landing.who-are-we.title</source>
