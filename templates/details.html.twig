@@ -1,0 +1,186 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% set metaTitle = 'landing.details.metatitle'|trans %}
+
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing'},
+            { title: metaTitle|trans },
+        ]} %}
+    </div>
+
+    <div class="fr-x-background-alt--blue-france">
+        <div class="fr-container app-landing-jumbotron fr-py-4w fr-py-md-6w">
+            <div>
+                <h1>
+                    {{ 'landing.details.jumbotron.title'|trans }}
+                </h1>
+
+                <p class="fr-text--xl">
+                    {{ 'landing.details.jumbotron.description'|trans|raw }}
+                </p>
+
+                <ul class="fr-text--xl">
+                    <li>
+                        {{ 'landing.details.jumbotron.list1'|trans }}
+                    </li>
+                    <li>
+                        {{ 'landing.details.jumbotron.list2'|trans }}
+                    </li>
+                </ul>
+            </div>
+
+            <img src="{{ asset('images/landing/illustration-steps.webp') }}" aria-hidden="true" height="300" loading="lazy" class="fr-hidden fr-unhidden-lg" />
+        </div>
+    </div>
+
+    <div class="fr-container fr-py-4w">
+        <h2 id="input">
+            {{ 'landing.details.input.title'|trans }}
+        </h2>
+
+        <div class="app-landing-details-input">
+            <div class="fr-px-2w fr-py-4w fr-x-background-alt--blue-france">
+                <ol class="app-landing-details-input-steplist">
+                    <li>
+                        <h3 class="fr-text--xl fr-my-0">
+                            {{ 'landing.details.input.steps.register'|trans }}
+                        </h3>
+                        <p class="fr-text--sm fr-my-0">
+                            {{ 'landing.details.input.steps.register.description'|trans }}
+                        </p>
+                        <a href="{{ path('app_register') }}" class="fr-link fr-text--sm fr-icon-arrow-right-line fr-link--icon-right">
+                            {{ 'landing.details.input.steps.register.cta'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <h3 class="fr-text--xl fr-my-0">
+                            {{ 'landing.details.input.steps.add_regulation_orders'|trans }}
+                        </h3>
+                        <p class="fr-text--sm fr-my-0">
+                            {{ 'landing.details.input.steps.add_regulation_orders.description'|trans }}
+                        </p>
+                    </li>
+                    <li>
+                        <h3 class="fr-text--xl fr-my-0">
+                            {{ 'landing.details.input.steps.broadcast'|trans }}
+                        </h3>
+                        <p class="fr-text--sm fr-my-0">
+                            {{ 'landing.details.input.steps.broadcast.description1'|trans }}
+                        </p>
+                        <p class="fr-text--sm fr-my-0">
+                            {{ 'landing.details.input.steps.broadcast.description2'|trans }}
+                        </p>
+                    </li>
+                </ol>
+            </div>
+
+            <div>
+                <figure>
+                    {% set caption = 'landing.details.input.regulation_example.caption'|trans %}
+                    <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" width="475" alt="{{ caption }}">
+                    <figcaption class="fr-text--xs">{{ caption }}</figcaption>
+                </figure>
+
+                <figure>
+                    {% set caption = 'landing.details.input.gps_example.caption'|trans %}
+                    <img src="{{ asset('images/landing/illustration-waze.webp') }}" width="475" alt="{{ caption }}">
+                    <figcaption class="fr-text--xs">{{ caption }}</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <h2 id="integration" class="fr-pt-4w">
+            {{ 'landing.details.integration.title'|trans }}
+        </h2>
+
+        <p class="fr-text--lg">
+            {{ 'landing.details.integration.description1'|trans|raw }}
+        </p>
+
+        <p class="fr-text--lg">
+            {{ 'landing.details.integration.description2'|trans|raw }}
+        </p>
+
+        <ol class="fr-raw-list">
+            <li class="app-landing-details-integration-stepcard">
+                <div>
+                    <img src="{{ asset('images/landing/flow-settings.svg') }}" width="110" aria-hidden="true">
+                </div>
+
+                <div>
+                    <p class="fr-my-0 fr-text--bold fr-text--xl">
+                        {{ 'landing.details.integration.step.fetch.title'|trans }}
+                    </p>
+                    <p class="fr-my-0">
+                        {{ 'landing.details.integration.step.fetch.description'|trans }}
+                    </p>
+                </div>
+            </li>
+
+            <li class="fr-mt-4w app-landing-details-integration-stepcard">
+                <div>
+                    <img src="{{ asset('images/landing/location-overseas-france.svg') }}" width="110" aria-hidden="true">
+                </div>
+
+                <div>
+                    <p class="fr-my-0 fr-text--bold fr-text--xl">
+                        {{ 'landing.details.integration.step.broadcast.title'|trans }}
+                    </p>
+                    <p class="fr-my-0">
+                        {{ 'landing.details.integration.step.broadcast.description'|trans|raw }}
+                    </p>
+                </div>
+            </li>
+        </ol>
+
+        <p class="fr-mt-4w fr-mb-2w fr-text--lg">
+            {{ 'landing.details.integration.more'|trans }}
+        </p>
+
+        <a href="{{ path('app_contact') }}" class="fr-link fr-icon-arrow-right-line fr-link--icon-right">
+            {{ 'landing.details.integration.more.link'|trans }}
+        </a>
+
+        <h2 class="fr-mt-4w">
+            {{ 'landing.details.more.title'|trans }}
+        </h2>
+
+        <div class="fr-tile fr-tile--horizontal fr-enlarge-link app-landing-details-helptile">
+            <div class="fr-tile__body">
+                <div class="fr-tile__content">
+                    <h3 class="fr-tile__title">
+                        <a href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr">
+                            {{ 'landing.details.help.title'|trans }}
+                        </a>
+                    </h3>
+                    <p class="fr-tile__desc">
+                        {{ 'landing.details.help.description'|trans }}
+                    </p>
+                    <p class="fr-tile__detail">
+                        {{ 'landing.details.help.detail'|trans }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fr-background-alt--grey fr-py-4w">
+        <div class="fr-container">
+            <h2 class="fr-x-text--blue-france">
+                {{ 'landing.details.questions.title'|trans }}
+            </h2>
+            <p class="fr-text--xl">
+                {{ 'landing.details.questions.description'|trans }}
+            </p>
+            <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--secondary" target="_blank">
+                {{ 'landing.details.questions.link'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

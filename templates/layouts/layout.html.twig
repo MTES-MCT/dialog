@@ -47,29 +47,14 @@
                                 {{ 'landing.menu.button.home'|trans }}
                             </a>
                         </li>
-                        <li>
-                            <a class="fr-nav__link" href="{{ path('app_landing_authorities') }}" {% if 'app_landing_authorities' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.authorities'|trans }}
-                            </a>
-                        </li>
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('app_landing_digital_services') }}" {% if 'app_landing_digital_services' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.digital_services'|trans }}
-                            </a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('app_landing_road_users') }}" {% if 'app_landing_road_users' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.road_users'|trans }}
-                            </a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.restrictions'|trans }}
-                            </a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
+                            <a class="fr-nav__link fr-btn--icon-right fr-icon-road-map-line" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.map'|trans }}
+                            </a>
+                        </li>
+                        <li class="fr-nav__item">
+                            <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
+                                {{ 'landing.menu.button.regulations'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
@@ -84,12 +69,12 @@
                         </li>
                     {% else %}
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.restrictions'|trans }}
+                            <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
+                                {{ 'landing.menu.button.regulations'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
+                            <a class="fr-nav__link fr-btn--icon-right fr-icon-road-map-line" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.map'|trans }}
                             </a>
                         </li>

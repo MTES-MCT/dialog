@@ -1,0 +1,44 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = 'contact.title'|trans %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'landing.menu.button.home'|trans, path: 'app_landing'},
+            { title: metaTitle },
+        ]} %}
+    </section>
+
+    <div class="fr-x-background-alt--blue-france">
+        <div class="fr-container fr-py-2w app-landing-jumbotron">
+            <div>
+                <h1>
+                    {{ 'contact.jumbotron.title'|trans }}
+                </h1>
+
+                <p class="fr-text--xl">
+                    {{ 'contact.jumbotron.description'|trans|raw }}
+                </p>
+            </div>
+
+            <img src="{{ asset('images/landing/contact-email.webp') }}" aria-hidden="true" height="260" loading="lazy" class="fr-hidden fr-unhidden-lg" />
+        </div>
+    </div>
+
+    <div class="fr-container fr-py-4w">
+        <h2>
+            {{ 'contact.email.title'|trans }}
+        </h2>
+
+        <p>
+            {{ 'contact.email.description1'|trans|raw }}
+        </p>
+
+        <p>
+            {{ 'contact.email.description2'|trans }}
+        </p>
+    </section>
+{% endblock %}
