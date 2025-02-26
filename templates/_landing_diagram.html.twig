@@ -1,22 +1,20 @@
-{% set spotlight = spotlight|default([]) %}
-
 <ul class="{{ class|default('') }} app-landing-diagram" aria-hidden="true">
-    <li {% if 'authorities' in spotlight %}class="spotlight"{% endif %}>
+    <li>
         <img src="{{ asset('images/landing/city-hall.png') }}">
         <div>{{ 'landing.diagram.authorities'|trans }}</div>
     </li>
-    <span class="app-landing-diagram__arrow {% if 'authorities' in spotlight and 'dialog' in spotlight %}spotlight{% endif %}"></span>
-    <li {% if 'dialog' in spotlight %}class="spotlight"{% endif %}>
+    <span class="app-landing-diagram__arrow"></span>
+    <li class="fr-x-background-alt--blue-france">
         <img src="{{ asset('images/landing/system.png') }}">
         <div>{{ 'landing.diagram.dialog'|trans }}</div>
     </li>
-    <span class="app-landing-diagram__arrow {% if 'dialog' in spotlight and 'digital_services' in spotlight %}spotlight{% endif %}"></span>
-    <li {% if 'digital_services' in spotlight %}class="spotlight"{% endif %}>
+    <span class="app-landing-diagram__arrow"></span>
+    <li>
         <img src="{{ asset('images/landing/map.png') }}">
         <div>{{ 'landing.diagram.digital_services'|trans }}</div>
     </li>
-    <span class="app-landing-diagram__arrow {% if 'digital_services' in spotlight and 'road_users' in spotlight %}spotlight{% endif %}"></span>
-    <li {% if 'road_users' in spotlight %}class="spotlight"{% endif %}>
+    <span class="app-landing-diagram__arrow"></span>
+    <li>
         <img src="{{ asset('images/landing/community.png') }}">
         <div>{{ 'landing.diagram.road_users'|trans }}</div>
     </li>

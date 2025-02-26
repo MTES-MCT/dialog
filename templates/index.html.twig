@@ -5,102 +5,134 @@
 {% endblock %}
 
 {% block body %}
-    <section class="fr-container fr-py-4w header" aria-labelledby="jumbotron">
+    <!-- Jumbotron -->
+    <div class="fr-container fr-py-4w fr-py-md-6w">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
             <div class="fr-col-12 fr-col-md-8">
-                <h1 id="jumbotron" class="fr-x-text--blue-france">{{ 'landing.jumbotron.title'|trans }}</h1>
-                <ul class="fr-x-text--default-grey app-list--checkmarks fr-x-md-stack" style="--stack-spacing: 1rem;">
-                    <li>{{ 'landing.jumbotron.description1'|trans|raw }}
+                <h1 class="fr-x-text--blue-france">
+                    {{ 'landing.jumbotron.title'|trans }}
+                </h1>
+
+                <ul class="fr-text--xl fr-x-text--default-grey app-list--checkmarks">
+                    <li>
+                        {{ 'landing.jumbotron.description1'|trans|raw }}
                     </li>
-                    <li>{{ 'landing.jumbotron.description2'|trans|raw }}
+                    <li class="fr-mt-md-1w">
+                        {{ 'landing.jumbotron.description2'|trans|raw }}
                     </li>
-                    <li>{{ 'landing.jumbotron.description3'|trans|raw }}
+                    <li class="fr-mt-md-1w">
+                        {{ 'landing.jumbotron.description3'|trans|raw }}
                     </li>
                 </ul>
             </div>
-            <div class="fr-col-12 fr-col-md-4 fr-x-text--center">
-                <img src="{{ asset('images/landing/illustration-gps.webp') }}" alt="{{ 'landing.jumbotron.illustration'|trans }}" width="300" height="276"/>
+
+            <div class="fr-col-12 fr-col-md-4 fr-x-text--center" aria-hidden="true">
+                <img src="{{ asset('images/landing/illustration-gps.webp') }}" height="272" />
             </div>
         </div>
-    </section>
-    <section class="how-it-works fr-x-background-alt--blue-france" aria-labelledby="how-it-works">
-        <div class="fr-container fr-py-4w">
-            <h2 id="how-it-works">{{ 'landing.for-who.title'|trans }}</h2>
-            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row">
-                <div class="fr-col-12 fr-col-md-4">
-                    <div class="fr-card fr-enlarge-link">
-                        <div class="fr-card__body">
-                            <div class="fr-card__content">
-                                <h3 class="fr-card__title">
-                                    <a href="{{ path('app_landing_authorities') }}">
-                                        {{ 'landing.for-city.title'|trans }}
-                                    </a>
-                                </h3>
-                                <p class="fr-card__desc">
-                                    {{ 'landing.for-city.description'|trans|raw }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="fr-card__header fr-x-text--center">
-                            <img src="{{ asset('images/landing/city-hall.png') }}" alt="city-hall" />
-                        </div>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-4">
-                    <div class="fr-card fr-enlarge-link">
-                        <div class="fr-card__body">
-                            <div class="fr-card__content">
-                                <h3 class="fr-card__title">
-                                    <a href="{{ path('app_landing_digital_services') }}">
-                                        {{ 'landing.for-gps.title'|trans }}
-                                    </a>
-                                </h3>
-                                <p class="fr-card__desc">
-                                    {{ 'landing.for-gps.description'|trans|raw }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="fr-card__header fr-x-text--center">
-                            <img src="{{ asset('images/landing/map.png') }}" alt="map" />
-                        </div>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-4">
-                    <div class="fr-card fr-enlarge-link">
-                        <div class="fr-card__body">
-                            <div class="fr-card__content">
-                                <h3 class="fr-card__title">
-                                    <a href="{{ path('app_landing_road_users') }}">
-                                        {{ 'landing.road-users.title'|trans }}
-                                    </a>
-                                </h3>
-                                <p class="fr-card__desc">
-                                    {{ 'landing.road-users.description'|trans|raw }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="fr-card__header fr-x-text--center">
-                            <img src="{{ asset('images/landing/community.png') }}" alt="information" />
-                        </div>
-                    </div>
-                </div>
+    </div>
+
+    <!-- Aperçu carte + call to action -->
+    <div class="app-landing-map">
+        <div class="fr-container">
+            <div class="app-landing-map-card">
+                <h2 class="fr-h2">
+                    {{ 'landing.map.title'|trans }}
+                </h2>
+                <p>
+                    {{ 'landing.map.description'|trans }}
+                </p>
+                <a class="fr-btn fr-btn--icon-right fr-icon-road-map-line" href="{{ path('app_carto') }}">
+                    {{ 'landing.map.link'|trans }}
+                </a>
             </div>
         </div>
-    </section>
-    <section class="itinerary fr-container fr-py-6w" aria-labelledby="itinerary">
-        <h2 id="itinerary" class="fr-x-text--blue-france">{{ 'landing.how-it-works.title'|trans }}</h2>
-        <p class="fr-text--xl fr-m-0">{{ 'landing.how-it-works.description'|trans|raw }}</p>
-        {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w', spotlight: 'dialog'} only %}
-    </section>
-    <section class="fr-container fr-py-6w">
-                <h2 class="fr-x-text--blue-france">{{ 'landing.who-are-we.title'|trans }}</h2>
-                <p class="fr-text--xl">{{ 'landing.who-are-we.description1'|trans|raw }}</p>
-                <p class="fr-text--xl">{{ 'landing.who-are-we.description2'|trans|raw }}</p>
-                <a href="{{ path('app_landing_authorities') }}" class="fr-btn fr-mr-2w fr-mb-2w">
-                    {{ 'landing.who-are-we.experiment'|trans }}
+    </div>
+
+    <!-- Comment ça marche ? -->
+    <div class="fr-x-background-artwork-decorative-blue-france">
+        <div class="fr-container fr-py-6w">
+            <h2 class="fr-x-text--blue-france">
+                {{ 'landing.how-it-works.title'|trans }}
+            </h2>
+            <p class="fr-text--xl fr-m-0">
+                {{ 'landing.how-it-works.description'|trans|raw }}
+            </p>
+            {% include '_landing_diagram.html.twig' with {class: 'fr-mt-3w'} only %}
+        </div>
+    </div>
+
+    <!-- Diffuser mes données avec DiaLog -->
+    <div class="fr-container fr-py-6w">
+        <h2>{{ 'landing.distribute.title'|trans }}</h2>
+
+        <!-- Saisir un arrêté -->
+        <div class="app-landing-distribute-input">
+            <div>
+                <h3>
+                    <span aria-hidden="true">✏️</span>
+                    {{ 'landing.distribute.input.title'|trans }}
+                </h3>
+                <p>
+                    {{ 'landing.distribute.input.description'|trans|raw }}
+                </p>
+                <p>
+                    {{ 'landing.distribute.input.more'|trans({'%href%': path('app_landing_details') ~ '#input'})|raw }}
+                </p>
+                <p>
+                    {{ 'landing.distribute.input.test'|trans }}
+                </p>
+                <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-user-add-line fr-btn--icon-left" aria-hidden="true" data-testid="register-link">
+                    {{ 'landing.distribute.input.register'|trans }}
                 </a>
-                <a href="mailto:dialog@beta.gouv.fr" class="fr-btn fr-btn--secondary" data-testid="contact-link">
-                    {{ 'landing.who-are-we.contact'|trans }}
+            </div>
+
+            <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" height="411" loading="lazy" class="fr-hidden fr-unhidden-lg" aria-hidden="true">
+        </div>
+
+        <div class="app-landing-hr">
+            <hr>
+        </div>
+
+        <!-- Intégrer mes données -->
+        <div class="app-landing-distribute-integration">
+            <div>
+                <h3>
+                    <span aria-hidden="true">⚙️</span>
+                    {{ 'landing.distribute.integration.title'|trans }}
+                </h3>
+                <p>
+                    {{ 'landing.distribute.integration.description'|trans|raw }}
+                </p>
+                <p>
+                    {{ 'landing.distribute.integration.more'|trans({'%href%': path('app_landing_details') ~ '#integration' })|raw }}
+                </p>
+                <p>
+                    {{ 'landing.distribute.integration.contact'|trans }}
+                </p>
+                <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--secondary fr-icon-mail-open-line fr-btn--icon-left" data-testid="contact-link">
+                    {{ 'landing.distribute.integration.contact.link'|trans }}
                 </a>
-    </section>
+            </div>
+
+            <img src="{{ asset('images/landing/illustration-liste-arretés-publiés.webp') }}" height="411" loading="lazy" class="fr-hidden fr-unhidden-lg" aria-hidden="true">
+        </div>
+    </div>
+
+    <div class="fr-background-alt--grey fr-py-6w">
+        <div class="fr-container">
+            <h2 class="fr-x-text--blue-france">
+                {{ 'landing.who-are-we.title'|trans }}
+            </h2>
+            <p class="fr-text--xl">
+                {{ 'landing.who-are-we.description1'|trans|raw }}
+            </p>
+            <p class="fr-text--xl">
+                {{ 'landing.who-are-we.description2'|trans|raw }}
+            </p>
+            <a href="https://beta.gouv.fr/startups/dialogue.html" class="fr-btn fr-btn--tertiary" target="_blank">
+                {{ 'landing.who-are-we.team'|trans }}
+            </a>
+        </div>
+    </div>
 {% endblock %}
