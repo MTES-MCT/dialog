@@ -47,13 +47,7 @@ abstract class AbstractWebTestCase extends WebTestCase
                 return [$node->text(), ['href' => $node->attr('href'), 'aria-current' => $node->attr('aria-current')]];
             });
 
-        $this->assertSame(\count($expectedStructure), \count($actualStructure));
-
-        foreach ($expectedStructure as $index => [$text, $attrs]) {
-            [$actualText, $actualAttrs] = $actualStructure[$index];
-            $this->assertSame($text, $actualText);
-            $this->assertEmpty(array_diff($attrs, $actualAttrs));
-        }
+        $this->assertEquals($expectedStructure, $actualStructure);
     }
 
     /**
