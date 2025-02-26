@@ -12,10 +12,6 @@ ul.app-landing-diagram {
     width: fit-content;
 }
 
-ul.app-landing-diagram .spotlight {
-    background-color: var(--background-alt-blue-france);
-}
-
 ul.app-landing-diagram > li {
     padding: var(--item-padding);
     text-align: center;

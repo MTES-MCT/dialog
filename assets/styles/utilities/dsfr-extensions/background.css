@@ -9,3 +9,12 @@
 .fr-x-background-alt--blue-france {
     background-color: var(--background-alt-blue-france);
 }
+
+.fr-x-background-artwork-decorative-blue-france {
+    background-color: var(--artwork-decorative-blue-france);
+}
+
+.fr-x-background-open-blue-france-active {
+    border-radius: 40px;
+    background: var(--light-decisions-background-background-open-blue-france-active, #ADADF9);
+}
