@@ -44,7 +44,7 @@
 .app-landing-jumbotron > :first-child {
     flex-basis: 0;
     flex-grow: 1;
-    min-width: 320px;
+    min-width: 280px;
     max-width: 844px;
 }
 
@@ -56,13 +56,19 @@
 
 .app-landing-details-input > :first-child {
     flex-basis: 0;
-    flex-grow: 1;
-    min-width: 320px;
+    flex-grow: 999;
+    min-width: 280px;
     max-width: 700px;
 }
 
 .app-landing-details-input > :last-child {
+    flex-basis: 0;
+    flex-grow: 1;
     margin-inline: auto;
+}
+
+.app-landing-details-input img {
+    max-width: min(100%, 475px);
 }
 
 .app-landing-details-input-steplist {
@@ -108,11 +114,17 @@
 
 .app-landing-details-integration-stepcard > :last-child {
     padding: calc(4 * var(--1w));
-    min-width: 320px;
+    min-width: 280px;
     flex-basis: 0;
     flex-grow: 1;
 }
 
-.app-landing-details-helptile {
+.app-landing-details-moretiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(4 * var(--1w));
+}
+
+.app-landing-details-moretiles > * {
     max-width: 384px;
 }
