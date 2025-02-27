@@ -41,6 +41,8 @@ final class LandingDetailsControllerTest extends AbstractWebTestCase
                 ['h2', 'Pour en savoir plus'],
                 ['h3', 'Aide en ligne'],
                 ['a', 'Aide en ligne', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr']],
+                ['h3', 'Convention de partage des données'],
+                ['a', 'Convention de partage des données', ['href' => '/files/20241216 - Convention de partenariat - DiaLog.docx']],
                 ['h2', 'Des questions ?'],
                 ['a', 'Nous contacter', ['href' => '/contact']],
             ],

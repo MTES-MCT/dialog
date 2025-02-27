@@ -130,7 +130,12 @@
             <p class="fr-text--xl">
                 {{ 'landing.who-are-we.description2'|trans|raw }}
             </p>
-            <a href="https://beta.gouv.fr/startups/dialogue.html" class="fr-btn fr-btn--tertiary" target="_blank">
+            <a
+                href="https://beta.gouv.fr/startups/dialogue.html"
+                class="fr-btn fr-btn--tertiary"
+                target="_blank"
+                title="{{ 'common.targetblank'|trans({'%metaTitle%': 'landing.who-are-we.team.metaTitle'|trans}) }}"
+            >
                 {{ 'landing.who-are-we.team'|trans }}
             </a>
         </div>

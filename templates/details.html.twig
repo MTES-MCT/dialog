@@ -81,15 +81,15 @@
             </div>
 
             <div>
-                <figure>
+                <figure class="fr-hidden fr-unhidden-lg">
                     {% set caption = 'landing.details.input.regulation_example.caption'|trans %}
-                    <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" width="475" alt="{{ caption }}">
+                    <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" loading="lazy" alt="{{ caption }}">
                     <figcaption class="fr-text--xs">{{ caption }}</figcaption>
                 </figure>
 
-                <figure>
+                <figure class="fr-hidden fr-unhidden-lg">
                     {% set caption = 'landing.details.input.gps_example.caption'|trans %}
-                    <img src="{{ asset('images/landing/illustration-waze.webp') }}" width="475" alt="{{ caption }}">
+                    <img src="{{ asset('images/landing/illustration-waze.webp') }}" loading="lazy" alt="{{ caption }}">
                     <figcaption class="fr-text--xs">{{ caption }}</figcaption>
                 </figure>
             </div>
@@ -151,20 +151,44 @@
             {{ 'landing.details.more.title'|trans }}
         </h2>
 
-        <div class="fr-tile fr-tile--horizontal fr-enlarge-link app-landing-details-helptile">
-            <div class="fr-tile__body">
-                <div class="fr-tile__content">
-                    <h3 class="fr-tile__title">
-                        <a href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr">
-                            {{ 'landing.details.help.title'|trans }}
-                        </a>
-                    </h3>
-                    <p class="fr-tile__desc">
-                        {{ 'landing.details.help.description'|trans }}
-                    </p>
-                    <p class="fr-tile__detail">
-                        {{ 'landing.details.help.detail'|trans }}
-                    </p>
+        <div class="app-landing-details-moretiles">
+            <div class="fr-tile fr-tile--horizontal fr-enlarge-link">
+                <div class="fr-tile__body">
+                    <div class="fr-tile__content">
+                        <h3 class="fr-tile__title">
+                            <a
+                                href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr"
+                                title="{{ 'common.targetblank'|trans({'%metaTitle%': 'landing.details.help.metaTitle'|trans}) }}"
+                                target="_blank"
+                            >
+                                {{ 'landing.details.help.title'|trans }}
+                            </a>
+                        </h3>
+                        <p class="fr-tile__desc">
+                            {{ 'landing.details.help.description'|trans }}
+                        </p>
+                        <p class="fr-tile__detail">
+                            {{ 'landing.details.help.detail'|trans }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fr-card fr-enlarge-link fr-card--sm fr-card--download">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ asset('files/20241216 - Convention de partenariat - DiaLog.docx') }}" download>
+                                Convention de partage des données
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            Une convention est proposée pour le partage des données entre votre collectivité et DiaLog.
+                        </p>
+                        <div class="fr-card__end">
+                            <p class="fr-card__detail">DOCX - 190 ko</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -178,7 +202,7 @@
             <p class="fr-text--xl">
                 {{ 'landing.details.questions.description'|trans }}
             </p>
-            <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--secondary" target="_blank">
+            <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--secondary">
                 {{ 'landing.details.questions.link'|trans }}
             </a>
         </div>
