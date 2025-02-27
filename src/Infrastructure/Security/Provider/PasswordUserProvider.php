@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Provider;
 
-use App\Domain\User\ProConnectUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
-use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use App\Infrastructure\Security\User\PasswordUser;
-use App\Infrastructure\Security\User\ProConnectUser as SymfonyProConnectUser;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-final class UserProvider implements UserProviderInterface
+final class PasswordUserProvider implements UserProviderInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
@@ -27,16 +24,11 @@ final class UserProvider implements UserProviderInterface
     {
         $user = $this->userRepository->findOneByEmail($identifier);
 
-        if (!$user instanceof User) {
+        if (!$user instanceof User || !$user->getPasswordUser()) {
             throw new UserNotFoundException(\sprintf('Unable to find the user %s', $identifier));
         }
 
         $userOrganizations = $this->organizationUserRepositoryInterface->findByUserUuid($user->getUuid());
-        $isProConnectUser = $user->getProConnectUser() instanceof ProConnectUser;
-
-        if ($isProConnectUser) {
-            return new SymfonyProConnectUser($user, $userOrganizations);
-        }
 
         return new PasswordUser($user, $userOrganizations);
     }
@@ -48,6 +40,6 @@ final class UserProvider implements UserProviderInterface
 
     public function supportsClass(string $class): bool
     {
-        return is_subclass_of($class, AbstractAuthenticatedUser::class);
+        return $class === PasswordUser::class;
     }
 }

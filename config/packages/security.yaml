@@ -2,8 +2,13 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     providers:
-        user:
-            id: App\Infrastructure\Security\Provider\UserProvider
+        password_user:
+            id: App\Infrastructure\Security\Provider\PasswordUserProvider
+        proconnect_user:
+            id: App\Infrastructure\Security\Provider\ProConnectUserProvider
+        all:
+            chain:
+                providers: ['password_user', 'proconnect_user']
 
     firewalls:
         dev:
@@ -12,7 +17,7 @@ security:
 
         main:
             lazy: true
-            provider: user
+            provider: all
             user_checker: App\Infrastructure\Security\UserChecker
             custom_authenticator:
                 - App\Infrastructure\Security\Authenticator\ProConnectAuthenticator
