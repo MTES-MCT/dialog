@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Controller\Regulation\Fragments;
+
+use App\Application\RoadGeocoderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\UX\Turbo\TurboBundle;
+
+final class ReferencePointSideOptionsFragmentController
+{
+    public function __construct(
+        private \Twig\Environment $twig,
+        private RoadGeocoderInterface $roadGeocoder,
+    ) {
+    }
+
+    #[Route(
+        '/_fragment/reference_point/side/options',
+        name: 'fragment_reference_point_side_options',
+        methods: ['GET'],
+    )]
+    public function __invoke(
+        Request $request,
+        #[MapQueryParameter] string $administrator,
+        #[MapQueryParameter] string $roadNumber,
+        #[MapQueryParameter] string $pointNumber,
+        #[MapQueryParameter] string $currentOption,
+        #[MapQueryParameter] string $targetId,
+    ): Response {
+        $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $pointNumber);
+
+        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+        return new Response(
+            $this->twig->render(
+                name: 'regulation/fragments/_reference_point_side_options.stream.html.twig',
+                context: [
+                    'sides' => $sides,
+                    'currentOption' => $currentOption,
+                    'targetId' => $targetId,
+                ],
+            ),
+        );
+    }
+}

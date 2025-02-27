@@ -137,6 +137,52 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new RoadGeocodingFailureException($roadType, $message);
     }
 
+    public function findReferencePoints(string $search, string $administrator, string $roadNumber): array
+    {
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                'SELECT
+                    DISTINCT p.numero AS point_number,
+                    p.numero::integer AS _point_number_int, -- Must be selected because appears in ORDER BY
+                    p.code_insee_du_departement as department_code,
+                    (
+                        SELECT COUNT(DISTINCT pp.code_insee_du_departement)
+                        FROM point_de_repere AS pp
+                        WHERE pp.numero = p.numero
+                        AND pp.gestionnaire = p.gestionnaire
+                        AND pp.route = p.route
+                        AND pp.type_de_pr = p.type_de_pr
+                    ) AS num_departments
+                FROM point_de_repere AS p
+                WHERE p.numero LIKE :numero_pattern
+                AND p.gestionnaire = :gestionnaire
+                AND p.route = :route
+                AND p.type_de_pr LIKE \'PR%\'
+                ORDER BY p.numero::integer, p.code_insee_du_departement
+                ',
+                [
+                    'numero_pattern' => \sprintf('%s%%', $search),
+                    'gestionnaire' => $administrator,
+                    'route' => $roadNumber,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Reference points query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $results = [];
+
+        foreach ($rows as $row) {
+            $results[] = [
+                'pointNumber' => $row['point_number'],
+                'departmentCode' => $row['department_code'],
+                'numDepartments' => $row['num_departments'],
+            ];
+        }
+
+        return $results;
+    }
+
     public function computeReferencePoint(
         string $roadType,
         string $administrator,
@@ -220,6 +266,36 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         } else {
             return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
         }
+    }
+
+    public function findSides(string $administrator, string $roadNumber, string $pointNumber): array
+    {
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                'SELECT DISTINCT p.cote AS side
+                FROM point_de_repere AS p
+                WHERE p.numero = :numero
+                AND p.gestionnaire = :gestionnaire
+                AND p.route = :route
+                AND p.type_de_pr LIKE \'PR%\'
+                ',
+                [
+                    'numero' => $pointNumber,
+                    'gestionnaire' => $administrator,
+                    'route' => $roadNumber,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Sides query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $sides = [];
+
+        foreach ($rows as $row) {
+            $sides[] = $row['side'];
+        }
+
+        return $sides;
     }
 
     public function findRoadNames(string $search, string $cityCode): array

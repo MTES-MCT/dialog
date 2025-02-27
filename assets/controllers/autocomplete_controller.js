@@ -77,6 +77,7 @@ export default class Autocomplete extends StimulusAutocomplete {
   reset() {
     this.resetOptions();
     this._fetchManager.reset();
+    this._fetchManager.postResetFetch();
   }
 }
 
@@ -100,6 +101,13 @@ class FetchManager {
     this._isFetchRequested = this._controller.prefetchValue;
   }
 
+  postResetFetch() {
+    if (this._isFetchRequested) {
+      this._controller.disableLoadingStatus(); // Load empty results in the background
+      this.#doManagedFetch();
+    }
+  }
+
   #handleVisibility = (visible) => {
     if (visible && this._isFetchRequested) {
       // Flush any previous fetch request
@@ -118,6 +126,8 @@ class FetchManager {
   #onLoadEnd = () => {
     const isFocused = this._controller.inputTarget === document.activeElement;
     const hasResults = !!this._controller.resultsTarget.innerHTML;
+
+    this._controller.enableLoadingStatus();
 
     if (isFocused && hasResults) {
       this._controller.open();

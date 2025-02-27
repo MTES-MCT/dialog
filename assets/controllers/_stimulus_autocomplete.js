@@ -58,6 +58,8 @@ export default class Autocomplete extends Controller {
     }
 
     this.readyValue = true
+
+    this._loadingDisabled = false;
   }
 
   disconnect() {
@@ -248,8 +250,16 @@ export default class Autocomplete extends Controller {
     this.statusTarget.textContent = text
   }
 
+  disableLoadingStatus() {
+    this._loadingDisabled = true;
+  }
+
+  enableLoadingStatus() {
+    this._loadingDisabled = false;
+  }
+
   showLoadingStatus() {
-    if (!this.hasStatusTarget || !this.loadingStatusValue) {
+    if (!this.hasStatusTarget || !this.loadingStatusValue || this._loadingDisabled) {
       return
     }
     this.resultsShown = true

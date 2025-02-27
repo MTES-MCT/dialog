@@ -4,7 +4,14 @@ export default class extends Controller {
     static values = {
         url: String,
         extraQueryParams: { type: String, default: undefined },
+        initial: { type: Boolean, default: false },
     };
+
+    connect() {
+        if (this.initialValue) {
+            this.fetch();
+        }
+    }
 
     fetch = async () => {
         const response = await fetch(this.buildURL());
