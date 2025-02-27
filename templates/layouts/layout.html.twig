@@ -57,16 +57,7 @@
                                 {{ 'landing.menu.button.regulations'|trans }}
                             </a>
                         </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="/blog/fr/" target="_blank">
-                                {{ 'common.blog'|trans }}
-                            </a>
-                        </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr" target="_blank">
-                                {{ 'landing.menu.button.help'|trans }}
-                            </a>
-                        </li>
+
                     {% else %}
                         <li class="fr-nav__item">
                             <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
@@ -78,12 +69,17 @@
                                 {{ 'landing.menu.button.map'|trans }}
                             </a>
                         </li>
-                        <li class="fr-nav__item">
-                            <a class="fr-nav__link" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr" target="_blank">
-                                {{ 'landing.menu.button.help'|trans }}
-                            </a>
-                        </li>
                     {% endif %}
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="/blog/fr/" target="_blank">
+                            {{ 'common.blog'|trans }}
+                        </a>
+                    </li>
+                    <li class="fr-nav__item">
+                        <a class="fr-nav__link" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr" target="_blank">
+                            {{ 'landing.menu.button.help'|trans }}
+                        </a>
+                    </li>
                 </ul>
             </nav>
         {% endblock %}
