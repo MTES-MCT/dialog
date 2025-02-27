@@ -143,6 +143,10 @@
                 <source>common.back</source>
                 <target>Précédent</target>
             </trans-unit>
+            <trans-unit id="common.targetblank">
+                <source>common.targetblank</source>
+                <target>%metaTitle% (nouvelle fenêtre)</target>
+            </trans-unit>
             <trans-unit id="common.publish">
                 <source>common.publish</source>
                 <target>Publier</target>
@@ -1210,6 +1214,10 @@
                 <source>landing.who-are-we.team</source>
                 <target>Découvrir l'équipe</target>
             </trans-unit>
+            <trans-unit id="landing.who-are-we.team.metaTitle">
+                <source>landing.who-are-we.team.metaTitle</source>
+                <target>DiaLog sur beta.gouv.fr</target>
+            </trans-unit>
             <trans-unit id="landing.details.metatitle">
                 <source>landing.details.metatitle</source>
                 <target>Saisir ou intégrer des arrêtés</target>
@@ -1325,6 +1333,10 @@
             <trans-unit id="landing.details.help.detail">
                 <source>landing.details.help.detail</source>
                 <target>Découvrir</target>
+            </trans-unit>
+            <trans-unit id="landing.details.help.metaTitle">
+                <source>landing.details.help.metaTitle</source>
+                <target>Aide en ligne de DiaLog</target>
             </trans-unit>
             <trans-unit id="landing.details.questions.title">
                 <source>landing.details.questions.title</source>
