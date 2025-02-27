@@ -2,13 +2,13 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     providers:
-        password_user:
-            id: App\Infrastructure\Security\Provider\PasswordUserProvider
+        local_user:
+            id: App\Infrastructure\Security\Provider\LocalPasswordUserProvider
         proconnect_user:
             id: App\Infrastructure\Security\Provider\ProConnectUserProvider
         all:
             chain:
-                providers: ['password_user', 'proconnect_user']
+                providers: ['local_user', 'proconnect_user']
 
     firewalls:
         dev:
