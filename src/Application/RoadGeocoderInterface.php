@@ -16,6 +16,8 @@ interface RoadGeocoderInterface
 
     public function computeRoad(string $roadType, string $administrator, string $roadNumber): string;
 
+    public function findReferencePoints(string $search, string $administrator, string $roadNumber): array;
+
     public function computeReferencePoint(
         string $roadType,
         string $administrator,
@@ -24,6 +26,8 @@ interface RoadGeocoderInterface
         string $side,
         int $abscissa,
     ): Coordinates;
+
+    public function findSides(string $administrator, string $roadNumber, string $pointNumber): array;
 
     public function findRoadNames(string $search, string $cityCode): array;
 

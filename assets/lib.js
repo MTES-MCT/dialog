@@ -31,26 +31,30 @@ function _displayAnyDebugExceptionPage(event) {
 
 /**
  * @param {HTMLElement} element 
+ * @param {(target: HTMLElement) => void} postReset
  * @returns {void}
  */
-export function resetFormControl(element) {
+export function resetFormControl(element, postReset = (target) => null) {
     // No unified DOM interface exists to reset a form control.
     // So we must implement it on a case-by-case basis in JavaScript.
 
     if (element instanceof HTMLInputElement) {
         element.value = '';
+        postReset(element);
         return;
     }
 
     if (element instanceof HTMLSelectElement) {
         element.selectedIndex = 0;
+        postReset(element);
         return;
     }
 
     if (element instanceof HTMLFieldSetElement) {
         for (const subElement of element.elements) {
-            resetFormControl(subElement);
+            resetFormControl(subElement, postReset);
         }
+        postReset(element);
         return;
     }
 
@@ -58,7 +62,7 @@ export function resetFormControl(element) {
         if (element.dataset.resetBehavior === 'click') {
             element.click();
         }
-
+        postReset(element);
         return;
     }
 

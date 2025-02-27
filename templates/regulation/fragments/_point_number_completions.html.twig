@@ -1,0 +1,10 @@
+{% for result in results %}
+    <li role="option" data-autocomplete-value="{{ result.pointNumber }}">
+        {{ result.pointNumber }}
+        {% if result.numDepartments > 0 %}({{ result.departmentCode }}){% endif %}
+    </li>
+{% endfor %}
+
+<template id="status">
+    {{ 'common.autocomplete.results_count'|trans({ '%count%': results|length }) }}
+</template>

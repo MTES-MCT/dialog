@@ -614,7 +614,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.pointNumber.help">
                 <source>regulation.location.referencePoint.pointNumber.help</source>
-                <target>Numéro du point de repère</target>
+                <target>Numéro du PR</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.abscissa">
                 <source>regulation.location.referencePoint.abscissa</source>
