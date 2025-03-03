@@ -222,8 +222,6 @@ export default class Autocomplete extends Controller {
   }
 
   onInputChange = () => {
-    if (this.hasHiddenTarget) this.hiddenTarget.value = ""
-
     const query = this.inputTarget.value.trim()
     if ((query && query.length >= this.minLengthValue) || (!query && this.fetchEmptyValue)) {
       this.fetchResults(query)
@@ -250,18 +248,16 @@ export default class Autocomplete extends Controller {
     this.statusTarget.textContent = text
   }
 
-  disableLoadingStatus() {
-    this._loadingDisabled = true;
-  }
-
-  enableLoadingStatus() {
-    this._loadingDisabled = false;
-  }
-
   showLoadingStatus() {
-    if (!this.hasStatusTarget || !this.loadingStatusValue || this._loadingDisabled) {
+    if (!this.hasStatusTarget || !this.loadingStatusValue) {
       return
     }
+
+    if (this.inputTarget !== document.activeElement) {
+      // Only show status message when input is focused
+      return;
+    }
+
     this.resultsShown = true
     this.inputTarget.setAttribute("aria-expanded", "true")
     this.setStatus(this.loadingStatusValue)

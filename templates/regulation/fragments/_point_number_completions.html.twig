@@ -1,7 +1,6 @@
 {% for result in results %}
-    <li role="option" data-autocomplete-value="{{ result.pointNumber }}">
-        {{ result.pointNumber }}
-        {% if result.numDepartments > 0 %}({{ result.departmentCode }}){% endif %}
+    <li role="option" data-autocomplete-value="{{ result.value }}">
+        {{ result.pointNumber }} ({{ result.departmentCode }})
     </li>
 {% endfor %}
 

@@ -39,6 +39,10 @@ final class NumberedRoadFormType extends AbstractType
                 ],
             )
             ->add(
+                'fromPointNumberValue',
+                HiddenType::class,
+            )
+            ->add(
                 'fromPointNumber',
                 TextType::class,
                 options: [
@@ -50,6 +54,10 @@ final class NumberedRoadFormType extends AbstractType
                 'fromSide',
                 ChoiceType::class,
                 options: $this->getRoadSideOptions(),
+            )
+            ->add(
+                'toPointNumberValue',
+                HiddenType::class,
             )
             ->add(
                 'toPointNumber',
