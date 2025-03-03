@@ -79,11 +79,11 @@ class StorageAreaMigrationGenerator
             $description = $row['description_infobulle'];
             $roadNumber = $this->parseRoadNumber($row['id_route']);
             $administrator = $this->findAdministrator($roadNumber);
-            [$fromPointNumber, $fromSide] = $this->parsePointNumberAndSide($row['nom_plo']);
             $fromDepartmentCode = $row['departement'];
+            [$fromPointNumber, $fromSide] = $this->parsePointNumberAndSide($row['nom_plo']);
             $fromAbscissa = (int) $row['abscisse'];
+            $toDepartmentCode = $row['departement_fin'] ?: $fromDepartmentCode;
             [$toPointNumber, $toSide] = $this->parsePointNumberAndSide($row['nom_plo_fin']);
-            $toDepartmentCode = $row['departement_fin'];
             $toAbscissa = (int) $row['abscisse_fin'];
 
             $fullRoadGeometry = $this->roadGeocoder->computeRoad('Nationale', $administrator, $roadNumber);
@@ -94,8 +94,8 @@ class StorageAreaMigrationGenerator
                     'Nationale',
                     $administrator,
                     $roadNumber,
-                    $fromPointNumber,
                     $fromDepartmentCode,
+                    $fromPointNumber,
                     $fromSide,
                     $fromAbscissa,
                     $toDepartmentCode,
@@ -116,12 +116,12 @@ class StorageAreaMigrationGenerator
                 'description' => \sprintf("'%s'", $description),
                 'administrator' => \sprintf("'%s'", $administrator),
                 'road_number' => \sprintf("'%s'", $roadNumber),
-                'from_point_number' => \sprintf("'%s'", $fromPointNumber),
                 'from_department_code' => \sprintf("'%s'", $fromDepartmentCode),
+                'from_point_number' => \sprintf("'%s'", $fromPointNumber),
                 'from_side' => \sprintf("'%s'", $fromSide),
                 'from_abscissa' => $fromAbscissa,
-                'to_point_number' => \sprintf("'%s'", $toPointNumber),
                 'to_department_code' => \sprintf("'%s'", $toDepartmentCode),
+                'to_point_number' => \sprintf("'%s'", $toPointNumber),
                 'to_side' => \sprintf("'%s'", $toSide),
                 'to_abscissa' => $toAbscissa,
                 'geometry' => \sprintf("ST_GeomFromGeoJSON('%s')", $geometry),
@@ -140,12 +140,12 @@ class StorageAreaMigrationGenerator
             'description',
             'administrator',
             'road_number',
-            'from_point_number',
             'from_department_code',
+            'from_point_number',
             'from_side',
             'from_abscissa',
-            'to_point_number',
             'to_department_code',
+            'to_point_number',
             'to_side',
             'to_abscissa',
             'geometry',

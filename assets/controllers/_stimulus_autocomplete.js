@@ -58,8 +58,6 @@ export default class Autocomplete extends Controller {
     }
 
     this.readyValue = true
-
-    this._loadingDisabled = false;
   }
 
   disconnect() {

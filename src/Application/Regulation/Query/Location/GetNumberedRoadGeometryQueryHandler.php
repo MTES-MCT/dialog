@@ -40,12 +40,12 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
             $command->roadType,
             $command->administrator,
             $command->roadNumber,
-            $command->fromPointNumber,
             $command->fromDepartmentCode,
+            $command->fromPointNumber,
             $command->fromSide,
             $command->fromAbscissa ?? 0,
-            $command->toPointNumber,
             $command->toDepartmentCode,
+            $command->toPointNumber,
             $command->toSide,
             $command->toAbscissa ?? 0,
             $command->direction,
@@ -60,6 +60,8 @@ final class GetNumberedRoadGeometryQueryHandler implements QueryInterface
         return !$numberedRoad
             || $command->roadNumber !== $numberedRoad->getRoadNumber()
             || $command->administrator !== $numberedRoad->getAdministrator()
+            || $command->fromDepartmentCode !== $numberedRoad->getFromDepartmentCode()
+            || $command->toDepartmentCode !== $numberedRoad->getToDepartmentCode()
             || $command->fromPointNumber !== $numberedRoad->getFromPointNumber()
             || $command->toPointNumber !== $numberedRoad->getToPointNumber()
             || $command->fromAbscissa !== $numberedRoad->getFromAbscissa()

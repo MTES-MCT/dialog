@@ -33,9 +33,9 @@ final class ReferencePointSideOptionsFragmentController
         #[MapQueryParameter] string $currentOption,
         #[MapQueryParameter] string $targetId,
     ): Response {
-        [$pointNumber, $departmentCode] = SaveNumberedRoadCommand::decodePointNumberValue($pointNumberValue);
+        [$departmentCode, $pointNumber] = SaveNumberedRoadCommand::decodePointNumberValue($pointNumberValue);
 
-        $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $pointNumber, $departmentCode);
+        $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $departmentCode, $pointNumber);
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

@@ -179,8 +179,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         string $roadType,
         string $administrator,
         string $roadNumber,
-        string $pointNumber,
         ?string $departmentCode,
+        string $pointNumber,
         string $side,
         int $abscissa,
     ): Coordinates {
@@ -266,7 +266,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
     }
 
-    public function findSides(string $administrator, string $roadNumber, string $pointNumber, ?string $departmentCode): array
+    public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(

@@ -22,13 +22,13 @@ interface RoadGeocoderInterface
         string $roadType,
         string $administrator,
         string $roadNumber,
-        string $pointNumber,
         ?string $departmentCode,
+        string $pointNumber,
         string $side,
         int $abscissa,
     ): Coordinates;
 
-    public function findSides(string $administrator, string $roadNumber, string $pointNumber, ?string $departmentCode): array;
+    public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array;
 
     public function findRoadNames(string $search, string $cityCode): array;
 
