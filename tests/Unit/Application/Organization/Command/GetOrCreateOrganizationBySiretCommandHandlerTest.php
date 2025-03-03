@@ -10,9 +10,11 @@ use App\Application\IdFactoryInterface;
 use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommandHandler;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
+use App\Application\User\View\OrganizationUserView;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
+use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -20,6 +22,7 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
 {
     private MockObject $idFactory;
     private MockObject $organizationRepository;
+    private MockObject $organizationUserRepository;
     private MockObject $dateUtils;
     private MockObject $organizationFetcher;
     private GetOrCreateOrganizationBySiretCommandHandler $handler;
@@ -30,12 +33,14 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
+        $this->organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->organizationFetcher = $this->createMock(ApiOrganizationFetcherInterface::class);
 
         $this->handler = new GetOrCreateOrganizationBySiretCommandHandler(
             $this->idFactory,
             $this->organizationRepository,
+            $this->organizationUserRepository,
             $this->dateUtils,
             $this->organizationFetcher,
         );
@@ -67,11 +72,54 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('make');
 
+        $this->organizationUserRepository
+            ->expects(self::once())
+            ->method('findByOrganizationUuid')
+            ->with($existingOrganization->getUuid())
+            ->willReturn([]);
+
         $result = ($this->handler)($this->command);
 
         $this->assertInstanceOf(GetOrCreateOrganizationView::class, $result);
         $this->assertSame($existingOrganization, $result->organization);
-        $this->assertFalse($result->isCreated);
+        $this->assertFalse($result->hasOrganizationUsers);
+    }
+
+    public function testReturnsExistingOrganizationWithUsers(): void
+    {
+        $existingOrganization = (new Organization('32516746-4fce-4750-ba83-7ae9b4290678'))
+            ->setName('Fairness')
+            ->setSiret($this->siret);
+
+        $this->organizationRepository
+            ->expects(self::once())
+            ->method('findOneBySiret')
+            ->with($this->siret)
+            ->willReturn($existingOrganization);
+
+        $this->organizationFetcher
+            ->expects(self::never())
+            ->method('findBySiret');
+
+        $this->organizationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->organizationUserRepository
+            ->expects(self::once())
+            ->method('findByOrganizationUuid')
+            ->with($existingOrganization->getUuid())
+            ->willReturn([$this->createMock(OrganizationUserView::class)]);
+
+        $result = ($this->handler)($this->command);
+
+        $this->assertInstanceOf(GetOrCreateOrganizationView::class, $result);
+        $this->assertSame($existingOrganization, $result->organization);
+        $this->assertTrue($result->hasOrganizationUsers);
     }
 
     public function testCreatesNewOrganization(): void
@@ -112,11 +160,17 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->method('add')
             ->with($expectedOrganization);
 
+        $this->organizationUserRepository
+            ->expects(self::once())
+            ->method('findByOrganizationUuid')
+            ->with($orgUuid)
+            ->willReturn([]);
+
         $result = ($this->handler)($this->command);
 
         $this->assertInstanceOf(GetOrCreateOrganizationView::class, $result);
         $this->assertEquals($expectedOrganization, $result->organization);
-        $this->assertTrue($result->isCreated);
+        $this->assertFalse($result->hasOrganizationUsers);
     }
 
     public function testThrowsExceptionWhenOrganizationNotFound(): void
@@ -146,6 +200,10 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
         $this->organizationRepository
             ->expects(self::never())
             ->method('add');
+
+        $this->organizationUserRepository
+            ->expects(self::never())
+            ->method('findByOrganizationUuid');
 
         ($this->handler)($this->command);
     }
