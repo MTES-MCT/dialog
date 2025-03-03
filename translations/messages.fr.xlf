@@ -1418,6 +1418,14 @@
                 <source>login.proconnect.auth</source>
                 <target>S'identifier avec</target>
             </trans-unit>
+            <trans-unit id="login.proconnect.link">
+                <source>login.proconnect.link</source>
+                <target>Qu'est-ce que ProConnect ?</target>
+            </trans-unit>
+            <trans-unit id="login.proconnect.link.title">
+                <source>login.proconnect.link.title</source>
+                <target>Qu'est-ce que ProConnect ? - nouvelle fenêtre</target>
+            </trans-unit>
             <trans-unit id="login.email">
                 <source>login.email</source>
                 <target>Adresse e-mail</target>
