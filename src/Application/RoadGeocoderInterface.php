@@ -27,7 +27,7 @@ interface RoadGeocoderInterface
         int $abscissa,
     ): Coordinates;
 
-    public function findSides(string $administrator, string $roadNumber, string $pointNumber): array;
+    public function findSides(string $administrator, string $roadNumber, string $pointNumber, ?string $departmentCode): array;
 
     public function findRoadNames(string $search, string $cityCode): array;
 

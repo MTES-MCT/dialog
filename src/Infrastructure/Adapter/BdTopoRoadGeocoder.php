@@ -144,15 +144,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 'SELECT
                     DISTINCT p.numero AS point_number,
                     p.numero::integer AS _point_number_int, -- Must be selected because appears in ORDER BY
-                    p.code_insee_du_departement as department_code,
-                    (
-                        SELECT COUNT(DISTINCT pp.code_insee_du_departement)
-                        FROM point_de_repere AS pp
-                        WHERE pp.numero = p.numero
-                        AND pp.gestionnaire = p.gestionnaire
-                        AND pp.route = p.route
-                        AND pp.type_de_pr = p.type_de_pr
-                    ) AS num_departments
+                    p.code_insee_du_departement as department_code
                 FROM point_de_repere AS p
                 WHERE p.numero LIKE :numero_pattern
                 AND p.gestionnaire = :gestionnaire
@@ -174,9 +166,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         foreach ($rows as $row) {
             $results[] = [
+                'value' => \sprintf('%s##%s', $row['point_number'], $row['department_code']),
                 'pointNumber' => $row['point_number'],
                 'departmentCode' => $row['department_code'],
-                'numDepartments' => $row['num_departments'],
             ];
         }
 
@@ -268,21 +260,26 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
     }
 
-    public function findSides(string $administrator, string $roadNumber, string $pointNumber): array
+    public function findSides(string $administrator, string $roadNumber, string $pointNumber, ?string $departmentCode): array
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                'SELECT DISTINCT p.cote AS side
-                FROM point_de_repere AS p
-                WHERE p.numero = :numero
-                AND p.gestionnaire = :gestionnaire
-                AND p.route = :route
-                AND p.type_de_pr LIKE \'PR%\'
-                ',
+                \sprintf(
+                    'SELECT DISTINCT p.cote AS side
+                    FROM point_de_repere AS p
+                    WHERE p.gestionnaire = :gestionnaire
+                    AND p.route = :route
+                    AND p.numero = :numero
+                    AND p.type_de_pr LIKE \'PR%%\'
+                    %s
+                    ',
+                    empty($departmentCode) ? '' : 'AND p.code_insee_du_departement = :departmentCode',
+                ),
                 [
-                    'numero' => $pointNumber,
-                    'gestionnaire' => $administrator,
                     'route' => $roadNumber,
+                    'gestionnaire' => $administrator,
+                    'numero' => $pointNumber,
+                    'departmentCode' => $departmentCode,
                 ],
             );
         } catch (\Exception $exc) {

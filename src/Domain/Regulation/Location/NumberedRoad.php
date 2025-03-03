@@ -51,6 +51,16 @@ class NumberedRoad
         return $this->toPointNumber;
     }
 
+    public function getFromDepartmentCode(): ?string
+    {
+        return null;
+    }
+
+    public function getToDepartmentCode(): ?string
+    {
+        return null;
+    }
+
     public function getFromSide(): ?string
     {
         return $this->fromSide;

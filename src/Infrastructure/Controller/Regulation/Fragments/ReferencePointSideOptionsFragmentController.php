@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,11 +29,13 @@ final class ReferencePointSideOptionsFragmentController
         Request $request,
         #[MapQueryParameter] string $administrator,
         #[MapQueryParameter] string $roadNumber,
-        #[MapQueryParameter] string $pointNumber,
+        #[MapQueryParameter] string $pointNumberValue,
         #[MapQueryParameter] string $currentOption,
         #[MapQueryParameter] string $targetId,
     ): Response {
-        $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $pointNumber);
+        [$pointNumber, $departmentCode] = SaveNumberedRoadCommand::decodePointNumberValue($pointNumberValue);
+
+        $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $pointNumber, $departmentCode);
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
