@@ -47,9 +47,9 @@ final class RegisterCommandHandler
         /** @var GetOrCreateOrganizationView $organizationView */
         $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($command->organizationSiret));
         $organization = $organizationView->organization;
-        $organizationRole = $organizationView->isCreated
-            ? OrganizationRolesEnum::ROLE_ORGA_ADMIN->value
-            : OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
+        $organizationRole = $organizationView->hasOrganizationUsers
+            ? OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value
+            : OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
 
         $now = $this->dateUtils->getNow();
         $user = (new User($this->idFactory->make()))

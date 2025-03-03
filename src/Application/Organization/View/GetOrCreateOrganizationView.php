@@ -10,7 +10,7 @@ final readonly class GetOrCreateOrganizationView
 {
     public function __construct(
         public Organization $organization,
-        public bool $isCreated,
+        public bool $hasOrganizationUsers,
     ) {
     }
 }

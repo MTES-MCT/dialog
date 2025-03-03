@@ -62,9 +62,9 @@ final class CreateProConnectUserCommandHandler
             $organization = $organizationView->organization;
 
             if (!$this->isUserAlreadyRegisteredInOrganization->isSatisfiedBy($user->getEmail(), $organization)) {
-                $organizationRole = $organizationView->isCreated
-                    ? OrganizationRolesEnum::ROLE_ORGA_ADMIN->value
-                    : OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
+                $organizationRole = $organizationView->hasOrganizationUsers
+                    ? OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value
+                    : OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
 
                 $organizationUser = (new OrganizationUser($this->idFactory->make()))
                     ->setUser($user)
