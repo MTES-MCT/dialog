@@ -13,9 +13,11 @@ class NumberedRoad
         private ?string $administrator = null,
         private ?string $roadNumber = null,
         private ?string $fromPointNumber = null,
+        private ?string $fromDepartmentCode = null,
         private ?string $fromSide = null,
         private ?int $fromAbscissa = null,
         private ?string $toPointNumber = null,
+        private ?string $toDepartmentCode = null,
         private ?string $toSide = null,
         private ?int $toAbscissa = null,
     ) {
@@ -53,12 +55,12 @@ class NumberedRoad
 
     public function getFromDepartmentCode(): ?string
     {
-        return null;
+        return $this->fromDepartmentCode;
     }
 
     public function getToDepartmentCode(): ?string
     {
-        return null;
+        return $this->toDepartmentCode;
     }
 
     public function getFromSide(): ?string
@@ -91,20 +93,24 @@ class NumberedRoad
         ?string $administrator = null,
         ?string $roadNumber = null,
         ?string $fromPointNumber = null,
+        ?string $fromDepartmentCode = null,
         ?string $fromSide = null,
         ?int $fromAbscissa = null,
         ?string $toPointNumber = null,
+        ?string $toDepartmentCode = null,
         ?string $toSide = null,
         ?int $toAbscissa = null,
     ): void {
         $this->administrator = $administrator;
         $this->roadNumber = $roadNumber;
         $this->fromPointNumber = $fromPointNumber;
+        $this->fromDepartmentCode = $fromDepartmentCode;
         $this->fromSide = $fromSide;
-        $this->toPointNumber = $toPointNumber;
         $this->fromAbscissa = $fromAbscissa;
-        $this->toAbscissa = $toAbscissa;
+        $this->toPointNumber = $toPointNumber;
+        $this->toDepartmentCode = $toDepartmentCode;
         $this->toSide = $toSide;
+        $this->toAbscissa = $toAbscissa;
         $this->direction = $direction;
     }
 }
