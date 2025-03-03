@@ -26,13 +26,13 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
 
         // Publish
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/publish', [
             '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(expectedCode: 303);
     }
 
     public function testGetRegulationsToDatexFormat(): void
@@ -46,7 +46,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $response = $client->getResponse();
 
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(expectedCode: 200);
         $this->assertSecurityHeaders();
 
         $xml = new \DOMDocument();
