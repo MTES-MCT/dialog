@@ -55,7 +55,7 @@ final class CreateProConnectUserCommandHandler
                 $this->userRepository->add($user);
             }
 
-            // Si l'utilisateur n'est pas dans l'organisation récupéré via ProConnect, on le rajoute.
+            // Si l'utilisateur n'est pas dans l'organisation récupéré via ProConnect, on le rajoute, en créant l'orga si besoin.
 
             /** @var GetOrCreateOrganizationView $organizationView */
             $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($command->siret));
