@@ -23,6 +23,7 @@ interface RoadGeocoderInterface
         string $administrator,
         string $roadNumber,
         string $pointNumber,
+        ?string $departmentCode,
         string $side,
         int $abscissa,
     ): Coordinates;

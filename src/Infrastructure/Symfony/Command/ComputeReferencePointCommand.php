@@ -29,6 +29,7 @@ class ComputeReferencePointCommand extends Command
         $this->addArgument('administrator');
         $this->addArgument('roadNumber');
         $this->addArgument('pointNumber');
+        $this->addArgument('departmentCode');
         $this->addArgument('side');
         $this->addArgument('abscissa');
     }
@@ -40,6 +41,7 @@ class ComputeReferencePointCommand extends Command
             $input->getArgument('administrator'),
             $input->getArgument('roadNumber'),
             $input->getArgument('pointNumber'),
+            $input->getArgument('departmentCode'),
             $input->getArgument('side'),
             (int) $input->getArgument('abscissa'),
         );

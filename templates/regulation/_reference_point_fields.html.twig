@@ -30,7 +30,7 @@
         },
     }) }}
 
-    {{ form_row(pointNumber, {
+    {{ form_row(pointNumberDisplayedValue, {
         attr: {
             class: 'fr-input',
             'data-autocomplete-target': 'input',
@@ -39,7 +39,7 @@
     }) }}
 
     <ul
-        id="{{ pointNumber.vars.id }}-results"
+        id="{{ pointNumberDisplayedValue.vars.id }}-results"
         role="listbox"
         aria-label="{{ 'regulation.location.pointNumber.results_label'|trans }}"
         class="fr-x-autocomplete"

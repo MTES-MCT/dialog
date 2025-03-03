@@ -180,59 +180,65 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         string $administrator,
         string $roadNumber,
         string $pointNumber,
+        ?string $departmentCode,
         string $side,
         int $abscissa,
     ): Coordinates {
         try {
             // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
             $row = $this->bdtopoConnection->fetchAssociative(
-                'SELECT ST_AsGeoJSON(
-                    ST_GeometryN(
-                        ST_LocateAlong(
-                            ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
-                            ST_InterpolatePoint(
+                \sprintf(
+                    'SELECT ST_AsGeoJSON(
+                        ST_GeometryN(
+                            ST_LocateAlong(
                                 ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
-                                p.geometrie
-                            ) + :abscissa * (
-                                -- L ordre de numérisation (= ordre des points dans la géométrie de la section)
-                                -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
-                                -- On détecte si les deux ordres correspondent avec cette règle :
-                                -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
-                                -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens 
-                                CASE WHEN ST_Distance(
-                                    ST_StartPoint(s.geometrie),
-                                    (
-                                        SELECT pp.geometrie
-                                        FROM point_de_repere AS pp
-                                        WHERE pp.identifiant_de_section = s.identifiant_de_section
-                                        AND pp.ordre >= 0
-                                        ORDER BY pp.ordre ASC
-                                        LIMIT 1
-                                    )
-                                ) < ST_Length(s.geometrie) / 4
-                                THEN 1
-                                ELSE -1
-                                END
-                            )
-                        ),
-                        1
-                    )
-                ) AS geom
-                FROM point_de_repere AS p
-                LEFT JOIN section_de_points_de_repere AS s
-                    ON p.identifiant_de_section = s.identifiant_de_section
-                WHERE p.gestionnaire = :administrator
-                    AND p.route = :roadNumber
-                    AND p.numero = :pointNumber
-                    AND p.cote = :side
-                    -- Types dans la BDTOPO : C, CS, DS, FS, PR, PR0, PRF.
-                    -- On ne garde que les types PR, PR0 et PRF, car les autres types ne correspondent pas à des PR "physiques".
-                    AND p.type_de_pr LIKE \'PR%\'
-                ',
+                                ST_InterpolatePoint(
+                                    ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
+                                    p.geometrie
+                                ) + :abscissa * (
+                                    -- L ordre de numérisation (= ordre des points dans la géométrie de la section)
+                                    -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
+                                    -- On détecte si les deux ordres correspondent avec cette règle :
+                                    -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
+                                    -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens 
+                                    CASE WHEN ST_Distance(
+                                        ST_StartPoint(s.geometrie),
+                                        (
+                                            SELECT pp.geometrie
+                                            FROM point_de_repere AS pp
+                                            WHERE pp.identifiant_de_section = s.identifiant_de_section
+                                            AND pp.ordre >= 0
+                                            ORDER BY pp.ordre ASC
+                                            LIMIT 1
+                                        )
+                                    ) < ST_Length(s.geometrie) / 4
+                                    THEN 1
+                                    ELSE -1
+                                    END
+                                )
+                            ),
+                            1
+                        )
+                    ) AS geom
+                    FROM point_de_repere AS p
+                    LEFT JOIN section_de_points_de_repere AS s
+                        ON p.identifiant_de_section = s.identifiant_de_section
+                    WHERE p.gestionnaire = :administrator
+                        AND p.route = :roadNumber
+                        AND p.numero = :pointNumber
+                        AND p.cote = :side
+                        -- Types dans la BDTOPO : C, CS, DS, FS, PR, PR0, PRF.
+                        -- On ne garde que les types PR, PR0 et PRF, car les autres types ne correspondent pas à des PR "physiques".
+                        AND p.type_de_pr LIKE \'PR%%\'
+                        %s
+                    ',
+                    empty($departmentCode) ? '' : 'AND p.code_insee_du_departement = :departmentCode',
+                ),
                 [
                     'administrator' => $administrator,
                     'roadNumber' => $roadNumber,
                     'pointNumber' => $pointNumber,
+                    'departmentCode' => $departmentCode,
                     'side' => $side,
                     'abscissa' => $abscissa,
                 ],
