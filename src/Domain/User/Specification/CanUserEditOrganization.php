@@ -6,11 +6,11 @@ namespace App\Domain\User\Specification;
 
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 
 class CanUserEditOrganization
 {
-    public function isSatisfiedBy(Organization $organization, SymfonyUser $user): bool
+    public function isSatisfiedBy(Organization $organization, AbstractAuthenticatedUser $user): bool
     {
         foreach ($user->getUserOrganizations() as $userOrganization) {
             if ($userOrganization->uuid !== $organization->getUuid()) {

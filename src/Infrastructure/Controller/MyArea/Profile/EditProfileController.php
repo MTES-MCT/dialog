@@ -42,9 +42,9 @@ final class EditProfileController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $this->commandBus->handle($command);
-                $symfonyUser = $this->authenticatedUser->getSymfonyUser();
-                $symfonyUser->setFullName($user->getFullName());
-                $symfonyUser->setEmail($user->getEmail());
+                $abstractSymfonyUser = $this->authenticatedUser->getSessionUser();
+                $abstractSymfonyUser->setFullName($user->getFullName());
+                $abstractSymfonyUser->setEmail($user->getEmail());
 
                 /** @var FlashBagAwareSessionInterface */
                 $session = $request->getSession();

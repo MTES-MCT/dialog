@@ -14,6 +14,10 @@
                 <source>common.register</source>
                 <target>Créer un compte</target>
             </trans-unit>
+            <trans-unit id="common.or">
+                <source>common.or</source>
+                <target>ou</target>
+            </trans-unit>
             <trans-unit id="common.blog">
                 <source>common.blog</source>
                 <target>Blog</target>
@@ -81,10 +85,6 @@
             <trans-unit id="common.do_not_delete">
                 <source>common.do_not_delete</source>
                 <target>Ne pas supprimer</target>
-            </trans-unit>
-            <trans-unit id="common.or">
-                <source>common.or</source>
-                <target>ou</target>
             </trans-unit>
             <trans-unit id="common.ministry">
                 <source>common.ministry</source>
@@ -1410,6 +1410,14 @@
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
             </trans-unit>
+            <trans-unit id="login.proconnect.title">
+                <source>login.proconnect.title</source>
+                <target>Se connecter avec ProConnect</target>
+            </trans-unit>
+            <trans-unit id="login.proconnect.auth">
+                <source>login.proconnect.auth</source>
+                <target>S'identifier avec</target>
+            </trans-unit>
             <trans-unit id="login.email">
                 <source>login.email</source>
                 <target>Adresse e-mail</target>
@@ -1972,6 +1980,14 @@
             <trans-unit id="register.comment">
                 <source>register.comment</source>
                 <target>Message</target>
+            </trans-unit>
+            <trans-unit id="register.auth.proconnect">
+                <source>register.auth.proconnect</source>
+                <target>Créer un compte avec ProConnect</target>
+            </trans-unit>
+            <trans-unit id="register.auth.email">
+                <source>register.auth.email</source>
+                <target>Créer un compte avec son adresse e-mail</target>
             </trans-unit>
             <trans-unit id="organization.name">
                 <source>organization.name</source>

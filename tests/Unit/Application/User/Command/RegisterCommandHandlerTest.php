@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\User\Command;
 
-use App\Application\ApiOrganizationFetcherInterface;
+use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
+use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
+use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\RegisterCommand;
@@ -18,7 +20,6 @@ use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\PasswordUser;
-use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
@@ -33,10 +34,9 @@ final class RegisterCommandHandlerTest extends TestCase
     private MockObject $userRepository;
     private MockObject $passwordUserRepository;
     private MockObject $organizationUserRepository;
-    private MockObject $organizationRepository;
     private MockObject $dateUtils;
     private MockObject $stringUtils;
-    private ApiOrganizationFetcherInterface $organizationFetcher;
+    private MockObject $commandBus;
     private RegisterCommandHandler $handler;
     private RegisterCommand $command;
 
@@ -47,22 +47,21 @@ final class RegisterCommandHandlerTest extends TestCase
         $this->organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
         $this->userRepository = $this->createMock(UserRepositoryInterface::class);
         $this->passwordUserRepository = $this->createMock(PasswordUserRepositoryInterface::class);
-        $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
-        $this->organizationFetcher = $this->createMock(ApiOrganizationFetcherInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->stringUtils = $this->createMock(StringUtilsInterface::class);
+        $this->commandBus = $this->createMock(CommandBusInterface::class);
 
         $this->handler = new RegisterCommandHandler(
             $this->idFactory,
             $this->userRepository,
             $this->passwordUserRepository,
             $this->organizationUserRepository,
-            $this->organizationRepository,
             $this->dateUtils,
             $this->stringUtils,
             $this->passwordHasher,
-            $this->organizationFetcher,
+            $this->commandBus,
         );
+
         $this->command = new RegisterCommand();
         $this->command->fullName = 'Mathieu MARCHOIS';
         $this->command->email = ' mathieu@fairness.coop ';
@@ -76,7 +75,7 @@ final class RegisterCommandHandlerTest extends TestCase
             ->willReturn('mathieu@fairness.coop');
     }
 
-    public function testRegisterWithSiretLinkedToExistingOrganization(): void
+    public function testRegister(): void
     {
         $organization = $this->createMock(Organization::class);
 
@@ -86,15 +85,14 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop')
             ->willReturn(null);
 
-        $this->organizationRepository
+        $orgView = new GetOrCreateOrganizationView($organization, false);
+        $this->commandBus
             ->expects(self::once())
-            ->method('findOneBySiret')
-            ->with('82050375300015')
-            ->willReturn($organization);
-
-        $this->organizationRepository
-            ->expects(self::never())
-            ->method('add');
+            ->method('handle')
+            ->with(self::callback(function (GetOrCreateOrganizationBySiretCommand $cmd) {
+                return $cmd->siret === '82050375300015';
+            }))
+            ->willReturn($orgView);
 
         $this->idFactory
             ->expects(self::exactly(3))
@@ -149,94 +147,6 @@ final class RegisterCommandHandlerTest extends TestCase
         $this->assertEquals(($this->handler)($this->command), $user);
     }
 
-    public function testRegisterWithSiretNotLinkedToAnOrganization(): void
-    {
-        $organization = $this->createMock(Organization::class);
-
-        $this->userRepository
-            ->expects(self::once())
-            ->method('findOneByEmail')
-            ->with('mathieu@fairness.coop')
-            ->willReturn(null);
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneBySiret')
-            ->with('82050375300015')
-            ->willReturn(null);
-
-        $this->passwordHasher
-            ->expects(self::once())
-            ->method('hash')
-            ->with('12345')
-            ->willReturn('passwordHashed');
-
-        $date = new \DateTimeImmutable('2024-05-07');
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $user = (new User('0de5692b-cab1-494c-804d-765dc14df674'))
-            ->setFullName('Mathieu MARCHOIS')
-            ->setEmail('mathieu@fairness.coop')
-            ->setRoles([UserRolesEnum::ROLE_USER->value])
-            ->setRegistrationDate($date);
-
-        $passwordUser = new PasswordUser('3e4ea113-9f64-4933-a699-0561b8c15622', 'passwordHashed', $user);
-        $user->setPasswordUser($passwordUser);
-
-        $organization = (new Organization('d145a0e3-e397-412c-ba6a-90b150f7aec2'))
-            ->setCreatedAt($date)
-            ->setName('Fairness')
-            ->setSiret('82050375300015');
-
-        $organizationUser = (new OrganizationUser('f40f95eb-a7dd-4232-9f03-2db10f04f37f'))
-            ->setOrganization($organization)
-            ->setUser($user)
-            ->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
-
-        $this->organizationFetcher
-            ->expects(self::once())
-            ->method('findBySiret')
-            ->with('82050375300015')
-            ->willReturn([
-                'name' => 'Fairness',
-            ]);
-
-        $this->organizationUserRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($organizationUser));
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->isInstanceOf(Organization::class));
-
-        $this->passwordUserRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($passwordUser));
-
-        $this->idFactory
-            ->expects(self::exactly(4))
-            ->method('make')
-            ->willReturn(
-                'd145a0e3-e397-412c-ba6a-90b150f7aec2',
-                '0de5692b-cab1-494c-804d-765dc14df674',
-                '3e4ea113-9f64-4933-a699-0561b8c15622',
-                'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
-            );
-
-        $this->userRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($user));
-
-        $this->assertEquals(($this->handler)($this->command), $user);
-    }
-
     public function testRegisterWithBadSiret(): void
     {
         $this->expectException(OrganizationNotFoundException::class);
@@ -247,27 +157,16 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop')
             ->willReturn(null);
 
-        $this->organizationRepository
+        $this->commandBus
             ->expects(self::once())
-            ->method('findOneBySiret')
-            ->with('82050375300015')
-            ->willReturn(null);
+            ->method('handle')
+            ->willThrowException(new OrganizationNotFoundException());
 
         $this->passwordHasher
             ->expects(self::never())
             ->method('hash');
 
-        $this->organizationFetcher
-            ->expects(self::once())
-            ->method('findBySiret')
-            ->with('82050375300015')
-            ->will($this->throwException(new OrganizationNotFoundException()));
-
         $this->organizationUserRepository
-            ->expects(self::never())
-            ->method('add');
-
-        $this->organizationRepository
             ->expects(self::never())
             ->method('add');
 
@@ -298,13 +197,9 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop')
             ->willReturn($user);
 
-        $this->organizationRepository
+        $this->commandBus
             ->expects(self::never())
-            ->method('findOneBySiret');
-
-        $this->organizationRepository
-            ->expects(self::never())
-            ->method('add');
+            ->method('handle');
 
         $this->passwordUserRepository
             ->expects(self::never())
