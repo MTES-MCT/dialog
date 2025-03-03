@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Security;
 
 use App\Domain\User\User;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -18,18 +19,17 @@ final class AuthenticatedUser
 
     public function getUser(): ?User
     {
-        $user = $this->getSymfonyUser();
+        $user = $this->getSessionUser();
 
         return $user
             ? $this->entityManager->getReference(User::class, $user->getUuid())
             : null;
     }
 
-    public function getSymfonyUser(): ?SymfonyUser
+    public function getSessionUser(): ?AbstractAuthenticatedUser
     {
-        /** @var SymfonyUser|null */
         $user = $this->security->getUser();
 
-        return $user;
+        return $user instanceof AbstractAuthenticatedUser ? $user : null;
     }
 }

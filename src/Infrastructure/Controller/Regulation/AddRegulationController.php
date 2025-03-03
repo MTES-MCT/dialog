@@ -12,7 +12,7 @@ use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\User\Command\MarkUserAsActiveCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,7 +42,7 @@ final class AddRegulationController
     )]
     public function __invoke(Request $request): Response
     {
-        /** @var SymfonyUser */
+        /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
         $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow());
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());

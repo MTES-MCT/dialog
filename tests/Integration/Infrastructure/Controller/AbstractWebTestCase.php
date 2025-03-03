@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
+use App\Infrastructure\Security\Provider\LocalPasswordUserProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
@@ -16,8 +16,8 @@ abstract class AbstractWebTestCase extends WebTestCase
     {
         $client = static::createClient();
 
-        /** @var UserProviderInterface */
-        $userProvider = static::getContainer()->get(UserProviderInterface::class);
+        /** @var LocalPasswordUserProvider */
+        $userProvider = static::getContainer()->get(LocalPasswordUserProvider::class);
         $user = $userProvider->loadUserByIdentifier($email);
 
         $client->loginUser($user);

@@ -11,7 +11,7 @@ use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,7 +41,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        /** @var SymfonyUser */
+        /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($regulationOrderRecord->getOrganizationUuid()));

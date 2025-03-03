@@ -7,12 +7,12 @@ namespace App\Infrastructure\Security\Provider;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\ProConnectUser;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-final class UserProvider implements UserProviderInterface
+final class ProConnectUserProvider implements UserProviderInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
@@ -23,21 +23,14 @@ final class UserProvider implements UserProviderInterface
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $user = $this->userRepository->findOneByEmail($identifier);
-        if (!$user instanceof User || !$user->getPasswordUser()) {
+
+        if (!$user instanceof User || !$user->getProConnectUser()) {
             throw new UserNotFoundException(\sprintf('Unable to find the user %s', $identifier));
         }
 
         $userOrganizations = $this->organizationUserRepositoryInterface->findByUserUuid($user->getUuid());
 
-        return new SymfonyUser(
-            $user->getUuid(),
-            $user->getEmail(),
-            $user->getFullName(),
-            $user->getPasswordUser()->getPassword(),
-            $userOrganizations,
-            $user->getRoles(),
-            $user->isVerified(),
-        );
+        return new ProConnectUser($user, $userOrganizations);
     }
 
     public function refreshUser(UserInterface $user): UserInterface
@@ -47,6 +40,6 @@ final class UserProvider implements UserProviderInterface
 
     public function supportsClass(string $class): bool
     {
-        return SymfonyUser::class === $class;
+        return $class === ProConnectUser::class;
     }
 }

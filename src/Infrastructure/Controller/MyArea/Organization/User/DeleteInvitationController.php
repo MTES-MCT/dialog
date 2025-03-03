@@ -41,7 +41,7 @@ final class DeleteInvitationController
     {
         /** @var FlashBagAwareSessionInterface */
         $session = $request->getSession();
-        $user = $this->authenticatedUser->getSymfonyUser();
+        $user = $this->authenticatedUser->getSessionUser();
 
         try {
             $organizationUuid = $this->commandBus->handle(new DeleteInvitationCommand($uuid, $user));

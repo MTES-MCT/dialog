@@ -6,11 +6,11 @@ namespace App\Domain\User\Specification;
 
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Enum\OrganizationRolesEnum;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 
 class CanUserPublishRegulation
 {
-    public function isSatisfiedBy(RegulationOrderRecord $regulationOrderRecord, SymfonyUser $user): bool
+    public function isSatisfiedBy(RegulationOrderRecord $regulationOrderRecord, AbstractAuthenticatedUser $user): bool
     {
         $organization = $regulationOrderRecord->getOrganization();
 

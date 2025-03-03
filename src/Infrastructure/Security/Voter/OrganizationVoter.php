@@ -7,7 +7,7 @@ namespace App\Infrastructure\Security\Voter;
 use App\Domain\User\Organization;
 use App\Domain\User\Specification\CanUserEditOrganization;
 use App\Domain\User\Specification\CanUserViewOrganization;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -39,7 +39,7 @@ final class OrganizationVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof SymfonyUser) {
+        if (!$user instanceof AbstractAuthenticatedUser) {
             return false;
         }
 

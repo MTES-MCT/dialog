@@ -12,7 +12,7 @@ use App\Domain\User\Invitation;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\InvitationRepositoryInterface;
 use App\Domain\User\Specification\CanUserEditOrganization;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 class DeleteInvitationCommandHandlerTest extends TestCase
@@ -34,7 +34,7 @@ class DeleteInvitationCommandHandlerTest extends TestCase
 
     public function testDelete(): void
     {
-        $user = $this->createMock(SymfonyUser::class);
+        $user = $this->createMock(AbstractAuthenticatedUser::class);
         $organization = $this->createMock(Organization::class);
         $organization
             ->expects(self::once())
@@ -72,7 +72,7 @@ class DeleteInvitationCommandHandlerTest extends TestCase
     {
         $this->expectException(InvitationNotOwnedException::class);
 
-        $user = $this->createMock(SymfonyUser::class);
+        $user = $this->createMock(AbstractAuthenticatedUser::class);
         $organization = $this->createMock(Organization::class);
         $organization
             ->expects(self::once())
@@ -107,7 +107,7 @@ class DeleteInvitationCommandHandlerTest extends TestCase
     public function testInvitationNotFound(): void
     {
         $this->expectException(InvitationNotFoundException::class);
-        $user = $this->createMock(SymfonyUser::class);
+        $user = $this->createMock(AbstractAuthenticatedUser::class);
 
         $this->invitationRepository
             ->expects($this->once())

@@ -6,7 +6,7 @@ namespace App\Infrastructure\Security\Voter;
 
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\Specification\CanUserPublishRegulation;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -36,7 +36,7 @@ final class RegulationOrderRecordVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof SymfonyUser) {
+        if (!$user instanceof AbstractAuthenticatedUser) {
             return false;
         }
 

@@ -10,7 +10,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
         "easycorp/easyadmin-bundle": "^4.7",
-        "firebase/php-jwt": "^6.10",
+        "firebase/php-jwt": "^6.11",
         "jsor/doctrine-postgis": "^2.1",
         "league/commonmark": "^2.4",
         "league/flysystem-async-aws-s3": "^3.29",

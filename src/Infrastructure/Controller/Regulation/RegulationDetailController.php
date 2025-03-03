@@ -14,7 +14,7 @@ use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use App\Domain\Regulation\Specification\CanViewRegulationDetail;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -43,7 +43,7 @@ final class RegulationDetailController extends AbstractRegulationController
     )]
     public function __invoke(string $uuid): Response
     {
-        /** @var SymfonyUser|null */
+        /** @var AbstractAuthenticatedUser|null */
         $currentUser = $this->security->getUser();
 
         /** @var GeneralInfoView */

@@ -10,7 +10,7 @@ use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\OrganizationRegulationAccessInterface;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -38,7 +38,7 @@ abstract class AbstractRegulationController
         }
 
         if ($requireUserSameOrg) {
-            /** @var SymfonyUser|null */
+            /** @var AbstractAuthenticatedUser|null */
             $user = $this->security->getUser();
 
             if (!$user || !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $user->getUserOrganizationUuids())) {

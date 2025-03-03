@@ -12,11 +12,16 @@
                     <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
                         <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
                             <h1>{{ 'login.title'|trans }}</h1>
+                            <div class="fr-mb-6v">
+                                <h6>{{ 'login.proconnect.title'|trans }}</h6>
+                                {% include 'proconnect/_auth_widget.html.twig' %}
+                            </div>
+                            <p class="fr-hr-or">{{ 'common.or'|trans }}</p>
                             <div>
                                 <form id="login-1760" action="{{ path('app_login') }}" method="post">
                                     <fieldset class="fr-fieldset" aria-labelledby="login-fieldset-legend">
                                         <legend id="login-fieldset-legend" class="fr-fieldset__legend">
-                                            <h2>{{ 'login.legend'|trans }}</h2>
+                                            <h6>{{ 'login.legend'|trans }}</h6>
                                         </legend>
                                         <div class="fr-fieldset__element">
                                             <fieldset class="fr-fieldset" id="credentials" aria-labelledby="credentials-message">

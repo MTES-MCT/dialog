@@ -8,7 +8,7 @@ use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Specification\CanUserEditOrganization;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use PHPUnit\Framework\TestCase;
 
 final class CanUserEditOrganizationTest extends TestCase
@@ -21,8 +21,8 @@ final class CanUserEditOrganizationTest extends TestCase
             ->method('getUuid')
             ->willReturn('c1790745-b915-4fb5-96e7-79b104092a55');
 
-        $symfonyUser = $this->createMock(SymfonyUser::class);
-        $symfonyUser
+        $abstractSymfonyUser = $this->createMock(AbstractAuthenticatedUser::class);
+        $abstractSymfonyUser
             ->expects(self::once())
             ->method('getUserOrganizations')
             ->willReturn([
@@ -30,7 +30,7 @@ final class CanUserEditOrganizationTest extends TestCase
             ]);
 
         $pattern = new CanUserEditOrganization();
-        $this->assertTrue($pattern->isSatisfiedBy($organization, $symfonyUser));
+        $this->assertTrue($pattern->isSatisfiedBy($organization, $abstractSymfonyUser));
     }
 
     public function testCannotEdit(): void
@@ -41,8 +41,8 @@ final class CanUserEditOrganizationTest extends TestCase
             ->method('getUuid')
             ->willReturn('c1790745-b915-4fb5-96e7-79b104092a55');
 
-        $symfonyUser = $this->createMock(SymfonyUser::class);
-        $symfonyUser
+        $abstractSymfonyUser = $this->createMock(AbstractAuthenticatedUser::class);
+        $abstractSymfonyUser
             ->expects(self::once())
             ->method('getUserOrganizations')
             ->willReturn([
@@ -50,6 +50,6 @@ final class CanUserEditOrganizationTest extends TestCase
             ]);
 
         $pattern = new CanUserEditOrganization();
-        $this->assertFalse($pattern->isSatisfiedBy($organization, $symfonyUser));
+        $this->assertFalse($pattern->isSatisfiedBy($organization, $abstractSymfonyUser));
     }
 }

@@ -11,7 +11,7 @@ use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +41,7 @@ final class DeleteRegulationController
     #[IsCsrfTokenValid('delete-regulation')]
     public function __invoke(Request $request, string $uuid): Response
     {
-        /** @var SymfonyUser */
+        /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
 
         try {

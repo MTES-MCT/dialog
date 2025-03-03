@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Security;
 
-use App\Infrastructure\Security\SymfonyUser;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use App\Infrastructure\Security\UserChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
@@ -19,7 +19,7 @@ final class UserCheckerTest extends TestCase
             ->expects(self::never())
             ->method('trans');
 
-        $user = $this->createMock(SymfonyUser::class);
+        $user = $this->createMock(AbstractAuthenticatedUser::class);
         $user
             ->expects(self::once())
             ->method('isVerified')
@@ -41,7 +41,7 @@ final class UserCheckerTest extends TestCase
             ->with('login.error.not_verified_account')
             ->willReturn('Vous devez valider votre compte grâce au mail de confirmation reçu.');
 
-        $user = $this->createMock(SymfonyUser::class);
+        $user = $this->createMock(AbstractAuthenticatedUser::class);
         $user
             ->expects(self::once())
             ->method('isVerified')
