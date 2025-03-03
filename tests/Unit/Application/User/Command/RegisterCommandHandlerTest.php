@@ -85,7 +85,7 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop')
             ->willReturn(null);
 
-        $orgView = new GetOrCreateOrganizationView($organization, false);
+        $orgView = new GetOrCreateOrganizationView($organization, true);
         $this->commandBus
             ->expects(self::once())
             ->method('handle')

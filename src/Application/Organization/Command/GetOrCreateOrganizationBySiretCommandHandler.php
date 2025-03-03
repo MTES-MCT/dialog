@@ -11,12 +11,14 @@ use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
+use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 
 final class GetOrCreateOrganizationBySiretCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
         private OrganizationRepositoryInterface $organizationRepository,
+        private OrganizationUserRepositoryInterface $organizationUserRepository,
         private DateUtilsInterface $dateUtils,
         private ApiOrganizationFetcherInterface $organizationFetcher,
     ) {
@@ -27,7 +29,6 @@ final class GetOrCreateOrganizationBySiretCommandHandler
         $siret = $command->siret;
         $organization = $this->organizationRepository->findOneBySiret($siret);
         $now = $this->dateUtils->getNow();
-        $isCreated = false;
 
         if (!$organization) {
             try {
@@ -36,7 +37,6 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                 throw $e;
             }
 
-            $isCreated = true;
             $organization = (new Organization($this->idFactory->make()))
                 ->setCreatedAt($now)
                 ->setSiret($siret)
@@ -45,6 +45,9 @@ final class GetOrCreateOrganizationBySiretCommandHandler
             $this->organizationRepository->add($organization);
         }
 
-        return new GetOrCreateOrganizationView($organization, $isCreated);
+        return new GetOrCreateOrganizationView(
+            organization: $organization,
+            hasOrganizationUsers: \count($this->organizationUserRepository->findByOrganizationUuid($organization->getUuid())) > 0,
+        );
     }
 }
