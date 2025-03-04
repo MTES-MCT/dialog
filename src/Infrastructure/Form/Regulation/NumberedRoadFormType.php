@@ -39,8 +39,12 @@ final class NumberedRoadFormType extends AbstractType
                 ],
             )
             ->add(
-                'fromPointNumberValue',
+                'fromPointNumber',
                 HiddenType::class,
+                options: [
+                    // Keep old 'fromPointNumber' name in HTML
+                    'property_path' => 'fromPointNumberValue',
+                ],
             )
             ->add(
                 'fromPointNumberDisplayedValue',
@@ -56,8 +60,12 @@ final class NumberedRoadFormType extends AbstractType
                 options: $this->getRoadSideOptions(),
             )
             ->add(
-                'toPointNumberValue',
+                'toPointNumber',
                 HiddenType::class,
+                options: [
+                    // Keep old 'fromPointNumber' name in HTML
+                    'property_path' => 'toPointNumberValue',
+                ],
             )
             ->add(
                 'toPointNumberDisplayedValue',
@@ -198,8 +206,8 @@ final class NumberedRoadFormType extends AbstractType
             'storage_areas' => [],
             'data_class' => SaveNumberedRoadCommand::class,
             'error_mapping' => [
-                'fromPointNumberValue' => 'fromPointNumberDisplayedValue',
-                'toPointNumberValue' => 'toPointNumberDisplayedValue',
+                'fromPointNumber' => 'fromPointNumberDisplayedValue',
+                'toPointNumber' => 'toPointNumberDisplayedValue',
             ],
         ]);
         $resolver->setAllowedTypes('roadType', 'string');

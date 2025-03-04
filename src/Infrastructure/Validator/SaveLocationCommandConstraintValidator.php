@@ -43,14 +43,14 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
             }
 
             if (!$command->$roadType->fromPointNumberValue) {
-                $this->context->buildViolation('regulation.location.pointNumberValue.error.blank')
-                    ->atPath("$roadType.fromPointNumberValue")
+                $this->context->buildViolation('regulation.location.pointNumber.error.blank')
+                    ->atPath("$roadType.fromPointNumber")
                     ->addViolation();
             }
 
             if (!$command->$roadType->toPointNumberValue) {
-                $this->context->buildViolation('regulation.location.pointNumberValue.error.blank')
-                    ->atPath("$roadType.toPointNumberValue")
+                $this->context->buildViolation('regulation.location.pointNumber.error.blank')
+                    ->atPath("$roadType.toPointNumber")
                     ->addViolation();
             }
         }

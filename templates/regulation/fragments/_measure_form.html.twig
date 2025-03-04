@@ -246,7 +246,7 @@
                     {% include 'regulation/_reference_point_fields.html.twig' with {
                         administrator: form[roadType].administrator,
                         roadNumber: form[roadType].roadNumber,
-                        pointNumberValue: form[roadType].fromPointNumberValue,
+                        pointNumber: form[roadType].fromPointNumber,
                         pointNumberDisplayedValue: form[roadType].fromPointNumberDisplayedValue,
                         side: form[roadType].fromSide,
                         abscissa: form[roadType].fromAbscissa,
@@ -264,13 +264,13 @@
                     {% include 'regulation/_reference_point_fields.html.twig' with {
                         administrator: form[roadType].administrator,
                         roadNumber: form[roadType].roadNumber,
-                        pointNumberValue: form[roadType].toPointNumberValue,
+                        pointNumber: form[roadType].toPointNumber,
                         pointNumberDisplayedValue: form[roadType].toPointNumberDisplayedValue,
                         side: form[roadType].toSide,
                         abscissa: form[roadType].toAbscissa,
                     } only %}
                 </div>
-            </fieldset>
+            </fieldset>.
             {{ form_row(form[roadType].direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
 
             {% if regulationSubject == 'winterMaintenance' %}

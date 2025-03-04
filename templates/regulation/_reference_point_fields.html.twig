@@ -18,14 +18,14 @@
     data-fetch-extra-query-params-value="{{ {
         administrator: '#' ~ administrator.vars.id,
         roadNumber: '#' ~ roadNumber.vars.id,
-        pointNumberValue: '#' ~ pointNumberValue.vars.id,
+        pointNumber: '#' ~ pointNumber.vars.id,
         currentOption: '#' ~ side.vars.id,
         targetId: side.vars.id,
     }|json_encode }}"
-    data-fetch-required-params-value="{{ ['administrator', 'roadNumber', 'pointNumberValue']|json_encode }}"
+    data-fetch-required-params-value="{{ ['administrator', 'roadNumber', 'pointNumber']|json_encode }}"
     data-action="autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
 >
-    {{ form_row(pointNumberValue, {
+    {{ form_row(pointNumber, {
         attr: {
             'data-autocomplete-target': 'hidden',
         },

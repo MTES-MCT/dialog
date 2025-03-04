@@ -29,7 +29,7 @@ final class ReferencePointSideOptionsFragmentController
         Request $request,
         #[MapQueryParameter] string $administrator,
         #[MapQueryParameter] string $roadNumber,
-        #[MapQueryParameter] string $pointNumberValue,
+        #[MapQueryParameter('pointNumber')] string $pointNumberValue,
         #[MapQueryParameter] string $currentOption,
         #[MapQueryParameter] string $targetId,
     ): Response {
