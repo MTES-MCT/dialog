@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\MyArea\Organization\VisaModel;
 
-use App\Application\CommandBusInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
 use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
@@ -21,7 +20,6 @@ final class VisaDetailController extends AbstractOrganizationController
 {
     public function __construct(
         private \Twig\Environment $twig,
-        private CommandBusInterface $commandBus,
         QueryBusInterface $queryBus,
         Security $security,
     ) {

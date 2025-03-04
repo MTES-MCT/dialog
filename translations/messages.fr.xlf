@@ -2421,6 +2421,10 @@
                 <source>visa.description</source>
                 <target>Description</target>
             </trans-unit>
+            <trans-unit id="visa.detail.title">
+                <source>visa.detail.title</source>
+                <target>Modèles de visas</target>
+            </trans-unit>
             <trans-unit id="visa.add.title">
                 <source>visa.add.title</source>
                 <target>Ajouter un modèle</target>

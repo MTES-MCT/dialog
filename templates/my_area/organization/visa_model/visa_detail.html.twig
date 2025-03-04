@@ -1,7 +1,6 @@
 {% extends 'layouts/layout.html.twig' %}
-{% set metaTitle = visaModel is defined ? visaModel.name : 'visa.add.title'|trans %}
 {% block title %}
-    {{ metaTitle }} - {{ parent() }}
+    {{ 'visa.detail.title'|trans }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
@@ -15,13 +14,12 @@
                     { title: 'user.myarea'|trans, path: 'app_my_area'},
                     { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
                     { title: 'visa.list.title'|trans, url: path('app_config_visa_models_list', {uuid: organization.uuid}), generatedPath: true },
-                    { title: metaTitle },
+                    { title: visaModel.name },
                 ]} %}
-                <h2>{{ metaTitle }}</h2>
+                <h2>{{ visaModel.name }}</h2>
 
-                <div class="app-card app-card--raised fr-mb-2w">
-                    <p>{{ visaModel.name }}</p>
-                    <p>{{ visaModel.description }}</p>
+                <div class="app-card app-card--raised fr-mb-2w fr-p-2w">
+                    {{ visaModel.description }}
                 </div>
                 <div class="app-card fr-mb-2w app-card--with-full-background">
                     <div class="app-card__header">
