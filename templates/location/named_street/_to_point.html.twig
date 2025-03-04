@@ -55,6 +55,7 @@
                 roadName: '#' ~ form.namedStreet.roadName.vars.id,
                 cityCode: '#' ~ form.namedStreet.cityCode.vars.id,
             }|json_encode }}"
+            data-autocomplete-required-params-value="{{ ['roadName', 'cityCode']|json_encode }}"
             data-autocomplete-min-length-value="3"
             data-autocomplete-delay-value="500"
             data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"

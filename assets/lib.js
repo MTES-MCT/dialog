@@ -31,30 +31,30 @@ function _displayAnyDebugExceptionPage(event) {
 
 /**
  * @param {HTMLElement} element 
- * @param {(target: HTMLElement) => void} postReset
+ * @param {(target: HTMLElement) => void} resetCallback
  * @returns {void}
  */
-export function resetFormControl(element, postReset = (target) => null) {
+export function resetFormControl(element, resetCallback = (_target) => null) {
     // No unified DOM interface exists to reset a form control.
     // So we must implement it on a case-by-case basis in JavaScript.
 
     if (element instanceof HTMLInputElement) {
         element.value = '';
-        postReset(element);
+        resetCallback(element);
         return;
     }
 
     if (element instanceof HTMLSelectElement) {
         element.selectedIndex = 0;
-        postReset(element);
+        resetCallback(element);
         return;
     }
 
     if (element instanceof HTMLFieldSetElement) {
         for (const subElement of element.elements) {
-            resetFormControl(subElement, postReset);
+            resetFormControl(subElement, resetCallback);
         }
-        postReset(element);
+        resetCallback(element);
         return;
     }
 
@@ -62,7 +62,7 @@ export function resetFormControl(element, postReset = (target) => null) {
         if (element.dataset.resetBehavior === 'click') {
             element.click();
         }
-        postReset(element);
+        resetCallback(element);
         return;
     }
 
@@ -80,4 +80,13 @@ export function respondToVisibility(element, callback) {
     }, options);
 
     observer.observe(element);
+}
+
+export const debounce = (fn, delay = 10) => {
+    let timeoutId = null;
+
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(fn, delay);
+    };
 }
