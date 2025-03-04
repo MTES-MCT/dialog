@@ -99,14 +99,14 @@ DiaLog achève en ce moment la phase de construction et débute la phase de dép
                 Léa L. - La développeuse back end
             </div>
             <div class="texte_membre">
-                Développeuse chez Fairness depuis août 2023 : c’est moi qui m’occupe de tout ce qui ne se voit pas derrière l’interface visible de DiaLog. Je suis passée par [Le Wagon](https://www.lewagon.com/fr), une programme reconversion d’un an. Auparavant je ne faisais pas du tout d’informatique : j’étais dans le secteur médical ! Mais je retrouve dans mon activité chez Fairness le côté intérêt général qui me plaît.
+                Développeuse chez Fairness depuis août 2023 : c’est moi qui m’occupe de tout ce qui ne se voit pas derrière l’interface visible de DiaLog. Je suis passée par [Le GRETA](https://www.greta-92.fr/4-nos-formations/11934-titre-professionnel-developpeur-web-et-web-mobile-7), un programme de reconversion d’un an. Auparavant je ne faisais pas du tout d’informatique : j’étais dans le secteur médical ! Mais je retrouve dans mon activité chez Fairness le côté intérêt général qui me plaît.
             </div>
             <div class="formation_membre">
-                Formation : Reconversion avec Le Wagon
+                Formation : Reconversion avec Le GRETA - Titre professionnel Développeur Web et Web Mobile
             </div>
         </div>
         <div class="photo_membre">
-            {% image "./img/Lea.png", "Placeholder", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
+            {% image "./img/PhotoLL.png", "Placeholder", [300, 800], "(max-width: 200px) 80vw, 200px", "photo" %}
         </div>
     </div>
 
