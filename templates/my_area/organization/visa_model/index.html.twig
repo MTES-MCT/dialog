@@ -51,7 +51,7 @@
                                         {{ visa.description|u.truncate(75, '...', false) }}</td>
                                     <td>
                                         <div class="fr-btns-group fr-btns-group--center fr-btns-group--inline-sm">
-                                            <a href="#" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline"></a>
+                                            <a href="{{ path('app_config_visa_models_detail', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline"></a>
                                             {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                                                 {% if visa.organizationUuid %}
                                                     <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_visa_models_edit', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">

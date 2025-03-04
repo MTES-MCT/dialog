@@ -1,0 +1,50 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = visaModel is defined ? visaModel.name : 'visa.add.title'|trans %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'visa.list.title'|trans, url: path('app_config_visa_models_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: metaTitle },
+                ]} %}
+                <h2>{{ metaTitle }}</h2>
+
+                <div class="app-card app-card--raised fr-mb-2w">
+                    <p>{{ visaModel.name }}</p>
+                    <p>{{ visaModel.description }}</p>
+                </div>
+                <div class="app-card fr-mb-2w app-card--with-full-background">
+                    <div class="app-card__header">
+                        <span class="app-card__img fr-icon-x-check fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
+                        <h3 class="app-card__title fr-h4 fr-mb-0">{{ 'visas.form.visas'|trans }}</h3>
+                    </div>
+                    <div class="app-card__content">
+                        <ul
+                            id="visa-list"
+                            class="fr-raw-list fr-fieldset__element"
+                            data-testid="visa-list"
+                            data-form-collection-target="collectionContainer"
+                        >
+                            {% for item in visaModel.visas %}
+                                <li class="app-card app-card--no-header fr-mb-2w">
+                                    {{ item }}
+                                </li>
+                            {% else %}
+                                {% do visaModel.visas.setRendered %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+        </div>
+    </section>
+{% endblock %}
