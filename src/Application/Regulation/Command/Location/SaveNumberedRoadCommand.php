@@ -31,6 +31,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public ?string $geometry = null;
     public ?Measure $measure;
     public ?Location $location = null;
+
     // FormType only
     public ?string $fromPointNumberValue = null;
     public ?string $fromPointNumberDisplayedValue = null;
@@ -40,29 +41,21 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public function __construct(
         public ?NumberedRoad $numberedRoad = null,
     ) {
-        $fromDepartmentCode = $numberedRoad?->getFromDepartmentCode();
-        $fromPointNumber = $numberedRoad?->getFromPointNumber();
-        $toDepartmentCode = $numberedRoad?->getToDepartmentCode();
-        $toPointNumber = $numberedRoad?->getToPointNumber();
-
         $this->administrator = $numberedRoad?->getAdministrator();
         $this->roadNumber = $numberedRoad?->getRoadNumber();
         $this->fromSide = $numberedRoad?->getFromSide();
-        $this->fromDepartmentCode = $fromDepartmentCode;
-        $this->fromPointNumber = $fromPointNumber;
+        $this->fromDepartmentCode = $numberedRoad?->getFromDepartmentCode();
+        $this->fromPointNumber = $numberedRoad?->getFromPointNumber();
         $this->fromAbscissa = $numberedRoad?->getFromAbscissa();
-        $this->toDepartmentCode = $toDepartmentCode;
-        $this->toPointNumber = $toPointNumber;
+        $this->toDepartmentCode = $numberedRoad?->getToDepartmentCode();
+        $this->toPointNumber = $numberedRoad?->getToPointNumber();
         $this->toAbscissa = $numberedRoad?->getToAbscissa();
         $this->toSide = $numberedRoad?->getToSide();
         $this->direction = $numberedRoad?->getDirection() ?? DirectionEnum::BOTH->value;
         $this->storageArea = $numberedRoad?->getLocation()?->getStorageArea();
         $this->roadType = $numberedRoad?->getLocation()?->getRoadType();
 
-        $this->fromPointNumberValue = self::encodePointNumberValue($fromDepartmentCode, $fromPointNumber);
-        $this->fromPointNumberDisplayedValue = self::encodePointNumberDisplayedValue($fromDepartmentCode, $fromPointNumber);
-        $this->toPointNumberValue = self::encodePointNumberValue($toDepartmentCode, $toPointNumber);
-        $this->toPointNumberDisplayedValue = self::encodePointNumberDisplayedValue($toDepartmentCode, $toPointNumber);
+        $this->prepareReferencePoints();
     }
 
     public static function encodePointNumberValue(?string $departmentCode, ?string $pointNumber): ?string
@@ -125,6 +118,14 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public function getGeometryQuery(): QueryInterface
     {
         return new GetNumberedRoadGeometryQuery($this, $this->location, $this->geometry);
+    }
+
+    public function prepareReferencePoints(): void
+    {
+        $this->fromPointNumberValue = self::encodePointNumberValue($this->fromDepartmentCode, $this->fromPointNumber);
+        $this->fromPointNumberDisplayedValue = self::encodePointNumberDisplayedValue($this->fromDepartmentCode, $this->fromPointNumber);
+        $this->toPointNumberValue = self::encodePointNumberValue($this->toDepartmentCode, $this->toPointNumber);
+        $this->toPointNumberDisplayedValue = self::encodePointNumberDisplayedValue($this->toDepartmentCode, $this->toPointNumber);
     }
 
     public function clean(): void
