@@ -48,10 +48,11 @@
                                         {% if not visa.organizationUuid %}<span class="fr-tag fr-tag--sm">DiaLog</span>{% endif %}
                                     </td>
                                     <td>
-                                        {{ visa.description|u.truncate(50, '...', false) }}</td>
+                                        {{ visa.description|u.truncate(75, '...', false) }}</td>
                                     <td>
-                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                                            <div class="fr-btns-group fr-btns-group--center fr-btns-group--inline-sm">
+                                        <div class="fr-btns-group fr-btns-group--center fr-btns-group--inline-sm">
+                                            <a href="#" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline"></a>
+                                            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                                                 {% if visa.organizationUuid %}
                                                     <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_visa_models_edit', { uuid: visa.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                                                         {{ 'common.update'|trans }}
@@ -93,8 +94,9 @@
                                                         <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
                                                     </form>
                                                 {% endif %}
-                                            </div>
-                                        {% endif %}
+                                            
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
