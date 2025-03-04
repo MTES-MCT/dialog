@@ -40,6 +40,14 @@ final class NumberedRoadFormType extends AbstractType
             )
             ->add(
                 'fromPointNumber',
+                HiddenType::class,
+                options: [
+                    // Keep old 'fromPointNumber' name in HTML
+                    'property_path' => 'fromPointNumberValue',
+                ],
+            )
+            ->add(
+                'fromPointNumberDisplayedValue',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
@@ -53,6 +61,14 @@ final class NumberedRoadFormType extends AbstractType
             )
             ->add(
                 'toPointNumber',
+                HiddenType::class,
+                options: [
+                    // Keep old 'fromPointNumber' name in HTML
+                    'property_path' => 'toPointNumberValue',
+                ],
+            )
+            ->add(
+                'toPointNumberDisplayedValue',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
@@ -189,6 +205,10 @@ final class NumberedRoadFormType extends AbstractType
             'administrators' => [],
             'storage_areas' => [],
             'data_class' => SaveNumberedRoadCommand::class,
+            'error_mapping' => [
+                'fromPointNumber' => 'fromPointNumberDisplayedValue',
+                'toPointNumber' => 'toPointNumberDisplayedValue',
+            ],
         ]);
         $resolver->setAllowedTypes('roadType', 'string');
         $resolver->setAllowedTypes('administrators', 'array');
