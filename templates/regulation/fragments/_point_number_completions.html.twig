@@ -1,7 +1,5 @@
 {% for result in results %}
-    <li role="option" data-autocomplete-value="{{ result.value }}">
-        {{ result.pointNumber }} ({{ result.departmentCode }})
-    </li>
+    <li role="option" data-autocomplete-value="{{ result.value }}">{{ result.label }}</li>
 {% endfor %}
 
 <template id="status">

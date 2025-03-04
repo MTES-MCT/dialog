@@ -67,7 +67,8 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
 
     public static function encodePointNumberValue(?string $departmentCode, ?string $pointNumber): ?string
     {
-        if (empty($pointNumber)) {
+        // WARNING (1): empty($pointNumber) ne convient pas car '0' est un PR valide mais empty('0') renvoie true en PHP.
+        if ($pointNumber === null || $pointNumber === '') {
             return null;
         }
 
@@ -80,7 +81,8 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
 
     public static function decodePointNumberValue(?string $value): array
     {
-        if (empty($value)) {
+        // WARNING: idem que (1).
+        if ($value === null || $value === '') {
             return [null, null];
         }
 
@@ -88,12 +90,21 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         // '122#22' -> ['22', '122']
         $parts = explode('##', $value, 2);
 
-        return \count($parts) === 2 ? $parts : [null, $value];
+        if (\count($parts) === 2) {
+            [$departmentCode, $pointNumber] = $parts;
+
+            return [$departmentCode, $pointNumber];
+        }
+
+        $pointNumber = $value;
+
+        return [null, $pointNumber];
     }
 
     public static function encodePointNumberDisplayedValue(?string $departmentCode, ?string $pointNumber): ?string
     {
-        if (empty($pointNumber)) {
+        // WARNING: idem que (1).
+        if ($pointNumber === null || $pointNumber === '') {
             return null;
         }
 
