@@ -115,6 +115,10 @@
                 <source>common.invite</source>
                 <target>Inviter</target>
             </trans-unit>
+            <trans-unit id="common.detail">
+                <source>common.detail</source>
+                <target>Affiche détails</target>
+            </trans-unit>
             <trans-unit id="common.update">
                 <source>common.update</source>
                 <target>Modifier</target>
