@@ -18,10 +18,10 @@
                 ]} %}
                 <h2>{{ visaModel.name }}</h2>
 
-                <div class="app-card app-card--raised fr-mb-2w fr-p-2w">
+                <div class="fr-mb-2w fr-p-2w">
                     {{ visaModel.description }}
                 </div>
-                <div class="app-card fr-mb-2w app-card--with-full-background">
+                <div class="app-card app-card--with-full-background">
                     <div class="app-card__header">
                         <span class="app-card__img fr-icon-x-check fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
                         <h3 class="app-card__title fr-h4 fr-mb-0">{{ 'visas.form.visas'|trans }}</h3>
@@ -34,7 +34,7 @@
                             data-form-collection-target="collectionContainer"
                         >
                             {% for item in visaModel.visas %}
-                                <li class="app-card app-card--no-header fr-mb-2w">
+                                <li class="app-card fr-mb-2w fr-background-alt--grey">
                                     {{ item }}
                                 </li>
                             {% else %}
