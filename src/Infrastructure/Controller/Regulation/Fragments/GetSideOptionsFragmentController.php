@@ -6,13 +6,14 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\UX\Turbo\TurboBundle;
 
-final class ReferencePointSideOptionsFragmentController
+final class GetSideOptionsFragmentController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -21,8 +22,8 @@ final class ReferencePointSideOptionsFragmentController
     }
 
     #[Route(
-        '/_fragment/reference_point/side/options',
-        name: 'fragment_reference_point_side_options',
+        '/_fragment/side-options',
+        name: 'fragment_side_options',
         methods: ['GET'],
     )]
     public function __invoke(
@@ -33,6 +34,10 @@ final class ReferencePointSideOptionsFragmentController
         #[MapQueryParameter] string $currentOption,
         #[MapQueryParameter] string $targetId,
     ): Response {
+        if (!$administrator || !$roadNumber || !$pointNumberValue) {
+            throw new BadRequestException();
+        }
+
         [$departmentCode, $pointNumber] = SaveNumberedRoadCommand::decodePointNumberValue($pointNumberValue);
 
         $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $departmentCode, $pointNumber);
@@ -41,7 +46,7 @@ final class ReferencePointSideOptionsFragmentController
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_reference_point_side_options.stream.html.twig',
+                name: 'regulation/fragments/_side_options.stream.html.twig',
                 context: [
                     'sides' => $sides,
                     'currentOption' => $currentOption,

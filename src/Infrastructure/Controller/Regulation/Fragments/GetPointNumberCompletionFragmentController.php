@@ -19,8 +19,8 @@ final class GetPointNumberCompletionFragmentController
 
     #[Route(
         '/_fragment/point-number-completions',
-        methods: 'GET',
         name: 'fragment_point_number_completion',
+        methods: ['GET'],
     )]
     public function __invoke(
         #[MapQueryParameter] string $search,

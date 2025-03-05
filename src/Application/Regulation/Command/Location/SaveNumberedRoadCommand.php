@@ -43,9 +43,9 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     ) {
         $this->administrator = $numberedRoad?->getAdministrator();
         $this->roadNumber = $numberedRoad?->getRoadNumber();
-        $this->fromSide = $numberedRoad?->getFromSide();
         $this->fromDepartmentCode = $numberedRoad?->getFromDepartmentCode();
         $this->fromPointNumber = $numberedRoad?->getFromPointNumber();
+        $this->fromSide = $numberedRoad?->getFromSide();
         $this->fromAbscissa = $numberedRoad?->getFromAbscissa();
         $this->toDepartmentCode = $numberedRoad?->getToDepartmentCode();
         $this->toPointNumber = $numberedRoad?->getToPointNumber();

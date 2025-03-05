@@ -4,7 +4,6 @@ import { debounce, respondToVisibility } from '../lib';
 export default class extends Controller {
     static values = {
         url: String,
-        delay: { type: Number, default: 300 },
         extraQueryParams: { type: String, default: undefined },
         requiredParams: { type: String, default: undefined }, // Use to avoid unecessary requests
         prefetch: { type: Boolean, default: false },
