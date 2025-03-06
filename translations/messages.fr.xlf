@@ -115,6 +115,10 @@
                 <source>common.invite</source>
                 <target>Inviter</target>
             </trans-unit>
+            <trans-unit id="common.detail">
+                <source>common.detail</source>
+                <target>Affiche détails</target>
+            </trans-unit>
             <trans-unit id="common.update">
                 <source>common.update</source>
                 <target>Modifier</target>
@@ -2420,6 +2424,10 @@
             <trans-unit id="visa.description">
                 <source>visa.description</source>
                 <target>Description</target>
+            </trans-unit>
+            <trans-unit id="visa.detail.title">
+                <source>visa.detail.title</source>
+                <target>Modèles de visas</target>
             </trans-unit>
             <trans-unit id="visa.add.title">
                 <source>visa.add.title</source>

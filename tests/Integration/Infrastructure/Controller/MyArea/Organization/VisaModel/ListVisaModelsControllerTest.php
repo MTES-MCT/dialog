@@ -27,7 +27,7 @@ final class ListVisaModelsControllerTest extends AbstractWebTestCase
         $this->assertCount(2, $users->filter('tr'));
 
         $this->assertSame('Réglementation de vitesse en agglomération DiaLog', $tr0->eq(0)->text());
-        $this->assertSame('Limitation de vitesse dans toute la commune de l\'agglomération...', $tr0->eq(1)->text());
+        $this->assertSame('Limitation de vitesse dans toute la commune de l\'agglomération truc muche', $tr0->eq(1)->text());
         $this->assertSame('Interdiction de circulation', $tr1->eq(0)->text());
         $this->assertSame('Interdiction pour tous les véhicules', $tr1->eq(1)->text());
     }
