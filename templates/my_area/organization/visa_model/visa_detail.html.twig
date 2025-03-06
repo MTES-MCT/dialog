@@ -1,0 +1,45 @@
+{% extends 'layouts/layout.html.twig' %}
+{% block title %}
+    {{ 'visa.detail.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'visa.list.title'|trans, url: path('app_config_visa_models_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: visaModel.name },
+                ]} %}
+                <h2>{{ visaModel.name }}</h2>
+
+                <div class="fr-mb-2w fr-p-2w">
+                    {{ visaModel.description }}
+                </div>
+                <div class="app-card app-card--with-full-background">
+                    <div class="app-card__header">
+                        <span class="app-card__img fr-icon-x-check fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
+                        <h3 class="app-card__title fr-h4 fr-mb-0">{{ 'visas.form.visas'|trans }}</h3>
+                    </div>
+                    <div class="app-card__content">
+                        <ul
+                            id="visa-list"
+                            class="fr-raw-list fr-fieldset__element"
+                            data-testid="visa-list"
+                        >
+                            {% for item in visaModel.visas %}
+                                <li class="app-card fr-mb-2w fr-background-alt--grey">
+                                    {{ item }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+        </div>
+    </section>
+{% endblock %}
