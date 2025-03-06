@@ -2,7 +2,7 @@
 
 * Date : 2024-07-11
 * Personnes impliquées : Florimond Manca (auteur principal), équipe DiaLog (relecture)
-* Statut : BROUILLON <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
+* Statut : ACCEPTÉ <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
 
 **Table des matières**
 
