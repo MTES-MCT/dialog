@@ -12,12 +12,12 @@ class SigningAuthority
         private string $uuid,
         private string $name,
         private string $address,
-        private ?string $roadName = null,
-        private ?string $cityCode = null,
-        private ?string $cityLabel = null,
         private string $placeOfSignature,
         private string $signatoryName,
         private Organization $organization,
+        private ?string $roadName = null,
+        private ?string $cityCode = null,
+        private ?string $cityLabel = null,
     ) {
     }
 
@@ -69,11 +69,17 @@ class SigningAuthority
     public function update(
         string $name,
         string $address,
+        string $roadName,
+        string $cityCode,
+        string $cityLabel,
         string $placeOfSignature,
         string $signatoryName,
     ): void {
         $this->name = $name;
         $this->address = $address;
+        $this->roadName = $roadName;
+        $this->cityCode = $cityCode;
+        $this->cityLabel = $cityLabel;
         $this->placeOfSignature = $placeOfSignature;
         $this->signatoryName = $signatoryName;
     }
