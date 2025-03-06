@@ -12,6 +12,9 @@ class SigningAuthority
         private string $uuid,
         private string $name,
         private string $address,
+        private ?string $roadName = null,
+        private ?string $cityCode = null,
+        private ?string $cityLabel = null,
         private string $placeOfSignature,
         private string $signatoryName,
         private Organization $organization,
@@ -31,6 +34,21 @@ class SigningAuthority
     public function getAddress(): string
     {
         return $this->address;
+    }
+
+    public function getRoadName(): ?string
+    {
+        return $this->roadName;
+    }
+
+    public function getCityCode(): ?string
+    {
+        return $this->cityCode;
+    }
+
+    public function getCityLabel(): ?string
+    {
+        return $this->cityLabel;
     }
 
     public function getPlaceOfSignature(): string
