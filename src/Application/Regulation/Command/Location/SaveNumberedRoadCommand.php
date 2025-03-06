@@ -105,7 +105,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
             return $pointNumber;
         }
 
-        return \sprintf('%s (%s)', $pointNumber, $departmentCode);
+        return \sprintf('%s (dép %s)', $pointNumber, $departmentCode);
     }
 
     // Road command interface

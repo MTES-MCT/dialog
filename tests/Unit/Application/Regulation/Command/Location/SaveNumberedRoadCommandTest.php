@@ -13,7 +13,7 @@ final class SaveNumberedRoadCommandTest extends TestCase
     private function provideEncodePointNumbers(): array
     {
         return [
-            'all-values' => ['07', '12', '08', '2', '07##12', '12 (07)', '08##2', '2 (08)'],
+            'all-values' => ['07', '12', '08', '2', '07##12', '12 (dép 07)', '08##2', '2 (dép 08)'],
             'departmentCode-null' => [null, '12', null, '2', '12', '12', '2', '2'], // For historical data
             'pointNumber-null' => ['07', null, '08', null, null, null, null, null], // For empty data
             'pointNumber-zero' => ['0', null, '00', null, null, null, null, null], // Special regression test case, avoid use of empty('0')

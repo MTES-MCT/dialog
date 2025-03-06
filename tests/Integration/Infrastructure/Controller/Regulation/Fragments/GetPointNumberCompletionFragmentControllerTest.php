@@ -20,7 +20,7 @@ final class GetPointNumberCompletionFragmentControllerTest extends AbstractWebTe
         $options = $crawler->filter('li[role="option"]');
         $this->assertSame(329, $options->count());
 
-        $this->assertSame('0 (22)', $options->first()->text());
+        $this->assertSame('0 (dép 22)', $options->first()->text());
         $this->assertSame('22##0', $options->first()->attr('data-autocomplete-value'));
 
         // Les options doivent être triées par PR croissant puis par département croissant
@@ -56,11 +56,19 @@ final class GetPointNumberCompletionFragmentControllerTest extends AbstractWebTe
 
         $this->assertSame('8 résultats', $crawler->filter('template[id="status"]')->text());
         $options = $crawler->filter('li[role="option"]');
-        $this->assertSame(8, $options->count());
-
-        $options->each(function ($node) {
-            $this->assertStringStartsWith('12', $node->text());
-        });
+        $this->assertEquals(
+            [
+                '12 (dép 22)',
+                '12 (dép 29)',
+                '12 (dép 35)',
+                '12 (dép 53)',
+                '120',
+                '121',
+                '122',
+                '123',
+            ],
+            $options->each(fn ($node) => $node->text()),
+        );
     }
 
     public function testCompletionNoResults(): void

@@ -145,7 +145,15 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 'SELECT
                     DISTINCT p.numero AS point_number,
                     p.numero::integer AS _point_number_int, -- Must be selected because appears in ORDER BY
-                    p.code_insee_du_departement as department_code
+                    p.code_insee_du_departement as department_code,
+                    (
+                        SELECT COUNT(DISTINCT(pp.code_insee_du_departement))
+                        FROM point_de_repere AS pp
+                        WHERE pp.numero = p.numero
+                        AND pp.gestionnaire = p.gestionnaire
+                        AND pp.route = p.route
+                        AND pp.type_de_pr LIKE \'PR%\'
+                    ) AS num_departments
                 FROM point_de_repere AS p
                 WHERE p.numero LIKE :numero_pattern
                 AND p.gestionnaire = :gestionnaire
@@ -166,9 +174,16 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         $results = [];
 
         foreach ($rows as $row) {
+            $value = SaveNumberedRoadCommand::encodePointNumberValue($row['department_code'], $row['point_number']);
+
+            $label = SaveNumberedRoadCommand::encodePointNumberDisplayedValue(
+                $row['num_departments'] > 1 ? $row['department_code'] : null,
+                $row['point_number'],
+            );
+
             $results[] = [
-                'value' => SaveNumberedRoadCommand::encodePointNumberValue($row['department_code'], $row['point_number']),
-                'label' => SaveNumberedRoadCommand::encodePointNumberDisplayedValue($row['department_code'], $row['point_number']),
+                'value' => $value,
+                'label' => $label,
             ];
         }
 
