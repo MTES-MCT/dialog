@@ -15,6 +15,9 @@ class SigningAuthority
         private string $placeOfSignature,
         private string $signatoryName,
         private Organization $organization,
+        private ?string $roadName = null,
+        private ?string $cityCode = null,
+        private ?string $cityLabel = null,
     ) {
     }
 
@@ -31,6 +34,21 @@ class SigningAuthority
     public function getAddress(): string
     {
         return $this->address;
+    }
+
+    public function getRoadName(): ?string
+    {
+        return $this->roadName;
+    }
+
+    public function getCityCode(): ?string
+    {
+        return $this->cityCode;
+    }
+
+    public function getCityLabel(): ?string
+    {
+        return $this->cityLabel;
     }
 
     public function getPlaceOfSignature(): string
@@ -51,11 +69,17 @@ class SigningAuthority
     public function update(
         string $name,
         string $address,
+        ?string $roadName,
+        ?string $cityCode,
+        ?string $cityLabel,
         string $placeOfSignature,
         string $signatoryName,
     ): void {
         $this->name = $name;
         $this->address = $address;
+        $this->roadName = $roadName;
+        $this->cityCode = $cityCode;
+        $this->cityLabel = $cityLabel;
         $this->placeOfSignature = $placeOfSignature;
         $this->signatoryName = $signatoryName;
     }
