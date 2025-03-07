@@ -69,9 +69,9 @@ class SigningAuthority
     public function update(
         string $name,
         string $address,
-        string $roadName,
-        string $cityCode,
-        string $cityLabel,
+        ?string $roadName,
+        ?string $cityCode,
+        ?string $cityLabel,
         string $placeOfSignature,
         string $signatoryName,
     ): void {

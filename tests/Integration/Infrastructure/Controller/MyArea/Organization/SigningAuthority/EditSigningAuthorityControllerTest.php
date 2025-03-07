@@ -9,6 +9,10 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
 {
+    /**
+     * @group only
+     * @return void
+     */
     public function testEdit(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
@@ -31,7 +35,7 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $client->followRedirect();
-
+//erreur ici la pas de redirection ?
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_config_signing_authority_detail');
     }
