@@ -10,7 +10,9 @@ use App\Application\IdFactoryInterface;
 use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommandHandler;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
+use App\Application\Organization\View\OrganizationFetchedView;
 use App\Application\User\View\OrganizationUserView;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
@@ -126,7 +128,10 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
     {
         $now = new \DateTimeImmutable('2024-05-07');
         $orgUuid = 'd145a0e3-e397-412c-ba6a-90b150f7aec2';
-        $orgName = 'Fairness';
+        $orgName = 'Comune de Saint Ouen';
+        $orgCode = '22930008201453';
+        $orgCodeType = OrganizationCodeTypeEnum::INSEE->value;
+        $orgGeometry = 'POINT(2.3 48.9)';
 
         $this->organizationRepository
             ->expects(self::once())
@@ -134,11 +139,18 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->with($this->siret)
             ->willReturn(null);
 
+        $organizationFetchedView = new OrganizationFetchedView(
+            name: $orgName,
+            code: $orgCode,
+            codeType: $orgCodeType,
+            geometry: $orgGeometry,
+        );
+
         $this->organizationFetcher
             ->expects(self::once())
             ->method('findBySiret')
             ->with($this->siret)
-            ->willReturn(['name' => $orgName]);
+            ->willReturn($organizationFetchedView);
 
         $this->dateUtils
             ->expects(self::once())
@@ -153,7 +165,10 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
         $expectedOrganization = (new Organization($orgUuid))
             ->setCreatedAt($now)
             ->setSiret($this->siret)
-            ->setName($orgName);
+            ->setName($orgName)
+            ->setCode($orgCode)
+            ->setCodeType($orgCodeType)
+            ->setGeometry($orgGeometry);
 
         $this->organizationRepository
             ->expects(self::once())
@@ -183,11 +198,12 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->with($this->siret)
             ->willReturn(null);
 
+        $exception = new OrganizationNotFoundException();
         $this->organizationFetcher
             ->expects(self::once())
             ->method('findBySiret')
             ->with($this->siret)
-            ->willThrowException(new OrganizationNotFoundException());
+            ->willThrowException($exception);
 
         $this->dateUtils
             ->expects(self::once())
