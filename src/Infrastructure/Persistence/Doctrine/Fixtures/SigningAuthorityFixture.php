@@ -18,13 +18,12 @@ final class SigningAuthorityFixture extends Fixture implements DependentFixtureI
             uuid: '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
             name: 'Monsieur le maire de Savenay',
             address: '3 rue de la Concertation',
-            roadName: '',
-            cityCode: '',
-            cityLabel: '',
-
             placeOfSignature: 'Savenay',
             signatoryName: 'Monsieur X, Maire de Savenay',
             organization: $this->getReference('mainOrg', Organization::class),
+            roadName: null,
+            cityCode: null,
+            cityLabel: null,
         );
 
         $manager->persist($signatoryAuthority);

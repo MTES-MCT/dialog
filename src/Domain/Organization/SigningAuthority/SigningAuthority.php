@@ -69,18 +69,18 @@ class SigningAuthority
     public function update(
         string $name,
         string $address,
+        string $placeOfSignature,
+        string $signatoryName,
         ?string $roadName,
         ?string $cityCode,
         ?string $cityLabel,
-        string $placeOfSignature,
-        string $signatoryName,
     ): void {
         $this->name = $name;
         $this->address = $address;
+        $this->placeOfSignature = $placeOfSignature;
+        $this->signatoryName = $signatoryName;
         $this->roadName = $roadName;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
-        $this->placeOfSignature = $placeOfSignature;
-        $this->signatoryName = $signatoryName;
     }
 }

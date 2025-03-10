@@ -71,9 +71,6 @@ final class SaveSigningAuthorityCommandHandlerTest extends TestCase
             ->with(
                 'Madame la maire de Savenay',
                 '4 rue de la Concertation',
-                '',
-                '',
-                '',
                 'Savenay',
                 'Madame X, Maire de Savenay',
             );
@@ -94,9 +91,6 @@ final class SaveSigningAuthorityCommandHandlerTest extends TestCase
         $command = new SaveSigningAuthorityCommand($organization, $signingAuthority);
         $command->name = 'Madame la maire de Savenay';
         $command->address = '4 rue de la Concertation';
-        $command->roadName = '';
-        $command->cityCode = '';
-        $command-> cityLabel= '';
         $command->placeOfSignature = 'Savenay';
         $command->signatoryName = 'Madame X, Maire de Savenay';
 
