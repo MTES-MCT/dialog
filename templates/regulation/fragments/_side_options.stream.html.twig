@@ -1,0 +1,9 @@
+<turbo-stream action="update" target="{{ targetId }}">
+    <template>
+        {% for side in sides %}
+            <option value="{{ side }}" {% if side == currentOption %}selected{% endif %}>
+                {{ ('regulation.location.road.side.' ~ side)|trans }}
+            </option>
+        {% endfor %}
+    </template>
+</turbo-stream>

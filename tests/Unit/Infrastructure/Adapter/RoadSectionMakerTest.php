@@ -34,9 +34,11 @@ final class RoadSectionMakerTest extends TestCase
         $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $administrator = 'Ardèche';
         $roadNumber = 'D110';
+        $fromDepartmentCode = null;
         $fromPointNumber = '1';
         $fromSide = 'U';
         $fromAbscissa = 0;
+        $toDepartmentCode = null;
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
@@ -53,8 +55,8 @@ final class RoadSectionMakerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeReferencePoint')
             ->withConsecutive(
-                [$roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa],
-                [$roadType, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa],
+                [$roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa],
+                [$roadType, $administrator, $roadNumber, $toDepartmentCode, $toPointNumber, $toSide, $toAbscissa],
             )
             ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
 
@@ -71,9 +73,11 @@ final class RoadSectionMakerTest extends TestCase
                 $roadType,
                 $administrator,
                 $roadNumber,
+                $fromDepartmentCode,
                 $fromPointNumber,
                 $fromSide,
                 $fromAbscissa,
+                $toDepartmentCode,
                 $toPointNumber,
                 $toSide,
                 $toAbscissa,
@@ -90,9 +94,11 @@ final class RoadSectionMakerTest extends TestCase
         $fullDepartmentalRoadGeometry = 'geometry';
         $administrator = 'Ardèche';
         $roadNumber = 'D110';
+        $fromDepartmentCode = null;
         $fromPointNumber = '1';
         $fromSide = 'U';
         $fromAbscissa = 1000000000;
+        $toDepartmentCode = null;
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
@@ -108,7 +114,7 @@ final class RoadSectionMakerTest extends TestCase
         $geocoder
             ->expects(self::once())
             ->method('computeReferencePoint')
-            ->with($roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa)
+            ->with($roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa)
             ->willThrowException(new AbscissaOutOfRangeException($roadType));
 
         $lineSectionMaker
@@ -120,9 +126,11 @@ final class RoadSectionMakerTest extends TestCase
             $roadType,
             $administrator,
             $roadNumber,
+            $fromDepartmentCode,
             $fromPointNumber,
             $fromSide,
             $fromAbscissa,
+            $toDepartmentCode,
             $toPointNumber,
             $toSide,
             $toAbscissa,
@@ -138,9 +146,11 @@ final class RoadSectionMakerTest extends TestCase
         $fullDepartmentalRoadGeometry = 'geometry';
         $administrator = 'Ardèche';
         $roadNumber = 'D110';
+        $fromDepartmentCode = null;
         $fromPointNumber = '1';
         $fromSide = 'U';
         $fromAbscissa = 1;
+        $toDepartmentCode = null;
         $toPointNumber = '5';
         $toAbscissa = 15000000;
         $toSide = 'U';
@@ -174,9 +184,11 @@ final class RoadSectionMakerTest extends TestCase
             $roadType,
             $administrator,
             $roadNumber,
+            $fromDepartmentCode,
             $fromPointNumber,
             $fromSide,
             $fromAbscissa,
+            $toDepartmentCode,
             $toPointNumber,
             $toSide,
             $toAbscissa,
@@ -192,9 +204,11 @@ final class RoadSectionMakerTest extends TestCase
         $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $administrator = 'Ardèche';
         $roadNumber = 'D110';
+        $fromDepartmentCode = null;
         $fromPointNumber = '1';
         $fromSide = 'U';
         $fromAbscissa = 0;
+        $toDepartmentCode = null;
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
@@ -227,9 +241,11 @@ final class RoadSectionMakerTest extends TestCase
             $roadType,
             $administrator,
             $roadNumber,
+            $fromDepartmentCode,
             $fromPointNumber,
             $fromSide,
             $fromAbscissa,
+            $toDepartmentCode,
             $toPointNumber,
             $toSide,
             $toAbscissa,
@@ -245,9 +261,11 @@ final class RoadSectionMakerTest extends TestCase
         $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $administrator = 'Ardèche';
         $roadNumber = 'D110';
+        $fromDepartmentCode = null;
         $fromPointNumber = '1';
         $fromSide = 'U';
         $fromAbscissa = 0;
+        $toDepartmentCode = null;
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
@@ -275,9 +293,11 @@ final class RoadSectionMakerTest extends TestCase
             $roadType,
             $administrator,
             $roadNumber,
+            $fromDepartmentCode,
             $fromPointNumber,
             $fromSide,
             $fromAbscissa,
+            $toDepartmentCode,
             $toPointNumber,
             $toSide,
             $toAbscissa,
@@ -320,9 +340,11 @@ final class RoadSectionMakerTest extends TestCase
         $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $administrator = 'Ardèche';
         $roadNumber = 'D110';
+        $fromDepartmentCode = null;
         $fromPointNumber = '1';
         $fromSide = 'U';
         $fromAbscissa = 0;
+        $toDepartmentCode = null;
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
@@ -338,8 +360,8 @@ final class RoadSectionMakerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('computeReferencePoint')
             ->withConsecutive(
-                [$roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa],
-                [$roadType, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa],
+                [$roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa],
+                [$roadType, $administrator, $roadNumber, $toDepartmentCode, $toPointNumber, $toSide, $toAbscissa],
             )
             ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
 
@@ -354,9 +376,11 @@ final class RoadSectionMakerTest extends TestCase
             $roadType,
             $administrator,
             $roadNumber,
+            $fromDepartmentCode,
             $fromPointNumber,
             $fromSide,
             $fromAbscissa,
+            $toDepartmentCode,
             $toPointNumber,
             $toSide,
             $toAbscissa,

@@ -21,9 +21,11 @@ final class NumberedRoadTest extends TestCase
             direction: DirectionEnum::BOTH->value,
             administrator: 'Ardèche',
             roadNumber: 'D110',
+            fromDepartmentCode: null,
             fromPointNumber: '14',
             fromAbscissa: 650,
             fromSide: 'U',
+            toDepartmentCode: null,
             toPointNumber: '16',
             toAbscissa: 250,
             toSide: 'U',
@@ -34,9 +36,11 @@ final class NumberedRoadTest extends TestCase
         $this->assertSame(DirectionEnum::BOTH->value, $numberedRoad->getDirection());
         $this->assertSame('Ardèche', $numberedRoad->getAdministrator());
         $this->assertSame('D110', $numberedRoad->getRoadNumber());
+        $this->assertSame(null, $numberedRoad->getFromDepartmentCode());
         $this->assertSame('14', $numberedRoad->getFromPointNumber());
         $this->assertSame(650, $numberedRoad->getFromAbscissa());
         $this->assertSame('U', $numberedRoad->getFromSide());
+        $this->assertSame(null, $numberedRoad->getToDepartmentCode());
         $this->assertSame('16', $numberedRoad->getToPointNumber());
         $this->assertSame(250, $numberedRoad->getToAbscissa());
         $this->assertSame('U', $numberedRoad->getToSide());
@@ -45,9 +49,11 @@ final class NumberedRoadTest extends TestCase
             DirectionEnum::B_TO_A->value,
             'Ain',
             'D16',
+            '01',
             '10',
             'D',
             0,
+            '01',
             '12',
             'D',
             0,
@@ -56,9 +62,11 @@ final class NumberedRoadTest extends TestCase
         $this->assertSame(DirectionEnum::B_TO_A->value, $numberedRoad->getDirection());
         $this->assertSame('Ain', $numberedRoad->getAdministrator());
         $this->assertSame('D16', $numberedRoad->getRoadNumber());
+        $this->assertSame('01', $numberedRoad->getFromDepartmentCode());
         $this->assertSame('10', $numberedRoad->getFromPointNumber());
         $this->assertSame('D', $numberedRoad->getFromSide());
         $this->assertSame(0, $numberedRoad->getFromAbscissa());
+        $this->assertSame('01', $numberedRoad->getToDepartmentCode());
         $this->assertSame('12', $numberedRoad->getToPointNumber());
         $this->assertSame(0, $numberedRoad->getToAbscissa());
         $this->assertSame('D', $numberedRoad->getToSide());
