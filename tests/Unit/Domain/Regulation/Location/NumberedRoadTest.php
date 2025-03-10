@@ -71,4 +71,14 @@ final class NumberedRoadTest extends TestCase
         $this->assertSame(0, $numberedRoad->getToAbscissa());
         $this->assertSame('D', $numberedRoad->getToSide());
     }
+
+    public function testIsPointNumberEmpty(): void
+    {
+        $this->assertTrue(NumberedRoad::isPointNumberEmpty(''));
+        $this->assertTrue(NumberedRoad::isPointNumberEmpty(null));
+        $this->assertFalse(NumberedRoad::isPointNumberEmpty('0'));
+        $this->assertFalse(NumberedRoad::isPointNumberEmpty('00'));
+        $this->assertFalse(NumberedRoad::isPointNumberEmpty('1'));
+        $this->assertFalse(NumberedRoad::isPointNumberEmpty('123'));
+    }
 }

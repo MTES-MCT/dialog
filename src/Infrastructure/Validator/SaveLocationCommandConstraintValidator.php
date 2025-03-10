@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Validator;
 
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Domain\Regulation\Location\NumberedRoad;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -42,13 +43,13 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
                     ->addViolation();
             }
 
-            if (!$command->$roadType->fromPointNumberValue) {
+            if (NumberedRoad::isPointNumberEmpty($command->$roadType->fromPointNumberValue)) {
                 $this->context->buildViolation('regulation.location.pointNumber.error.blank')
                     ->atPath("$roadType.fromPointNumber")
                     ->addViolation();
             }
 
-            if (!$command->$roadType->toPointNumberValue) {
+            if (NumberedRoad::isPointNumberEmpty($command->$roadType->toPointNumberValue)) {
                 $this->context->buildViolation('regulation.location.pointNumber.error.blank')
                     ->atPath("$roadType.toPointNumber")
                     ->addViolation();

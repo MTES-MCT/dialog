@@ -6,10 +6,14 @@ namespace App\Domain\User;
 
 class Organization
 {
-    private \DateTimeInterface $createdAt;
     private string $name;
     private ?string $siret;
     private ?string $logo;
+    private ?string $code;
+    private ?string $codeType;
+    private ?string $geometry;
+    private \DateTimeInterface $createdAt;
+    private ?\DateTimeInterface $updatedAt;
 
     public function __construct(
         private string $uuid,
@@ -24,6 +28,18 @@ class Organization
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 
     public function setCreatedAt(\DateTimeInterface $createdAt): self
@@ -72,6 +88,42 @@ class Organization
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getCodeType(): ?string
+    {
+        return $this->codeType;
+    }
+
+    public function setCodeType(string $codeType): self
+    {
+        $this->codeType = $codeType;
+
+        return $this;
+    }
+
+    public function getGeometry(): ?string
+    {
+        return $this->geometry;
+    }
+
+    public function setGeometry(string $geometry): self
+    {
+        $this->geometry = $geometry;
+
+        return $this;
     }
 
     public function update(string $name, string $siret): void

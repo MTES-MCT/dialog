@@ -88,6 +88,12 @@ class NumberedRoad
         return $this->direction;
     }
 
+    public static function isPointNumberEmpty(?string $value): bool
+    {
+        // WARNING: empty($value) ne fonctionnerait pas car en PHP, empty('0') vaut true (bizarrerie). Or le PR numéro 0 est valide.
+        return $value === null || $value === '';
+    }
+
     public function update(
         string $direction,
         ?string $administrator = null,

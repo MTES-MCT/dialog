@@ -1,4 +1,4 @@
-{%- if location.fromPointNumber is not null and location.fromPointNumber is not same as('') and location.toPointNumber is not null and location.toPointNumber is not same as('') -%}
+{%- if location.hasPointNumbers -%}
     {{ 'regulation.location.reference_point'|trans({
         '%fromPointNumber%': location.fromPointNumber,
         '%fromAbscissa%': location.fromAbscissa,

@@ -387,6 +387,33 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
     }
 
+    public function testNumberedRoadPointNumberZero(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $this->assertSame(RoadTypeEnum::DEPARTMENTAL_ROAD->value, $values['measure_form']['locations'][3]['roadType']);
+        $values['measure_form']['locations'][3]['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
+        $values['measure_form']['locations'][3]['nationalRoad']['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
+        $values['measure_form']['locations'][3]['nationalRoad']['administrator'] = 'DIR Ouest';
+        $values['measure_form']['locations'][3]['nationalRoad']['roadNumber'] = 'N12';
+        $values['measure_form']['locations'][3]['nationalRoad']['fromPointNumber'] = '0';
+        $values['measure_form']['locations'][3]['nationalRoad']['fromSide'] = 'U';
+        $values['measure_form']['locations'][3]['nationalRoad']['fromAbscissa'] = 0;
+        $values['measure_form']['locations'][3]['nationalRoad']['toPointNumber'] = '1';
+        $values['measure_form']['locations'][3]['nationalRoad']['toSide'] = 'U';
+        $values['measure_form']['locations'][3]['nationalRoad']['toAbscissa'] = 0;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertSame('N12 (DIR Ouest) du PR 0+0 (côté U) au PR 1+0 (côté U)', $crawler->filter('[data-location-uuid]')->eq(3)->text());
+    }
+
     public function testNationalRoadWinterMaintenanceSetAndClearStorageArea(): void
     {
         $client = $this->login();
