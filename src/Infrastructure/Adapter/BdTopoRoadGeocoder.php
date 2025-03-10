@@ -8,7 +8,6 @@ use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\IntersectionGeocoderInterface;
-use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -174,16 +173,10 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         $results = [];
 
         foreach ($rows as $row) {
-            $value = SaveNumberedRoadCommand::encodePointNumberValue($row['department_code'], $row['point_number']);
-
-            $label = SaveNumberedRoadCommand::encodePointNumberDisplayedValue(
-                $row['num_departments'] > 1 ? $row['department_code'] : null,
-                $row['point_number'],
-            );
-
             $results[] = [
-                'value' => $value,
-                'label' => $label,
+                'pointNumber' => $row['point_number'],
+                'departmentCode' => $row['department_code'],
+                'numDepartments' => $row['num_departments'],
             ];
         }
 

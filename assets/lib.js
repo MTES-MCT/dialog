@@ -41,12 +41,14 @@ export function resetFormControl(element, resetCallback = (_target) => null) {
     if (element instanceof HTMLInputElement) {
         element.value = '';
         resetCallback(element);
+
         return;
     }
 
     if (element instanceof HTMLSelectElement) {
         element.selectedIndex = 0;
         resetCallback(element);
+
         return;
     }
 
@@ -55,6 +57,7 @@ export function resetFormControl(element, resetCallback = (_target) => null) {
             resetFormControl(subElement, resetCallback);
         }
         resetCallback(element);
+
         return;
     }
 
@@ -63,6 +66,7 @@ export function resetFormControl(element, resetCallback = (_target) => null) {
             element.click();
         }
         resetCallback(element);
+
         return;
     }
 

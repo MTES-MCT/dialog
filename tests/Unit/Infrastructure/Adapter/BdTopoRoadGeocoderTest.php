@@ -70,6 +70,18 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->roadGeocoder->computeReferencePoint(RoadTypeEnum::DEPARTMENTAL_ROAD->value, 'Ardennes', 'D32', null, '1', 'U', 0);
     }
 
+    public function testFindReferencePointsUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->findReferencePoints('1', 'DIR Ouest', 'N12');
+    }
+
     public function testFindRoadNamesUnexpectedError(): void
     {
         $this->expectException(GeocodingFailureException::class);

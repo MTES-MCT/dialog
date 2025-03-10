@@ -137,7 +137,7 @@ class FetchManager {
 
   #doManagedFetch = () => {
     this._isFetching = true;
- 
+
     this._controller.element.dispatchEvent(new CustomEvent('autocomplete.prefetch', { bubbles: true }));
     this._controller.triggerFetch();
   };

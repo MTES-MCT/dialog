@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
+use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -27,7 +28,20 @@ final class GetPointNumberCompletionFragmentController
         #[MapQueryParameter] string $administrator,
         #[MapQueryParameter] string $roadNumber,
     ): Response {
-        $results = $this->roadGeocoder->findReferencePoints($search, $administrator, $roadNumber);
+        $referencePoints = $this->roadGeocoder->findReferencePoints($search, $administrator, $roadNumber);
+
+        $results = [];
+
+        foreach ($referencePoints as $referencePoint) {
+            $value = SaveNumberedRoadCommand::encodePointNumberValue($referencePoint['departmentCode'], $referencePoint['pointNumber']);
+
+            $label = SaveNumberedRoadCommand::encodePointNumberDisplayedValue(
+                $referencePoint['numDepartments'] > 1 ? $referencePoint['departmentCode'] : null,
+                $referencePoint['pointNumber'],
+            );
+
+            $results[] = ['value' => $value, 'label' => $label];
+        }
 
         return new Response(
             $this->twig->render(

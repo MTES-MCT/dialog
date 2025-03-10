@@ -6,7 +6,6 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -34,10 +33,6 @@ final class GetSideOptionsFragmentController
         #[MapQueryParameter] string $currentOption,
         #[MapQueryParameter] string $targetId,
     ): Response {
-        if (!$administrator || !$roadNumber || !$pointNumberValue) {
-            throw new BadRequestException();
-        }
-
         [$departmentCode, $pointNumber] = SaveNumberedRoadCommand::decodePointNumberValue($pointNumberValue);
 
         $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $departmentCode, $pointNumber);
