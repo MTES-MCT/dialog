@@ -95,7 +95,7 @@ class Organization
         return $this->code;
     }
 
-    public function setCode(string $code): self
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
@@ -107,7 +107,7 @@ class Organization
         return $this->codeType;
     }
 
-    public function setCodeType(string $codeType): self
+    public function setCodeType(?string $codeType): self
     {
         $this->codeType = $codeType;
 
@@ -119,7 +119,7 @@ class Organization
         return $this->geometry;
     }
 
-    public function setGeometry(string $geometry): self
+    public function setGeometry(?string $geometry): self
     {
         $this->geometry = $geometry;
 

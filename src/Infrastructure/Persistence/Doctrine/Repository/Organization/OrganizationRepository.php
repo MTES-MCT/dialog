@@ -23,10 +23,22 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             ->select(\sprintf(
                 'NEW %s(
                     o.uuid,
-                    o.name
+                    o.name,
+                    o.siret
                 )',
                 OrganizationView::class,
             ))
+            ->where('o.siret IS NOT NULL')
+            ->orderBy('o.name', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAllEntities(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.siret IS NOT NULL')
             ->orderBy('o.name', 'ASC')
             ->getQuery()
             ->getResult()

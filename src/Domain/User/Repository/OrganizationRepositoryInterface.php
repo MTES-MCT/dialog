@@ -12,6 +12,8 @@ interface OrganizationRepositoryInterface
     /** @return OrganizationView[] */
     public function findAll(): array;
 
+    public function findAllEntities(): array;
+
     public function findOneByUuid(string $uuid): ?Organization;
 
     public function findOneBySiret(string $siret): ?Organization;
