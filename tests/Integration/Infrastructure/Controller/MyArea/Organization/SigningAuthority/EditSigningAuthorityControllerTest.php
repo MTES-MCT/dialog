@@ -25,7 +25,6 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['signing_authority_form']['name'] = 'Madame la maire de Pau';
-        $values['signing_authority_form']['address'] = '3 rue de la Concertation';
         $values['signing_authority_form']['roadName'] = '3 rue de la Concertation';
         $values['signing_authority_form']['cityCode'] = '75018';
         $values['signing_authority_form']['cityLabel'] = 'Paris';
@@ -50,7 +49,6 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['signing_authority_form']['name'] = '';
-        $values['signing_authority_form']['address'] = '';
         $values['signing_authority_form']['roadName'] = '';
         $values['signing_authority_form']['cityCode'] = '';
         $values['signing_authority_form']['cityLabel'] = '';

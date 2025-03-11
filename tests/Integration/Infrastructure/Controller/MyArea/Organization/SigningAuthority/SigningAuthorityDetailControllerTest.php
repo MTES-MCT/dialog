@@ -19,7 +19,7 @@ final class SigningAuthorityDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Autorité signataire', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Autorité signataire - DiaLog', $crawler);
 
-        $this->assertSame($crawler->filter('[data-testid="signing_authority"] ul')->text(), 'Intitulé du signataire : Monsieur le maire de Savenay Adresse de l\'établissement : 3 rue de la Concertation Fait à : Savenay Nom du signataire : Monsieur X, Maire de Savenay');
+        $this->assertSame($crawler->filter('[data-testid="signing_authority"] ul')->text(), 'Monsieur le maire de Savenay Adresse de l\'établissement : N/D N/D N/D Fait à : Savenay Nom du signataire : Monsieur X, Maire de Savenay');
     }
 
     public function testNotAdministrator(): void
