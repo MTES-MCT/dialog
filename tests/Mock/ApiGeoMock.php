@@ -8,7 +8,7 @@ use App\Domain\User\Exception\OrganizationNotFoundException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class ApiOrganizationFetcherMock extends MockHttpClient
+final class ApiGeoMock extends MockHttpClient
 {
     private string $baseUri = 'https://testserver';
 
@@ -29,7 +29,9 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'nom_complet' => 'COMMUNE DE SAVENAY',
                         'nature_juridique' => '7210',
                         'siege' => [
-                            'commune' => '44195',
+                            'code_postal' => '44260',
+                            'departement' => '44',
+                            'region' => '52',
                         ],
                     ],
                 ],
@@ -42,7 +44,9 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'nom_complet' => 'DEPARTEMENT DE LA SEINE SAINT DENIS',
                         'nature_juridique' => '7220',
                         'siege' => [
+                            'code_postal' => '93000',
                             'departement' => '93',
+                            'region' => '11',
                         ],
                     ],
                 ],
@@ -55,6 +59,9 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'nom_complet' => 'METROPOLE DU GRAND PARIS (MGP)',
                         'nature_juridique' => '7344',
                         'siege' => [
+                            'code_postal' => '75013',
+                            'departement' => '75',
+                            'region' => '11',
                             'epci' => '200054781',
                         ],
                     ],
@@ -68,6 +75,8 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'nom_complet' => 'REGION ILE DE FRANCE',
                         'nature_juridique' => '7230',
                         'siege' => [
+                            'code_postal' => '75000',
+                            'departement' => '75',
                             'region' => '11',
                         ],
                     ],

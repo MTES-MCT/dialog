@@ -12,7 +12,9 @@ interface OrganizationRepositoryInterface
     /** @return OrganizationView[] */
     public function findAll(): array;
 
-    public function findAllEntities(): array;
+    public function findAllWithCodes(): array;
+
+    public function findAllWithoutCodes(): array;
 
     public function findOneByUuid(string $uuid): ?Organization;
 

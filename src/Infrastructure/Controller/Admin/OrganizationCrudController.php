@@ -28,18 +28,21 @@ final class OrganizationCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $isEditPage = ($pageName === Crud::PAGE_EDIT);
+
         $fields = [
             TextField::new('name')->setLabel('Nom de l\'organisation'),
             DateField::new('createdAt')
                 ->setLabel('Date de création')
-                ->setDisabled($pageName === Crud::PAGE_EDIT),
+                ->setDisabled($isEditPage),
             TextField::new('siret')->setLabel('Siret'),
+            TextField::new('codeWithType', 'Code territorial')->hideOnForm(),
         ];
 
-        if ($pageName === Crud::PAGE_EDIT) {
+        if ($isEditPage) {
             $fields[] = TextField::new('uuid')
                 ->setLabel('UUID de l\'organisation')
-                ->setDisabled($pageName === Crud::PAGE_EDIT);
+                ->setDisabled(true);
         }
 
         return $fields;

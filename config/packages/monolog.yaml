@@ -3,6 +3,7 @@ monolog:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         - eudonet_paris_import
         - bac_idf_import
+        - organization_geometry_import
 
     handlers:
         eudonet_paris_import:
@@ -29,6 +30,12 @@ monolog:
             path: "%kernel.project_dir%/log/litteralis/import.%kernel.environment%.log"
             formatter: monolog.formatter.json
             channels: ["litteralis_import"]
+        organization_geometry_import:
+            level: debug
+            type: rotating_file
+            path: "%kernel.project_dir%/log/organization/import.%kernel.environment%.log"
+            formatter: monolog.formatter.json
+            channels: ["organization_geometry_import"]
 
 when@dev:
     monolog:

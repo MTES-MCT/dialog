@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Organization\Command;
 
 use App\Application\ApiOrganizationFetcherInterface;
+use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
@@ -22,6 +23,7 @@ final class GetOrCreateOrganizationBySiretCommandHandler
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private DateUtilsInterface $dateUtils,
         private ApiOrganizationFetcherInterface $organizationFetcher,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -44,10 +46,10 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                 ->setSiret($siret)
                 ->setName($organizationFetchedView->name)
                 ->setCode($organizationFetchedView->code)
-                ->setCodeType($organizationFetchedView->codeType)
-                ->setGeometry($organizationFetchedView->geometry);
+                ->setCodeType($organizationFetchedView->codeType);
 
             $this->organizationRepository->add($organization);
+            $this->commandBus->dispatchAsync(new SyncOrganizationAdministrativeBoundariesCommand($organization->getUuid()));
         }
 
         return new GetOrCreateOrganizationView(

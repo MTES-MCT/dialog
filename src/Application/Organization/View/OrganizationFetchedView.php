@@ -8,9 +8,8 @@ final readonly class OrganizationFetchedView
 {
     public function __construct(
         public string $name,
-        public ?string $code = null,
-        public ?string $codeType = null,
-        public ?string $geometry = null,
+        public string $code,
+        public string $codeType,
     ) {
     }
 }
