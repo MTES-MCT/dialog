@@ -21,6 +21,9 @@ final class SigningAuthorityFixture extends Fixture implements DependentFixtureI
             placeOfSignature: 'Savenay',
             signatoryName: 'Monsieur X, Maire de Savenay',
             organization: $this->getReference('mainOrg', Organization::class),
+            roadName: null,
+            cityCode: null,
+            cityLabel: null,
         );
 
         $manager->persist($signatoryAuthority);
