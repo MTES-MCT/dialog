@@ -40,14 +40,14 @@ class OrganizationAdministrativeBoundariesGeometry implements OrganizationAdmini
         }
 
         // Récupération des paramètres de simplification en fonction du type de code
-        $simplificationParams = $this->getSimplificationParameters($codeType);
+        $simplificationFactor = $this->getSimplificationFactor($codeType);
         $validGeometries = $this->processGeometryBatches($results);
 
         if (empty($validGeometries)) {
             throw new \LogicException('No valid geometries found for administrative boundaries');
         }
 
-        return $this->unifyGeometries($validGeometries, $simplificationParams);
+        return $this->unifyGeometries($validGeometries, $simplificationFactor);
     }
 
     private function processGeometryBatches(array $results): array
@@ -84,31 +84,18 @@ class OrganizationAdministrativeBoundariesGeometry implements OrganizationAdmini
         return $validGeometries;
     }
 
-    private function getSimplificationParameters(string $codeType): array
+    private function getSimplificationFactor(string $codeType): float
     {
-        $simplificationFactor = match ($codeType) {
-            OrganizationCodeTypeEnum::INSEE->value => 0.0005, // Simplification légère (~50m)
+        return match ($codeType) {
+            OrganizationCodeTypeEnum::INSEE->value => 0, // Pas de simplification
             OrganizationCodeTypeEnum::DEPARTMENT->value => 0.001, // Simplification moyenne (~110m)
-            OrganizationCodeTypeEnum::REGION->value => 0.003, // Simplification plus forte (~210m)
+            OrganizationCodeTypeEnum::REGION->value => 0.003, // Simplification forte (~210m)
             OrganizationCodeTypeEnum::EPCI->value => 0.002, // Simplification assez forte (~160m)
             default => 0.001,
         };
-
-        $simplificationThreshold = match ($codeType) {
-            OrganizationCodeTypeEnum::INSEE->value => 1000,
-            OrganizationCodeTypeEnum::DEPARTMENT->value => 2000,
-            OrganizationCodeTypeEnum::REGION->value => 3000,
-            OrganizationCodeTypeEnum::EPCI->value => 2500,
-            default => 1000,
-        };
-
-        return [
-            'factor' => $simplificationFactor,
-            'threshold' => $simplificationThreshold,
-        ];
     }
 
-    private function unifyGeometries(array $validGeometries, array $simplificationParams): string
+    private function unifyGeometries(array $validGeometries, float $simplificationFactor): string
     {
         // Construction de la requête pour unir toutes les géométries
         $geometriesUnion = implode(', ', array_map(function ($wkt) {
@@ -123,13 +110,8 @@ class OrganizationAdministrativeBoundariesGeometry implements OrganizationAdmini
             throw new \LogicException('Impossible to generate a valid geometry for administrative boundaries');
         }
 
-        // Récupération du nombre de points de la géométrie
-        $geometrySize = $this->defaultConnection->executeQuery('SELECT ST_NPoints(?)::integer', [$unionResult])->fetchOne();
-
-        // Simplification de la géométrie si elle dépasse le seuil
-        $finalQuery = $geometrySize > $simplificationParams['threshold']
-            ? "SELECT ST_AsGeoJSON(ST_SimplifyPreserveTopology(?, {$simplificationParams['factor']}))"
-            : 'SELECT ST_AsGeoJSON(?)';
+        // Simplification de la géométrie
+        $finalQuery = "SELECT ST_AsGeoJSON(ST_SimplifyPreserveTopology(?, {$simplificationFactor}))";
 
         $result = $this->defaultConnection->executeQuery($finalQuery, [$unionResult])->fetchOne();
 

@@ -23,4 +23,6 @@ interface OrganizationRepositoryInterface
     public function countOrganizations(): int;
 
     public function add(Organization $organization): void;
+
+    public function flush(): void;
 }

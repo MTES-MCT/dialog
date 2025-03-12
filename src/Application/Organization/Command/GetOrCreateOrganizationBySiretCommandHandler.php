@@ -49,6 +49,7 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                 ->setCodeType($organizationFetchedView->codeType);
 
             $this->organizationRepository->add($organization);
+            $this->organizationRepository->flush();
             $this->commandBus->dispatchAsync(new SyncOrganizationAdministrativeBoundariesCommand($organization->getUuid()));
         }
 
