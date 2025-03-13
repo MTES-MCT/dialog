@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Integration\BacIdf;
 
+use App\Application\CommandBusInterface;
 use App\Application\Integration\BacIdf\Command\ImportBacIdfRegulationCommand;
-use App\Application\QueryBusInterface;
+use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
+use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
@@ -14,15 +16,12 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\User\Command\SaveOrganizationCommand;
-use App\Application\User\Query\GetOrganizationBySiretQuery;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
-use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Infrastructure\Integration\BacIdf\BacIdfCityProcessorInterface;
 use App\Infrastructure\Integration\BacIdf\BacIdfTransformer;
@@ -31,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 
 final class BacIdfTransformerTest extends TestCase
 {
-    private $queryBus;
+    private $commandBus;
     private $organization;
     private $cityProcessor;
     private $cityCode = '93027';
@@ -39,7 +38,7 @@ final class BacIdfTransformerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->queryBus = $this->createMock(QueryBusInterface::class);
+        $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
         $this->cityProcessor = $this->createMock(BacIdfCityProcessorInterface::class);
     }
@@ -51,11 +50,13 @@ final class BacIdfTransformerTest extends TestCase
             ->method('getSiretFromInseeCode')
             ->willReturn($this->siret);
 
-        $this->queryBus
+        $organizationView = new GetOrCreateOrganizationView($this->organization, false);
+
+        $this->commandBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetOrganizationBySiretQuery($this->siret))
-            ->willReturn($this->organization);
+            ->with(new GetOrCreateOrganizationBySiretCommand($this->siret))
+            ->willReturn($organizationView);
 
         $record = json_decode(file_get_contents(__DIR__ . '/data/decree1.json'), associative: true);
 
@@ -108,7 +109,7 @@ final class BacIdfTransformerTest extends TestCase
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
+        $transformer = new BacIdfTransformer($this->commandBus, $this->cityProcessor);
 
         $this->assertEquals($result, $transformer->transform($record));
     }
@@ -120,15 +121,13 @@ final class BacIdfTransformerTest extends TestCase
             ->method('getSiretFromInseeCode')
             ->willReturn($this->siret);
 
-        $this->queryBus
+        $organizationView = new GetOrCreateOrganizationView($this->organization, false);
+
+        $this->commandBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetOrganizationBySiretQuery($this->siret))
-            ->willThrowException(new OrganizationNotFoundException());
-
-        $organizationCommand = new SaveOrganizationCommand();
-        $organizationCommand->siret = $this->siret;
-        $organizationCommand->name = 'Mairie de La Courneuve';
+            ->with(new GetOrCreateOrganizationBySiretCommand($this->siret))
+            ->willReturn($organizationView);
 
         $record = [
             'ARR_REF' => 'arr_1',
@@ -205,9 +204,9 @@ final class BacIdfTransformerTest extends TestCase
         $measureCommand->vehicleSet = $vehicleSet;
 
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
-        $result = new BacIdfTransformerResult($importCommand, [], null, $organizationCommand);
+        $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
+        $transformer = new BacIdfTransformer($this->commandBus, $this->cityProcessor);
 
         $this->assertEquals($result, $transformer->transform($record));
     }
@@ -527,11 +526,21 @@ final class BacIdfTransformerTest extends TestCase
             ->method('getSiretFromInseeCode')
             ->willReturn($this->siret);
 
-        $this->queryBus
-            ->expects(\array_key_exists('ARR_COMMUNE', $record) ? self::once() : self::never())
-            ->method('handle');
+        if (\array_key_exists('ARR_COMMUNE', $record)) {
+            $organizationView = new GetOrCreateOrganizationView($this->organization, false);
 
-        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
+            $this->commandBus
+                ->expects(self::once())
+                ->method('handle')
+                ->with(new GetOrCreateOrganizationBySiretCommand($this->siret))
+                ->willReturn($organizationView);
+        } else {
+            $this->commandBus
+                ->expects(self::never())
+                ->method('handle');
+        }
+
+        $transformer = new BacIdfTransformer($this->commandBus, $this->cityProcessor);
 
         $result = $transformer->transform($record);
 
@@ -549,11 +558,13 @@ final class BacIdfTransformerTest extends TestCase
             ->method('getSiretFromInseeCode')
             ->willReturn($this->siret);
 
-        $this->queryBus
+        $organizationView = new GetOrCreateOrganizationView($this->organization, false);
+
+        $this->commandBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetOrganizationBySiretQuery($this->siret))
-            ->willReturn($this->organization);
+            ->with(new GetOrCreateOrganizationBySiretCommand($this->siret))
+            ->willReturn($organizationView);
 
         $regCirculation = [
             'CIRC_REG' => [
@@ -636,7 +647,7 @@ final class BacIdfTransformerTest extends TestCase
         $importCommand = new ImportBacIdfRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new BacIdfTransformerResult($importCommand, [], $this->organization);
 
-        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
+        $transformer = new BacIdfTransformer($this->commandBus, $this->cityProcessor);
 
         $this->assertEquals($result, $transformer->transform($record));
     }
@@ -924,6 +935,10 @@ final class BacIdfTransformerTest extends TestCase
             ->method('getSiretFromInseeCode')
             ->willReturn(null);
 
+        $this->commandBus
+            ->expects(self::never())
+            ->method('handle');
+
         $record = [
             'ARR_REF' => 'arr_1',
             'ARR_NOM' => 'nom_1',
@@ -942,7 +957,7 @@ final class BacIdfTransformerTest extends TestCase
             ],
         ];
 
-        $transformer = new BacIdfTransformer($this->queryBus, $this->cityProcessor);
+        $transformer = new BacIdfTransformer($this->commandBus, $this->cityProcessor);
 
         $result = $transformer->transform($record);
 

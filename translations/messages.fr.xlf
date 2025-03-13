@@ -2071,7 +2071,7 @@
             </trans-unit>
             <trans-unit id="register.error.organizationSiret_not_found">
                 <source>register.error.organizationSiret_not_found</source>
-                <target>Le SIRET fourni n'existe pas. Veuillez vérifier si votre SIRET est correct.</target>
+                <target>Votre SIRET est invalide : numéro inexistant ou entité juridique non compatible avec DiaLog.</target>
             </trans-unit>
             <trans-unit id="register.find_siret">
                 <source>register.find_siret</source>

@@ -11,8 +11,8 @@
         </options>
     </field>
     <field name="updatedAt" type="datetimetz" nullable="true"/>
-    <field name="code" length="5" type="string" nullable="true"/>
-    <field name="codeType" length="10" type="string" nullable="true"/>
+    <field name="code" length="10" type="string" nullable="true"/>
+    <field name="codeType" length="15" type="string" nullable="true"/>
     <field name="geometry" type="geojson_geometry" column="geometry" nullable="true">
       <options>
         <option name="geometry_type">GEOMETRY</option>

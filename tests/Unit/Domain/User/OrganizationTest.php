@@ -34,5 +34,6 @@ final class OrganizationTest extends TestCase
         $this->assertSame('44260', $organization->getCode());
         $this->assertSame(OrganizationCodeTypeEnum::INSEE->value, $organization->getCodeType());
         $this->assertSame('geometry', $organization->getGeometry());
+        $this->assertSame('44260 (insee)', $organization->getCodeWithType());
     }
 }

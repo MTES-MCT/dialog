@@ -83,7 +83,34 @@ Cette solution se compose de plusieurs éléments clés:
 
 3. **Correspondance SIRET → codes administratifs**:
    - Utilisation de l'[API recherche entreprise](https://recherche-entreprises.api.gouv.fr/search?q=20009320100016&est_collectivite_territoriale=true) qui nous permet de récupérer les informations d'une organisation via son SIRET.
-   Dans l'exemple ici de la Métropole de Lille : `$codeInsee = $data['results'][0]['siege']['code_commune'] ?? null`
+   Dans l'exemple ici de la Métropole de Lille : `$codeInsee = $data['results'][0]['siege']['commune'] ?? null`
 
 4. **Processus de mise à jour**:
    - Rafraîchissement semestrielle de tous les coutours administratif stockés dans la table Organization via une commande Symfony.
+
+## Simplification des géométries
+
+Pour optimiser le stockage et les performances d'affichage des contours administratifs, nous avons implémenté une stratégie de simplification des géométries adaptée à chaque type d'entité administrative.
+
+### Problématique
+
+Les contours administratifs bruts fournis par l'API Découpage administratif peuvent contenir un nombre très élevé de points, ce qui entraîne :
+- Un volume de données important à stocker en base
+- Des temps de chargement plus longs pour l'affichage des cartes
+- Une consommation accrue de bande passante
+
+### Solution retenue
+
+Nous avons mis en place une simplification différenciée selon le type d'entité administrative, en utilisant la fonction `ST_SimplifyPreserveTopology` de PostGIS :
+
+| Type d'entité | Facteur de simplification | Impact approximatif |
+|---------------|---------------------------|---------------------|
+| Commune (INSEE) | 0 (pas de simplification) | 0 |
+| Département | 0.001 | ~110m |
+| Région | 0.003 | ~210m |
+| EPCI | 0.002 | ~160m |
+
+Cette approche permet de :
+- Conserver une précision élevée pour les communes
+- Réduire significativement le poids des géométries pour les grandes entités (comme les régions)
+- Maintenir un bon équilibre entre précision visuelle et performance

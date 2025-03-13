@@ -12,6 +12,10 @@ interface OrganizationRepositoryInterface
     /** @return OrganizationView[] */
     public function findAll(): array;
 
+    public function findAllWithCodes(): array;
+
+    public function findAllWithoutCodes(): array;
+
     public function findOneByUuid(string $uuid): ?Organization;
 
     public function findOneBySiret(string $siret): ?Organization;
@@ -19,4 +23,6 @@ interface OrganizationRepositoryInterface
     public function countOrganizations(): int;
 
     public function add(Organization $organization): void;
+
+    public function flush(): void;
 }

@@ -21,7 +21,7 @@ final class RegisterControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['register_form[fullName]'] = 'Lucie Dutest';
-        $form['register_form[organizationSiret]'] = '82050375300015';
+        $form['register_form[organizationSiret]'] = '21440195200129';
         $form['register_form[password][first]'] = 'password12345';
         $form['register_form[password][second]'] = 'password12345';
         $form['register_form[email]'] = 'lucie@example.com';
@@ -53,7 +53,7 @@ final class RegisterControllerTest extends AbstractWebTestCase
         $form['register_form[cgu]'] = '1';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Le SIRET fourni n\'existe pas. Veuillez vérifier si votre SIRET est correct.', $crawler->filter('#register_form_organizationSiret_error')->text());
+        $this->assertSame('Votre SIRET est invalide : numéro inexistant ou entité juridique non compatible avec DiaLog.', $crawler->filter('#register_form_organizationSiret_error')->text());
     }
 
     public function testRegisterWithAccountAlreadyExists(): void

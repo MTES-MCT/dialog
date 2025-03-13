@@ -167,6 +167,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $field = $form->get('organizationUuid');
         $this->assertSame('Organisation', trim($field->getLabel()->nodeValue));
         $choices = $crawler->filter('form[role="search"] select[name="organizationUuid"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+
         $this->assertEquals([
             ['', 'Mes organisations'],
             [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],

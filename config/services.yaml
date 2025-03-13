@@ -154,7 +154,9 @@ when@test:
             arguments: ['%client_timezone%']
         App\Tests\Mock\ApiOrganizationFetcherMock:
             decorates: 'organization_fetcher.client'
-            decoration_inner_name: 'App\Tests\Mock\EudonetParis\ApiOrganizationFetcherMock::organization_fetcher.client'
-
+            decoration_inner_name: 'App\Tests\Mock\ApiOrganizationFetcherMock::organization_fetcher.client'
+        App\Tests\Mock\ApiGeoMock:
+            decorates: 'geo_api.client'
+            decoration_inner_name: 'App\Tests\Mock\ApiGeoMock::geo_api.client'
         Psr\Log\NullLogger: ~
         logger: '@Psr\Log\NullLogger'
