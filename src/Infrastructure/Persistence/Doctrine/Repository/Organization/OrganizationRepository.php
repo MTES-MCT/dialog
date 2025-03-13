@@ -23,19 +23,45 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             ->select(\sprintf(
                 'NEW %s(
                     o.uuid,
-                    o.name
+                    o.name,
+                    o.siret
                 )',
                 OrganizationView::class,
             ))
+            ->where('o.siret IS NOT NULL')
             ->orderBy('o.name', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
 
+    public function findAllWithoutCodes(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.siret IS NOT NULL')
+            ->andWhere('o.code is NULL or o.codeType IS NULL')
+            ->orderBy('o.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllWithCodes(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.code is NOT NULL')
+            ->andWhere('o.codeType is NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function add(Organization $organization): void
     {
         $this->getEntityManager()->persist($organization);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 
     public function findOneByUuid(string $uuid): ?Organization

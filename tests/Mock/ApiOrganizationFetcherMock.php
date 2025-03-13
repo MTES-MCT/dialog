@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Mock;
 
+use App\Domain\User\Exception\OrganizationNotFoundException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -19,11 +20,65 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
 
     private function handleRequests(string $method, string $url, array $options): MockResponse
     {
-        $results = match ($options['query']['q']) {
-            '82050375300015' => ['results' => [0 => ['nom_complet' => 'Fairness']], 'total_results' => 1],
-            default => ['results' => [], 'total_results' => 0],
+        $payload = match ($options['query']['q']) {
+            // Commune
+            '21440195200129' => [
+                'total_results' => 1,
+                'results' => [
+                    [
+                        'nom_complet' => 'COMMUNE DE SAVENAY',
+                        'nature_juridique' => '7210',
+                        'siege' => [
+                            'commune' => '44195',
+                        ],
+                    ],
+                ],
+            ],
+            // Département
+            '22930008201453' => [
+                'total_results' => 1,
+                'results' => [
+                    [
+                        'nom_complet' => 'DEPARTEMENT DE LA SEINE SAINT DENIS',
+                        'nature_juridique' => '7220',
+                        'siege' => [
+                            'departement' => '93',
+                        ],
+                    ],
+                ],
+            ],
+            // EPCI
+            '20005478100022' => [
+                'total_results' => 1,
+                'results' => [
+                    [
+                        'nom_complet' => 'METROPOLE DU GRAND PARIS (MGP)',
+                        'nature_juridique' => '7344',
+                        'siege' => [
+                            'epci' => '200054781',
+                        ],
+                    ],
+                ],
+            ],
+            // Région
+            '23750007900312' => [
+                'total_results' => 1,
+                'results' => [
+                    [
+                        'nom_complet' => 'REGION ILE DE FRANCE',
+                        'nature_juridique' => '7230',
+                        'siege' => [
+                            'region' => '11',
+                        ],
+                    ],
+                ],
+            ],
+            default => throw new OrganizationNotFoundException(),
         };
 
-        return new MockResponse(json_encode($results), ['http_code' => 200]);
+        return new MockResponse(
+            json_encode($payload, JSON_THROW_ON_ERROR),
+            ['http_code' => 200],
+        );
     }
 }
