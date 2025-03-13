@@ -34,6 +34,7 @@ services:
     volumes:
       - ./:/var/www/dialog
       - ./docker/php/supervisor:/etc/supervisor
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - database
       - redis

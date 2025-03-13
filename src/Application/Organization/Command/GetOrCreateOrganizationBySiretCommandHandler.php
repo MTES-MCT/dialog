@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Organization\Command;
 
 use App\Application\ApiOrganizationFetcherInterface;
+use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
+use App\Application\Organization\View\OrganizationFetchedView;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
@@ -21,6 +23,7 @@ final class GetOrCreateOrganizationBySiretCommandHandler
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private DateUtilsInterface $dateUtils,
         private ApiOrganizationFetcherInterface $organizationFetcher,
+        private CommandBusInterface $commandBus,
     ) {
     }
 
@@ -32,7 +35,8 @@ final class GetOrCreateOrganizationBySiretCommandHandler
 
         if (!$organization) {
             try {
-                ['name' => $name] = $this->organizationFetcher->findBySiret($siret);
+                /** @var OrganizationFetchedView */
+                $organizationFetchedView = $this->organizationFetcher->findBySiret($siret);
             } catch (OrganizationNotFoundException $e) {
                 throw $e;
             }
@@ -40,9 +44,13 @@ final class GetOrCreateOrganizationBySiretCommandHandler
             $organization = (new Organization($this->idFactory->make()))
                 ->setCreatedAt($now)
                 ->setSiret($siret)
-                ->setName($name);
+                ->setName($organizationFetchedView->name)
+                ->setCode($organizationFetchedView->code)
+                ->setCodeType($organizationFetchedView->codeType);
 
             $this->organizationRepository->add($organization);
+            $this->organizationRepository->flush();
+            $this->commandBus->dispatchAsync(new SyncOrganizationAdministrativeBoundariesCommand($organization->getUuid()));
         }
 
         return new GetOrCreateOrganizationView(

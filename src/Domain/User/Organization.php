@@ -126,6 +126,11 @@ class Organization
         return $this;
     }
 
+    public function getCodeWithType(): string
+    {
+        return \sprintf('%s (%s)', $this->getCode(), $this->getCodeType());
+    }
+
     public function update(string $name, string $siret): void
     {
         $this->name = $name;
