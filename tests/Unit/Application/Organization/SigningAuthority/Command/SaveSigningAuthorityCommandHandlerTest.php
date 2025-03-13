@@ -31,10 +31,12 @@ final class SaveSigningAuthorityCommandHandlerTest extends TestCase
         $signingAuthority = new SigningAuthority(
             uuid: '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
             name: 'Monsieur le maire de Savenay',
-            address: '3 rue de la Concertation',
             placeOfSignature: 'Savenay',
             signatoryName: 'Monsieur X, Maire de Savenay',
             organization: $organization,
+            roadName: '3 rue de la Concertation',
+            cityCode: '75018',
+            cityLabel: 'Paris',
         );
 
         $this->signingAuthorityRepository
@@ -54,9 +56,11 @@ final class SaveSigningAuthorityCommandHandlerTest extends TestCase
         );
         $command = new SaveSigningAuthorityCommand($organization);
         $command->name = 'Monsieur le maire de Savenay';
-        $command->address = '3 rue de la Concertation';
         $command->placeOfSignature = 'Savenay';
         $command->signatoryName = 'Monsieur X, Maire de Savenay';
+        $command->roadName = '3 rue de la Concertation';
+        $command->cityCode = '75018';
+        $command->cityLabel = 'Paris';
 
         $handler($command);
     }
@@ -70,9 +74,12 @@ final class SaveSigningAuthorityCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 'Madame la maire de Savenay',
-                '4 rue de la Concertation',
                 'Savenay',
                 'Madame X, Maire de Savenay',
+                '3 rue de la Concertation',
+                '75018',
+                'Paris',
+                null,
             );
 
         $this->signingAuthorityRepository
@@ -90,9 +97,11 @@ final class SaveSigningAuthorityCommandHandlerTest extends TestCase
 
         $command = new SaveSigningAuthorityCommand($organization, $signingAuthority);
         $command->name = 'Madame la maire de Savenay';
-        $command->address = '4 rue de la Concertation';
         $command->placeOfSignature = 'Savenay';
         $command->signatoryName = 'Madame X, Maire de Savenay';
+        $command->roadName = '3 rue de la Concertation';
+        $command->cityCode = '75018';
+        $command->cityLabel = 'Paris';
 
         $handler($command);
     }
