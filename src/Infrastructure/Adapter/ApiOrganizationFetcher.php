@@ -27,7 +27,6 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
 
     private const NATURES_REGION = [
         '7230', // Région
-        '7230', // Région
         '7171', // Service déconcentré de l'État à compétence (inter) régionale
     ];
 
