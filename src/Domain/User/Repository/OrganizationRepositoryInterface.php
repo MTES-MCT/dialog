@@ -14,8 +14,6 @@ interface OrganizationRepositoryInterface
 
     public function findAllWithCodes(): array;
 
-    public function findAllWithoutCodes(): array;
-
     public function findOneByUuid(string $uuid): ?Organization;
 
     public function findOneBySiret(string $siret): ?Organization;
