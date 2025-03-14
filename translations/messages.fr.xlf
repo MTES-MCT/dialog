@@ -30,6 +30,10 @@
                 <source>common.and</source>
                 <target>et</target>
             </trans-unit>
+            <trans-unit id="common.loading">
+                <source>common.loading</source>
+                <target>Chargement ...</target>
+            </trans-unit>
             <trans-unit id="common.enabled">
                 <source>common.enabled</source>
                 <target>Activé</target>
