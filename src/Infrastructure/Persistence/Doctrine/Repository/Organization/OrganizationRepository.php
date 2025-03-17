@@ -35,11 +35,10 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         ;
     }
 
-    public function findAllWithCodes(): array
+    public function findAllEntities(): array
     {
         return $this->createQueryBuilder('o')
-            ->andWhere('o.code is NOT NULL')
-            ->andWhere('o.codeType is NOT NULL')
+            ->where('o.siret is NOT NULL')
             ->getQuery()
             ->getResult();
     }

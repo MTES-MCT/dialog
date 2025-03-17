@@ -14,6 +14,7 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
 {
     private const NATURES_COMMUNE = [
         '7210', // Commune et commune nouvelle
+        '7229', // (Autre) Collectivité territoriale
         '7179', // (Autre) Service déconcentré de l'État à compétence territoriale
     ];
 
@@ -37,7 +38,6 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
         '7347', // Communauté de villes
         '7345', // Syndicat intercommunal à vocation multiple (SIVOM)
         '7348', // Communauté d'agglomération
-        '7229', // (Autre) Collectivité territoriale
     ];
 
     public function __construct(
@@ -50,7 +50,7 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
         $query = [
             'q' => $siret,
             'est_collectivite_territoriale' => 'true',
-            'include' => 'siege',
+            'include' => 'siege,complements',
             'minimal' => 'true',
         ];
 
@@ -79,32 +79,31 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
     private function getOrganizationCodes(array $result): array
     {
         $natureJuridique = $result['nature_juridique'];
-        $siege = $result['siege'];
 
         if (\in_array($natureJuridique, self::NATURES_COMMUNE, true)) {
             return [
-                'code' => $siege['commune'],
+                'code' => $result['complements']['collectivite_territoriale']['code_insee'] ?? $result['siege']['commune'],
                 'codeType' => OrganizationCodeTypeEnum::INSEE->value,
             ];
         }
 
         if (\in_array($natureJuridique, self::NATURES_DEPARTEMENT, true)) {
             return [
-                'code' => $siege['departement'],
+                'code' => $result['siege']['departement'],
                 'codeType' => OrganizationCodeTypeEnum::DEPARTMENT->value,
             ];
         }
 
         if (\in_array($natureJuridique, self::NATURES_REGION, true)) {
             return [
-                'code' => $siege['region'],
+                'code' => $result['siege']['region'],
                 'codeType' => OrganizationCodeTypeEnum::REGION->value,
             ];
         }
 
         if (\in_array($natureJuridique, self::NATURES_EPCI, true)) {
             return [
-                'code' => $siege['epci'],
+                'code' => $result['siege']['epci'],
                 'codeType' => OrganizationCodeTypeEnum::EPCI->value,
             ];
         }
