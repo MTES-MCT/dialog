@@ -1,0 +1,22 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Carte de {{ organization.name }}{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_admin', { crudAction: 'index', crudControllerFqcn: 'App\\Infrastructure\\Controller\\Admin\\OrganizationCrudController'}) }}" class="btn btn-secondary">
+        <i class="fa fa-arrow-left"></i> Retour à la liste
+    </a>
+{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-body">
+            {% if geometry %}
+                <div data-controller="polygon-map" data-polygon-map-geojson-value='{{ geometry }}'>
+                    <div data-polygon-map-target="container"></div>
+                    <div data-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
