@@ -21,7 +21,13 @@
                 <option name="max">100</option>
             </constraint>
         </property>
-        <property name="address">
+        <property name="roadName">
+            <constraint name="NotBlank"/>
+        </property>
+        <property name="cityCode">
+            <constraint name="NotBlank"/>
+        </property>
+        <property name="cityLabel">
             <constraint name="NotBlank"/>
         </property>
     </class>

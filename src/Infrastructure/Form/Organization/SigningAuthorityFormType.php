@@ -6,7 +6,6 @@ namespace App\Infrastructure\Form\Organization;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -24,11 +23,25 @@ final class SigningAuthorityFormType extends AbstractType
                 ],
             )
             ->add(
-                'address',
-                TextareaType::class,
+                'roadName',
+                TextType::class,
                 options: [
-                    'label' => 'signing_authority.address',
-                    'help' => 'signing_authority.address.help',
+                    'label' => 'signing_authority.roadName',
+                    'help' => 'signing_authority.roadName.help',
+                ],
+            )
+            ->add(
+                'cityCode',
+                TextType::class,
+                options: [
+                    'label' => 'signing_authority.cityCode',
+                ],
+            )
+            ->add(
+                'cityLabel',
+                TextType::class,
+                options: [
+                    'label' => 'signing_authority.cityLabel',
                 ],
             )
             ->add(
