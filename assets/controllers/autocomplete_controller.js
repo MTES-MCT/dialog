@@ -5,6 +5,7 @@ export default class Autocomplete extends StimulusAutocomplete {
   static values = {
     ...Autocomplete.values,
     extraQueryParams: { type: String, default: undefined },
+    requiredParams: { type: String, default: undefined }, // Use to avoid unecessary requests
     prefetch: { type: Boolean, default: false },
   };
 
@@ -67,9 +68,31 @@ export default class Autocomplete extends StimulusAutocomplete {
       }
     }
 
+    if (!this.#checkRequiredParams(params)) {
+      return null;
+    }
+
     url.search = params.toString();
 
     return url.toString();
+  }
+
+  /**
+   * @param {URLSearchParams} params 
+   * @returns {Boolean}
+   */
+  #checkRequiredParams(params) {
+    if (!this.requiredParamsValue) {
+      return true;
+    }
+
+    for (const name of JSON.parse(this.requiredParamsValue)) {
+      if (!params.get(name)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // Action callbacks
@@ -98,6 +121,10 @@ class FetchManager {
 
   reset() {
     this._isFetchRequested = this._controller.prefetchValue;
+
+    if (this._isFetchRequested) {
+      this.#doManagedFetch();
+    }
   }
 
   #handleVisibility = (visible) => {
@@ -111,8 +138,8 @@ class FetchManager {
   #doManagedFetch = () => {
     this._isFetching = true;
 
-    // This method on the controller triggers the autocomplete request, including checking for search query length etc. 
-    this._controller.onInputChange();
+    this._controller.element.dispatchEvent(new CustomEvent('autocomplete.prefetch', { bubbles: true }));
+    this._controller.triggerFetch();
   };
 
   #onLoadEnd = () => {

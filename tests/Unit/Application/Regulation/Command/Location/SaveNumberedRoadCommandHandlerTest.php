@@ -22,9 +22,11 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
     private ?string $administrator;
     private ?string $roadNumber;
     private string $geometry;
+    private ?string $fromDepartmentCode;
     private string $fromPointNumber;
     private string $fromSide;
     private int $fromAbscissa;
+    private ?string $toDepartmentCode;
     private string $toPointNumber;
     private string $toSide;
     private int $toAbscissa;
@@ -40,9 +42,11 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
 
         $this->administrator = 'Département de Loire-Atlantique';
         $this->roadNumber = 'D12';
+        $this->fromDepartmentCode = null;
         $this->fromPointNumber = '1';
         $this->fromSide = 'U';
         $this->fromAbscissa = 0;
+        $this->toDepartmentCode = null;
         $this->toPointNumber = '5';
         $this->toSide = 'U';
         $this->toAbscissa = 100;
@@ -80,8 +84,10 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
                         direction: $this->direction,
                         administrator: $this->administrator,
                         roadNumber: $this->roadNumber,
+                        fromDepartmentCode: $this->fromDepartmentCode,
                         fromPointNumber: $this->fromPointNumber,
                         fromSide: $this->fromSide,
+                        toDepartmentCode: $this->toDepartmentCode,
                         fromAbscissa: $this->fromAbscissa,
                         toPointNumber: $this->toPointNumber,
                         toSide: $this->toSide,
@@ -101,6 +107,7 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         $command->direction = $this->direction;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->fromDepartmentCode = $this->fromDepartmentCode;
         $command->fromPointNumber = $this->fromPointNumber;
         $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
@@ -131,9 +138,11 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
                 $this->direction,
                 $this->administrator,
                 $this->roadNumber,
+                $this->fromDepartmentCode,
                 $this->fromPointNumber,
                 $this->fromSide,
                 $this->fromAbscissa,
+                $this->toDepartmentCode,
                 $this->toPointNumber,
                 $this->toSide,
                 $this->toAbscissa,
@@ -157,9 +166,11 @@ final class SaveNumberedRoadCommandHandlerTest extends TestCase
         $command->direction = $this->direction;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->fromDepartmentCode = $this->fromDepartmentCode;
         $command->fromPointNumber = $this->fromPointNumber;
         $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
+        $command->toDepartmentCode = $this->toDepartmentCode;
         $command->toPointNumber = $this->toPointNumber;
         $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;

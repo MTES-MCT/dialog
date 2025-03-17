@@ -9,6 +9,7 @@
     <field name="administrator" type="string" column="administrator" nullable="false" length="255" />
     <field name="roadNumber" type="string" column="road_number" nullable="false" length="50" />
     <field name="fromPointNumber" type="string" column="from_point_number" length="5"  nullable="false"/>
+    <field name="fromDepartmentCode" type="string" column="from_department_code" length="5"  nullable="true"/> <!-- Historical rows have null-->
     <field name="fromSide" type="string" column="from_side" nullable="false" length="1" />
     <field name="fromAbscissa" type="integer" column="from_abscissa" nullable="true">
       <options>
@@ -16,6 +17,7 @@
       </options>
     </field>
     <field name="toPointNumber" type="string" column="to_point_number" length="5" nullable="false"/>
+    <field name="toDepartmentCode" type="string" column="to_department_code" length="5"  nullable="true"/> <!-- Historical rows have null-->
     <field name="toSide" type="string" column="to_side" nullable="false" length="1" />
     <field name="toAbscissa" type="integer" column="to_abscissa" nullable="true">
       <options>
