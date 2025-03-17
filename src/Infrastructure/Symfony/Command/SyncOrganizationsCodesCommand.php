@@ -29,12 +29,9 @@ class SyncOrganizationsCodesCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * Cette commande est à usage unique pour synchroniser les organisations existantes
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $organizations = $this->organizationRepository->findAllWithoutCodes();
+        $organizations = $this->organizationRepository->findAllEntities();
 
         foreach ($organizations as $organization) {
             try {

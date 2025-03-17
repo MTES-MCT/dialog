@@ -38,8 +38,10 @@ final class ApiOrganizationFetcherTest extends TestCase
                     [
                         'nom_complet' => 'COMMUNE DE SAVENAY',
                         'nature_juridique' => '7210',
-                        'siege' => [
-                            'commune' => '44195',
+                        'complements' => [
+                            'collectivite_territoriale' => [
+                                'code_insee' => '44195',
+                            ],
                         ],
                     ],
                 ],
