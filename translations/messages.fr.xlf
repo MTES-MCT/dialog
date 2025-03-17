@@ -2501,6 +2501,22 @@
                 <source>signing_authority.address.help</source>
                 <target>Entrez l'adresse de l'établissement, par exemple de la mairie</target>
             </trans-unit>
+            <trans-unit id="signing_authority.roadName">
+                <source>signing_authority.roadName</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.roadName.help">
+                <source>signing_authority.roadName.help</source>
+                <target>Numéro et voie</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.cityCode">
+                <source>signing_authority.cityCode</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.cityLabel">
+                <source>signing_authority.cityLabel</source>
+                <target>Ville</target>
+            </trans-unit>
             <trans-unit id="signing_authority.placeOfSignature">
                 <source>signing_authority.placeOfSignature</source>
                 <target>Fait à</target>

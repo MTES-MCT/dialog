@@ -26,7 +26,7 @@ final class SaveSigningAuthorityCommand implements CommandInterface
         $this->address = $signingAuthority?->getAddress();
         $this->roadName = $signingAuthority?->getRoadName();
         $this->cityCode = $signingAuthority?->getCityCode();
-        $this->roadName = $signingAuthority?->getCityLabel();
+        $this->cityLabel = $signingAuthority?->getCityLabel();
         $this->placeOfSignature = $signingAuthority?->getPlaceOfSignature();
         $this->signatoryName = $signingAuthority?->getSignatoryName();
     }
