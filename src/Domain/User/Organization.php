@@ -9,8 +9,8 @@ class Organization
     private string $name;
     private ?string $siret;
     private ?string $logo;
-    private ?string $code;
-    private ?string $codeType;
+    private ?string $code = null;
+    private ?string $codeType = null;
     private ?string $geometry;
     private \DateTimeInterface $createdAt;
     private ?\DateTimeInterface $updatedAt;
@@ -124,6 +124,15 @@ class Organization
         $this->geometry = $geometry;
 
         return $this;
+    }
+
+    public function getCodeWithType(): string
+    {
+        if (!$this->getCode() || !$this->getCodeType()) {
+            return 'N/A';
+        }
+
+        return \sprintf('%s (%s)', $this->getCode(), $this->getCodeType());
     }
 
     public function update(string $name, string $siret): void

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Integration\BacIdf;
 
+use App\Application\CommandBusInterface;
 use App\Application\Integration\BacIdf\Command\ImportBacIdfRegulationCommand;
-use App\Application\QueryBusInterface;
+use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
+use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
@@ -14,20 +16,17 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\User\Command\SaveOrganizationCommand;
-use App\Application\User\Query\GetOrganizationBySiretQuery;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
-use App\Domain\User\Exception\OrganizationNotFoundException;
 
 final class BacIdfTransformer
 {
     public function __construct(
-        private QueryBusInterface $queryBus,
+        private CommandBusInterface $commandBus,
         private BacIdfCityProcessorInterface $cityProcessor,
     ) {
     }
@@ -87,13 +86,9 @@ final class BacIdfTransformer
         $organization = null;
         $organizationCommand = null;
 
-        try {
-            $organization = $this->queryBus->handle(new GetOrganizationBySiretQuery($siret));
-        } catch (OrganizationNotFoundException) {
-            $organizationCommand = new SaveOrganizationCommand();
-            $organizationCommand->siret = $siret;
-            $organizationCommand->name = \sprintf('Mairie de %s', $row['ARR_COMMUNE']['ARR_VILLE']);
-        }
+        /** @var GetOrCreateOrganizationView */
+        $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($siret));
+        $organization = $organizationView->organization;
 
         $measureCommands = [];
         $errors = [];

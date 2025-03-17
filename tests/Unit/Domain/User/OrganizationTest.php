@@ -19,10 +19,14 @@ final class OrganizationTest extends TestCase
             ->setName('Mairie de Savenay')
             ->setSiret('21440195200129')
             ->setLogo('/path/to/logo.jpg')
-            ->setCode('44260')
-            ->setCodeType(OrganizationCodeTypeEnum::INSEE->value)
             ->setGeometry('geometry')
             ->setUpdatedAt($date);
+
+        $this->assertSame('N/A', $organization->getCodeWithType());
+
+        $organization
+            ->setCode('44260')
+            ->setCodeType(OrganizationCodeTypeEnum::INSEE->value);
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $organization->getUuid());
         $this->assertEquals($date, $organization->getCreatedAt());
@@ -34,5 +38,6 @@ final class OrganizationTest extends TestCase
         $this->assertSame('44260', $organization->getCode());
         $this->assertSame(OrganizationCodeTypeEnum::INSEE->value, $organization->getCodeType());
         $this->assertSame('geometry', $organization->getGeometry());
+        $this->assertSame('44260 (insee)', $organization->getCodeWithType());
     }
 }
