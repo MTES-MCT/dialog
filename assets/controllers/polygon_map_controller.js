@@ -96,7 +96,7 @@ export default class extends Controller {
         const mapOptions = {
             container: this.containerTarget,
             style: this.styleValue,
-            interactive: false,
+            interactive: true,
             attributionControl: false,
         };
 
@@ -108,7 +108,6 @@ export default class extends Controller {
             }
 
             this.hideLoading();
-            this.removeMaplibreControls();
             this.constrainMapCanvas();
 
             this.element.dispatchEvent(new CustomEvent('maplibre:ready', {
@@ -120,16 +119,6 @@ export default class extends Controller {
         this.map.on('error', () => {
             this.hideLoading();
             this.containerTarget.innerHTML = `<h3>Erreur de chargement de la carte</h3>`;
-        });
-    }
-
-    removeMaplibreControls() {
-        const controls = this.element.querySelectorAll('.maplibregl-ctrl-bottom-right, .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-top-right, .maplibregl-ctrl-top-left');
-
-        controls.forEach(control => {
-            if (control && control.parentNode) {
-                control.parentNode.removeChild(control);
-            }
         });
     }
 

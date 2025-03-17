@@ -12,9 +12,9 @@
     <div class="card">
         <div class="card-body">
             {% if geometry %}
-                <div data-controller="static-polygon-map" data-static-polygon-map-geojson-value='{{ geometry }}'>
-                    <div data-static-polygon-map-target="container"></div>
-                    <div data-static-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
+                <div data-controller="polygon-map" data-polygon-map-geojson-value='{{ geometry }}'>
+                    <div data-polygon-map-target="container"></div>
+                    <div data-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
                 </div>
             {% endif %}
         </div>

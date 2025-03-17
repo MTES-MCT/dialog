@@ -89,7 +89,7 @@ final class OrganizationCrudController extends AbstractCrudController
 
     public function syncAllGeometries(): RedirectResponse
     {
-        $organizations = $this->organizationRepository->findAllWithCodes();
+        $organizations = $this->organizationRepository->findAllEntities();
         foreach ($organizations as $organization) {
             $this->commandBus->dispatchAsync(new SyncOrganizationAdministrativeBoundariesCommand($organization->getUuid()));
         }

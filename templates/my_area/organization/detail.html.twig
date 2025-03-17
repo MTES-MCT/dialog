@@ -23,9 +23,9 @@
                             <img class="fr-x-max-w-32w" src="{{ logo }}" alt="{{ 'organization.logo'|trans }}" />
                         {% endif %}
                         {% if organization.geometry %}
-                            <div data-controller="static-polygon-map" data-static-polygon-map-geojson-value='{{ organization.geometry }}'>
-                                <div data-static-polygon-map-target="container"></div>
-                                <div data-static-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
+                            <div data-controller="polygon-map" data-polygon-map-geojson-value='{{ organization.geometry }}'>
+                                <div data-polygon-map-target="container"></div>
+                                <div data-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
                             </div>
                         {% endif %}
                     </div>
