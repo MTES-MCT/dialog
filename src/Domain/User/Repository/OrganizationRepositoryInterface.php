@@ -23,4 +23,6 @@ interface OrganizationRepositoryInterface
     public function add(Organization $organization): void;
 
     public function flush(): void;
+
+    public function canInterveneOnGeometry(string $uuid, string $geometry): bool;
 }
