@@ -23,6 +23,7 @@ final class Version20250306142031 extends AbstractMigration
         $this->addSql('ALTER TABLE signing_authority ADD road_name VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE signing_authority ADD city_code VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE signing_authority ADD city_label VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE signing_authority ALTER address DROP NOT NULL');
     }
 
     public function down(Schema $schema): void
@@ -31,5 +32,6 @@ final class Version20250306142031 extends AbstractMigration
         $this->addSql('ALTER TABLE signing_authority DROP road_name');
         $this->addSql('ALTER TABLE signing_authority DROP city_code');
         $this->addSql('ALTER TABLE signing_authority DROP city_label');
+        $this->addSql('ALTER TABLE signing_authority ALTER address SET NOT NULL');
     }
 }
