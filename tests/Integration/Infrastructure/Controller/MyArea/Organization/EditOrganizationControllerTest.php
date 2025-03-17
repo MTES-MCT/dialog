@@ -69,7 +69,7 @@ final class EditOrganizationControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['organization_form']['name'] = 'Main Org';
-        $values['organization_form']['siret'] = '12345678909876';
+        $values['organization_form']['siret'] = '21440195200129';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 

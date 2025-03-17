@@ -102,6 +102,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis à Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
+    /**
+     * @group only
+     */
     public function testDeletePeriod(): void
     {
         function ensureRegularSpaces(string $text): string
