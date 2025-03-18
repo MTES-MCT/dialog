@@ -37,6 +37,7 @@ final class GeneralInfoFormType extends AbstractType
                 options: [
                     'label' => 'regulation.general_info.identifier',
                     'help' => 'regulation.general_info.identifier.help',
+                    'data' => $options['identifier'],
                 ],
             )
             ->add(
@@ -210,10 +211,12 @@ final class GeneralInfoFormType extends AbstractType
             'validation_groups' => ['Default', 'html_form'],
             'organizations' => [],
             'visaModels' => [],
+            'identifier' => '',
             'save_options' => [],
         ]);
         $resolver->setAllowedTypes('organizations', 'array');
         $resolver->setAllowedTypes('visaModels', 'array');
+        $resolver->setAllowedTypes('identifier', 'string');
         $resolver->setAllowedTypes('save_options', 'array');
     }
 }

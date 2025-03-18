@@ -44,8 +44,12 @@ final class AddRegulationController
     {
         /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
-        $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow());
+        $currentDate = $this->dateUtils->getTomorrow();
+        $command = SaveRegulationGeneralInfoCommand::create(null, $currentDate);
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
+
+        $prefix = $currentDate->format('Y-m');
+        $identifier = $prefix . '-' . uniqid();
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
@@ -54,6 +58,7 @@ final class AddRegulationController
                 'organizations' => $user->getUserOrganizations(),
                 'visaModels' => $visaModels,
                 'action' => $this->router->generate('app_regulation_add'),
+                'identifier' => $identifier,
                 'save_options' => [
                     'label' => 'common.form.continue',
                     'attr' => [
