@@ -54,6 +54,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                 'organizations' => $user->getUserOrganizations(),
                 'visaModels' => $visaModels,
                 'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
+                'identifier' => $command->identifier,
                 'save_options' => [
                     'label' => 'common.form.validate',
                     'attr' => [
