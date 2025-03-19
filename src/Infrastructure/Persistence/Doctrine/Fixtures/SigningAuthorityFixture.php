@@ -23,7 +23,7 @@ final class SigningAuthorityFixture extends Fixture implements DependentFixtureI
             roadName: '3 rue de la Concertation',
             cityCode: '75018',
             cityLabel: 'Paris',
-            address: null,
+            address: '',
         );
 
         $manager->persist($signatoryAuthority);
