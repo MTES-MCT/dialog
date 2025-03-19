@@ -84,4 +84,22 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             ->getSingleScalarResult()
         ;
     }
+
+    public function canInterveneOnGeometry(string $uuid, string $geometry): bool
+    {
+        $result = $this->getEntityManager()->getConnection()->fetchAssociative(
+            'SELECT CASE
+                WHEN ST_IsEmpty(geometry) OR geometry IS NULL THEN false
+                ELSE ST_Intersects(ST_GeomFromGeoJSON(:geometry), geometry)
+            END as has_intersection
+            FROM organization
+            WHERE uuid = :uuid',
+            [
+                'uuid' => $uuid,
+                'geometry' => $geometry,
+            ],
+        );
+
+        return (bool) ($result['has_intersection'] ?? false);
+    }
 }

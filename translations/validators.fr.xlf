@@ -86,6 +86,10 @@
                 <source>organization.siret.already_exist</source>
                 <target>Ce SIRET est déjà utilisé.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.error.organization_cannot_intervene_on_geometry">
+                <source>regulation.location.error.organization_cannot_intervene_on_geometry</source>
+                <target>"%organizationName%" n'a pas les compétences pour intervenir sur ce linéaire de route. Merci de contacter le support DiaLog.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
