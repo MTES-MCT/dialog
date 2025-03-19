@@ -16,4 +16,6 @@ interface RegulationOrderRepositoryInterface
     public function getDuplicateIdentifier(string $identifier, Organization $organization): string;
 
     public function findVisasAndReasonsByRegulationOrderUuid(string $uuid): array;
+
+    public function countRegulationOrdersForOrganizationDuringCurrentMonth(string $userUuid): int;
 }

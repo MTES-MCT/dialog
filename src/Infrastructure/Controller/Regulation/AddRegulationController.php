@@ -9,6 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Query\GetRegulationOrderIdentifierQuery;
 use App\Application\User\Command\MarkUserAsActiveCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
@@ -44,12 +45,11 @@ final class AddRegulationController
     {
         /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
-        $currentDate = $this->dateUtils->getTomorrow();
-        $command = SaveRegulationGeneralInfoCommand::create(null, $currentDate);
+        $organizationUuid = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66';
+        $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
+        /* $identifier = GetRegulationOrderIdentifierQuery(); */
+        $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow(), $identifier);
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
-
-        $prefix = $currentDate->format('Y-m');
-        $identifier = $prefix . '-' . uniqid();
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
@@ -58,7 +58,6 @@ final class AddRegulationController
                 'organizations' => $user->getUserOrganizations(),
                 'visaModels' => $visaModels,
                 'action' => $this->router->generate('app_regulation_add'),
-                'identifier' => $identifier,
                 'save_options' => [
                     'label' => 'common.form.continue',
                     'attr' => [

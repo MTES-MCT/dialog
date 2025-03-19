@@ -67,4 +67,16 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
             ->getOneOrNullResult()
         ;
     }
+
+    public function countRegulationOrdersForOrganizationDuringCurrentMonth(string $organizationUuid): int
+    {
+        return $this->createQueryBuilder('roc')
+           ->select('COUNT(r) + 1 AS number_of_records')
+           ->where('roc.organization_uuid = :uuid')
+           ->andWhere('MONTH(roc.created_at) = MONTH(CURRENT_DATE())')
+           ->andWhere('YEAR(roc.created_at) = YEAR(CURRENT_DATE())')
+           ->getQuery()
+           ->getSingleScalarResult()
+        ;
+    }
 }

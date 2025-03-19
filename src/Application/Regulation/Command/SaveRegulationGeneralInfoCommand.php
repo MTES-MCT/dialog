@@ -30,7 +30,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
 
     public static function create(
         ?RegulationOrderRecord $regulationOrderRecord = null,
-        ?\DateTimeImmutable $startDate = null,
+        ?\DateTimeImmutable $startDate = null, ?string $identifier,
     ): self {
         $regulationOrder = $regulationOrderRecord?->getRegulationOrder();
         $command = new self($regulationOrderRecord);
