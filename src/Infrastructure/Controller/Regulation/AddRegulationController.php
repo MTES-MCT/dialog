@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
-use App\Application\DateUtilsInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
@@ -29,7 +28,6 @@ final class AddRegulationController
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
-        private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
     ) {
     }

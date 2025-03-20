@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
-use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
@@ -13,9 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class RegulationOrderRepository extends ServiceEntityRepository implements RegulationOrderRepositoryInterface
 {
-    public function __construct(
-        ManagerRegistry $registry,
-        private DateUtilsInterface $dateUtils)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RegulationOrder::class);
     }
@@ -68,23 +65,6 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
-        ;
-    }
-
-    public function countRegulationOrdersForOrganizationDuringCurrentMonth(string $uuid): int
-    {
-        $now = $this->dateUtils->getNow();
-        $startDate = $now->modify('first day of this month');
-        $endDate = $now->modify('last day of this month');
-
-        return $this->createQueryBuilder('ro')
-           ->select('COUNT(ror) + 1 AS number_of_records')
-           ->innerJoin('ro.regulationOrderRecord', 'ror')
-           ->where('ror.organization = :uuid')
-           ->andWhere('ror.createdAt BETWEEN :startDate AND :endDate')
-           ->setParameters(['startDate' => $startDate, 'endDate' => $endDate, 'uuid' => $uuid])
-           ->getQuery()
-           ->getSingleScalarResult()
         ;
     }
 }
