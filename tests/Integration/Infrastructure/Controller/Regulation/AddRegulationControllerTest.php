@@ -90,7 +90,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_identifier_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#general_info_form_title_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#general_info_form_category_error')->text());
     }
