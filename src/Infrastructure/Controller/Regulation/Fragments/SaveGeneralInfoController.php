@@ -8,7 +8,6 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\Query\GetRegulationOrderIdentifierQuery;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
@@ -47,8 +46,8 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($organizationUuid));
-        $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
-        $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord, $identifier);
+
+        $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,

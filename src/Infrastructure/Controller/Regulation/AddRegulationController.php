@@ -14,7 +14,6 @@ use App\Application\User\Command\MarkUserAsActiveCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +27,6 @@ final class AddRegulationController
         private \Twig\Environment $twig,
         private AuthenticatedUser $authenticatedUser,
         private FormFactoryInterface $formFactory,
-        private Security $security,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
         private DateUtilsInterface $dateUtils,
@@ -44,11 +42,12 @@ final class AddRegulationController
     public function __invoke(Request $request): Response
     {
         /** @var AbstractAuthenticatedUser */
-        $user = $this->security->getUser();
-        $organizationUuid = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66';
+        $user = $this->authenticatedUser->getSessionUser();
+        $organizationUuid = current($user->getUserOrganizationUuids());
         $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
+
         /* $identifier = GetRegulationOrderIdentifierQuery(); */
-        $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow(), $identifier);
+        $command = SaveRegulationGeneralInfoCommand::create(null, $identifier);
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
 
         $form = $this->formFactory->create(
