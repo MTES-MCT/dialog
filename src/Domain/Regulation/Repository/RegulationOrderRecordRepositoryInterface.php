@@ -48,5 +48,5 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function countTemporaryRegulationOrderRecords(): int;
 
-    public function countRegulationOrderRecordsForOrganizationDuringCurrentMonth(string $userUuid): int;
+    public function countRegulationOrderRecordsForOrganizationDuringCurrentMonth(string $uuid): int;
 }

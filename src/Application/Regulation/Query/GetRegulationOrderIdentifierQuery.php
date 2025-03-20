@@ -9,7 +9,7 @@ use App\Application\QueryInterface;
 final readonly class GetRegulationOrderIdentifierQuery implements QueryInterface
 {
     public function __construct(
-        public string $userUuid,
+        public string $uuid,
     ) {
     }
 }
