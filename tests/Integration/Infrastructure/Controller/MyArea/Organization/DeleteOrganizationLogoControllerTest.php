@@ -15,7 +15,7 @@ final class DeleteOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testDeleteLogo(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID_2 . '/logo/delete', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SAINT_OUEN_ID . '/logo/delete', [
             '_token' => $this->generateCsrfToken($client, 'delete-logo'),
         ]);
 
@@ -29,7 +29,7 @@ final class DeleteOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/logo/delete', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/logo/delete', [
             '_token' => $this->generateCsrfToken($client, 'delete-logo'),
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -47,7 +47,7 @@ final class DeleteOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/logo/delete', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/logo/delete', [
             '_token' => $this->generateCsrfToken($client, 'delete-logo'),
         ]);
         $this->assertResponseRedirects('http://localhost/login', 302);

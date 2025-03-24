@@ -15,7 +15,7 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testDelete(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
             '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
         ]);
 
@@ -29,7 +29,7 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testNotFound(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/e18d61be-1797-4d6b-aa58-cd75e623a821', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/e18d61be-1797-4d6b-aa58-cd75e623a821', [
             '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
         ]);
 
@@ -39,7 +39,7 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
             '_token' => $this->generateCsrfToken($client, 'delete-visa-model'),
         ]);
 
@@ -49,7 +49,7 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testBadAccessToken(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30', [
             '_token' => 'abc',
         ]);
 
@@ -68,7 +68,7 @@ final class DeleteVisaModelControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30');
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

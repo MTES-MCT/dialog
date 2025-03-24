@@ -102,9 +102,6 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Route du Grand Brossais du n° 15 au n° 37bis à Savenay (44260)', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
-    /**
-     * @group only
-     */
     public function testDeletePeriod(): void
     {
         function ensureRegularSpaces(string $text): string
@@ -475,7 +472,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
     public function testEditAsAdminRawGeoJSONShown(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
