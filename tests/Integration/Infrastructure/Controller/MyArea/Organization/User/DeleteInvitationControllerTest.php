@@ -15,7 +15,7 @@ final class DeleteInvitationControllerTest extends AbstractWebTestCase
 
     public function testDelete(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $client->request('DELETE', '/mon-espace/invitations/' . InvitationFixture::INVITATION_ALREADY_JOINED_UUID . '/delete', [
             '_token' => $this->generateCsrfToken($client, 'delete-invitation'),
         ]);

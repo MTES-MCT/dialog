@@ -472,7 +472,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
     public function testEditAsAdminRawGeoJSONShown(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();

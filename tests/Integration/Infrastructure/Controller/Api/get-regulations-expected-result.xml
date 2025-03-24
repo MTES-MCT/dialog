@@ -424,7 +424,7 @@
             </description>
             <issuingAuthority>
                 <com:values>
-                    <com:value>Main Org</com:value>
+                    <com:value>Département de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
             <regulationId>F/CIFS/2023#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
@@ -554,7 +554,7 @@
 
                 </condition>
             </trafficRegulation>
-        
+
             <_trafficRegulationOrderExtension>
                 <trafficRegulationOrderExtended>
                     <dx:source>dialog</dx:source>
@@ -570,7 +570,7 @@
             </description>
             <issuingAuthority>
                 <com:values>
-                    <com:value>Main Org</com:value>
+                    <com:value>Département de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
             <regulationId>117374#24-A-0473#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
@@ -637,7 +637,7 @@
             </description>
             <issuingAuthority>
                 <com:values>
-                    <com:value>Main Org</com:value>
+                    <com:value>Département de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
             <regulationId>FO2/2023#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
@@ -659,7 +659,7 @@
 
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-                    
+
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="ValidityCondition">
@@ -830,7 +830,7 @@
             </description>
             <issuingAuthority>
                 <com:values>
-                    <com:value>Main Org</com:value>
+                    <com:value>Département de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
             <regulationId>F2025/HIVER1#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>

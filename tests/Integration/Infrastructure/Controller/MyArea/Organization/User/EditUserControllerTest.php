@@ -13,7 +13,7 @@ final class EditUserControllerTest extends AbstractWebTestCase
     public function testEdit(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -38,7 +38,7 @@ final class EditUserControllerTest extends AbstractWebTestCase
     public function testEditAdmin(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33/edit');
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -46,7 +46,7 @@ final class EditUserControllerTest extends AbstractWebTestCase
     public function testBadEmail(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();
@@ -64,7 +64,7 @@ final class EditUserControllerTest extends AbstractWebTestCase
     public function testBadFormValues(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();
@@ -91,14 +91,14 @@ final class EditUserControllerTest extends AbstractWebTestCase
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/users/d47badd9-989e-472b-a80e-9df642e93880/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/users/d47badd9-989e-472b-a80e-9df642e93880/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -112,7 +112,7 @@ final class EditUserControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

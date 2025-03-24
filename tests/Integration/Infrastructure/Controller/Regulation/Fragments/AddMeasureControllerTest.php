@@ -589,7 +589,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
     public function testAddRawGeoJSONAsAdmin(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -623,7 +623,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
     public function testAddRawGeoJSONAsAdminInvalidBlank(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -648,7 +648,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
     public function testAddRawGeoJSONAsAdminInvalidGeometryJSON(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -1124,7 +1124,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
     public function testFieldsTooLongRawGeoJSON(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
 
         $this->assertResponseStatusCodeSame(200);
