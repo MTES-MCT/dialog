@@ -1571,6 +1571,10 @@
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.parkingProhibited">
+                <source>regulation.measure.type.parkingProhibited</source>
+                <target>Stationnement interdit</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.card.title">
                 <source>regulation.measure.card.title</source>
                 <target>Mesure</target>
