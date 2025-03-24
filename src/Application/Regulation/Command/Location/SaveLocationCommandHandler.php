@@ -10,6 +10,7 @@ use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationInterveneOnGeometry;
 
 final class SaveLocationCommandHandler
@@ -18,6 +19,7 @@ final class SaveLocationCommandHandler
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private LocationRepositoryInterface $locationRepository,
+        private RegulationOrderRepositoryInterface $regulationOrderRepository,
         private IdFactoryInterface $idFactory,
         private CanOrganizationInterveneOnGeometry $canOrganizationInterveneOnGeometry,
     ) {
@@ -28,13 +30,13 @@ final class SaveLocationCommandHandler
         $command->clean();
         $roadCommand = $command->getRoadCommand();
         $roadCommand->clean();
+        $organization = $command->organization;
 
         // Update location
 
         if ($location = $command->location) {
             $roadCommand->setLocation($location);
             $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
-            $organization = $location->getMeasure()->getRegulationOrder()->getRegulationOrderRecord()->getOrganization();
 
             if (!$this->canOrganizationInterveneOnGeometry->isSatisfiedBy($organization->getUuid(), $geometry)) {
                 throw new OrganizationCannotInterveneOnGeometryException();
@@ -52,7 +54,6 @@ final class SaveLocationCommandHandler
 
         // Create location
         $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
-        $organization = $command->measure->getRegulationOrder()->getRegulationOrderRecord()->getOrganization();
 
         if (!$this->canOrganizationInterveneOnGeometry->isSatisfiedBy($organization->getUuid(), $geometry)) {
             throw new OrganizationCannotInterveneOnGeometryException();

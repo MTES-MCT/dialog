@@ -26,7 +26,7 @@ final class InvitationFixture extends Fixture implements DependentFixtureInterfa
             role: OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             createdAt: new \DateTimeImmutable('2025-02-12'),
             owner: $this->getReference('otherOrgUser', User::class),
-            organization: $this->getReference('otherOrg', Organization::class),
+            organization: $this->getReference('regionIdfOrg', Organization::class),
         );
 
         $invitationAlreadyJoined = new Invitation(
@@ -35,8 +35,8 @@ final class InvitationFixture extends Fixture implements DependentFixtureInterfa
             email: 'mathieu.marchois@beta.gouv.fr',
             role: OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             createdAt: new \DateTimeImmutable('2025-02-12'),
-            owner: $this->getReference('mainOrgAdmin', User::class),
-            organization: $this->getReference('mainOrg', Organization::class),
+            owner: $this->getReference('department93Admin', User::class),
+            organization: $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $manager->persist($invitation);

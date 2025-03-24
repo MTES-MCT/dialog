@@ -55,7 +55,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['general_info_form']['identifier'] = $identifier;
-        $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
+        $values['general_info_form']['organization'] = OrganizationFixture::SEINE_SAINT_DENIS_ID;
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
@@ -79,7 +79,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertStringContainsString(
-            'Les <a target="_top" href="/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models">modèles de visas</a>',
+            'Les <a target="_top" href="/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models">modèles de visas</a>',
             trim($crawler->filter('#visa_models_management_notice')->html()),
         );
     }

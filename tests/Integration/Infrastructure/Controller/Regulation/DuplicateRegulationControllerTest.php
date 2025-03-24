@@ -29,7 +29,7 @@ final class DuplicateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measures->eq(0)->filter('.app-card__content li')->eq(0)->text());
         $this->assertSame('à partir du 11/03/2023 à 00h00', $measures->eq(0)->filter('.app-card__content li')->eq(1)->text());
-        $this->assertSame('Rue du Simplon à Paris 18e Arrondissement (75018)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Rue des Graviers à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testDuplicateMultiple(): void

@@ -37,7 +37,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
 
     public function testGetRegulationsToDatexFormat(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
 
         // Prepare some regulation orders to avoid the need to have published versions of fixtures
         $this->prepareWinterMaintenanceRegulationOrder($client);

@@ -16,7 +16,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 {
     public function testAdd(): void
     {
-        $email = UserFixture::MAIN_ORG_USER_EMAIL;
+        $email = UserFixture::DEPARTMENT_93_USER_EMAIL;
         $client = $this->login($email);
         $crawler = $client->request('GET', '/regulations/add');
 
@@ -42,8 +42,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
         $values['general_info_form']['identifier'] = 'F022023';
+        $values['general_info_form']['organization'] = OrganizationFixture::SEINE_SAINT_DENIS_ID;
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;
@@ -127,7 +127,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $identifier = RegulationOrderFixture::TYPICAL_IDENTIFIER;
         $form['general_info_form[identifier]'] = $identifier;
-        $form['general_info_form[organization]'] = OrganizationFixture::MAIN_ORG_ID;
+        $form['general_info_form[organization]'] = OrganizationFixture::SEINE_SAINT_DENIS_ID;
         $form['general_info_form[title]'] = 'Travaux';
         $form['general_info_form[category]'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $form['general_info_form[subject]'] = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
