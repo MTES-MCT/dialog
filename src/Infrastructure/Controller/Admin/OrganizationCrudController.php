@@ -53,7 +53,8 @@ final class OrganizationCrudController extends AbstractCrudController
                 ->setChoices(array_combine($codeTypes, $codeTypes))
                 ->hideOnIndex(),
             TextField::new('codeWithType', 'Code territorial')->hideOnForm(),
-            DateTimeField::new('updatedAt')->setLabel('Date de dernière mise à jour')->hideOnForm(),
+            DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
+            DateTimeField::new('updatedAt')->setLabel('Date de mise à jour du contour')->hideOnForm(),
         ];
 
         return $fields;
