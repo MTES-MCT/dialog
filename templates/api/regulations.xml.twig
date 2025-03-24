@@ -68,6 +68,10 @@
                                     </com:values>
                                 </otherObligation>
                             </typeOfRegulation>
+                        {% elseif trafficRegulation.type == 'parkingProhibited'%}
+                            <typeOfRegulation xsi:type="SpeedLimit">
+                                <standingOrParkingRestricitonType>parkingProhibited</standingOrParkingRestricitonType>
+                            </typeOfRegulation>
                         {% else %}
                             <typeOfRegulation xsi:type="AccessRestriction">
                                 <accessRestrictionType>noEntry</accessRestrictionType>
