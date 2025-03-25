@@ -44,7 +44,6 @@ final class AddRegulationController
         $organizationUuid = current($user->getUserOrganizationUuids());
         $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
 
-        /* $identifier = GetRegulationOrderIdentifierQuery(); */
         $command = SaveRegulationGeneralInfoCommand::create(null, $identifier);
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
 
