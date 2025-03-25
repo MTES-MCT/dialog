@@ -43,6 +43,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
+        $values['general_info_form']['identifier'] = 'F022023';
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;
@@ -57,11 +58,35 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
         // Filled with DateUtilsMock::getNow()
         $this->assertEquals(new \DateTimeImmutable('2023-06-09'), $userRepository->findOneByEmail($email)->getLastActiveAt());
-        $this->assertEquals('2023-06-0001', $values['general_info_form']['identifier']);
+
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulation_detail');
         $this->assertSame('Créé le 09/06/2023', $crawler->filter('[data-testid="history"]')->text());
+    }
+
+    public function testWithDefaultIdentifier(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/add');
+
+        $saveButton = $crawler->selectButton('Continuer');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+        $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
+        $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;
+        $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
+        $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
+        $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
+        $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
+        $values['general_info_form']['additionalReasons'][0] = 'Motif 1';
+        $values['general_info_form']['additionalReasons'][1] = 'Motif 2';
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(303);
+        $this->assertEquals('2023-06-0001', $values['general_info_form']['identifier']);
     }
 
     public function testEmptyData(): void
