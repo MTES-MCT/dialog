@@ -42,7 +42,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['general_info_form']['identifier'] = 'F022023';
         $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
@@ -58,8 +57,8 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
         // Filled with DateUtilsMock::getNow()
         $this->assertEquals(new \DateTimeImmutable('2023-06-09'), $userRepository->findOneByEmail($email)->getLastActiveAt());
+        $this->assertEquals('2023-06-0001', $values['general_info_form']['identifier']);
         $crawler = $client->followRedirect();
-
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulation_detail');
         $this->assertSame('Créé le 09/06/2023', $crawler->filter('[data-testid="history"]')->text());
