@@ -30,12 +30,12 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
 
     public static function create(
         ?RegulationOrderRecord $regulationOrderRecord = null,
-        ?\DateTimeImmutable $startDate = null,
+        ?string $identifier = null,
     ): self {
         $regulationOrder = $regulationOrderRecord?->getRegulationOrder();
         $command = new self($regulationOrderRecord);
         $command->organization = $regulationOrderRecord?->getOrganization();
-        $command->identifier = $regulationOrder?->getIdentifier();
+        $command->identifier = $regulationOrder?->getIdentifier() ?? $identifier;
         $command->source = $regulationOrderRecord?->getSource() ?? RegulationOrderRecordSourceEnum::DIALOG->value;
         $command->category = $regulationOrder?->getCategory();
         $command->subject = $regulationOrder?->getSubject();

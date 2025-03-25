@@ -44,7 +44,9 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
-        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($regulationOrderRecord->getOrganizationUuid()));
+        $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
+        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($organizationUuid));
+
         $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $form = $this->formFactory->create(
