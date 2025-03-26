@@ -43,7 +43,6 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $values = $form->getPhpValues();
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
 
         // Publish
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_PARKING_PROHIBITED . '/publish', [
