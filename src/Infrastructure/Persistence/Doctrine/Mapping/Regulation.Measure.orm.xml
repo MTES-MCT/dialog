@@ -4,7 +4,7 @@
     name="App\Domain\Regulation\Measure"
     table="measure">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="type" type="string" column="type" nullable="false" length="16"/>
+    <field name="type" type="string" column="type" nullable="false" length="17"/>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false"/>
     <many-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="measures">
         <join-columns>

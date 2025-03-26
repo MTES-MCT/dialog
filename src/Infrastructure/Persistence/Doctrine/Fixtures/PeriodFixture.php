@@ -155,6 +155,13 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2025-01-30 23:59:00', $tz),
             recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
         );
+        $parkingProhibitedPeriod = new Period(
+            uuid: 'bbc808ef-5263-4583-8fd1-ed26da08cf5d',
+            measure: $this->getReference('parkingProhibitedMeasure', Measure::class),
+            startDateTime: new \DateTimeImmutable('2025-01-15 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2025-01-30 23:59:00', $tz),
+            recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
+        );
 
         $manager->persist($typicalPeriod);
         $manager->persist($publishedPeriod);
@@ -176,6 +183,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($rawGeoJSONPeriod);
         $manager->persist($litteralisPeriod);
         $manager->persist($winterMaintenancePeriod);
+        $manager->persist($parkingProhibitedPeriod);
 
         $manager->flush();
     }
