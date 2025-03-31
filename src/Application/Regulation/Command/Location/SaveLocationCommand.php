@@ -26,8 +26,8 @@ final class SaveLocationCommand implements CommandInterface
     ) {
         $this->roadType = $location?->getRoadType();
 
-        if ($location) {
-            $this->organization = $location->getMeasure()->getRegulationOrder()->getRegulationOrderRecord()->getOrganization();
+        if ($measure = $location?->getMeasure()) {
+            $this->organization = $measure->getRegulationOrder()->getRegulationOrderRecord()->getOrganization();
         }
 
         if ($location?->getNamedStreet()) {

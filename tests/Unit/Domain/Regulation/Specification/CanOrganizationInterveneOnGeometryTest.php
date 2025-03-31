@@ -35,8 +35,24 @@ final class CanOrganizationInterveneOnGeometryTest extends TestCase
             ->with('62c8c28c-d87b-4cc3-a5c6-6b2c0bc46504', $linear)
             ->willReturn(true);
 
-        $specification = new CanOrganizationInterveneOnGeometry($this->organizationRepository);
+        $specification = new CanOrganizationInterveneOnGeometry($this->organizationRepository, 'e0d93630-acf7-4722-81e8-ff7d5fa64b66');
         $this->assertTrue($specification->isSatisfiedBy('62c8c28c-d87b-4cc3-a5c6-6b2c0bc46504', $linear));
+    }
+
+    public function testDiaLogOrganizationCanInterveneOnGeometry(): void
+    {
+        $linear = 'LINESTRING(1 1, 2 2, 3 3)';
+
+        $this->organizationRepository
+            ->expects(self::never())
+            ->method('findOneByUuid');
+
+        $this->organizationRepository
+            ->expects(self::never())
+            ->method('canInterveneOnGeometry');
+
+        $specification = new CanOrganizationInterveneOnGeometry($this->organizationRepository, 'e0d93630-acf7-4722-81e8-ff7d5fa64b66');
+        $this->assertTrue($specification->isSatisfiedBy('e0d93630-acf7-4722-81e8-ff7d5fa64b66', $linear));
     }
 
     public function testOrganizationNotFound(): void
@@ -52,7 +68,7 @@ final class CanOrganizationInterveneOnGeometryTest extends TestCase
             ->expects(self::never())
             ->method('canInterveneOnGeometry');
 
-        $specification = new CanOrganizationInterveneOnGeometry($this->organizationRepository);
+        $specification = new CanOrganizationInterveneOnGeometry($this->organizationRepository, 'e0d93630-acf7-4722-81e8-ff7d5fa64b66');
         $this->assertFalse($specification->isSatisfiedBy('62c8c28c-d87b-4cc3-a5c6-6b2c0bc46504', $linear));
     }
 }

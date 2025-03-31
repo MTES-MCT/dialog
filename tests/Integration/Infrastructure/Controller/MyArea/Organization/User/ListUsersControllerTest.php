@@ -39,7 +39,7 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr2->eq(1)->text());
         $this->assertSame('Contributeur', $tr2->eq(2)->text());
         $this->assertSame('Modifier', $tr2->eq(3)->filter('a')->text());
-        $this->assertSame('http://localhost/mon-espace/organizations/e0d93630-acf7-4722-81e8-ff7d5fa64b66/users/0b507871-8b5e-4575-b297-a630310fc06e/edit', $tr2->eq(3)->filter('a')->link()->getUri());
+        $this->assertSame('http://localhost/mon-espace/organizations/8f9164ed-dc0f-4c98-ac18-2f590a1cfd22/users/0b507871-8b5e-4575-b297-a630310fc06e/edit', $tr2->eq(3)->filter('a')->link()->getUri());
     }
 
     public function testIndexAsContributor(): void

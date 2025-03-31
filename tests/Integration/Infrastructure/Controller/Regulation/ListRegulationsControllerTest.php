@@ -69,7 +69,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageOneRow0 = $pageOneRows->eq(0)->filter('td');
         $this->assertSame('FO1/2023', $pageOneRow0->eq(0)->text());
         $this->assertSame('Département de Seine-Saint-Denis', $pageOneRow0->eq(1)->text());
-        $this->assertSame('Saint-Ouen-sur-Seine Rue Eugène Berthoud + 4 localisations', $pageOneRow0->eq(2)->text());
+        $this->assertSame('Saint-Ouen-sur-Seine Rue Eugène Berthoud + 3 localisations', $pageOneRow0->eq(2)->text());
         $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $pageOneRow0->eq(3)->text());
         $this->assertSame('Brouillon', $pageOneRow0->eq(4)->text());
 
@@ -88,7 +88,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageTwoRow0 = $pageTwoRows->eq(0)->filter('td');
         $this->assertSame('F/CIFS/2023', $pageTwoRow0->eq(0)->text());
         $this->assertSame('Département de Seine-Saint-Denis', $pageTwoRow0->eq(1)->text());
-        $this->assertSame('Montauban (82000) Rue de la République + 1 localisation', $pageTwoRow0->eq(2)->text());
+        $this->assertSame('Saint-Ouen-sur-Seine Rue Claude Monet + 1 localisation', $pageTwoRow0->eq(2)->text());
         $this->assertSame('du 02/06/2023 au 10/06/2023 passé', $pageTwoRow0->eq(3)->text());
         $this->assertSame('Publié', $pageTwoRow0->eq(4)->text());
     }

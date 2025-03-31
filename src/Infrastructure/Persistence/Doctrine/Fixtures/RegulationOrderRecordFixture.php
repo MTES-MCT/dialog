@@ -139,7 +139,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('winterMaintenanceRegulationOrder', RegulationOrder::class),
             new \DateTime('2025-01-08'),
-            $this->getReference('seineSaintDenisOrg', Organization::class),
+            $this->getReference('dialogOrg', Organization::class),
         );
 
         $manager->persist($typicalRegulationOrderRecord);

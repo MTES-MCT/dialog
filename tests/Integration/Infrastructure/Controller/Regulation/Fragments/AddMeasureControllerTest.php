@@ -149,12 +149,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
-        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
-        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
-        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
-        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
-        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '37bis';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
@@ -173,6 +170,53 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $addMeasureBtn = $crawler->filter('turbo-stream[target=block_measure]')->selectButton('Ajouter une mesure');
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
+    }
+
+    public function testLocationOutOfOrganization(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        // Get the raw values.
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['vehicleSet']['restrictedTypes'] = ['heavyGoodsVehicle', 'dimensions', 'other'];
+        $values['measure_form']['vehicleSet']['otherRestrictedTypeText'] = 'Matières dangereuses';
+        $values['measure_form']['vehicleSet']['exemptedTypes'] = ['commercial', 'other'];
+        $values['measure_form']['vehicleSet']['otherExemptedTypeText'] = 'Déchets industriels';
+        $values['measure_form']['vehicleSet']['heavyweightMaxWeight'] = 3.5;
+        $values['measure_form']['vehicleSet']['maxWidth'] = 0.0; // Zero OK
+        $values['measure_form']['vehicleSet']['maxLength'] = -0; // Zero OK
+        $values['measure_form']['vehicleSet']['maxHeight'] = '2.50';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '20';
+        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
+        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
+        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '37bis';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringStartsWith('L\'organisation "Département de Seine-Saint-Denis" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S\'il s\'agit d\'une erreur, vous pouvez contacter le support DiaLog.', $crawler->filter('#measure_form_locations_0_roadType_error')->text());
     }
 
     public function testGeocodingFailureFullRoad(): void
@@ -410,7 +454,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
     public function testAddNumberedRoad(array $locationForm, string $expectedText): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/add');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
@@ -423,6 +467,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0] = $locationForm;
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-11-30';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -603,7 +648,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
         $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
         $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Village olympique';
-        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"type": "Point", "coordinates": [42, 4]}';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"type": "Point", "coordinates": [2.3305975477333334, 48.91891596499872]}';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
         $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
         $values['measure_form']['periods'][0]['startTime']['minute'] = '0';

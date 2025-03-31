@@ -11,13 +11,19 @@ use Doctrine\Persistence\ObjectManager;
 
 final class OrganizationFixture extends Fixture
 {
-    public const SEINE_SAINT_DENIS_ID = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66';
+    public const DIALOG_ORG_ID = 'e0d93630-acf7-4722-81e8-ff7d5fa64b66';
+    public const SEINE_SAINT_DENIS_ID = '8f9164ed-dc0f-4c98-ac18-2f590a1cfd22';
     public const SEINE_SAINT_DENIS_NAME = 'Département de Seine-Saint-Denis';
     public const REGION_IDF_ID = '3c46e94d-7ca2-4253-a9ea-0ce5fdb966a4';
     public const SAINT_OUEN_ID = 'ea9c0cfe-165f-49cf-934b-3a11c6e96b79';
 
     public function load(ObjectManager $manager): void
     {
+        $dialogOrg = (new Organization(self::DIALOG_ORG_ID))
+            ->setName('DiaLog')
+            ->setCreatedAt(new \DateTimeImmutable('2022-11-01'))
+            ->setLogo('/path/to/logo.jpeg');
+
         $seineSaintDenisOrg = (new Organization(self::SEINE_SAINT_DENIS_ID))
             ->setName(self::SEINE_SAINT_DENIS_NAME)
             ->setCreatedAt(new \DateTimeImmutable('2022-11-01'))
@@ -46,10 +52,12 @@ final class OrganizationFixture extends Fixture
         $manager->persist($seineSaintDenisOrg);
         $manager->persist($regionIdfOrg);
         $manager->persist($saintOuenOrg);
+        $manager->persist($dialogOrg);
         $manager->flush();
 
         $this->addReference('seineSaintDenisOrg', $seineSaintDenisOrg);
         $this->addReference('regionIdfOrg', $regionIdfOrg);
         $this->addReference('saintOuenOrg', $saintOuenOrg);
+        $this->addReference('dialogOrg', $dialogOrg);
     }
 }

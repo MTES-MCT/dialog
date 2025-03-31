@@ -73,7 +73,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['general_info_form']['organization'] = OrganizationFixture::MAIN_ORG_ID;
+        $values['general_info_form']['organization'] = OrganizationFixture::DIALOG_ORG_ID;
         $values['general_info_form']['title'] = 'Interdiction de circuler dans Paris';
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;

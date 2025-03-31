@@ -39,6 +39,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private $locationRepository;
     private $idFactory;
     private $canOrganizationInterveneOnGeometry;
+    private $organization;
 
     public function setUp(): void
     {
@@ -47,6 +48,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->canOrganizationInterveneOnGeometry = $this->createMock(CanOrganizationInterveneOnGeometry::class);
+        $this->organization = $this->createMock(Organization::class);
     }
 
     private function provideTestCreateNumberedRoad(): array
@@ -62,31 +64,17 @@ final class SaveLocationCommandHandlerTest extends TestCase
      */
     public function testCreateNumberedRoad(string $roadType): void
     {
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
-        $organization = $this->createMock(Organization::class);
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $measure
             ->expects(self::once())
             ->method('addLocation')
             ->with($createdLocation);
-        $measure
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getRegulationOrderRecord')
-            ->willReturn($regulationOrderRecord);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
 
         $numberedRoadCommand = new SaveNumberedRoadCommand();
 
@@ -133,6 +121,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $command = new SaveLocationCommand();
         $command->measure = $measure;
         $command->roadType = $roadType;
+        $command->organization = $this->organization;
         $command->assignNumberedRoad($numberedRoadCommand);
 
         $result = $handler($command);
@@ -142,32 +131,17 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testCreateNamedStreet(): void
     {
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $createdLocation = $this->createMock(Location::class);
-        $organization = $this->createMock(Organization::class);
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $measure = $this->createMock(Measure::class);
         $measure
             ->expects(self::once())
             ->method('addLocation')
             ->with($createdLocation);
-
-        $measure
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getRegulationOrderRecord')
-            ->willReturn($regulationOrderRecord);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
 
         $namedStreetCommand = new SaveNamedStreetCommand();
 
@@ -213,6 +187,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
+        $command->organization = $this->organization;
         $command->roadType = RoadTypeEnum::LANE->value;
         $command->namedStreet = $namedStreetCommand;
 
@@ -225,26 +200,12 @@ final class SaveLocationCommandHandlerTest extends TestCase
     {
         $this->expectException(OrganizationCannotInterveneOnGeometryException::class);
 
-        $organization = $this->createMock(Organization::class);
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $measure = $this->createMock(Measure::class);
-        $measure
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getRegulationOrderRecord')
-            ->willReturn($regulationOrderRecord);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-        $organization
+        $this->organization
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $measure = $this->createMock(Measure::class);
 
         $namedStreetCommand = new SaveNamedStreetCommand();
 
@@ -281,6 +242,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
+        $command->organization = $this->organization;
         $command->roadType = RoadTypeEnum::LANE->value;
         $command->namedStreet = $namedStreetCommand;
 
@@ -291,31 +253,17 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testCreateRawGeoJSON(): void
     {
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $createdLocation = $this->createMock(Location::class);
-        $organization = $this->createMock(Organization::class);
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $measure = $this->createMock(Measure::class);
         $measure
             ->expects(self::once())
             ->method('addLocation')
             ->with($createdLocation);
-        $measure
-            ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-        $regulationOrder
-            ->expects(self::once())
-            ->method('getRegulationOrderRecord')
-            ->willReturn($regulationOrderRecord);
-        $regulationOrderRecord
-            ->expects(self::once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
 
         $rawGeoJSONCommand = new SaveRawGeoJSONCommand();
         $rawGeoJSONCommand->label = 'Evénement spécial';
@@ -365,6 +313,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $command->measure = $measure;
         $command->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $command->rawGeoJSON = $rawGeoJSONCommand;
+        $command->organization = $this->organization;
 
         $result = $handler($command);
 
@@ -374,10 +323,20 @@ final class SaveLocationCommandHandlerTest extends TestCase
     public function testUpdateNumberedRoadWithNamedStreetDeletion(): void
     {
         $namedStreet = $this->createMock(NamedStreet::class);
-        $organization = $this->createMock(Organization::class);
+        $measure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $measure = $this->createMock(Measure::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
         $measure
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -390,12 +349,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
-
-        $location = $this->createMock(Location::class);
         $location
             ->expects(self::exactly(3))
             ->method('getNamedStreet')
@@ -457,10 +410,21 @@ final class SaveLocationCommandHandlerTest extends TestCase
     public function testUpdateNamedStreetWithNumberedRoadDelation(): void
     {
         $numberedRoad = $this->createMock(NumberedRoad::class);
-        $organization = $this->createMock(Organization::class);
+        $measure = $this->createMock(Measure::class);
+
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $measure = $this->createMock(Measure::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
         $measure
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -473,12 +437,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
-
-        $location = $this->createMock(Location::class);
         $location
             ->expects(self::exactly(3))
             ->method('getNumberedRoad')
@@ -539,10 +497,21 @@ final class SaveLocationCommandHandlerTest extends TestCase
     public function testUpdateNamedStreetWithRawGeoJSONDelation(): void
     {
         $rawGeoJSON = $this->createMock(RawGeoJSON::class);
-        $organization = $this->createMock(Organization::class);
+        $measure = $this->createMock(Measure::class);
+
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $measure = $this->createMock(Measure::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
         $measure
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -555,12 +524,6 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
-
-        $location = $this->createMock(Location::class);
         $location
             ->expects(self::exactly(3))
             ->method('getRawGeoJSON')
@@ -622,10 +585,21 @@ final class SaveLocationCommandHandlerTest extends TestCase
     {
         $this->expectException(OrganizationCannotInterveneOnGeometryException::class);
         $rawGeoJSON = $this->createMock(RawGeoJSON::class);
-        $organization = $this->createMock(Organization::class);
+        $measure = $this->createMock(Measure::class);
+
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-        $measure = $this->createMock(Measure::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
         $measure
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -638,12 +612,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
 
-        $location = $this->createMock(Location::class);
         $location
             ->expects(self::exactly(2))
             ->method('getRawGeoJSON')

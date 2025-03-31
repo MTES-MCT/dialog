@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class EditOrganizationControllerTest extends AbstractWebTestCase
@@ -69,7 +70,7 @@ final class EditOrganizationControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['organization_form']['name'] = 'Département de Seine-Saint-Denis';
-        $values['organization_form']['siret'] = '21440195200129';
+        $values['organization_form']['siret'] = '22930008201453';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -86,7 +87,7 @@ final class EditOrganizationControllerTest extends AbstractWebTestCase
 
     public function testEditDialog(): void
     {
-        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
         $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/edit');
         $this->assertResponseStatusCodeSame(403);
     }

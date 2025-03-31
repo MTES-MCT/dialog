@@ -69,6 +69,11 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
         $organizationUser4->setOrganization($this->getReference('saintOuenOrg', Organization::class));
         $organizationUser4->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
 
+        $organizationUser5 = new OrganizationUser('b3eef867-7446-4d5a-9336-ab3305515f1d');
+        $organizationUser5->setUser($department93User);
+        $organizationUser5->setOrganization($this->getReference('dialogOrg', Organization::class));
+        $organizationUser5->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
+
         $manager->persist($department93User);
         $manager->persist($department93Admin);
         $manager->persist($otherOrgUser);
@@ -79,6 +84,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($organizationUser2);
         $manager->persist($organizationUser3);
         $manager->persist($organizationUser4);
+        $manager->persist($organizationUser5);
         $manager->flush();
 
         $this->addReference('department93User', $department93User);

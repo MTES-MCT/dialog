@@ -12,7 +12,11 @@ use App\Application\Regulation\Command\Location\GeocodeLocationsWithoutGeometryC
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
+use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class GeocodeLocationsWithoutGeometryCommandHandlerTest extends TestCase
@@ -50,9 +54,33 @@ final class GeocodeLocationsWithoutGeometryCommandHandlerTest extends TestCase
 
     public function testUpdate(): void
     {
+        $organization = $this->createMock(Organization::class);
+        $measure = $this->createMock(Measure::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+
+        $measure->expects(self::any())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrder->expects(self::any())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord->expects(self::any())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
         $location1 = $this->createMock(Location::class);
+        $location1->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
         $location2 = $this->createMock(Location::class);
+        $location2->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
         $location3 = $this->createMock(Location::class);
+        $location3->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
 
         $namedStreet1 = $this->createMock(NamedStreet::class);
         $namedStreet2 = $this->createMock(NamedStreet::class);
