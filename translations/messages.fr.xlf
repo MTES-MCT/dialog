@@ -30,6 +30,10 @@
                 <source>common.and</source>
                 <target>et</target>
             </trans-unit>
+            <trans-unit id="common.loading">
+                <source>common.loading</source>
+                <target>Chargement ...</target>
+            </trans-unit>
             <trans-unit id="common.enabled">
                 <source>common.enabled</source>
                 <target>Activé</target>
@@ -2071,7 +2075,7 @@
             </trans-unit>
             <trans-unit id="register.error.organizationSiret_not_found">
                 <source>register.error.organizationSiret_not_found</source>
-                <target>Le SIRET fourni n'existe pas. Veuillez vérifier si votre SIRET est correct.</target>
+                <target>Votre SIRET est invalide : numéro inexistant ou entité juridique non compatible avec DiaLog.</target>
             </trans-unit>
             <trans-unit id="register.find_siret">
                 <source>register.find_siret</source>
@@ -2496,6 +2500,22 @@
             <trans-unit id="signing_authority.address.help">
                 <source>signing_authority.address.help</source>
                 <target>Entrez l'adresse de l'établissement, par exemple de la mairie</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.roadName">
+                <source>signing_authority.roadName</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.roadName.help">
+                <source>signing_authority.roadName.help</source>
+                <target>Numéro et voie</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.cityCode">
+                <source>signing_authority.cityCode</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="signing_authority.cityLabel">
+                <source>signing_authority.cityLabel</source>
+                <target>Ville</target>
             </trans-unit>
             <trans-unit id="signing_authority.placeOfSignature">
                 <source>signing_authority.placeOfSignature</source>

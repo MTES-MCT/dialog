@@ -12,6 +12,9 @@ final class SaveSigningAuthorityCommand implements CommandInterface
 {
     public ?string $name = null;
     public ?string $address = null;
+    public ?string $roadName = null;
+    public ?string $cityCode = null;
+    public ?string $cityLabel = null;
     public ?string $placeOfSignature = null;
     public ?string $signatoryName = null;
 
@@ -21,6 +24,9 @@ final class SaveSigningAuthorityCommand implements CommandInterface
     ) {
         $this->name = $signingAuthority?->getName();
         $this->address = $signingAuthority?->getAddress();
+        $this->roadName = $signingAuthority?->getRoadName();
+        $this->cityCode = $signingAuthority?->getCityCode();
+        $this->cityLabel = $signingAuthority?->getCityLabel();
         $this->placeOfSignature = $signingAuthority?->getPlaceOfSignature();
         $this->signatoryName = $signingAuthority?->getSignatoryName();
     }
