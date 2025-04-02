@@ -453,21 +453,18 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-06-01T23:00:00+00:00</com:overallStartTime>
+                                    <com:overallStartTime>2023-06-03T08:00:00+00:00</com:overallStartTime>
 
-                                    <com:overallEndTime>2023-06-06T22:59:00+00:00</com:overallEndTime>
+                                    <com:overallEndTime>2023-06-05T10:00:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
-                                        </com:recurringTimePeriodOfDay>
-                                        <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
+                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
                                         </com:recurringTimePeriodOfDay>
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>tuesday</com:applicableDay>
+                                            <com:applicableDay>thursday</com:applicableDay>
                                         </com:recurringDayWeekMonthPeriod>
                                     </com:validPeriod>
                                 </com:validityTimeSpecification>
@@ -503,18 +500,21 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-06-03T08:00:00+00:00</com:overallStartTime>
+                                    <com:overallStartTime>2023-06-01T23:00:00+00:00</com:overallStartTime>
 
-                                    <com:overallEndTime>2023-06-05T10:00:00+00:00</com:overallEndTime>
+                                    <com:overallEndTime>2023-06-06T22:59:00+00:00</com:overallEndTime>
 
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
+                                            <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>14:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>19:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>21:00:00+00:00</com:endTimeOfPeriod>
                                         </com:recurringTimePeriodOfDay>
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>tuesday</com:applicableDay>
-                                            <com:applicableDay>thursday</com:applicableDay>
                                         </com:recurringDayWeekMonthPeriod>
                                     </com:validPeriod>
                                 </com:validityTimeSpecification>
