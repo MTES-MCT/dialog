@@ -465,8 +465,8 @@ final class BacIdfTransformer
 
             if ($startHour !== '00:00' && $endHour !== '23:59') {
                 $timeSlotCommand = new SaveTimeSlotCommand();
-                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $startHour, new \DateTimeZone('Europe/Paris'));
-                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $endHour, new \DateTimeZone('Europe/Paris'));
+                $timeSlotCommand->startTime = \DateTimeImmutable::createFromFormat('H:i', $startHour, new \DateTimeZone('Etc/GMT-1'));
+                $timeSlotCommand->endTime = \DateTimeImmutable::createFromFormat('H:i', $endHour, new \DateTimeZone('Etc/GMT-1'));
                 $timeSlotCommands[] = $timeSlotCommand;
             }
 
