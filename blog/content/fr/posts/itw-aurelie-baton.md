@@ -32,14 +32,14 @@ L’enjeu est donc de décomplexifier tout en permettant une flexibilité : on c
 Etape 1 : sélection par défaut de tous les véhicules
 
 <figure>
-{% image "./img/aurelie-itw-pic1.png", "Capture d'écran du sélecteur de tous les véhicules ou certains véhicules seulement", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/aurelie-itw-pic1.png", "L'option 'Tous les véhicules' est sélectionnée par défaut dans l’interface de DiaLog", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 <figcaption>L'option "Tous les véhicules" est sélectionnée par défaut dans l’interface de DiaLog</figcaption>
 </figure>
 
 Etape 2 : sélection de certains véhicules uniquement
 
 <figure>
-{% image "./img/aurelie-itw-pic2.png", "Capture d'écran de la sélection de certains véhicules uniquement : poids, gabarit, crit'air, matières dangereuses, autre", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/aurelie-itw-pic2.png", 'Option "Certains véhicules" affichée au clic uniquement', [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 <figcaption>Option “Certains véhicules” affichée au clic uniquement</figcaption>
 </figure>
 
@@ -48,14 +48,14 @@ Nous appliquons le même principe pour les exceptions. DiaLog permet d’indique
 Etape 1 : bouton pour définir une exception (pas obligatoire)
 
 <figure>
-{% image "./img/aurelie-itw-pic3.png", "Capture d'écran du bouton permettant de définir des exceptions", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/aurelie-itw-pic3.png", 'Option pour définir une exception, le détail est "caché" par défaut', [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 <figcaption>Option pour définir une exception, le détail est "caché" par défaut</figcaption>
 </figure>
 
 Etape 2 : sélection possible des exceptions après avoir cliqué sur le bouton
  
  <figure>
-{% image "./img/aurelie-itw-pic4.png", "Capture d'écran de la sélection des véhicules qui font l'objet d'une exception", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/aurelie-itw-pic4.png", 'Après avoir cliqué sur "Définir une exception"', [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
 <figcaption>Après avoir cliqué sur "Définir une exception"</figcaption>
 </figure>
 
