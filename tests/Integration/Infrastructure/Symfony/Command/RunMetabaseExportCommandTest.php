@@ -39,13 +39,13 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
 
         $this->assertEquals([
             'users' => 3,
-            'organizations' => 2,
+            'organizations' => 3,
             // Only counts regulations outside of DiaLog org
-            'regulationOrderRecords' => 1,
-            'regulationOrderRecords.published' => 1,
-            'regulationOrderRecords.permanent' => 0,
-            'regulationOrderRecords.temporary' => 1,
-            'cifs.incidents' => 7,
+            'regulationOrderRecords' => 10,
+            'regulationOrderRecords.published' => 4,
+            'regulationOrderRecords.permanent' => 1,
+            'regulationOrderRecords.temporary' => 9,
+            'cifs.incidents' => 13,
         ], $counts);
 
         // Check user active statistics

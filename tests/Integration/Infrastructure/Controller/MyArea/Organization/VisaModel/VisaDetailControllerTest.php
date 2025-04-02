@@ -12,8 +12,8 @@ final class VisaDetailControllerTest extends AbstractWebTestCase
 {
     public function testIndex(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/detail');
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/detail');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -30,7 +30,7 @@ final class VisaDetailControllerTest extends AbstractWebTestCase
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/detail');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/detail');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -44,7 +44,7 @@ final class VisaDetailControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/detail');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/detail');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

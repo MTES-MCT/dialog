@@ -14,6 +14,8 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class SaveMeasureCommandTest extends TestCase
@@ -21,23 +23,57 @@ final class SaveMeasureCommandTest extends TestCase
     public function testCreateWithoutMeasure(): void
     {
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $organization = $this->createMock(Organization::class);
+
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
         $command = SaveMeasureCommand::create($regulationOrder);
+
+        $expectedLocation = new SaveLocationCommand();
+        $expectedLocation->organization = $organization;
 
         $this->assertEmpty($command->measure);
         $this->assertEmpty($command->type);
         $this->assertSame($regulationOrder, $command->regulationOrder);
-        $this->assertEquals([new SaveLocationCommand()], $command->locations);
+        $this->assertEquals([$expectedLocation], $command->locations);
         $this->assertEquals([new SavePeriodCommand()], $command->periods);
     }
 
     public function testCreateWithMeasure(): void
     {
-        $location1 = $this->createMock(Location::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $organization = $this->createMock(Organization::class);
+
+        $regulationOrder
+            ->expects(self::exactly(2))
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::exactly(2))
+            ->method('getOrganization')
+            ->willReturn($organization);
+
         $vehicleSet = $this->createMock(VehicleSet::class);
         $period = $this->createMock(Period::class);
         $measure = $this->createMock(Measure::class);
         $createdAt = new \DateTimeImmutable('2023-06-01');
+        $location1 = $this->createMock(Location::class);
+        $location1
+            ->expects(self::exactly(2))
+            ->method('getMeasure')
+            ->willReturn($measure);
+
+        $measure->expects(self::exactly(2))
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
 
         $measure
             ->expects(self::once())

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\DeleteNamedStreetCommand;
@@ -24,7 +25,11 @@ use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
+use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Domain\Regulation\Specification\CanOrganizationInterveneOnGeometry;
+use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class SaveLocationCommandHandlerTest extends TestCase
@@ -33,6 +38,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
     private $queryBus;
     private $locationRepository;
     private $idFactory;
+    private $canOrganizationInterveneOnGeometry;
+    private $organization;
 
     public function setUp(): void
     {
@@ -40,6 +47,8 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->locationRepository = $this->createMock(LocationRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
+        $this->canOrganizationInterveneOnGeometry = $this->createMock(CanOrganizationInterveneOnGeometry::class);
+        $this->organization = $this->createMock(Organization::class);
     }
 
     private function provideTestCreateNumberedRoad(): array
@@ -55,6 +64,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
      */
     public function testCreateNumberedRoad(string $roadType): void
     {
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
         $measure
@@ -86,15 +100,28 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ))
             ->willReturn($createdLocation);
 
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(true);
+
         $this->commandBus
             ->expects(self::once())
             ->method('handle')
             ->with($this->equalTo($numberedRoadCommand));
 
-        $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
         $command->roadType = $roadType;
+        $command->organization = $this->organization;
         $command->assignNumberedRoad($numberedRoadCommand);
 
         $result = $handler($command);
@@ -104,6 +131,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testCreateNamedStreet(): void
     {
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
         $measure
@@ -117,6 +149,12 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('make')
             ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(true);
 
         $this->queryBus
             ->expects(self::once())
@@ -140,9 +178,71 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('handle')
             ->with($this->equalTo($namedStreetCommand));
 
-        $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
+        $command->organization = $this->organization;
+        $command->roadType = RoadTypeEnum::LANE->value;
+        $command->namedStreet = $namedStreetCommand;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
+
+    public function testCreateLocationWithGeometryThatOrganizationCannotInterveneOn(): void
+    {
+        $this->expectException(OrganizationCannotInterveneOnGeometryException::class);
+
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $measure = $this->createMock(Measure::class);
+
+        $namedStreetCommand = new SaveNamedStreetCommand();
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(false);
+
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetNamedStreetGeometryQuery($namedStreetCommand))
+            ->willReturn('geometry');
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $this->commandBus
+            ->expects(self::never())
+            ->method('handle');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->organization = $this->organization;
         $command->roadType = RoadTypeEnum::LANE->value;
         $command->namedStreet = $namedStreetCommand;
 
@@ -153,6 +253,11 @@ final class SaveLocationCommandHandlerTest extends TestCase
 
     public function testCreateRawGeoJSON(): void
     {
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $createdLocation = $this->createMock(Location::class);
         $measure = $this->createMock(Measure::class);
         $measure
@@ -175,6 +280,12 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->with(new GetRawGeoJSONGeometryQuery('<geometry>'))
             ->willReturn('<geometry>');
 
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', '<geometry>')
+            ->willReturn(true);
+
         $this->locationRepository
             ->expects(self::once())
             ->method('add')
@@ -191,11 +302,18 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('handle')
             ->with($this->equalTo($rawGeoJSONCommand));
 
-        $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
         $command->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $command->rawGeoJSON = $rawGeoJSONCommand;
+        $command->organization = $this->organization;
 
         $result = $handler($command);
 
@@ -205,15 +323,50 @@ final class SaveLocationCommandHandlerTest extends TestCase
     public function testUpdateNumberedRoadWithNamedStreetDeletion(): void
     {
         $namedStreet = $this->createMock(NamedStreet::class);
+        $measure = $this->createMock(Measure::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+        $measure
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
         $location
             ->expects(self::exactly(3))
             ->method('getNamedStreet')
             ->willReturn($namedStreet);
         $location
             ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+        $location
+            ->expects(self::once())
             ->method('update')
             ->with(RoadTypeEnum::DEPARTMENTAL_ROAD->value, 'geometry');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(true);
 
         $numberedRoadCommand = new SaveNumberedRoadCommand();
         $numberedRoadCommand->location = $location;
@@ -236,7 +389,13 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 },
             );
 
-        $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
 
         $command = new SaveLocationCommand($location);
         $command->namedStreet = null;
@@ -251,7 +410,33 @@ final class SaveLocationCommandHandlerTest extends TestCase
     public function testUpdateNamedStreetWithNumberedRoadDelation(): void
     {
         $numberedRoad = $this->createMock(NumberedRoad::class);
+        $measure = $this->createMock(Measure::class);
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+        $measure
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
         $location
             ->expects(self::exactly(3))
             ->method('getNumberedRoad')
@@ -260,6 +445,16 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(RoadTypeEnum::LANE->value, 'geometry');
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(true);
 
         $namedStreetCommand = new SaveNamedStreetCommand();
         $namedStreetCommand->roadType = RoadTypeEnum::LANE->value;
@@ -282,7 +477,13 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 },
             );
 
-        $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
 
         $command = new SaveLocationCommand($location);
         $command->roadType = RoadTypeEnum::LANE->value;
@@ -296,7 +497,33 @@ final class SaveLocationCommandHandlerTest extends TestCase
     public function testUpdateNamedStreetWithRawGeoJSONDelation(): void
     {
         $rawGeoJSON = $this->createMock(RawGeoJSON::class);
+        $measure = $this->createMock(Measure::class);
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
         $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+        $measure
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
         $location
             ->expects(self::exactly(3))
             ->method('getRawGeoJSON')
@@ -305,6 +532,10 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('update')
             ->with(RoadTypeEnum::LANE->value, 'geometry');
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
 
         $namedStreetCommand = new SaveNamedStreetCommand();
         $namedStreetCommand->roadType = RoadTypeEnum::LANE->value;
@@ -315,6 +546,12 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->method('handle')
             ->with(new GetNamedStreetGeometryQuery($namedStreetCommand, $location))
             ->willReturn('geometry');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(true);
 
         $matcher = self::exactly(2);
         $this->commandBus
@@ -327,7 +564,94 @@ final class SaveLocationCommandHandlerTest extends TestCase
                 },
             );
 
-        $handler = new SaveLocationCommandHandler($this->commandBus, $this->queryBus, $this->locationRepository, $this->idFactory);
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
+
+        $command = new SaveLocationCommand($location);
+        $command->roadType = RoadTypeEnum::LANE->value;
+        $command->namedStreet = $namedStreetCommand;
+
+        $result = $handler($command);
+
+        $this->assertSame($location, $result);
+    }
+
+    public function testUpdateCannotOrganizationInterveneOnGeometry(): void
+    {
+        $this->expectException(OrganizationCannotInterveneOnGeometryException::class);
+        $rawGeoJSON = $this->createMock(RawGeoJSON::class);
+        $measure = $this->createMock(Measure::class);
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+        $measure
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $location
+            ->expects(self::exactly(2))
+            ->method('getRawGeoJSON')
+            ->willReturn($rawGeoJSON);
+        $location
+            ->expects(self::never())
+            ->method('update');
+        $location
+            ->expects(self::once())
+            ->method('getMeasure')
+            ->willReturn($measure);
+
+        $namedStreetCommand = new SaveNamedStreetCommand();
+        $namedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $namedStreetCommand->location = $location;
+
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetNamedStreetGeometryQuery($namedStreetCommand, $location))
+            ->willReturn('geometry');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', 'geometry')
+            ->willReturn(false);
+
+        $this->commandBus
+            ->expects(self::never())
+            ->method('handle');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
 
         $command = new SaveLocationCommand($location);
         $command->roadType = RoadTypeEnum::LANE->value;

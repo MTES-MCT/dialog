@@ -114,3 +114,14 @@ Cette approche permet de :
 - Conserver une précision élevée pour les communes
 - Réduire significativement le poids des géométries pour les grandes entités (comme les régions)
 - Maintenir un bon équilibre entre précision visuelle et performance
+
+## Règles de validation d'une localisation d'un arrêté
+
+Pour la validation d'une localisation d'un arrêté dans un périmètre géographique d'une organisation, nous avons défini les règles métiers suivantes :
+
+- Inclusion totale : Le linéaire est entièrement contenu dans le périmètre de l'organisation.
+- Inclusion partielle sortante : Le linéaire commence dans le périmètre de l'organisation puis se termine à l'extérieur.
+- Inclusion partielle entrante : Le linéaire commence à l'extérieur du périmètre de l'organisation puis se termine à l'intérieur.
+- Traversée multiple : Le linéaire traverse plusieurs fois les limites du périmètre de l'organisation (entrée-sortie-entrée...).
+
+Cette solution résout le problème de linéaires partagés entre plusieurs organisations tout en prenant en compte des scénarios plus complexes comme les traversées multiples. Elle permet d'associer de manière fiable les arrêtés aux organisations concernées en fonction de leur localisation géographique.

@@ -160,7 +160,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                                 -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
                                 -- On détecte si les deux ordres correspondent avec cette règle :
                                 -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
-                                -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens 
+                                -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens
                                 CASE WHEN ST_Distance(
                                     ST_StartPoint(s.geometrie),
                                     (

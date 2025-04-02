@@ -15,7 +15,7 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     public function testDelete(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e', [
             '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
 
@@ -29,7 +29,7 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     public function testDeleteAdmin(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33', [
             '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
 
@@ -39,7 +39,7 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/users/d47badd9-989e-472b-a80e-9df642e93880', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/users/d47badd9-989e-472b-a80e-9df642e93880', [
             '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
         $this->assertResponseStatusCodeSame(403);
@@ -57,7 +57,7 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e');
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }
