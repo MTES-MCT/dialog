@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -74,6 +75,9 @@ final class SaveMeasureCommandHandler
                 } catch (GeocodingFailureException $e) {
                     $e->setLocationIndex($index);
                     throw $e;
+                } catch (OrganizationCannotInterveneOnGeometryException $e) {
+                    $e->setLocationIndex($index);
+                    throw $e;
                 }
             }
 
@@ -117,6 +121,9 @@ final class SaveMeasureCommandHandler
                 $location = $this->commandBus->handle($locationCommand);
                 $measure->addLocation($location);
             } catch (GeocodingFailureException $e) {
+                $e->setLocationIndex($index);
+                throw $e;
+            } catch (OrganizationCannotInterveneOnGeometryException $e) {
                 $e->setLocationIndex($index);
                 throw $e;
             }

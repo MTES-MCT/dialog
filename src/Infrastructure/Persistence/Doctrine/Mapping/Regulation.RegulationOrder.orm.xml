@@ -12,7 +12,7 @@
     <field name="additionalVisas" type="array" nullable="true"/>
     <field name="additionalReasons" type="array" nullable="true"/>
     <one-to-many field="measures" target-entity="App\Domain\Regulation\Measure" mapped-by="regulationOrder"/>
-    <one-to-one field="regulationOrderRecord" target-entity="App\Domain\Regulation\RegulationOrderRecord" mapped-by="regulationOrder" />
+    <one-to-one field="regulationOrderRecord" target-entity="App\Domain\Regulation\RegulationOrderRecord" mapped-by="regulationOrder"/>
     <many-to-one field="visaModel" target-entity="App\Domain\Organization\VisaModel\VisaModel">
       <join-columns>
           <join-column name="visa_model_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
