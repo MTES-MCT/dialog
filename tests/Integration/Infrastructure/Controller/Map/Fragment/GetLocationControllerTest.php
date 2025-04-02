@@ -24,7 +24,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $li->eq(0)->text());
         $this->assertSame('Avenue de Fonneuve du n° 695 au n° 253 à Montauban (82000)', $li->eq(1)->text());
         $this->assertSame('Pour les véhicules de plus de 3,5 tonnes, 12 mètres de long ou 2,4 mètres de haut, matières dangereuses, Crit\'Air 4 et Crit\'Air 5, sauf piétons, véhicules d\'urgence et convois exceptionnels', $li->eq(2)->text());
-        $this->assertSame('Du 28/03/2023 à 08h00 au 28/03/2023 à 22h00du 10/03/2023 à 00h00 au 20/03/2023 à 23h59', $li->eq(3)->text());
+        $this->assertSame('Du 10/03/2023 à 00h00 au 20/03/2023 à 23h59du 28/03/2023 à 08h00 au 28/03/2023 à 22h00', $li->eq(3)->text());
 
         $detailsLink = $crawler->selectLink('Voir les détails');
         $this->assertSame('_blank', $detailsLink->attr('target'));
