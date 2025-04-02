@@ -22,7 +22,7 @@ class AdministratorRepositoryTest extends KernelTestCase
 
         $this->assertEquals([RoadTypeEnum::DEPARTMENTAL_ROAD->value, RoadTypeEnum::NATIONAL_ROAD->value], array_keys($administrators));
 
-        $this->assertCount(103, $administrators[RoadTypeEnum::DEPARTMENTAL_ROAD->value]);
+        $this->assertCount(107, $administrators[RoadTypeEnum::DEPARTMENTAL_ROAD->value]);
         $this->assertCount(24, $administrators[RoadTypeEnum::NATIONAL_ROAD->value]);
 
         // Take some examples
