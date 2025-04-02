@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
-use App\Application\DateUtilsInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Query\GetRegulationOrderIdentifierQuery;
 use App\Application\User\Command\MarkUserAsActiveCommand;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,10 +26,8 @@ final class AddRegulationController
         private \Twig\Environment $twig,
         private AuthenticatedUser $authenticatedUser,
         private FormFactoryInterface $formFactory,
-        private Security $security,
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
-        private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
     ) {
     }
@@ -43,8 +40,11 @@ final class AddRegulationController
     public function __invoke(Request $request): Response
     {
         /** @var AbstractAuthenticatedUser */
-        $user = $this->security->getUser();
-        $command = SaveRegulationGeneralInfoCommand::create(null, $this->dateUtils->getTomorrow());
+        $user = $this->authenticatedUser->getSessionUser();
+        $organizationUuid = current($user->getUserOrganizationUuids());
+        $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
+
+        $command = SaveRegulationGeneralInfoCommand::create(null, $identifier);
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
 
         $form = $this->formFactory->create(

@@ -451,4 +451,20 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function countRegulationOrderRecordsForOrganizationDuringCurrentMonth(string $uuid): int
+    {
+        $now = $this->dateUtils->getNow();
+        $startDate = $now->modify('first day of this month');
+        $endDate = $now->modify('last day of this month');
+
+        return $this->createQueryBuilder('ror')
+           ->select('COUNT(ror) + 1 AS number_of_records')
+           ->where('ror.organization = :uuid')
+           ->andWhere('ror.createdAt BETWEEN :startDate AND :endDate')
+           ->setParameters(['startDate' => $startDate, 'endDate' => $endDate, 'uuid' => $uuid])
+           ->getQuery()
+           ->getSingleScalarResult()
+        ;
+    }
 }
