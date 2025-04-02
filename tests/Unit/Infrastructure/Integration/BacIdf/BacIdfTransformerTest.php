@@ -864,7 +864,7 @@ final class BacIdfTransformerTest extends TestCase
         $periodCommand1->endTime = null;
         $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
         $timeSlot = new SaveTimeSlotCommand();
-        $timeSlot->startTime = new \DateTimeImmutable('08:00', new \DateTimeZone('Europe/Paris'));
+        $timeSlot->startTime = new \DateTimeImmutable('08:00', new \DateTimeZone('Etc/GMT-1'));
         $timeSlot->endTime = new \DateTimeImmutable('22:00', new \DateTimeZone('Etc/GMT-1'));
         $periodCommand1->timeSlots = [$timeSlot];
 
