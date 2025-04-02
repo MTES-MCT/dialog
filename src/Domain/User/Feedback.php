@@ -6,6 +6,8 @@ namespace App\Domain\User;
 
 class Feedback
 {
+    private ?\DateTimeInterface $createdAt = null;
+
     public function __construct(
         private string $uuid,
         private string $content,
@@ -32,5 +34,17 @@ class Feedback
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 }
