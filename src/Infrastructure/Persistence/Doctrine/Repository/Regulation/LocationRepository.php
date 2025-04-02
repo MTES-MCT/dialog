@@ -159,7 +159,12 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function findAllWithoutGeometry(): array
     {
         return $this->createQueryBuilder('l')
+            ->addSelect('m', 'ro', 'roc', 'o')
             ->where('l.geometry IS NULL')
+            ->innerJoin('l.measure', 'm')
+            ->innerJoin('m.regulationOrder', 'ro')
+            ->innerJoin('ro.regulationOrderRecord', 'roc')
+            ->innerJoin('roc.organization', 'o')
             ->getQuery()
             ->getResult()
         ;

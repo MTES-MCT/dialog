@@ -22,6 +22,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use App\Domain\User\Organization;
 
 final class BacIdfTransformer
 {
@@ -131,7 +132,7 @@ final class BacIdfTransformer
                     continue;
                 }
 
-                $locationCommand = $this->parseLocation($row, $regVoie);
+                $locationCommand = $this->parseLocation($row, $regVoie, $organization);
 
                 $measureCommand->locations[] = $locationCommand;
             }
@@ -385,10 +386,11 @@ final class BacIdfTransformer
         return implode(', ', $types);
     }
 
-    private function parseLocation(array $row, array $regVoie): SaveLocationCommand
+    private function parseLocation(array $row, array $regVoie, Organization $organization): SaveLocationCommand
     {
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->organization = $organization;
 
         $geometries = [];
 

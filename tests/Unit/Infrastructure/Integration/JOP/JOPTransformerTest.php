@@ -100,6 +100,7 @@ final class JOPTransformerTest extends TestCase
         $generalInfoCommand->organization = $organization;
 
         $locationCommand1 = new SaveLocationCommand();
+        $locationCommand1->organization = $organization;
         $locationCommand1->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $locationCommand1->rawGeoJSON = new SaveRawGeoJSONCommand();
         $locationCommand1->rawGeoJSON->label = 'PARA_Marathon, ' . str_repeat('a', 255);

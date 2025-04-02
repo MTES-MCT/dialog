@@ -22,7 +22,7 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
     {
         $payload = match ($options['query']['q']) {
             // Commune
-            '21440195200129' => [
+            '22930008201453' => [
                 'total_results' => 1,
                 'results' => [
                     [

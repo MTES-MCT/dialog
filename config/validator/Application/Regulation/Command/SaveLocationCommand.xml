@@ -6,6 +6,9 @@
         <property name="roadType">
             <constraint name="NotBlank" />
         </property>
+        <property name="organization">
+            <constraint name="NotBlank" />
+        </property>
         <property name="namedStreet">
             <constraint name="Valid" />
         </property>

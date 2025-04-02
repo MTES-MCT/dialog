@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
+use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
@@ -56,6 +57,7 @@ final class AddMeasureController extends AbstractRegulationController
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+        $organization = $regulationOrderRecord->getOrganization();
         $command = SaveMeasureCommand::create($regulationOrder);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
         $storageAreas = $this->queryBus->handle(new GetStorageAreasByRoadNumbersQuery()); // Show all because no road selected yet
@@ -127,6 +129,14 @@ final class AddMeasureController extends AbstractRegulationController
                 $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('roadName')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
+                    ),
+                );
+            } catch (OrganizationCannotInterveneOnGeometryException $exc) {
+                $commandFailed = true;
+                \Sentry\captureException($exc);
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadType')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.organization_cannot_intervene_on_geometry', ['%organizationName%' => $organization->getName()], 'validators'),
                     ),
                 );
             }

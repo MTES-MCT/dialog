@@ -19,7 +19,7 @@ final class SigningAuthorityFixture extends Fixture implements DependentFixtureI
             name: 'Monsieur le maire de Savenay',
             placeOfSignature: 'Savenay',
             signatoryName: 'Monsieur X, Maire de Savenay',
-            organization: $this->getReference('mainOrg', Organization::class),
+            organization: $this->getReference('seineSaintDenisOrg', Organization::class),
             roadName: '3 rue de la Concertation',
             cityCode: '75018',
             cityLabel: 'Paris',

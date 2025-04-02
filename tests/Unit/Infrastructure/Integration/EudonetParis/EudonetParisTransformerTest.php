@@ -87,6 +87,7 @@ final class EudonetParisTransformerTest extends TestCase
         $generalInfoCommand->organization = $organization;
 
         $locationCommand1 = new SaveLocationCommand();
+        $locationCommand1->organization = $organization;
         $locationCommand1->roadType = 'lane';
         $locationCommand1->namedStreet = new SaveNamedStreetCommand();
         $locationCommand1->namedStreet->roadType = 'lane';
@@ -96,6 +97,7 @@ final class EudonetParisTransformerTest extends TestCase
 
         $locationCommand2 = new SaveLocationCommand();
         $locationCommand2->roadType = 'lane';
+        $locationCommand2->organization = $organization;
         $locationCommand2->namedStreet = new SaveNamedStreetCommand();
         $locationCommand2->namedStreet->roadType = 'lane';
         $locationCommand2->namedStreet->cityCode = '75118';

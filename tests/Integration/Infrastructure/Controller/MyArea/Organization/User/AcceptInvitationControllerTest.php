@@ -23,7 +23,7 @@ final class AcceptInvitationControllerTest extends AbstractWebTestCase
 
     public function testInvitationNotOwned(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $client->request('GET', '/mon-espace/invitations/' . InvitationFixture::UUID . '/accept');
         $crawler = $client->followRedirect();
 

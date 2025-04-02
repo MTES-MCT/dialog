@@ -12,27 +12,27 @@ final class OrganizationDetailControllerTest extends AbstractWebTestCase
     public function testDetail(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID);
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Main Org', $crawler->filter('h2')->text());
-        $this->assertMetaTitle('Main Org - DiaLog', $crawler);
+        $this->assertSame('Département de Seine-Saint-Denis', $crawler->filter('h2')->text());
+        $this->assertMetaTitle('Département de Seine-Saint-Denis - DiaLog', $crawler);
 
-        $this->assertSame($crawler->filter('h2')->text(), 'Main Org');
+        $this->assertSame($crawler->filter('h2')->text(), 'Département de Seine-Saint-Denis');
     }
 
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID);
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID);
         $this->assertResponseStatusCodeSame(200);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID);
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID);
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -46,7 +46,7 @@ final class OrganizationDetailControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID);
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID);
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

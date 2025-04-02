@@ -52,7 +52,7 @@ final class ApiOrganizationFetcherTest extends TestCase
             ->method('request')
             ->willReturn($mockResponse);
 
-        $result = $this->apiOrganizationFetcher->findBySiret('21440195200129');
+        $result = $this->apiOrganizationFetcher->findBySiret('22930008201453');
 
         $this->assertInstanceOf(OrganizationFetchedView::class, $result);
         $this->assertEquals('COMMUNE DE SAVENAY', $result->name);

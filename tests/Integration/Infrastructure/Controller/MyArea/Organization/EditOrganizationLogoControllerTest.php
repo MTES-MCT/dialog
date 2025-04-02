@@ -13,7 +13,7 @@ final class EditOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testEditLogo(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID_2 . '/logo/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SAINT_OUEN_ID . '/logo/edit');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -39,7 +39,7 @@ final class EditOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testBadFileExtension(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID_2 . '/logo/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SAINT_OUEN_ID . '/logo/edit');
 
         $uploadedFile = new UploadedFile(
             __DIR__ . '/../../../../../fixtures/dialog_export.docx',
@@ -58,7 +58,7 @@ final class EditOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testFileTooLarge(): void
     {
         $client = $this->login('florimond.manca@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID_2 . '/logo/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SAINT_OUEN_ID . '/logo/edit');
 
         $uploadedFile = new UploadedFile(
             __DIR__ . '/../../../../../fixtures/file_too_large.pdf',
@@ -77,14 +77,14 @@ final class EditOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/logo/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/logo/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/logo/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/logo/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -98,7 +98,7 @@ final class EditOrganizationLogoControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/logo/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/logo/edit');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

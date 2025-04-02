@@ -12,7 +12,7 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
     public function testEdit(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/signing_authority/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/signing_authority/edit');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -41,7 +41,7 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
     public function testBadFormValues(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/signing_authority/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/signing_authority/edit');
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();
@@ -77,14 +77,14 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/signing_authority/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/signing_authority/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/signing_authority/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/signing_authority/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -98,7 +98,7 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/signing_authority/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/signing_authority/edit');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

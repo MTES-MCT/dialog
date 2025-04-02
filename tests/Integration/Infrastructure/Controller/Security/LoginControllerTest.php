@@ -21,7 +21,7 @@ final class LoginControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
 
-        $form['email'] = UserFixture::MAIN_ORG_USER_EMAIL;
+        $form['email'] = UserFixture::DEPARTMENT_93_USER_EMAIL;
         $form['password'] = UserFixture::PASSWORD;
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
@@ -38,7 +38,7 @@ final class LoginControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Se connecter');
         $form = $saveButton->form();
 
-        $form['email'] = UserFixture::MAIN_ORG_ADMIN_EMAIL;
+        $form['email'] = UserFixture::DEPARTMENT_93_ADMIN_EMAIL;
         $form['password'] = UserFixture::PASSWORD;
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);

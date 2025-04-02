@@ -75,7 +75,7 @@ final class APIAdresseMockClient extends MockHttpClient
                     ],
                 ],
             ],
-            ['housenumber', '15 Route du Grand Brossais'] => [
+            ['housenumber', '55 rue Eugène Berthoud'] => [
                 [
                     'geometry' => json_decode('{"type":"Point","coordinates":[-1.935828977,47.34702398]}', true),
                 ],

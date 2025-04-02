@@ -21,7 +21,7 @@ final class RegisterControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['register_form[fullName]'] = 'Lucie Dutest';
-        $form['register_form[organizationSiret]'] = '21440195200129';
+        $form['register_form[organizationSiret]'] = '22930008201453';
         $form['register_form[password][first]'] = 'password12345';
         $form['register_form[password][second]'] = 'password12345';
         $form['register_form[email]'] = 'lucie@example.com';

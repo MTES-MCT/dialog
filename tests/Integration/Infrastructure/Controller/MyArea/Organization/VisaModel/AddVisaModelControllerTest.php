@@ -31,7 +31,7 @@ final class AddVisaModelControllerTest extends AbstractWebTestCase
     public function testAdd(string $name, ?string $description, array $visas): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/add');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/add');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -56,7 +56,7 @@ final class AddVisaModelControllerTest extends AbstractWebTestCase
     public function testBadFormValues(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/add');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/add');
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();
@@ -75,14 +75,14 @@ final class AddVisaModelControllerTest extends AbstractWebTestCase
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/add');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/add');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/visa_models/add');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/visa_models/add');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -96,7 +96,7 @@ final class AddVisaModelControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/add');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/add');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

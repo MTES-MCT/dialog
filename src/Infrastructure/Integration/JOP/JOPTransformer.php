@@ -100,6 +100,7 @@ final readonly class JOPTransformer
             );
 
             $locationCommand = new SaveLocationCommand();
+            $locationCommand->organization = $organization;
             $locationCommand->roadType = RoadTypeEnum::RAW_GEOJSON->value;
             $rawGeoJSON = new SaveRawGeoJSONCommand();
             $rawGeoJSON->label = $label;

@@ -82,6 +82,7 @@ final class LitteralisTransformerTest extends TestCase
 
         $location1 = new SaveLocationCommand();
         $location1->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $location1->organization = $this->organization;
         $rawGeoJSON1 = new SaveRawGeoJSONCommand();
         $rawGeoJSON1->label = "AVENUE DES CHÂTEAUX, DU 1 JUSQU'À LA PLACE DE LA DISTILLERIE;PLACE DE LA DISTILLERIE, DE LA RUE DE LA DISTILLERIE JUSQU'À LA RUE DU GÉNÉRAL LECLERC";
         $rawGeoJSON1->geometry = 'geometry1';
@@ -109,6 +110,7 @@ final class LitteralisTransformerTest extends TestCase
         $measureCommand2->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
 
         $location2 = new SaveLocationCommand();
+        $location2->organization = $this->organization;
         $location2->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $rawGeoJSON2 = new SaveRawGeoJSONCommand();
         $rawGeoJSON2->label = "PLACE DE LA DISTILLERIE, DE LA RUE DE LA DISTILLERIE JUSQU'À LA RUE DU GÉNÉRAL LECLERC";

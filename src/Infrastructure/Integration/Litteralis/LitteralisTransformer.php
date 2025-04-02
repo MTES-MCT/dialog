@@ -76,7 +76,7 @@ final readonly class LitteralisTransformer
             // Une feature (emprise) contient une seule "geometry" pouvant rassembler plusieurs endroits précisés dans la propriété 'localisations'.
             // On crée donc une seule SaveCommandLocation de type RawGeoJSON.
             // On l'assigne ensuite à chaque mesure présente dans la propriété 'mesures'.
-            $locationCommand = $this->parseLocation($feature);
+            $locationCommand = $this->parseLocation($feature, $organization);
             $featureMeasureCommands = $this->parseMeasures($feature['properties'], $reporter);
 
             foreach ($featureMeasureCommands as $measureCommand) {
@@ -170,7 +170,7 @@ final readonly class LitteralisTransformer
         return $parameters;
     }
 
-    private function parseLocation(array $feature): SaveLocationCommand
+    private function parseLocation(array $feature, Organization $organization): SaveLocationCommand
     {
         $properties = $feature['properties'];
         $label = trim($properties['localisations']);
@@ -183,6 +183,7 @@ final readonly class LitteralisTransformer
         $sectionsGeometry = $this->roadGeocoder->convertPolygonRoadToLines($geometry);
 
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->organization = $organization;
         $locationCommand->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $locationCommand->rawGeoJSON = new SaveRawGeoJSONCommand();
         $locationCommand->rawGeoJSON->geometry = $sectionsGeometry;

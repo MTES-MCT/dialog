@@ -15,7 +15,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
     public function testPublish(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
             '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
         ]);

@@ -20,7 +20,9 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
+use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
 final class SaveMeasureCommandHandlerTest extends TestCase
@@ -238,6 +240,11 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
     public function testUpdate(): void
     {
+        $organization = $this->createMock(Organization::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $measure = $this->createMock(Measure::class);
+
         $this->idFactory
             ->expects(self::never())
             ->method('make');
@@ -263,12 +270,32 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('065af978-a0f0-7cf8-8000-ce7f83c57ca3');
+        $location1
+            ->expects(self::any())
+            ->method('getMeasure')
+            ->willReturn($measure);
+        $measure
+            ->expects(self::any())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+        $regulationOrder
+            ->expects(self::any())
+            ->method('getRegulationOrderRecord')
+            ->willReturn($regulationOrderRecord);
+        $regulationOrderRecord
+            ->expects(self::any())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $location2 = $this->createMock(Location::class);
         $location2
             ->expects(self::exactly(3))
             ->method('getUuid')
             ->willReturn('065af992-ecb9-7afd-8000-a1ac6e020f2f');
+        $location2
+            ->expects(self::any())
+            ->method('getMeasure')
+            ->willReturn($measure);
 
         $measure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);

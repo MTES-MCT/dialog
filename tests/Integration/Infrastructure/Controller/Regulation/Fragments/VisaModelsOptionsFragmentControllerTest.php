@@ -12,7 +12,7 @@ final class VisaModelsOptionsFragmentControllerTest extends AbstractWebTestCase
     public function testGetOptions(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/visa_models/options?organizationUuid=' . OrganizationFixture::MAIN_ORG_ID . '&targetId=general_info_form_visaModelUuid');
+        $crawler = $client->request('GET', '/_fragment/visa_models/options?organizationUuid=' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '&targetId=general_info_form_visaModelUuid');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();

@@ -22,7 +22,7 @@ final class VisaModelFixture extends Fixture implements DependentFixtureInterfac
         $visa1 = (new VisaModel('65c12316-e210-445d-9169-0298b13b3b30'))
             ->setName('Interdiction de circulation')
             ->setDescription('Interdiction pour tous les véhicules')
-            ->setOrganization($this->getReference('mainOrg', Organization::class))
+            ->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class))
             ->setVisas(['vu que 3']);
 
         $manager->persist($genericVisa);

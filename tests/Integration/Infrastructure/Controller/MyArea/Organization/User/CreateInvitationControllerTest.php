@@ -13,7 +13,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
     public function testInvite(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/invite');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -32,7 +32,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Mathieu FERNANDEZ vous invite à rejoindre l&#039;organisation Main Org.');
+        $this->assertEmailHtmlBodyContains($email, 'Mathieu FERNANDEZ vous invite à rejoindre l&#039;organisation Département de Seine-Saint-Denis.');
 
         $client->followRedirect();
 
@@ -43,7 +43,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
     public function testAlreadyInOrganization(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/invite');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
 
         $saveButton = $crawler->selectButton('Inviter');
         $form = $saveButton->form();
@@ -62,7 +62,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
     public function testAlreadyInvitedInOrganization(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/invite');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
 
         $saveButton = $crawler->selectButton('Inviter');
         $form = $saveButton->form();
@@ -81,7 +81,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
     public function testBadFormValues(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/invite');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
 
         $saveButton = $crawler->selectButton('Inviter');
         $form = $saveButton->form();
@@ -108,14 +108,14 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/invite');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/users/invite');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/users/invite');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -129,7 +129,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/users/invite');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

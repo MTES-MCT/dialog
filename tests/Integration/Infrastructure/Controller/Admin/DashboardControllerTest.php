@@ -11,7 +11,7 @@ final class DashboardControllerTest extends AbstractWebTestCase
 {
     public function testDashboard(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/admin');
 
         $this->assertResponseStatusCodeSame(200);

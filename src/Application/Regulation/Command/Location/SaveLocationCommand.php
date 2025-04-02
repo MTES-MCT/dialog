@@ -8,11 +8,13 @@ use App\Application\CommandInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
+use App\Domain\User\Organization;
 
 final class SaveLocationCommand implements CommandInterface
 {
     public ?string $roadType = null;
     public ?Measure $measure = null;
+    public ?Organization $organization = null;
     public ?SaveNumberedRoadCommand $departmentalRoad = null;
     public ?SaveNumberedRoadCommand $nationalRoad = null;
     public ?SaveNamedStreetCommand $namedStreet = null;
@@ -23,6 +25,10 @@ final class SaveLocationCommand implements CommandInterface
         public readonly ?Location $location = null,
     ) {
         $this->roadType = $location?->getRoadType();
+
+        if ($measure = $location?->getMeasure()) {
+            $this->organization = $measure->getRegulationOrder()->getRegulationOrderRecord()->getOrganization();
+        }
 
         if ($location?->getNamedStreet()) {
             $this->namedStreet = new SaveNamedStreetCommand($location->getNamedStreet());
