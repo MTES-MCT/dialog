@@ -40,6 +40,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
     public const UUID_RAWGEOJSON = '06672e5e-8322-739f-8000-9ebfcd86e29a';
     public const UUID_LITTERALIS = '066e9849-1457-7a1e-8000-3142ece4a7de';
     public const UUID_WINTER_MAINTENANCE = '6f665f38-7765-47b1-849a-06279eba3ac6';
+    public const UUID_PARKING_PROHIBITED = '9995801a-0a5c-4a93-8562-f84df8484315';
 
     public function load(ObjectManager $manager): void
     {
@@ -142,6 +143,15 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             $this->getReference('dialogOrg', Organization::class),
         );
 
+        $parkingProhibitedRegulationOrderRecord = new RegulationOrderRecord(
+            self::UUID_PARKING_PROHIBITED,
+            RegulationOrderRecordSourceEnum::DIALOG->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            $this->getReference('parkingProhibitedRegulationOrder', RegulationOrder::class),
+            new \DateTime('2025-01-08'),
+            $this->getReference('dialogOrg', Organization::class),
+        );
+
         $manager->persist($typicalRegulationOrderRecord);
         $manager->persist($publishedRegulationOrderRecord);
         $manager->persist($regulationOrderRecordPermanent);
@@ -153,6 +163,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $manager->persist($rawGeoJSONRegulationOrderRecord);
         $manager->persist($litteralisRegulationOrderRecord);
         $manager->persist($winterMaintenanceRegulationOrderRecord);
+        $manager->persist($parkingProhibitedRegulationOrderRecord);
         $manager->flush();
     }
 

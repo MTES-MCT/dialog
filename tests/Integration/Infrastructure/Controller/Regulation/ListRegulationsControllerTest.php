@@ -29,7 +29,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
         $this->assertSame('...', $navLi->eq(5)->text());
-        $this->assertSame('10', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('11', $navLi->eq(6)->filter('a')->text());
         $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
         $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
 
@@ -49,8 +49,8 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('', $rows->eq(0)->filter('td')->eq(3)->text());
         $this->assertSame('', $rows->eq(1)->filter('td')->eq(3)->text());
         $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(2)->filter('td')->eq(3)->text());
-        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(3)->filter('td')->eq(3)->text());
-        $this->assertSame('du 03/07/2023 au 10/11/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
+        $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(3)->filter('td')->eq(3)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
     }
 
     public function testRegulationRendering(): void
@@ -253,7 +253,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(9, $rows->count());
+        $this->assertSame(10, $rows->count());
     }
 
     public function testStatusFilterPublished(): void
@@ -281,7 +281,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertCount(3, $statuses);
+        $this->assertCount(4, $statuses);
         foreach ($statuses as $status) {
             $this->assertSame('Publié', $status);
         }
