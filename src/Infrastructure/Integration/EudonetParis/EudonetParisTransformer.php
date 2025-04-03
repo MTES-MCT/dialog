@@ -47,7 +47,7 @@ final class EudonetParisTransformer
         $measureCommands = [];
 
         foreach ($row['measures'] as $measureRow) {
-            [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow, $regulationPeriodCommand);
+            [$measureCommand, $measureErrors] = $this->buildMeasureCommand($measureRow, $regulationPeriodCommand, $organization);
 
             if (empty($measureCommand)) {
                 $errors[] = ['loc' => $loc, 'impact' => 'skip_regulation', 'reason' => EudonetParisErrorEnum::MEASURE_ERRORS->value, 'errors' => $measureErrors];
@@ -132,7 +132,7 @@ final class EudonetParisTransformer
         return [$command, $regulationPeriodCommand, null];
     }
 
-    private function buildMeasureCommand(array $row, SavePeriodCommand $regulationPeriodCommand): array
+    private function buildMeasureCommand(array $row, SavePeriodCommand $regulationPeriodCommand, Organization $organization): array
     {
         $loc = ['measure_id' => $row['fields'][EudonetParisExtractor::MESURE_ID]];
         $errors = [];
@@ -151,7 +151,7 @@ final class EudonetParisTransformer
         $locationCommands = [];
 
         foreach ($row['locations'] as $locationRow) {
-            [$locationCommand, $error] = $this->buildLocationCommand($locationRow);
+            [$locationCommand, $error] = $this->buildLocationCommand($locationRow, $organization);
 
             if (empty($locationCommand)) {
                 $errors[] = ['loc' => [...$loc, ...$error['loc']], ...array_diff_key($error, ['loc' => '']), 'impact' => 'skip_measure'];
@@ -174,7 +174,7 @@ final class EudonetParisTransformer
         return [$command, null];
     }
 
-    private function buildLocationCommand(array $row): array
+    private function buildLocationCommand(array $row, Organization $organization): array
     {
         $loc = ['location_id' => $row['fields'][EudonetParisExtractor::LOCALISATION_ID]];
 
@@ -226,6 +226,7 @@ final class EudonetParisTransformer
         }
 
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->organization = $organization;
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;

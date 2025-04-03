@@ -7,7 +7,6 @@ namespace App\Tests\Integration\Infrastructure\Controller\Api;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
-use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -37,7 +36,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
 
     public function testGetRegulationsToDatexFormat(): void
     {
-        $client = $this->login(UserFixture::MAIN_ORG_ADMIN_EMAIL);
+        $client = $this->login();
 
         // Prepare some regulation orders to avoid the need to have published versions of fixtures
         $this->prepareWinterMaintenanceRegulationOrder($client);

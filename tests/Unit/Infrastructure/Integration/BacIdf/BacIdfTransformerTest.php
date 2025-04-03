@@ -66,6 +66,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->title = 'Circulation passage Pierre Curie';
 
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->organization = $this->organization;
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
@@ -178,6 +179,7 @@ final class BacIdfTransformerTest extends TestCase
         $generalInfoCommand->title = 'nom_1';
 
         $locationCommand = new SaveLocationCommand();
+        $locationCommand->organization = $this->organization;
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
@@ -598,6 +600,7 @@ final class BacIdfTransformerTest extends TestCase
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
+        $locationCommand->organization = $this->organization;
         $locationCommand->namedStreet = new SaveNamedStreetCommand();
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet->cityCode = $this->cityCode;
@@ -864,8 +867,8 @@ final class BacIdfTransformerTest extends TestCase
         $periodCommand1->endTime = null;
         $periodCommand1->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
         $timeSlot = new SaveTimeSlotCommand();
-        $timeSlot->startTime = new \DateTimeImmutable('08:00', new \DateTimeZone('Etc/GMT-1'));
-        $timeSlot->endTime = new \DateTimeImmutable('22:00', new \DateTimeZone('Etc/GMT-1'));
+        $timeSlot->startTime = new \DateTimeImmutable('08:00', new \DateTimeZone('ETC/GMT-1'));
+        $timeSlot->endTime = new \DateTimeImmutable('22:00', new \DateTimeZone('ETC/GMT-1'));
         $periodCommand1->timeSlots = [$timeSlot];
 
         $periodCommand2 = new SavePeriodCommand();
@@ -891,8 +894,8 @@ final class BacIdfTransformerTest extends TestCase
         $dailyRange->applicableDays = [ApplicableDayEnum::WEDNESDAY->value, ApplicableDayEnum::SUNDAY->value];
         $periodCommand3->dailyRange = $dailyRange;
         $timeSlot = new SaveTimeSlotCommand();
-        $timeSlot->startTime = new \DateTimeImmutable('08:00', new \DateTimeZone('Etc/GMT-1'));
-        $timeSlot->endTime = new \DateTimeImmutable('16:00', new \DateTimeZone('Etc/GMT-1'));
+        $timeSlot->startTime = new \DateTimeImmutable('08:00', new \DateTimeZone('ETC/GMT-1'));
+        $timeSlot->endTime = new \DateTimeImmutable('16:00', new \DateTimeZone('ETC/GMT-1'));
         $periodCommand3->timeSlots = [$timeSlot];
 
         yield [

@@ -27,7 +27,6 @@ final class DuplicateMeasureCommandHandler
         $measure = $command->measure;
         $originalRegulationOrderRecord = $command->originalRegulationOrderRecord;
         $originalRegulationOrder = $originalRegulationOrderRecord->getRegulationOrder();
-
         $periodCommands = [];
         $locationCommands = [];
 
@@ -59,6 +58,7 @@ final class DuplicateMeasureCommandHandler
 
         foreach ($measure->getLocations() as $location) {
             $cmd = new SaveLocationCommand();
+            $cmd->organization = $originalRegulationOrderRecord->getOrganization();
             $cmd->roadType = $location->getRoadType();
 
             if ($numberedRoad = $location->getNumberedRoad()) {
