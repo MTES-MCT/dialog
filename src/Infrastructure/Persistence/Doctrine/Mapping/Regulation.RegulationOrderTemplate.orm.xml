@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="App\Domain\Regulation\RegulationOrderTemplate" table="regulation_order_template">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="name" type="string" length="150" nullable="false"/>
+    <field name="title" type="string" length="150" nullable="false"/>
+    <field name="visaContent" type="text" nullable="false"/>
+    <field name="consideringContent" type="text" nullable="false"/>
+    <field name="articleContent" type="text" nullable="false"/>
+    <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
+        <options>
+            <option name="default">CURRENT_TIMESTAMP</option>
+        </options>
+    </field>
+    <many-to-one field="organization" target-entity="App\Domain\User\Organization">
+        <join-columns>
+            <join-column name="organization_uuid" referenced-column-name="uuid" nullable="true" on-delete="CASCADE"/>
+        </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
