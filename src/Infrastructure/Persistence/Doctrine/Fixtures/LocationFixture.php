@@ -310,6 +310,13 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             toAbscissa: 0,
         );
 
+        $parkingProhibitedLocation = new Location(
+            '814c51a5-3d55-46de-9185-c3430a5deacc',
+            $this->getReference('parkingProhibitedMeasure', Measure::class),
+            roadType: RoadTypeEnum::LANE->value,
+            geometry: '{"type":"MultiLineString","coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}',
+        );
+
         $manager->persist($namedStreetTypicalMeasureLocation1);
         $manager->persist($namedStreetTypicalMeasureLocation2);
         $manager->persist($namedStreetTypicalMeasureLocation3);
@@ -342,6 +349,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($litteralisLocation1RawGeoJSON);
         $manager->persist($winterMaintenanceLocation);
         $manager->persist($winterMaintenanceLocationNumberedRoad);
+        $manager->persist($parkingProhibitedLocation);
         $manager->flush();
 
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);
