@@ -8,6 +8,7 @@
             <constraint name="Choice">
                 <value>noEntry</value>
                 <value>speedLimitation</value>
+                <value>parkingProhibited</value>
             </constraint>
         </property>
         <property name="maxSpeed">
