@@ -512,6 +512,25 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
+                                    <com:overallStartTime>2023-06-03T08:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-06-05T10:00:00+00:00</com:overallEndTime>
+                                    <com:validPeriod>
+                                        <com:recurringTimePeriodOfDay>
+                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
+                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
+                                        </com:recurringTimePeriodOfDay>
+                                        <com:recurringDayWeekMonthPeriod>
+                                            <com:applicableDay>tuesday</com:applicableDay>
+                                            <com:applicableDay>thursday</com:applicableDay>
+                                        </com:recurringDayWeekMonthPeriod>
+                                    </com:validPeriod>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+                        </conditions>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-06-04T23:00:00+00:00</com:overallStartTime>
                                     <com:overallEndTime>2023-06-10T22:59:00+00:00</com:overallEndTime>
                                     <com:validPeriod>
@@ -519,7 +538,6 @@
                                             <com:startTimeOfPeriod>18:00:00+00:00</com:startTimeOfPeriod>
                                             <com:endTimeOfPeriod>22:00:00+00:00</com:endTimeOfPeriod>
                                         </com:recurringTimePeriodOfDay>
-
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>monday</com:applicableDay>
                                             <com:applicableDay>tuesday</com:applicableDay>
@@ -550,25 +568,6 @@
                                         </com:recurringTimePeriodOfDay>
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>tuesday</com:applicableDay>
-                                        </com:recurringDayWeekMonthPeriod>
-                                    </com:validPeriod>
-                                </com:validityTimeSpecification>
-                            </validityByOrder>
-                        </conditions>
-                        <conditions xsi:type="ValidityCondition">
-                            <validityByOrder>
-                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                                <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-06-03T08:00:00+00:00</com:overallStartTime>
-                                    <com:overallEndTime>2023-06-05T10:00:00+00:00</com:overallEndTime>
-                                    <com:validPeriod>
-                                        <com:recurringTimePeriodOfDay>
-                                            <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
-                                            <com:endTimeOfPeriod>10:00:00+00:00</com:endTimeOfPeriod>
-                                        </com:recurringTimePeriodOfDay>
-                                        <com:recurringDayWeekMonthPeriod>
-                                            <com:applicableDay>tuesday</com:applicableDay>
-                                            <com:applicableDay>thursday</com:applicableDay>
                                         </com:recurringDayWeekMonthPeriod>
                                     </com:validPeriod>
                                 </com:validityTimeSpecification>
@@ -746,8 +745,8 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
-                                    <com:overallEndTime>2023-03-20T22:59:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2023-03-28T07:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-03-28T21:00:00+00:00</com:overallEndTime>
                                 </com:validityTimeSpecification>
                             </validityByOrder>
 
@@ -756,8 +755,8 @@
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-03-28T07:00:00+00:00</com:overallStartTime>
-                                    <com:overallEndTime>2023-03-28T21:00:00+00:00</com:overallEndTime>
+                                    <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-03-20T22:59:00+00:00</com:overallEndTime>
                                 </com:validityTimeSpecification>
                             </validityByOrder>
 
@@ -1193,7 +1192,6 @@
                 <com:validityTimeSpecification>
                     <com:overallStartTime>2021-11-01T23:00:00+00:00</com:overallStartTime>
                     <com:overallEndTime>2021-11-06T22:59:00+00:00</com:overallEndTime>
-
                 </com:validityTimeSpecification>
             </validityByOrder>
             <trafficRegulation>
