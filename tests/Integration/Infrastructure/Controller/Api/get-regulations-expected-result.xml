@@ -19,9 +19,9 @@
         <com:country>fr</com:country>
         <com:nationalIdentifier>DiaLog</com:nationalIdentifier>
     </com:publicationCreator>
-
     <trafficRegulationsFromCompetentAuthorities>
-        <trafficRegulationOrder id="064ca240-2b58-73ea-8000-2d03faf5d44c" version="1">
+        <trafficRegulationOrder
+            id="064ca240-2b58-73ea-8000-2d03faf5d44c" version="1">
             <description>
                 <com:values>
                     <com:value lang="fr">ARRETE TEMPORAIRE ACT2023STD - 619-MB</com:value>
@@ -36,42 +36,43 @@
 
             <regulationId>064ca240-2b58-73ea-8000-2d03faf5d44c</regulationId>
             <status>madeAndImplemented</status>
-
             <trafficRegulation>
-                <status>active</status>
 
+                <status>active</status>
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
-
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ValidityCondition">
                         <validityByOrder>
                             <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                             <com:validityTimeSpecification>
                                 <com:overallStartTime>2023-08-11T18:00:00+02:00</com:overallStartTime>
                                 <com:overallEndTime>2023-08-15T06:00:00+02:00</com:overallEndTime>
+
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
-
                     <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                        <locationByOrder
+                            xsi:type="loc:SingleRoadLinearLocation">
                             <loc:linearWithinLinearElement>
+
                                 <loc:linearElement xsi:type="loc:LinearElement">
                                     <loc:roadName>
                                         <com:values>
+
                                             <com:value lang="fr">Avenue du Stade de France, 93210 Saint-Denis</com:value>
                                         </com:values>
                                     </loc:roadName>
                                 </loc:linearElement>
-
-                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                <loc:fromPoint
+                                    xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
                                         <loc:referentIdentifier>start</loc:referentIdentifier>
+
                                         <loc:referentName>Pont SNCF</loc:referentName>
                                         <loc:referentType>landmark</loc:referentType>
                                         <loc:pointCoordinates>
@@ -80,51 +81,52 @@
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:fromPoint>
-                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                <loc:toPoint
+                                    xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
                                         <loc:referentIdentifier>end</loc:referentIdentifier>
+
                                         <loc:referentName>Rue Francis de Préssensé</loc:referentName>
+
                                         <loc:referentType>intersection</loc:referentType>
                                         <loc:pointCoordinates>
+
                                             <loc:latitude>48.919612</loc:latitude>
                                             <loc:longitude>2.361700</loc:longitude>
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:toPoint>
                             </loc:linearWithinLinearElement>
+
                         </locationByOrder>
                     </conditions>
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
-
         <trafficRegulationOrder id="064ca247-fb24-7cf8-8000-0cf1af53270c" version="1">
             <description>
+
                 <com:values>
                     <com:value lang="fr">ARRETE TEMPORAIRE ACT2023STD - 365 SM</com:value>
+
                 </com:values>
             </description>
-
             <issuingAuthority>
                 <com:values>
                     <com:value lang="fr">Mairie de Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
-
             <regulationId>064ca247-fb24-7cf8-8000-0cf1af53270c</regulationId>
             <status>madeAndImplemented</status>
-
             <trafficRegulation>
                 <status>active</status>
-
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
 
+                </typeOfRegulation>
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="ValidityCondition">
@@ -133,177 +135,228 @@
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-05-17T18:00:00+02:00</com:overallStartTime>
                                     <com:overallEndTime>2023-05-19T06:00:00+02:00</com:overallEndTime>
+
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
+
                         <conditions xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-05-19T18:00:00+02:00</com:overallStartTime>
                                     <com:overallEndTime>2023-05-23T06:00:00+02:00</com:overallEndTime>
+
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
+
                         <conditions xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-06-02T18:00:00+02:00</com:overallStartTime>
                                     <com:overallEndTime>2023-06-05T06:00:00+02:00</com:overallEndTime>
+
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
+
                         <conditions xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-06-09T18:00:00+02:00</com:overallStartTime>
                                     <com:overallEndTime>2023-06-12T06:00:00+02:00</com:overallEndTime>
+
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
+
                         <conditions xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-08-11T18:00:00+02:00</com:overallStartTime>
                                     <com:overallEndTime>2023-08-15T06:00:00+02:00</com:overallEndTime>
+
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
+
                         <conditions xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-11-03T18:00:00+02:00</com:overallStartTime>
                                     <com:overallEndTime>2023-11-06T06:00:00+02:00</com:overallEndTime>
+
                                 </com:validityTimeSpecification>
                             </validityByOrder>
                         </conditions>
-                    </conditions>
 
+                    </conditions>
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
+
                         <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                            <locationByOrder
+                                xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
+
                                     <loc:linearElement xsi:type="loc:LinearElement">
                                         <loc:roadName>
+
                                             <com:values>
                                                 <com:value lang="fr">Avenue des Fruitiers, 93210 Saint-Denis</com:value>
                                             </com:values>
                                         </loc:roadName>
                                     </loc:linearElement>
-                                    <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:fromPoint
+                                        xsi:type="loc:DistanceFromLinearElementReferent">
                                         <loc:distanceAlong>0</loc:distanceAlong>
                                         <loc:fromReferent>
                                             <loc:referentIdentifier>start</loc:referentIdentifier>
+
                                             <loc:referentName>33</loc:referentName>
                                             <loc:referentType>referenceMarker</loc:referentType>
                                             <loc:pointCoordinates>
                                                 <loc:latitude>48.919245</loc:latitude>
+
                                                 <loc:longitude>2.354415</loc:longitude>
                                             </loc:pointCoordinates>
+
                                         </loc:fromReferent>
                                     </loc:fromPoint>
-                                    <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:toPoint
+                                        xsi:type="loc:DistanceFromLinearElementReferent">
                                         <loc:distanceAlong>0</loc:distanceAlong>
                                         <loc:fromReferent>
                                             <loc:referentIdentifier>end</loc:referentIdentifier>
+
                                             <loc:referentName>5</loc:referentName>
                                             <loc:referentType>referenceMarker</loc:referentType>
                                             <loc:pointCoordinates>
                                                 <loc:latitude>48.916503</loc:latitude>
+
                                                 <loc:longitude>2.354752</loc:longitude>
                                             </loc:pointCoordinates>
+
                                         </loc:fromReferent>
                                     </loc:toPoint>
                                 </loc:linearWithinLinearElement>
+
                             </locationByOrder>
                         </conditions>
-
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
+
                                     <loc:linearElement xsi:type="loc:LinearElement">
                                         <loc:roadName>
+
                                             <com:values>
                                                 <com:value lang="fr">Rue des Cheminots, 93210 Saint-Denis</com:value>
                                             </com:values>
                                         </loc:roadName>
                                     </loc:linearElement>
-                                    <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:fromPoint
+                                        xsi:type="loc:DistanceFromLinearElementReferent">
                                         <loc:distanceAlong>0</loc:distanceAlong>
                                         <loc:fromReferent>
                                             <loc:referentIdentifier>start</loc:referentIdentifier>
+
                                             <loc:referentName>24</loc:referentName>
                                             <loc:referentType>referenceMarker</loc:referentType>
                                             <loc:pointCoordinates>
                                                 <loc:latitude>48.917786</loc:latitude>
+
                                                 <loc:longitude>2.352652</loc:longitude>
                                             </loc:pointCoordinates>
+
                                         </loc:fromReferent>
                                     </loc:fromPoint>
-                                    <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:toPoint
+                                        xsi:type="loc:DistanceFromLinearElementReferent">
                                         <loc:distanceAlong>0</loc:distanceAlong>
                                         <loc:fromReferent>
                                             <loc:referentIdentifier>end</loc:referentIdentifier>
+
                                             <loc:referentName>10</loc:referentName>
                                             <loc:referentType>referenceMarker</loc:referentType>
                                             <loc:pointCoordinates>
                                                 <loc:latitude>48.916110</loc:latitude>
+
                                                 <loc:longitude>2.352746</loc:longitude>
                                             </loc:pointCoordinates>
+
                                         </loc:fromReferent>
                                     </loc:toPoint>
                                 </loc:linearWithinLinearElement>
+
                             </locationByOrder>
                         </conditions>
-
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
+
                                     <loc:linearElement xsi:type="loc:LinearElement">
                                         <loc:roadName>
+
                                             <com:values>
                                                 <com:value lang="fr">Avenue François Mitterand, 93210 Saint-Denis</com:value>
                                             </com:values>
                                         </loc:roadName>
                                     </loc:linearElement>
+
                                     <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+
                                         <loc:distanceAlong>0</loc:distanceAlong>
                                         <loc:fromReferent>
+
                                             <loc:referentIdentifier>start</loc:referentIdentifier>
                                             <loc:referentName>17</loc:referentName>
                                             <loc:referentType>referenceMarker</loc:referentType>
                                             <loc:pointCoordinates>
+
                                                 <loc:latitude>48.918139</loc:latitude>
                                                 <loc:longitude>2.352316</loc:longitude>
                                             </loc:pointCoordinates>
                                         </loc:fromReferent>
                                     </loc:fromPoint>
-                                    <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                    <loc:toPoint
+                                        xsi:type="loc:DistanceFromLinearElementReferent">
                                         <loc:distanceAlong>0</loc:distanceAlong>
                                         <loc:fromReferent>
                                             <loc:referentIdentifier>end</loc:referentIdentifier>
+
                                             <loc:referentName>1</loc:referentName>
                                             <loc:referentType>referenceMarker</loc:referentType>
                                             <loc:pointCoordinates>
                                                 <loc:latitude>48.918037</loc:latitude>
+
                                                 <loc:longitude>2.356793</loc:longitude>
                                             </loc:pointCoordinates>
+
                                         </loc:fromReferent>
                                     </loc:toPoint>
                                 </loc:linearWithinLinearElement>
+
                             </locationByOrder>
                         </conditions>
-
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:SingleRoadLinearLocation">
                                 <loc:linearWithinLinearElement>
+
                                     <loc:linearElement xsi:type="loc:LinearElement">
                                         <loc:roadName>
+
                                             <com:values>
                                                 <com:value lang="fr">Rue Federico Fellini, 93210 Saint-Denis</com:value>
                                             </com:values>
@@ -313,109 +366,119 @@
                                         xsi:type="loc:PercentageDistanceAlongLinearElement">
                                         <loc:percentageDistanceAlong>0</loc:percentageDistanceAlong>
                                     </loc:fromPoint>
-                                    <loc:toPoint xsi:type="loc:PercentageDistanceAlongLinearElement">
+                                    <loc:toPoint
+                                        xsi:type="loc:PercentageDistanceAlongLinearElement">
                                         <loc:percentageDistanceAlong>100</loc:percentageDistanceAlong>
                                     </loc:toPoint>
                                 </loc:linearWithinLinearElement>
                             </locationByOrder>
+
                         </conditions>
                     </conditions>
-
                     <conditions xsi:type="DriverCondition">
                         <negate>true</negate>
                         <driverCharacteristicsType>localResident</driverCharacteristicsType>
                     </conditions>
+
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
-
-        <trafficRegulationOrder id="064ca50b-428d-7810-8000-9b78885e357b" version="1">
+        <trafficRegulationOrder
+            id="064ca50b-428d-7810-8000-9b78885e357b" version="1">
             <description>
                 <com:values>
                     <com:value lang="fr">Arrêté portant dérogation temporaire des conditions de circulation et de stationnement des véhicules de toutes catégories, sur places existantes ou sur voie de circulation (route, piste cyclable, voie de bus ou trottoir), pour manifestation</com:value>
                 </com:values>
-            </description>
 
+            </description>
             <issuingAuthority>
                 <com:values>
                     <com:value lang="fr">Préfecture de Seine-Saint-Denis</com:value>
                 </com:values>
             </issuingAuthority>
-
             <regulationId>064ca50b-428d-7810-8000-9b78885e357b</regulationId>
             <status>madeAndImplemented</status>
-
             <trafficRegulation>
-                <status>active</status>
 
+                <status>active</status>
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
-
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ValidityCondition">
                         <validityByOrder>
                             <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                             <com:validityTimeSpecification>
                                 <com:overallStartTime>2023-08-11T16:00:00+02:00</com:overallStartTime>
                                 <com:overallEndTime>2023-08-15T05:00:00+02:00</com:overallEndTime>
+
                             </com:validityTimeSpecification>
                         </validityByOrder>
                     </conditions>
-
                     <conditions xsi:type="LocationCondition">
-                        <locationByOrder xsi:type="loc:SingleRoadLinearLocation">
+                        <locationByOrder
+                            xsi:type="loc:SingleRoadLinearLocation">
                             <loc:supplementaryPositionalDescription>
+
                                 <loc:carriageway>
                                     <loc:carriageway>mainCarriageway</loc:carriageway>
+
                                     <loc:lane>
                                         <loc:laneUsage>rightLane</loc:laneUsage>
                                     </loc:lane>
+
                                 </loc:carriageway>
                             </loc:supplementaryPositionalDescription>
-
                             <loc:linearWithinLinearElement>
+
                                 <loc:linearElement xsi:type="loc:LinearElement">
                                     <loc:roadName>
                                         <com:values>
+
                                             <com:value lang="fr">Rue Francis de Pressensé, 93210 Saint-Denis</com:value>
                                         </com:values>
                                     </loc:roadName>
                                 </loc:linearElement>
-
-                                <loc:fromPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                <loc:fromPoint
+                                    xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
                                         <loc:referentIdentifier>start</loc:referentIdentifier>
+
                                         <loc:referentName>Avenue du Président Wilson</loc:referentName>
+
                                         <loc:referentType>intersection</loc:referentType>
                                         <loc:pointCoordinates>
+
                                             <loc:latitude>48.918157</loc:latitude>
                                             <loc:longitude>2.357865</loc:longitude>
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:fromPoint>
-                                <loc:toPoint xsi:type="loc:DistanceFromLinearElementReferent">
+                                <loc:toPoint
+                                    xsi:type="loc:DistanceFromLinearElementReferent">
                                     <loc:distanceAlong>0</loc:distanceAlong>
                                     <loc:fromReferent>
                                         <loc:referentIdentifier>end</loc:referentIdentifier>
+
                                         <loc:referentName>Avenue du Stade de France</loc:referentName>
+
                                         <loc:referentType>intersection</loc:referentType>
                                         <loc:pointCoordinates>
+
                                             <loc:latitude>48.919687</loc:latitude>
                                             <loc:longitude>2.361726</loc:longitude>
                                         </loc:pointCoordinates>
                                     </loc:fromReferent>
                                 </loc:toPoint>
                             </loc:linearWithinLinearElement>
+
                         </locationByOrder>
                     </conditions>
                 </condition>
             </trafficRegulation>
         </trafficRegulationOrder>
-
         <trafficRegulationOrder id="06549047-db9d-74bb-8000-754a6f2ff4c3" version="1">
             <description>
                 <com:values>
@@ -429,7 +492,6 @@
             </issuingAuthority>
             <regulationId>F/CIFS/2023#8f9164ed-dc0f-4c98-ac18-2f590a1cfd22</regulationId>
             <status>madeAndImplemented</status>
-
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
@@ -437,16 +499,13 @@
                     <com:overallEndTime>2023-06-10T22:59:00+00:00</com:overallEndTime>
                 </com:validityTimeSpecification>
             </validityByOrder>
-
             <trafficRegulation>
                 <status>active</status>
                 <typeOfRegulation xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
                 </typeOfRegulation>
-
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="ValidityCondition">
@@ -454,9 +513,7 @@
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-06-03T08:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2023-06-05T10:00:00+00:00</com:overallEndTime>
-
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
                                             <com:startTimeOfPeriod>08:00:00+00:00</com:startTimeOfPeriod>
@@ -475,9 +532,7 @@
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-06-04T23:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2023-06-10T22:59:00+00:00</com:overallEndTime>
-
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
                                             <com:startTimeOfPeriod>18:00:00+00:00</com:startTimeOfPeriod>
@@ -501,9 +556,7 @@
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-06-01T23:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2023-06-06T22:59:00+00:00</com:overallEndTime>
-
                                     <com:validPeriod>
                                         <com:recurringTimePeriodOfDay>
                                             <com:startTimeOfPeriod>12:00:00+00:00</com:startTimeOfPeriod>
@@ -521,7 +574,6 @@
                             </validityByOrder>
                         </conditions>
                     </conditions>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="LocationCondition">
@@ -533,7 +585,7 @@
                                 </loc:supplementaryPositionalDescription>
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[2.339150682,48.911532934],[2.339535452,48.911316524]],[[2.338854183,48.911459354],[2.338947542,48.911521022],[2.339005897,48.911545625],[2.339044051,48.911549433],[2.339090471,48.911546991],[2.339150682,48.911532934]],[[2.337514404,48.910599408],[2.337678265,48.910695641],[2.338854183,48.911459354]]]}</dx:geoJsonGeometry>
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;MultiLineString&quot;,&quot;coordinates&quot;:[[[2.339150682,48.911532934],[2.339535452,48.911316524]],[[2.338854183,48.911459354],[2.338947542,48.911521022],[2.339005897,48.911545625],[2.339044051,48.911549433],[2.339090471,48.911546991],[2.339150682,48.911532934]],[[2.337514404,48.910599408],[2.337678265,48.910695641],[2.338854183,48.911459354]]]}</dx:geoJsonGeometry>
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
                             </locationByOrder>
@@ -542,35 +594,42 @@
                             <locationByOrder xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
                                     <loc:roadInformation>
+
                                         <loc:roadNumber>D14</loc:roadNumber>
+
                                     </loc:roadInformation>
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"LineString","coordinates":[[2.344241283,48.911986097],[2.344182729,48.908845831]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[2.344241283,48.911986097],[2.344182729,48.908845831]]}</dx:geoJsonGeometry>
+
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                     </conditions>
-
-
                 </condition>
             </trafficRegulation>
-
             <_trafficRegulationOrderExtension>
                 <trafficRegulationOrderExtended>
+
                     <dx:source>dialog</dx:source>
                     <dx:publicUrl>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</dx:publicUrl>
                 </trafficRegulationOrderExtended>
+
             </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>
-        <trafficRegulationOrder id="066e9849-f802-7a4c-8000-845f47c4b0de" version="1">
+        <trafficRegulationOrder
+            id="066e9849-f802-7a4c-8000-845f47c4b0de" version="1">
             <description>
                 <com:values>
                     <com:value>Arrêté de voirie (URL : https://dl.sogelink.fr/?iX5UN3GL)</com:value>
                 </com:values>
             </description>
+
             <issuingAuthority>
                 <com:values>
                     <com:value>Département de Seine-Saint-Denis</com:value>
@@ -578,7 +637,6 @@
             </issuingAuthority>
             <regulationId>117374#24-A-0473#8f9164ed-dc0f-4c98-ac18-2f590a1cfd22</regulationId>
             <status>madeAndImplemented</status>
-
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
@@ -586,63 +644,71 @@
                     <com:overallEndTime>2023-11-10T22:59:00+00:00</com:overallEndTime>
                 </com:validityTimeSpecification>
             </validityByOrder>
-
             <trafficRegulation>
                 <status>active</status>
-                <typeOfRegulation xsi:type="AccessRestriction">
+                <typeOfRegulation
+                    xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
 
+                </typeOfRegulation>
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="ValidityCondition">
+                        <conditions
+                            xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-07-02T23:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2023-11-10T22:59:00+00:00</com:overallEndTime>
-
                                 </com:validityTimeSpecification>
                             </validityByOrder>
+
                         </conditions>
                     </conditions>
-
-                    <conditions xsi:type="ConditionSet">
+                    <conditions
+                        xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:locationDescription>
+
                                         <com:values>
                                             <com:value>ROUTE 147 (NOYELLES-LÈS-SECLIN) DU PR7 +779 AU PR8 +413</com:value>
                                         </com:values>
                                     </loc:locationDescription>
+
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[3.023890325,50.570177599],[3.023850386,50.570151247]],[[3.023890325,50.570177599],[3.024458944,50.570503315]],[[3.024458944,50.570503315],[3.024500711,50.570527945]],[[3.024500711,50.570527945],[3.024501619,50.570528488]],[[3.024501619,50.570528488],[3.025116052,50.570901355]],[[3.025116052,50.570901355],[3.02515503,50.570929555]],[[3.023850386,50.570151247],[3.02384667,50.570148629]],[[3.023475742,50.569868822],[3.023440948,50.569835923]],[[3.023475742,50.569868822],[3.02384667,50.570148629]],[[3.02515503,50.570929555],[3.025159053,50.570932711]],[[3.025159053,50.570932711],[3.025653937,50.571355649]],[[3.025653937,50.571355649],[3.02569009,50.57138952]],[[3.02569009,50.57138952],[3.025691455,50.571390856]],[[3.025691455,50.571390856],[3.026131049,50.571842058]],[[3.026131049,50.571842058],[3.026159516,50.571877523]],[[3.023440948,50.569835923],[3.02343789,50.569832708]],[[3.023149663,50.569492048],[3.023119275,50.569455721]],[[3.023149663,50.569492048],[3.02343789,50.569832708]],[[3.022717354,50.568969715],[3.023119183,50.56945561]],[[3.023119275,50.569455721],[3.023119183,50.56945561]],[[3.026159516,50.571877523],[3.02616073,50.571879188]],[[3.02616073,50.571879188],[3.027150974,50.57338937]]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;MultiLineString&quot;,&quot;coordinates&quot;:[[[3.023890325,50.570177599],[3.023850386,50.570151247]],[[3.023890325,50.570177599],[3.024458944,50.570503315]],[[3.024458944,50.570503315],[3.024500711,50.570527945]],[[3.024500711,50.570527945],[3.024501619,50.570528488]],[[3.024501619,50.570528488],[3.025116052,50.570901355]],[[3.025116052,50.570901355],[3.02515503,50.570929555]],[[3.023850386,50.570151247],[3.02384667,50.570148629]],[[3.023475742,50.569868822],[3.023440948,50.569835923]],[[3.023475742,50.569868822],[3.02384667,50.570148629]],[[3.02515503,50.570929555],[3.025159053,50.570932711]],[[3.025159053,50.570932711],[3.025653937,50.571355649]],[[3.025653937,50.571355649],[3.02569009,50.57138952]],[[3.02569009,50.57138952],[3.025691455,50.571390856]],[[3.025691455,50.571390856],[3.026131049,50.571842058]],[[3.026131049,50.571842058],[3.026159516,50.571877523]],[[3.023440948,50.569835923],[3.02343789,50.569832708]],[[3.023149663,50.569492048],[3.023119275,50.569455721]],[[3.023149663,50.569492048],[3.02343789,50.569832708]],[[3.022717354,50.568969715],[3.023119183,50.56945561]],[[3.023119275,50.569455721],[3.023119183,50.56945561]],[[3.026159516,50.571877523],[3.02616073,50.571879188]],[[3.02616073,50.571879188],[3.027150974,50.57338937]]]}</dx:geoJsonGeometry>
+
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                     </conditions>
-
-
                 </condition>
             </trafficRegulation>
-
             <_trafficRegulationOrderExtension>
                 <trafficRegulationOrderExtended>
+
                     <dx:source>litteralis</dx:source>
                     <dx:publicUrl>http://localhost/regulations/066e9849-1457-7a1e-8000-3142ece4a7de</dx:publicUrl>
                 </trafficRegulationOrderExtended>
+
             </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>
-        <trafficRegulationOrder id="2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c" version="1">
+        <trafficRegulationOrder
+            id="2e5eb289-90c8-4c3f-8e7c-2e9e7de8948c" version="1">
             <description>
                 <com:values>
                     <com:value>Title 2</com:value>
@@ -655,92 +721,116 @@
             </issuingAuthority>
             <regulationId>FO2/2023#8f9164ed-dc0f-4c98-ac18-2f590a1cfd22</regulationId>
             <status>madeAndImplemented</status>
-
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
+
                     <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
+
                     <com:overallEndTime>2023-03-28T21:00:00+00:00</com:overallEndTime>
                 </com:validityTimeSpecification>
             </validityByOrder>
-
             <trafficRegulation>
                 <status>active</status>
-                <typeOfRegulation xsi:type="AccessRestriction">
+                <typeOfRegulation
+                    xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
 
+                </typeOfRegulation>
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="ValidityCondition">
-                            <validityByOrder>
-                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
-                                <com:validityTimeSpecification>
-                                    <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
-
-                                    <com:overallEndTime>2023-03-20T22:59:00+00:00</com:overallEndTime>
-
-                                </com:validityTimeSpecification>
-                            </validityByOrder>
-                        </conditions>
                         <conditions xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2023-03-28T07:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2023-03-28T21:00:00+00:00</com:overallEndTime>
-
                                 </com:validityTimeSpecification>
                             </validityByOrder>
+
+                        </conditions>
+                        <conditions xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2023-03-09T23:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2023-03-20T22:59:00+00:00</com:overallEndTime>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+
                         </conditions>
                     </conditions>
-
-                    <conditions xsi:type="ConditionSet">
+                    <conditions
+                        xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:roadInformation>
+
                                         <loc:roadName>Rue Ardoin</loc:roadName>
+
                                     </loc:roadInformation>
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"LineString","coordinates":[[2.325355408,48.911434195],[2.325111381,48.911736147],[2.324961168,48.911921009]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[2.325355408,48.911434195],[2.325111381,48.911736147],[2.324961168,48.911921009]]}</dx:geoJsonGeometry>
+
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:roadInformation>
+
                                         <loc:roadName>Rue La Clef Des Champs</loc:roadName>
+
                                     </loc:roadInformation>
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[2.329780456,48.914583486],[2.330613336,48.914964052],[2.330910397,48.915100608]],[[2.329780456,48.914583486],[2.328950365,48.914199332]],[[2.328950365,48.914199332],[2.328863568,48.914158377]],[[2.325817532,48.912730261],[2.326734253,48.913164386]],[[2.32471204,48.912229415],[2.325817532,48.912730261]],[[2.327532979,48.913544783],[2.328272336,48.91387448],[2.328863568,48.914158377]],[[2.331360722,48.915309063],[2.330910397,48.915100608]],[[2.326734253,48.913164386],[2.327532979,48.913544783]]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;MultiLineString&quot;,&quot;coordinates&quot;:[[[2.329780456,48.914583486],[2.330613336,48.914964052],[2.330910397,48.915100608]],[[2.329780456,48.914583486],[2.328950365,48.914199332]],[[2.328950365,48.914199332],[2.328863568,48.914158377]],[[2.325817532,48.912730261],[2.326734253,48.913164386]],[[2.32471204,48.912229415],[2.325817532,48.912730261]],[[2.327532979,48.913544783],[2.328272336,48.91387448],[2.328863568,48.914158377]],[[2.331360722,48.915309063],[2.330910397,48.915100608]],[[2.326734253,48.913164386],[2.327532979,48.913544783]]]}</dx:geoJsonGeometry>
+
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:roadInformation>
+
                                         <loc:roadNumber>D322</loc:roadNumber>
+
                                     </loc:roadInformation>
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"MultiLineString","coordinates":[[[4.663492283,49.820771105],[4.663561067,49.820708163],[4.663623202,49.820654298],[4.663725129,49.820585513],[4.66385317,49.820508284],[4.663996569,49.820433542],[4.664156393,49.820351386],[4.664302802,49.820283791],[4.664436862,49.820220858],[4.664595794,49.82015399],[4.664760103,49.820081657],[4.664970675,49.819979937],[4.66510358,49.819924207],[4.66516665,49.819899084],[4.665248891,49.819865612],[4.665391601,49.819812444],[4.665544028,49.819759143],[4.665691049,49.819710408],[4.665836593,49.819658998],[4.66598766,49.819606614],[4.666138405,49.819544349],[4.66630138,49.819473829]]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;MultiLineString&quot;,&quot;coordinates&quot;:[[[4.663492283,49.820771105],[4.663561067,49.820708163],[4.663623202,49.820654298],[4.663725129,49.820585513],[4.66385317,49.820508284],[4.663996569,49.820433542],[4.664156393,49.820351386],[4.664302802,49.820283791],[4.664436862,49.820220858],[4.664595794,49.82015399],[4.664760103,49.820081657],[4.664970675,49.819979937],[4.66510358,49.819924207],[4.66516665,49.819899084],[4.665248891,49.819865612],[4.665391601,49.819812444],[4.665544028,49.819759143],[4.665691049,49.819710408],[4.665836593,49.819658998],[4.66598766,49.819606614],[4.666138405,49.819544349],[4.66630138,49.819473829]]]}</dx:geoJsonGeometry>
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                         <conditions xsi:type="LocationCondition">
@@ -752,14 +842,13 @@
                                 </loc:supplementaryPositionalDescription>
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"GeometryCollection","geometries":[{"type":"LineString","coordinates":[[2.330977507,48.915717906],[2.330750912,48.91595566]]},{"type":"LineString","coordinates":[[2.331071063,48.915609611],[2.330977507,48.915717906]]}]}</dx:geoJsonGeometry>
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;GeometryCollection&quot;,&quot;geometries&quot;:[{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[2.330977507,48.915717906],[2.330750912,48.91595566]]},{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[2.331071063,48.915609611],[2.330977507,48.915717906]]}]}</dx:geoJsonGeometry>
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                     </conditions>
-
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
                         <conditions xsi:type="VehicleCondition">
@@ -802,13 +891,17 @@
                                 </com:emissions>
                             </vehicleCharacteristics>
                         </conditions>
-                        <conditions xsi:type="VehicleCondition">
+
+                        <conditions
+                            xsi:type="VehicleCondition">
                             <negate>false</negate>
                             <vehicleCharacteristics>
+
                                 <com:loadType>hazardousMaterials</com:loadType>
                             </vehicleCharacteristics>
                         </conditions>
-                        <conditions xsi:type="NonVehicularRoadUserCondition">
+                        <conditions
+                            xsi:type="NonVehicularRoadUserCondition">
                             <negate>true</negate>
                             <nonVehicularRoadUser>pedestrians</nonVehicularRoadUser>
                         </conditions>
@@ -816,154 +909,269 @@
                             <negate>true</negate>
                             <vehicleCharacteristics>
                                 <com:vehicleUsage>emergencyServices</com:vehicleUsage>
+
                             </vehicleCharacteristics>
+
                         </conditions>
-                        <conditions xsi:type="VehicleCondition">
+                        <conditions
+                            xsi:type="VehicleCondition">
                             <negate>true</negate>
                             <vehicleCharacteristics>
+
                                 <com:_vehicleCharacteristicsExtension>
+
                                     <com:vehicleCharacteristicsExtended>
+
                                         <dx:otherVehicleType>Convois exceptionnels</dx:otherVehicleType>
                                     </com:vehicleCharacteristicsExtended>
                                 </com:_vehicleCharacteristicsExtension>
+
                             </vehicleCharacteristics>
+
                         </conditions>
                     </conditions>
                 </condition>
             </trafficRegulation>
-
             <_trafficRegulationOrderExtension>
                 <trafficRegulationOrderExtended>
                     <dx:source>dialog</dx:source>
+
                     <dx:publicUrl>http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5</dx:publicUrl>
                 </trafficRegulationOrderExtended>
+
             </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>
-        <trafficRegulationOrder id="804fedae-db25-4ac8-ac95-2d6cf4df7422" version="1">
+        <trafficRegulationOrder
+            id="804fedae-db25-4ac8-ac95-2d6cf4df7422" version="1">
             <description>
                 <com:values>
                     <com:value>Arrêté de viabilité hivernale sur la N176</com:value>
                 </com:values>
             </description>
             <issuingAuthority>
+
                 <com:values>
                     <com:value>DiaLog</com:value>
                 </com:values>
             </issuingAuthority>
-            <regulationId>F2025/HIVER1#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
-            <status>madeAndImplemented</status>
 
+            <regulationId>F2025/HIVER1#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
+
+            <status>madeAndImplemented</status>
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
                     <com:overallStartTime>2025-01-14T23:00:00+00:00</com:overallStartTime>
                     <com:overallEndTime>2025-01-30T22:59:00+00:00</com:overallEndTime>
+
                 </com:validityTimeSpecification>
             </validityByOrder>
-
             <trafficRegulation>
                 <status>active</status>
-                <typeOfRegulation xsi:type="AccessRestriction">
+                <typeOfRegulation
+                    xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
 
+                </typeOfRegulation>
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="ValidityCondition">
+                        <conditions
+                            xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2025-01-14T23:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2025-01-30T22:59:00+00:00</com:overallEndTime>
-
                                 </com:validityTimeSpecification>
                             </validityByOrder>
+
                         </conditions>
                     </conditions>
-
-                    <conditions xsi:type="ConditionSet">
+                    <conditions
+                        xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:roadInformation>
+
                                         <loc:roadNumber>N176</loc:roadNumber>
+
                                     </loc:roadInformation>
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"LineString","coordinates":[[-2.201030047,48.425146243],[-2.202297854,48.425049341],[-2.203494689,48.424960714],[-2.204844298,48.424855445],[-2.20605839,48.424763329],[-2.207220768,48.424682489],[-2.208240455,48.424597091],[-2.209135407,48.424537907],[-2.209826241,48.424496709],[-2.210661899,48.424481594],[-2.211431991,48.424488292],[-2.212205395,48.424514674],[-2.212921594,48.424565207],[-2.213689115,48.424641427],[-2.214594712,48.424757547],[-2.215491296,48.424905612],[-2.215554944,48.424919039],[-2.215680624,48.424943259],[-2.215978733,48.424998656],[-2.216104502,48.425023774],[-2.21676327,48.425177793],[-2.217372772,48.425326766],[-2.218186595,48.425555094],[-2.219502576,48.425942518],[-2.219780534,48.426026744],[-2.219883914,48.426058253],[-2.219938302,48.426073889],[-2.219946751,48.426077123],[-2.220038895,48.426104619],[-2.220177245,48.42614721],[-2.220368545,48.426204599],[-2.220522179,48.426251024],[-2.221544411,48.42654498],[-2.222444316,48.426780305],[-2.223233216,48.426961914],[-2.223998672,48.427112092],[-2.224057921,48.427122102],[-2.224949811,48.427263094],[-2.225597801,48.427335494],[-2.226444504,48.427417158],[-2.227360371,48.427472322],[-2.228360141,48.427512956],[-2.229256778,48.427551823],[-2.229803018,48.427568284],[-2.229915773,48.427571421],[-2.229968645,48.427571792],[-2.23012591,48.427572964],[-2.230357627,48.427573554],[-2.231164997,48.42757307],[-2.232126589,48.427543229],[-2.23290943,48.427500539],[-2.233736158,48.427436069],[-2.234630872,48.42734695],[-2.235478477,48.427233759],[-2.236366909,48.427095315],[-2.236939988,48.426987034],[-2.237769619,48.426816015],[-2.238652671,48.426596645],[-2.238806891,48.42655376],[-2.238871456,48.426535578],[-2.238900502,48.426527982],[-2.238917587,48.426522718],[-2.239121984,48.426466794],[-2.239360552,48.426400343],[-2.239966013,48.426209468],[-2.240233538,48.426120996],[-2.240654293,48.425979763],[-2.2414583,48.425701655],[-2.242373085,48.425379869],[-2.243183904,48.425115873],[-2.243776118,48.424928268],[-2.244414991,48.424746709],[-2.245340337,48.42449025],[-2.246279517,48.424250302],[-2.247178492,48.42404188],[-2.248091483,48.423851765],[-2.249345596,48.423618576],[-2.251348303,48.42325842],[-2.25248712,48.42306457],[-2.252912128,48.42299343],[-2.252999881,48.422976915],[-2.253983604,48.422803527]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[-2.201030047,48.425146243],[-2.202297854,48.425049341],[-2.203494689,48.424960714],[-2.204844298,48.424855445],[-2.20605839,48.424763329],[-2.207220768,48.424682489],[-2.208240455,48.424597091],[-2.209135407,48.424537907],[-2.209826241,48.424496709],[-2.210661899,48.424481594],[-2.211431991,48.424488292],[-2.212205395,48.424514674],[-2.212921594,48.424565207],[-2.213689115,48.424641427],[-2.214594712,48.424757547],[-2.215491296,48.424905612],[-2.215554944,48.424919039],[-2.215680624,48.424943259],[-2.215978733,48.424998656],[-2.216104502,48.425023774],[-2.21676327,48.425177793],[-2.217372772,48.425326766],[-2.218186595,48.425555094],[-2.219502576,48.425942518],[-2.219780534,48.426026744],[-2.219883914,48.426058253],[-2.219938302,48.426073889],[-2.219946751,48.426077123],[-2.220038895,48.426104619],[-2.220177245,48.42614721],[-2.220368545,48.426204599],[-2.220522179,48.426251024],[-2.221544411,48.42654498],[-2.222444316,48.426780305],[-2.223233216,48.426961914],[-2.223998672,48.427112092],[-2.224057921,48.427122102],[-2.224949811,48.427263094],[-2.225597801,48.427335494],[-2.226444504,48.427417158],[-2.227360371,48.427472322],[-2.228360141,48.427512956],[-2.229256778,48.427551823],[-2.229803018,48.427568284],[-2.229915773,48.427571421],[-2.229968645,48.427571792],[-2.23012591,48.427572964],[-2.230357627,48.427573554],[-2.231164997,48.42757307],[-2.232126589,48.427543229],[-2.23290943,48.427500539],[-2.233736158,48.427436069],[-2.234630872,48.42734695],[-2.235478477,48.427233759],[-2.236366909,48.427095315],[-2.236939988,48.426987034],[-2.237769619,48.426816015],[-2.238652671,48.426596645],[-2.238806891,48.42655376],[-2.238871456,48.426535578],[-2.238900502,48.426527982],[-2.238917587,48.426522718],[-2.239121984,48.426466794],[-2.239360552,48.426400343],[-2.239966013,48.426209468],[-2.240233538,48.426120996],[-2.240654293,48.425979763],[-2.2414583,48.425701655],[-2.242373085,48.425379869],[-2.243183904,48.425115873],[-2.243776118,48.424928268],[-2.244414991,48.424746709],[-2.245340337,48.42449025],[-2.246279517,48.424250302],[-2.247178492,48.42404188],[-2.248091483,48.423851765],[-2.249345596,48.423618576],[-2.251348303,48.42325842],[-2.25248712,48.42306457],[-2.252912128,48.42299343],[-2.252999881,48.422976915],[-2.253983604,48.422803527]]}</dx:geoJsonGeometry>
+
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                     </conditions>
-
-
                 </condition>
             </trafficRegulation>
             <trafficRegulation>
                 <status>active</status>
-                <typeOfRegulation xsi:type="MandatoryRoadOrCarriagewayOrLaneUsage">
+                <typeOfRegulation
+                    xsi:type="MandatoryRoadOrCarriagewayOrLaneUsage">
                     <otherObligation>
                         <com:values>
+
                             <com:value>Aire de stockage</com:value>
                         </com:values>
+
                     </otherObligation>
                 </typeOfRegulation>
-
-                <condition xsi:type="ConditionSet">
+                <condition
+                    xsi:type="ConditionSet">
                     <operator>and</operator>
-
-                    <conditions xsi:type="ConditionSet">
+                    <conditions
+                        xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="ValidityCondition">
+                        <conditions
+                            xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2025-01-14T23:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2025-01-30T22:59:00+00:00</com:overallEndTime>
-
                                 </com:validityTimeSpecification>
                             </validityByOrder>
+
                         </conditions>
                     </conditions>
-
-                    <conditions xsi:type="ConditionSet">
+                    <conditions
+                        xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:roadInformation>
+
                                         <loc:roadNumber>N176</loc:roadNumber>
+
                                     </loc:roadInformation>
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"LineString","coordinates":[[-2.125866086,48.441256556],[-2.126882365,48.440993584],[-2.127692347,48.440782741],[-2.128221077,48.440647171],[-2.128688145,48.440532298],[-2.128834016,48.44049984],[-2.129624293,48.440323193],[-2.130617158,48.44012605],[-2.132545925,48.439772971],[-2.133414753,48.439610025],[-2.133783565,48.439543562],[-2.134460911,48.439417752],[-2.136098021,48.439116918],[-2.137024227,48.438945146],[-2.137813131,48.43879645],[-2.138690961,48.438615042],[-2.138750707,48.438602534],[-2.139416035,48.438451071],[-2.140190701,48.438267816],[-2.14083112,48.438111114],[-2.141526352,48.437933098],[-2.141981518,48.437807868],[-2.142308717,48.43771794],[-2.143015876,48.437509646],[-2.143791072,48.437276757],[-2.144711466,48.436977155],[-2.144932779,48.436899029],[-2.145592021,48.436672064],[-2.145648361,48.436652488],[-2.146638941,48.436281305],[-2.14764411,48.435893251],[-2.148531723,48.435549963],[-2.149395217,48.43520952],[-2.149678275,48.435098048],[-2.150589439,48.434746508],[-2.151494931,48.434392503],[-2.152007189,48.434200739],[-2.153201983,48.433743984],[-2.154472557,48.433245153],[-2.155628804,48.43279636],[-2.156793856,48.43234086],[-2.15784459,48.431935402],[-2.158929876,48.431509497],[-2.159873934,48.431149235],[-2.160717288,48.430825807],[-2.161364093,48.430583962],[-2.161579782,48.430504244],[-2.161617753,48.430490869],[-2.162177238,48.430297901],[-2.162363489,48.430235692],[-2.162409288,48.430219272],[-2.163119101,48.429984588],[-2.163654423,48.429821516],[-2.164022757,48.429709896],[-2.164864396,48.429465849],[-2.165263397,48.429349283],[-2.166032843,48.429142634],[-2.166910484,48.428920443],[-2.167692742,48.42873396],[-2.168584343,48.428543603],[-2.16945137,48.428365131],[-2.170460996,48.428190346],[-2.171520878,48.428016964],[-2.172281681,48.427901709],[-2.173173056,48.427778043],[-2.173884611,48.427699188],[-2.174568545,48.427628747],[-2.174695934,48.427615539]]}</dx:geoJsonGeometry>
+
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[-2.125866086,48.441256556],[-2.126882365,48.440993584],[-2.127692347,48.440782741],[-2.128221077,48.440647171],[-2.128688145,48.440532298],[-2.128834016,48.44049984],[-2.129624293,48.440323193],[-2.130617158,48.44012605],[-2.132545925,48.439772971],[-2.133414753,48.439610025],[-2.133783565,48.439543562],[-2.134460911,48.439417752],[-2.136098021,48.439116918],[-2.137024227,48.438945146],[-2.137813131,48.43879645],[-2.138690961,48.438615042],[-2.138750707,48.438602534],[-2.139416035,48.438451071],[-2.140190701,48.438267816],[-2.14083112,48.438111114],[-2.141526352,48.437933098],[-2.141981518,48.437807868],[-2.142308717,48.43771794],[-2.143015876,48.437509646],[-2.143791072,48.437276757],[-2.144711466,48.436977155],[-2.144932779,48.436899029],[-2.145592021,48.436672064],[-2.145648361,48.436652488],[-2.146638941,48.436281305],[-2.14764411,48.435893251],[-2.148531723,48.435549963],[-2.149395217,48.43520952],[-2.149678275,48.435098048],[-2.150589439,48.434746508],[-2.151494931,48.434392503],[-2.152007189,48.434200739],[-2.153201983,48.433743984],[-2.154472557,48.433245153],[-2.155628804,48.43279636],[-2.156793856,48.43234086],[-2.15784459,48.431935402],[-2.158929876,48.431509497],[-2.159873934,48.431149235],[-2.160717288,48.430825807],[-2.161364093,48.430583962],[-2.161579782,48.430504244],[-2.161617753,48.430490869],[-2.162177238,48.430297901],[-2.162363489,48.430235692],[-2.162409288,48.430219272],[-2.163119101,48.429984588],[-2.163654423,48.429821516],[-2.164022757,48.429709896],[-2.164864396,48.429465849],[-2.165263397,48.429349283],[-2.166032843,48.429142634],[-2.166910484,48.428920443],[-2.167692742,48.42873396],[-2.168584343,48.428543603],[-2.16945137,48.428365131],[-2.170460996,48.428190346],[-2.171520878,48.428016964],[-2.172281681,48.427901709],[-2.173173056,48.427778043],[-2.173884611,48.427699188],[-2.174568545,48.427628747],[-2.174695934,48.427615539]]}</dx:geoJsonGeometry>
+
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                     </conditions>
-
-
                 </condition>
             </trafficRegulation>
-
             <_trafficRegulationOrderExtension>
                 <trafficRegulationOrderExtended>
+
                     <dx:source>dialog</dx:source>
                     <dx:publicUrl>http://localhost/regulations/6f665f38-7765-47b1-849a-06279eba3ac6</dx:publicUrl>
                 </trafficRegulationOrderExtended>
+
             </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>
-        <trafficRegulationOrder id="edc8dd18-5f56-4684-b2ba-d18658d53518" version="1">
+        <trafficRegulationOrder
+            id="9d8653c5-daae-49df-8f16-6ed03cae02f4" version="1">
+            <description>
+                <com:values>
+                    <com:value>Arrêté interdiction de stationnement sur une voie</com:value>
+                </com:values>
+            </description>
+            <issuingAuthority>
+
+                <com:values>
+                    <com:value>DiaLog</com:value>
+                </com:values>
+            </issuingAuthority>
+
+            <regulationId>2025-01#e0d93630-acf7-4722-81e8-ff7d5fa64b66</regulationId>
+            <status>madeAndImplemented</status>
+            <validityByOrder>
+                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                <com:validityTimeSpecification>
+                    <com:overallStartTime>2025-01-14T23:00:00+00:00</com:overallStartTime>
+                    <com:overallEndTime>2025-01-30T22:59:00+00:00</com:overallEndTime>
+
+                </com:validityTimeSpecification>
+            </validityByOrder>
+            <trafficRegulation>
+                <status>active</status>
+                <typeOfRegulation
+                    xsi:type="StandingOrParkingRestriction">
+                    <standingOrParkingRestrictionType>parkingProhibited</standingOrParkingRestrictionType>
+                </typeOfRegulation>
+                <condition
+                    xsi:type="ConditionSet">
+                    <operator>and</operator>
+                    <conditions
+                        xsi:type="ConditionSet">
+                        <operator>or</operator>
+                        <conditions
+                            xsi:type="ValidityCondition">
+                            <validityByOrder>
+                                <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
+                                <com:validityTimeSpecification>
+                                    <com:overallStartTime>2025-01-14T23:00:00+00:00</com:overallStartTime>
+                                    <com:overallEndTime>2025-01-30T22:59:00+00:00</com:overallEndTime>
+                                </com:validityTimeSpecification>
+                            </validityByOrder>
+
+                        </conditions>
+                    </conditions>
+                    <conditions
+                        xsi:type="ConditionSet">
+                        <operator>or</operator>
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
+                                <loc:supplementaryPositionalDescription>
+
+                                    <loc:roadInformation>
+
+                                        <loc:roadName></loc:roadName>
+                                    </loc:roadInformation>
+
+                                </loc:supplementaryPositionalDescription>
+
+                                <loc:_linearLocationExtension>
+                                    <loc:linearLocationExtended>
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;MultiLineString&quot;,&quot;coordinates&quot;:[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}</dx:geoJsonGeometry>
+                                    </loc:linearLocationExtended>
+                                </loc:_linearLocationExtension>
+
+                            </locationByOrder>
+                        </conditions>
+                    </conditions>
+                </condition>
+            </trafficRegulation>
+            <_trafficRegulationOrderExtension>
+                <trafficRegulationOrderExtended>
+
+                    <dx:source>dialog</dx:source>
+                    <dx:publicUrl>http://localhost/regulations/9995801a-0a5c-4a93-8562-f84df8484315</dx:publicUrl>
+                </trafficRegulationOrderExtended>
+
+            </_trafficRegulationOrderExtension>
+        </trafficRegulationOrder>
+        <trafficRegulationOrder
+            id="edc8dd18-5f56-4684-b2ba-d18658d53518" version="1">
             <description>
                 <com:values>
                     <com:value>Arrêté exporté vers CIFS</com:value>
@@ -971,12 +1179,14 @@
             </description>
             <issuingAuthority>
                 <com:values>
+
                     <com:value>Région Ile de France</com:value>
                 </com:values>
             </issuingAuthority>
-            <regulationId>F/OUTDATED/CIFS/2021#3c46e94d-7ca2-4253-a9ea-0ce5fdb966a4</regulationId>
-            <status>madeAndImplemented</status>
 
+            <regulationId>F/OUTDATED/CIFS/2021#3c46e94d-7ca2-4253-a9ea-0ce5fdb966a4</regulationId>
+
+            <status>madeAndImplemented</status>
             <validityByOrder>
                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                 <com:validityTimeSpecification>
@@ -984,26 +1194,24 @@
                     <com:overallEndTime>2021-11-06T22:59:00+00:00</com:overallEndTime>
                 </com:validityTimeSpecification>
             </validityByOrder>
-
             <trafficRegulation>
                 <status>active</status>
-                <typeOfRegulation xsi:type="AccessRestriction">
+                <typeOfRegulation
+                    xsi:type="AccessRestriction">
                     <accessRestrictionType>noEntry</accessRestrictionType>
-                </typeOfRegulation>
 
+                </typeOfRegulation>
                 <condition xsi:type="ConditionSet">
                     <operator>and</operator>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="ValidityCondition">
+                        <conditions
+                            xsi:type="ValidityCondition">
                             <validityByOrder>
                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                 <com:validityTimeSpecification>
                                     <com:overallStartTime>2021-11-01T23:00:00+00:00</com:overallStartTime>
-
                                     <com:overallEndTime>2021-11-06T22:59:00+00:00</com:overallEndTime>
-
                                     <com:validPeriod>
                                         <com:recurringDayWeekMonthPeriod>
                                             <com:applicableDay>monday</com:applicableDay>
@@ -1016,36 +1224,45 @@
                                         </com:recurringDayWeekMonthPeriod>
                                     </com:validPeriod>
                                 </com:validityTimeSpecification>
+
                             </validityByOrder>
                         </conditions>
                     </conditions>
-
                     <conditions xsi:type="ConditionSet">
                         <operator>or</operator>
-                        <conditions xsi:type="LocationCondition">
-                            <locationByOrder xsi:type="loc:LinearLocation">
+                        <conditions
+                            xsi:type="LocationCondition">
+                            <locationByOrder
+                                xsi:type="loc:LinearLocation">
                                 <loc:supplementaryPositionalDescription>
+
                                     <loc:roadInformation>
+
                                         <loc:roadName></loc:roadName>
                                     </loc:roadInformation>
+
                                 </loc:supplementaryPositionalDescription>
+
                                 <loc:_linearLocationExtension>
                                     <loc:linearLocationExtended>
-                                        <dx:geoJsonGeometry>{"type":"LineString","coordinates":[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</dx:geoJsonGeometry>
+                                        <dx:geoJsonGeometry>{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[1.35643852,44.01573612],[1.35634358,44.01578421],[1.35628051,44.01580846],[1.35620232,44.01583789],[1.35573093,44.01600635],[1.35515052,44.01623528],[1.3550483,44.01627605],[1.35476043,44.01639595],[1.35431163,44.01660254],[1.354256366,44.016628823]]}</dx:geoJsonGeometry>
                                     </loc:linearLocationExtended>
                                 </loc:_linearLocationExtension>
+
                             </locationByOrder>
                         </conditions>
                     </conditions>
                 </condition>
             </trafficRegulation>
-
             <_trafficRegulationOrderExtension>
                 <trafficRegulationOrderExtended>
+
                     <dx:source>dialog</dx:source>
                     <dx:publicUrl>http://localhost/regulations/9d408332-d30f-4530-be66-dfb2d98ebae5</dx:publicUrl>
                 </trafficRegulationOrderExtended>
+
             </_trafficRegulationOrderExtension>
         </trafficRegulationOrder>
     </trafficRegulationsFromCompetentAuthorities>
+
 </d2:payload>

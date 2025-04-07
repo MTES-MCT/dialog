@@ -1571,6 +1571,10 @@
                 <source>regulation.measure.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.parkingProhibited">
+                <source>regulation.measure.type.parkingProhibited</source>
+                <target>Stationnement interdit</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.card.title">
                 <source>regulation.measure.card.title</source>
                 <target>Mesure</target>
@@ -2144,6 +2148,10 @@
             <trans-unit id="map.filter.type.speedLimitation">
                 <source>map.filter.type.speedLimitation</source>
                 <target>Limitation de vitesse</target>
+            </trans-unit>
+            <trans-unit id="map.filter.type.parkingProhibited">
+                <source>map.filter.type.parkingProhibited</source>
+                <target>Stationnement interdit</target>
             </trans-unit>
             <trans-unit id="map.filters.title.application.period">
                 <source>map.filters.title.application.period</source>

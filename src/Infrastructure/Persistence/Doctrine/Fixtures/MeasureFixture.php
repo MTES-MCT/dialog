@@ -23,6 +23,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
     public const UUID_CIFS = '06548f88-56a9-70e2-8000-a06baed6a93d';
     public const UUID_RAWGEOJSON = '06672e2d-669d-7593-8000-7cfd59230dc2';
     public const UUID_WINTER_MAINTENANCE = '5f19f73e-58ae-4281-bd17-362b8db003b7';
+    public const UUID_PARKING_PROHIBITED = '3260382e-1d37-48f0-a5a1-9ced1d8192f2';
 
     public function load(ObjectManager $manager): void
     {
@@ -97,6 +98,13 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2025-01-15'),
         );
 
+        $parkingProhibitedMeasure = new Measure(
+            self::UUID_PARKING_PROHIBITED,
+            $this->getReference('parkingProhibitedRegulationOrder', RegulationOrder::class),
+            MeasureTypeEnum::PARKING_PROHIBITED->value,
+            new \DateTime('2025-01-15'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
@@ -107,6 +115,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($rawGeoJSONMeasure);
         $manager->persist($litteralisMeasure);
         $manager->persist($winterMaintenanceMeasure);
+        $manager->persist($parkingProhibitedMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
@@ -118,6 +127,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('rawGeoJSONMeasure', $rawGeoJSONMeasure);
         $this->addReference('litteralisMeasure', $litteralisMeasure);
         $this->addReference('winterMaintenanceMeasure', $winterMaintenanceMeasure);
+        $this->addReference('parkingProhibitedMeasure', $parkingProhibitedMeasure);
 
         $manager->flush();
     }
