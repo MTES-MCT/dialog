@@ -6,7 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" length="100" nullable="false"/>
     <field name="email" type="string" nullable="false"/>
-    <field name="function" type="string" length="150" nullable="true"/>
+    <field name="role" type="string" length="150" nullable="true"/>
     <many-to-one field="organization" target-entity="App\Domain\User\Organization">
         <join-columns>
             <join-column name="organization_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>

@@ -13,7 +13,7 @@ class MailingList
         private string $name,
         private string $email,
         private Organization $organization,
-        private ?string $function = null,
+        private ?string $role = null,
     ) {
     }
 
@@ -32,9 +32,9 @@ class MailingList
         return $this->email;
     }
 
-    public function getFunction(): ?string
+    public function getRole(): ?string
     {
-        return $this->function;
+        return $this->role;
     }
 
     public function getOrganization(): Organization
