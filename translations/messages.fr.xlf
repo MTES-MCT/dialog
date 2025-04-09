@@ -2285,6 +2285,26 @@
                 <source>user.myarea.description</source>
                 <target>Retrouvez vos informations personnelles et les organisations dont vous faites parties.</target>
             </trans-unit>
+            <trans-unit id="recipient.list.title">
+                <source>recipient.list.title</source>
+                <target>Liste de diffusion</target>
+            </trans-unit>
+            <trans-unit id="recipient.list.description">
+                <source>recipient.list.description</source>
+                <target>Ajouter les contacts des personnes à qui vous souhaiter partager vos arrêtés.</target>
+            </trans-unit>
+            <trans-unit id="recipient.list.name">
+                <source>recipient.list.name</source>
+                <target>Destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.list.email">
+                <source>recipient.list.email</source>
+                <target>E-mail</target>
+            </trans-unit>
+            <trans-unit id="recipient.list.role">
+                <source>recipient.list.role</source>
+                <target>Fonction</target>
+            </trans-unit>
             <trans-unit id="integration.report.title">
                 <source>integration.report.title</source>
                 <target>Rapport d'intégration</target>
