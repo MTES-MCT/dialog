@@ -29,13 +29,13 @@ final class RecipientsListController extends AbstractOrganizationController
     public function __invoke(string $uuid): Response
     {
         $organization = $this->getOrganization($uuid);
-        $mailingList = $this->queryBus->handle(new GetMailingListQuery($uuid));
+        $mailingLists = $this->queryBus->handle(new GetMailingListQuery($uuid));
 
         return new Response($this->twig->render(
             name: 'my_area/organization/recipients/index.html.twig',
             context: [
                 'organization' => $organization,
-                'mailingList' => $mailingList,
+                'mailingLists' => $mailingLists,
             ],
         ));
     }
