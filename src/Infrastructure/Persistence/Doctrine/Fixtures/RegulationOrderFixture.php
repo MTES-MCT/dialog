@@ -17,9 +17,6 @@ final class RegulationOrderFixture extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // NOTE : les dates sont à saisir "prêtes à enregistrer en DB", donc faire attention à la timezone
-        $tz = new \DateTimeZone('Etc/GMT-1');
-
         $typicalRegulationOrder = new RegulationOrder(
             uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
             identifier: self::TYPICAL_IDENTIFIER,

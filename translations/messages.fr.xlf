@@ -2409,6 +2409,10 @@
                 <source>config.menu.organization</source>
                 <target>Mon organisation</target>
             </trans-unit>
+            <trans-unit id="config.menu.regulation_order_templates">
+                <source>config.menu.regulation_order_templates</source>
+                <target>Modèles d'arrêtés</target>
+            </trans-unit>
             <trans-unit id="config.menu.organization.edit">
                 <source>config.menu.organization.edit</source>
                 <target>Modifier mon organisation</target>
@@ -2624,6 +2628,18 @@
             <trans-unit id="invitation.list.delete">
                 <source>invitation.list.delete</source>
                 <target>Supprimer cette invitation</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.list.title">
+                <source>regulation_order_template.list.title</source>
+                <target>Modèles d'arrêtés</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.list.help">
+                <source>regulation_order_template.list.help</source>
+                <target>Créer des modèles d'arrêtés à utiliser par les agents dans les arrêtés de circulation créés dans DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.name">
+                <source>regulation_order_template.name</source>
+                <target>Nom du modèle</target>
             </trans-unit>
         </body>
     </file>
