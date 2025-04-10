@@ -2639,7 +2639,7 @@
             </trans-unit>
             <trans-unit id="regulation_order_template.name">
                 <source>regulation_order_template.name</source>
-                <target>Nom du modèle</target>
+                <target>Nom</target>
             </trans-unit>
         </body>
     </file>
