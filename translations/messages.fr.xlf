@@ -2621,6 +2621,30 @@
                 <source>regulation_order_template.name</source>
                 <target>Nom</target>
             </trans-unit>
+            <trans-unit id="regulation_order_template.title">
+                <source>regulation_order_template.title</source>
+                <target>Titre de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.visaContent">
+                <source>regulation_order_template.visaContent</source>
+                <target>Contenu du visa</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.consideringContent">
+                <source>regulation_order_template.consideringContent</source>
+                <target>Contenu de la considération</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.articleContent">
+                <source>regulation_order_template.articleContent</source>
+                <target>Contenu de l'article</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.add.title">
+                <source>regulation_order_template.add.title</source>
+                <target>Ajouter un modèle</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.name.help">
+                <source>regulation_order_template.name.help</source>
+                <target>Entrez un nom, par exemple "Réglementation de vitesse"</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -18,6 +18,13 @@ final class RegulationOrderTemplateRepository extends ServiceEntityRepository im
         parent::__construct($registry, RegulationOrderTemplate::class);
     }
 
+    public function add(RegulationOrderTemplate $regulationOrderTemplate): RegulationOrderTemplate
+    {
+        $this->getEntityManager()->persist($regulationOrderTemplate);
+
+        return $regulationOrderTemplate;
+    }
+
     public function findByFilters(RegulationOrderTemplateDTO $dto): array
     {
         $query = $this->createQueryBuilder('rot');
