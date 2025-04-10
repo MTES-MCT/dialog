@@ -59,4 +59,18 @@ class RegulationOrderTemplate
     {
         return $this->createdAt;
     }
+
+    public function update(
+        string $name,
+        string $title,
+        string $visaContent,
+        string $consideringContent,
+        string $articleContent,
+    ): void {
+        $this->name = $name;
+        $this->title = $title;
+        $this->visaContent = $visaContent;
+        $this->consideringContent = $consideringContent;
+        $this->articleContent = $articleContent;
+    }
 }

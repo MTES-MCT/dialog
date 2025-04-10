@@ -1,0 +1,81 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = regulationOrderTemplate is defined ? regulationOrderTemplate.name : 'regulation_order_template.add.title'|trans %}
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'regulation_order_template.list.title'|trans, url: path('app_config_regulation_order_templates_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: metaTitle },
+                ]} %}
+                <h2>{{ metaTitle }}</h2>
+                {{ form_start(form) }}
+                    {{ form_row(form.name, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    <section class="fr-accordion fr-mb-3w">
+                        <h3 class="fr-accordion__title">
+                            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-variables">
+                                <span class="fr-icon-settings-5-line fr-pr-2w" aria-hidden="true"></span>
+                                Liste des variables disponibles
+                            </button>
+                        </h3>
+                        <div class="fr-collapse" id="accordion-variables">
+                            <h4 class="fr-h4">Contenu</h4>
+                        </div>
+                    </section>
+
+
+                    {{ form_row(form.title, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 100
+                        }
+                    }) }}
+                    {{ form_row(form.visaContent, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 400
+                        }
+                    }) }}
+                    {{ form_row(form.consideringContent, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 100
+                        }
+                    }) }}
+                    {{ form_row(form.articleContent, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 400
+                        }
+                    }) }}
+                    <a href="{{ path('app_config_regulation_order_templates_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                        {{ "common.cancel"|trans }}
+                    </a>
+                    {{ form_widget(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}

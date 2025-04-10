@@ -34,5 +34,19 @@ final class RegulationOrderTemplateTest extends TestCase
         $this->assertSame('Arrete temporaire n°[numero_arrete]', $regulationOrderTemplate->getTitle());
         $this->assertSame($organization, $regulationOrderTemplate->getOrganization());
         $this->assertSame($createdAt, $regulationOrderTemplate->getCreatedAt());
+
+        $regulationOrderTemplate->update(
+            'Restriction de vitesse updated',
+            'Arrete temporaire n°[numero_arrete] updated',
+            'VU ... updated',
+            'CONSIDERANT ... updated',
+            'ARTICLES ... updated',
+        );
+
+        $this->assertSame('Restriction de vitesse updated', $regulationOrderTemplate->getName());
+        $this->assertSame('Arrete temporaire n°[numero_arrete] updated', $regulationOrderTemplate->getTitle());
+        $this->assertSame('VU ... updated', $regulationOrderTemplate->getVisaContent());
+        $this->assertSame('CONSIDERANT ... updated', $regulationOrderTemplate->getConsideringContent());
+        $this->assertSame('ARTICLES ... updated', $regulationOrderTemplate->getArticleContent());
     }
 }
