@@ -17,7 +17,7 @@
                     { title: 'recipient.list.title'|trans },
                 ]} %}
                 <div class="fr-grid-row">
-                    <h2 id="user-list" class="fr-col fr-mb-0">{{ 'recipient.list.title'|trans }}</h2>
+                    <h2 id="recipient-list" class="fr-col fr-mb-0">{{ 'recipient.list.title'|trans }}</h2>
                 </div>
                 <p class="fr-text--sm">{{ 'recipient.list.description'|trans }}</p>
                 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
@@ -31,7 +31,7 @@
                                 <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
                             </tr>
                         </thead>
-                        <tbody data-testid="user-list">
+                        <tbody data-testid="recipient-list">
                             {% for mailingList in mailingLists %}
                                 <tr>
                                     <td>
@@ -41,7 +41,7 @@
                                         {{ mailingList.email }}<br/>
                                     </td>
                                     <td>
-                                        {{ mailingList.function }}<br/>
+                                        {{ mailingList.role }}<br/>
                                     </td>
                                 </tr>
                             {% endfor %}

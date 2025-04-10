@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\MyArea\Organization\Recipients;
+namespace App\Infrastructure\Controller\MyArea\Organization\MailingList;
 
 use App\Application\Organization\MailingList\Query\GetMailingListQuery;
 use App\Application\QueryBusInterface;
@@ -32,7 +32,7 @@ final class RecipientsListController extends AbstractOrganizationController
         $mailingLists = $this->queryBus->handle(new GetMailingListQuery($uuid));
 
         return new Response($this->twig->render(
-            name: 'my_area/organization/recipients/index.html.twig',
+            name: 'my_area/organization/mailing_list/index.html.twig',
             context: [
                 'organization' => $organization,
                 'mailingLists' => $mailingLists,
