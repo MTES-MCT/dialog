@@ -23,7 +23,7 @@ final class RecipientsListController extends AbstractOrganizationController
 
     #[Route(
         path: '/organizations/{uuid}/recipients',
-        name: 'app_recipients_list',
+        name: 'app_config_recipients_list',
         methods: ['GET'],
     )]
     public function __invoke(string $uuid): Response

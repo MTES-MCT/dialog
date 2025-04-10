@@ -20,9 +20,10 @@ final class MailingListRepository extends ServiceEntityRepository implements Mai
     public function findRecipientsByOrganizationUuid(string $uuid): array
     {
         return $this->createQueryBuilder('ml')
+            ->select('ml.uuid, ml.name, ml.email, ml.role')
             ->where('o.uuid = :uuid')
             ->setParameter('uuid', $uuid)
-            ->leftJoin('ml.organization', 'o')
+            ->innerJoin('ml.organization', 'o')
             ->getQuery()
             ->getResult();
     }
