@@ -41,8 +41,8 @@ final class GetRegulationOrderTemplatesQueryHandlerTest extends TestCase
             ->willReturn($rows);
 
         $handler = new GetRegulationOrderTemplatesQueryHandler($regulationOrderTemplateRepository);
-        $regulationOrderTemaplates = $handler(new GetRegulationOrderTemplatesQuery($dto));
+        $regulationOrderTemplates = $handler(new GetRegulationOrderTemplatesQuery($dto));
 
-        $this->assertEquals($rows, $regulationOrderTemaplates);
+        $this->assertEquals($rows, $regulationOrderTemplates);
     }
 }
