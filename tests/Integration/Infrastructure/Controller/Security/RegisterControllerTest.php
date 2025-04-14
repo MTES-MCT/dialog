@@ -31,7 +31,7 @@ final class RegisterControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Pour finaliser la création de votre compte, merci de cliquer sur le lien ci-dessous :');
+        $this->assertEmailHtmlBodyContains($email, 'Pour activer votre compte, veuillez valider votre adresse email en utilisant le bouton de confirmation ci-dessous :');
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
