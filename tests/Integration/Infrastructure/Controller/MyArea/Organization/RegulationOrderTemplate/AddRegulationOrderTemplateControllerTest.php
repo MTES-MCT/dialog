@@ -8,7 +8,7 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class AddRegulationOrderTemplatesControllerTest extends AbstractWebTestCase
+final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
 {
     public function testIndex(): void
     {

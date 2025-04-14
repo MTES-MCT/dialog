@@ -29,14 +29,57 @@
                         <h3 class="fr-accordion__title">
                             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-variables">
                                 <span class="fr-icon-settings-5-line fr-pr-2w" aria-hidden="true"></span>
-                                Liste des variables disponibles
+                                {{ "regulation_order_template.variables.title"|trans }}
                             </button>
                         </h3>
                         <div class="fr-collapse" id="accordion-variables">
-                            <h4 class="fr-h4">Contenu</h4>
+                            <div class="fr-table--lg fr-table fr-table" id="table-lg-component">
+                                <div class="fr-table__wrapper">
+                                    <div class="fr-table__container">
+                                        <div class="fr-table__content">
+                                            <p class="fr-mb-2w">
+                                                {{ "regulation_order_template.variables.description"|trans }}
+                                            </p>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">{{ "regulation_order_template.variables.intitule"|trans }}</th>
+                                                        <th scope="col">{{ "regulation_order_template.variables.name"|trans }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{ "regulation_order_template.variables.list.number"|trans }}</td>
+                                                        <td>[numero_arrete]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ "regulation_order_template.variables.list.intitule"|trans }}</td>
+                                                        <td>[intitule_arrete]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ "regulation_order_template.variables.list.start_pr"|trans }}</td>
+                                                        <td>[numero_pr_debut]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ "regulation_order_template.variables.list.end_pr"|trans }}</td>
+                                                        <td>[numero_pr_fin]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ "regulation_order_template.variables.list.signatory_name"|trans }}</td>
+                                                        <td>[nom_signataire]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ "regulation_order_template.variables.list.national_road_number"|trans }}</td>
+                                                        <td>[numero_rn]</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </section>
-
 
                     {{ form_row(form.title, {
                         group_class: 'fr-input-group',
