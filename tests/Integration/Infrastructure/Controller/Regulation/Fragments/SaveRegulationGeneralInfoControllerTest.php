@@ -30,14 +30,12 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $values['general_info_form']['title'] = 'Nouveau titre';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
-
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('fragment_regulations_general_info');
-
-        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
-        $this->assertSame('Modifié le 09/06/2023', $crawler->filter('[data-testid="history"]')->text());
+        $streams = $crawler->filter('turbo-stream')->extract(attributes: ['action', 'target']);
+        $this->assertEquals([
+            ['replace', 'block_general_info'],
+            ['replace', 'block_regulation_order_history'],
+        ], $streams);
     }
 
     public function testEditWithAnAlreadyExistingIdentifier(): void
