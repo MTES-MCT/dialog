@@ -27,4 +27,11 @@ final class MailingListRepository extends ServiceEntityRepository implements Mai
             ->getQuery()
             ->getResult();
     }
+
+    public function add(MailingList $mailingList): MailingList
+    {
+        $this->getEntityManager()->persist($mailingList);
+
+        return $mailingList;
+    }
 }

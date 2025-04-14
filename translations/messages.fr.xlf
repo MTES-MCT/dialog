@@ -2305,6 +2305,30 @@
                 <source>recipient.list.role</source>
                 <target>Fonction</target>
             </trans-unit>
+            <trans-unit id="add.recipient.form.title">
+                <source>add.recipient.form.title</source>
+                <target>Destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.name">
+                <source>recipient.name</source>
+                <target>Nom et prénom</target>
+            </trans-unit>
+            <trans-unit id="recipient.name.help">
+                <source>recipient.name.help</source>
+                <target>Entrez le nom et prénom du destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.email">
+                <source>recipient.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="recipient.role">
+                <source>recipient.role</source>
+                <target>Fonction</target>
+            </trans-unit>
+            <trans-unit id="recipient.role.help">
+                <source>recipient.role.help</source>
+                <target>Entrez la fonction du destinataire</target>
+            </trans-unit>
             <trans-unit id="integration.report.title">
                 <source>integration.report.title</source>
                 <target>Rapport d'intégration</target>
