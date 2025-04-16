@@ -16,136 +16,62 @@ export default class extends Controller {
         // Charger Quill de manière asynchrone
         const { default: Quill } = await import('quill');
 
-        const toolbarOptions = {
-            container: [
-                ['bold', 'italic', 'underline'],
-                [{ 'header': [1, 2, 3, false] }],
-                [{ 'size': [] }],
-                [{ 'align': [] }],
-                [{ 'indent': '-1' }, { 'indent': '+1' }],
-                [{ 'color': [] }, { 'background': [] }]
-            ]
-        };
+        const containerOptions = [
+            ['bold', 'italic', 'underline'],
+            [{ 'header': [1, 2, 3, false] }],
+            [{ 'size': [] }],
+            [{ 'align': [] }],
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
+            [{ 'color': [] }, { 'background': [] }]
+        ];
+
+        const handlersOptions = {};
+
+        if (this.variablesValue.length > 0) {
+             // Credits: https://jsfiddle.net/q7jferw3/ via https://github.com/slab/quill/issues/1817#issuecomment-344079500
+            containerOptions.unshift([{ 'variables': this.variablesValue.map(item => item.value) }]);
+
+            handlersOptions['variables'] = function(value) {
+                if (value) {
+                    const cursorPosition = this.quill.getSelection().index;
+                    this.quill.insertText(cursorPosition, value);
+                    this.quill.setSelection(cursorPosition + value.length);
+                }
+            };
+        }
 
         this.quill = new Quill(editorContainer, {
             theme: 'snow',
             modules: {
-                toolbar: toolbarOptions
+                toolbar: {
+                    container: containerOptions,
+                    handlers: handlersOptions,
+                }
             }
         });
 
-        // Ajouter le bouton de variables seulement si des variables sont définies
         if (this.variablesValue.length > 0) {
-            this.addVariablesButton();
-        }
-
-        // Synchroniser le contenu avec le textarea caché
-        this.quill.on('text-change', () => {
-            this.element.value = this.quill.root.innerHTML;
-        });
-
-        // Initialiser le contenu si présent
-        if (this.element.value) {
-            this.quill.root.innerHTML = this.element.value;
+            this.addVariablesPickerHTML();
         }
     }
 
-    addVariablesButton() {
-        // Ajouter le bouton de variables
-        const variablesButton = document.createElement('button');
-        variablesButton.className = 'ql-variable-button';
-        variablesButton.innerHTML = '<span class="fr-icon-settings-5-line" aria-hidden="true"></span>';
-        variablesButton.title = 'Insérer une variable';
-        variablesButton.style.cssText = `
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            cursor: pointer;
-            margin: 0 2px;
-        `;
+    addVariablesPickerHTML() {
+        // Credits: https://jsfiddle.net/q7jferw3/ via https://github.com/slab/quill/issues/1817#issuecomment-344079500
+        const parent = this.element.parentElement;
 
-        // Créer le menu déroulant des variables
-        const variablesDropdown = document.createElement('div');
-        variablesDropdown.className = 'ql-variables-dropdown';
-        variablesDropdown.style.cssText = `
-            display: none;
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ccc;
-            padding: 3px;
-            z-index: 1000;
-            min-width: 200px;
-        `;
-
-        // Variable pour stocker la position du curseur
-        let savedCursorPosition = null;
-
-        this.variablesValue.forEach(variable => {
-            const option = document.createElement('div');
-            option.className = 'ql-variable-option';
-            option.style.cssText = `
-                padding: 6px;
-                cursor: pointer;
-                border-bottom: 1px solid #eee;
-            `;
-            option.textContent = variable.label;
-            option.onclick = () => {
-                const insertPosition = savedCursorPosition ?? (this.quill.getSelection()?.index ?? this.quill.getLength());
-                this.quill.insertText(insertPosition, variable.value);
-                this.quill.setSelection(insertPosition + variable.value.length, 0);
-                variablesDropdown.style.display = 'none';
-                savedCursorPosition = null;
-            };
-            variablesDropdown.appendChild(option);
+        // On doit définir manuellement le texte de chaque option affichée dans la dropdown, sinon leur texte est vide
+        const variablesPickerItems = parent.querySelectorAll('.ql-variables .ql-picker-item');
+        variablesPickerItems.forEach(item => {
+            item.textContent = this.variablesValue.find((v) => v.value === item.dataset.value).label;
         });
 
-        const toolbar = this.quill.getModule('toolbar').container;
-        toolbar.appendChild(variablesButton);
-        toolbar.appendChild(variablesDropdown);
-
-        const updateDropdownPosition = () => {
-            if (variablesDropdown.style.display === 'block') {
-                const rect = variablesButton.getBoundingClientRect();
-                const toolbarRect = toolbar.getBoundingClientRect();
-
-                if (rect && toolbarRect) {
-                    variablesDropdown.style.top = `${rect.bottom - toolbarRect.top}px`;
-                    variablesDropdown.style.left = `${rect.left - toolbarRect.left}px`;
-                } else {
-                    variablesDropdown.style.display = 'none';
-                }
-            }
-        };
-
-        // Gestionnaire d'événements pour le clic sur le bouton
-        variablesButton.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            savedCursorPosition = this.quill.getSelection()?.index ?? this.quill.getLength();
-            variablesDropdown.style.display = variablesDropdown.style.display === 'none' ? 'block' : 'none';
-            if (variablesDropdown.style.display === 'block') {
-                requestAnimationFrame(updateDropdownPosition);
-            }
-        };
-
-        // Gestionnaire d'événements pour le clic en dehors
-        document.addEventListener('click', (e) => {
-            if (!variablesDropdown.contains(e.target) && e.target !== variablesButton) {
-                variablesDropdown.style.display = 'none';
-                savedCursorPosition = null;
-            }
-        });
-
-        window.addEventListener('scroll', updateDropdownPosition, true);
-        this.quill.root.addEventListener('scroll', updateDropdownPosition);
-
-        this.element.addEventListener('disconnect', () => {
-            window.removeEventListener('scroll', updateDropdownPosition, true);
-            this.quill.root.removeEventListener('scroll', updateDropdownPosition);
-        });
+        // On affiche l'icône dans le label
+        const variablesIcon = document.createElement('span');
+        variablesIcon.className = 'fr-icon-settings-5-line';
+        variablesIcon.style.marginRight = '1rem';
+        variablesIcon.setAttribute('aria-hidden', 'true');
+        const pickerLabel = parent.querySelector('.ql-variables .ql-picker-label');
+        pickerLabel.innerHTML = variablesIcon.outerHTML + pickerLabel.innerHTML;
     }
 
     disconnect() {
