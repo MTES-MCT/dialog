@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Admin;
 
 use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\Command\SyncOrganizationAdministrativeBoundariesCommand;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
@@ -13,10 +14,15 @@ use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,6 +34,7 @@ final class OrganizationCrudController extends AbstractCrudController
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly CommandBusInterface $commandBus,
         private readonly OrganizationRepositoryInterface $organizationRepository,
+        private readonly DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -122,5 +129,25 @@ final class OrganizationCrudController extends AbstractCrudController
             'organization' => $organization,
             'geometry' => $organization->getGeometry(),
         ]);
+    }
+
+    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createNewFormBuilder($entityDto, $formOptions, $context);
+
+        $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function ($event) {
+            $form = $event->getForm();
+
+            if (!$form->isValid()) {
+                return;
+            }
+
+            /** @var Organization */
+            $organization = $form->getData();
+
+            $organization->setCreatedAt($this->dateUtils->getNow());
+        });
+
+        return $formBuilder;
     }
 }
