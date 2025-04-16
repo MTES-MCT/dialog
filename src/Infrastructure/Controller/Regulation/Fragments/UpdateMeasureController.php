@@ -84,6 +84,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                 'storage_areas' => $storageAreas,
                 'isPermanent' => $regulationOrder->isPermanent(),
                 'permissions' => $command->permissions,
+                'organization' => $organization,
             ],
         );
         $form->handleRequest($request);
