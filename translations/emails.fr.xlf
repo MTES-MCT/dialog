@@ -12,7 +12,7 @@
             </trans-unit>
             <trans-unit id="forgot_password.title">
                 <source>forgot_password.title</source>
-                <target>Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, cliquez sur le lien ci-dessous :</target>
+                <target>Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, veuillez utiliser le bouton suivant :</target>
             </trans-unit>
             <trans-unit id="common.expiration">
                 <source>common.expiration</source>
