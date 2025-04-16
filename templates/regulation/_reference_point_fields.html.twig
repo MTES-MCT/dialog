@@ -16,20 +16,20 @@
     data-fetch-extra-query-params-value="{{ {
         administrator: '#' ~ administrator.vars.id,
         roadNumber: '#' ~ roadNumber.vars.id,
-        pointNumber: '#' ~ pointNumber.vars.id,
+        pointNumberWithDepartmentCode: '#' ~ pointNumberWithDepartmentCode.vars.id,
         currentOption: '#' ~ side.vars.id,
         targetId: side.vars.id,
     }|json_encode }}"
-    data-fetch-required-params-value="{{ ['administrator', 'roadNumber', 'pointNumber']|json_encode }}"
+    data-fetch-required-params-value="{{ ['administrator', 'roadNumber', 'pointNumberWithDepartmentCode']|json_encode }}"
     data-action="autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
 >
-    {{ form_row(pointNumber, {
+    {{ form_row(pointNumberWithDepartmentCode, {
         attr: {
             'data-autocomplete-target': 'hidden',
         },
     }) }}
 
-    {{ form_row(pointNumberDisplayedValue, {
+    {{ form_row(pointNumberWithDepartmentCodeLabel, {
         attr: {
             class: 'fr-input',
             'data-autocomplete-target': 'input',
@@ -38,7 +38,7 @@
     }) }}
 
     <ul
-        id="{{ pointNumberDisplayedValue.vars.id }}-results"
+        id="{{ pointNumberWithDepartmentCodeLabel.vars.id }}-results"
         role="listbox"
         aria-label="{{ 'regulation.location.pointNumber.results_label'|trans }}"
         class="fr-x-autocomplete"

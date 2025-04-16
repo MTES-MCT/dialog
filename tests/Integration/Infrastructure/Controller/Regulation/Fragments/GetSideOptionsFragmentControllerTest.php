@@ -16,7 +16,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
                 'query' => [
                     'administrator' => 'DIR Centre Est',
                     'roadNumber' => 'N79',
-                    'pointNumber' => '71##21',
+                    'pointNumberWithDepartmentCode' => '71##21',
                     'currentOption' => '',
                 ],
                 'sides' => [['U', false]],
@@ -25,7 +25,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
                 'query' => [
                     'administrator' => 'DIR Ouest',
                     'roadNumber' => 'N12',
-                    'pointNumber' => '22##122',
+                    'pointNumberWithDepartmentCode' => '22##122',
                     'currentOption' => 'G',
                 ],
                 'sides' => [['D', false], ['G', true]],
@@ -65,7 +65,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', \sprintf('/_fragment/side-options?%s&currentOption=&targetId=sideSelect', http_build_query([
             'administrator' => 'Blahblah',
             'roadNumber' => 'N12',
-            'pointNumber' => '22##122',
+            'pointNumberWithDepartmentCode' => '22##122',
         ])));
 
         $this->assertResponseStatusCodeSame(200);
@@ -81,11 +81,11 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
         return [
             'administrator-missing' => [
                 'roadNumber' => 'N12',
-                'pointNumber' => '22##122',
+                'pointNumberWithDepartmentCode' => '22##122',
             ],
             'roadNumber-missing' => [
                 'administrator' => 'DIR Ouest',
-                'pointNumber' => '22##122',
+                'pointNumberWithDepartmentCode' => '22##122',
             ],
             'pointNumber-missing' => [
                 'administrator' => 'DIR Ouest',
@@ -111,7 +111,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
         $client->request('GET', \sprintf('/_fragment/side-options?%s', http_build_query([
             'administrator' => 'Blahblah',
             'roadNumber' => 'N12',
-            'pointNumber' => '22##122',
+            'pointNumberWithDepartmentCode' => '22##122',
             'currentOption' => '',
             'targetId' => 'sideSelect',
         ])));

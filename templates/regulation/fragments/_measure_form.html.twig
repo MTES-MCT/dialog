@@ -246,8 +246,8 @@
                     {% include 'regulation/_reference_point_fields.html.twig' with {
                         administrator: form[roadType].administrator,
                         roadNumber: form[roadType].roadNumber,
-                        pointNumber: form[roadType].fromPointNumber,
-                        pointNumberDisplayedValue: form[roadType].fromPointNumberDisplayedValue,
+                        pointNumberWithDepartmentCode: form[roadType].fromPointNumber,
+                        pointNumberWithDepartmentCodeLabel: form[roadType].fromPointNumberWithDepartmentCodeLabel,
                         side: form[roadType].fromSide,
                         abscissa: form[roadType].fromAbscissa,
                     } only %}
@@ -264,8 +264,8 @@
                     {% include 'regulation/_reference_point_fields.html.twig' with {
                         administrator: form[roadType].administrator,
                         roadNumber: form[roadType].roadNumber,
-                        pointNumber: form[roadType].toPointNumber,
-                        pointNumberDisplayedValue: form[roadType].toPointNumberDisplayedValue,
+                        pointNumberWithDepartmentCode: form[roadType].toPointNumber,
+                        pointNumberWithDepartmentCodeLabel: form[roadType].toPointNumberWithDepartmentCodeLabel,
                         side: form[roadType].toSide,
                         abscissa: form[roadType].toAbscissa,
                     } only %}

@@ -42,12 +42,12 @@ final class NumberedRoadFormType extends AbstractType
                 'fromPointNumber',
                 HiddenType::class,
                 options: [
-                    // Keep old 'fromPointNumber' name in HTML
-                    'property_path' => 'fromPointNumberValue',
+                    // Keep previous 'fromPointNumber' field name in HTML
+                    'property_path' => 'fromPointNumberWithDepartmentCode',
                 ],
             )
             ->add(
-                'fromPointNumberDisplayedValue',
+                'fromPointNumberWithDepartmentCodeLabel',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
@@ -63,12 +63,12 @@ final class NumberedRoadFormType extends AbstractType
                 'toPointNumber',
                 HiddenType::class,
                 options: [
-                    // Keep old 'fromPointNumber' name in HTML
-                    'property_path' => 'toPointNumberValue',
+                    // Keep previous 'toPointNumber' field name in HTML
+                    'property_path' => 'toPointNumberWithDepartmentCode',
                 ],
             )
             ->add(
-                'toPointNumberDisplayedValue',
+                'toPointNumberWithDepartmentCodeLabel',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.referencePoint.pointNumber',
@@ -206,8 +206,8 @@ final class NumberedRoadFormType extends AbstractType
             'storage_areas' => [],
             'data_class' => SaveNumberedRoadCommand::class,
             'error_mapping' => [
-                'fromPointNumber' => 'fromPointNumberDisplayedValue',
-                'toPointNumber' => 'toPointNumberDisplayedValue',
+                'fromPointNumber' => 'fromPointNumberWithDepartmentCodeLabel',
+                'toPointNumber' => 'toPointNumberWithDepartmentCodeLabel',
             ],
         ]);
         $resolver->setAllowedTypes('roadType', 'string');

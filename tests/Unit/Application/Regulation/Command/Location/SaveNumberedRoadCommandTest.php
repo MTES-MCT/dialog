@@ -28,10 +28,10 @@ final class SaveNumberedRoadCommandTest extends TestCase
         ?string $fromPointNumber,
         ?string $toDepartmentCode,
         ?string $toPointNumber,
-        ?string $expectedFromPointNumberValue,
-        ?string $expectedFromPointNumberDisplayedValue,
-        ?string $expectedToPointNumberValue,
-        ?string $expectedToPointNumberDisplayedValue,
+        ?string $expectedFromPointNumberWithDepartmentCode,
+        ?string $expectedFromPointNumberWithDepartmentCodeLabel,
+        ?string $expectedToPointNumberWithDepartmentCode,
+        ?string $expectedToPointNumberWithDepartmentCodeLabel,
     ): void {
         $numberedRoad = $this->createMock(NumberedRoad::class);
 
@@ -57,10 +57,10 @@ final class SaveNumberedRoadCommandTest extends TestCase
 
         $command = new SaveNumberedRoadCommand($numberedRoad);
 
-        $this->assertSame($expectedFromPointNumberValue, $command->fromPointNumberValue);
-        $this->assertSame($expectedFromPointNumberDisplayedValue, $command->fromPointNumberDisplayedValue);
-        $this->assertSame($expectedToPointNumberValue, $command->toPointNumberValue);
-        $this->assertSame($expectedToPointNumberDisplayedValue, $command->toPointNumberDisplayedValue);
+        $this->assertSame($expectedFromPointNumberWithDepartmentCode, $command->fromPointNumberWithDepartmentCode);
+        $this->assertSame($expectedFromPointNumberWithDepartmentCodeLabel, $command->fromPointNumberWithDepartmentCodeLabel);
+        $this->assertSame($expectedToPointNumberWithDepartmentCode, $command->toPointNumberWithDepartmentCode);
+        $this->assertSame($expectedToPointNumberWithDepartmentCodeLabel, $command->toPointNumberWithDepartmentCodeLabel);
     }
 
     private function provideDecodePointNumbers(): array
@@ -77,8 +77,8 @@ final class SaveNumberedRoadCommandTest extends TestCase
      * @dataProvider provideDecodePointNumbers
      */
     public function testDecodePointNumbers(
-        ?string $fromPointNumberValue,
-        ?string $toPointNumberValue,
+        ?string $fromPointNumberWithDepartmentCode,
+        ?string $toPointNumberWithDepartmentCode,
         ?string $expectedFromDepartmentCode,
         ?string $expectedFromPointNumber,
         ?string $expectedToDepartmentcode,
@@ -86,8 +86,8 @@ final class SaveNumberedRoadCommandTest extends TestCase
     ): void {
         $command = new SaveNumberedRoadCommand();
 
-        $command->fromPointNumberValue = $fromPointNumberValue;
-        $command->toPointNumberValue = $toPointNumberValue;
+        $command->fromPointNumberWithDepartmentCode = $fromPointNumberWithDepartmentCode;
+        $command->toPointNumberWithDepartmentCode = $toPointNumberWithDepartmentCode;
 
         $command->clean();
 

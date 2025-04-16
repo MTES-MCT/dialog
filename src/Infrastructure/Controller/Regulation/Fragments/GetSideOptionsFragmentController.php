@@ -29,11 +29,11 @@ final class GetSideOptionsFragmentController
         Request $request,
         #[MapQueryParameter] string $administrator,
         #[MapQueryParameter] string $roadNumber,
-        #[MapQueryParameter('pointNumber')] string $pointNumberValue,
+        #[MapQueryParameter] string $pointNumberWithDepartmentCode,
         #[MapQueryParameter] string $currentOption,
         #[MapQueryParameter] string $targetId,
     ): Response {
-        [$departmentCode, $pointNumber] = SaveNumberedRoadCommand::decodePointNumberValue($pointNumberValue);
+        [$departmentCode, $pointNumber] = SaveNumberedRoadCommand::decodePointNumberWithDepartmentCode($pointNumberWithDepartmentCode);
 
         $sides = $this->roadGeocoder->findSides($administrator, $roadNumber, $departmentCode, $pointNumber);
 

@@ -33,10 +33,10 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
     public ?Location $location = null;
 
     // FormType only
-    public ?string $fromPointNumberValue = null;
-    public ?string $fromPointNumberDisplayedValue = null;
-    public ?string $toPointNumberValue = null;
-    public ?string $toPointNumberDisplayedValue = null;
+    public ?string $fromPointNumberWithDepartmentCode = null;
+    public ?string $fromPointNumberWithDepartmentCodeLabel = null;
+    public ?string $toPointNumberWithDepartmentCode = null;
+    public ?string $toPointNumberWithDepartmentCodeLabel = null;
 
     public function __construct(
         public ?NumberedRoad $numberedRoad = null,
@@ -58,7 +58,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         $this->prepareReferencePoints();
     }
 
-    public static function encodePointNumberValue(?string $departmentCode, ?string $pointNumber): ?string
+    public static function encodePointNumberWithDepartmentCode(?string $departmentCode, ?string $pointNumber): ?string
     {
         // WARNING (1): empty($pointNumber) ne convient pas car '0' est un PR valide mais empty('0') renvoie true en PHP.
         if ($pointNumber === null || $pointNumber === '') {
@@ -72,7 +72,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         return implode('##', [$departmentCode, $pointNumber]);
     }
 
-    public static function decodePointNumberValue(?string $value): array
+    public static function decodePointNumberWithDepartmentCode(?string $value): array
     {
         // WARNING: idem que (1).
         if ($value === null || $value === '') {
@@ -94,7 +94,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         return [null, $pointNumber];
     }
 
-    public static function encodePointNumberDisplayedValue(?string $departmentCode, ?string $pointNumber): ?string
+    public static function makePointNumberWithDepartmentCodeLabel(?string $departmentCode, ?string $pointNumber): ?string
     {
         // WARNING: idem que (1).
         if ($pointNumber === null || $pointNumber === '') {
@@ -122,10 +122,10 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
 
     public function prepareReferencePoints(): void
     {
-        $this->fromPointNumberValue = self::encodePointNumberValue($this->fromDepartmentCode, $this->fromPointNumber);
-        $this->fromPointNumberDisplayedValue = self::encodePointNumberDisplayedValue($this->fromDepartmentCode, $this->fromPointNumber);
-        $this->toPointNumberValue = self::encodePointNumberValue($this->toDepartmentCode, $this->toPointNumber);
-        $this->toPointNumberDisplayedValue = self::encodePointNumberDisplayedValue($this->toDepartmentCode, $this->toPointNumber);
+        $this->fromPointNumberWithDepartmentCode = self::encodePointNumberWithDepartmentCode($this->fromDepartmentCode, $this->fromPointNumber);
+        $this->fromPointNumberWithDepartmentCodeLabel = self::makePointNumberWithDepartmentCodeLabel($this->fromDepartmentCode, $this->fromPointNumber);
+        $this->toPointNumberWithDepartmentCode = self::encodePointNumberWithDepartmentCode($this->toDepartmentCode, $this->toPointNumber);
+        $this->toPointNumberWithDepartmentCodeLabel = self::makePointNumberWithDepartmentCodeLabel($this->toDepartmentCode, $this->toPointNumber);
     }
 
     public function clean(): void
@@ -134,7 +134,7 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
             $this->storageArea = null;
         }
 
-        [$this->fromDepartmentCode, $this->fromPointNumber] = self::decodePointNumberValue($this->fromPointNumberValue);
-        [$this->toDepartmentCode, $this->toPointNumber] = self::decodePointNumberValue($this->toPointNumberValue);
+        [$this->fromDepartmentCode, $this->fromPointNumber] = self::decodePointNumberWithDepartmentCode($this->fromPointNumberWithDepartmentCode);
+        [$this->toDepartmentCode, $this->toPointNumber] = self::decodePointNumberWithDepartmentCode($this->toPointNumberWithDepartmentCode);
     }
 }

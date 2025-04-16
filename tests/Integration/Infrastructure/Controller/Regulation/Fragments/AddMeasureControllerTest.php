@@ -91,8 +91,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_administrator_error')->text());
-        $this->assertSame('Veuillez choisir un PR parmi la liste.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromPointNumberDisplayedValue_error')->text());
-        $this->assertSame('Veuillez choisir un PR parmi la liste.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toPointNumberDisplayedValue_error')->text());
+        $this->assertSame('Veuillez choisir un PR parmi la liste.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromPointNumberWithDepartmentCodeLabel_error')->text());
+        $this->assertSame('Veuillez choisir un PR parmi la liste.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toPointNumberWithDepartmentCodeLabel_error')->text());
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromSide_error')->text());
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toSide_error')->text());
         $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromAbscissa_error')->text());

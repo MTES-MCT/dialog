@@ -33,9 +33,9 @@ final class GetPointNumberCompletionFragmentController
         $results = [];
 
         foreach ($referencePoints as $referencePoint) {
-            $value = SaveNumberedRoadCommand::encodePointNumberValue($referencePoint['departmentCode'], $referencePoint['pointNumber']);
+            $value = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($referencePoint['departmentCode'], $referencePoint['pointNumber']);
 
-            $label = SaveNumberedRoadCommand::encodePointNumberDisplayedValue(
+            $label = SaveNumberedRoadCommand::makePointNumberWithDepartmentCodeLabel(
                 $referencePoint['numDepartments'] > 1 ? $referencePoint['departmentCode'] : null,
                 $referencePoint['pointNumber'],
             );
