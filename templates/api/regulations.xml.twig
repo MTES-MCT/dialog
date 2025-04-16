@@ -68,6 +68,10 @@
                                     </com:values>
                                 </otherObligation>
                             </typeOfRegulation>
+                        {% elseif trafficRegulation.type == 'parkingProhibited'%}
+                            <typeOfRegulation xsi:type="StandingOrParkingRestriction">
+                                <standingOrParkingRestrictionType>parkingProhibited</standingOrParkingRestrictionType>
+                            </typeOfRegulation>
                         {% else %}
                             <typeOfRegulation xsi:type="AccessRestriction">
                                 <accessRestrictionType>noEntry</accessRestrictionType>
@@ -86,11 +90,11 @@
                                                 <com:validityStatus>definedByValidityTimeSpec</com:validityStatus>
                                                 <com:validityTimeSpecification>
                                                     <com:overallStartTime>{{ validityCondition.overallStartTime|date('Y-m-d\\TH:i:sP') }}</com:overallStartTime>
-    
+
                                                     {% if validityCondition.overallEndTime %}
                                                         <com:overallEndTime>{{ validityCondition.overallEndTime|date('Y-m-d\\TH:i:sP') }}</com:overallEndTime>
                                                     {% endif %}
-    
+
                                                     {% for validPeriod in validityCondition.validPeriods %}
                                                         <com:validPeriod>
                                                             {% for timePeriod in validPeriod.recurringTimePeriods %}

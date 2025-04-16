@@ -29,7 +29,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('2', $navLi->eq(3)->filter('a')->text());
         $this->assertSame('3', $navLi->eq(4)->filter('a')->text());
         $this->assertSame('...', $navLi->eq(5)->text());
-        $this->assertSame('10', $navLi->eq(6)->filter('a')->text());
+        $this->assertSame('11', $navLi->eq(6)->filter('a')->text());
         $this->assertSame('Page suivante', $navLi->eq(7)->filter('a')->text());
         $this->assertSame('Dernière page', $navLi->eq(8)->filter('a')->text());
 
@@ -49,8 +49,8 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('', $rows->eq(0)->filter('td')->eq(3)->text());
         $this->assertSame('', $rows->eq(1)->filter('td')->eq(3)->text());
         $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(2)->filter('td')->eq(3)->text());
-        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(3)->filter('td')->eq(3)->text());
-        $this->assertSame('du 03/07/2023 au 10/11/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
+        $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(3)->filter('td')->eq(3)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(4)->filter('td')->eq(3)->text());
     }
 
     public function testRegulationRendering(): void
@@ -68,8 +68,8 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $pageOneRow0 = $pageOneRows->eq(0)->filter('td');
         $this->assertSame('FO1/2023', $pageOneRow0->eq(0)->text());
-        $this->assertSame('Main Org', $pageOneRow0->eq(1)->text());
-        $this->assertSame('Savenay (44260) Route du Grand Brossais + 4 localisations', $pageOneRow0->eq(2)->text());
+        $this->assertSame('Département de Seine-Saint-Denis', $pageOneRow0->eq(1)->text());
+        $this->assertSame('Saint-Ouen-sur-Seine Rue Eugène Berthoud + 3 localisations', $pageOneRow0->eq(2)->text());
         $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $pageOneRow0->eq(3)->text());
         $this->assertSame('Brouillon', $pageOneRow0->eq(4)->text());
 
@@ -87,8 +87,8 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $pageTwoRow0 = $pageTwoRows->eq(0)->filter('td');
         $this->assertSame('F/CIFS/2023', $pageTwoRow0->eq(0)->text());
-        $this->assertSame('Main Org', $pageTwoRow0->eq(1)->text());
-        $this->assertSame('Montauban (82000) Rue de la République + 1 localisation', $pageTwoRow0->eq(2)->text());
+        $this->assertSame('Département de Seine-Saint-Denis', $pageTwoRow0->eq(1)->text());
+        $this->assertSame('Saint-Ouen-sur-Seine Rue Claude Monet + 1 localisation', $pageTwoRow0->eq(2)->text());
         $this->assertSame('du 02/06/2023 au 10/06/2023 passé', $pageTwoRow0->eq(3)->text());
         $this->assertSame('Publié', $pageTwoRow0->eq(4)->text());
     }
@@ -105,8 +105,8 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $row0 = $rows->eq(0)->filter('td');
         $this->assertSame('FO2/2023', $row0->eq(0)->text());
-        $this->assertSame('Main Org', $row0->eq(1)->text());
-        $this->assertSame('Montauban (82000) Avenue de Fonneuve + 3 localisations', $row0->eq(2)->text());
+        $this->assertSame('Département de Seine-Saint-Denis', $row0->eq(1)->text());
+        $this->assertSame('Saint-Ouen-sur-Seine Rue Albert Dhalenne + 3 localisations', $row0->eq(2)->text());
         $this->assertSame('du 10/03/2023 au 28/03/2023 passé', $row0->eq(3)->text());
         $this->assertSame('Publié', $row0->eq(4)->text());
 
@@ -170,20 +170,20 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $this->assertEquals([
             ['', 'Mes organisations'],
-            [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
-            [OrganizationFixture::OTHER_ORG_ID_2, 'Mairie de Saint Ouen'],
-            [OrganizationFixture::OTHER_ORG_ID, 'Mairie de Savenay'],
+            [OrganizationFixture::SAINT_OUEN_ID, 'Commune de Saint Ouen sur Seine'],
+            [OrganizationFixture::SEINE_SAINT_DENIS_ID, 'Département de Seine-Saint-Denis'],
+            [OrganizationFixture::REGION_IDF_ID, 'Région Ile de France'],
         ], $choices);
         $this->assertSame('', $field->getValue());
 
         // Submit filter
-        $form['organizationUuid'] = OrganizationFixture::OTHER_ORG_ID;
+        $form['organizationUuid'] = OrganizationFixture::REGION_IDF_ID;
         $crawler = $client->submit($form);
 
         $organizations = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(2)')->each(fn ($node) => $node->text());
         $this->assertCount(1, $organizations);
         foreach ($organizations as $org) {
-            $this->assertSame('Mairie de Savenay', $org);
+            $this->assertSame('Région Ile de France', $org);
         }
     }
 
@@ -202,9 +202,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $choices = $crawler->filter('form[role="search"] select[name="organizationUuid"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
         $this->assertEquals([
             ['', 'Toutes les organisations'],
-            [OrganizationFixture::MAIN_ORG_ID, 'Main Org'],
-            [OrganizationFixture::OTHER_ORG_ID_2, 'Mairie de Saint Ouen'],
-            [OrganizationFixture::OTHER_ORG_ID, 'Mairie de Savenay'],
+            [OrganizationFixture::SAINT_OUEN_ID, 'Commune de Saint Ouen sur Seine'],
+            [OrganizationFixture::SEINE_SAINT_DENIS_ID, 'Département de Seine-Saint-Denis'],
+            [OrganizationFixture::REGION_IDF_ID, 'Région Ile de France'],
         ], $choices);
         $this->assertSame('', $field->getValue());
     }
@@ -253,7 +253,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
-        $this->assertSame(9, $rows->count());
+        $this->assertSame(10, $rows->count());
     }
 
     public function testStatusFilterPublished(): void
@@ -281,7 +281,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
-        $this->assertCount(3, $statuses);
+        $this->assertCount(4, $statuses);
         foreach ($statuses as $status) {
             $this->assertSame('Publié', $status);
         }
@@ -355,7 +355,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $client = $this->login();
         $crawler = $client->request('GET', \sprintf(
             '/regulations?identifier=FO2&organizationUuid=%s&regulationOrderType=%s&status=%s',
-            OrganizationFixture::MAIN_ORG_ID,
+            OrganizationFixture::SEINE_SAINT_DENIS_ID,
             RegulationOrderTypeEnum::TEMPORARY->value,
             RegulationOrderRecordStatusEnum::PUBLISHED->value,
         ));

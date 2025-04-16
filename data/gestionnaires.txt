@@ -85,6 +85,7 @@ Valeur du champ « Type de route » associée : Nationale
 Gestionnaire = « CEVM »
 Valeur du champ « Type de route » associée : Autoroute
 Gestionnaire = « Charente »
+Valeur du champ « Type de route » associée : Départementale
 _________________________________________________________________________________
 BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
 66Valeur du champ « Type de route » associée : Départementale
@@ -122,6 +123,7 @@ Valeur du champ « Type de route » associée : Départementale
 Gestionnaire = « Côte-d'Or »
 Valeur du champ « Type de route » associée : Départementale
 Gestionnaire = « Côtes-d'Armor »
+Valeur du champ « Type de route » associée : Départementale
 _________________________________________________________________________________
 BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
 67Valeur du champ « Type de route » associée : Départementale
@@ -233,6 +235,7 @@ Valeur du champ « Type de route » associée : Départementale
 Gestionnaire = « Hautes-Alpes »
 Valeur du champ « Type de route » associée : Départementale
 Gestionnaire = « Haute-Saône »
+Valeur du champ « Type de route » associée : Départementale
 _________________________________________________________________________________
 BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
 70Valeur du champ « Type de route » associée : Départementale
@@ -270,6 +273,7 @@ Valeur du champ « Type de route » associée : Départementale
 Gestionnaire = « Loir-et-Cher »
 Valeur du champ « Type de route » associée : Départementale
 Gestionnaire = « Lot »
+Valeur du champ « Type de route » associée : Départementale
 _________________________________________________________________________________
 BD TOPO® Thème Transport - Descriptif de contenu - Octobre 2023
 71Valeur du champ « Type de route » associée : Départementale

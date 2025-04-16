@@ -16,6 +16,11 @@
                         {{ 'config.menu.users'|trans }}
                     </a>
                 </li>
+                <li class="fr-sidemenu__item {% if 'app_config_regulation_order_templates' in routeName %}fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{{ path('app_config_regulation_order_templates_list', { uuid: organization.uuid }) }}" {% if 'app_config_regulation_order_templates' in routeName %}aria-current="page"{% endif%}>
+                        {{ 'config.menu.regulation_order_templates'|trans }}
+                    </a>
+                </li>
                 <li class="fr-sidemenu__item">
                     <button class="fr-sidemenu__btn" aria-expanded="{{ 'app_config_visa' in routeName or 'app_config_organization_edit_logo' in routeName or 'app_config_signing_authority' in routeName ? 'true' : 'false' }}" aria-controls="sidemenu-config">{{ 'config.menu.regulations'|trans }}</button>
                     <div class="fr-collapse" id="sidemenu-config">

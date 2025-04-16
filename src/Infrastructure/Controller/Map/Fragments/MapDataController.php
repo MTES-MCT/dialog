@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Map\Fragments;
 
+use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
@@ -19,6 +20,7 @@ final class MapDataController
         private FormFactoryInterface $formFactory,
         private RouterInterface $router,
         private LocationRepositoryInterface $locationRepository,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -29,7 +31,7 @@ final class MapDataController
     )]
     public function __invoke(Request $request): Response
     {
-        $dto = new MapFilterDTO();
+        $dto = new MapFilterDTO($this->dateUtils->getNow());
         $form = $this->formFactory->create(
             type: MapFilterFormType::class,
             data: $dto,

@@ -180,6 +180,10 @@ div.fr-callout__text p {
     margin: 20px auto;
 }
 
+.image-article-profil {
+    height: 300px;
+}
+
 /* Appliquer l'italique et la couleur grise aux légendes des images */
 .legende-article {
     font-style: italic;

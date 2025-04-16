@@ -25,7 +25,7 @@ DiaLog est une solution numérique qui permet de numériser la réglementation r
 
 Prenons le temps d’échanger avec [Florimond Manca](https://www.linkedin.com/in/florimondmanca/) pour comprendre ce qui se cache derrière ce produit. Florimond est membre de la Scop [Fairness](https://www.linkedin.com/company/fairness-coop/posts/?feedView=all), en charge du développement informatique de DiaLog.
 
-{% image "./img/florimond-profile.jpg", "Florimond Manca", [300, 800], "(max-width: 800px) 80vw, 800px", "image-article" %}
+{% image "./img/florimond-profile.jpg", "Florimond Manca", [300, 300], "(max-width: 300px) 80vw, 300px", "image-article image-article-profil" %}
 
 **Une startup d’État est créée pour concevoir des produits qui règlent un problème. Comment passe-t-on du problème au produit ?**
 

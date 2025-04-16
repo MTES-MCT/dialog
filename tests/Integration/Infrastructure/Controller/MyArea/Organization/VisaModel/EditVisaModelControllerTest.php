@@ -31,7 +31,7 @@ final class EditVisaModelControllerTest extends AbstractWebTestCase
     public function testEdit(string $name, ?string $description, array $visas): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -56,7 +56,7 @@ final class EditVisaModelControllerTest extends AbstractWebTestCase
     public function testBadFormValues(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();
@@ -75,21 +75,21 @@ final class EditVisaModelControllerTest extends AbstractWebTestCase
     public function testVisaModelNotFound(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/99a1c489-6741-4db3-8618-119c43195a86/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/99a1c489-6741-4db3-8618-119c43195a86/edit');
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testNotAdministrator(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::OTHER_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
         $this->assertResponseStatusCodeSame(403);
     }
 
@@ -103,7 +103,7 @@ final class EditVisaModelControllerTest extends AbstractWebTestCase
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::MAIN_ORG_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/visa_models/65c12316-e210-445d-9169-0298b13b3b30/edit');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

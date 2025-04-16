@@ -12,7 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
-    protected function login(string $email = UserFixture::MAIN_ORG_USER_EMAIL): KernelBrowser
+    protected function login(string $email = UserFixture::DEPARTMENT_93_USER_EMAIL): KernelBrowser
     {
         $client = static::createClient();
 

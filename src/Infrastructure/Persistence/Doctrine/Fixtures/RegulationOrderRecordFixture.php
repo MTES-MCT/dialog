@@ -40,6 +40,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
     public const UUID_RAWGEOJSON = '06672e5e-8322-739f-8000-9ebfcd86e29a';
     public const UUID_LITTERALIS = '066e9849-1457-7a1e-8000-3142ece4a7de';
     public const UUID_WINTER_MAINTENANCE = '6f665f38-7765-47b1-849a-06279eba3ac6';
+    public const UUID_PARKING_PROHIBITED = '9995801a-0a5c-4a93-8562-f84df8484315';
 
     public function load(ObjectManager $manager): void
     {
@@ -49,7 +50,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('typicalRegulationOrder', RegulationOrder::class),
             new \DateTime('2022-01-10'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $publishedRegulationOrderRecord = new RegulationOrderRecord(
@@ -58,7 +59,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('publishedRegulationOrder', RegulationOrder::class),
             new \DateTime('2022-01-10'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $regulationOrderRecordPermanent = new RegulationOrderRecord(
@@ -67,7 +68,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('regulationOrderPermanent', RegulationOrder::class),
             new \DateTime('2022-01-11'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $fullCityRegulationOrderRecord = new RegulationOrderRecord(
@@ -76,7 +77,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('fullCityRegulationOrder', RegulationOrder::class),
             new \DateTime('2022-01-11'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $regulationOrderRecordNoLocations = new RegulationOrderRecord(
@@ -85,7 +86,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('regulationOrderNoLocations', RegulationOrder::class),
             new \DateTime('2022-01-10'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $regulationOrderRecordNoMeasures = new RegulationOrderRecord(
@@ -94,7 +95,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('regulationOrderNoMeasures', RegulationOrder::class),
             new \DateTime('2022-01-10'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $regulationOrderRecordCifs = new RegulationOrderRecord(
@@ -103,7 +104,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('regulationOrderCifs', RegulationOrder::class),
             new \DateTime('2023-09-06'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $outDatedRegulationOrderRecordCifs = new RegulationOrderRecord(
@@ -112,7 +113,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('outDatedRegulationOrderCifs', RegulationOrder::class),
             new \DateTime('2021-11-02'),
-            $this->getReference('otherOrg', Organization::class),
+            $this->getReference('regionIdfOrg', Organization::class),
         );
 
         $rawGeoJSONRegulationOrderRecord = new RegulationOrderRecord(
@@ -121,7 +122,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('rawGeoJSONRegulationOrder', RegulationOrder::class),
             new \DateTime('2020-06-05'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $litteralisRegulationOrderRecord = new RegulationOrderRecord(
@@ -130,7 +131,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::PUBLISHED->value,
             $this->getReference('litteralisRegulationOrder', RegulationOrder::class),
             new \DateTime('2024-09-05'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
         $winterMaintenanceRegulationOrderRecord = new RegulationOrderRecord(
@@ -139,7 +140,16 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
             RegulationOrderRecordStatusEnum::DRAFT->value,
             $this->getReference('winterMaintenanceRegulationOrder', RegulationOrder::class),
             new \DateTime('2025-01-08'),
-            $this->getReference('mainOrg', Organization::class),
+            $this->getReference('dialogOrg', Organization::class),
+        );
+
+        $parkingProhibitedRegulationOrderRecord = new RegulationOrderRecord(
+            self::UUID_PARKING_PROHIBITED,
+            RegulationOrderRecordSourceEnum::DIALOG->value,
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            $this->getReference('parkingProhibitedRegulationOrder', RegulationOrder::class),
+            new \DateTime('2025-01-08'),
+            $this->getReference('dialogOrg', Organization::class),
         );
 
         $manager->persist($typicalRegulationOrderRecord);
@@ -153,6 +163,7 @@ final class RegulationOrderRecordFixture extends Fixture implements DependentFix
         $manager->persist($rawGeoJSONRegulationOrderRecord);
         $manager->persist($litteralisRegulationOrderRecord);
         $manager->persist($winterMaintenanceRegulationOrderRecord);
+        $manager->persist($parkingProhibitedRegulationOrderRecord);
         $manager->flush();
     }
 

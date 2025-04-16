@@ -21,7 +21,7 @@ final class RegisterControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['register_form[fullName]'] = 'Lucie Dutest';
-        $form['register_form[organizationSiret]'] = '21440195200129';
+        $form['register_form[organizationSiret]'] = '22930008201453';
         $form['register_form[password][first]'] = 'password12345';
         $form['register_form[password][second]'] = 'password12345';
         $form['register_form[email]'] = 'lucie@example.com';
@@ -31,7 +31,7 @@ final class RegisterControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Pour finaliser la création de votre compte, merci de cliquer sur le lien ci-dessous :');
+        $this->assertEmailHtmlBodyContains($email, 'Pour activer votre compte, veuillez valider votre adresse email en utilisant le bouton de confirmation ci-dessous :');
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
