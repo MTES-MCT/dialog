@@ -8,13 +8,18 @@ Que deviennent les données une fois intégrées ? De quelles données la platef
 
 ## Étapes de la mise en place d'une intégration
 
-1. Prise de contact et identification technique de la source de données (fichier unique, API...)
-2. Mise à disposition d'un accès technique aux données sources (incluant d'éventuels identifiants d'authentification) afin que l'équipe technique en évalue le contenu et la possibilité d'import dans DiaLog
-3. Développement ou adaptation du code nécessaire à l'import des données sources dans la plateforme DiaLog
-4. Mise en ligne des données dans un environnement de recette afin de valider l'intégration
-5. Mise en production de l'intégration et des données
+| Etape | Qui | Fait quoi |
+|---|---|---|
+| 1 | Collectivité + DiaLog | Prise de contact et identification technique de la source de données (fichier unique, API...) et de sa fréquence de mise à jour |
+| 2 | Collectivité | Mise à disposition d'un accès technique aux données sources (incluant d'éventuels identifiants d'authentification) afin que l'équipe technique en évalue le contenu et la possibilité d'import dans DiaLog |
+| 3 | DiaLog | Développement ou adaptation du code nécessaire à l'import des données sources dans la plateforme DiaLog |
+| 4 | DiaLog | Mise en ligne des données dans un environnement de recette afin de valider l'intégration, avec communication des statistiques d'intégration telles que le nombre d'arrêtés importés ou en erreur |
+| 5 | Collectivité | Validation de l'intégration sur l'environnement de recette (par exemple par inspection de la carte des restrictions) |
+| 6 | DiaLog | Mise en production de l'intégration et des données |
 
-En fonction de la source de données, l'exécution de l'intégration pourra être programmée périodiquement (généralement toutes les semaines) afin
+En fonction de la source de données, l'exécution de l'import de données pourra être programmé périodiquement (généralement toutes les semaines).
+
+Après la mise en ligne initiale, l'intégration fera l'objet d'une amélioration continue en fonction des retours de la collectivité.
 
 ## Chemin de la donnée
 
