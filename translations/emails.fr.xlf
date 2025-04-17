@@ -12,7 +12,7 @@
             </trans-unit>
             <trans-unit id="forgot_password.title">
                 <source>forgot_password.title</source>
-                <target>Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, cliquez sur le lien ci-dessous :</target>
+                <target>Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, veuillez utiliser le bouton suivant :</target>
             </trans-unit>
             <trans-unit id="common.expiration">
                 <source>common.expiration</source>
@@ -32,7 +32,7 @@
             </trans-unit>
             <trans-unit id="confirm_user_account.confirm_email">
                 <source>confirm_user_account.confirm_email</source>
-                <target>Pour finaliser la création de votre compte, merci de cliquer sur le lien ci-dessous :</target>
+                <target>Pour activer votre compte, veuillez valider votre adresse email en utilisant le bouton de confirmation ci-dessous :</target>
             </trans-unit>
             <trans-unit id="confirm_user_account.confirm_email_button">
                 <source>confirm_user_account.confirm_email_button</source>
