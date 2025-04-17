@@ -31,6 +31,9 @@ Encore
     // Public map
     .addStyleEntry('map', './assets/styles/map.scss')
 
+    // Quill styles
+    .addStyleEntry('quill', './assets/styles/quill.css')
+
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')
 
@@ -101,11 +104,15 @@ Encore
                 /^fr-alert--/,
                 /^d-map-popup/,
                 // Map libre classes
-                /^maplibregl/
+                /^maplibregl/,
+                // Quill classes
+                /^ql-/
             ],
             greedy: [
                 // Source of complex selectors
                 /input/,
+                // Quill complex selectors
+                /quill/
             ]
         }
     }))
