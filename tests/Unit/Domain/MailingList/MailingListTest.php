@@ -27,5 +27,15 @@ final class MailingListTest extends TestCase
         $this->assertSame('email@mairie.gouv.fr', $mailingList->getEmail());
         $this->assertSame($organization, $mailingList->getOrganization());
         $this->assertSame('Maire', $mailingList->getRole());
+
+        $mailingList->update(
+            'Isabelle Truc',
+            'isabelle@beta.gouv.fr',
+            'Prefecture',
+        );
+
+        $this->assertSame('Isabelle Truc', $mailingList->getName());
+        $this->assertSame('isabelle@beta.gouv.fr', $mailingList->getEmail());
+        $this->assertSame('Prefecture', $mailingList->getRole());
     }
 }
