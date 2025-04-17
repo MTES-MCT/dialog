@@ -2307,7 +2307,7 @@
             </trans-unit>
             <trans-unit id="add.recipient.form.title">
                 <source>add.recipient.form.title</source>
-                <target>Destinataire</target>
+                <target>Ajouter un destinataire</target>
             </trans-unit>
             <trans-unit id="recipient.name">
                 <source>recipient.name</source>
@@ -2436,6 +2436,10 @@
             <trans-unit id="config.menu.regulation_order_templates">
                 <source>config.menu.regulation_order_templates</source>
                 <target>Modèles d'arrêtés</target>
+            </trans-unit>
+            <trans-unit id="config.menu.mailing_list">
+                <source>config.menu.mailing_list</source>
+                <target>Liste de diffusion</target>
             </trans-unit>
             <trans-unit id="config.menu.organization.edit">
                 <source>config.menu.organization.edit</source>

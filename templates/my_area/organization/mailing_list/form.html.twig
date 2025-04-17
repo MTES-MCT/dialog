@@ -25,7 +25,7 @@
                             {{ form_row(form.role, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                         </div>
                     </div>
-                    <a href="{{ path('app_config_visa_models_list', {uuid: organization.uuid}) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                    <a href="{{ path('app_config_recipients_list', {uuid: organization.uuid}) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                         {{ "common.cancel"|trans }}
                     </a>
                     {{ form_widget(form.save) }}
