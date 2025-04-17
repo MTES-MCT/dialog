@@ -1,0 +1,120 @@
+{% extends 'layouts/layout.html.twig' %}
+{% set metaTitle = regulationOrderTemplate is defined ? regulationOrderTemplate.name : 'regulation_order_template.add.title'|trans %}
+
+{% set variables = [
+    { label: 'regulation_order_template.variables.list.number'|trans, value: '[numero_arrete]' },
+    { label: 'regulation_order_template.variables.list.intitule'|trans, value: '[intitule_arrete]' },
+    { label: 'regulation_order_template.variables.list.start_pr'|trans, value: '[numero_pr_debut]' },
+    { label: 'regulation_order_template.variables.list.end_pr'|trans, value: '[numero_pr_fin]' },
+    { label: 'regulation_order_template.variables.list.signatory_name'|trans, value: '[nom_signataire]' },
+    { label: 'regulation_order_template.variables.list.national_road_number'|trans, value: '[numero_rn]' }
+] %}
+
+{% block title %}
+    {{ metaTitle }} - {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('quill') }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
+            </div>
+            <div class="fr-col-12 fr-col-md-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+                    { title: 'regulation_order_template.list.title'|trans, url: path('app_config_regulation_order_templates_list', {uuid: organization.uuid}), generatedPath: true },
+                    { title: metaTitle },
+                ]} %}
+                <h2>{{ metaTitle }}</h2>
+                {{ form_start(form) }}
+                    {{ form_row(form.name, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                    <section class="fr-accordion fr-mb-3w">
+                        <h3 class="fr-accordion__title">
+                            <button type="button" class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-variables">
+                                <span class="fr-icon-settings-5-line fr-pr-2w" aria-hidden="true"></span>
+                                {{ "regulation_order_template.variables.title"|trans }}
+                            </button>
+                        </h3>
+                        <div class="fr-collapse" id="accordion-variables">
+                            <div class="fr-table--lg fr-table fr-table" id="table-lg-component">
+                                <div class="fr-table__wrapper">
+                                    <div class="fr-table__container">
+                                        <div class="fr-table__content">
+                                            <p class="fr-mb-2w">
+                                                {{ "regulation_order_template.variables.description"|trans }}
+                                            </p>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">{{ "regulation_order_template.variables.intitule"|trans }}</th>
+                                                        <th scope="col">{{ "regulation_order_template.variables.name"|trans }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for variable in variables %}
+                                                        <tr>
+                                                            <td>{{ variable.label }}</td>
+                                                            <td>{{ variable.value }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {{ form_row(form.title, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 100,
+                            'data-rich-text-variables-value': variables|json_encode|raw
+                        }
+                    }) }}
+                    {{ form_row(form.visaContent, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 400,
+                            'data-rich-text-variables-value': variables|json_encode|raw
+                        }
+                    }) }}
+                    {{ form_row(form.consideringContent, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 100,
+                            'data-rich-text-variables-value': variables|json_encode|raw
+                        }
+                    }) }}
+                    {{ form_row(form.articleContent, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-controller': 'rich-text',
+                            'data-rich-text-height-value': 400,
+                            'data-rich-text-variables-value': variables|json_encode|raw
+                        }
+                    }) }}
+                    <a href="{{ path('app_config_regulation_order_templates_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                        {{ "common.cancel"|trans }}
+                    </a>
+                    {{ form_widget(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
