@@ -2293,6 +2293,10 @@
                 <source>recipient.list.description</source>
                 <target>Ajouter les contacts des personnes à qui vous souhaiter partager vos arrêtés.</target>
             </trans-unit>
+            <trans-unit id="recipient.add.title">
+                <source>recipient.add.title</source>
+                <target>Ajouter un destinataire</target>
+            </trans-unit>
             <trans-unit id="recipient.list.name">
                 <source>recipient.list.name</source>
                 <target>Destinataire</target>

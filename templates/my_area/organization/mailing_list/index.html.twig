@@ -18,6 +18,11 @@
                 ]} %}
                 <div class="fr-grid-row">
                     <h2 id="recipient-list" class="fr-col fr-mb-0">{{ 'recipient.list.title'|trans }}</h2>
+                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                        <a href="{{ path('app_config_recipients_list_add', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'recipient.add.title'|trans }}">
+                            {{ 'recipient.add.title'|trans }}
+                        </a>
+                    {% endif %}
                 </div>
                 <p class="fr-text--sm">{{ 'recipient.list.description'|trans }}</p>
                 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
