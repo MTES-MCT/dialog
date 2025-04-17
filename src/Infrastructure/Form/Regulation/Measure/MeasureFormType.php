@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation\Measure;
 
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
+use App\Domain\User\Organization;
 use App\Infrastructure\Form\Regulation\LocationFormType;
 use App\Infrastructure\Form\Regulation\PeriodFormType;
 use App\Infrastructure\Form\Regulation\VehicleSetFormType;
@@ -59,6 +60,7 @@ final class MeasureFormType extends AbstractType
                     'administrators' => $options['administrators'],
                     'storage_areas' => $options['storage_areas'],
                     'permissions' => $options['permissions'],
+                    'organization' => $options['organization'],
                 ],
                 'prototype_name' => '__location_name__',
                 'label' => false,
@@ -101,11 +103,13 @@ final class MeasureFormType extends AbstractType
             'storage_areas' => [],
             'isPermanent' => false,
             'permissions' => [],
+            'organization' => null,
             'validation_groups' => ['Default', 'html_form'],
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
         $resolver->setAllowedTypes('storage_areas', 'array');
         $resolver->setAllowedTypes('isPermanent', 'boolean');
         $resolver->setAllowedTypes('permissions', 'array');
+        $resolver->setAllowedTypes('organization', ['null', Organization::class]);
     }
 }
