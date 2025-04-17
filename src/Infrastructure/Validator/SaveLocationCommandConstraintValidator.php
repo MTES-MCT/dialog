@@ -43,14 +43,14 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
                     ->addViolation();
             }
 
-            if (NumberedRoad::isPointNumberEmpty($command->$roadType->fromPointNumber)) {
-                $this->context->buildViolation('common.error.not_blank')
+            if (NumberedRoad::isPointNumberEmpty($command->$roadType->fromPointNumberWithDepartmentCode)) {
+                $this->context->buildViolation('regulation.location.pointNumber.error.blank')
                     ->atPath("$roadType.fromPointNumber")
                     ->addViolation();
             }
 
-            if (NumberedRoad::isPointNumberEmpty($command->$roadType->toPointNumber)) {
-                $this->context->buildViolation('common.error.not_blank')
+            if (NumberedRoad::isPointNumberEmpty($command->$roadType->toPointNumberWithDepartmentCode)) {
+                $this->context->buildViolation('regulation.location.pointNumber.error.blank')
                     ->atPath("$roadType.toPointNumber")
                     ->addViolation();
             }

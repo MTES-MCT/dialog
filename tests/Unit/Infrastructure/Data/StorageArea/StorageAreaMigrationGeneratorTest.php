@@ -93,9 +93,11 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                     'Nationale',
                     'DIR Centre-Est',
                     'N79',
+                    '71',
                     '50',
                     'D',
                     600,
+                    '71',
                     '51',
                     'D',
                     150,
@@ -106,9 +108,11 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                     'Nationale',
                     'DIR Atlantique',
                     'N10',
+                    '86',
                     '92',
                     'G',
                     0,
+                    '86',
                     '87',
                     'G',
                     800,
@@ -119,9 +123,11 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                     'Nationale',
                     'DIR Atlantique',
                     'N10',
+                    '16',
                     '29',
                     'D',
                     200,
+                    '16',
                     '29',
                     'D',
                     300,
@@ -133,12 +139,12 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
         $sql = $this->generator->makeMigrationSql($this->testRows);
 
         $expectedSql = trim(
-            'INSERT INTO storage_area (uuid, source_id, description, administrator, road_number, from_point_number, from_side, from_abscissa, to_point_number, to_side, to_abscissa, geometry) VALUES
-(uuid_generate_v4(), \'Pl_5\', \'La Chapelle du Mont de France _ 42-71-N79-51-1 _ capacité 30 - située sur BAU  _ District Mâcon _ CEI CHARANY LES MACON\', \'DIR Centre-Est\', \'N79\', \'50\', \'D\', 600, \'51\', \'D\', 150, ST_GeomFromGeoJSON(\'geom1\')),
-(uuid_generate_v4(), \'PL_86_N0010_ ??_N0010\', \'Stockage 420 PL pleine voie –  sens Bordeaux/Poitiers\', \'DIR Atlantique\', \'N10\', \'92\', \'G\', 0, \'87\', \'G\', 800, ST_GeomFromGeoJSON(\'geom2\')),
-(uuid_generate_v4(), \'PL_16_N0010_04_N0010\', \'Stockage 400 PL hors axe – Aire de repos Maine de Boixe ouest + restaurant La Belle Cantinière – accès sens nord/sud\', \'DIR Atlantique\', \'N10\', \'29\', \'D\', 200, \'29\', \'D\', 300, ST_GeomFromGeoJSON(\'geom3\'))
+            'INSERT INTO storage_area (uuid, source_id, description, administrator, road_number, from_department_code, from_point_number, from_side, from_abscissa, to_department_code, to_point_number, to_side, to_abscissa, geometry) VALUES
+(uuid_generate_v4(), \'Pl_5\', \'La Chapelle du Mont de France _ 42-71-N79-51-1 _ capacité 30 - située sur BAU  _ District Mâcon _ CEI CHARANY LES MACON\', \'DIR Centre-Est\', \'N79\', \'71\', \'50\', \'D\', 600, \'71\', \'51\', \'D\', 150, ST_GeomFromGeoJSON(\'geom1\')),
+(uuid_generate_v4(), \'PL_86_N0010_ ??_N0010\', \'Stockage 420 PL pleine voie –  sens Bordeaux/Poitiers\', \'DIR Atlantique\', \'N10\', \'86\', \'92\', \'G\', 0, \'86\', \'87\', \'G\', 800, ST_GeomFromGeoJSON(\'geom2\')),
+(uuid_generate_v4(), \'PL_16_N0010_04_N0010\', \'Stockage 400 PL hors axe – Aire de repos Maine de Boixe ouest + restaurant La Belle Cantinière – accès sens nord/sud\', \'DIR Atlantique\', \'N10\', \'16\', \'29\', \'D\', 200, \'16\', \'29\', \'D\', 300, ST_GeomFromGeoJSON(\'geom3\'))
 ON CONFLICT (source_id) DO UPDATE
-SET description = EXCLUDED.description, administrator = EXCLUDED.administrator, road_number = EXCLUDED.road_number, from_point_number = EXCLUDED.from_point_number, from_side = EXCLUDED.from_side, from_abscissa = EXCLUDED.from_abscissa, to_point_number = EXCLUDED.to_point_number, to_side = EXCLUDED.to_side, to_abscissa = EXCLUDED.to_abscissa, geometry = EXCLUDED.geometry;
+SET description = EXCLUDED.description, administrator = EXCLUDED.administrator, road_number = EXCLUDED.road_number, from_department_code = EXCLUDED.from_department_code, from_point_number = EXCLUDED.from_point_number, from_side = EXCLUDED.from_side, from_abscissa = EXCLUDED.from_abscissa, to_department_code = EXCLUDED.to_department_code, to_point_number = EXCLUDED.to_point_number, to_side = EXCLUDED.to_side, to_abscissa = EXCLUDED.to_abscissa, geometry = EXCLUDED.geometry;
 ',
         );
 
