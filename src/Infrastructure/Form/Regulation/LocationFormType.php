@@ -7,6 +7,7 @@ namespace App\Infrastructure\Form\Regulation;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
+use App\Domain\User\Organization;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -61,6 +62,15 @@ final class LocationFormType extends AbstractType
                 );
             }
         });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
+            $command = $event->getData();
+
+            if ($command && !$command->location) {
+                // Added via form collection: need to set organization
+                $command->organization = $options['organization'];
+            }
+        });
     }
 
     private function getRoadTypeOptions(bool $includeRawGeoJSONOption = false): array
@@ -103,10 +113,12 @@ final class LocationFormType extends AbstractType
             ],
             'storage_areas' => [],
             'permissions' => [],
+            'organization' => null,
             'data_class' => SaveLocationCommand::class,
         ]);
         $resolver->setAllowedTypes('administrators', 'array');
         $resolver->setAllowedTypes('storage_areas', 'array');
         $resolver->setAllowedTypes('permissions', 'array');
+        $resolver->setAllowedTypes('organization', ['null', Organization::class]);
     }
 }

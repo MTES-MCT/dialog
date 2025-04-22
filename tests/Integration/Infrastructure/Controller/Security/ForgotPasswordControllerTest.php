@@ -27,7 +27,7 @@ final class ForgotPasswordControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, cliquez sur le lien ci-dessous');
+        $this->assertEmailHtmlBodyContains($email, 'Vous avez demandé la réinitialisation du mot de passe associé à votre compte. Afin de valider votre demande, veuillez utiliser le bouton suivant');
 
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
