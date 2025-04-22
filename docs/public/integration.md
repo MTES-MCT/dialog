@@ -10,12 +10,13 @@ Que deviennent les données une fois intégrées ? De quelles données la platef
 
 | Etape | Qui | Fait quoi |
 |---|---|---|
-| 1 | Collectivité + DiaLog | Prise de contact et identification technique de la source de données (fichier unique, API...) et de sa fréquence de mise à jour |
-| 2 | Collectivité | Mise à disposition d'un accès technique aux données sources (incluant d'éventuels identifiants d'authentification) afin que l'équipe technique en évalue le contenu et la possibilité d'import dans DiaLog |
-| 3 | DiaLog | Développement ou adaptation du code nécessaire à l'import des données sources dans la plateforme DiaLog |
-| 4 | DiaLog | Mise en ligne des données dans un environnement de recette afin de valider l'intégration, avec communication des statistiques d'intégration telles que le nombre d'arrêtés importés ou en erreur |
-| 5 | Collectivité | Validation de l'intégration sur l'environnement de recette (par exemple par inspection de la carte des restrictions) |
-| 6 | DiaLog | Mise en production de l'intégration et des données |
+| 1 | Collectivité + Équipe DiaLog | Prise de contact et identification technique de la source de données (fichier unique, API...) et de sa fréquence de mise à jour |
+| 2 | Collectivité | Mise à disposition d'un accès technique aux données sources (incluant d'éventuels identifiants d'authentification) |
+| 3 | Équipe DiaLog | Test du bon fonctionnement de l'accès technique, évaluation des données sources et confirmation des possibilités d'import dans DiaLog le cas échéant |
+| 4 | Équipe DiaLog | Développement ou adaptation du code nécessaire à l'import des données sources dans la plateforme DiaLog |
+| 5 | Équipe DiaLog | Mise en ligne des données dans un environnement de recette afin de valider l'intégration, avec communication des statistiques d'intégration telles que le nombre d'arrêtés importés ou en erreur |
+| 6 | Collectivité | Validation de l'intégration sur l'environnement de recette (par exemple par inspection de la carte des restrictions) |
+| 7 | Équipe DiaLog | Mise en production de l'intégration et des données |
 
 En fonction de la source de données, l'exécution de l'import de données pourra être programmé périodiquement (généralement toutes les semaines).
 
