@@ -27,9 +27,11 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
         string $roadType,
         string $administrator,
         string $roadNumber,
+        ?string $fromDepartmentCode,
         string $fromPointNumber,
         string $fromSide,
         ?int $fromAbscissa,
+        ?string $toDepartmentCode,
         string $toPointNumber,
         string $toSide,
         int $toAbscissa,
@@ -37,7 +39,7 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
     ): string {
         try {
             $fromCoords = $this->roadGeocoder
-                ->computeReferencePoint($roadType, $administrator, $roadNumber, $fromPointNumber, $fromSide, $fromAbscissa);
+                ->computeReferencePoint($roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa);
         } catch (AbscissaOutOfRangeException $e) {
             throw new StartAbscissaOutOfRangeException($roadType, previous: $e);
         } catch (GeocodingFailureException $e) {
@@ -46,7 +48,7 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
 
         try {
             $toCoords = $this->roadGeocoder
-                ->computeReferencePoint($roadType, $administrator, $roadNumber, $toPointNumber, $toSide, $toAbscissa);
+                ->computeReferencePoint($roadType, $administrator, $roadNumber, $toDepartmentCode, $toPointNumber, $toSide, $toAbscissa);
         } catch (AbscissaOutOfRangeException $e) {
             throw new EndAbscissaOutOfRangeException($roadType, previous: $e);
         } catch (GeocodingFailureException $e) {

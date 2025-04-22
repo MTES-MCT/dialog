@@ -216,14 +216,25 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             'success' => [
                 'D906',
                 'Ardèche',
+                null,
                 '34',
                 'U',
                 0,
                 Coordinates::fromLonLat(3.905822232, 44.592400215),
             ],
+            'success-with-departmentCode' => [
+                'N12',
+                'DIR Ouest',
+                '22', // Existe aussi dans le département 29
+                '1',
+                'D',
+                0,
+                Coordinates::fromLonLat(-2.149963152, 48.267350044),
+            ],
             'abscissa' => [
                 'D906',
                 'Ardèche',
+                null,
                 '34',
                 'U',
                 500,
@@ -232,6 +243,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             'pr-and-line-inverted-order' => [
                 'D978',
                 'Corrèze',
+                null,
                 '1',
                 'U',
                 100,
@@ -242,6 +254,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             'pr-type-excluded-fs' => [
                 'N79',
                 'DIR Centre Est',
+                null,
                 // Ce numéro de PR existe en deux variantes dans point_de_repere :
                 // un type_de_pr = 'PR', et un type_de_pr = 'FS' (qu'on ne veut pas).
                 '51',
@@ -255,12 +268,13 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
     /**
      * @dataProvider provideTestComputeReferencePoint
      */
-    public function testComputeReferencePoint(string $roadNumber, string $administrator, string $pointNumber, string $side, int $abscissa, Coordinates $coords): void
+    public function testComputeReferencePoint(string $roadNumber, string $administrator, ?string $departmentCode, string $pointNumber, string $side, int $abscissa, Coordinates $coords): void
     {
         $this->assertEquals($coords, $this->roadGeocoder->computeReferencePoint(
             RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             $administrator,
             $roadNumber,
+            $departmentCode,
             $pointNumber,
             $side,
             $abscissa,
@@ -276,6 +290,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             administrator: 'Ardèche',
             roadNumber: 'D906',
+            departmentCode: null,
             pointNumber: '1',
             side: 'U',
             abscissa: 0,
@@ -290,6 +305,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             administrator: 'Ardèche',
             roadNumber: 'D906',
+            departmentCode: null,
             pointNumber: '34',
             side: 'U',
             abscissa: 4000,
